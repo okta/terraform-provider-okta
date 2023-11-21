@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaUserAdminRoles_crud(t *testing.T) {
-	mgr := newFixtureManager(userAdminRoles, t.Name())
+func TestAccResourceOktaUserAdminRoles_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", userAdminRoles, t.Name())
 	start := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("basic_update.tf", t)
 	remove := mgr.GetFixtures("basic_removal.tf", t)

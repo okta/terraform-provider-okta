@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaDataSourcePolicy_read(t *testing.T) {
+func TestAccDataSourceOktaPolicy_read(t *testing.T) {
 	config := testAccDataSourcePolicyConfig()
 
 	oktaResourceTest(t, resource.TestCase{

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,9 +24,10 @@ func resourceAppGroupAssignments() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"app_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The ID of the application to assign a group to.",
 			},
 			"group": {
 				Type:        schema.TypeList,
@@ -48,18 +48,18 @@ func resourceAppGroupAssignments() *schema.Resource {
 								p, n := d.GetChange("priority")
 								return p == n && new == "0"
 							},
+							Description: "Priority of group assignment",
 						},
 						"profile": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: stringIsJSON,
 							StateFunc:        normalizeDataJSON,
 							Required:         true,
-							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-								return new == ""
-							},
+							DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 							DefaultFunc: func() (interface{}, error) {
 								return "{}", nil
 							},
+							Description: "JSON document containing [application profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
 						},
 					},
 				},
@@ -92,7 +92,10 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 
 func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	assignments, resp, err := listApplicationGroupAssignments(
+	// remember, current group assignments is an API call and are all groups
+	// assigned to the app, even those initiated outside the provider, for
+	// instance those assignments from "click ops"
+	currentGroupAssignments, resp, err := listApplicationGroupAssignments(
 		ctx,
 		client,
 		d.Get("app_id").(string),
@@ -100,22 +103,23 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
-	if assignments == nil {
+	if currentGroupAssignments == nil {
 		d.SetId("")
 		return nil
 	}
 	g, ok := d.GetOk("group")
 	if ok {
-		err := setNonPrimitives(d, map[string]interface{}{"group": syncGroups(d, g.([]interface{}), assignments)})
+		groupAssignments := syncGroups(d, g.([]interface{}), currentGroupAssignments)
+		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
 	} else {
-		arr := make([]map[string]interface{}, len(assignments))
-		for i := range assignments {
-			arr[i] = groupAssignmentToTFGroup(assignments[i])
+		groupAssignments := make([]map[string]interface{}, len(currentGroupAssignments))
+		for i := range currentGroupAssignments {
+			groupAssignments[i] = groupAssignmentToTFGroup(currentGroupAssignments[i])
 		}
-		err := setNonPrimitives(d, map[string]interface{}{"group": arr})
+		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
@@ -126,15 +130,10 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
 	appID := d.Get("app_id").(string)
-	assignments, _, err := listApplicationGroupAssignments(
-		ctx,
-		client,
-		d.Get("app_id").(string),
-	)
+	toAssign, toRemove, err := splitAssignmentsTargets(d)
 	if err != nil {
-		return diag.Errorf("failed to fetch group assignments: %v", err)
+		return diag.Errorf("failed to discern group assignment splits: %v", err)
 	}
-	toAssign, toRemove := splitAssignmentsTargets(tfGroupsToGroupAssignments(d), assignments)
 	err = deleteGroupAssignments(
 		client.Application.DeleteApplicationGroupAssignment,
 		ctx,
@@ -172,24 +171,64 @@ func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func syncGroups(d *schema.ResourceData, groups []interface{}, assignments []*sdk.ApplicationGroupAssignment) []interface{} {
-	var newGroups []interface{}
-	for i := range groups {
-		present := false
-		for _, assignment := range assignments {
-			if assignment.Id == d.Get(fmt.Sprintf("group.%d.id", i)).(string) {
-				present = true
-				if assignment.PriorityPtr != nil && *assignment.PriorityPtr >= 0 {
-					groups[i].(map[string]interface{})["priority"] = *assignment.PriorityPtr
+// syncGroups compares tfGroups - the groups set in the config, with all group
+// assignments, and all assignments known to the API. If there is new
+// information from all group assignments for a group already in the config,
+// that information will be updated (id, priority, profile). If the group no
+// longer exists as an assignment it is removed from the groups locally.
+// Otherwise, the group is is added to results slice as net new data. Change
+// detection will occur if anything changes API side compared to local state
+// side.
+func syncGroups(d *schema.ResourceData, tfGroups []interface{}, groupAssignments []*sdk.ApplicationGroupAssignment) []interface{} {
+	var result []interface{}
+	// Two passes are required for the result.
+	// First pass keeps the order of tfGroup, but only keeps/updates the group
+	// info if it is present in group assignments.
+	// Second pass is to add in any new additions from group assignments.
+	for i := range tfGroups {
+		// if group is no longer assigned it will not be added back to the results
+		for _, assignment := range groupAssignments {
+			groupId := fmt.Sprintf("group.%d.id", i)
+			if assignment.Id == d.Get(groupId).(string) {
+				group := map[string]interface{}{
+					"id":      assignment.Id,
+					"profile": buildProfile(d, i, assignment),
 				}
-				groups[i].(map[string]interface{})["profile"] = buildProfile(d, i, assignment)
+				if assignment.PriorityPtr != nil && *assignment.PriorityPtr >= 0 {
+					group["priority"] = *assignment.PriorityPtr
+				}
+				result = append(result, group)
 			}
 		}
-		if present {
-			newGroups = append(newGroups, groups[i])
-		}
 	}
-	return newGroups
+
+	for _, assignment := range groupAssignments {
+		found := false
+		for _, g := range tfGroups {
+			group := g.(map[string]interface{})
+			id := group["id"]
+			if id == assignment.Id {
+				found = true
+			}
+		}
+		if found {
+			continue
+		}
+
+		newGroup := map[string]interface{}{
+			"id": assignment.Id,
+		}
+		if assignment.Profile != nil {
+			if p, ok := assignment.Profile.(string); ok {
+				newGroup["profile"] = p
+			}
+		}
+		if assignment.PriorityPtr != nil && *assignment.PriorityPtr >= 0 {
+			newGroup["priority"] = *assignment.PriorityPtr
+		}
+		result = append(result, newGroup)
+	}
+	return result
 }
 
 func buildProfile(d *schema.ResourceData, i int, assignment *sdk.ApplicationGroupAssignment) string {
@@ -231,39 +270,74 @@ func buildProfile(d *schema.ResourceData, i int, assignment *sdk.ApplicationGrou
 	return string(jsonProfile)
 }
 
-func splitAssignmentsTargets(expectedAssignments, existingAssignments []*sdk.ApplicationGroupAssignment) (toAssign, toRemove []*sdk.ApplicationGroupAssignment) {
-	for i := range expectedAssignments {
-		if !containsEqualAssignment(existingAssignments, expectedAssignments[i]) {
-			toAssign = append(toAssign, expectedAssignments[i])
-		}
+// splitAssignmentsTargets uses schema change to determine what if any
+// assignments to keep and which to remove. This is in the context of the local
+// terraform state. Get changes returns old state vs new state. Anything in the
+// old state but not in the new state will be removed.  Otherwise, everything is
+// to be assigned. That way, if there are changes to an existing assignment
+// (e.g. on priority or profile) they'll still be posted to the API for update.
+func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.ApplicationGroupAssignment, err error) {
+	// 1. Anything in old, but not in new, needs to be deleted
+	// 2. Treat everything else as to be added that will also take care of field
+	//    updates on priority and profile
+	o, n := d.GetChange("group")
+	oldState, ok := o.([]interface{})
+	if !ok {
+		err = fmt.Errorf("expected old groups to be slice, got %T", o)
+		return
 	}
-	for i := range existingAssignments {
-		if !containsAssignment(expectedAssignments, existingAssignments[i]) {
-			toRemove = append(toRemove, existingAssignments[i])
-		}
+	newState, ok := n.([]interface{})
+	if !ok {
+		err = fmt.Errorf("expected new groups to be slice, got %T", n)
+		return
 	}
-	return
-}
 
-func containsAssignment(assignments []*sdk.ApplicationGroupAssignment, assignment *sdk.ApplicationGroupAssignment) bool {
-	for i := range assignments {
-		if assignments[i].Id == assignment.Id {
-			return true
+	oldIDs := map[string]interface{}{}
+	newIDs := map[string]interface{}{}
+	for _, old := range oldState {
+		if o, ok := old.(map[string]interface{}); ok {
+			id := o["id"].(string)
+			oldIDs[id] = o
 		}
 	}
-	return false
-}
+	for _, new := range newState {
+		if n, ok := new.(map[string]interface{}); ok {
+			id := n["id"].(string)
+			newIDs[id] = n
+		}
+	}
 
-func containsEqualAssignment(assignments []*sdk.ApplicationGroupAssignment, assignment *sdk.ApplicationGroupAssignment) bool {
-	for i := range assignments {
-		if assignments[i].Id == assignment.Id && reflect.DeepEqual(assignments[i].Profile, assignment.Profile) {
-			if assignments[i].PriorityPtr != nil && assignment.PriorityPtr != nil {
-				return reflect.DeepEqual(*assignments[i].PriorityPtr, *assignment.PriorityPtr)
+	// delete
+	for id := range oldIDs {
+		if newIDs[id] == nil {
+			// only id is needed
+			toRemove = append(toRemove, &sdk.ApplicationGroupAssignment{
+				Id: id,
+			})
+		}
+	}
+
+	// anything in the new state treat as an assign even though it might already
+	// exist and might be unchanged
+	for id, group := range newIDs {
+		a := group.(map[string]interface{})
+		assignment := &sdk.ApplicationGroupAssignment{
+			Id: id,
+		}
+		if profile, ok := a["profile"]; ok {
+			var p interface{}
+			if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
+				assignment.Profile = p
 			}
-			return true
+			err = nil // need to reset err as it is a named return value
 		}
+		if priority, ok := a["priority"]; ok {
+			assignment.PriorityPtr = int64Ptr(priority.(int))
+		}
+		toAssign = append(toAssign, assignment)
 	}
-	return false
+
+	return
 }
 
 func groupAssignmentToTFGroup(assignment *sdk.ApplicationGroupAssignment) map[string]interface{} {

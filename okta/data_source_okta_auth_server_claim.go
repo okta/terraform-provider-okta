@@ -22,11 +22,13 @@ func dataSourceAuthServerClaim() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"name"},
+				Description:   "Name of the claim. Conflicts with `name`.",
 			},
 			"name": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"id"},
+				Description:   "Name of the claim. Conflicts with `id`.",
 			},
 			"scopes": {
 				Type:        schema.TypeSet,
@@ -35,26 +37,32 @@ func dataSourceAuthServerClaim() *schema.Resource {
 				Description: "Auth server claim list of scopes",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the claim.",
 			},
 			"value": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Value of the claim.",
 			},
 			"value_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Specifies whether the Claim is an Okta EL expression (`EXPRESSION`), a set of groups (`GROUPS`), or a system claim (`SYSTEM`)",
 			},
 			"claim_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Specifies whether the Claim is for an access token (`RESOURCE`) or ID token (`IDENTITY`).",
 			},
 			"always_include_in_token": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Specifies whether to include Claims in the token.",
 			},
 		},
+		Description: "Get authorization server claim from Okta.",
 	}
 }
 

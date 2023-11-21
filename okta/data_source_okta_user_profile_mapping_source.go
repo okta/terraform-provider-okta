@@ -18,14 +18,17 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 				Description: "ID of the source",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Name of source.",
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Type of source.",
 			},
 		},
+		Description: "Get the base user Profile Mapping source or target from Okta.",
 	}
 }
 

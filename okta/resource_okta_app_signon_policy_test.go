@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
-	mgr := newFixtureManager(appSignOnPolicy, t.Name())
+func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appSignOnPolicy, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
@@ -48,8 +48,8 @@ func TestAccOktaAppSignOnPolicy_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaAppSignOnPolicy_destroy(t *testing.T) {
-	mgr := newFixtureManager(groupSchemaProperty, t.Name())
+func TestAccResourceOktaAppSignOnPolicy_destroy(t *testing.T) {
+	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaSmsTemplate_crud(t *testing.T) {
+func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", templateSms)
-	mgr := newFixtureManager(templateSms, t.Name())
+	mgr := newFixtureManager("resources", templateSms, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 
@@ -47,7 +47,7 @@ func TestAccOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.SmsTemplate.GetSmsTemplate(context.Background(), id)
 	return doesResourceExist(response, err)
 }

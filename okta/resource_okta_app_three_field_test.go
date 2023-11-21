@@ -8,8 +8,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppThreeFieldApplication_crud(t *testing.T) {
-	mgr := newFixtureManager(appThreeField, t.Name())
+func TestAccResourceOktaAppThreeFieldApplication_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appThreeField, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	updatedCreds := mgr.GetFixtures("updated_credentials.tf", t)

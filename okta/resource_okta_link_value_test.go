@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccOktaLinkValue(t *testing.T) {
-	mgr := newFixtureManager(linkValue, t.Name())
+func TestAccResourceOktaLinkValue(t *testing.T) {
+	mgr := newFixtureManager("resources", linkValue, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkValue)
@@ -38,14 +38,11 @@ func TestAccOktaLinkValue(t *testing.T) {
 }
 
 func checkLinkValueDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != linkValue {
 			continue
 		}
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		lo, resp, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), rs.Primary.Attributes["primary_name"])
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil

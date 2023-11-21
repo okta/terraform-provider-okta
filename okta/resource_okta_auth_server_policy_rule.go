@@ -39,6 +39,11 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Required:    true,
 				Description: "Auth server policy ID",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "The rule is the system (default) rule for its associated policy",
+			},
 			"status": statusSchema,
 			"priority": {
 				Type:        schema.TypeInt,
@@ -54,47 +59,56 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
 			},
 			"scope_whitelist": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Description: "Scopes allowed for this policy rule. They can be whitelisted by name or all can be whitelisted with ` * `",
 			},
 			"access_token_lifetime_minutes": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  60,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     60,
+				Description: "Lifetime of access token. Can be set to a value between 5 and 1440 minutes. Default is `60`.",
 			},
 			"refresh_token_lifetime_minutes": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Lifetime of refresh token.",
 			},
 			"refresh_token_window_minutes": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  10080,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     10080,
+				Description: "Window in which a refresh token can be used. It can be a value between 5 and 2628000 (5 years) minutes. Default is `10080` (7 days).`refresh_token_window_minutes` must be between `access_token_lifetime_minutes` and `refresh_token_lifetime_minutes`.",
 			},
 			"inline_hook_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The ID of the inline token to trigger.",
 			},
 			"user_whitelist": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "Specifies a set of Users to be included.",
 			},
 			"user_blacklist": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "Specifies a set of Users to be excluded.",
 			},
 			"group_whitelist": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "Specifies a set of Groups whose Users are to be included. Can be set to Group ID or to the following: `EVERYONE`.",
 			},
 			"group_blacklist": {
-				Type:     schema.TypeSet,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Optional: true,
+				Type:        schema.TypeSet,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
+				Description: "Specifies a set of Groups whose Users are to be excluded.",
 			},
 		},
 	}
@@ -127,6 +141,7 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("system", boolFromBoolPtr(authServerPolicyRule.System))
 	_ = d.Set("name", authServerPolicyRule.Name)
 	_ = d.Set("status", authServerPolicyRule.Status)
 	if authServerPolicyRule.PriorityPtr != nil {

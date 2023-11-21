@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceApp_read(t *testing.T) {
-	mgr := newFixtureManager(app, t.Name())
+func TestAccDataSourceOktaApp_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", app, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestApp(mgr.Seed)
 
@@ -50,9 +49,9 @@ resource "okta_app_oauth" "test" {
 }`, i)
 }
 
-func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
-	ri := acctest.RandInt()
-	config := testLabelConfig(ri)
+func TestAccDataSourceOktaAppLabelTest_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", app, t.Name())
+	config := testLabelConfig(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -62,7 +61,7 @@ func TestAccOktaDataSourceAppLabelTest_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(ri)),
+					resource.TestCheckResourceAttr("data.okta_app.test", "label", buildResourceName(mgr.Seed)),
 				),
 			},
 		},

@@ -43,7 +43,7 @@ The following arguments are supported:
   - `fqdn` - DNS record name.
   - `record_type` - Record type can be TXT or cname.
   - `value` - DNS record value
-  - `expiration ` - DNS TXT record expiration
+  - `expiration ` - (Deprecated) This field has been removed in the newest go sdk version and has become noop
 
 ## Import
 

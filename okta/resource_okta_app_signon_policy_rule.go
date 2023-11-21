@@ -29,6 +29,11 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				ForceNew:    true,
 				Description: "ID of the policy",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: `Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy`,
+			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -42,6 +47,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 					p, n := d.GetChange("priority")
 					return p == n && new == "0"
 				},
+				Description: "Priority of the rule.",
 			},
 			"groups_included": {
 				Type:        schema.TypeSet,
@@ -111,6 +117,12 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 				RequiredWith: []string{"device_is_registered"},
 				Description:  "If the device is managed. A device is managed if it's managed by a device management system. When managed is passed, registered must also be included and must be set to true.",
 			},
+			"device_assurances_included": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "List of device assurance IDs to include",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"platform_include": {
 				Type:     schema.TypeSet,
 				Elem:     platformIncludeResource,
@@ -169,9 +181,16 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 					Type:             schema.TypeString,
 					ValidateDiagFunc: stringIsJSON,
 					StateFunc:        normalizeDataJSON,
+					DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 				},
 				Optional:    true,
 				Description: "An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class",
+			},
+			"risk_score": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "ANY",
+				Description: "The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH",
 			},
 		},
 	}
@@ -211,6 +230,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("system", boolFromBoolPtr(rule.System))
 	_ = d.Set("name", rule.Name)
 	if rule.PriorityPtr != nil {
 		_ = d.Set("priority", *rule.PriorityPtr)
@@ -248,6 +268,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		if rule.Conditions.Device != nil {
 			_ = d.Set("device_is_managed", rule.Conditions.Device.Managed)
 			_ = d.Set("device_is_registered", rule.Conditions.Device.Registered)
+			if rule.Conditions.Device.Assurance != nil {
+				m["device_assurances_included"] = convertStringSliceToSetNullable(rule.Conditions.Device.Assurance.Include)
+			}
 		}
 		if rule.Conditions.People != nil {
 			if rule.Conditions.People.Users != nil {
@@ -263,6 +286,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 			m["user_types_excluded"] = convertStringSliceToSetNullable(rule.Conditions.UserType.Exclude)
 			m["user_types_included"] = convertStringSliceToSetNullable(rule.Conditions.UserType.Include)
 		}
+		if rule.Conditions.RiskScore != nil {
+			_ = d.Set("risk_score", rule.Conditions.RiskScore.Level)
+		}
 		_ = setNonPrimitives(d, m)
 	}
 	return nil
@@ -273,7 +299,12 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), buildAppSignOnPolicyRule(d))
+	rule := buildAppSignOnPolicyRule(d)
+	if boolFromBoolPtr(rule.System) {
+		// Conditions can't be set on the default/system rule
+		rule.Conditions = nil
+	}
+	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -324,6 +355,16 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		PriorityPtr: int64Ptr(d.Get("priority").(int)),
 		Type:        "ACCESS_POLICY",
 	}
+
+	// NOTE: Only the API read will be able to set the "system" boolean so it is
+	// ok to inspect the resource data for its presence to set the bool pointer.
+	// When buildAppSignOnPolicyRule is called from the create context the bool
+	// pointer is effectively inert (nil) and we don't need additional logic
+	// about if this is being called for create/read/update.
+	if v, ok := d.GetOk("system"); ok {
+		rule.System = boolPtr(v.(bool))
+	}
+
 	var constraints []*sdk.AccessPolicyConstraints
 	v, ok := d.GetOk("constraints")
 	if ok {
@@ -335,10 +376,6 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
-	// if this is a default rule, the conditions attribute is read-only.
-	if d.Get("name") == "Catch-all Rule" {
-		return rule
-	}
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		Platform: &sdk.PlatformPolicyRuleCondition{
@@ -346,6 +383,9 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		},
 		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
 			Condition: d.Get("custom_expression").(string),
+		},
+		RiskScore: &sdk.RiskScorePolicyRuleCondition{
+			Level: d.Get("risk_score").(string),
 		},
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
@@ -355,6 +395,21 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 			Registered: boolPtr(isRegistered.(bool)),
 		}
 	}
+	deviceAssurancesIncluded, deviceAssurancesIncludedOk := d.GetOk("device_assurances_included")
+	if deviceAssurancesIncludedOk {
+		if rule.Conditions.Device != nil {
+			rule.Conditions.Device.Assurance = &sdk.DeviceAssurancePolicyRuleCondition{
+				Include: convertInterfaceToStringSetNullable(deviceAssurancesIncluded),
+			}
+		} else {
+			rule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{
+				Assurance: &sdk.DeviceAssurancePolicyRuleCondition{
+					Include: convertInterfaceToStringSetNullable(deviceAssurancesIncluded),
+				},
+			}
+		}
+	}
+
 	usersExcluded, usersExcludedOk := d.GetOk("users_excluded")
 	usersIncluded, usersIncludedOk := d.GetOk("users_included")
 	if usersExcludedOk || usersIncludedOk {

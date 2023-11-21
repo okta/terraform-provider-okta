@@ -28,6 +28,8 @@ The following arguments are supported:
 
   ~> **WARNING**: Use of `OKTA_MANAGED` requires a feature flag to be enabled.
 
+- `brand_id` - (Optional) The Brand ID of the domain
+
 ## Attributes Reference
 
 - `id` - Domain ID

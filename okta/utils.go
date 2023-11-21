@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"unicode"
@@ -146,7 +147,9 @@ func convertInterfaceToStringArr(purportedList interface{}) []string {
 func convertInterfaceArrToStringArr(rawArr []interface{}) []string {
 	arr := make([]string, len(rawArr))
 	for i, thing := range rawArr {
-		arr[i] = thing.(string)
+		if a, ok := thing.(string); ok {
+			arr[i] = a
+		}
 	}
 	return arr
 }
@@ -172,14 +175,22 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 	return &schema.ResourceImporter{
 		StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 			parts := strings.Split(d.Id(), "/")
+			if len(parts) != len(fields) {
+				return nil, fmt.Errorf("expected %d import fields %q, got %d fields %q", len(fields), strings.Join(fields, "/"), len(parts), d.Id())
+			}
 			for i, field := range fields {
 				if field == "id" {
 					d.SetId(parts[i])
 					continue
 				}
-				var value string
+				var value interface{}
 				if i < len(parts) {
-					value = parts[i]
+					// deal with the import parameter being a boolean "true" / "false"
+					if bValue, err := strconv.ParseBool(parts[i]); err == nil {
+						value = bValue
+					} else {
+						value = parts[i]
+					}
 				}
 				_ = d.Set(field, value)
 			}
@@ -237,14 +248,25 @@ func ensureNotDefault(d *schema.ResourceData, t string) error {
 
 func getMapString(m map[string]interface{}, key string) string {
 	if v, ok := m[key]; ok {
-		return v.(string)
+		if res, ok := v.(string); ok {
+			return res
+		}
 	}
 	return ""
 }
 
+// boolPtr return bool pointer to b's value
 func boolPtr(b bool) (ptr *bool) {
 	ptr = &b
 	return
+}
+
+// boolFromBoolPtr if b is nil returns false, otherwise return boolean value of b
+func boolFromBoolPtr(b *bool) bool {
+	if b == nil {
+		return false
+	}
+	return *b
 }
 
 func stringPtr(s string) (ptr *string) {
@@ -316,16 +338,15 @@ func suppressErrorOn403(what string, meta interface{}, resp *sdk.Response, err e
 }
 
 func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
-	return meta.(*Config).oktaClient
+	return meta.(*Config).oktaSDKClientV2
 }
 
-// TODO switch to getOktaClientFromMetadata when migration complete
 func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
-	return meta.(*Config).v3Client
+	return meta.(*Config).oktaSDKClientV3
 }
 
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
-	return meta.(*Config).supplementClient
+	return meta.(*Config).oktaSDKsupplementClient
 }
 
 func getRequestExecutor(m interface{}) *sdk.RequestExecutor {
@@ -371,6 +392,21 @@ func remove(arr []string, el string) []string {
 		}
 	}
 	return newArr
+}
+
+// appendUnique appends el to arr if el isn't already present in arr
+func appendUnique(arr []string, el string) []string {
+	found := false
+	for _, item := range arr {
+		if item == el {
+			found = true
+			break
+		}
+	}
+	if found {
+		return arr
+	}
+	return append(arr, el)
 }
 
 // The best practices states that aggregate types should have error handling (think non-primitive). This will not attempt to set nil values.
@@ -534,4 +570,24 @@ func certNormalize(certContents string) (*x509.Certificate, error) {
 		return nil, err
 	}
 	return certDecoded, nil
+}
+
+// noChangeInObjectFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
+// returns true if old and new JSONs are equivalent object representations ...
+// It is true, there is no change!  Edge chase if newJSON is blank, will also
+// return true which cover the new resource case.
+func noChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	if newJSON == "" {
+		return true
+	}
+	var oldObj map[string]any
+	var newObj map[string]any
+	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
+		return false
+	}
+
+	return reflect.DeepEqual(oldObj, newObj)
 }

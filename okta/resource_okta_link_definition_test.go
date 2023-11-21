@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaLinkDefinition(t *testing.T) {
-	mgr := newFixtureManager(linkDefinition, t.Name())
+func TestAccResourceOktaLinkDefinition(t *testing.T) {
+	mgr := newFixtureManager("resources", linkDefinition, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", linkDefinition)
 	oktaResourceTest(t, resource.TestCase{
@@ -34,7 +34,7 @@ func TestAccOktaLinkDefinition(t *testing.T) {
 }
 
 func doesLinkDefinitionExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.LinkedObject.GetLinkedObjectDefinition(context.Background(), id)
 	return doesResourceExist(response, err)
 }
@@ -47,7 +47,7 @@ func doesLinkDefinitionExist(id string) (bool, error) {
 // calling mutex in the resource to impose the equivelent of `terraform
 // -parallelism=1`
 func TestAccResourceOktaLinkDefinition_parallel_api_calls(t *testing.T) {
-	mgr := newFixtureManager(linkDefinition, t.Name())
+	mgr := newFixtureManager("resources", linkDefinition, t.Name())
 	config := `
 resource "okta_link_definition" "one" {
 	primary_name           = "testAcc_replace_with_uuid_one"

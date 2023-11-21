@@ -1,0 +1,338 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport/grant
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-16T07:45:43.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:43 GMT
+        status: 200 OK
+        code: 200
+        duration: 182.285914ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-16T07:45:43.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:43 GMT
+        status: 200 OK
+        code: 200
+        duration: 75.804785ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-16T07:45:43.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:43 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.380113ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport/revoke
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"DISABLED","expiration":null,"_links":{"grant":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/grant","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:44 GMT
+        status: 200 OK
+        code: 200
+        duration: 79.05422ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport/grant
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-16T07:45:44.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:44 GMT
+        status: 200 OK
+        code: 200
+        duration: 85.231653ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport/extend
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-17T07:45:44.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:44 GMT
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 79.380151ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"ENABLED","expiration":"2023-08-17T07:45:44.000Z","_links":{"extend":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/extend","hints":{"allow":["POST"]}},"revoke":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/revoke","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:44 GMT
+        status: 200 OK
+        code: 200
+        duration: 58.062251ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport/revoke
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"DISABLED","expiration":null,"_links":{"grant":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/grant","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.811639ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/privacy/oktaSupport
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"support":"DISABLED","expiration":null,"_links":{"grant":{"href":"https://oie-00.oktapreview.com/api/v1/org/privacy/oktaSupport/grant","hints":{"allow":["POST"]}}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:45:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 74.641606ms

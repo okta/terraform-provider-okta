@@ -14,18 +14,22 @@ func dataSourceUserType() *schema.Resource {
 		ReadContext: dataSourceUserTypeRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Name of user type to retrieve.",
 			},
 			"display_name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Display name of user type.",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Description of user type.",
 			},
 		},
+		Description: "Get a user type from Okta.",
 	}
 }
 

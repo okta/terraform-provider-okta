@@ -184,6 +184,12 @@ data "okta_user_type" "default" {
   name = "user"
 }
 
+resource "okta_policy_device_assurance_android" "test" {
+  name = "test"
+  os_version = "12"
+  jailbreak = false
+}
+
 resource "okta_app_signon_policy_rule" "test" {
   name                                   = "testAcc_replace_with_uuid"
   policy_id                              = data.okta_app_signon_policy.test.id
@@ -200,6 +206,9 @@ resource "okta_app_signon_policy_rule" "test" {
   groups_included                        = [
     okta_group.this[0].id,
     okta_group.this[1].id
+  ]
+  device_assurances_included = [
+    okta_policy_device_assurance_android.test.id
   ]
   network_connection                     = "ZONE"
   network_includes                       = [
@@ -298,6 +307,8 @@ The following arguments are supported:
 - `device_is_managed` - (Optional) If the device is managed. A device is managed if it's managed by a device management
   system. When managed is passed, `device_is_registered` must also be included and must be set to `true`.
 
+- `device_assurances_included` - (Optional) List of device assurances IDs to be included.
+
 - `platform_include` - (Optional) List of particular platforms or devices to match on.
     - `type` - (Optional) One of: `"ANY"`, `"MOBILE"`, `"DESKTOP"`
     - `os_expression` - (Optional) Only available and required when using `os_type = "OTHER"`
@@ -321,9 +332,13 @@ The following arguments are supported:
 
 - `constraints` - (Optional) - An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class. Each element should be in JSON format.
 
+- `risk_score` - (Optional) - The risk score specifies a particular level of risk to match on. Valid values are: `"ANY"`, `"LOW"`, `"MEDIUM"`, `"HIGH"`. Default is `"ANY"`.
+
 ## Attributes Reference
 
 - `id` - ID of the sign-on policy rule.
+
+- `system` - Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy.
 
 ## Import
 

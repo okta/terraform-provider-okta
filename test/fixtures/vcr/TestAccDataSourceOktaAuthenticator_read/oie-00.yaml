@@ -1,0 +1,447 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"00o5qwjvg8hg7YpT81d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.oktapreview.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:05 GMT
+        status: 200 OK
+        code: 200
+        duration: 102.997977ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"00o5qwjvg8hg7YpT81d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.oktapreview.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:05 GMT
+        status: 200 OK
+        code: 200
+        duration: 138.40908ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:06 GMT
+        status: 200 OK
+        code: 200
+        duration: 138.382189ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:06 GMT
+        status: 200 OK
+        code: 200
+        duration: 612.579632ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:06 GMT
+        status: 200 OK
+        code: 200
+        duration: 113.505549ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:07 GMT
+        status: 200 OK
+        code: 200
+        duration: 398.312456ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:07 GMT
+        status: 200 OK
+        code: 200
+        duration: 125.995037ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:07 GMT
+        status: 200 OK
+        code: 200
+        duration: 363.548527ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 130.211483ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 143.204512ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 72.652013ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut7l6yhato1oHq6o1d7","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2023-04-06T16:43:22.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7l6yhato1oHq6o1d7/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"aut5qwjvl1oLrzhRh1d7","key":"okta_email","status":"ACTIVE","name":"Email","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:05:13.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":10},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl1oLrzhRh1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5z8lo8eomRT3Ud1d7","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2022-10-28T21:28:47.000Z","lastUpdated":"2023-08-15T23:03:13.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5z8lo8eomRT3Ud1d7/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut5qwjvl5gOSPb1O1d7","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-24T23:42:33.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","appInstanceId":""},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl5gOSPb1O1d7/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.oktapreview.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"security_key","id":"aut671z3rsjA6cKkD1d7","key":"onprem_mfa","status":"ACTIVE","name":"On-Prem MFA","created":"2022-11-18T00:03:02.000Z","lastUpdated":"2023-08-04T22:15:51.000Z","provider":{"type":"DEL_OATH","configuration":{"hostName":"localhost","authPort":999,"instanceId":"0oa671z3rv7v8tB0c1d7","userNameTemplate":{"template":"global.assign.userName.login"}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut671z3rsjA6cKkD1d7/methods","hints":{"allow":["GET"]}}}},{"type":"password","id":"aut5qwjvl06CN1xJM1d7","key":"okta_password","status":"ACTIVE","name":"Password","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2022-10-07T23:17:01.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl06CN1xJM1d7/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"aut5qwjvl2gxUODWp1d7","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-07-27T20:49:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl2gxUODWp1d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut7iiygl0ERiM5K61d7","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2023-03-30T19:07:28.000Z","lastUpdated":"2023-08-08T22:27:52.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut7iiygl0ERiM5K61d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"aut5qwjvl4CZA34T01d7","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2022-10-07T23:17:01.000Z","lastUpdated":"2023-08-15T23:08:15.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut5qwjvl4CZA34T01d7/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"aut9dozyy6QwgjR2J1d7","key":"yubikey_token","status":"ACTIVE","name":"Yubikey","created":"2023-08-08T20:28:53.000Z","lastUpdated":"2023-08-08T20:28:53.000Z","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.oktapreview.com/api/v1/authenticators/aut9dozyy6QwgjR2J1d7/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:29:08 GMT
+        status: 200 OK
+        code: 200
+        duration: 438.898994ms

@@ -19,7 +19,7 @@ import (
 // with the `depends_on` meta argument.
 func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.forgot_password_en", emailCustomization)
-	mgr := newFixtureManager(emailCustomization, t.Name())
+	mgr := newFixtureManager("resources", emailCustomization, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
@@ -118,9 +118,6 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 }
 
 func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
-	if isVCRPlayMode() {
-		return nil
-	}
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != emailCustomization {
 			continue
@@ -128,7 +125,7 @@ func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
 		ID := rs.Primary.ID
 		brandID := rs.Primary.Attributes["brand_id"]
 		templateName := rs.Primary.Attributes["template_name"]
-		client := oktaV3ClientForTest()
+		client := sdkV3ClientForTest()
 
 		ctx := context.Background()
 

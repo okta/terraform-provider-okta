@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyProfileEnrollmentApps(t *testing.T) {
-	mgr := newFixtureManager(policyProfileEnrollmentApps, t.Name())
+func TestAccResourceOktaPolicyProfileEnrollmentApps(t *testing.T) {
+	mgr := newFixtureManager("resources", policyProfileEnrollmentApps, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyProfileEnrollmentApps)

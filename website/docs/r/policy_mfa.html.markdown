@@ -120,6 +120,8 @@ All MFA settings above have the following structure.
 
 - `enroll` - (Optional) Requirements for user initiated enrollment. Can be `"NOT_ALLOWED"`, `"OPTIONAL"`, or `"REQUIRED"`. By default, it is `"OPTIONAL"`.
 
+- `constraints` - (Optional) webauthn argument.
+
 - `consent_type` - (Optional) User consent type required before enrolling in the factor: `"NONE"` or `"TERMS_OF_SERVICE"`. By default, it is `"NONE"`.
   ~> **NOTE:** Only applicable when using Classic mode with Factors (not OIE). When using OIE, `consent_type` is not used
 

@@ -117,6 +117,11 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
 	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+	if idp.Protocol.Endpoints.Sso != nil {
+		_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
+		_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
+		_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
+	}
 	if idp.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
 	}
@@ -138,6 +143,9 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
+	}
+	if idp.Status != "" {
+		_ = d.Set("status", idp.Status)
 	}
 	mapping, resp, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
 	if err := suppressErrorOn401("resource okta_idp_saml.user_type_id", m, resp, err); err != nil {

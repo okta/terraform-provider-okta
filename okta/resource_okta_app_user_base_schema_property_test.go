@@ -8,8 +8,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppUserBaseSchema_change(t *testing.T) {
-	mgr := newFixtureManager(appUserBaseSchemaProperty, t.Name())
+func TestAccResourceOktaAppUserBaseSchema_change(t *testing.T) {
+	mgr := newFixtureManager("resources", appUserBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appUserBaseSchemaProperty)

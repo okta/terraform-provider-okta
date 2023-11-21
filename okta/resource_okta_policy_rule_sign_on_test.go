@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
-	mgr := newFixtureManager(policyRuleSignOn, t.Name())
+func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleSignOn, t.Name())
 	config := testOktaPolicyRuleSignOnDefaultErrors(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -26,8 +26,8 @@ func TestAccOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
-	mgr := newFixtureManager(policyRuleSignOn, t.Name())
+func TestAccResourceOktaPolicyRuleSignon_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleSignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	excludedNetwork := mgr.GetFixtures("excluded_network.tf", t)
@@ -122,8 +122,8 @@ func TestAccOktaPolicyRuleSignon_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicyRuleSignon_multiple(t *testing.T) {
-	mgr := newFixtureManager(policyRuleSignOn, t.Name())
+func TestAccResourceOktaPolicyRuleSignon_multiple(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleSignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	basicMultiple := mgr.GetFixtures("basic_multiple.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleSignOn)

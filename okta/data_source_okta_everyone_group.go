@@ -13,8 +13,9 @@ func dataSourceEveryoneGroup() *schema.Resource {
 		ReadContext: dataSourceEveryoneGroupRead,
 		Schema: map[string]*schema.Schema{
 			"description": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Description of group.",
 			},
 			"include_users": {
 				Type:        schema.TypeBool,
@@ -23,6 +24,7 @@ func dataSourceEveryoneGroup() *schema.Resource {
 				Description: "Fetch group users, having default off cuts down on API calls.",
 			},
 		},
+		Description: "Get the `Everyone` group from Okta.",
 	}
 }
 

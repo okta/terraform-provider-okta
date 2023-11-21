@@ -195,6 +195,9 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 		return fmt.Errorf("failed to get list of resource set resources: %v", err)
 	}
 	for _, res := range resources {
+		if res.Links == nil {
+			continue
+		}
 		links := res.Links.(map[string]interface{})
 		var url string
 		for _, v := range links {

@@ -7,9 +7,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceUserType_read(t *testing.T) {
+func TestAccDataSourceOktaUserType_read(t *testing.T) {
 	resourceName := fmt.Sprintf("data.%s.test", userType)
-	mgr := newFixtureManager(userType, t.Name())
+	mgr := newFixtureManager("data-sources", userType, t.Name())
 	createUserType := mgr.GetFixtures("okta_user_type.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 

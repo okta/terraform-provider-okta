@@ -18,10 +18,8 @@ func resourceGroupMemberships() *schema.Resource {
 		ReadContext:   resourceGroupMembershipsRead,
 		UpdateContext: resourceGroupMembershipsUpdate,
 		DeleteContext: resourceGroupMembershipsDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Description: "Resource to manage a set of group memberships for a specific group.",
+		Importer:      createNestedResourceImporter([]string{"id", "track_all_users"}),
+		Description:   "Resource to manage a set of group memberships for a specific group.",
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
@@ -48,6 +46,13 @@ func resourceGroupMemberships() *schema.Resource {
 func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
 	users := convertInterfaceToStringSetNullable(d.Get("users"))
+	// if read is being called via import "id" will not be blank and "group_id"
+	// will be blank, so set group_id accordingly
+	if d.Id() != "" && groupId == "" {
+		groupId = d.Id()
+		d.Set("group_id", groupId)
+	}
+
 	client := getOktaClientFromMetadata(m)
 
 	if len(users) == 0 {
@@ -58,16 +63,16 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	bOff := backoff.NewExponentialBackOff()
-	bOff.MaxElapsedTime = time.Second * 10
-	bOff.InitialInterval = time.Second
-
+	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	// During create the Okta service can have eventual consistency issues when
 	// adding users to a group. Use a backoff to wait for at list one user to be
 	// associated with the group.
 	err = backoff.Retry(func() error {
 		// TODO, should we wait for all users to be added to the group?
 		ok, err := checkIfGroupHasUsers(ctx, client, groupId, users)
+		if doNotRetry(m, err) {
+			return backoff.Permanent(err)
+		}
 		if err != nil {
 			return backoff.Permanent(err)
 		}
@@ -75,7 +80,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 			return nil
 		}
 		return fmt.Errorf("group (%s) did not have expected user memberships after multiple checks", groupId)
-	}, bOff)
+	}, boc)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -93,7 +98,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 	if trackAllUsers {
 		changed, newUserIDs, err := checkIfUsersHaveChanged(ctx, client, groupId, &oldUsers)
 		if err != nil {
-			return diag.Errorf("An error occured checking user ids for group %q, error: %+v", groupId, err)
+			return diag.Errorf("An error occurred checking user ids for group %q, error: %+v", groupId, err)
 		}
 		if changed {
 			// set the new user ids if users have changed
@@ -157,7 +162,8 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 // slice of returned strings will be empty.
 func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
-	if users == nil || len(*users) == 0 {
+	// users slice can be sized 0 if this is a read from import
+	if users == nil {
 		return false, &noop, nil
 	}
 

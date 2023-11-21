@@ -45,8 +45,9 @@ func dataSourceUsers() *schema.Resource {
 				},
 			},
 			"users": {
-				Type:     schema.TypeList,
-				Computed: true,
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "collection of users retrieved from Okta.",
 				Elem: &schema.Resource{
 					Schema: buildSchema(userProfileDataSchema,
 						map[string]*schema.Schema{
@@ -69,6 +70,7 @@ func dataSourceUsers() *schema.Resource {
 				Description: "Force delay of the users read by N seconds. Useful when eventual consistency of users information needs to be allowed for.",
 			},
 		},
+		Description: "Get a list of users from Okta.",
 	}
 }
 
@@ -77,7 +79,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
 			logger(m).Info("delaying users read by ", delay, " seconds")
-			time.Sleep(time.Duration(delay) * time.Second)
+			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
 			logger(m).Warn("users read delay value ", n, " is not an integer")
 		}

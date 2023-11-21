@@ -32,6 +32,7 @@ func resourceAppSamlAppSettings() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 		},
 	}

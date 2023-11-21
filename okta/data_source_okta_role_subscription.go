@@ -28,6 +28,7 @@ func dataSourceRoleSubscription() *schema.Resource {
 				Description: "Status of subscription",
 			},
 		},
+		Description: "Get subscriptions of a Role with a specific type",
 	}
 }
 

@@ -10,8 +10,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_redirectCrud(t *testing.T) {
-	mgr := newFixtureManager(appOAuthRedirectURI, t.Name())
+func TestAccResourceOktaAppOAuthApplication_redirectCrud(t *testing.T) {
+	mgr := newFixtureManager("resources", appOAuthRedirectURI, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuthRedirectURI)
@@ -54,7 +54,7 @@ func createRedirectURIExists(resourceName string) resource.TestCheckFunc {
 
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 

@@ -6,8 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceGroups_read(t *testing.T) {
-	mgr := newFixtureManager(groups, t.Name())
+func TestAccDataSourceOktaGroups_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", groups, t.Name())
 	groups := mgr.GetFixtures("okta_groups.tf", t)
 	config := mgr.GetFixtures("datasource.tf", t)
 	oktaResourceTest(t, resource.TestCase{

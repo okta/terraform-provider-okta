@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaUser_read(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	baseConfig := mgr.GetFixtures("datasource.tf", t)
 	createUserConfig := mgr.GetFixtures("datasource_create_user.tf", t)
 
@@ -56,7 +56,7 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipAdminRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -76,7 +76,7 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -96,7 +96,7 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUser_SkipGroupsSkipRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -116,7 +116,7 @@ func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUser_NoSkips pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	allAdminRolesRegexp, _ := regexp.Compile("APP_ADMIN, SUPER_ADMIN")
 	allGroupMembershipsRegexp, _ := regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
 	oktaResourceTest(t, resource.TestCase{

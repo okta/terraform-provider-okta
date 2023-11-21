@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaIdpSocial_crud(t *testing.T) {
-	mgr := newFixtureManager(idpSocial, t.Name())
+func TestAccResourceOktaIdpSocial_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", idpSocial, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	disabledConf := mgr.GetFixtures("auto_provision_disabled.tf", t)
 	fbName := fmt.Sprintf("%s.facebook", idpSocial)

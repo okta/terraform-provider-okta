@@ -25,6 +25,7 @@ func dataSourceTheme() *schema.Resource {
 			},
 			themeDataSourceSchema,
 		),
+		Description: "Get a single Theme of a Brand of an Okta Organization.",
 	}
 }
 

@@ -9,8 +9,8 @@ import (
 )
 
 // Test creation of a simple AWS SWA app. The preconfigured apps are created by name.
-func TestAccAppSwaApplication_preconfig(t *testing.T) {
-	mgr := newFixtureManager(appSwa, t.Name())
+func TestAccResourceOktaAppSwaApplication_preconfig(t *testing.T) {
+	mgr := newFixtureManager("resources", appSwa, t.Name())
 	config := mgr.GetFixtures("preconfig.tf", t)
 	updatedConfig := mgr.GetFixtures("preconfig_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
@@ -44,8 +44,8 @@ func TestAccAppSwaApplication_preconfig(t *testing.T) {
 }
 
 // Test creation of a custom SAML app.
-func TestAccAppSwaApplication_crud(t *testing.T) {
-	mgr := newFixtureManager(appSwa, t.Name())
+func TestAccResourceOktaAppSwaApplication_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appSwa, t.Name())
 	config := mgr.GetFixtures("custom.tf", t)
 	updatedConfig := mgr.GetFixtures("custom_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSwa)
@@ -83,8 +83,8 @@ func TestAccAppSwaApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppSwaApplication_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appSwa, t.Name())
+func TestAccResourceOktaAppSwaApplication_timeouts(t *testing.T) {
+	mgr := newFixtureManager("resources", appSwa, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSwa)
 	config := `
 resource "okta_app_swa" "test" {

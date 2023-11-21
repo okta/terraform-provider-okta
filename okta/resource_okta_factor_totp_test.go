@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaFactorTOTP(t *testing.T) {
+func TestAccResourceOktaFactorTOTP(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", factorTotp)
-	mgr := newFixtureManager(factorTotp, t.Name())
+	mgr := newFixtureManager("resources", factorTotp, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -34,7 +34,7 @@ func TestAccOktaFactorTOTP(t *testing.T) {
 }
 
 func doesFactorTOTPExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
 	return doesResourceExist(response, err)
 }

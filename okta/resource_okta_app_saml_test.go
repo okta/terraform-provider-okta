@@ -8,34 +8,14 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // Ensure conditional require logic causes this plan to fail
-func TestAccAppSaml_conditionalRequire(t *testing.T) {
-	ri := acctest.RandInt()
-	config := buildTestSamlConfigMissingFields(ri)
-
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: 'Custom SAML applications must contain these fields'*"),
-			},
-		},
-	})
-}
-
-// Ensure conditional require logic causes this plan to fail
-func TestAccAppSaml_invalidURL(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+func TestAccResourceOktaAppSaml_conditionalRequire(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -46,14 +26,33 @@ func TestAccAppSaml_invalidURL(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
-				ExpectError: regexp.MustCompile("invalid URL: expected 'sso_url' to have a host"),
+				ExpectError: regexp.MustCompile("missing conditionally required fields, reason: 'Custom SAML applications must contain these fields"),
 			},
 		},
 	})
 }
 
-func TestAccAppSaml_crud(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+// Ensure conditional require logic causes this plan to fail
+func TestAccResourceOktaAppSaml_invalidURL(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
+	config := buildTestSamlConfigMissingFields(mgr.Seed)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile("Custom SAML applications must contain these fields"),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppSaml_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	allFields := mgr.GetFixtures("updated.tf", t)
 	importConfig := mgr.GetFixtures("import.tf", t)
@@ -93,6 +92,7 @@ func TestAccAppSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://example.com"),
 					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://okta.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "metadata_url"),
 				),
 			},
 			{
@@ -153,8 +153,8 @@ func TestAccAppSaml_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppSaml_preconfigured(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+func TestAccResourceOktaAppSaml_preconfigured(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	preconfigured := mgr.GetFixtures("preconfigured.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
@@ -232,8 +232,8 @@ func areJSONStringsEqual(a, b string) bool {
 	return reflect.DeepEqual(aM, bM)
 }
 
-func TestAccAppSaml_inlineHook(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+func TestAccResourceOktaAppSaml_inlineHook(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic_inline_hook.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
@@ -257,14 +257,14 @@ func TestAccAppSaml_inlineHook(t *testing.T) {
 }
 
 // Tests creation of service app and updates it to turn on federated broker
-func TestAccAppSaml_federationBroker(t *testing.T) {
+func TestAccResourceOktaAppSaml_federationBroker(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta
 	//       Skipping for now assuming that the okta account doesn't have this feature enabled.
 	//       If this feature is enabled or Okta releases this to all this test should be enabled.
 	//       SEE https://help.okta.com/en/prod/Content/Topics/Apps/apps-fbm-enable.htm
 	t.Skip("This is an 'Early Access Feature' and needs to be enabled by Okta, skipping this test as it fails when this feature is not available")
 
-	mgr := newFixtureManager(appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("federation_broker_off.tf", t)
 	updatedConfig := mgr.GetFixtures("federation_broker_on.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
@@ -278,7 +278,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
@@ -287,7 +287,7 @@ func TestAccAppSaml_federationBroker(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
@@ -309,7 +309,7 @@ resource "%s" "%s" {
 }
 
 func TestAccResourceOktaAppSaml_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 	config := `
 resource "okta_app_saml" "test" {
@@ -350,7 +350,7 @@ resource "okta_app_saml" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -361,13 +361,13 @@ resource "okta_app_saml" "test" {
 }
 
 // Test to ensure that certificate logic returns no-op / no-change upon apply and future plans
-func TestAccAppSaml_certdiff(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+func TestAccResourceOktaAppSaml_certdiff(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
 	config := mgr.GetFixtures("basic_cert_plain.tf", t)
 	config2 := mgr.GetFixtures("basic_cert_file.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appSaml)
 
-	resource.ParallelTest(t, resource.TestCase{
+	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,

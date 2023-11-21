@@ -12,6 +12,7 @@ func dataSourceThemes() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceThemesRead,
 		Schema:      themesDataSourceSchema,
+		Description: "Get Themes of a Brand of an Okta Organization.",
 	}
 }
 

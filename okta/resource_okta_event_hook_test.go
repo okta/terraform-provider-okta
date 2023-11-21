@@ -12,9 +12,9 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccOktaEventHook_crud(t *testing.T) {
+func TestAccResourceOktaEventHook_crud(t *testing.T) {
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager(eventHook, t.Name())
+	mgr := newFixtureManager("resources", eventHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
@@ -112,7 +112,7 @@ func TestAccOktaEventHook_crud(t *testing.T) {
 }
 
 func eventHookExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	eh, resp, err := client.EventHook.GetEventHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

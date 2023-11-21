@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAuthenticator_read(t *testing.T) {
-	mgr := newFixtureManager(authenticator, t.Name())
+func TestAccDataSourceOktaAuthenticator_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", authenticator, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", authenticator)    // security question
 	resourceName1 := fmt.Sprintf("data.%s.test_1", authenticator) // okta verify

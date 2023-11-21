@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccAppGroupAssignment_crud(t *testing.T) {
+func TestAccResourceOktaAppGroupAssignment_crud(t *testing.T) {
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	resourceName1 := fmt.Sprintf("%s.test.1", appGroupAssignment)
 	resourceName3 := fmt.Sprintf("%s.test3", appGroupAssignment)
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	mgr := newFixtureManager("resources", appGroupAssignment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	// TF concurrency will cause this test to flap if the groups and assigned
@@ -109,11 +109,11 @@ func TestAccAppGroupAssignment_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppGroupAssignment_retain(t *testing.T) {
+func TestAccResourceOktaAppGroupAssignment_retain(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignment)
 	appName := fmt.Sprintf("%s.test", appOAuth)
 	groupName := fmt.Sprintf("%s.test", group)
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+	mgr := newFixtureManager("resources", appGroupAssignment, t.Name())
 	retainAssignment := mgr.GetFixtures("retain_assignment.tf", t)
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
@@ -144,8 +144,8 @@ func TestAccAppGroupAssignment_retain(t *testing.T) {
 	})
 }
 
-func TestAccAppGroupAssignment_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appGroupAssignment, t.Name())
+func TestAccResourceOktaAppGroupAssignment_timeouts(t *testing.T) {
+	mgr := newFixtureManager("resources", appGroupAssignment, t.Name())
 	resourceName0 := fmt.Sprintf("%s.test.0", appGroupAssignment)
 	config := `
 resource "okta_app_oauth" "test" {
@@ -155,10 +155,6 @@ resource "okta_app_oauth" "test" {
   redirect_uris  = ["http://d.com/"]
   response_types = ["code", "token", "id_token"]
   issuer_mode    = "ORG_URL"
-
-  lifecycle {
-    ignore_changes = [users, groups]
-  }
 }
 
 resource "okta_group" "test" {
@@ -211,7 +207,7 @@ func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc 
 
 		appID := rs.Primary.Attributes["app_id"]
 		groupID := rs.Primary.Attributes["group_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
@@ -240,7 +236,7 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 
 		appID := appRes.Primary.ID
 		groupID := groupRes.Primary.ID
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {

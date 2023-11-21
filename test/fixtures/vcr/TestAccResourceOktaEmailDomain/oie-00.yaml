@@ -1,0 +1,458 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6wns4SKwJO841d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9bp9qjr4Jeov7o1d7","name":"testacc-151698231.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g50f1cx0TnCLI1d7","name":"testacc-1581719983195440002.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6p986tGJ0szD1d7","name":"testacc-2962001760122344778.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6l95iVBku8Np1d7","name":"testacc-5300095896632648989.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6xbh3nDFqqQM1d7","name":"testacc-6777928687122154046.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g5fu2f3LDN7qp1d7","name":"testacc-8138813389774993674.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6ifd0VDKgecr1d7","name":"testacc-8166714741473833687.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6fmkoC6WXokN1d7","name":"testacc-8429334156475870404.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6qjn2C4K8jLv1d7","name":"testacc-8691025484172203539.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:43 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 131.766283ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6wns4SKwJO841d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9bp9qjr4Jeov7o1d7","name":"testacc-151698231.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g50f1cx0TnCLI1d7","name":"testacc-1581719983195440002.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6p986tGJ0szD1d7","name":"testacc-2962001760122344778.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6l95iVBku8Np1d7","name":"testacc-5300095896632648989.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6xbh3nDFqqQM1d7","name":"testacc-6777928687122154046.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g5fu2f3LDN7qp1d7","name":"testacc-8138813389774993674.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6ifd0VDKgecr1d7","name":"testacc-8166714741473833687.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6fmkoC6WXokN1d7","name":"testacc-8429334156475870404.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6qjn2C4K8jLv1d7","name":"testacc-8691025484172203539.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:44 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 52.672333ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 114
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"brandId":"bnd9bp9qjr4Jeov7o1d7","displayName":"test","domain":"testAcc-386351645.example.com","userName":"fff"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/email-domains
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"NOT_STARTED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:44 GMT
+        status: 201 Created
+        code: 201
+        duration: 545.604078ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"NOT_STARTED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 78.491327ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"NOT_STARTED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 58.502808ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6wns4SKwJO841d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9bp9qjr4Jeov7o1d7","name":"testacc-151698231.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeD9i75zu2FqVJrW61d7","defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bnd9g50f1cx0TnCLI1d7","name":"testacc-1581719983195440002.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6p986tGJ0szD1d7","name":"testacc-2962001760122344778.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6l95iVBku8Np1d7","name":"testacc-5300095896632648989.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6xbh3nDFqqQM1d7","name":"testacc-6777928687122154046.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g5fu2f3LDN7qp1d7","name":"testacc-8138813389774993674.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6ifd0VDKgecr1d7","name":"testacc-8166714741473833687.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6fmkoC6WXokN1d7","name":"testacc-8429334156475870404.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6qjn2C4K8jLv1d7","name":"testacc-8691025484172203539.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 60.880089ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6wns4SKwJO841d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9bp9qjr4Jeov7o1d7","name":"testacc-151698231.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeD9i75zu2FqVJrW61d7","defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bnd9g50f1cx0TnCLI1d7","name":"testacc-1581719983195440002.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6p986tGJ0szD1d7","name":"testacc-2962001760122344778.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6l95iVBku8Np1d7","name":"testacc-5300095896632648989.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6xbh3nDFqqQM1d7","name":"testacc-6777928687122154046.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g5fu2f3LDN7qp1d7","name":"testacc-8138813389774993674.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6ifd0VDKgecr1d7","name":"testacc-8166714741473833687.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6fmkoC6WXokN1d7","name":"testacc-8429334156475870404.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6qjn2C4K8jLv1d7","name":"testacc-8691025484172203539.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 70.302276ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"NOT_STARTED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.188983ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6wns4SKwJO841d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6wns4SKwJO841d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9bp9qjr4Jeov7o1d7","name":"testacc-151698231.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeD9i75zu2FqVJrW61d7","defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9bp9qjr4Jeov7o1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bnd9g50f1cx0TnCLI1d7","name":"testacc-1581719983195440002.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g50f1cx0TnCLI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6p986tGJ0szD1d7","name":"testacc-2962001760122344778.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6p986tGJ0szD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6l95iVBku8Np1d7","name":"testacc-5300095896632648989.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6l95iVBku8Np1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6xbh3nDFqqQM1d7","name":"testacc-6777928687122154046.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6xbh3nDFqqQM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9g5fu2f3LDN7qp1d7","name":"testacc-8138813389774993674.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9g5fu2f3LDN7qp1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6ifd0VDKgecr1d7","name":"testacc-8166714741473833687.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6ifd0VDKgecr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6fmkoC6WXokN1d7","name":"testacc-8429334156475870404.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6fmkoC6WXokN1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bnd9i6qjn2C4K8jLv1d7","name":"testacc-8691025484172203539.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bnd9i6qjn2C4K8jLv1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:45 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+        status: 200 OK
+        code: 200
+        duration: 55.075208ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"NOT_STARTED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 64.480275ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Tue, 15 Aug 2023 23:42:46 GMT
+        status: 204 No Content
+        code: 204
+        duration: 283.273816ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD9i75zu2FqVJrW61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD9i75zu2FqVJrW61d7","validationStatus":"DELETED","displayName":"test","userName":"fff","domain":"testAcc-386351645.example.com","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.testAcc-386351645.example.com","verificationValue":"a56d2316f2e14a6bbf678099a0911a33"},{"recordType":"cname","fqdn":"mail.testacc-386351645.example.com","verificationValue":"u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p03._domainkey.testacc-386351645.example.com","verificationValue":"p03.domainkey.u17770251.wl002.sendgrid.net"},{"recordType":"cname","fqdn":"p032._domainkey.testacc-386351645.example.com","verificationValue":"p032.domainkey.u17770251.wl002.sendgrid.net"}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 15 Aug 2023 23:42:46 GMT
+        status: 200 OK
+        code: 200
+        duration: 71.625225ms

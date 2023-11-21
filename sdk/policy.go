@@ -158,8 +158,13 @@ type PolicyFactor struct {
 }
 
 type PolicyAuthenticator struct {
-	Key    string  `json:"key,omitempty"`
-	Enroll *Enroll `json:"enroll,omitempty"`
+	Key         string                          `json:"key,omitempty"`
+	Enroll      *Enroll                         `json:"enroll,omitempty"`
+	Constraints *PolicyAuthenticatorConstraints `json:"constraints,omitempty"`
+}
+
+type PolicyAuthenticatorConstraints struct {
+	AaguidGroups []string `json:"aaguidGroups,omitempty"`
 }
 
 type Consent struct {

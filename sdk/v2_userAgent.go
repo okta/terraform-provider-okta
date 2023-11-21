@@ -23,7 +23,7 @@ func NewUserAgent(config *config) UserAgent {
 }
 
 func (ua UserAgent) String() string {
-	userAgentString := "okta-sdk-golang/" + Version + " "
+	userAgentString := "local-v2-sdk/0.0.0 "
 	userAgentString += "golang/" + ua.goVersion + " "
 	userAgentString += ua.osName + "/" + ua.osVersion
 

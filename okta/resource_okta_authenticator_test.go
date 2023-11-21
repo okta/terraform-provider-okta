@@ -7,9 +7,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthenticator_crud(t *testing.T) {
+func TestAccResourceOktaAuthenticator_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authenticator)
-	mgr := newFixtureManager(authenticator, t.Name())
+	mgr := newFixtureManager("resources", authenticator, t.Name())
 	config := mgr.GetFixtures("security_question.tf", t)
 	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 
@@ -63,10 +63,10 @@ resource "okta_authenticator" "test" {
 	})
 }
 
-// TestAccOktaAuthenticator_Issue1367_simple
+// TestAccResourceOktaAuthenticator_Issue1367_simple
 // https://github.com/okta/terraform-provider-okta/issues/1367
 // Google OTP is a simple example of the solution for #1367
-func TestAccOktaAuthenticator_Issue1367_simple(t *testing.T) {
+func TestAccResourceOktaAuthenticator_Issue1367_simple(t *testing.T) {
 	config := `
 resource "okta_authenticator" "google_otp" {
 	name   = "Google Authenticator"
@@ -95,12 +95,12 @@ resource "okta_authenticator" "google_otp" {
 	})
 }
 
-// TestAccOktaAuthenticator_Issue1367_provider_json
+// TestAccResourceOktaAuthenticator_Issue1367_provider_json
 // https://github.com/okta/terraform-provider-okta/issues/1367
 // Demonstrates provider input as freeform JSON
 // Example from `POST /api/v1/authenticator` API docs
 // https://developer.okta.com/docs/reference/api/authenticators-admin/#create-authenticator
-func TestAccOktaAuthenticator_Issue1367_provider_json(t *testing.T) {
+func TestAccResourceOktaAuthenticator_Issue1367_provider_json(t *testing.T) {
 	config := `
 resource "okta_authenticator" "test" {
   name = "On-Prem MFA"

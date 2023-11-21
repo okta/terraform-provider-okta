@@ -26,7 +26,7 @@ const (
 )
 
 // newFixtureManager Gets a new fixture manager for a particular resource.
-func newFixtureManager(resourceName, testName string) *fixtureManager {
+func newFixtureManager(resourceType, resourceName, testName string) *fixtureManager {
 	ri := acctest.RandInt()
 
 	// If we are running in VCR mode make the random number be a hash of the
@@ -39,10 +39,14 @@ func newFixtureManager(resourceName, testName string) *fixtureManager {
 
 	dir, _ := os.Getwd()
 	return &fixtureManager{
-		Path:     path.Join(dir, "../examples", resourceName),
+		Path:     path.Join(dir, "../examples", resourceType, resourceName),
 		TestName: testName,
 		Seed:     ri,
 	}
+}
+
+func (manager *fixtureManager) SeedStr() string {
+	return fmt.Sprintf("%d", manager.Seed)
 }
 
 func (manager *fixtureManager) GetFixtures(fixtureName string, t *testing.T) string {

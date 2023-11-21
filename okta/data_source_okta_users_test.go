@@ -13,8 +13,8 @@ var (
 	allGroupMembershipsRegexp, _ = regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
 )
 
-func TestAccOktaDataSourceUsers_read(t *testing.T) {
-	mgr := newFixtureManager(users, t.Name())
+func TestAccDataSourceOktaUsers_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", users, t.Name())
 	users := mgr.GetFixtures("users.tf", t)
 	config := mgr.GetFixtures("basic.tf", t)
 	dataSource := mgr.GetFixtures("datasource.tf", t)
@@ -53,8 +53,8 @@ func TestAccOktaDataSourceUsers_read(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
-	mgr := newFixtureManager(users, t.Name())
+func TestAccDataSourceOktaUsers_readWithGroupId(t *testing.T) {
+	mgr := newFixtureManager("data-sources", users, t.Name())
 	users := mgr.GetFixtures("users_with_group.tf", t)
 	config := mgr.GetFixtures("group.tf", t)
 
@@ -86,8 +86,8 @@ func TestAccOktaDataSourceUsers_readWithGroupId(t *testing.T) {
 	})
 }
 
-func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
-	mgr := newFixtureManager(users, t.Name())
+func TestAccDataSourceOktaUsers_readWithGroupIdIncludingGroups(t *testing.T) {
+	mgr := newFixtureManager("data-sources", users, t.Name())
 	users := mgr.GetFixtures("users_with_group.tf", t)
 	config := mgr.GetFixtures("group_with_groups.tf", t)
 
@@ -121,7 +121,7 @@ func TestAccOktaDataSourceUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeNone pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -143,7 +143,7 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeGroups pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -165,7 +165,7 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeRoles pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -187,7 +187,7 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 
 // TestAccDataSourceOktaUsers_IncludeAll pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
 func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
-	mgr := newFixtureManager(user, t.Name())
+	mgr := newFixtureManager("data-sources", user, t.Name())
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

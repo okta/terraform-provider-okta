@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaInlineHook_crud(t *testing.T) {
+func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
-	mgr := newFixtureManager(inlineHook, t.Name())
+	mgr := newFixtureManager("resources", inlineHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
@@ -102,7 +102,7 @@ func TestAccOktaInlineHook_crud(t *testing.T) {
 }
 
 func inlineHookExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, resp, err := client.InlineHook.GetInlineHook(context.Background(), id)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return false, err

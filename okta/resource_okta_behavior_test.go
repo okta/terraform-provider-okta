@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaBehavior(t *testing.T) {
-	mgr := newFixtureManager(behavior, t.Name())
+func TestAccResourceOktaBehavior(t *testing.T) {
+	mgr := newFixtureManager("resources", behavior, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	inactive := mgr.GetFixtures("inactive.tf", t)
@@ -56,7 +56,7 @@ func TestAccOktaBehavior(t *testing.T) {
 }
 
 func doesBehaviorExist(id string) (bool, error) {
-	client := apiSupplementForTest()
+	client := sdkSupplementClientForTest()
 	_, response, err := client.GetBehavior(context.Background(), id)
 	return doesResourceExist(response, err)
 }

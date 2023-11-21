@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaMfaPolicyRule_crud(t *testing.T) {
-	mgr := newFixtureManager(policyRuleMfa, t.Name())
+func TestAccResourceOktaMfaPolicyRule_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleMfa, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleMfa)

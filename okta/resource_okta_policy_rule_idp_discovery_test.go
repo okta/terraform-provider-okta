@@ -7,13 +7,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
-	mgr := newFixtureManager(policyRuleIdpDiscovery, t.Name())
+func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", t)
 	deactivatedConfig := mgr.GetFixtures("basic_deactivated.tf", t)
 
-	mgr2 := newFixtureManager(policyRuleIdpDiscovery, t.Name())
+	mgr2 := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
 	appIncludeConfig := mgr2.GetFixtures("app_include.tf", t)
 	appExcludeConfig := mgr2.GetFixtures("app_exclude_platform.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)

@@ -14,8 +14,8 @@ const (
 	loginTestProp     = "login"
 )
 
-func TestAccOktaUserBaseSchema_crud(t *testing.T) {
-	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+func TestAccResourceOktaUserBaseSchema_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", userBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	nonDefault := mgr.GetFixtures("non_default_user_type.tf", t)
@@ -73,8 +73,8 @@ func TestAccOktaUserBaseSchema_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaUserBaseSchemaLogin_crud(t *testing.T) {
-	mgr := newFixtureManager(userBaseSchemaProperty, t.Name())
+func TestAccResourceOktaUserBaseSchemaLogin_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", userBaseSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic_login.tf", t)
 	updated := mgr.GetFixtures("login_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.%s", userBaseSchemaProperty, loginTestProp)
@@ -144,14 +144,17 @@ func testOktaUserBaseSchemasExists(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-// TestAccOktaUserBaseSchemaLogin_multiple_properties Test for issue 1217 fix.
+// TestAccResourceOktaUserBaseSchemaLogin_multiple_properties Test for issue 1217 fix.
 // https://github.com/okta/terraform-provider-okta/issues/1217 This test would
 // fail before the fix was implemented. The fix is to put a calling mutex on
 // create and update for the `okta_user_base_schema_property` resource. The Okta
 // management API ignores parallel calls to `POST
 // /api/v1/meta/schemas/user/{userId}` and our fix is to use a calling mutex in
 // the resource to impose the equivelent of `terraform -parallelism=1`
-func TestAccOktaUserBaseSchemaLogin_multiple_properties(t *testing.T) {
+func TestAccResourceOktaUserBaseSchemaLogin_multiple_properties(t *testing.T) {
+	if skipVCRTest(t) {
+		return
+	}
 	config := `
 resource "okta_user_base_schema_property" "login" {
 	index       = "login"

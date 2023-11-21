@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAppOauth_read(t *testing.T) {
-	mgr := newFixtureManager(appOAuth, t.Name())
+func TestAccDataSourceOktaAppOauth_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", appOAuth, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppOauth(mgr.Seed)
 

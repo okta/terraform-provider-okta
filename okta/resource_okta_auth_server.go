@@ -26,16 +26,19 @@ func resourceAuthServer() *schema.Resource {
 			},
 			"status": statusSchema,
 			"kid": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The ID of the JSON Web Key used for signing tokens issued by the authorization server.",
 			},
 			"credentials_last_rotated": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the authorization server started to use the `kid` for signing tokens.",
 			},
 			"credentials_next_rotation": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the authorization server changes the key for signing tokens. Only returned when `credentials_rotation_mode` is `AUTO`.",
 			},
 			"credentials_rotation_mode": {
 				Type:        schema.TypeString,
@@ -44,12 +47,14 @@ func resourceAuthServer() *schema.Resource {
 				Description: "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The description of the authorization server.",
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The name of the authorization server.",
 			},
 			"issuer": {
 				Type:        schema.TypeString,

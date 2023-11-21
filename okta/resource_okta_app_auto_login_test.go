@@ -8,8 +8,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppAutoLoginApplication_crud(t *testing.T) {
-	mgr := newFixtureManager(appAutoLogin, t.Name())
+func TestAccResourceOktaAppAutoLoginApplication_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appAutoLogin, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appAutoLogin)
@@ -61,8 +61,8 @@ func TestAccAppAutoLoginApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppAutoLoginApplication_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appAutoLogin, t.Name())
+func TestAccResourceOktaAppAutoLoginApplication_timeouts(t *testing.T) {
+	mgr := newFixtureManager("resources", appAutoLogin, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appAutoLogin)
 	config := `
 resource "okta_app_auto_login" "test" {

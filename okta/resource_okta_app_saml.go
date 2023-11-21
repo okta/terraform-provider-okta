@@ -287,9 +287,7 @@ func resourceAppSaml() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"inline_hook_id": {
 				Type:        schema.TypeString,
@@ -486,13 +484,8 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
-		var q string
-		if keyID != "" {
-			q = fmt.Sprintf("?kid=%s", keyID)
-		}
 		_ = d.Set("metadata", string(keyMetadata))
-		_ = d.Set("metadata_url", fmt.Sprintf("%s/api/v1/apps/%s/sso/saml/metadata%s",
-			getOktaClientFromMetadata(m).GetConfig().Okta.Client.OrgUrl, d.Id(), q))
+		_ = d.Set("metadata_url", linksValue(app.Links, "metadata", "href"))
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
@@ -525,14 +518,19 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set SAML application status: %v", err)
 	}
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

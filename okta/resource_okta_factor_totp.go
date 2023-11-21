@@ -21,13 +21,13 @@ func resourceFactorTOTP() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Factor name",
+				Description: "The TOTP name.",
 			},
 			"otp_length": {
 				Type:        schema.TypeInt,
 				Default:     6,
 				Optional:    true,
-				Description: "Factor name",
+				Description: "Length of the password. Default is `6`.",
 				ForceNew:    true,
 			},
 			"hmac_algorithm": {
@@ -101,6 +101,8 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
+
 	_, err := getAPISupplementFromMetadata(m).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete TOTP factor: %v", err)

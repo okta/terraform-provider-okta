@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
+func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerPolicyRule)
-	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	mgr := newFixtureManager("resources", authServerPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
@@ -25,6 +25,7 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test"),
+					resource.TestCheckResourceAttr(resourceName, "system", "false"),
 				),
 			},
 			{
@@ -32,17 +33,18 @@ func TestAccOktaAuthServerPolicyRule_create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_updated"),
+					resource.TestCheckResourceAttr(resourceName, "system", "false"),
 				),
 			},
 		},
 	})
 }
 
-// TestAccOktaAuthServerPolicyRule_priority_concurrency_bug is a test to
+// TestAccResourceOktaAuthServerPolicyRule_priority_concurrency_bug is a test to
 // reproduce and then fix a bug in the Okta service where it couldn't, at the
 // time, elegantly handle current API calls to either update rule create or rule
 // priority.
-func TestAccOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
+func TestAccResourceOktaAuthServerPolicyRule_priority_concurrency_bug(t *testing.T) {
 	numRules := 10
 	testPolicyRules := make([]string, numRules)
 	// Test setup makes each policy rule dependent on the one before it.
@@ -68,7 +70,7 @@ resource "okta_auth_server_policy" "test" {
   auth_server_id   = okta_auth_server.test.id
 }
 %s`, strings.Join(testPolicyRules, ""))
-	mgr := newFixtureManager(authServerPolicyRule, t.Name())
+	mgr := newFixtureManager("resources", authServerPolicyRule, t.Name())
 	oktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:          testAccPreCheck(t),

@@ -14,8 +14,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const Version = "2.17.0"
-
 type Client struct {
 	config                     *config
 	requestExecutor            *RequestExecutor

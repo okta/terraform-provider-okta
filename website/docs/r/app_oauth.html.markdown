@@ -10,6 +10,10 @@ description: |-
 
 This resource allows you to create and configure an OIDC Application.
 
+-> During an apply if there is change in `status` the app will first be
+activated or deactivated in accordance with the `status` change. Then, all
+other arguments that changed will be applied.
+
 ## Example Usage
 
 ```hcl
@@ -36,9 +40,16 @@ resource "okta_app_oauth" "example" {
 
   jwks {
     kty = "RSA"
-    kid = "SIGNING_KEY"
+    kid = "SIGNING_KEY_RSA"
     e   = "AQAB"
     n   = "xyz"
+  }
+
+  jwks {
+    kty = "EC"
+    kid = "SIGNING_KEY_EC"
+    x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
+    y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
   }
 }
 ```
@@ -87,7 +98,7 @@ The following arguments are supported:
   `"urn:ietf:params:oauth:grant-type:saml2-bearer"` (*Early Access Property*), `"urn:ietf:params:oauth:grant-type:token-exchange"` (*Early Access Property*),
   `"interaction_code"` (*OIE only*).
 
-- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **IMPORTANT**: this field is available only when using api token in the provider config.
+- `groups_claim` - (Optional) Groups claim for an OpenID Connect client application. **IMPORTANT**: this argument is ignored when Okta API authentication is done with OAuth 2.0 credentials
   - `type` - (Required) Groups claim type. Valid values: `"FILTER"`, `"EXPRESSION"`.
   - `filter_type` - (Optional) Groups claim filter. Can only be set if type is `"FILTER"`. Valid values: `"EQUALS"`, `"STARTS_WITH"`, `"CONTAINS"`, `"REGEX"`.
   - `name` - (Required) Name of the claim that will be used in the token.
@@ -103,7 +114,7 @@ The following arguments are supported:
 - `issuer_mode` - (Optional) Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
 Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
-- `jwks` - (Optional) JSON Web Key set. [Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console)
+- `jwks` - (Optional) JSON Web Key set. Multiple jwks are supported[Admin Console JWK Reference](https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/#generate-the-jwk-in-the-admin-console). Use kty=RSA e=[value] n=[value] for RSA jwks, and kty=EC x=[value] y=[value] for EC jwks
 
 - `jwks_uri` - (Optional) URL of the custom authorization server's JSON Web Key Set document.
 
@@ -217,8 +228,21 @@ true in the resource. This causes `client_secret` to be set to blank. Remove
 `omit_secret` and run apply again. The resource will set a new `client_secret`
 for the app.
 
-### Advanced PEM and JWKS example
+### Private Keys
 
+The private key format that an Okta OAuth app expects is PKCS#8 (unencrypted).
+The operator either uploads their own private key or Okta can generate one in
+the Admin UI Panel under the apps Client Credentials. PKCS#8 format can be
+identified by a header that starts with `-----BEGIN PRIVATE KEY-----`. If the
+operator has a PKCS#1 (unencrypted) format private key (the header starts with
+`-----BEGIN RSA PRIVATE KEY-----`) they can generate a PKCS#8 format
+key with `openssl`:
+
+```
+ openssl rsa -in pkcs1.pem -out pkcs8-example.pem
+```
+
+### Advanced PEM and JWKS example
 
 ```hcl
 # This example config illustrates how Terraform can be used to generate a

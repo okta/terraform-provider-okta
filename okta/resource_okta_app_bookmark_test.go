@@ -8,8 +8,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppBookmarkApplication_crud(t *testing.T) {
-	mgr := newFixtureManager(appBookmark, t.Name())
+func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
@@ -44,8 +44,8 @@ func TestAccAppBookmarkApplication_crud(t *testing.T) {
 	})
 }
 
-func TestAccAppBookmarkApplication_timeouts(t *testing.T) {
-	mgr := newFixtureManager(appBookmark, t.Name())
+func TestAccResourceOktaAppBookmarkApplication_timeouts(t *testing.T) {
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 resource "okta_app_bookmark" "test" {
@@ -66,7 +66,8 @@ resource "okta_app_bookmark" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -78,8 +79,8 @@ resource "okta_app_bookmark" "test" {
 
 // TestAccAppBookmarkApplication_PR1366 Test for @jakezarobsky-8451 PR #1366
 // https://github.com/okta/terraform-provider-okta/pull/1366
-func TestAccAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
-	mgr := newFixtureManager(appBookmark, t.Name())
+func TestAccResourceOktaAppBookmarkApplication_PR1366_authentication_policy(t *testing.T) {
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appBookmark)
 	config := `
 data "okta_policy" "test" {
@@ -107,7 +108,7 @@ resource "okta_app_bookmark" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),

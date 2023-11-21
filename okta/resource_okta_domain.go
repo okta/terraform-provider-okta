@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func resourceDomain() *schema.Resource {
@@ -35,6 +35,11 @@ func resourceDomain() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Status of the domain",
+			},
+			"brand_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Brand id of the domain",
 			},
 			"dns_records": {
 				Type:        schema.TypeList,
@@ -71,49 +76,63 @@ func resourceDomain() *schema.Resource {
 }
 
 func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	domain, _, err := getOktaClientFromMetadata(m).Domain.CreateDomain(ctx, buildDomain(d))
+	domainRequest, err := buildDomain(d)
+	if err != nil {
+		return diag.Errorf("failed to build domain: %v", err)
+	}
+	domain, _, err := getOktaV3ClientFromMetadata(m).CustomDomainApi.CreateCustomDomain(ctx).Domain(domainRequest).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create domain: %v", err)
 	}
-	d.SetId(domain.Id)
+	d.SetId(domain.GetId())
+	if brandId, ok := d.GetOk("brand_id"); ok {
+		_, _, err = getOktaV3ClientFromMetadata(m).CustomDomainApi.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: brandId.(string)}).Execute()
+		if err != nil {
+			return diag.Errorf("failed to update domain: %v", err)
+		}
+		_, err = getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrand(ctx, domain.GetBrandId()).Execute()
+		if err != nil {
+			return diag.Errorf("failed to delete brand: %v", err)
+		}
+	}
 	return resourceDomainRead(ctx, d, m)
 }
 
 func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	domain, resp, err := getOktaClientFromMetadata(m).Domain.GetDomain(ctx, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	domain, resp, err := getOktaV3ClientFromMetadata(m).CustomDomainApi.GetCustomDomain(ctx, d.Id()).Execute()
+	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get domain: %v", err)
 	}
 	if domain == nil {
 		d.SetId("")
 		return nil
 	}
-	vd, err := validateDomain(ctx, d, m, domain.ValidationStatus)
+	vd, err := validateDomain(ctx, d, m, string(domain.GetValidationStatus()))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.Set("name", domain.Domain)
+	d.Set("name", domain.GetDomain())
 
 	if vd != nil {
-		_ = d.Set("validation_status", vd.ValidationStatus)
+		_ = d.Set("validation_status", vd.GetValidationStatus())
 	} else {
-		_ = d.Set("validation_status", domain.ValidationStatus)
+		_ = d.Set("validation_status", domain.GetValidationStatus())
 	}
 	arr := make([]map[string]interface{}, len(domain.DnsRecords))
 	for i := range domain.DnsRecords {
 		arr[i] = map[string]interface{}{
-			"expiration":  domain.DnsRecords[i].Expiration,
-			"fqdn":        domain.DnsRecords[i].Fqdn,
-			"record_type": domain.DnsRecords[i].RecordType,
-			"values":      convertStringSliceToInterfaceSlice(domain.DnsRecords[i].Values),
+			"expiration":  domain.DnsRecords[i].GetExpiration(),
+			"fqdn":        domain.DnsRecords[i].GetFqdn(),
+			"record_type": domain.DnsRecords[i].GetRecordType(),
+			"values":      convertStringSliceToInterfaceSlice(domain.DnsRecords[i].GetValues()),
 		}
 	}
 	err = setNonPrimitives(d, map[string]interface{}{"dns_records": arr})
 	if err != nil {
 		return diag.Errorf("failed to set DNS records: %v", err)
 	}
-	if domain.ValidationStatus == "IN_PROGRESS" || domain.ValidationStatus == "VERIFIED" || domain.ValidationStatus == "COMPLETED" {
+	if domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_COMPLETED || domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_IN_PROGRESS || domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_COMPLETED {
 		return nil
 	}
 
@@ -122,7 +141,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 
 func resourceDomainDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	logger(m).Info("deleting domain", "id", d.Id())
-	_, err := getOktaClientFromMetadata(m).Domain.DeleteDomain(ctx, d.Id())
+	_, err := getOktaV3ClientFromMetadata(m).CustomDomainApi.DeleteCustomDomain(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete domain: %v", err)
 	}
@@ -134,23 +153,31 @@ func resourceDomainUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomDomainApi.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: d.Get("brand_id").(string)}).Execute()
+	if err != nil {
+		return diag.Errorf("failed to update domain: %v", err)
+	}
 	return resourceDomainRead(ctx, d, m)
 }
 
-func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*sdk.Domain, error) {
+func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, validationStatus string) (*okta.DomainResponse, error) {
 	if validationStatus == "IN_PROGRESS" || validationStatus == "VERIFIED" || validationStatus == "COMPLETED" {
 		return nil, nil
 	}
-	domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Id())
+	domain, _, err := getOktaV3ClientFromMetadata(m).CustomDomainApi.VerifyDomain(ctx, d.Id()).Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify domain: %v", err)
 	}
 	return domain, nil
 }
 
-func buildDomain(d *schema.ResourceData) sdk.Domain {
-	return sdk.Domain{
-		Domain:                d.Get("name").(string),
-		CertificateSourceType: d.Get("certificate_source_type").(string),
+func buildDomain(d *schema.ResourceData) (okta.DomainRequest, error) {
+	certSourceType, err := okta.NewDomainCertificateSourceTypeFromValue(d.Get("certificate_source_type").(string))
+	if err != nil {
+		return okta.DomainRequest{}, err
 	}
+	return okta.DomainRequest{
+		Domain:                d.Get("name").(string),
+		CertificateSourceType: *certSourceType,
+	}, nil
 }

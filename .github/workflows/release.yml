@@ -21,7 +21,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       -
         name: Unshallow
         run: git fetch --prune --unshallow
@@ -30,17 +30,20 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.20"
+      - 
+        name: Run VCR smoke tests
+        run: make smoke-test-play-vcr-acc
       -
         name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v5
+        uses: crazy-max/ghaction-import-gpg@v6
           # These secrets will need to be configured for the repository:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
       -
         name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v4.3.0
+        uses: goreleaser/goreleaser-action@v5.0.0
         with:
           version: latest
           args: release --rm-dist

@@ -26,6 +26,7 @@ func dataSourceAppGroupAssignments() *schema.Resource {
 				Description: "List of groups IDs assigned to the app",
 			},
 		},
+		Description: "Get a set of groups assigned to an Okta application.",
 	}
 }
 

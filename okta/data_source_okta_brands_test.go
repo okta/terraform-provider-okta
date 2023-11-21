@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaBrands_read(t *testing.T) {
-	mgr := newFixtureManager(brands, t.Name())
+	mgr := newFixtureManager("data-sources", brands, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -19,7 +19,6 @@ func TestAccDataSourceOktaBrands_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_brands.test", "brands.#"),
-					resource.TestCheckResourceAttr("data.okta_brands.test", "brands.#", "1"),
 					resource.TestCheckResourceAttrSet("data.okta_brands.test", "brands.0.id"),
 					resource.TestCheckResourceAttrSet("data.okta_brands.test", "brands.0.name"),
 					resource.TestCheckResourceAttrSet("data.okta_brands.test", "brands.0.links"),

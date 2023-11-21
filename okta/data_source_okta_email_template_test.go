@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaEmailTemplate_read(t *testing.T) {
-	mgr := newFixtureManager(emailTemplate, t.Name())
+	mgr := newFixtureManager("data-sources", emailTemplate, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

@@ -22,11 +22,12 @@ func dataSourceEmailTemplate() *schema.Resource {
 			},
 			emailTemplateDataSourceSchema,
 		),
+		Description: "Get a single Email Template for a Brand belonging to an Okta organization.",
 	}
 }
 
 func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {

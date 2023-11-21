@@ -7,7 +7,7 @@ import (
 )
 
 func TestAccDataSourceOktaDomain_read(t *testing.T) {
-	mgr := newFixtureManager(domain, t.Name())
+	mgr := newFixtureManager("data-sources", domain, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{

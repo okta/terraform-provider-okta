@@ -7,11 +7,12 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/stretchr/testify/require"
 )
 
-func TestAccOktaGroupRule_crud(t *testing.T) {
+func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRule)
-	mgr := newFixtureManager("okta_group_rule", t.Name())
+	mgr := newFixtureManager("resources", "okta_group_rule", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	name := buildResourceName(mgr.Seed)
@@ -60,8 +61,8 @@ func TestAccOktaGroupRule_crud(t *testing.T) {
 	})
 }
 
-func TestAccOktaGroupRule_invalidHandle(t *testing.T) {
-	mgr := newFixtureManager(groupRule, t.Name())
+func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
+	mgr := newFixtureManager("resources", groupRule, t.Name())
 	groupResource := fmt.Sprintf("%s.test", group)
 	ruleResource := fmt.Sprintf("%s.inval", groupRule)
 	testName := buildResourceName(mgr.Seed)
@@ -165,8 +166,30 @@ resource "okta_group_rule" "inval" {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return doesResourceExist(response, err)
+}
+
+func TestAccResourceOktaGroupRule_statusIsInvalidDiffFn(t *testing.T) {
+	cases := []struct {
+		status   string
+		expected bool
+	}{
+		{
+			status:   "VALID",
+			expected: false,
+		},
+		{
+			status:   "INVALID",
+			expected: true,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.status, func(t *testing.T) {
+			result := statusIsInvalidDiffFn(tc.status)
+			require.EqualValues(t, tc.expected, result)
+		})
+	}
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
-	mgr := newFixtureManager(policySignOn, t.Name())
+func TestAccResourceOktaPolicySignOn_defaultError(t *testing.T) {
+	mgr := newFixtureManager("resources", policySignOn, t.Name())
 	config := testOktaPolicySignOnDefaultErrors(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -26,8 +26,8 @@ func TestAccOktaPolicySignOn_defaultError(t *testing.T) {
 	})
 }
 
-func TestAccOktaPolicySignOn_crud(t *testing.T) {
-	mgr := newFixtureManager(policySignOn, t.Name())
+func TestAccResourceOktaPolicySignOn_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", policySignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_inactive.tf", t)
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
@@ -36,10 +36,10 @@ func TestAccOktaPolicySignOn_crud(t *testing.T) {
 	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
 	// Not sure about correct settings for this to pass.
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkPolicyDestroy(policySignOn),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkPolicyDestroy(policySignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

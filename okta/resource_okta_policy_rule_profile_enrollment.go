@@ -90,6 +90,12 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 					},
 				},
 			},
+			"progressive_profiling_action": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Enabled or disabled progressive profiling action rule conditions: ENABLED or DISABLED",
+				Default:     "DISABLED",
+			},
 		},
 	}
 }
@@ -227,6 +233,9 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *sch
 	}
 	if access, ok := d.GetOk("access"); ok {
 		ruleAction.Access = access.(string)
+	}
+	if progressiveProfilingAction, ok := d.GetOk("progressive_profiling_action"); ok {
+		ruleAction.ProgressiveProfilingAction = progressiveProfilingAction.(string)
 	}
 
 	activationRequirements := sdk.NewProfileEnrollmentPolicyRuleActivationRequirement()

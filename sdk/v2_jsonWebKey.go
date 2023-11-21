@@ -17,8 +17,10 @@ type JsonWebKey struct {
 	N           string      `json:"n,omitempty"`
 	Status      string      `json:"status,omitempty"`
 	Use         string      `json:"use,omitempty"`
+	X           string      `json:"x,omitempty"` // NOTE: EC X parameter is undocumented in docs and oas3 but still valid in the API
 	X5c         []string    `json:"x5c,omitempty"`
 	X5t         string      `json:"x5t,omitempty"`
 	X5tS256     string      `json:"x5t#S256,omitempty"`
 	X5u         string      `json:"x5u,omitempty"`
+	Y           string      `json:"y,omitempty"` // NOTE: EC Y parameter is undocumented in docs and oas3 but still valid in the API
 }

@@ -41,9 +41,7 @@ func resourceAuthenticator() *schema.Resource {
 				Description:      "Authenticator settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"provider_json": {
 				Type:             schema.TypeString,
@@ -51,9 +49,7 @@ func resourceAuthenticator() *schema.Resource {
 				Description:      "Provider in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 				ConflictsWith: []string{
 					// general
 					"provider_auth_port",
@@ -135,12 +131,14 @@ func resourceAuthenticator() *schema.Resource {
 			},
 			// General Provider Attributes
 			"provider_instance_id": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "App Instance ID.",
 			},
 			"provider_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`",
 			},
 		},
 	}

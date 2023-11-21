@@ -100,9 +100,7 @@ func resourceUser() *schema.Resource {
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Description:      "JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"custom_profile_attributes_to_ignore": {
 				Type:        schema.TypeSet,
@@ -441,7 +439,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
-		err := updateUserStatus(ctx, user.Id, d.Get("status").(string), client)
+		err := updateUserStatus(m, ctx, user.Id, d.Get("status").(string), client)
 		if err != nil {
 			return diag.Errorf("failed to update user status: %v", err)
 		}
@@ -515,7 +513,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
 	if statusChange {
-		err := updateUserStatus(ctx, d.Id(), status, client)
+		err := updateUserStatus(m, ctx, d.Id(), status, client)
 		if err != nil {
 			return diag.Errorf("failed to update user status: %v", err)
 		}

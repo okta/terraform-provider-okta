@@ -1,0 +1,377 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 134
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"description":"Terraform Acceptance Test User Type","displayName":"Terraform Acceptance Test User Type","name":"testAcc_2502672097"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:22.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:22 GMT
+        status: 200 OK
+        code: 200
+        duration: 201.524261ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:22.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:22 GMT
+        status: 200 OK
+        code: 200
+        duration: 71.0856ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:22.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 56.451549ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:22.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.703608ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 150
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"description":"Terraform Acceptance Test User Type Updated","displayName":"Terraform Acceptance Test User Type Updated","name":"testAcc_2502672097"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type Updated","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type Updated","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:23.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:23 GMT
+        status: 200 OK
+        code: 200
+        duration: 89.964348ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type Updated","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type Updated","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:23.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 66.265107ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type Updated","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type Updated","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:23.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 57.589314ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"oty9i7jksbFRM5sYX1d7","displayName":"Terraform Acceptance Test User Type Updated","name":"testAcc_2502672097","description":"Terraform Acceptance Test User Type Updated","createdBy":"00u5ptm07rHbDyowI1d7","lastUpdatedBy":"00u5ptm07rHbDyowI1d7","created":"2023-08-16T00:09:22.000Z","lastUpdated":"2023-08-16T00:09:23.000Z","default":false,"_links":{"schema":{"rel":"schema","href":"https://classic-00.oktapreview.com/api/v1/meta/schemas/user/osc9i7jksbFRM5sYX1d7","method":"GET"},"self":{"rel":"self","href":"https://classic-00.oktapreview.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7","method":"GET"}}}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:24 GMT
+        status: 200 OK
+        code: 200
+        duration: 56.96924ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Date:
+                - Wed, 16 Aug 2023 00:09:25 GMT
+        status: 204 No Content
+        code: 204
+        duration: 80.057368ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/types/user/oty9i7jksbFRM5sYX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: oty9i7jksbFRM5sYX1d7 (CVDType)","errorLink":"E0000007","errorId":"oae_istU3SZQku8AJCzQjA_bA","errorCauses":[]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 16 Aug 2023 00:09:25 GMT
+        status: 404 Not Found
+        code: 404
+        duration: 63.140869ms

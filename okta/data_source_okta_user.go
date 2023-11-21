@@ -84,6 +84,7 @@ func dataSourceUser() *schema.Resource {
 				Description: "Do not populate user roles information (prevents additional API call)",
 			},
 		}),
+		Description: "Get a single users from Okta.",
 	}
 }
 
@@ -92,7 +93,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
 			logger(m).Info("delaying user read by ", delay, " seconds")
-			time.Sleep(time.Duration(delay) * time.Second)
+			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
 			logger(m).Warn("user read delay value ", n, " is not an integer")
 		}

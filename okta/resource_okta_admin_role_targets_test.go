@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccAdminRoleTargets(t *testing.T) {
-	mgr := newFixtureManager(adminRoleTargets, t.Name())
+func TestAccResourceOktaAdminRoleTargets(t *testing.T) {
+	mgr := newFixtureManager("resources", adminRoleTargets, t.Name())
 	basic := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceAppName := fmt.Sprintf("%s.test_app", adminRoleTargets)
@@ -56,7 +56,7 @@ func TestAccAdminRoleTargets(t *testing.T) {
 }
 
 func doesTargetExists(id string) (bool, error) {
-	client := oktaClientForTest()
+	client := sdkV2ClientForTest()
 	parts := strings.Split(id, "/")
 	roles, _, err := client.User.ListAssignedRolesForUser(context.Background(), parts[0], nil)
 	if err != nil {

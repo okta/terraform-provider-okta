@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceAppSaml_read(t *testing.T) {
-	mgr := newFixtureManager(appSaml, t.Name())
+func TestAccDataSourceOktaAppSaml_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", appSaml, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	appCreate := buildTestAppSaml(mgr.Seed)
 

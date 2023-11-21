@@ -27,9 +27,10 @@ func resourceAppBookmark() *schema.Resource {
 				Required: true,
 			},
 			"request_integration": {
-				Type:     schema.TypeBool,
-				Default:  false,
-				Optional: true,
+				Type:        schema.TypeBool,
+				Default:     false,
+				Optional:    true,
+				Description: "Would you like Okta to add an integration for this app?",
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,
@@ -85,15 +86,19 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	app := buildAppBookmark(d)
-	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update bookmark application: %v", err)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set bookmark application status: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)

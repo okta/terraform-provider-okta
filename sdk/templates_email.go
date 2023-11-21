@@ -8,6 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
+// TODO deprecated
 type (
 	SdkEmailTemplate struct {
 		Id              string                          `json:"id,omitempty"`

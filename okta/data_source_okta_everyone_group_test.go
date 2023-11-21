@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceEveryoneGroup_read(t *testing.T) {
-	mgr := newFixtureManager(groupEveryone, t.Name())
+func TestAccDataSourceOktaEveryoneGroup_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", groupEveryone, t.Name())
 	config := testAccDataSourceEveryoneGroupConfig(mgr.Seed)
 
 	oktaResourceTest(t, resource.TestCase{

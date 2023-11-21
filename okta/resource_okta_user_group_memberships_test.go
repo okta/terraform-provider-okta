@@ -6,8 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaUserGroupMemberships_crud(t *testing.T) {
-	mgr := newFixtureManager(userGroupMemberships, t.Name())
+func TestAccResourceOktaUserGroupMemberships_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", userGroupMemberships, t.Name())
 	start := mgr.GetFixtures("basic.tf", t)
 	update := mgr.GetFixtures("basic_update.tf", t)
 	remove := mgr.GetFixtures("basic_removal.tf", t)

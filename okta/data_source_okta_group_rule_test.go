@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccOktaDataSourceGroupRule_read(t *testing.T) {
-	mgr := newFixtureManager(groupRule, t.Name())
+func TestAccDataSourceOktaGroupRule_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", groupRule, t.Name())
 	step1config := groupAndRule
 	step2config := fmt.Sprintf("%s%s", groupAndRule, groupRuleDataSources)
 

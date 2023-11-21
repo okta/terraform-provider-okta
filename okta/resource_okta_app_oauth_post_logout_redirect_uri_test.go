@@ -10,8 +10,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
-	mgr := newFixtureManager(appOAuthPostLogoutRedirectURI, t.Name())
+func TestAccResourceOktaAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
+	mgr := newFixtureManager("resources", appOAuthPostLogoutRedirectURI, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuthPostLogoutRedirectURI)
@@ -35,8 +35,8 @@ func TestAccAppOAuthApplication_postLogoutRedirectCrud(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					createPostLogoutRedirectURIExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "id", "https://www.example-updated.com"),
-					resource.TestCheckResourceAttr(resourceName, "uri", "https://www.example-updated.com"),
+					resource.TestCheckResourceAttr(resourceName, "id", "https://www.google-updated.com"),
+					resource.TestCheckResourceAttr(resourceName, "uri", "https://www.google-updated.com"),
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 				),
 			},
@@ -54,7 +54,7 @@ func createPostLogoutRedirectURIExists(resourceName string) resource.TestCheckFu
 
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
-		client := oktaClientForTest()
+		client := sdkV2ClientForTest()
 		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 

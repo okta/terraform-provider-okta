@@ -21,11 +21,12 @@ func dataSourceBrand() *schema.Resource {
 			},
 			brandDataSourceSchema,
 		),
+		Description: "Get a single Brand from Okta.",
 	}
 }
 
 func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var brand *okta.Brand
+	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID := d.Get("brand_id").(string)
 

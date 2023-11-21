@@ -259,14 +259,14 @@ func resourceAppOAuth() *schema.Resource {
 			"refresh_token_rotation": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
-				Description: "*Early Access Property* Refresh token rotation behavior",
+				Default:     "STATIC",
+				Description: "*Early Access Property* Refresh token rotation behavior, required with grant types refresh_token",
 			},
 			"refresh_token_leeway": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Computed:    true,
-				Description: "*Early Access Property* Grace period for token rotation",
+				Default:     0,
+				Description: "*Early Access Property* Grace period for token rotation, required with grant types refresh_token",
 			},
 			"auto_submit_toolbar": {
 				Type:        schema.TypeBool,
@@ -292,6 +292,7 @@ func resourceAppOAuth() *schema.Resource {
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
 				Description:      "Custom JSON that represents an OAuth application's profile",
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"jwks": {
 				Type:     schema.TypeList,
@@ -318,6 +319,16 @@ func resourceAppOAuth() *schema.Resource {
 							Optional:    true,
 							Description: "RSA Modulus",
 						},
+						"x": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "X coordinate of the elliptic curve point",
+						},
+						"y": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Y coordinate of the elliptic curve point",
+						},
 					},
 				},
 			},
@@ -329,7 +340,7 @@ func resourceAppOAuth() *schema.Resource {
 			"groups_claim": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
-				Description: "Groups claim for an OpenID Connect client application",
+				Description: "Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials)",
 				Optional:    true,
 				Elem:        groupsClaimResource,
 			},
@@ -339,9 +350,7 @@ func resourceAppOAuth() *schema.Resource {
 				Description:      "Application settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return new == ""
-				},
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,
@@ -397,7 +406,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d); err != nil {
+	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
@@ -427,6 +436,12 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	raw, ok := d.GetOk("groups_claim")
 	if !ok {
 		return nil
@@ -451,6 +466,12 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	raw, ok := d.GetOk("groups_claim")
 	if !ok {
 		return nil
@@ -511,11 +532,16 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("client_secret", "")
 	}
 
-	gc, err := flattenGroupsClaim(ctx, d, m)
-	if err != nil {
-		return diag.FromErr(err)
+	c := m.(*Config)
+	if c.IsOAuth20Auth() {
+		logger(m).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+	} else {
+		gc, err := flattenGroupsClaim(ctx, d, m)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		_ = d.Set("groups_claim", gc)
 	}
-	_ = d.Set("groups_claim", gc)
 
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
@@ -571,11 +597,21 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 		jwks := oauthClient.Jwks.Keys
 		arr := make([]map[string]interface{}, len(jwks))
 		for i, jwk := range jwks {
-			arr[i] = map[string]interface{}{
-				"kty": jwk.Kty,
-				"kid": jwk.Kid,
-				"e":   jwk.E,
-				"n":   jwk.N,
+			if jwk.Kty == "RSA" && jwk.E != "" && jwk.N != "" {
+				arr[i] = map[string]interface{}{
+					"kty": jwk.Kty,
+					"kid": jwk.Kid,
+					"e":   jwk.E,
+					"n":   jwk.N,
+				}
+			}
+			if jwk.Kty == "EC" && jwk.X != "" && jwk.Y != "" {
+				arr[i] = map[string]interface{}{
+					"kty": jwk.Kty,
+					"kid": jwk.Kid,
+					"x":   jwk.X,
+					"y":   jwk.Y,
+				}
 			}
 		}
 		err := setNonPrimitives(d, map[string]interface{}{"jwks": arr})
@@ -610,24 +646,28 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 }
 
 func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !additionalChanges {
+		return nil
+	}
+
 	client := getOktaClientFromMetadata(m)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d); err != nil {
+	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
-	_, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
+	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
-	}
-	err = setAppStatus(ctx, d, client, app.Status)
-	if err != nil {
-		return diag.Errorf("failed to set OAuth application status: %v", err)
 	}
 	if d.HasChange("logo") {
 		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
@@ -759,12 +799,19 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 	if len(jwks) > 0 {
 		keys := make([]*sdk.JsonWebKey, len(jwks))
 		for i := range jwks {
-			keys[i] = &sdk.JsonWebKey{
+			key := &sdk.JsonWebKey{
 				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
 				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
-				E:   d.Get(fmt.Sprintf("jwks.%d.e", i)).(string),
-				N:   d.Get(fmt.Sprintf("jwks.%d.n", i)).(string),
 			}
+			if e, ok := d.Get(fmt.Sprintf("jwks.%d.e", i)).(string); ok {
+				key.E = e
+				key.N = d.Get(fmt.Sprintf("jwks.%d.n", i)).(string)
+			}
+			if x, ok := d.Get(fmt.Sprintf("jwks.%d.x", i)).(string); ok {
+				key.X = x
+				key.Y = d.Get(fmt.Sprintf("jwks.%d.y", i)).(string)
+			}
+			keys[i] = key
 		}
 		app.Settings.OauthClient.Jwks = &sdk.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
@@ -822,18 +869,23 @@ func validateGrantTypes(d *schema.ResourceData) error {
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }
 
-func validateAppOAuth(d *schema.ResourceData) error {
+func validateAppOAuth(d *schema.ResourceData, m interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
-		groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
-		if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
-			return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
-		}
-		if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
-			return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
-		}
-		if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
-			return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+		c := m.(*Config)
+		if c.IsOAuth20Auth() {
+			logger(m).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
+		} else {
+			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
+				return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
+			}
+			if groupsClaim["type"].(string) == "FILTER" && groupsClaim["filter_type"].(string) == "" {
+				return errors.New("'filter_type' in 'groups_claim' is required when 'type' is set to 'FILTER'")
+			}
+			if groupsClaim["name"].(string) == "" || groupsClaim["value"].(string) == "" {
+				return errors.New("'name' 'value' and in 'groups_claim' should not be empty")
+			}
 		}
 	}
 	_, jwks := d.GetOk("jwks")
