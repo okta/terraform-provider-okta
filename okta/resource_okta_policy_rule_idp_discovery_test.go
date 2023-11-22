@@ -81,7 +81,7 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 
 func TestAccResourceOktaPolicyRuleIdpDiscoveryDynamic(t *testing.T) {
 	mgr := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
-	config := mgr.GetFixtures("test.tf", t)
+	config := mgr.GetFixtures("dynamic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	oktaResourceTest(t, resource.TestCase{
