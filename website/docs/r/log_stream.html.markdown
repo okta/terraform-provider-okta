@@ -37,7 +37,7 @@ resource "okta_log_stream" "example" {
   settings {
     host = "acme.splunkcloud.com"
     edition = "gcp"
-    token = "58A7C8D6-4E2F-4C3B-8F5B-D4E2F3A4B5C6"
+    token = "YOUR_HEC_TOKEN"
   }
 }
 ```
