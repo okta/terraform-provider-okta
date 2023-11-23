@@ -43,6 +43,7 @@ type Client struct {
 	UserFactor                 *UserFactorResource
 	UserSchema                 *UserSchemaResource
 	UserType                   *UserTypeResource
+	LogStream                  *LogStreamResource
 }
 
 type resource struct {
@@ -113,6 +114,7 @@ func NewClient(ctx context.Context, conf ...ConfigSetter) (context.Context, *Cli
 	c.UserFactor = (*UserFactorResource)(&c.resource)
 	c.UserSchema = (*UserSchemaResource)(&c.resource)
 	c.UserType = (*UserTypeResource)(&c.resource)
+	c.LogStream = (*LogStreamResource)(&c.resource)
 
 	contextReturn := context.WithValue(ctx, clientContextKey{}, c)
 
