@@ -91,6 +91,7 @@ const (
 	inlineHook                    = "okta_inline_hook"
 	linkDefinition                = "okta_link_definition"
 	linkValue                     = "okta_link_value"
+	logStream                     = "okta_log_stream"
 	networkZone                   = "okta_network_zone"
 	orgConfiguration              = "okta_org_configuration"
 	orgSupport                    = "okta_org_support"
@@ -296,6 +297,7 @@ func Provider() *schema.Provider {
 			inlineHook:                    resourceInlineHook(),
 			linkDefinition:                resourceLinkDefinition(),
 			linkValue:                     resourceLinkValue(),
+			logStream:                     resourceLogStream(),
 			networkZone:                   resourceNetworkZone(),
 			orgConfiguration:              resourceOrgConfiguration(),
 			orgSupport:                    resourceOrgSupport(),
@@ -360,6 +362,7 @@ func Provider() *schema.Provider {
 			idpOidc:                  dataSourceIdpOidc(),
 			idpSaml:                  dataSourceIdpSaml(),
 			idpSocial:                dataSourceIdpSocial(),
+			logStream:                dataSourceLogStream(),
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
 			roleSubscription:         dataSourceRoleSubscription(),

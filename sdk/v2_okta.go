@@ -116,6 +116,7 @@ func NewClient(ctx context.Context, conf ...ConfigSetter) (context.Context, *Cli
 	c.UserFactor = (*UserFactorResource)(&c.resource)
 	c.UserSchema = (*UserSchemaResource)(&c.resource)
 	c.UserType = (*UserTypeResource)(&c.resource)
+	c.LogStream = (*LogStreamResource)(&c.resource)
 
 	contextReturn := context.WithValue(ctx, clientContextKey{}, c)
 
