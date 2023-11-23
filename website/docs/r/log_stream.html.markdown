@@ -50,7 +50,7 @@ The following arguments are supported:
 
 - `type` - (Required) Type of the Log Stream - can either be `"aws_eventbridge"` or `"splunk_cloud_logstreaming"` only.
 
-- `status` - (Optional) Network Status - can either be ACTIVE or INACTIVE only. Default is ACTIVE.
+- `status` - (Optional) Log Stream Status - can either be ACTIVE or INACTIVE only. Default is ACTIVE.
 
 - `settings` - (Required) Stream provider specific configuration.
 
