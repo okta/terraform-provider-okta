@@ -42,7 +42,7 @@ The following arguments are supported:
 
 - `type` - (Required) Type of the Network Zone - can either be `"IP"` or `"DYNAMIC"` only.
 
-- `status` - (Optional) Log Stream Status - can either be ACTIVE or INACTIVE only.
+- `status` - (Optional) Network Status - can either be ACTIVE or INACTIVE only.
 
 - `dynamic_locations` - (Optional) Array of locations [ISO-3166-1](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
   and [ISO-3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). Format code: countryCode OR countryCode-regionCode.
