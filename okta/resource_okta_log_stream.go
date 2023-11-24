@@ -89,6 +89,7 @@ func resourceLogStream() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							ForceNew:         true,
+							Sensitive:        true,
 							Description:      "The HEC token for your Splunk Cloud HTTP Event Collector. Required only for 'splunk_cloud_logstreaming' type",
 							ValidateDiagFunc: validation.ToDiagFunc(validation.StringMatch(splunkTokenRegex, "Splunk token must match the pattern: `(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`")),
 						},
