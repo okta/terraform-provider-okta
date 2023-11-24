@@ -35,11 +35,10 @@ func resourceLogStream() *schema.Resource {
 				Description: "Unique name for the Log Stream object",
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				Description: fmt.Sprintf("Streaming provider used - %s or %s",
-					logStreamTypeEventBridge, logStreamTypeSplunk),
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Streaming provider used - 'aws_eventbridge' or 'splunk_cloud_logstreaming'",
 				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 					logStreamTypeEventBridge, logStreamTypeSplunk,
 				}, false)),

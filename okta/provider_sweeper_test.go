@@ -355,6 +355,24 @@ func sweepLinkDefinitions(client *testClient) error {
 	return condenseError(errorList)
 }
 
+func sweepLogStreams(client *testClient) error {
+	var errorList []error
+	streams, _, err := client.sdkV2Client.LogStream.ListLogStreams(context.Background(), &query.Params{Limit: defaultPaginationLimit})
+	if err != nil {
+		return err
+	}
+	for _, stream := range streams {
+		if strings.HasPrefix(stream.Name, testResourcePrefix) {
+			if _, err := client.sdkV2Client.LogStream.DeleteLogStream(context.Background(), stream.Id); err != nil {
+				errorList = append(errorList, err)
+				continue
+			}
+			logSweptResource("log stream", stream.Id, stream.Name)
+		}
+	}
+	return condenseError(errorList)
+}
+
 func sweepNetworkZones(client *testClient) error {
 	var errorList []error
 	zones, _, err := client.sdkV2Client.NetworkZone.ListNetworkZones(context.Background(), &query.Params{Limit: defaultPaginationLimit})

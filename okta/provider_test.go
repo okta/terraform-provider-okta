@@ -111,6 +111,7 @@ func TestMain(m *testing.M) {
 		setupSweeper(group, sweepGroups)
 		setupSweeper(groupSchemaProperty, sweepGroupCustomSchema)
 		setupSweeper(linkDefinition, sweepLinkDefinitions)
+		setupSweeper(logStream, sweepLogStreams)
 		setupSweeper(networkZone, sweepNetworkZones)
 		setupSweeper(policyMfa, sweepMfaPolicies)
 		setupSweeper(policyPassword, sweepPasswordPolicies)
