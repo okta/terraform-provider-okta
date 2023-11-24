@@ -30,6 +30,7 @@ type Client struct {
 	InlineHook                 *InlineHookResource
 	LinkedObject               *LinkedObjectResource
 	LogEvent                   *LogEventResource
+	LogStream                  *LogStreamResource
 	NetworkZone                *NetworkZoneResource
 	OrgSetting                 *OrgSettingResource
 	Policy                     *PolicyResource
@@ -43,7 +44,6 @@ type Client struct {
 	UserFactor                 *UserFactorResource
 	UserSchema                 *UserSchemaResource
 	UserType                   *UserTypeResource
-	LogStream                  *LogStreamResource
 }
 
 type resource struct {
@@ -101,6 +101,7 @@ func NewClient(ctx context.Context, conf ...ConfigSetter) (context.Context, *Cli
 	c.InlineHook = (*InlineHookResource)(&c.resource)
 	c.LinkedObject = (*LinkedObjectResource)(&c.resource)
 	c.LogEvent = (*LogEventResource)(&c.resource)
+	c.LogStream = (*LogStreamResource)(&c.resource)
 	c.NetworkZone = (*NetworkZoneResource)(&c.resource)
 	c.OrgSetting = (*OrgSettingResource)(&c.resource)
 	c.Policy = (*PolicyResource)(&c.resource)
@@ -114,7 +115,6 @@ func NewClient(ctx context.Context, conf ...ConfigSetter) (context.Context, *Cli
 	c.UserFactor = (*UserFactorResource)(&c.resource)
 	c.UserSchema = (*UserSchemaResource)(&c.resource)
 	c.UserType = (*UserTypeResource)(&c.resource)
-	c.LogStream = (*LogStreamResource)(&c.resource)
 
 	contextReturn := context.WithValue(ctx, clientContextKey{}, c)
 
