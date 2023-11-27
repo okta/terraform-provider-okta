@@ -497,6 +497,67 @@ resource "okta_app_user_schema_property" "test" {
 	})
 }
 
+func TestAccResourceOktaAppUserSchemas_array_enum_json(t *testing.T) {
+	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
+	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
+	config := `
+resource "okta_app_oauth" "test" {
+	label          = "testAcc_replace_with_uuid"
+	type           = "native"
+	grant_types    = ["authorization_code"]
+	redirect_uris  = ["http://d.com/"]
+	response_types = ["code"]
+}
+
+resource "okta_app_user_schema_property" "test" {
+	app_id      = okta_app_oauth.test.id
+	index       = "testAcc_replace_with_uuid"
+	title       = "terraform acceptance test"
+	type        = "array"
+	description = "testing"
+	required    = false
+	permissions = "READ_ONLY"
+	master      = "PROFILE_MASTER"
+	array_type  = "object"
+	array_enum  = [
+		jsonencode({value="test_value_1"}),
+		jsonencode({value="test_value_2"})
+	]
+	array_one_of {
+	  const = jsonencode({value="test_value_1"})
+	  title = "object 1"
+	}
+	array_one_of {
+	  const = jsonencode({value="test_value_2"})
+	  title = "object 2"
+	}
+}
+`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appUserSchemaProperty, testAppUserSchemaExists),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					testAppUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "type", "array"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "object"),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.0", `{"value":"test_value_1"}`),
+					resource.TestCheckResourceAttr(resourceName, "array_enum.1", `{"value":"test_value_2"}`),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.title", "object 1"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.const", `{"value":"test_value_1"}`),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.title", "object 2"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.const", `{"value":"test_value_2"}`),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
 	mgr := newFixtureManager("resources", appUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", appUserSchemaProperty)
