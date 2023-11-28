@@ -37,7 +37,7 @@ func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, m interfac
 		}
 	} else {
 		logger(m).Info("reading brand by ID", "id", brandID)
-		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID).Execute()
+		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrand(ctx, brandID).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand: %v", err)
 		}

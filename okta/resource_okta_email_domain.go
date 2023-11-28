@@ -78,7 +78,7 @@ func resourceEmailDomain() *schema.Resource {
 }
 
 func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	emailDomain, _, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.CreateEmailDomain(ctx).EmailDomain(buildEmailDomain(d)).Execute()
+	emailDomain, _, err := getOktaV3ClientFromMetadata(m).EmailDomainAPI.CreateEmailDomain(ctx).EmailDomain(buildEmailDomain(d)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create email domain: %v", err)
 	}
@@ -87,7 +87,7 @@ func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.GetEmailDomain(ctx, d.Id()).Execute()
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
@@ -116,7 +116,7 @@ func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceEmailDomainUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.ReplaceEmailDomain(ctx, d.Id()).UpdateEmailDomain(buildUpdateEmailDomain(d)).Execute()
+	_, _, err := getOktaV3ClientFromMetadata(m).EmailDomainAPI.ReplaceEmailDomain(ctx, d.Id()).UpdateEmailDomain(buildUpdateEmailDomain(d)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email domain: %v", err)
 	}
@@ -124,14 +124,14 @@ func resourceEmailDomainUpdate(ctx context.Context, d *schema.ResourceData, m in
 }
 
 func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.GetEmailDomain(ctx, d.Id()).Execute()
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(m).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
 	if emailDomain == nil || emailDomain.GetValidationStatus() == "DELETED" {
 		return nil
 	}
-	_, err = getOktaV3ClientFromMetadata(m).EmailDomainApi.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
+	_, err = getOktaV3ClientFromMetadata(m).EmailDomainAPI.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete email domain: %v", err)
 	}

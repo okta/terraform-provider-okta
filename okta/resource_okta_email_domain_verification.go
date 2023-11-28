@@ -25,7 +25,7 @@ func resourceEmailDomainVerification() *schema.Resource {
 }
 
 func resourceEmailDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaV3ClientFromMetadata(m).EmailDomainApi.VerifyEmailDomain(ctx, d.Get("email_domain_id").(string)).Execute()
+	_, _, err := getOktaV3ClientFromMetadata(m).EmailDomainAPI.VerifyEmailDomain(ctx, d.Get("email_domain_id").(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to verify email domain: %v", err)
 	}

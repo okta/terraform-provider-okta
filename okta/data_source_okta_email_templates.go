@@ -32,7 +32,7 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
 		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrand(ctx, brandID.(string)).Execute()
+		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand for email templates: %v", err)
 		}
@@ -60,7 +60,7 @@ func dataSourceEmailTemplatesRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func collectEmailTempates(ctx context.Context, client *okta.APIClient, brand *okta.BrandWithEmbedded) ([]okta.EmailTemplate, error) {
-	templates, resp, err := client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
+	templates, resp, err := client.CustomizationAPI.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 	if err != nil {
 		return nil, err
 	}

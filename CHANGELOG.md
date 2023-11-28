@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.6.2 (November 28, 2023)
+
+### BUG FIXES
+
+*  Correct updating an app when status is involved with the update [#1806](https://github.com/okta/terraform-provider-okta/pull/1806). Thanks, [@monde](https://github.com/monde)!
+*  Datasource okta_org_metadata incorrect value for domains.organization [#1810](https://github.com/okta/terraform-provider-okta/pull/1810). Thanks, [@monde](https://github.com/monde)!
+*  CustomDiff for status on okta_group_rule [#1813](https://github.com/okta/terraform-provider-okta/pull/1813). Thanks, [@monde](https://github.com/monde)!
+*  Update okta_idp_social resource docs [#1814](https://github.com/okta/terraform-provider-okta/pull/1814). Thanks, [@monde](https://github.com/monde)!
+*  Support array enum of object type in schemas [#1827](https://github.com/okta/terraform-provider-okta/pull/1827). Thanks, [@monde](https://github.com/monde)!
+*  Fix risk_score default broke customer without FF [#1829](https://github.com/okta/terraform-provider-okta/pull/1829). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+*  Resource okta_brand's email_domain_id is an attribute, not an argument [#1831](https://github.com/okta/terraform-provider-okta/pull/1831). Thanks, [@monde](https://github.com/monde)!
+*  Add header to local sdk files, update contribution notes [#1833](https://github.com/okta/terraform-provider-okta/pull/1833). Thanks, [@monde](https://github.com/monde)!
+
 ## 4.6.1 (November 2, 2023)
 
 ### BUG FIXES

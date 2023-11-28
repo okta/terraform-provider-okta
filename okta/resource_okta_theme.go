@@ -44,7 +44,7 @@ func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.Errorf("theme_id required to create theme")
 	}
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
@@ -68,7 +68,7 @@ func resourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	brandID := bid.(string)
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, d.Id()).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
@@ -154,7 +154,7 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		}
 	}
 
-	themeResp, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()
+	themeResp, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update theme: %v", err)
 	}
@@ -182,7 +182,7 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 	brandID := parts[0]
 	themeID := parts[1]
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get theme: %v", err)
 	}
@@ -200,7 +200,7 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("logo")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -208,14 +208,14 @@ func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{},
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeLogo(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeLogo(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
 func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("favicon")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -223,14 +223,14 @@ func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeFavicon(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeFavicon(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
 func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
 	_, newPath := d.GetChange("background_image")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationApi.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -238,6 +238,6 @@ func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m i
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationApi.UploadBrandThemeBackgroundImage(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeBackgroundImage(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }

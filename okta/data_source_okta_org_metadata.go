@@ -122,7 +122,7 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	org, _, err := d.config.oktaSDKClientV3.OrgSettingApi.GetWellknownOrgMetadata(ctx).Execute()
+	org, _, err := d.config.oktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving org metadata",
