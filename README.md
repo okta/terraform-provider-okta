@@ -112,8 +112,21 @@ the [provider's website](https://registry.terraform.io/providers/okta/okta/lates
 
 Terraform is the work of thousands of contributors. We really appreciate your help!
 
-To contribute, please read the contribution
-guidelines: [Contributing to Terraform - Okta Provider](.github/CONTRIBUTING.md)
+We have these minimum requirements for source code contributions.
+
+Bug fix pull requests must include:
+
+- [Terraform Plugin Acceptance Tests](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests).
+
+Pull requests with new resources and data sources must include:
+
+- Signed [Okta Individual Contributor License Agreement](https://developer.okta.com/cla/) emailed to `CLA@okta.com`
+- Implemented with the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework) (not [Terraform Plugin SDKv2](https://developer.hashicorp.com/terraform/plugin/sdkv2) )
+- Make Okta API calls with the [okta-sdk-golang v3](https://github.com/okta/okta-sdk-golang) client
+- Include [Terraform Plugin Acceptance Tests](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests)
+
+Please see the [contribution guidelines](.github/CONTRIBUTING.md) for additional
+information about making contributions to the Okta Terraform Provider.
 
 Issues on GitHub are intended to be related to the bugs or feature requests with provider codebase.
 See [Plugin SDK Community](https://www.terraform.io/community)
