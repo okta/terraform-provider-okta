@@ -67,7 +67,7 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			},
 			"email_domain_id": schema.StringAttribute{
 				Description: "Email Domain ID tied to this brand",
-				Optional:    true,
+				Computed:    true,
 			},
 			"locale": schema.StringAttribute{
 				Description: "The language specified as an IETF BCP 47 language tag",
@@ -334,7 +334,6 @@ func buildUpdateBrandRequest(model brandResourceModel) (okta.BrandRequest, error
 		AgreeToCustomPrivacyPolicy: model.AgreeToCustomPrivacyPolicy.ValueBoolPointer(),
 		CustomPrivacyPolicyUrl:     model.CustomPrivacyPolicyURL.ValueStringPointer(),
 		DefaultApp:                 defaultApp,
-		EmailDomainId:              model.EmailDomainID.ValueStringPointer(),
 		Locale:                     model.Locale.ValueStringPointer(),
 		RemovePoweredByOkta:        model.RemovePoweredByOkta.ValueBoolPointer(),
 	}, nil

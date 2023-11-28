@@ -25,8 +25,6 @@ resource "okta_brand" "example" {
 
 - `name` - (Required) Name of the brand
 
-- `email_domain_id` - (Optional) Email Domain ID tied to this brand
-
 - `locale` - (Optional) The language specified as an IETF BCP 47 language tag
 
 
@@ -45,6 +43,8 @@ resource "okta_brand" "example" {
 - `default_app_classic_application_uri` - (Optional) Default app classic application uri
 
 ## Attributes Reference
+
+- `email_domain_id` - (Read-only) Email Domain ID tied to this brand
 
 - `id` - (Read-only) Brand ID
 
