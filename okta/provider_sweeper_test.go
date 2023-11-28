@@ -203,12 +203,12 @@ func sweepBehaviors(client *testClient) error {
 
 func sweepEmailCustomization(client *testClient) error {
 	ctx := context.Background()
-	brands, _, err := client.sdkV3Client.CustomizationApi.ListBrands(ctx).Execute()
+	brands, _, err := client.sdkV3Client.CustomizationAPI.ListBrands(ctx).Execute()
 	if err != nil {
 		return err
 	}
 	for _, brand := range brands {
-		templates, resp, err := client.sdkV3Client.CustomizationApi.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
+		templates, resp, err := client.sdkV3Client.CustomizationAPI.ListEmailTemplates(ctx, brand.GetId()).Limit(int32(defaultPaginationLimit)).Execute()
 		if err != nil {
 			continue
 		}
@@ -222,7 +222,7 @@ func sweepEmailCustomization(client *testClient) error {
 		}
 
 		for _, template := range templates {
-			_, _ = client.sdkV3Client.CustomizationApi.DeleteAllCustomizations(context.Background(), brand.GetId(), template.GetName()).Execute()
+			_, _ = client.sdkV3Client.CustomizationAPI.DeleteAllCustomizations(context.Background(), brand.GetId(), template.GetName()).Execute()
 		}
 	}
 

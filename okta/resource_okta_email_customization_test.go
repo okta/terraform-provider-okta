@@ -129,23 +129,23 @@ func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
 
 		ctx := context.Background()
 
-		customizations, _, err := client.CustomizationApi.ListEmailCustomizations(ctx, brandID, templateName).Execute()
+		customizations, _, err := client.CustomizationAPI.ListEmailCustomizations(ctx, brandID, templateName).Execute()
 		if err != nil {
 			return fmt.Errorf("failed to delete email customization ID %q, brandID %q, templateName: %q", ID, brandID, templateName)
 		}
 		if len(customizations) == 1 {
-			_, err := client.CustomizationApi.DeleteAllCustomizations(ctx, brandID, templateName).Execute()
+			_, err := client.CustomizationAPI.DeleteAllCustomizations(ctx, brandID, templateName).Execute()
 			if err != nil {
 				return fmt.Errorf("failed to delete email customization ID %q, brandID %q, templateName: %q", ID, brandID, templateName)
 			}
 		} else {
-			_, err = client.CustomizationApi.DeleteEmailCustomization(ctx, brandID, templateName, ID).Execute()
+			_, err = client.CustomizationAPI.DeleteEmailCustomization(ctx, brandID, templateName, ID).Execute()
 			if err != nil {
 				return fmt.Errorf("failed to delete email customization ID %q, brandID %q, templateName: %q", ID, brandID, templateName)
 			}
 		}
 
-		_, resp, _ := client.CustomizationApi.GetEmailCustomization(ctx, brandID, templateName, ID).Execute()
+		_, resp, _ := client.CustomizationAPI.GetEmailCustomization(ctx, brandID, templateName, ID).Execute()
 		if resp.StatusCode == http.StatusNotFound {
 			return nil
 		}

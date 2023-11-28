@@ -48,7 +48,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 
 	client := getOktaV3ClientFromMetadata(m)
 
-	customization, _, err := client.CustomizationApi.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
+	customization, _, err := client.CustomizationAPI.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create email customization: %v", err)
 	}
@@ -69,7 +69,7 @@ func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData,
 		return diagErr
 	}
 
-	customization, resp, err := getOktaV3ClientFromMetadata(m).CustomizationApi.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	customization, resp, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email customization: %v", err)
 	}
@@ -107,7 +107,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		cr.Body = body.(string)
 	}
 
-	customization, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
+	customization, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email customization: %v", err)
 	}
@@ -135,19 +135,19 @@ func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceDat
 	// customization to be deleted is the default."
 	// https://developer.okta.com/docs/reference/api/brands/#response-body-23
 	// Else delete the specific customization.
-	customizations, _, err := client.CustomizationApi.ListEmailCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
+	customizations, _, err := client.CustomizationAPI.ListEmailCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email customization: %v", err)
 	}
 	if len(customizations) == 1 {
-		_, err := client.CustomizationApi.DeleteAllCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
+		_, err := client.CustomizationAPI.DeleteAllCustomizations(ctx, etcr.brandID, etcr.templateName).Execute()
 		if err != nil {
 			return diag.Errorf("failed to delete email customization: %v", err)
 		}
 		return nil
 	}
 
-	_, err = client.CustomizationApi.DeleteEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	_, err = client.CustomizationAPI.DeleteEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email customization: %v", err)
 	}

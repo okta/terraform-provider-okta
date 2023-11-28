@@ -112,7 +112,7 @@ func (r *appAccessPolicyAssignmentResource) Create(ctx context.Context, req reso
 
 	// assign policy to app
 	policyID := plan.PolicyID.ValueString()
-	_, err = r.oktaSDKClientV3.ApplicationPoliciesApi.AssignApplicationPolicy(ctx, appID, policyID).Execute()
+	_, err = r.oktaSDKClientV3.ApplicationPoliciesAPI.AssignApplicationPolicy(ctx, appID, policyID).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("couldn't assign policy %q to app %q", policyID, appID),
@@ -215,7 +215,7 @@ func (r *appAccessPolicyAssignmentResource) Update(ctx context.Context, req reso
 	if !plan.PolicyID.Equal(state.PolicyID) {
 		// policy id has changed in the config, update
 		appID := plan.AppID.ValueString()
-		_, err = r.oktaSDKClientV3.ApplicationPoliciesApi.AssignApplicationPolicy(ctx, appID, plan.PolicyID.ValueString()).Execute()
+		_, err = r.oktaSDKClientV3.ApplicationPoliciesAPI.AssignApplicationPolicy(ctx, appID, plan.PolicyID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("couldn't re-assign policy %q to app %q", plan.PolicyID.ValueString(), appID),
@@ -240,7 +240,7 @@ func (r *appAccessPolicyAssignmentResource) ImportState(ctx context.Context, req
 }
 
 func (r *appAccessPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.Context, appID string) (*okta.ListApplications200ResponseInner, error) {
-	appInnerResp, _, err := r.oktaSDKClientV3.ApplicationApi.GetApplication(ctx, appID).Execute()
+	appInnerResp, _, err := r.oktaSDKClientV3.ApplicationAPI.GetApplication(ctx, appID).Execute()
 	return appInnerResp, err
 }
 

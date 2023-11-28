@@ -39,7 +39,7 @@ func TestAccResourceOktaEmailDomain(t *testing.T) {
 
 func emailDomainExists(id string) (bool, error) {
 	client := sdkV3ClientForTest()
-	emailDomain, resp, err := client.EmailDomainApi.GetEmailDomain(context.Background(), id).Execute()
+	emailDomain, resp, err := client.EmailDomainAPI.GetEmailDomain(context.Background(), id).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return false, err
 	}

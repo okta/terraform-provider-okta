@@ -67,7 +67,7 @@ func flattenBrand(brand *okta.BrandWithEmbedded) map[string]interface{} {
 }
 
 func getDefaultBrand(ctx context.Context, m interface{}) (*okta.BrandWithEmbedded, error) {
-	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationApi.ListBrands(ctx).Execute()
+	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ListBrands(ctx).Execute()
 	if err != nil {
 		return nil, err
 	}
