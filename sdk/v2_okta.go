@@ -32,7 +32,6 @@ type Client struct {
 	InlineHook                 *InlineHookResource
 	LinkedObject               *LinkedObjectResource
 	LogEvent                   *LogEventResource
-	LogStream                  *LogStreamResource
 	NetworkZone                *NetworkZoneResource
 	OrgSetting                 *OrgSettingResource
 	Policy                     *PolicyResource
@@ -104,7 +103,6 @@ func NewClient(ctx context.Context, conf ...ConfigSetter) (context.Context, *Cli
 	c.InlineHook = (*InlineHookResource)(&c.resource)
 	c.LinkedObject = (*LinkedObjectResource)(&c.resource)
 	c.LogEvent = (*LogEventResource)(&c.resource)
-	c.LogStream = (*LogStreamResource)(&c.resource)
 	c.NetworkZone = (*NetworkZoneResource)(&c.resource)
 	c.OrgSetting = (*OrgSettingResource)(&c.resource)
 	c.Policy = (*PolicyResource)(&c.resource)
