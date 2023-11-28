@@ -171,7 +171,7 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 	_ = d.Set("unique", subschema.Unique)
 
 	// NOTE: Enums on the schema can be typed other than string but the
-	// Terraform SDK is staticly defined at runtime for string so we need to
+	// Terraform SDK is statically defined at runtime for string so we need to
 	// juggle types on the fly.
 
 	if subschema.Items != nil {
@@ -179,7 +179,7 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 		stringifyEnumSlice(subschema.Items.Type, &subschema.Items.Enum)
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", subschema.Items.Enum)
+		_ = d.Set("array_enum", flattenArrayEnum(subschema.Items.Enum))
 	}
 
 	stringifyOneOfSlice(subschema.Type, &subschema.OneOf)
@@ -258,7 +258,25 @@ func buildNullableItems(d *schema.ResourceData) (*sdk.UserSchemaAttributeItems, 
 		return u, nil
 	}
 	if okArrayEnum {
-		u.Enum = arrayEnum.([]interface{})
+		enumSlice, ok := arrayEnum.([]interface{})
+		if !ok {
+			return nil, fmt.Errorf("expected %q value %+v to be an array but was an %T", "array_enum", arrayEnum, arrayEnum)
+		}
+		if at == "object" {
+			// If array type is object, assume each item is a JSON string.  Okta
+			// API expects object to be a map.  Unmarshal that into a
+			// map[string]interface{} so the array marshals to correct json.
+			// Previous to this subtle distinction if the operator had JSON
+			// strings they would be escaped extras as absolute strings.
+			for i, item := range enumSlice {
+				var object map[string]interface{}
+				if err := json.Unmarshal([]byte(item.(string)), &object); err != nil {
+					return nil, err
+				}
+				enumSlice[i] = object
+			}
+		}
+		u.Enum = enumSlice
 	}
 	if okArrayOneOf {
 		oneOf, err := buildOneOf(arrayOneOf.([]interface{}), u.Type)
@@ -277,8 +295,16 @@ func buildOneOf(ae []interface{}, elemType string) ([]*sdk.UserSchemaAttributeEn
 		oneOf[i] = &sdk.UserSchemaAttributeEnum{
 			Title: valueMap["title"].(string),
 		}
-		c := valueMap["const"].(string)
-		oneOf[i].Const = c
+		value := valueMap["const"]
+		switch elemType {
+		case "object":
+			var object map[string]interface{}
+			if err := json.Unmarshal([]byte(value.(string)), &object); err == nil {
+				oneOf[i].Const = object
+			}
+		default:
+			oneOf[i].Const = value.(string)
+		}
 	}
 	return oneOf, nil
 }
@@ -286,11 +312,33 @@ func buildOneOf(ae []interface{}, elemType string) ([]*sdk.UserSchemaAttributeEn
 func flattenOneOf(oneOf []*sdk.UserSchemaAttributeEnum) []interface{} {
 	result := make([]interface{}, len(oneOf))
 	for i, v := range oneOf {
+		var value string
+		if obj, ok := v.Const.(map[string]interface{}); ok {
+			objB, _ := json.Marshal(obj)
+			value = string(objB)
+		} else {
+			value = v.Const.(string)
+		}
 		of := map[string]interface{}{
 			"title": v.Title,
-			"const": v.Const,
+			"const": value,
 		}
 		result[i] = of
+	}
+	return result
+}
+
+func flattenArrayEnum(arrayEnum []interface{}) []interface{} {
+	result := make([]interface{}, len(arrayEnum))
+	for i, v := range arrayEnum {
+		var value string
+		if obj, ok := v.(map[string]interface{}); ok {
+			objB, _ := json.Marshal(obj)
+			value = string(objB)
+		} else {
+			value = v.(string)
+		}
+		result[i] = value
 	}
 	return result
 }
@@ -540,6 +588,8 @@ func coerceCorrectTypedValue(elemType string, value interface{}) (interface{}, e
 		return coerceInt(value)
 	case "boolean":
 		return coerceBool(value)
+	case "object":
+		return value, nil
 	default:
 		if str, ok := value.(string); ok {
 			return str, nil
@@ -601,6 +651,8 @@ func coerceStringValue(elemType string, value interface{}) (interface{}, error) 
 			return fmt.Sprintf("%t", v), nil
 		}
 		return nil, fmt.Errorf("could not coerce %+v of type %T to bool", value, value)
+	case "object":
+		return value, nil
 	default:
 		if str, ok := value.(string); ok {
 			return str, nil

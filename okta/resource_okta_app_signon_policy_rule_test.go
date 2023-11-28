@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-// TODO unable to run the test due to conflict providerFactories between plugin and framework
 func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
@@ -311,4 +310,43 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints [
 
 		return nil
 	}
+}
+
+func TestAccResourceOktaAppSignOnPolicyRuleDefault(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
+	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("default.tf", t)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttrSet(resourceName, "priority"),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "factor_mode", "2FA"),
+					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "users_included.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "network_includes.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "network_excludes.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
+					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
+					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT1H"),
+					resource.TestCheckResourceAttr(resourceName, "risk_score", "ANY"),
+				),
+			},
+		},
+	})
 }

@@ -189,7 +189,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 			"risk_score": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     "ANY",
+				Computed:    true,
 				Description: "The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH",
 			},
 		},
@@ -384,9 +384,12 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
 			Condition: d.Get("custom_expression").(string),
 		},
-		RiskScore: &sdk.RiskScorePolicyRuleCondition{
-			Level: d.Get("risk_score").(string),
-		},
+	}
+	riskScore, ok := d.GetOk("risk_score")
+	if ok {
+		rule.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
+			Level: riskScore.(string),
+		}
 	}
 	isRegistered, ok := d.GetOk("device_is_registered")
 	if ok && isRegistered.(bool) {
