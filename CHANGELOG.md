@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.6.3 (November 29, 2023)
+
+### BUG FIXES
+
+*  Hot fix due to breaking change in okta-sdk-golang [#1838](https://github.com/okta/terraform-provider-okta/pull/1838). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.6.2 (November 28, 2023)
 
 ### BUG FIXES
