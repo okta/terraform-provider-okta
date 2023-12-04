@@ -247,6 +247,7 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewOrgMetadataDataSource,
+		NewDefaultSigninPageDataSource,
 	}
 }
 
