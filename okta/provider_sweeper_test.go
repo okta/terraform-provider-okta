@@ -363,7 +363,7 @@ func sweepLinkDefinitions(client *testClient) error {
 
 func sweepLogStreams(client *testClient) error {
 	var errorList []error
-	streams, _, err := client.sdkV3Client.LogStreamApi.ListLogStreams(context.Background()).Execute()
+	streams, _, err := client.sdkV3Client.LogStreamAPI.ListLogStreams(context.Background()).Execute()
 	if err != nil {
 		return err
 	}
@@ -379,7 +379,7 @@ func sweepLogStreams(client *testClient) error {
 		}
 
 		if strings.HasPrefix(name, testResourcePrefix) {
-			if _, err = client.sdkV3Client.LogStreamApi.DeleteLogStream(context.Background(), id).Execute(); err != nil {
+			if _, err = client.sdkV3Client.LogStreamAPI.DeleteLogStream(context.Background(), id).Execute(); err != nil {
 				errorList = append(errorList, err)
 				continue
 			}

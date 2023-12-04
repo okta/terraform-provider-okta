@@ -19,5 +19,3 @@ resource "okta_log_stream" "splunk_log_stream_example" {
     token = "58A7C8D6-4E2F-4C3B-8F5B-D4E2F3A4B5C6"
   }
 }
-
-

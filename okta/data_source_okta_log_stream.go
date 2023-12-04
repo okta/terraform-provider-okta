@@ -3,9 +3,10 @@ package okta
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 func dataSourceLogStream() *schema.Resource {
@@ -52,57 +53,74 @@ func dataSourceLogStreamRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	var (
 		err       error
-		logStream *sdk.LogStream
+		logStream *providerLogStream
 	)
 	if id != "" {
-		logStream, _, err = getOktaClientFromMetadata(m).LogStream.GetLogStream(ctx, id)
+		logStreamResp, _, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.GetLogStream(ctx, id).Execute()
+		if err != nil {
+			return diag.Errorf("failed to get log stream %s: %v", id, err)
+		}
+		logStream, err = normalizeLogSteamResponse(logStreamResp)
+		if err != nil {
+			return diag.Errorf("failed to read log stream properties: %v", err)
+		}
 	} else {
 		logStream, err = findLogStreamByName(ctx, m, name)
+		if err != nil {
+			return diag.Errorf("failed to find log stream %q: %v", name, err)
+		}
 	}
-	if err != nil {
-		return diag.Errorf("failed to find log stream: %v", err)
-	}
+
 	d.SetId(logStream.Id)
 	_ = d.Set("name", logStream.Name)
 	_ = d.Set("type", logStream.Type)
 	_ = d.Set("status", logStream.Status)
 
 	settings := make(map[string]interface{})
+	// aws
 	assignIfNotEmpty(&settings, "account_id", logStream.Settings.AccountId)
 	assignIfNotEmpty(&settings, "event_source_name", logStream.Settings.EventSourceName)
 	assignIfNotEmpty(&settings, "region", logStream.Settings.Region)
+
+	// splunk
 	assignIfNotEmpty(&settings, "edition", logStream.Settings.Edition)
 	assignIfNotEmpty(&settings, "host", logStream.Settings.Host)
+
 	_ = d.Set("settings", settings)
 
 	return nil
 }
 
-func findLogStreamByName(ctx context.Context, m interface{}, name string) (*sdk.LogStream, error) {
-	client := getOktaClientFromMetadata(m)
-	logStreams, resp, err := client.LogStream.ListLogStreams(ctx, nil)
+func findLogStreamByName(ctx context.Context, m interface{}, name string) (*providerLogStream, error) {
+	var logStreamListResp []okta.ListLogStreams200ResponseInner
+	logStreamListResp, resp, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.ListLogStreams(ctx).Execute()
 	if err != nil {
 		return nil, err
 	}
-	for i := range logStreams {
-		if logStreams[i].Name == name {
-			return logStreams[i], nil
+	moreStreams := true
+	for moreStreams {
+		moreStreams = false
+		for _, logStreamResp := range logStreamListResp {
+			var streamName string
+			if logStreamResp.LogStreamAws != nil {
+				streamName = logStreamResp.LogStreamAws.Name
+			}
+			if logStreamResp.LogStreamSplunk != nil {
+				streamName = logStreamResp.LogStreamSplunk.Name
+			}
+
+			if streamName == name {
+				return normalizeLogSteamResponse(&logStreamResp)
+			}
 		}
-	}
-	for {
-		var moreLogStreams []*sdk.LogStream
 		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &moreLogStreams)
+			moreStreams = true
+			var nextLogStreamListResp []okta.ListLogStreams200ResponseInner
+			resp, err = resp.Next(&nextLogStreamListResp)
 			if err != nil {
 				return nil, err
 			}
-			for i := range moreLogStreams {
-				if moreLogStreams[i].Name == name {
-					return moreLogStreams[i], nil
-				}
-			}
-		} else {
-			break
+			logStreamListResp = nextLogStreamListResp
 		}
 	}
 	return nil, fmt.Errorf("log stream with name '%s' does not exist", name)

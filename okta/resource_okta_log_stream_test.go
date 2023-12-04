@@ -56,7 +56,7 @@ func TestAccResourceOktaLogStream_crud(t *testing.T) {
 }
 
 func doesLogStreamExist(id string) (bool, error) {
-	client := sdkV2ClientForTest()
-	_, response, err := client.LogStream.GetLogStream(context.Background(), id)
-	return doesResourceExist(response, err)
+	client := sdkV3ClientForTest()
+	_, response, err := client.LogStreamAPI.GetLogStream(context.Background(), id).Execute()
+	return doesResourceExistV3(response, err)
 }

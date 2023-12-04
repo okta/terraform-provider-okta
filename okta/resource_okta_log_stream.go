@@ -3,11 +3,12 @@ package okta
 import (
 	"context"
 	"fmt"
+	"regexp"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"regexp"
+	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
 const (
@@ -18,9 +19,11 @@ const (
 	logStreamSplunkEditionGcp         = "gcp"
 )
 
-var awsEventBridgeEventSourceNameRegex = regexp.MustCompile(`^[\\.\\-_A-Za-z0-9]{1,75}$`)
-var splunkTokenRegex = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
-var splunkHostRegex = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*\.splunkcloud(\.gc\.com|\.fed\.com|\.com|\.mil)$`)
+var (
+	awsEventBridgeEventSourceNameRegex = regexp.MustCompile(`^[\\.\\-_A-Za-z0-9]{1,75}$`)
+	splunkTokenRegex                   = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
+	splunkHostRegex                    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*\.splunkcloud(\.gc\.com|\.fed\.com|\.com|\.mil)$`)
+)
 
 func resourceLogStream() *schema.Resource {
 	return &schema.Resource{
@@ -104,21 +107,41 @@ func resourceLogStreamCreate(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	requestLogStream := buildLogStream(d)
-	logStream, _, err := getOktaClientFromMetadata(m).LogStream.CreateLogStream(ctx, requestLogStream)
+	logStreamReq := getOktaV3ClientFromMetadata(m).LogStreamAPI.CreateLogStream(ctx)
+	logStreamBody, err := buildLogStreamCreate(d)
+	if err != nil {
+		return diag.Errorf("invalid log stream format: %v", err)
+	}
+	logStreamReq = logStreamReq.Instance(*logStreamBody)
+	resp, _, err := logStreamReq.Execute()
 	if err != nil {
 		return diag.Errorf("failed to create log stream: %v", err)
+	}
+	logStream, err := normalizeLogSteamResponse(resp)
+	if err != nil {
+		return diag.Errorf("failed to normalize log stream: %v", err)
 	}
 
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != "" && oldStatus != newStatus {
+		var resp *okta.ListLogStreams200ResponseInner
 		if newStatus == statusActive {
-			logStream, _, err = getOktaClientFromMetadata(m).LogStream.ActivateLogStream(ctx, logStream.Id)
+			resp, _, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				return diag.Errorf("failed to activate log stream: %v", err)
+			}
 		} else {
-			logStream, _, err = getOktaClientFromMetadata(m).LogStream.DeactivateLogStream(ctx, logStream.Id)
+			resp, _, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				return diag.Errorf("failed to deactivate log stream: %v", err)
+			}
 		}
-		if err != nil {
-			return diag.Errorf("failed to change log stream status: %v", err)
+
+		if resp.LogStreamAws != nil {
+			logStream.Status = resp.LogStreamAws.Status
+		}
+		if resp.LogStreamSplunk != nil {
+			logStream.Status = resp.LogStreamSplunk.Status
 		}
 	}
 
@@ -129,9 +152,13 @@ func resourceLogStreamCreate(ctx context.Context, d *schema.ResourceData, m inte
 }
 
 func resourceLogStreamRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logStream, resp, err := getOktaClientFromMetadata(m).LogStream.GetLogStream(ctx, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	logStreamResp, _, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.GetLogStream(ctx, d.Id()).Execute()
+	if err != nil {
 		return diag.Errorf("failed to get log stream: %v", err)
+	}
+	logStream, err := normalizeLogSteamResponse(logStreamResp)
+	if err != nil {
+		return diag.Errorf("failed to read log stream properties: %v", err)
 	}
 	return fillResourceDataFromLogStream(d, logStream)
 }
@@ -141,35 +168,39 @@ func resourceLogStreamUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	logStream, _, err := getOktaClientFromMetadata(m).LogStream.UpdateLogStream(ctx, d.Id(), buildLogStream(d))
+	logStreamReq := getOktaV3ClientFromMetadata(m).LogStreamAPI.ReplaceLogStream(ctx, d.Id())
+	logStreamBody, err := buildLogStreamReplace(d)
+	if err != nil {
+		return diag.Errorf("invalid log stream format: %v", err)
+	}
+	logStreamReq = logStreamReq.Instance(*logStreamBody)
+	resp, _, err := logStreamReq.Execute()
 	if err != nil {
 		return diag.Errorf("failed to update log stream: %v", err)
 	}
-	oldStatus, newStatus := d.GetChange("status")
-	if oldStatus != newStatus {
-		if newStatus == statusActive {
-			_, _, err = getOktaClientFromMetadata(m).LogStream.ActivateLogStream(ctx, d.Id())
-		} else {
-			_, _, err = getOktaClientFromMetadata(m).LogStream.DeactivateLogStream(ctx, d.Id())
-		}
-		if err != nil {
-			return diag.Errorf("failed to change log stream status: %v", err)
-		}
+	logStream, err := normalizeLogSteamResponse(resp)
+	if err != nil {
+		return diag.Errorf("failed to normalize log stream: %v", err)
 	}
-	//return resourceLogStreamRead(ctx, d, m)
-	return fillResourceDataFromLogStream(d, logStream)
+
+	diags := fillResourceDataFromLogStream(d, logStream)
+	d.SetId(logStream.Id)
+	return diags
 }
 
 func resourceLogStreamDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, _ = getOktaClientFromMetadata(m).LogStream.DeactivateLogStream(ctx, d.Id())
-	resp, err := getOktaClientFromMetadata(m).LogStream.DeleteLogStream(ctx, d.Id())
-	if err := suppressErrorOn404(resp, err); err != nil {
+	_, _, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.DeactivateLogStream(ctx, d.Id()).Execute()
+	if err != nil {
+		return diag.Errorf("failed to deactivate log stream: %v", err)
+	}
+	_, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.DeleteLogStream(ctx, d.Id()).Execute()
+	if err != nil {
 		return diag.Errorf("failed to delete log stream: %v", err)
 	}
 	return nil
 }
 
-func fillResourceDataFromLogStream(d *schema.ResourceData, logStream *sdk.LogStream) diag.Diagnostics {
+func fillResourceDataFromLogStream(d *schema.ResourceData, logStream *providerLogStream) diag.Diagnostics {
 	if logStream == nil {
 		d.SetId("")
 		return nil
@@ -178,34 +209,157 @@ func fillResourceDataFromLogStream(d *schema.ResourceData, logStream *sdk.LogStr
 	_ = d.Set("type", logStream.Type)
 	_ = d.Set("status", logStream.Status)
 
-	settings := make(map[string]interface{})
 	settingsList := d.Get("settings").(*schema.Set).List()
 	if len(settingsList) == 1 {
-		settings = settingsList[0].(map[string]interface{})
-
+		settings := settingsList[0].(map[string]interface{})
+		settings["account_id"] = logStream.Settings.AccountId
+		settings["event_source_name"] = logStream.Settings.EventSourceName
+		settings["region"] = logStream.Settings.Region
+		settings["edition"] = logStream.Settings.Edition
+		settings["host"] = logStream.Settings.Host
+		settings["token"] = logStream.Settings.Token
 	}
-	settings["account_id"] = logStream.Settings.AccountId
-	settings["event_source_name"] = logStream.Settings.EventSourceName
-	settings["region"] = logStream.Settings.Region
-	settings["edition"] = logStream.Settings.Edition
-	settings["host"] = logStream.Settings.Host
 
 	return nil
 }
 
-func buildLogStream(d *schema.ResourceData) sdk.LogStream {
+type providerLogStream struct {
+	Id       string
+	Name     string
+	Status   string
+	Type     string
+	Settings struct {
+		AccountId       string
+		EventSourceName string
+		Region          string
+		Edition         string
+		Host            string
+		Token           string
+	}
+}
+
+func normalizeLogSteamResponse(resp *okta.ListLogStreams200ResponseInner) (*providerLogStream, error) {
+	ls := providerLogStream{}
+	if resp.LogStreamAws != nil {
+		ls.Id = resp.LogStreamAws.Id
+		ls.Name = resp.LogStreamAws.Name
+		ls.Status = resp.LogStreamAws.Status
+		ls.Type = string(resp.LogStreamAws.Type)
+		ls.Settings.AccountId = resp.LogStreamAws.Settings.AccountId
+		ls.Settings.EventSourceName = resp.LogStreamAws.Settings.EventSourceName
+		ls.Settings.Region = string(resp.LogStreamAws.Settings.Region)
+	} else if resp.LogStreamSplunk != nil {
+		ls.Id = resp.LogStreamSplunk.Id
+		ls.Name = resp.LogStreamSplunk.Name
+		ls.Status = resp.LogStreamSplunk.Status
+		ls.Type = string(resp.LogStreamSplunk.Type)
+		ls.Settings.Edition = string(resp.LogStreamSplunk.Settings.Edition)
+		ls.Settings.Host = resp.LogStreamSplunk.Settings.Host
+		ls.Settings.Token = resp.LogStreamSplunk.Settings.Token
+	} else {
+		return nil, fmt.Errorf("log stream is type other than aws or splunk, this is a provider bug")
+	}
+
+	return &ls, nil
+}
+
+func buildLogStreamReplace(d *schema.ResourceData) (*okta.ReplaceLogStreamRequest, error) {
+	var _type interface{}
+	var ok bool
+	if _type, ok = d.GetOk("type"); !ok {
+		return nil, fmt.Errorf("required argument %q not set", "type")
+	}
+	var lsps okta.LogStreamPutSchema
+	if _type.(string) != "" {
+		lsps = okta.LogStreamPutSchema{
+			Name: d.Get("name").(string),
+			Type: okta.LogStreamType(_type.(string)),
+		}
+	}
+
 	settings := d.Get("settings").(*schema.Set).List()[0].(map[string]interface{})
-	return sdk.LogStream{
-		Name: d.Get("name").(string),
-		Type: d.Get("type").(string),
-		Settings: &sdk.LogStreamSettings{
-			AccountId:       settings["account_id"].(string),
-			EventSourceName: settings["event_source_name"].(string),
-			Region:          settings["region"].(string),
-			Host:            settings["host"].(string),
-			Token:           settings["token"].(string),
-			Edition:         settings["edition"].(string),
-		},
+	awsAccountId := settings["account_id"].(string)
+	awsEventSourceName := settings["event_source_name"].(string)
+	awsRegion := settings["region"].(string)
+	splunkHost := settings["host"].(string)
+	splunkEdition := settings["edition"].(string)
+
+	switch _type.(string) {
+	case logStreamTypeEventBridge:
+		return &okta.ReplaceLogStreamRequest{
+			LogStreamAwsPutSchema: &okta.LogStreamAwsPutSchema{
+				LogStreamPutSchema: lsps,
+				Settings: okta.LogStreamSettingsAws{
+					AccountId:       awsAccountId,
+					EventSourceName: awsEventSourceName,
+					Region:          okta.AwsRegion(awsRegion),
+				},
+			},
+		}, nil
+	case logStreamTypeSplunk:
+		return &okta.ReplaceLogStreamRequest{
+			LogStreamSplunkPutSchema: &okta.LogStreamSplunkPutSchema{
+				LogStreamPutSchema: lsps,
+				Settings: okta.LogStreamSettingsSplunkPut{
+					Edition: okta.SplunkEdition(splunkEdition),
+					Host:    splunkHost,
+				},
+			},
+		}, nil
+	default:
+		return nil, fmt.Errorf("unknown type %q argument", _type)
+	}
+}
+
+func buildLogStreamCreate(d *schema.ResourceData) (*okta.ListLogStreams200ResponseInner, error) {
+	var _type interface{}
+	var ok bool
+	if _type, ok = d.GetOk("type"); !ok {
+		return nil, fmt.Errorf("required argument %q not set", "type")
+	}
+	var ls okta.LogStream
+	if _type.(string) != "" {
+		ls = okta.LogStream{
+			Id:     d.Id(),
+			Name:   d.Get("name").(string),
+			Status: d.Get("status").(string),
+			Type:   okta.LogStreamType(_type.(string)),
+		}
+	}
+
+	settings := d.Get("settings").(*schema.Set).List()[0].(map[string]interface{})
+	awsAccountId := settings["account_id"].(string)
+	awsEventSourceName := settings["event_source_name"].(string)
+	awsRegion := settings["region"].(string)
+	splunkHost := settings["host"].(string)
+	splunkToken := settings["token"].(string)
+	splunkEdition := settings["edition"].(string)
+
+	switch _type.(string) {
+	case logStreamTypeEventBridge:
+		return &okta.ListLogStreams200ResponseInner{
+			LogStreamAws: &okta.LogStreamAws{
+				LogStream: ls,
+				Settings: okta.LogStreamSettingsAws{
+					AccountId:       awsAccountId,
+					EventSourceName: awsEventSourceName,
+					Region:          okta.AwsRegion(awsRegion),
+				},
+			},
+		}, nil
+	case logStreamTypeSplunk:
+		return &okta.ListLogStreams200ResponseInner{
+			LogStreamSplunk: &okta.LogStreamSplunk{
+				LogStream: ls,
+				Settings: okta.LogStreamSettingsSplunk{
+					Edition: okta.SplunkEdition(splunkEdition),
+					Host:    splunkHost,
+					Token:   splunkToken,
+				},
+			},
+		}, nil
+	default:
+		return nil, fmt.Errorf("unknown type %q argument", _type)
 	}
 }
 
