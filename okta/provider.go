@@ -297,7 +297,6 @@ func Provider() *schema.Provider {
 			inlineHook:                    resourceInlineHook(),
 			linkDefinition:                resourceLinkDefinition(),
 			linkValue:                     resourceLinkValue(),
-			logStream:                     resourceLogStream(),
 			networkZone:                   resourceNetworkZone(),
 			orgConfiguration:              resourceOrgConfiguration(),
 			orgSupport:                    resourceOrgSupport(),

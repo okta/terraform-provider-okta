@@ -1,4 +1,4 @@
-resource "okta_log_stream" "eventbridge_log_stream_example" {
+resource "okta_log_stream" "eventbridge" {
   name     = "testAcc_replace_with_uuid EventBridge"
   type     = "aws_eventbridge"
   status   = "ACTIVE"
@@ -9,10 +9,10 @@ resource "okta_log_stream" "eventbridge_log_stream_example" {
   }
 }
 
-resource "okta_log_stream" "splunk_log_stream_example" {
+resource "okta_log_stream" "splunk" {
   name              = "testAcc_replace_with_uuid Splunk"
   type              = "splunk_cloud_logstreaming"
-  status            = "ACTIVE"
+  status            = "INACTIVE"
   settings {
     host = "acme.splunkcloud.com"
     edition = "aws"

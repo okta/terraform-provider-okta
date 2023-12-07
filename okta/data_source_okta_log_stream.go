@@ -78,7 +78,7 @@ func dataSourceLogStreamRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	settings := make(map[string]interface{})
 	// aws
-	assignIfNotEmpty(&settings, "account_id", logStream.Settings.AccountId)
+	assignIfNotEmpty(&settings, "account_id", logStream.Settings.AccountID)
 	assignIfNotEmpty(&settings, "event_source_name", logStream.Settings.EventSourceName)
 	assignIfNotEmpty(&settings, "region", logStream.Settings.Region)
 

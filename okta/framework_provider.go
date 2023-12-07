@@ -257,6 +257,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewAppAccessPolicyAssignmentResource,
 		NewAppOAuthRoleAssignmentResource,
 		NewBrandResource,
+		NewLogStreamResource,
 		NewPolicyDeviceAssuranceAndroidResource,
 		NewPolicyDeviceAssuranceChromeOSResource,
 		NewPolicyDeviceAssuranceIOSResource,

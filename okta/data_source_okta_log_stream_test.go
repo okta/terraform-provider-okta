@@ -14,9 +14,9 @@ func TestAccDataSourceOktaLogStream_read(t *testing.T) {
 	splunkDataSource := fmt.Sprintf("data.%s.test_by_name", logStream)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

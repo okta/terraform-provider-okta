@@ -5,9 +5,15 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
@@ -25,75 +31,140 @@ var (
 	splunkHostRegex                    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*\.splunkcloud(\.gc\.com|\.fed\.com|\.com|\.mil)$`)
 )
 
-func resourceLogStream() *schema.Resource {
-	return &schema.Resource{
-		CreateContext: resourceLogStreamCreate,
-		ReadContext:   resourceLogStreamRead,
-		UpdateContext: resourceLogStreamUpdate,
-		DeleteContext: resourceLogStreamDelete,
-		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:        schema.TypeString,
-				Required:    true,
+type logStreamResource struct {
+	*Config
+}
+
+type logStreamModel struct {
+	ID       types.String `tfsdk:"id"`
+	Name     types.String `tfsdk:"name"`
+	Type     types.String `tfsdk:"type"`
+	Status   types.String `tfsdk:"status"`
+	Settings types.Object `tfsdk:"settings"`
+}
+type logStreamSettingsModel struct {
+	AccountID       types.String `tfsdk:"account_id"`
+	EventSourceName types.String `tfsdk:"event_source_name"`
+	Region          types.String `tfsdk:"region"`
+	Edition         types.String `tfsdk:"edition"`
+	Host            types.String `tfsdk:"host"`
+	Token           types.String `tfsdk:"token"`
+}
+
+func NewLogStreamResource() resource.Resource {
+	return &logStreamResource{}
+}
+
+func (r *logStreamResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_log_stream"
+}
+
+func (r *logStreamResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Manages log streams",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Log Stream ID",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"name": schema.StringAttribute{
 				Description: "Unique name for the Log Stream object",
-			},
-			"type": {
-				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
-				Description: "Streaming provider used - 'aws_eventbridge' or 'splunk_cloud_logstreaming'",
-				ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
-					logStreamTypeEventBridge, logStreamTypeSplunk,
-				}, false)),
 			},
-			"status": statusSchema,
-			"settings": {
-				Type:     schema.TypeSet,
-				Required: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"account_id": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							ForceNew:         true,
-							Description:      "AWS account ID. Required only for 'aws_eventbridge' type",
-							ValidateDiagFunc: validation.ToDiagFunc(validation.StringLenBetween(12, 12)),
+			"type": schema.StringAttribute{
+				Description: "Streaming provider used - 'aws_eventbridge' or 'splunk_cloud_logstreaming'",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					// force new
+					stringplanmodifier.RequiresReplace(),
+				},
+				Validators: []validator.String{
+					stringvalidator.OneOf([]string{
+						logStreamTypeEventBridge,
+						logStreamTypeSplunk,
+					}...),
+				},
+			},
+			"status": schema.StringAttribute{
+				Description: "Stream status",
+				Optional:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf([]string{
+						statusActive,
+						statusInactive,
+					}...),
+				},
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"account_id": schema.StringAttribute{
+						Description: "AWS account ID. Required only for 'aws_eventbridge' type",
+						Optional:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
 						},
-						"event_source_name": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							ForceNew:         true,
-							Description:      "An alphanumeric name (no spaces) to identify this event source in AWS EventBridge. Required only for 'aws_eventbridge' type",
-							ValidateDiagFunc: validation.ToDiagFunc(validation.StringMatch(awsEventBridgeEventSourceNameRegex, "Event Source must have an alphanumeric name (no spaces) shorter than 76 characters")),
+						Validators: []validator.String{
+							stringvalidator.LengthBetween(12, 12),
 						},
-						"region": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							ForceNew:    true,
-							Description: "The destination AWS region where event source is located. Required only for 'aws_eventbridge' type",
+					},
+					"event_source_name": schema.StringAttribute{
+						Description: "An alphanumeric name (no spaces) to identify this event source in AWS EventBridge. Required only for 'aws_eventbridge' type",
+						Optional:    true,
+						PlanModifiers: []planmodifier.String{
+							// force new
+							stringplanmodifier.RequiresReplace(),
 						},
-						"edition": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Edition of the Splunk Cloud instance. Could be one of: 'aws', 'aws_govcloud', 'gcp'. Required only for 'splunk_cloud_logstreaming' type",
-							ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
-								logStreamSplunkEditionAws, logStreamSplunkEditionAwsGovCloud, logStreamSplunkEditionGcp,
-							}, false)),
+						Validators: []validator.String{
+							stringvalidator.RegexMatches(awsEventBridgeEventSourceNameRegex, "Event Source must have an alphanumeric name (no spaces) shorter than 76 characters"),
 						},
-						"host": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							Description:      "The domain name for Splunk Cloud instance. Don't include http or https in the string. For example: 'acme.splunkcloud.com'. Required only for 'splunk_cloud_logstreaming' type",
-							ValidateDiagFunc: validation.ToDiagFunc(validation.StringMatch(splunkHostRegex, "Splunk host must match the pattern: `^(?!(?:http-inputs-))([a-z0-9]+(-[a-z0-9]+)*){1,100}\\\\.splunkcloud(gc\\\\.com|fed\\\\.com|\\\\.com|\\\\.mil)$`")),
+					},
+					"region": schema.StringAttribute{
+						Description: "The destination AWS region where event source is located. Required only for 'aws_eventbridge' type",
+						Optional:    true,
+						PlanModifiers: []planmodifier.String{
+							// force new
+							stringplanmodifier.RequiresReplace(),
 						},
-						"token": {
-							Type:             schema.TypeString,
-							Optional:         true,
-							ForceNew:         true,
-							Sensitive:        true,
-							Description:      "The HEC token for your Splunk Cloud HTTP Event Collector. Required only for 'splunk_cloud_logstreaming' type",
-							ValidateDiagFunc: validation.ToDiagFunc(validation.StringMatch(splunkTokenRegex, "Splunk token must match the pattern: `(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`")),
+					},
+					"edition": schema.StringAttribute{
+						Description: "Edition of the Splunk Cloud instance. Could be one of: 'aws', 'aws_govcloud', 'gcp'. Required only for 'splunk_cloud_logstreaming' type",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOf([]string{
+								logStreamSplunkEditionAws,
+								logStreamSplunkEditionAwsGovCloud,
+								logStreamSplunkEditionGcp,
+							}...),
+						},
+					},
+					"host": schema.StringAttribute{
+						Description: "The domain name for Splunk Cloud instance. Don't include http or https in the string. For example: 'acme.splunkcloud.com'. Required only for 'splunk_cloud_logstreaming' type",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.RegexMatches(
+								splunkHostRegex,
+								"Splunk host must match the pattern: `^(?!(?:http-inputs-))([a-z0-9]+(-[a-z0-9]+)*){1,100}\\\\.splunkcloud(gc\\\\.com|fed\\\\.com|\\\\.com|\\\\.mil)$`",
+							),
+						},
+					},
+					"token": schema.StringAttribute{
+						Description: "The HEC token for your Splunk Cloud HTTP Event Collector. Required only for 'splunk_cloud_logstreaming' type",
+						Optional:    true,
+						Sensitive:   true,
+						PlanModifiers: []planmodifier.String{
+							// force new
+							stringplanmodifier.RequiresReplace(),
+						},
+						Validators: []validator.String{
+							stringvalidator.RegexMatches(
+								splunkTokenRegex,
+								"Splunk token must match the pattern: `(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`",
+							),
 						},
 					},
 				},
@@ -102,124 +173,322 @@ func resourceLogStream() *schema.Resource {
 	}
 }
 
-func resourceLogStreamCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateLogStream(d)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	logStreamReq := getOktaV3ClientFromMetadata(m).LogStreamAPI.CreateLogStream(ctx)
-	logStreamBody, err := buildLogStreamCreate(d)
-	if err != nil {
-		return diag.Errorf("invalid log stream format: %v", err)
-	}
-	logStreamReq = logStreamReq.Instance(*logStreamBody)
-	resp, _, err := logStreamReq.Execute()
-	if err != nil {
-		return diag.Errorf("failed to create log stream: %v", err)
-	}
-	logStream, err := normalizeLogSteamResponse(resp)
-	if err != nil {
-		return diag.Errorf("failed to normalize log stream: %v", err)
+func (r *logStreamResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
 	}
 
-	oldStatus, newStatus := d.GetChange("status")
-	if oldStatus != "" && oldStatus != newStatus {
-		var resp *okta.ListLogStreams200ResponseInner
-		if newStatus == statusActive {
-			resp, _, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
-			if err != nil {
-				return diag.Errorf("failed to activate log stream: %v", err)
-			}
-		} else {
-			resp, _, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
-			if err != nil {
-				return diag.Errorf("failed to deactivate log stream: %v", err)
-			}
-		}
-
-		if resp.LogStreamAws != nil {
-			logStream.Status = resp.LogStreamAws.Status
-		}
-		if resp.LogStreamSplunk != nil {
-			logStream.Status = resp.LogStreamSplunk.Status
-		}
+	p, ok := req.ProviderData.(*Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
 	}
 
-	diags := fillResourceDataFromLogStream(d, logStream)
-	d.SetId(logStream.Id)
-
-	return diags
+	r.Config = p
 }
 
-func resourceLogStreamRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logStreamResp, _, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.GetLogStream(ctx, d.Id()).Execute()
+func (r *logStreamResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var state logStreamModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	logStreamCreateRequest := r.oktaSDKClientV3.LogStreamAPI.CreateLogStream(ctx)
+	logStreamCreateRequestBody := buildLogStreamCreateBody(ctx, &state)
+	if logStreamCreateRequestBody == nil {
+		resp.Diagnostics.AddError(
+			"failed to build log stream create request",
+			fmt.Sprintf("unknown type %q", state.Type.ValueString()),
+		)
+		return
+	}
+	logStreamCreateRequest = logStreamCreateRequest.Instance(*logStreamCreateRequestBody)
+	logStreamResp, _, err := logStreamCreateRequest.Execute()
 	if err != nil {
-		return diag.Errorf("failed to get log stream: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to create log stream",
+			err.Error(),
+		)
+		return
 	}
 	logStream, err := normalizeLogSteamResponse(logStreamResp)
 	if err != nil {
-		return diag.Errorf("failed to read log stream properties: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to normalize log stream",
+			err.Error(),
+		)
+		return
 	}
-	return fillResourceDataFromLogStream(d, logStream)
+
+	// NOTE: Okta API doesn't allow directly setting the status on the log
+	// stream when it is created. Therefore, we need to compare the operator's
+	// intentions in the plan with the API result. See Create Log Stream:
+	// https://developer.okta.com/docs/api/openapi/okta-management/management/tag/LogStream/#tag/LogStream/operation/createLogStream
+	planStatus := state.Status.ValueString()
+	if planStatus != logStream.Status {
+		if planStatus == statusActive {
+			_, _, err = r.oktaSDKClientV3.LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"failed to activate log stream",
+					err.Error(),
+				)
+				return
+			}
+			logStream.Status = statusActive
+		}
+		if planStatus == statusInactive {
+			_, _, err = r.oktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"failed to deactivate log stream",
+					err.Error(),
+				)
+				return
+			}
+			logStream.Status = statusInactive
+		}
+	}
+
+	applyLogStreamToState(ctx, logStream, &state)
+
+	// need to set the "new" state of the log stream model, TF runtime does
+	// change detection there
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	// don't need to check for error, we are returning already
 }
 
-func resourceLogStreamUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := validateLogStream(d)
-	if err != nil {
-		return diag.FromErr(err)
+func (r *logStreamResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data logStreamModel
+	resp.Diagnostics.Append(resp.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	logStreamReq := getOktaV3ClientFromMetadata(m).LogStreamAPI.ReplaceLogStream(ctx, d.Id())
-	logStreamBody, err := buildLogStreamReplace(d)
+	logStreamResp, _, err := r.oktaSDKClientV3.LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
-		return diag.Errorf("invalid log stream format: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to get log stream",
+			err.Error(),
+		)
+		return
 	}
-	logStreamReq = logStreamReq.Instance(*logStreamBody)
-	resp, _, err := logStreamReq.Execute()
+	logStream, err := normalizeLogSteamResponse(logStreamResp)
 	if err != nil {
-		return diag.Errorf("failed to update log stream: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to format log stream",
+			err.Error(),
+		)
+		return
 	}
-	logStream, err := normalizeLogSteamResponse(resp)
+	applyLogStreamToState(ctx, logStream, &data)
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var state logStreamModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	logStreamReplaceRequest := r.oktaSDKClientV3.LogStreamAPI.ReplaceLogStream(ctx, state.ID.ValueString())
+	logStreamReplaceBody := buildLogStreamReplaceBody(ctx, &state)
+	if logStreamReplaceBody == nil {
+		resp.Diagnostics.AddError(
+			"failed to build log stream replace request",
+			fmt.Sprintf("unknown type %q", state.Type.ValueString()),
+		)
+		return
+	}
+	logStreamReplaceRequest = logStreamReplaceRequest.Instance(*logStreamReplaceBody)
+	logStreamResp, _, err := logStreamReplaceRequest.Execute()
 	if err != nil {
-		return diag.Errorf("failed to normalize log stream: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to replace log stream",
+			err.Error(),
+		)
+		return
+	}
+	logStream, err := normalizeLogSteamResponse(logStreamResp)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to normalize log stream",
+			err.Error(),
+		)
+		return
 	}
 
-	diags := fillResourceDataFromLogStream(d, logStream)
-	d.SetId(logStream.Id)
-	return diags
+	// NOTE: Okta API doesn't allow directly setting the status on the log
+	// stream when it is created. Therefore, we need to compare the operator's
+	// intentions in the plan with the API result. See Create Log Stream:
+	// https://developer.okta.com/docs/api/openapi/okta-management/management/tag/LogStream/#tag/LogStream/operation/createLogStream
+	planStatus := state.Status.ValueString()
+	if planStatus != logStream.Status {
+		if planStatus == statusActive {
+			_, _, err = r.oktaSDKClientV3.LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"failed to activate log stream",
+					err.Error(),
+				)
+				return
+			}
+			logStream.Status = statusActive
+		}
+		if planStatus == statusInactive {
+			_, _, err = r.oktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"failed to deactivate log stream",
+					err.Error(),
+				)
+				return
+			}
+			logStream.Status = statusInactive
+		}
+	}
+
+	applyLogStreamToState(ctx, logStream, &state)
+
+	// need to set the "new" state of the log stream model, TF runtime does
+	// change detection there
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	// don't need to check for error, we are returning already
+
 }
 
-func resourceLogStreamDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaV3ClientFromMetadata(m).LogStreamAPI.DeactivateLogStream(ctx, d.Id()).Execute()
-	if err != nil {
-		return diag.Errorf("failed to deactivate log stream: %v", err)
+func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data logStreamModel
+	resp.Diagnostics.Append(resp.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	_, err = getOktaV3ClientFromMetadata(m).LogStreamAPI.DeleteLogStream(ctx, d.Id()).Execute()
+
+	_, _, err := r.oktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
-		return diag.Errorf("failed to delete log stream: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to deactivate log stream",
+			err.Error(),
+		)
+		return
+	}
+	_, err = r.oktaSDKClientV3.LogStreamAPI.DeleteLogStream(ctx, data.ID.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to delete log stream",
+			err.Error(),
+		)
+		return
+	}
+}
+
+func (r *logStreamResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func applyLogStreamToState(ctx context.Context, ls *providerLogStream, m *logStreamModel) {
+	m.ID = types.StringValue(ls.Id)
+	m.Name = types.StringValue(ls.Name)
+	m.Status = types.StringValue(ls.Status)
+	m.Type = types.StringValue(ls.Type)
+
+	settings := &logStreamSettingsModel{}
+	m.Settings.As(ctx, settings, basetypes.ObjectAsOptions{})
+
+	if ls.Settings.AccountID != "" {
+		settings.AccountID = types.StringValue(ls.Settings.AccountID)
+	}
+	if ls.Settings.EventSourceName != "" {
+		settings.EventSourceName = types.StringValue(ls.Settings.EventSourceName)
+	}
+	if ls.Settings.Region != "" {
+		settings.Region = types.StringValue(ls.Settings.Region)
+	}
+	if ls.Settings.Edition != "" {
+		settings.Edition = types.StringValue(ls.Settings.Edition)
+	}
+	if ls.Settings.Host != "" {
+		settings.Host = types.StringValue(ls.Settings.Host)
+	}
+	if ls.Settings.Token != "" {
+		settings.Token = types.StringValue(ls.Settings.Token)
+	}
+}
+
+func buildLogStreamCreateBody(ctx context.Context, m *logStreamModel) *okta.ListLogStreams200ResponseInner {
+	_type := m.Type.ValueString()
+	ls := okta.LogStream{
+		Id:     m.ID.ValueString(),
+		Name:   m.Name.ValueString(),
+		Status: m.Status.ValueString(),
+		Type:   okta.LogStreamType(m.Type.ValueString()),
+	}
+
+	settings := &logStreamSettingsModel{}
+	m.Settings.As(ctx, settings, basetypes.ObjectAsOptions{})
+
+	switch _type {
+	case logStreamTypeEventBridge:
+		var settingAws okta.LogStreamSettingsAws
+		settingAws.AccountId = settings.AccountID.ValueString()
+		settingAws.EventSourceName = settings.EventSourceName.ValueString()
+		settingAws.Region = okta.AwsRegion(settings.Region.ValueString())
+		return &okta.ListLogStreams200ResponseInner{
+			LogStreamAws: &okta.LogStreamAws{
+				LogStream: ls,
+				Settings:  settingAws,
+			},
+		}
+	case logStreamTypeSplunk:
+		var settingSplunk okta.LogStreamSettingsSplunk
+		settingSplunk.Edition = okta.SplunkEdition(settings.Edition.ValueString())
+		settingSplunk.Host = settings.Host.ValueString()
+		settingSplunk.Token = settings.Token.ValueString()
+		return &okta.ListLogStreams200ResponseInner{
+			LogStreamSplunk: &okta.LogStreamSplunk{
+				LogStream: ls,
+				Settings:  settingSplunk,
+			},
+		}
 	}
 	return nil
 }
 
-func fillResourceDataFromLogStream(d *schema.ResourceData, logStream *providerLogStream) diag.Diagnostics {
-	if logStream == nil {
-		d.SetId("")
-		return nil
-	}
-	_ = d.Set("name", logStream.Name)
-	_ = d.Set("type", logStream.Type)
-	_ = d.Set("status", logStream.Status)
-
-	settingsList := d.Get("settings").(*schema.Set).List()
-	if len(settingsList) == 1 {
-		settings := settingsList[0].(map[string]interface{})
-		settings["account_id"] = logStream.Settings.AccountId
-		settings["event_source_name"] = logStream.Settings.EventSourceName
-		settings["region"] = logStream.Settings.Region
-		settings["edition"] = logStream.Settings.Edition
-		settings["host"] = logStream.Settings.Host
-		settings["token"] = logStream.Settings.Token
+func buildLogStreamReplaceBody(ctx context.Context, m *logStreamModel) *okta.ReplaceLogStreamRequest {
+	_type := m.Type.ValueString()
+	ls := okta.LogStreamPutSchema{
+		Name: m.Name.ValueString(),
+		Type: okta.LogStreamType(m.Type.ValueString()),
 	}
 
+	settings := &logStreamSettingsModel{}
+	m.Settings.As(ctx, settings, basetypes.ObjectAsOptions{})
+
+	switch _type {
+	case logStreamTypeEventBridge:
+		var settingAws okta.LogStreamSettingsAws
+		settingAws.AccountId = settings.AccountID.ValueString()
+		settingAws.EventSourceName = settings.EventSourceName.ValueString()
+		settingAws.Region = okta.AwsRegion(settings.Region.ValueString())
+		return &okta.ReplaceLogStreamRequest{
+			LogStreamAwsPutSchema: &okta.LogStreamAwsPutSchema{
+				LogStreamPutSchema: ls,
+				Settings:           settingAws,
+			},
+		}
+	case logStreamTypeSplunk:
+		var settingSplunk okta.LogStreamSettingsSplunkPut
+		settingSplunk.Edition = okta.SplunkEdition(settings.Edition.ValueString())
+		settingSplunk.Host = settings.Host.ValueString()
+		return &okta.ReplaceLogStreamRequest{
+			LogStreamSplunkPutSchema: &okta.LogStreamSplunkPutSchema{
+				LogStreamPutSchema: ls,
+				Settings:           settingSplunk,
+			},
+		}
+	}
 	return nil
 }
 
@@ -229,7 +498,7 @@ type providerLogStream struct {
 	Status   string
 	Type     string
 	Settings struct {
-		AccountId       string
+		AccountID       string
 		EventSourceName string
 		Region          string
 		Edition         string
@@ -245,7 +514,7 @@ func normalizeLogSteamResponse(resp *okta.ListLogStreams200ResponseInner) (*prov
 		ls.Name = resp.LogStreamAws.Name
 		ls.Status = resp.LogStreamAws.Status
 		ls.Type = string(resp.LogStreamAws.Type)
-		ls.Settings.AccountId = resp.LogStreamAws.Settings.AccountId
+		ls.Settings.AccountID = resp.LogStreamAws.Settings.AccountId
 		ls.Settings.EventSourceName = resp.LogStreamAws.Settings.EventSourceName
 		ls.Settings.Region = string(resp.LogStreamAws.Settings.Region)
 	} else if resp.LogStreamSplunk != nil {
@@ -261,146 +530,4 @@ func normalizeLogSteamResponse(resp *okta.ListLogStreams200ResponseInner) (*prov
 	}
 
 	return &ls, nil
-}
-
-func buildLogStreamReplace(d *schema.ResourceData) (*okta.ReplaceLogStreamRequest, error) {
-	var _type interface{}
-	var ok bool
-	if _type, ok = d.GetOk("type"); !ok {
-		return nil, fmt.Errorf("required argument %q not set", "type")
-	}
-	var lsps okta.LogStreamPutSchema
-	if _type.(string) != "" {
-		lsps = okta.LogStreamPutSchema{
-			Name: d.Get("name").(string),
-			Type: okta.LogStreamType(_type.(string)),
-		}
-	}
-
-	settings := d.Get("settings").(*schema.Set).List()[0].(map[string]interface{})
-	awsAccountId := settings["account_id"].(string)
-	awsEventSourceName := settings["event_source_name"].(string)
-	awsRegion := settings["region"].(string)
-	splunkHost := settings["host"].(string)
-	splunkEdition := settings["edition"].(string)
-
-	switch _type.(string) {
-	case logStreamTypeEventBridge:
-		return &okta.ReplaceLogStreamRequest{
-			LogStreamAwsPutSchema: &okta.LogStreamAwsPutSchema{
-				LogStreamPutSchema: lsps,
-				Settings: okta.LogStreamSettingsAws{
-					AccountId:       awsAccountId,
-					EventSourceName: awsEventSourceName,
-					Region:          okta.AwsRegion(awsRegion),
-				},
-			},
-		}, nil
-	case logStreamTypeSplunk:
-		return &okta.ReplaceLogStreamRequest{
-			LogStreamSplunkPutSchema: &okta.LogStreamSplunkPutSchema{
-				LogStreamPutSchema: lsps,
-				Settings: okta.LogStreamSettingsSplunkPut{
-					Edition: okta.SplunkEdition(splunkEdition),
-					Host:    splunkHost,
-				},
-			},
-		}, nil
-	default:
-		return nil, fmt.Errorf("unknown type %q argument", _type)
-	}
-}
-
-func buildLogStreamCreate(d *schema.ResourceData) (*okta.ListLogStreams200ResponseInner, error) {
-	var _type interface{}
-	var ok bool
-	if _type, ok = d.GetOk("type"); !ok {
-		return nil, fmt.Errorf("required argument %q not set", "type")
-	}
-	var ls okta.LogStream
-	if _type.(string) != "" {
-		ls = okta.LogStream{
-			Id:     d.Id(),
-			Name:   d.Get("name").(string),
-			Status: d.Get("status").(string),
-			Type:   okta.LogStreamType(_type.(string)),
-		}
-	}
-
-	settings := d.Get("settings").(*schema.Set).List()[0].(map[string]interface{})
-	awsAccountId := settings["account_id"].(string)
-	awsEventSourceName := settings["event_source_name"].(string)
-	awsRegion := settings["region"].(string)
-	splunkHost := settings["host"].(string)
-	splunkToken := settings["token"].(string)
-	splunkEdition := settings["edition"].(string)
-
-	switch _type.(string) {
-	case logStreamTypeEventBridge:
-		return &okta.ListLogStreams200ResponseInner{
-			LogStreamAws: &okta.LogStreamAws{
-				LogStream: ls,
-				Settings: okta.LogStreamSettingsAws{
-					AccountId:       awsAccountId,
-					EventSourceName: awsEventSourceName,
-					Region:          okta.AwsRegion(awsRegion),
-				},
-			},
-		}, nil
-	case logStreamTypeSplunk:
-		return &okta.ListLogStreams200ResponseInner{
-			LogStreamSplunk: &okta.LogStreamSplunk{
-				LogStream: ls,
-				Settings: okta.LogStreamSettingsSplunk{
-					Edition: okta.SplunkEdition(splunkEdition),
-					Host:    splunkHost,
-					Token:   splunkToken,
-				},
-			},
-		}, nil
-	default:
-		return nil, fmt.Errorf("unknown type %q argument", _type)
-	}
-}
-
-func validateLogStream(d *schema.ResourceData) error {
-	logStreamType := d.Get("type").(string)
-	settings := d.Get("settings").(*schema.Set).List()[0].(map[string]interface{})
-	awsAccountId := settings["account_id"].(string)
-	awsEventSourceName := settings["event_source_name"].(string)
-	awsRegion := settings["region"].(string)
-	splunkHost := settings["host"].(string)
-	splunkToken := settings["token"].(string)
-	splunkEdition := settings["edition"].(string)
-
-	if logStreamType == logStreamTypeEventBridge {
-		if awsAccountId == "" {
-			return fmt.Errorf(`"account_id" is required for log stream type "aws_eventbridge"`)
-		}
-		if awsEventSourceName == "" {
-			return fmt.Errorf(`"event_source_name" is required for log stream type "aws_eventbridge"`)
-		}
-		if awsRegion == "" {
-			return fmt.Errorf(`"region" is required for log stream type "aws_eventbridge"`)
-		}
-		if splunkEdition != "" || splunkHost != "" || splunkToken != "" {
-			return fmt.Errorf(`"edition", "host" and "token" are not required for log stream type "aws_eventbridge"`)
-		}
-	} else if logStreamType == logStreamTypeSplunk {
-		if splunkHost == "" {
-			return fmt.Errorf(`"host" is required for log stream type "splunk_cloud_logstreaming"`)
-		}
-		if splunkToken == "" {
-			return fmt.Errorf(`"token" is required for log stream type "splunk_cloud_logstreaming"`)
-		}
-		if splunkEdition == "" {
-			return fmt.Errorf(`"edition" is required for log stream type "splunk_cloud_logstreaming"`)
-		}
-		if awsAccountId != "" || awsEventSourceName != "" || awsRegion != "" {
-			return fmt.Errorf(`"account_id", "event_source_name" and "region" are not required for log stream type "splunk_cloud_logstreaming"`)
-		}
-
-	}
-
-	return nil
 }
