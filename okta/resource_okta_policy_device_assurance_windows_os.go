@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -242,20 +241,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 
 // Configure adds the provider configured client to the resource.
 func (r *policyDeviceAssuranceWindowsResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	p, ok := req.ProviderData.(*Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.Config = p
+	r.Config = resourceConfiguration(req, resp)
 }
 
 func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

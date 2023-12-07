@@ -286,3 +286,20 @@ func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.C
 
 	return config
 }
+
+func resourceConfiguration(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *Config {
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	p, ok := req.ProviderData.(*Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+
+	return p
+}
