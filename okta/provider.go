@@ -361,7 +361,6 @@ func Provider() *schema.Provider {
 			idpOidc:                  dataSourceIdpOidc(),
 			idpSaml:                  dataSourceIdpSaml(),
 			idpSocial:                dataSourceIdpSocial(),
-			logStream:                dataSourceLogStream(),
 			networkZone:              dataSourceNetworkZone(),
 			policy:                   dataSourcePolicy(),
 			roleSubscription:         dataSourceRoleSubscription(),
