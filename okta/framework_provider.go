@@ -262,5 +262,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewPolicyDeviceAssuranceIOSResource,
 		NewPolicyDeviceAssuranceMacOSResource,
 		NewPolicyDeviceAssuranceWindowsResource,
+		NewCustomizedSigninResource,
+		NewPreviewSigninResource,
 	}
 }
