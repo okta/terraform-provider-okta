@@ -105,7 +105,7 @@ func (d *OrgMetadataDataSource) Configure(ctx context.Context, req datasource.Co
 	config, ok := req.ProviderData.(*Config)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
+			"Unexpected Datasource Configure Type",
 			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
