@@ -79,7 +79,7 @@ func dataSourceAuthServerScopes() *schema.Resource {
 }
 
 func dataSourceAuthServerScopesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopes, _, err := getOktaV3ClientFromMetadata(m).AuthorizationServerApi.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string)).Execute()
+	scopes, _, err := getOktaV3ClientFromMetadata(m).AuthorizationServerAPI.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list auth server scopes: %v", err)
 	}

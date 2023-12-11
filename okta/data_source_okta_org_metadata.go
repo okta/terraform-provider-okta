@@ -105,7 +105,7 @@ func (d *OrgMetadataDataSource) Configure(ctx context.Context, req datasource.Co
 	config, ok := req.ProviderData.(*Config)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
+			"Unexpected Datasource Configure Type",
 			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return
@@ -122,7 +122,7 @@ func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	org, _, err := d.config.oktaSDKClientV3.OrgSettingApi.GetWellknownOrgMetadata(ctx).Execute()
+	org, _, err := d.config.oktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving org metadata",

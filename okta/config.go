@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	OktaTerraformProviderVersion   = "4.6.1"
+	OktaTerraformProviderVersion   = "4.6.3"
 	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 )
 
@@ -207,7 +207,7 @@ func NewConfig(d *schema.ResourceData) *Config {
 func (c *Config) IsClassicOrg(ctx context.Context) bool {
 	if !c.queriedWellKnown {
 		// Discover if the Okta Org is Classic or OIE
-		org, _, err := c.oktaSDKClientV3.OrgSettingApi.GetWellknownOrgMetadata(ctx).Execute()
+		org, _, err := c.oktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
 		if err != nil {
 			c.logger.Error("error querying GET /.well-known/okta-organization", "error", err)
 			return c.classicOrg
@@ -277,7 +277,7 @@ func (c *Config) verifyCredentials(ctx context.Context) error {
 	// GET /api/v1/users/me
 	// only for SSWS API token. Should we keep doing this?
 	if c.apiToken != "" {
-		if _, _, err := c.oktaSDKClientV3.UserApi.GetUser(ctx, "me").Execute(); err != nil {
+		if _, _, err := c.oktaSDKClientV3.UserAPI.GetUser(ctx, "me").Execute(); err != nil {
 			return fmt.Errorf("error with v3 SDK client: %v", err)
 		}
 		if _, _, err := c.oktaSDKClientV2.User.GetUser(ctx, "me"); err != nil {
@@ -524,9 +524,12 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 		setters = append(setters, okta.WithTestingDisableHttpsCheck(true))
 	}
 
-	config := okta.NewConfiguration(setters...)
+	config, err := okta.NewConfiguration(setters...)
+	if err != nil {
+		return nil, err
+	}
 	client = okta.NewAPIClient(config)
-	return
+	return client, nil
 }
 
 func errHandler(resp *http.Response, err error, numTries int) (*http.Response, error) {
