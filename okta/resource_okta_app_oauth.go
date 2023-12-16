@@ -669,8 +669,8 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d)
-	// When omit_secret is true on update, we make sure that we empty the client secret value
-	// in the api call.
+	// When omit_secret is true on update, we make sure that do not include
+	// the client secret value in the api call.
 	// This is to ensure that when this is "toggled on", the apply which this occurs also does
 	// not do a final "reset" of the client secret value to the original stored in state.
 	if d.Get("omit_secret").(bool) {
@@ -685,8 +685,8 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.FromErr(err)
 	}
 
-	// The `client_secret` value is always returned from the API when it set on update
-	// Regardless if we pass a value or not.
+	// The `client_secret` value is always returned from the API on update
+	// regardless if we pass a value or not.
 	// We need to make sure that we set the value in state based upon the `omit_secret` behavior
 	// When `true`: We blank out the secret value
 	// When `false`: We set the secret value to the value returned from the API
