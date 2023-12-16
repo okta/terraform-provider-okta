@@ -865,3 +865,35 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 		})
 	}
 }
+
+func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
+	mgr := newFixtureManager("resources", appOAuth, t.Name())
+	omit_secret_off := mgr.GetFixtures("omit_secret_off.tf", t)
+	omit_secret_on := mgr.GetFixtures("omit_secret_on.tf", t)
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: omit_secret_off,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+				),
+			},
+			{
+				Config: omit_secret_on,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+				),
+			},
+		},
+	})
+}

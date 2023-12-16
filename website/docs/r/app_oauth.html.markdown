@@ -80,7 +80,7 @@ The following arguments are supported:
 
 - `auto_submit_toolbar` - (Optional) Display auto submit toolbar.
 
-- `client_basic_secret` - (Optional) OAuth client secret key, this can be set when `token_endpoint_auth_method` is `"client_secret_basic"`.
+- `client_basic_secret` - (Optional) The user provided OAuth client secret key value, this can be set when `token_endpoint_auth_method` is `"client_secret_basic"`. This does nothing when `omit_secret` is set to true.
 
 - `client_id` - (Optional) OAuth client ID. If set during creation, app is created with this id. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
@@ -130,7 +130,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `logo_uri` - (Optional) URI that references a logo for the client.
 
-- `omit_secret` - (Optional) This tells the provider not to persist the application's secret to state. Your app's `client_secret` will be recreated if this ever changes from true => false.
+- `omit_secret` - (Optional) This tells the provider not manage the `client_secret` value in state. When this is false (the default), it will cause the auto-generated `client_secret` to be persisted in the `client_secret` attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.
 
 - `pkce_required` - (Optional) Require Proof Key for Code Exchange (PKCE) for
     additional verification.  If `pkce_required` isn't specified when adding a new
@@ -191,7 +191,7 @@ Valid values: `"CUSTOM_URL"`,`"ORG_URL"` or `"DYNAMIC"`. Default is `"ORG_URL"`.
 
 - `client_id` - The client ID of the application.
 
-- `client_secret` - The client secret of the application. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
+- `client_secret` - OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 
 - `id` - ID of the application.
 
