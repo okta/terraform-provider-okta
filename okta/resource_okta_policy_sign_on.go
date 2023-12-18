@@ -17,7 +17,8 @@ func resourcePolicySignOn() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: basePolicySchema,
+		Description: "Creates a Sign On Policy. This resource allows you to create and configure a Sign On Policy.",
+		Schema:      basePolicySchema,
 	}
 }
 

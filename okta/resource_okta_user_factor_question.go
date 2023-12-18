@@ -18,34 +18,34 @@ func resourceUserFactorQuestion() *schema.Resource {
 		UpdateContext: resourceUserFactorQuestionUpdate,
 		DeleteContext: resourceUserFactorQuestionDelete,
 		Importer:      createNestedResourceImporter([]string{"user_id", "id"}),
-		Description:   "Resource to manage a question factor for a user",
+		Description:   "Creates security question factor for a user. This resource allows you to create and configure security question factor for a user.",
 		Schema: map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID of a Okta User",
+				Description: "ID of the user. Resource will be recreated when `user_id` changes.",
 				ForceNew:    true,
 			},
 			"key": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Unique key for question",
+				Description: "Security question unique key. ",
 			},
 			"answer": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Sensitive:   true,
-				Description: "User password security answer",
+				Description: "Security question answer. Note here that answer won't be set during the resource import.",
 			},
 			"text": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Display text for question",
+				Description: "Display text for security question.",
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "User factor status.",
+				Description: "The status of the security question factor.",
 			},
 		},
 	}

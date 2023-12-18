@@ -15,23 +15,24 @@ func resourcePolicyPasswordRule() *schema.Resource {
 		UpdateContext: resourcePolicyPasswordRuleUpdate,
 		DeleteContext: resourcePolicyPasswordRuleDelete,
 		Importer:      createPolicyRuleImporter(),
+		Description:   "Creates a Password Policy Rule. This resource allows you to create and configure a Password Policy Rule.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"password_change": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Allow or deny a user to change their password: ALLOW or DENY. Default = ALLOW",
+				Description: "Allow or deny a user to change their password: `ALLOW` or `DENY`. Default: `ALLOW`",
 				Default:     "ALLOW",
 			},
 			"password_reset": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Allow or deny a user to reset their password: ALLOW or DENY. Default = ALLOW",
+				Description: "Allow or deny a user to reset their password: `ALLOW` or `DENY`. Default: `ALLOW`",
 				Default:     "ALLOW",
 			},
 			"password_unlock": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Allow or deny a user to unlock. Default = DENY",
+				Description: "Allow or deny a user to unlock. Default: `DENY`",
 				Default:     "DENY",
 			},
 		}),

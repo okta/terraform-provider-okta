@@ -21,7 +21,15 @@ func resourceResourceSet() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "Resource to manage administrative Role assignments for a User",
+		Description: `Manages Resource Sets as custom collections of resources. This resource allows the creation and manipulation of Okta Resource Sets as custom collections of Okta resources. You can use Okta Resource Sets to assign Custom Roles to administrators who are scoped to the designated resources. 
+The 'resources' field supports the following:
+	- Apps
+	- Groups
+	- All Users within a Group
+	- All Users within the org
+	- All Groups within the org
+	- All Apps within the org
+	- All Apps of the same type`,
 		Schema: map[string]*schema.Schema{
 			"label": {
 				Type:        schema.TypeString,
@@ -37,7 +45,7 @@ func resourceResourceSet() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The endpoints that reference the resources to be included in the new Resource Set",
+				Description: "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
 			},
 		},
 	}

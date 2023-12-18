@@ -17,26 +17,27 @@ func resourceEmailDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Creates email domain. This resource allows you to create and configure an email domain.",
 		Schema: map[string]*schema.Schema{
 			"brand_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Brand id",
+				Description: "Brand id of the email domain.",
 			},
 			"domain": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Domain name",
+				Description: "Mail domain to send from.",
 			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Display name",
+				Description: "Display name of the email domain.",
 			},
 			"user_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "User name",
+				Description: "User name of the email domain.",
 			},
 			"validation_status": {
 				Type:        schema.TypeString,

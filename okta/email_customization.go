@@ -68,7 +68,7 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 	"template_name": {
 		Type:        schema.TypeString,
 		Required:    true,
-		Description: "Template Name",
+		Description: "Template Name - Example values: `AccountLockout`,`ADForgotPassword`,`ADForgotPasswordDenied`,`ADSelfServiceUnlock`,`ADUserActivation`,`AuthenticatorEnrolled`,`AuthenticatorReset`,`ChangeEmailConfirmation`,`EmailChallenge`,`EmailChangeConfirmation`,`EmailFactorVerification`,`ForgotPassword`,`ForgotPasswordDenied`,`IGAReviewerEndNotification`,`IGAReviewerNotification`,`IGAReviewerPendingNotification`,`IGAReviewerReassigned`,`LDAPForgotPassword`,`LDAPForgotPasswordDenied`,`LDAPSelfServiceUnlock`,`LDAPUserActivation`,`MyAccountChangeConfirmation`,`NewSignOnNotification`,`OktaVerifyActivation`,`PasswordChanged`,`PasswordResetByAdmin`,`PendingEmailChange`,`RegistrationActivation`,`RegistrationEmailVerification`,`SelfServiceUnlock`,`SelfServiceUnlockOnUnlockedAccount`,`UserActivation`",
 	},
 	"links": {
 		Type:        schema.TypeString,
@@ -78,7 +78,7 @@ var emailCustomizationResourceSchema = map[string]*schema.Schema{
 	"language": {
 		Type:        schema.TypeString,
 		Optional:    true,
-		Description: "The language supported by the customization",
+		Description: "The language supported by the customization - Example values from [supported languages](https://developer.okta.com/docs/reference/api/brands/#supported-languages)",
 	},
 	"is_default": {
 		Type:        schema.TypeBool,

@@ -15,6 +15,11 @@ func resourceRoleSubscription() *schema.Resource {
 		ReadContext:   resourceRoleSubscriptionRead,
 		UpdateContext: resourceRoleSubscriptionUpdate,
 		DeleteContext: resourceFuncNoOp,
+		Description: `Manages group subscription.
+		
+This resource allows you to configure subscriptions of a Role with a specific type. 
+Check [configure email notifications](https://help.okta.com/oie/en-us/Content/Topics/Security/custom-admin-role/administrator-email-settings.htm) 
+page regarding what notifications are available for specific admin roles.`,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(_ context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
@@ -33,18 +38,43 @@ func resourceRoleSubscription() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				// https://developer.okta.com/docs/reference/api/admin-notifications/#role-types
-				Description: "Type of the role",
+				Description: `Type of the role. Valid values:
+	'API_ADMIN',
+	'APP_ADMIN',
+	'CUSTOM',
+	'GROUP_MEMBERSHIP_ADMIN',
+	'HELP_DESK_ADMIN',
+	'MOBILE_ADMIN',
+	'ORG_ADMIN',
+	'READ_ONLY_ADMIN',
+	'REPORT_ADMIN',
+	'SUPER_ADMIN',
+	'USER_ADMIN'
+	. See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types).`,
 			},
 			"notification_type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Type of the notification",
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `Type of the notification. Valid values: 
+	- 'CONNECTOR_AGENT' -  Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
+	- 'USER_LOCKED_OUT' - User lockouts.
+	- 'APP_IMPORT' - App user import status.
+	- 'LDAP_AGENT' - Disconnects and reconnects: LDAP agent.
+	- 'AD_AGENT' - Disconnects and reconnects: AD agent.
+	- 'OKTA_ANNOUNCEMENT' - Okta release notes and announcements.
+	- 'OKTA_ISSUE' - Trust incidents and updates.
+	- 'OKTA_UPDATE' - Scheduled system updates.
+	- 'IWA_AGENT' - Disconnects and reconnects: IWA agent.
+	- 'USER_DEPROVISION' - User deprovisions.
+	- 'REPORT_SUSPICIOUS_ACTIVITY' - User reporting of suspicious activity.
+	- 'RATELIMIT_NOTIFICATION' - Rate limit warning and violation.
+	- 'AGENT_AUTO_UPDATE_NOTIFICATION' - Agent auto-update notifications: AD Agent.`,
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Status of subscription",
+				Description: "Subscription status. Valid values: `subscribed`, `unsubscribed`.",
 			},
 		},
 	}

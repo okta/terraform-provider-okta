@@ -15,6 +15,16 @@ func resourceDomainCertificate() *schema.Resource {
 		UpdateContext: resourceDomainCertificateUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
+		Description: `Manages certificate for the domain.
+
+This resource's 'certificate', 'private_key', and 'certificate_chain' attributes
+hold actual PEM values and can be referred to by other configs requiring
+certificate and private key inputs. This is inline with TF's [best
+practices](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/sensitive-state#don-t-encrypt-state)
+of not encrypting state.
+
+See [Let's Encrypt Certbot notes](#lets-encrypt-certbot) at the end of this
+documentation for notes on how to generate a domain certificate with Let's Encrypt Certbot`,
 		Schema: map[string]*schema.Schema{
 			"domain_id": {
 				Type:        schema.TypeString,
@@ -25,7 +35,7 @@ func resourceDomainCertificate() *schema.Resource {
 			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Certificate type",
+				Description: "Certificate type. Valid value is `PEM`",
 				DefaultFunc: func() (interface{}, error) {
 					return "PEM", nil
 				},

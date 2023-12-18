@@ -19,6 +19,13 @@ func resourceAppSwa() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
+		Description: `Creates a SWA Application.
+		
+This resource allows you to create and configure a SWA Application.
+
+-> During an apply if there is change in 'status' the app will first be
+activated or deactivated in accordance with the 'status' change. Then, all
+other arguments that changed will be applied.`,
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
 				Type:        schema.TypeString,
