@@ -1,1 +1,0 @@
-terraform import okta_trusted_origin.example &#60;trusted origin id&#62;

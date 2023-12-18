@@ -1,1 +1,0 @@
-terraform import okta_user_schema_property.example &#60;user type id&#62;.&#60;index&#62;

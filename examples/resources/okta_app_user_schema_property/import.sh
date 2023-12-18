@@ -1,1 +1,0 @@
-terraform import okta_app_user_schema_property.example &#60;app id&#62;/&#60;property name&#62;

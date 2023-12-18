@@ -12,7 +12,6 @@ func resourceAppOAuthPostLogoutRedirectURI() *schema.Resource {
 		UpdateContext:      resourceAppOAuthRedirectURIUpdate("okta_app_oauth_post_logout_redirect_uri"),
 		DeleteContext:      resourceAppOAuthRedirectURIDelete("okta_app_oauth_post_logout_redirect_uri"),
 		Importer:           createCustomNestedResourceImporter([]string{"app_id", "id"}, "Expecting the following format: <app_id>/<uri>"),
-		Description:        "This resource allows you to manage post logout redirection URI for use in redirect-based flows.",
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Required:    true,

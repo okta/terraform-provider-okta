@@ -112,11 +112,6 @@ func resourceAppOAuth() *schema.Resource {
 			}
 			return nil
 		},
-		Description: `This resource allows you to create and configure an OIDC Application.
-
--> During an apply if there is change in status the app will first be
-activated or deactivated in accordance with the status change. Then, all
-other arguments that changed will be applied.`,
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
@@ -166,14 +161,10 @@ other arguments that changed will be applied.`,
 			// is missing on input therefore we can declare it's default to be
 			// true in the schema.
 			"auto_key_rotation": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
-				Description: `Requested key rotation mode. If
-				auto_key_rotation isn't specified, the client automatically opts in for Okta's
-				key rotation. You can update this property via the API or via the administrator
-				UI.
-				See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object"`,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Requested key rotation mode.",
 			},
 			"client_uri": {
 				Type:        schema.TypeString,
@@ -371,7 +362,7 @@ other arguments that changed will be applied.`,
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
+				Description: "Id of this apps authentication policy",
 			},
 			"jwks_uri": {
 				Type:        schema.TypeString,

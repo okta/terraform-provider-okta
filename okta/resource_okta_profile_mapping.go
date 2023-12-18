@@ -22,7 +22,6 @@ func resourceProfileMapping() *schema.Resource {
 		ReadContext:   resourceProfileMappingRead,
 		UpdateContext: resourceProfileMappingUpdate,
 		DeleteContext: resourceProfileMappingDelete,
-		Description:   "Manages a profile mapping. This resource allows you to manage a profile mapping by source and target IDs. -> **NOTE:** If using this resource with OAuth2 scopes, this resource requires `okta.profileMappings.manage` scope.",
 		Schema: map[string]*schema.Schema{
 			"source_id": {
 				Type:        schema.TypeString,
@@ -35,14 +34,12 @@ func resourceProfileMapping() *schema.Resource {
 				Description: "When turned on this flag will trigger the provider to delete mapping properties that are not defined in config. By default, we do not delete missing properties.",
 			},
 			"source_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "ID of the mapping source.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"source_name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Name of the mapping source.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"target_id": {
 				Type:        schema.TypeString,
@@ -50,28 +47,23 @@ func resourceProfileMapping() *schema.Resource {
 				Description: "The target id of the mapping to manage.",
 			},
 			"target_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "ID of the mapping target.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"target_name": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Name of the mapping target.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"mappings": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        mappingResource,
-				Description: "",
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     mappingResource,
 			},
 			"always_apply": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Description: `Whether apply the changes to all users with this profile after updating or creating the these mappings. 
-	~> **WARNING:**: 'always_apply' is incompatible with OAuth 2.0 authentication and will be ignored when using that type of authentication.
-	~> **WARNING:** 'always_apply' makes use of an internal/private Okta API endpoint that could change without notice rendering this resource inoperable.`,
-				Default: false,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Whether apply the changes to all users with this profile after updating or creating the these mappings.",
+				Default:     false,
 			},
 		},
 	}

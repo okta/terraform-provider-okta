@@ -1,1 +1,0 @@
-terraform import okta_captcha_org_wide_settings.example _

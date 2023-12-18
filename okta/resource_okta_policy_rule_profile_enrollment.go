@@ -16,14 +16,6 @@ func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 		UpdateContext: resourcePolicyProfileEnrollmentRuleUpdate,
 		DeleteContext: resourcePolicyProfileEnrollmentRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-		Description: `Creates a Profile Enrollment Policy Rule.
-		
-~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
-
-A [profile enrollment
-policy](https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy)
-is limited to one default rule. This resource does not create a rule for an
-enrollment policy, it allows the default policy rule to be updated.`,
 		Schema: map[string]*schema.Schema{
 			"policy_id": {
 				Type:        schema.TypeString,
@@ -54,7 +46,7 @@ enrollment policy, it allows the default policy rule to be updated.`,
 			"unknown_user_action": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Which action should be taken if this User is new. Valid values are: `DENY`, `REGISTER`",
+				Description: "Which action should be taken if this User is new",
 			},
 			"ui_schema_id": {
 				Type:        schema.TypeString,
@@ -64,22 +56,19 @@ enrollment policy, it allows the default policy rule to be updated.`,
 			"email_verification": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Indicates whether email verification should occur before access is granted. Default: `true`.",
+				Description: "Indicates whether email verification should occur before access is granted",
 				Default:     true,
 			},
 			"access": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Allow or deny access based on the rule conditions. Valid values are: `ALLOW`, `DENY`. Default: `ALLOW`.",
+				Description: "Allow or deny access based on the rule conditions: ALLOW or DENY",
 				Default:     "ALLOW",
 			},
 			"profile_attributes": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Description: `A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
-	- 'label' - (Required) A display-friendly label for this property
-	- 'name' - (Required) The name of a User Profile property
-	- 'required' - (Required) Indicates if this property is required for enrollment. Default is 'false'.`,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "A list of attributes to prompt the user during registration or progressive profiling",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"label": {
@@ -104,7 +93,7 @@ enrollment policy, it allows the default policy rule to be updated.`,
 			"progressive_profiling_action": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Enabled or disabled progressive profiling action rule conditions: `ENABLED` or `DISABLED`. Default: `DISABLED`",
+				Description: "Enabled or disabled progressive profiling action rule conditions: ENABLED or DISABLED",
 				Default:     "DISABLED",
 			},
 		},

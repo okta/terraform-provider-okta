@@ -17,35 +17,34 @@ func resourcePolicySignOnRule() *schema.Resource {
 		UpdateContext: resourcePolicySignOnRuleUpdate,
 		DeleteContext: resourcePolicySignOnRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-		Description:   "Creates a Sign On Policy Rule. In case `Invalid condition type specified: riskScore.` error is thrown, set `risc_level` to an empty string, since this feature is not enabled.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"authtype": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Authentication entrypoint: `ANY`, `RADIUS` or `LDAP_INTERFACE`. Default: `ANY`",
+				Description: "Authentication entrypoint: ANY, RADIUS or LDAP_INTERFACE",
 				Default:     "ANY",
 			},
 			"access": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Allow or deny access based on the rule conditions: `ALLOW`, `DENY` or `CHALLENGE`. Default: `ALLOW`",
+				Description: "Allow or deny access based on the rule conditions: ALLOW, DENY or CHALLENGE.",
 				Default:     "ALLOW",
 			},
 			"mfa_required": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Require MFA. Default: `false`",
+				Description: "Require MFA.",
 				Default:     false,
 			},
 			"mfa_prompt": { // mfa_require must be true
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: `DEVICE`, `SESSION` or`ALWAYS`.",
+				Description: "Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: DEVICE, SESSION or ALWAYS",
 			},
 			"mfa_remember_device": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Remember MFA device. Default: `false`",
+				Description: "Remember MFA device.",
 				Default:     false,
 			},
 			"mfa_lifetime": { // mfa_require must be true, mfa_prompt must be SESSION
@@ -56,32 +55,25 @@ func resourcePolicySignOnRule() *schema.Resource {
 			"session_idle": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Max minutes a session can be idle. Default: `120`",
+				Description: "Max minutes a session can be idle.",
 				Default:     120,
 			},
 			"session_lifetime": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Max minutes a session is active: Disable = 0. Default: `120`",
+				Description: "Max minutes a session is active: Disable = 0.",
 				Default:     120,
 			},
 			"session_persistent": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Whether session cookies will last across browser sessions. Okta Administrators can never have persistent session cookies. Default: `false`",
+				Description: "Whether session cookies will last across browser sessions. Okta Administrators can never have persistent session cookies.",
 				Default:     false,
 			},
 			"risc_level": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Risc level: ANY, LOW, MEDIUM or HIGH. Default: `ANY`",
-				Default:     "ANY",
-				Deprecated:  "Attribute typo, switch to risk_level instead. Default: `ANY`",
-			},
-			"risk_level": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Risk level: ANY, LOW, MEDIUM or HIGH. Default: `ANY`",
+				Description: "Risc level: ANY, LOW, MEDIUM or HIGH",
 				Default:     "ANY",
 			},
 			"behaviors": {
@@ -94,17 +86,11 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
-				Description: "Rule's primary factor. **WARNING** Ony works as a part of the Identity Engine. Valid values: `PASSWORD_IDP_ANY_FACTOR`, `PASSWORD_IDP`.",
+				Description: "Primary factor.",
 			},
 			"factor_sequence": {
 				Type:     schema.TypeList,
 				Optional: true,
-				Description: `Auth factor sequences. Should be set if 'access = "CHALLENGE"'.
-	- 'primary_criteria_provider' - (Required) Primary provider of the auth section.
-	- 'primary_criteria_factor_type' - (Required) Primary factor type of the auth section.
-	- 'secondary_criteria' - (Optional) Additional authentication steps.
-	- 'provider' - (Required) Provider of the additional authentication step.
-	- 'factor_type' - (Required) Factor type of the additional authentication step.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"primary_criteria_provider": {
@@ -141,14 +127,14 @@ func resourcePolicySignOnRule() *schema.Resource {
 			"identity_provider": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Apply rule based on the IdP used: `ANY`, `OKTA` or `SPECIFIC_IDP`. Default: `ANY`. ~> **WARNING**: Use of `identity_provider` requires a feature flag to be enabled.",
+				Description: "Apply rule based on the IdP used: ANY, OKTA or SPECIFIC_IDP.",
 				Default:     "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "When identity_provider is `SPECIFIC_IDP` then this is the list of IdP IDs to apply the rule on",
+				Description: "When identity_provider is SPECIFIC_IDP then this is the list of IdP IDs to apply the rule on",
 			},
 		}),
 	}
@@ -197,7 +183,6 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	if rule.Conditions != nil {
 		if rule.Conditions.RiskScore != nil {
 			_ = d.Set("risc_level", rule.Conditions.RiskScore.Level)
-			_ = d.Set("risk_level", rule.Conditions.RiskScore.Level)
 		}
 		if rule.Conditions.Risk != nil {
 			err = setNonPrimitives(d, map[string]interface{}{
@@ -301,13 +286,6 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	if ok {
 		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
 			Level: ri.(string),
-		}
-	} else {
-		rs, ok := d.GetOk("risk_level")
-		if ok {
-			template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
-				Level: rs.(string),
-			}
 		}
 	}
 	template.Actions = sdk.SdkPolicyRuleActions{

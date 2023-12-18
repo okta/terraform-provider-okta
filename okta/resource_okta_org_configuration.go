@@ -16,9 +16,6 @@ func resourceOrgConfiguration() *schema.Resource {
 		UpdateContext: resourceOrgSettingsUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
-		Description: `Manages org settings, logo, support and communication.
-		
-~> **IMPORTANT:** You must specify all Org Setting properties when you update an org's profile. Any property not specified in the script will be deleted.`,
 		Schema: map[string]*schema.Schema{
 			"company_name": {
 				Type:        schema.TypeString,
@@ -89,7 +86,7 @@ func resourceOrgConfiguration() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ValidateDiagFunc: logoFileIsValid(),
-				Description:      "Logo of org. The file must be in PNG, JPG, or GIF format and less than 1 MB in size. For best results use landscape orientation, a transparent background, and a minimum size of 420px by 120px to prevent upscaling.",
+				Description:      "Local path to logo of the org.",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},

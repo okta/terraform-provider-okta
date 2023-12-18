@@ -1,1 +1,0 @@
-terraform import okta_rate_limiting.example .

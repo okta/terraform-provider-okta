@@ -59,12 +59,8 @@ func (r *appOAuthRoleAssignmentResource) Configure(_ context.Context, req resour
 
 func (r *appOAuthRoleAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: `Manages assignment of an admin role to an OAuth application
-This resource allows you to assign an Okta admin role to a OAuth 
-service application. This requires the Okta tenant feature flag for this function to be enabled.`,
-		MarkdownDescription: `Manages assignment of an admin role to an OAuth application
-This resource allows you to assign an Okta admin role to a OAuth 
-service application. This requires the Okta tenant feature flag for this function to be enabled.`,
+		Description:         "Manages assignment of an admin role to an OAuth application",
+		MarkdownDescription: "Manages assignment of an admin role to an OAuth application",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description:         "Role Assignment ID",

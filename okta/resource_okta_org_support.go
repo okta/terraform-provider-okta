@@ -15,10 +15,6 @@ func resourceOrgSupport() *schema.Resource {
 		ReadContext:   resourceOrgSupportRead,
 		DeleteContext: resourceOrgSupportDelete,
 		Importer:      nil,
-		Description: `Manages Okta Support access your org
-
-This resource allows you to temporarily allow Okta Support to access your org as an administrator. By default,
-access will be granted for eight hours. Removing this resource will revoke Okta Support access to your org.`,
 		Schema: map[string]*schema.Schema{
 			"extend_by": {
 				Type:        schema.TypeInt,

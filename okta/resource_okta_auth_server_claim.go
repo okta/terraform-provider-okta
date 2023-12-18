@@ -15,22 +15,21 @@ func resourceAuthServerClaim() *schema.Resource {
 		UpdateContext: resourceAuthServerClaimUpdate,
 		DeleteContext: resourceAuthServerClaimDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
-		Description:   "Creates an Authorization Server Claim. This resource allows you to create and configure an Authorization Server Claim.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The name of the claim.",
+				Description: "Auth server claim name",
 			},
 			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID of the authorization server.",
+				Description: "Auth server ID",
 			},
 			"scopes": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "The list of scopes the auth server claim is tied to.",
+				Description: "Auth server claim list of scopes",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,

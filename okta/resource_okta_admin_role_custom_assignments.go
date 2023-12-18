@@ -18,11 +18,7 @@ func resourceAdminRoleCustomAssignments() *schema.Resource {
 		UpdateContext: resourceAdminRoleCustomAssignmentsUpdate,
 		DeleteContext: resourceAdminRoleCustomAssignmentsDelete,
 		Importer:      createNestedResourceImporter([]string{"resource_set_id", "custom_role_id"}),
-		Description: `Resource to manage the assignment and unassignment of Custom Roles
-
-These operations allow the creation and manipulation of custom roles as custom collections of permissions.
-		
-~> **NOTE:** This an Early Access feature.`,
+		Description:   "Resource to manage the assignment and unassignment of Custom Roles",
 		Schema: map[string]*schema.Schema{
 			"resource_set_id": {
 				Type:        schema.TypeString,

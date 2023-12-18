@@ -1,1 +1,0 @@
-terraform import okta_policy_device_assurance_windows.example &#60;device assurance id&#62;

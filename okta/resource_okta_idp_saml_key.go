@@ -18,7 +18,6 @@ func resourceIdpSigningKey() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "This resource allows you to create and configure a SAML Identity Provider Signing Key.",
 		Schema: map[string]*schema.Schema{
 			"x5c": {
 				Type:        schema.TypeSet,
@@ -27,34 +26,28 @@ func resourceIdpSigningKey() *schema.Resource {
 				Description: "base64-encoded X.509 certificate chain with DER encoding",
 			},
 			"created": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Date created.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"expires_at": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Date the cert expires.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"kid": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Key ID.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"kty": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Identifies the cryptographic algorithm family used with the key.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"use": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Intended use of the public key.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"x5t_s256": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "base64url-encoded SHA-256 thumbprint of the DER encoding of an X.509 certificate.",
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}

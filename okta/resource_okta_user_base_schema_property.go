@@ -29,7 +29,6 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description:   "Manages a User Base Schema property. This resource allows you to configure a base user schema property.",
 		SchemaVersion: 1,
 		Schema: buildSchema(
 			userBaseSchemaSchema,
@@ -39,7 +38,7 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 				"master": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					Description: "Master priority for the user schema property. It can be set to `PROFILE_MASTER` or `OKTA`. Default: `PROFILE_MASTER`",
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:     "PROFILE_MASTER",
 				},
 			},

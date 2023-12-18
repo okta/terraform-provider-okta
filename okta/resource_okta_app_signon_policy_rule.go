@@ -17,16 +17,6 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 		UpdateContext: resourceAppSignOnPolicyRuleUpdate,
 		DeleteContext: resourceAppSignOnPolicyRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-		Description: ` Manages a sign-on policy rules for the application.
-
-~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
-
-This resource allows you to create and configure a sign-on policy rule for the application.
-
-A default or 'Catch-all Rule' sign-on policy rule can be imported and managed as a custom rule.
-The only difference is that these fields are immutable and can not be managed: 'network_connection', 'network_excludes', 
-'network_includes', 'platform_include', 'custom_expression', 'device_is_registered', 'device_is_managed', 'users_excluded',
-'users_included', 'groups_excluded', 'groups_included', 'user_types_excluded' and 'user_types_included'.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -42,7 +32,7 @@ The only difference is that these fields are immutable and can not be managed: '
 			"system": {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Description: "Often the `Catch-all Rule` this rule is the system (default) rule for its associated policy",
+				Description: `Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy`,
 			},
 			"status": {
 				Type:        schema.TypeString,

@@ -17,12 +17,6 @@ func resourceFactorTOTP() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `Allows you to manage the time-based one-time password (TOTP) factors. A time-based one-time password (TOTP) is a
-		temporary passcode that is generated for user authentication. Examples of TOTP include hardware authenticators and
-		mobile app authenticators.
-		
-Once saved, the settings cannot be changed (except for the 'name' field). Any other change would force resource
-recreation.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -40,28 +34,28 @@ recreation.`,
 				Type:        schema.TypeString,
 				Default:     "HMacSHA512",
 				Optional:    true,
-				Description: "HMAC Algorithm. Valid values: `HMacSHA1`, `HMacSHA256`, `HMacSHA512`. Default is `HMacSHA512`.",
+				Description: "Hash-based message authentication code algorithm",
 				ForceNew:    true,
 			},
 			"time_step": {
 				Type:        schema.TypeInt,
 				Default:     15,
 				Optional:    true,
-				Description: "Time step in seconds. Valid values: `15`, `30`, `60`. Default is `15`.",
+				Description: "Time step in seconds",
 				ForceNew:    true,
 			},
 			"clock_drift_interval": {
 				Type:        schema.TypeInt,
 				Default:     3,
 				Optional:    true,
-				Description: "Clock drift interval. This setting allows you to build in tolerance for any drift between the token's current time and the server's current time. Valid values: `3`, `5`, `10`. Default is `3`.",
+				Description: "Clock drift interval",
 				ForceNew:    true,
 			},
 			"shared_secret_encoding": {
 				Type:        schema.TypeString,
 				Default:     "base32",
 				Optional:    true,
-				Description: "Shared secret encoding. Valid values: `base32`, `base64`, `hexadecimal`. Default is `base32`.",
+				Description: "Shared secret encoding",
 				ForceNew:    true,
 			},
 		},

@@ -15,32 +15,30 @@ var (
 		"array_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "The type of the array elements if `type` is set to `array`",
+			Description: "Subschema array type: string, number, integer, reference. Type field must be an array.",
 			ForceNew:    true,
 		},
 		"array_enum": {
 			Type:        schema.TypeList,
 			Optional:    true,
-			Description: "Array of values that an array property's items can be set to.",
+			Description: "Custom Subschema enumerated value of a property of type array.",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 		"array_one_of": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Description: `Display name and value an enum array can be set to.
-	- 'const' - (Required) value mapping to member of 'enum'.
-	- 'title' - (Required) display name for the enum value.`,
+			Type:        schema.TypeList,
+			Optional:    true,
+			Description: "array of valid JSON schemas for property type array.",
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"const": {
 						Required:    true,
 						Type:        schema.TypeString,
-						Description: "Value mapping to member of `array_enum`",
+						Description: "Enum value",
 					},
 					"title": {
 						Required:    true,
 						Type:        schema.TypeString,
-						Description: "Display name for the enum value.",
+						Description: "Enum title",
 					},
 				},
 			},
@@ -48,31 +46,29 @@ var (
 		"description": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "The description of the user schema property.",
+			Description: "Custom Subschema description",
 		},
 		"min_length": {
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Description: "The minimum length of the user property value. Only applies to type `string`",
+			Description: "Subschema of type string minimum length",
 		},
 		"max_length": {
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Description: "The maximum length of the user property value. Only applies to type `string`",
+			Description: "Subschema of type string maximum length",
 		},
 		"enum": {
 			Type:          schema.TypeList,
 			Optional:      true,
-			Description:   "Array of values a primitive property can be set to. See `array_enum` for arrays.",
+			Description:   "Custom Subschema enumerated value of the property. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"one_of": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Description: `Array of maps containing a mapping for display name to enum value.
-	- 'const' - (Required) value mapping to member of 'enum'.
-	- 'title' - (Required) display name for the enum value.`,
+			Type:          schema.TypeList,
+			Optional:      true,
+			Description:   "Custom Subschema json schemas. see: developer.okta.com/docs/api/resources/schemas#user-profile-schema-property-object",
 			ConflictsWith: []string{"array_type"},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -92,19 +88,19 @@ var (
 		"external_name": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "External name of the user schema property.",
+			Description: "Subschema external name",
 			ForceNew:    true,
 		},
 		"external_namespace": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "External namespace of the user schema property.",
+			Description: "Subschema external namespace",
 			ForceNew:    true,
 		},
 		"unique": {
 			Type:          schema.TypeString,
 			Optional:      true,
-			Description:   "Whether the property should be unique. It can be set to `UNIQUE_VALIDATED` or `NOT_UNIQUE`.",
+			Description:   "Subschema unique restriction",
 			ConflictsWith: []string{"one_of", "enum", "array_type"},
 			ForceNew:      true,
 		},
@@ -125,13 +121,13 @@ var (
 		"type": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "The type of the schema property. It can be `string`, `boolean`, `number`, `integer`, `array`, or `object`",
+			Description: "Subschema type: string, boolean, number, integer, array, or object",
 			ForceNew:    true,
 		},
 		"permissions": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Access control permissions for the property. It can be set to `READ_WRITE`, `READ_ONLY`, `HIDE`. Default: `READ_ONLY`",
+			Description: "SubSchema permissions: HIDE, READ_ONLY, or READ_WRITE.",
 			Default:     "READ_ONLY",
 		},
 		"required": {
@@ -145,7 +141,7 @@ var (
 		"user_type": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "User type ID. By default, it is `default`",
+			Description: "Custom subschema user type",
 			Default:     "default",
 		},
 	}

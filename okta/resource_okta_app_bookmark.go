@@ -21,16 +21,10 @@ func resourceAppBookmark() *schema.Resource {
 		},
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
-		Description: `This resource allows you to create and configure a Bookmark Application.
-
--> During an apply if there is change in status the app will first be
-activated or deactivated in accordance with the status change. Then, all
-other arguments that changed will be applied.`,
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"url": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The URL of the bookmark.",
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"request_integration": {
 				Type:        schema.TypeBool,
@@ -41,7 +35,7 @@ other arguments that changed will be applied.`,
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
+				Description: "Id of this apps authentication policy",
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{

@@ -1,1 +1,0 @@
-terraform import okta_policy_password_default.example .

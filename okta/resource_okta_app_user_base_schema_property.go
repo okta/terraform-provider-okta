@@ -15,7 +15,6 @@ func resourceAppUserBaseSchemaProperty() *schema.Resource {
 		UpdateContext: resourceAppUserBaseSchemaUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
-		Description:   "Manages an Application User Base Schema property. This resource allows you to configure a base app user schema property.",
 		Schema: buildSchema(
 			userBaseSchemaSchema,
 			userTypeSchema,
@@ -25,7 +24,7 @@ func resourceAppUserBaseSchemaProperty() *schema.Resource {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					Description: "Master priority for the user schema property. It can be set to `PROFILE_MASTER` or `OKTA`. Default: `PROFILE_MASTER`",
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:     "PROFILE_MASTER",
 				},
 				"app_id": {

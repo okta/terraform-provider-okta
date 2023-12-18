@@ -1,1 +1,0 @@
-terraform import okta_security_notification_emails.example _
