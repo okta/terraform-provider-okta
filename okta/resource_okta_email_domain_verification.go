@@ -13,6 +13,7 @@ func resourceEmailDomainVerification() *schema.Resource {
 		ReadContext:   resourceFuncNoOp,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
+		Description:   "Verifies the email domain. The resource won't be created if the email domain could not be verified.",
 		Schema: map[string]*schema.Schema{
 			"email_domain_id": {
 				Type:        schema.TypeString,

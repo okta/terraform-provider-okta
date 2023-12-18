@@ -23,7 +23,7 @@ var (
 		"label": {
 			Type:        schema.TypeString,
 			Required:    true,
-			Description: "Pretty name of app.",
+			Description: "The Application's display name.",
 		},
 		"sign_on_mode": {
 			Type:        schema.TypeString,
@@ -34,13 +34,13 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Default:     statusActive,
-			Description: "Status of application.",
+			Description: "Status of application. By default, it is `ACTIVE`",
 		},
 		"logo": {
 			Type:             schema.TypeString,
 			Optional:         true,
 			ValidateDiagFunc: logoFileIsValid(),
-			Description:      "Local path to logo of the application.",
+			Description:      "Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
@@ -64,7 +64,7 @@ var (
 		"app_links_json": {
 			Type:             schema.TypeString,
 			Optional:         true,
-			Description:      "Displays specific appLinks for the app",
+			Description:      "Displays specific appLinks for the app. The value for each application link should be boolean.",
 			ValidateDiagFunc: stringIsJSON,
 			StateFunc:        normalizeDataJSON,
 			DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
@@ -78,7 +78,7 @@ var (
 			Type:        schema.TypeBool,
 			Optional:    true,
 			Default:     false,
-			Description: "Enable self service",
+			Description: "Enable self service. Default is `false`",
 		},
 		"accessibility_error_redirect_url": {
 			Type:        schema.TypeString,
@@ -130,7 +130,7 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Default:     "${source.login}",
-			Description: "Username template",
+			Description: "Username template. Default: `${source.login}`",
 		},
 		"user_name_template_suffix": {
 			Type:        schema.TypeString,
@@ -141,12 +141,12 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Default:     "BUILT_IN",
-			Description: "Username template type",
+			Description: "Username template type. Default: `BUILT_IN`",
 		},
 		"user_name_template_push_status": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Push username on update",
+			Description: "Push username on update. Valid values: `PUSH` and `DONT_PUSH`",
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},

@@ -1,0 +1,1 @@
+terraform import okta_org_configuration.example _

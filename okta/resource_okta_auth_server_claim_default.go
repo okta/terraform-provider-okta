@@ -35,17 +35,20 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
+		Description: `Configures Default Authorization Server Claim.
+
+This resource allows you to configure Default Authorization Server Claims.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Default auth server claim name",
+				Description: "The name of the claim. Can be set to `sub`, `address`, `birthdate`, `email`,`email_verified`, `family_name`, `gender`, `given_name`, `locale`, `middle_name`, `name`, `nickname`,`phone_number`, `picture`, `preferred_username`, `profile`, `updated_at`, `website`, `zoneinfo`",
 				ForceNew:    true,
 			},
 			"auth_server_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Auth server ID",
+				Description: "ID of the authorization server.",
 				ForceNew:    true,
 			},
 			"scopes": {
@@ -65,7 +68,7 @@ func resourceAuthServerClaimDefault() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return d.Get("name") != "sub"
 				},
-				Description: "The value of the claim.",
+				Description: "The value of the claim. Only required for `sub` claim.",
 			},
 			"value_type": {
 				Type:        schema.TypeString,

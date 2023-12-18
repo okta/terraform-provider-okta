@@ -24,130 +24,80 @@ var (
 		},
 		"status": statusSchema,
 		"account_link_action": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "AUTO",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "AUTO",
+			Description: "Specifies the account linking action for an IdP user. Default: `AUTO`",
 		},
 		"account_link_group_include": {
-			Type:     schema.TypeSet,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
+			Type:        schema.TypeSet,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Optional:    true,
+			Description: "Group memberships to determine link candidates.",
 		},
 		"provisioning_action": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "AUTO",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "AUTO",
+			Description: "Provisioning action for an IdP user during authentication. Default: `AUTO`",
 		},
-		"deprovisioned_action": actionSchema,
-		"suspended_action":     actionSchema,
+		"deprovisioned_action": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "NONE",
+			Description: "Action for a previously deprovisioned IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`",
+		},
+		"suspended_action": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "NONE",
+			Description: "Action for a previously suspended IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`",
+		},
 		"groups_action": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "NONE",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "NONE",
+			Description: "Provisioning action for IdP user's group memberships. It can be `NONE`, `SYNC`, `APPEND`, or `ASSIGN`. Default: `NONE`",
 		},
 		"groups_attribute": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "IdP user profile attribute name (case-insensitive) for an array value that contains group memberships.",
 		},
 		"groups_assignment": {
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-			Type:     schema.TypeSet,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Optional:    true,
+			Type:        schema.TypeSet,
+			Description: "List of Okta Group IDs to add an IdP user as a member with the `ASSIGN` `groups_action`.",
 		},
 		"groups_filter": {
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-			Type:     schema.TypeSet,
+			Elem:        &schema.Schema{Type: schema.TypeString},
+			Optional:    true,
+			Type:        schema.TypeSet,
+			Description: "Whitelist of Okta Group identifiers that are allowed for the `APPEND` or `SYNC` `groups_action`.",
 		},
 		"username_template": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "idpuser.email",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "idpuser.email",
+			Description: "Okta EL Expression to generate or transform a unique username for the IdP user. Default: `idpuser.email`",
 		},
 		"subject_match_type": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Default:  "USERNAME",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Default:     "USERNAME",
+			Description: "Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `USERNAME`. It can be set to `USERNAME`, `EMAIL`, `USERNAME_OR_EMAIL` or `CUSTOM_ATTRIBUTE`.",
 		},
 		"subject_match_attribute": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Okta user profile attribute for matching transformed IdP username. Only for matchType `CUSTOM_ATTRIBUTE`.",
 		},
 		"profile_master": {
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Description: "Determines if the IdP should act as a source of truth for user profile attributes.",
 		},
-	}
-
-	actionSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Optional: true,
-		Default:  "NONE",
-	}
-
-	samlRequestSignatureAlgorithmSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "The XML digital Signature Algorithm used when signing an <AuthnRequest> message",
-		Default:     "SHA-256",
-	}
-	samlRequestSignatureScopeSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Specifies whether to digitally sign <AuthnRequest> messages to the IdP",
-		Default:     "REQUEST",
-	}
-
-	samlResponseSignatureAlgorithmSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "The minimum XML digital Signature Algorithm allowed when verifying a <SAMLResponse> message or <Assertion> element",
-		Default:     "SHA-256",
-	}
-	samlResponseSignatureScopeSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Specifies whether to verify a <SAMLResponse> message or <Assertion> element XML digital signature",
-		Default:     "ANY",
-	}
-
-	oidcRequestSignatureAlgorithmSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "The HMAC Signature Algorithm used when signing an authorization request",
-		Default:     "HS256",
-	}
-
-	oidcRequestSignatureScopeSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Description: "Specifies whether to digitally sign an authorization request to the IdP",
-		Default:     "REQUEST",
-	}
-
-	optBindingSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
-	}
-
-	optURLSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
-	}
-
-	optionalURLSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Optional: true,
-	}
-
-	bindingSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Required: true,
-	}
-
-	optionalBindingSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Optional: true,
 	}
 
 	issuerMode = &schema.Schema{
@@ -155,11 +105,6 @@ var (
 		Description: "Indicates whether Okta uses the original Okta org domain URL, or a custom domain URL",
 		Default:     "ORG_URL",
 		Optional:    true,
-	}
-
-	urlSchema = &schema.Schema{
-		Type:     schema.TypeString,
-		Required: true,
 	}
 )
 

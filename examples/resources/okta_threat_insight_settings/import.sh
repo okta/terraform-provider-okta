@@ -1,0 +1,1 @@
+terraform import okta_threat_insight_settings.example _

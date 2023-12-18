@@ -1,0 +1,1 @@
+terraform import okta_idp_saml.example &#60;idp id&#62;

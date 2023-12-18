@@ -23,16 +23,17 @@ func resourceFactor() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Allows you to manage the activation of Okta MFA methods. This resource allows you to manage Okta MFA methods.",
 		Schema: map[string]*schema.Schema{
 			"provider_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Factor provider ID",
+				Description: "The MFA provider name. Allowed values are `duo`, `fido_u2f`, `fido_webauthn`, `google_otp`, `okta_call`, `okta_otp`, `okta_password`, `okta_push`, `okta_question`, `okta_sms`, `okta_email`, `rsa_token`, `symantec_vip`, `yubikey_token`, or `hotp`.",
 				ForceNew:    true,
 			},
 			"active": {
 				Type:        schema.TypeBool,
-				Description: "Is this provider active?",
+				Description: "Whether to activate the provider, by default, it is set to `true`.",
 				Optional:    true,
 				Default:     true,
 			},

@@ -20,6 +20,7 @@ func resourceAppOAuthRedirectURI() *schema.Resource {
 		UpdateContext: resourceAppOAuthRedirectURIUpdate("okta_app_oauth_redirect_uri"),
 		DeleteContext: resourceAppOAuthRedirectURIDelete("okta_app_oauth_redirect_uri"),
 		Importer:      createCustomNestedResourceImporter([]string{"app_id", "id"}, "Expecting the following format: <app_id>/<uri>"),
+		Description:   "This resource allows you to manage redirection URI for use in redirect-based flows.",
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Required:    true,

@@ -19,11 +19,15 @@ func resourceAppSamlAppSettings() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `Manages app settings of the SAML application.
+
+This resource allows you to manage app settings of the SAML Application . It's basically the same as
+app_settings_json field in okta_app_saml resource and can be used in cases where settings require to be managed separately.`,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Application ID",
+				Description: "ID of the application.",
 				ForceNew:    true,
 			},
 			"settings": {

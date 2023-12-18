@@ -1,12 +1,12 @@
 ---
 page_title: "Resource: okta_policy_rule_password"
 description: |-
-  
+  Creates a Password Policy Rule. This resource allows you to create and configure a Password Policy Rule.
 ---
 
 # Resource: okta_policy_rule_password
 
-
+Creates a Password Policy Rule. This resource allows you to create and configure a Password Policy Rule.
 
 
 
@@ -19,19 +19,25 @@ description: |-
 
 ### Optional
 
-- `network_connection` (String) Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.
-- `network_excludes` (List of String) The zones to exclude
-- `network_includes` (List of String) The zones to include
-- `password_change` (String) Allow or deny a user to change their password: ALLOW or DENY. Default = ALLOW
-- `password_reset` (String) Allow or deny a user to reset their password: ALLOW or DENY. Default = ALLOW
-- `password_unlock` (String) Allow or deny a user to unlock. Default = DENY
+- `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`, `ON_NETWORK`, or `OFF_NETWORK`. Default: `ANYWHERE`
+- `network_excludes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to exclude.
+- `network_includes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to include.
+- `password_change` (String) Allow or deny a user to change their password: `ALLOW` or `DENY`. Default: `ALLOW`
+- `password_reset` (String) Allow or deny a user to reset their password: `ALLOW` or `DENY`. Default: `ALLOW`
+- `password_unlock` (String) Allow or deny a user to unlock. Default: `DENY`
 - `policy_id` (String) Policy ID of the Rule
-- `priority` (Number) Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
-- `status` (String) Policy Rule Status: ACTIVE or INACTIVE.
+- `priority` (Number) Rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last (lowest) if not provided.
+- `status` (String) Policy Rule Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
 - `users_excluded` (Set of String) Set of User IDs to Exclude
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import okta_policy_rule_password.example &#60;policy id&#62;/&#60;rule id&#62;
+```

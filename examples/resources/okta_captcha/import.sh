@@ -1,0 +1,1 @@
+terraform import okta_captcha.example &#60;captcha id&#62;

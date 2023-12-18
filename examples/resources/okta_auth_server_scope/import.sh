@@ -1,0 +1,1 @@
+terraform import okta_auth_server_scope.example &#60;auth server id&#62;/&#60;scope id&#62;

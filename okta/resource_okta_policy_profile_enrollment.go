@@ -15,6 +15,11 @@ func resourcePolicyProfileEnrollment() *schema.Resource {
 		UpdateContext: resourcePolicyProfileEnrollmentUpdate,
 		DeleteContext: resourcePolicyProfileEnrollmentDelete,
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
+		Description: `Creates a Profile Enrollment Policy
+		
+~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
+This resource allows you to create and configure a Profile Enrollment Policy.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,

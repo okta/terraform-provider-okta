@@ -26,6 +26,7 @@ func resourceBehavior() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "This resource allows you to create and configure a behavior.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -35,34 +36,34 @@ func resourceBehavior() *schema.Resource {
 			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Behavior type",
+				Description: "Type of the behavior. Can be set to `ANOMALOUS_LOCATION`, `ANOMALOUS_DEVICE`, `ANOMALOUS_IP` or `VELOCITY`. Resource will be recreated when the type changes.e",
 				ForceNew:    true,
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     statusActive,
-				Description: "Behavior status: ACTIVE or INACTIVE.",
+				Description: "Behavior status: ACTIVE or INACTIVE. Default: `ACTIVE`",
 			},
 			"location_granularity_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Determines the method and level of detail used to evaluate the behavior.",
+				Description: "Determines the method and level of detail used to evaluate the behavior. Required for `ANOMALOUS_LOCATION` behavior type. Can be set to `LAT_LONG`, `CITY`, `COUNTRY` or `SUBDIVISION`.",
 			},
 			"radius_from_location": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Radius from location (in kilometers)",
+				Description: "Radius from location (in kilometers). Should be at least 5. Required when `location_granularity_type` is set to `LAT_LONG`.",
 			},
 			"number_of_authentications": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "The number of recent authentications used to evaluate the behavior.",
+				Description: "The number of recent authentications used to evaluate the behavior. Required for `ANOMALOUS_LOCATION`, `ANOMALOUS_DEVICE` and `ANOMALOUS_IP` behavior types.",
 			},
 			"velocity": {
 				Type:          schema.TypeInt,
 				Optional:      true,
-				Description:   "Velocity (in kilometers per hour).",
+				Description:   "Velocity (in kilometers per hour). Should be at least 1. Required for `VELOCITY` behavior",
 				ConflictsWith: []string{"number_of_authentications", "radius_from_location", "location_granularity_type"},
 			},
 		},

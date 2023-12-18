@@ -20,7 +20,8 @@ func resourceTheme() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceThemeImportStateContext,
 		},
-		Schema: themeResourceSchema,
+		Description: "Gets, updates, a single Theme of a Brand of an Okta Organization.",
+		Schema:      themeResourceSchema,
 	}
 }
 

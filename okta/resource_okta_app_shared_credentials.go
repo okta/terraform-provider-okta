@@ -19,11 +19,18 @@ func resourceAppSharedCredentials() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
+		Description: `Creates a SWA shared credentials app.
+
+This resource allows you to create and configure SWA shared credentials app.
+
+-> During an apply if there is change in 'status' the app will first be
+activated or deactivated in accordance with the 'status' change. Then, all
+other arguments that changed will be applied.`,
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Preconfigured app name",
+				Description: "Name of application from the Okta Integration Network, if not included a custom app will be created.",
 			},
 			"button_field": {
 				Type:        schema.TypeString,
@@ -43,12 +50,12 @@ func resourceAppSharedCredentials() *schema.Resource {
 			"url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Login URL",
+				Description: "The URL of the sign-in page for this app.",
 			},
 			"url_regex": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "A regex that further restricts URL to the specified regex",
+				Description: "A regular expression that further restricts url to the specified regular expression.",
 			},
 			"redirect_url": {
 				Type:        schema.TypeString,

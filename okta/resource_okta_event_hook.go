@@ -17,6 +17,7 @@ func resourceEventHook() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Creates an event hook. This resource allows you to create and configure an event hook.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -62,7 +63,10 @@ func resourceEventHook() *schema.Resource {
 					}
 					return false
 				},
-				Description: "Details of the endpoint the event hook will hit.",
+				Description: `Details of the endpoint the event hook will hit.   
+	- 'version' - (Required) The version of the channel. The currently-supported version is '1.0.0'.
+	- 'uri' - (Required) The URI the hook will hit.
+	- 'type' - (Optional) The type of hook to trigger. Currently, the only supported type is 'HTTP'.`,
 			},
 		},
 	}

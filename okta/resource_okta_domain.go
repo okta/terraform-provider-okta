@@ -18,6 +18,7 @@ func resourceDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Manages custom domain for your organization.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -28,7 +29,7 @@ func resourceDomain() *schema.Resource {
 			"certificate_source_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Optional. Certificate source type that indicates whether the certificate is provided by the user or Okta. Accepted values: MANUAL, OKTA_MANAGED. Warning: Use of OKTA_MANAGED requires a feature flag to be enabled. Default value = MANUAL",
+				Description: "Certificate source type that indicates whether the certificate is provided by the user or Okta. Accepted values: `MANUAL`, `OKTA_MANAGED`. Warning: Use of OKTA_MANAGED requires a feature flag to be enabled. Default value = MANUAL",
 				Default:     "MANUAL",
 			},
 			"validation_status": {

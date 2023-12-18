@@ -15,24 +15,31 @@ func resourcePolicyMfaRule() *schema.Resource {
 		UpdateContext: resourcePolicyMfaRuleUpdate,
 		DeleteContext: resourcePolicyMfaRuleDelete,
 		Importer:      createPolicyRuleImporter(),
+		Description:   "Creates an MFA Policy Rule. This resource allows you to create and configure an MFA Policy Rule.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
 			"enroll": {
 				Type:        schema.TypeString,
 				Default:     "CHALLENGE",
 				Optional:    true,
-				Description: "Should the user be enrolled the first time they LOGIN, the next time they are CHALLENGED, or NEVER?",
+				Description: "When a user should be prompted for MFA. It can be `CHALLENGE`, `LOGIN`, or `NEVER`.",
 			},
 			"app_include": {
-				Type:        schema.TypeSet,
-				Elem:        appResource,
-				Optional:    true,
-				Description: "Applications to include",
+				Type:     schema.TypeSet,
+				Elem:     appResource,
+				Optional: true,
+				Description: `Applications to include in discovery rule. **IMPORTANT**: this field is only available in Classic Organizations.
+	- 'id' - (Optional) Use if 'type' is 'APP' to indicate the application id to include.
+	- 'name' - (Optional) Use if the 'type' is 'APP_TYPE' to indicate the type of application(s) to include in instances where an entire group (i.e. 'yahoo_mail') of applications should be included.
+	- 'type' - (Required) One of: 'APP', 'APP_TYPE'`,
 			},
 			"app_exclude": {
-				Type:        schema.TypeSet,
-				Elem:        appResource,
-				Optional:    true,
-				Description: "Applications to exclude",
+				Type:     schema.TypeSet,
+				Elem:     appResource,
+				Optional: true,
+				Description: `Applications to exclude in discovery rule. **IMPORTANT**: this field is only available in Classic Organizations.
+	- 'id' - (Optional) Use if 'type' is 'APP' to indicate the application id to include.
+	- 'name' - (Optional) Use if the 'type' is 'APP_TYPE' to indicate the type of application(s) to include in instances where an entire group (i.e. 'yahoo_mail') of applications should be included.
+	- 'type' - (Required) One of: 'APP', 'APP_TYPE'`,
 			},
 		}),
 	}
