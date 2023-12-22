@@ -37,11 +37,27 @@ resource "okta_authenticator" "test" {
 }
 ```
 
+```hcl
+resource "okta_authenticator" "test" {
+  name   = "Custom OTP"
+  key    = "custom_otp"
+  status = "ACTIVE"
+  settings = jsonencode({
+    "protocol" : "TOTP",
+    "acceptableAdjacentIntervals" : 3,
+    "timeIntervalInSeconds" : 30,
+    "encoding" : "base32",
+    "algorithm" : "HMacSHA256",
+    "passCodeLength" : 6
+  })
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
 
-- `key` (Required) A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`
+- `key` (Required) A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`, `custom_otp`
 
 - `name` - (Required) Name of the authenticator.
 

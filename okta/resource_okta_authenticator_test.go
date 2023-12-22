@@ -7,6 +7,44 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
+func TestAccResourceOktaAuthenticatorOTP(t *testing.T) {
+	config := `
+	resource "okta_authenticator" "otp" {
+		name   = "Custom OTP"
+		key    = "custom_otp"
+		status = "ACTIVE"
+		settings = jsonencode({
+		  "protocol" : "TOTP",
+		  "acceptableAdjacentIntervals" : 3,
+		  "timeIntervalInSeconds" : 30,
+		  "encoding" : "base32",
+		  "algorithm" : "HMacSHA256",
+		  "passCodeLength" : 6
+		})
+	}
+`
+	resourceName := fmt.Sprintf("%s.otp", authenticator)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "custom_otp"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Custom OTP"),
+					testAttributeJSON(resourceName, "settings", `{"acceptableAdjacentIntervals":3,"algorithm":"HMacSHA256","encoding":"base32","passCodeLength":6,"protocol":"TOTP","timeIntervalInSeconds":30}`),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAuthenticator_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authenticator)
 	mgr := newFixtureManager("resources", authenticator, t.Name())
