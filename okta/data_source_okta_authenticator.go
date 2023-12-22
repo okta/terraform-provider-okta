@@ -150,15 +150,9 @@ func findAuthenticator(ctx context.Context, m interface{}, name, key string) (*s
 		return nil, err
 	}
 	for _, authenticator := range authenticators {
-		if authenticator.Name == name {
-			return authenticator, nil
-		}
-		if authenticator.Key == key {
+		if authenticator.Name == name && authenticator.Key == key {
 			return authenticator, nil
 		}
 	}
-	if key != "" {
-		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
-	}
-	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name)
+	return nil, fmt.Errorf("authenticator with name '%s' and/or key '%s' does not exist", name, key)
 }

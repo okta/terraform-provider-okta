@@ -24,6 +24,10 @@ type Authenticator struct {
 	Type        string                 `json:"type,omitempty"`
 }
 
+type OTP struct {
+	Settings *AuthenticatorSettingsOTP `json:"settings"`
+}
+
 func (m *AuthenticatorResource) GetAuthenticator(ctx context.Context, authenticatorId string) (*Authenticator, *Response, error) {
 	url := fmt.Sprintf("/api/v1/authenticators/%v", authenticatorId)
 
@@ -108,6 +112,26 @@ func (m *AuthenticatorResource) CreateAuthenticator(ctx context.Context, body Au
 	}
 
 	return authenticator, resp, nil
+}
+
+func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string)(*Response, error){
+	url := fmt.Sprintf("/api/v1/authenticators/%v/methods/otp", authenticatorId)
+
+	rq := m.client.CloneRequestExecutor()
+
+	req, err := rq.WithAccept("application/json").WithContentType("application/json").NewRequest("PUT", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	var otp *OTP
+
+	resp, err := rq.Do(ctx, req, &otp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (m *AuthenticatorResource) ActivateAuthenticator(ctx context.Context, authenticatorId string) (*Authenticator, *Response, error) {
