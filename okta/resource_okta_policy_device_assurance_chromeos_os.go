@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -157,20 +156,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 
 // Configure adds the provider configured client to the resource.
 func (r *policyDeviceAssuranceChromeOSResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	p, ok := req.ProviderData.(*Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.Config = p
+	r.Config = resourceConfiguration(req, resp)
 }
 
 func (r *policyDeviceAssuranceChromeOSResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
