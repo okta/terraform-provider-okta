@@ -124,12 +124,8 @@ func (d *logStreamDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 		lsSettings, ok := logStreamResp.LogStreamAws.GetSettingsOk()
 		if ok {
-			if accountID, ok := lsSettings.GetAccountIdOk(); ok {
-				settings.AccountID = types.StringValue(*accountID)
-			}
-			if eventSourceName, ok := lsSettings.GetEventSourceNameOk(); ok {
-				settings.EventSourceName = types.StringValue(*eventSourceName)
-			}
+			settings.AccountID = types.StringPointerValue(&lsSettings.AccountId)
+			settings.EventSourceName = types.StringPointerValue(&lsSettings.EventSourceName)
 			if region, ok := lsSettings.GetRegionOk(); ok {
 				settings.Region = types.StringValue(string(*region))
 			}
