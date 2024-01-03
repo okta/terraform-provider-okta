@@ -11,14 +11,12 @@ import (
 var translationSmsResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"language": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "The language to map the template to.",
+			Type:     schema.TypeString,
+			Required: true,
 		},
 		"template": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Description: "The SMS message.",
+			Type:     schema.TypeString,
+			Required: true,
 		},
 	},
 }
@@ -32,7 +30,6 @@ func resourceTemplateSms() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "Creates an Okta SMS Template. This resource allows you to create and configure an Okta SMS Template.",
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
@@ -45,10 +42,9 @@ func resourceTemplateSms() *schema.Resource {
 				Description: "SMS default template",
 			},
 			"translations": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        translationSmsResource,
-				Description: "Set of translations for a particular template.",
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     translationSmsResource,
 			},
 		},
 	}

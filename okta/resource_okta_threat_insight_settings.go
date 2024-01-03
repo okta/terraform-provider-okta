@@ -17,17 +17,16 @@ func resourceThreatInsightSettings() *schema.Resource {
 		UpdateContext: resourceThreatInsightSettingsUpdate,
 		DeleteContext: resourceThreatInsightSettingsDelete,
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
-		Description:   "Manages Okta Threat Insight Settings. This resource allows you to configure Threat Insight Settings.",
 		Schema: map[string]*schema.Schema{
 			"action": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Specifies how Okta responds to authentication requests from suspicious IPs. Valid values are `none`, `audit`, or `block`. A value of `none` indicates that ThreatInsight is disabled. A value of `audit` indicates that Okta logs suspicious requests in the System Log. A value of `block` indicates that Okta logs suspicious requests in the System Log and blocks the requests.",
+				Description: "Specifies how Okta responds to authentication requests from suspicious IPs",
 			},
 			"network_excludes": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Accepts a list of Network Zone IDs. Can only accept zones of `IP` type. IPs in the excluded Network Zones aren't logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation. This ensures that traffic from known, trusted IPs isn't accidentally logged or blocked. The ordering of the network zone is not guarantee from the API sides",
+				Description: "List of Network Zone IDs to exclude to be not logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					// special case before the resource has been created

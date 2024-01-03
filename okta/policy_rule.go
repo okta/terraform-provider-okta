@@ -39,7 +39,7 @@ var (
 		"priority": {
 			Type:        schema.TypeInt,
 			Optional:    true,
-			Description: "Rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last (lowest) if not provided.",
+			Description: "Policy Rule Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.",
 			// Suppress diff if config is empty.
 			DiffSuppressFunc: createValueDiffSuppression("0"),
 		},
@@ -47,25 +47,25 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Default:     statusActive,
-			Description: "Policy Rule Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`",
+			Description: "Policy Rule Status: ACTIVE or INACTIVE.",
 		},
 		"network_connection": {
 			Type:        schema.TypeString,
 			Optional:    true,
-			Description: "Network selection mode: `ANYWHERE`, `ZONE`, `ON_NETWORK`, or `OFF_NETWORK`. Default: `ANYWHERE`",
+			Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
 			Default:     "ANYWHERE",
 		},
 		"network_includes": {
 			Type:          schema.TypeList,
 			Optional:      true,
-			Description:   "Required if `network_connection` = `ZONE`. Indicates the network zones to include.",
+			Description:   "The zones to include",
 			ConflictsWith: []string{"network_excludes"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},
 		"network_excludes": {
 			Type:          schema.TypeList,
 			Optional:      true,
-			Description:   "Required if `network_connection` = `ZONE`. Indicates the network zones to exclude.",
+			Description:   "The zones to exclude",
 			ConflictsWith: []string{"network_includes"},
 			Elem:          &schema.Schema{Type: schema.TypeString},
 		},

@@ -70,7 +70,6 @@ func resourceUser() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Creates an Okta User. This resource allows you to create and configure an Okta User.",
 		Schema: map[string]*schema.Schema{
 			"skip_roles": {
 				Type:        schema.TypeBool,
@@ -107,7 +106,7 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "List of custom_profile_attribute keys that should be excluded from being managed by Terraform. This is useful in situations where specific custom fields may contain sensitive information and should be managed outside of Terraform.",
+				Description: "List of custom_profile_attribute keys that should be excluded from being managed by Terraform.",
 			},
 			"department": {
 				Type:        schema.TypeString,
@@ -227,7 +226,7 @@ func resourceUser() *schema.Resource {
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "User profile property. Valid values are `ACTIVE`, `DEPROVISIONED`, `STAGED`, `SUSPENDED`. Default: `ACTIVE`",
+				Description: "The status of the User in Okta - remove to set user back to active/provisioned",
 				Default:     statusActive,
 				// ignore diff changing to ACTIVE if state is set to PROVISIONED or PASSWORD_EXPIRED
 				// since this is a similar status in Okta terms
@@ -275,20 +274,20 @@ func resourceUser() *schema.Resource {
 				Type:         schema.TypeBool,
 				Optional:     true,
 				Default:      false,
-				Description:  "If set to `true`, the user will have to change the password at the next login. This property will be used when user is being created and works only when `password` field is set. Default: `false`",
+				Description:  "If set to `true`, the user will have to change the password at the next login. This property will be used when user is being created and works only when `password` field is set",
 				RequiredWith: []string{"password"},
 			},
 			"password_inline_hook": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Description:   "Specifies that a Password Import Inline Hook should be triggered to handle verification of the user's password the first time the user logs in. This allows an existing password to be imported into Okta directly from some other store. When updating a user with a password hook the user must be in the `STAGED` status. The `password` field should not be specified when using Password Import Inline Hook.",
+				Description:   "When specified, the Password Inline Hook is triggered to handle verification of the end user's password the first time the user tries to sign in",
 				ConflictsWith: []string{"password", "password_hash"},
 			},
 			"old_password": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
-				Description: "Old User Password. Should be only set in case the password was not changed using the provider. fter successful password change this field should be removed and `password` field should be used for further changes.",
+				Description: "Old User Password. Should be only set in case the password was not changed using the provider",
 			},
 			"recovery_question": {
 				Type:        schema.TypeString,

@@ -66,7 +66,7 @@ func (r *policyDeviceAssuranceMacOSResource) Metadata(_ context.Context, req res
 
 func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages a device assurance policy for macos.",
+		Description: "Manages device assurance on policy",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Policy assurance id",
@@ -76,7 +76,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the device assurance policy.",
+				Description: "Policy device assurance name",
 				Required:    true,
 			},
 			"platform": schema.StringAttribute{
@@ -88,7 +88,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 			},
 			// use set to avoid order change as v3 does not have diff suppress func
 			"disk_encryption_type": schema.SetAttribute{
-				Description: "List of disk encryption type, can be `ALL_INTERNAL_VOLUMES`",
+				Description: "List of disk encryption type, can be ALL_INTERNAL_VOLUMES",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{
@@ -100,7 +100,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				},
 			},
 			"os_version": schema.StringAttribute{
-				Description: "Minimum os version of the device in the device assurance policy.",
+				Description: "The device os minimum version",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.AtLeastOneOf(path.Expressions{
@@ -111,7 +111,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				},
 			},
 			"secure_hardware_present": schema.BoolAttribute{
-				Description: "Is the device secure with hardware in the device assurance policy.",
+				Description: "Indicates if the device constains a secure hardware functionality",
 				Optional:    true,
 				Validators: []validator.Bool{
 					boolvalidator.AtLeastOneOf(path.Expressions{
@@ -122,7 +122,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				},
 			},
 			"screenlock_type": schema.SetAttribute{
-				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
+				Description: "List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{

@@ -14,12 +14,6 @@ func resourceLinkDefinition() *schema.Resource {
 		ReadContext:   resourceLinkDefinitionRead,
 		DeleteContext: resourceLinkDefinitionDelete,
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
-		Description: `Manages the creation and removal of the link definitions.
-		
-Link definition operations allow you to manage the creation and removal of the link definitions. If you remove a link 
-definition, links based on that definition are unavailable. Note that this resource is immutable, thus can not be modified.
-
-~> **NOTE:** Links reappear if you recreate the definition. However, Okta is likely to change this behavior so that links don't reappear. Don't rely on this behavior in production environments.`,
 		Schema: map[string]*schema.Schema{
 			"primary_name": {
 				Type:        schema.TypeString,

@@ -1,1 +1,0 @@
-terraform import okta_group.example &#60;group id&#62;

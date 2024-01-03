@@ -1,1 +1,0 @@
-terraform import okta_app_group_assignments.example &#60;app_id&#62

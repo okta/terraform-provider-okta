@@ -22,13 +22,6 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
-		Description: `Creates a Secure Password Store Application.
-	
-This resource allows you to create and configure a Secure Password Store Application.
-
--> During an apply if there is change in 'status' the app will first be
-activated or deactivated in accordance with the 'status' change. Then, all
-other arguments that changed will be applied.`,
 		Schema: buildAppSwaSchema(map[string]*schema.Schema{
 			"password_field": {
 				Type:        schema.TypeString,
@@ -79,13 +72,13 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "EDIT_USERNAME_AND_PASSWORD",
-				Description: "Application credentials scheme. One of: `EDIT_USERNAME_AND_PASSWORD`, `ADMIN_SETS_CREDENTIALS`, `EDIT_PASSWORD_ONLY`, `EXTERNAL_PASSWORD_SYNC`, or `SHARED_USERNAME_AND_PASSWORD`",
+				Description: "Application credentials scheme",
 			},
 			"reveal_password": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Allow user to reveal password. It can not be set to `true` if `credentials_scheme` is `ADMIN_SETS_CREDENTIALS`, `SHARED_USERNAME_AND_PASSWORD` or `EXTERNAL_PASSWORD_SYNC`.",
+				Description: "Allow user to reveal password",
 			},
 			"shared_username": {
 				Type:        schema.TypeString,

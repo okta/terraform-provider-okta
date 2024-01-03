@@ -20,26 +20,12 @@ func resourceAuthenticator() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
-
-This resource allows you to configure different authenticators.
-
--> **Create:** The Okta API has an odd notion of create for authenticators. If
-the authenticator doesn't exist then a one time 'POST /api/v1/authenticators' to
-create the authenticator (hard create) will be performed. Thereafter, that
-authenticator is never deleted, it is only deactivated (soft delete). Therefore,
-if the authenticator already exists create is just a soft import of an existing
-authenticator.
-
--> **Delete:** Authenticators can not be truly deleted therefore delete is soft.
-Delete will attempt to deativate the authenticator. An authenticator can only be
-deactivated if it's not in use by any other policy.`,
 		Schema: map[string]*schema.Schema{
 			"key": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`",
+				Description: "A human-readable string that identifies the Authenticator",
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -52,7 +38,7 @@ deactivated if it's not in use by any other policy.`,
 			"settings": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key`",
+				Description:      "Authenticator settings in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
@@ -60,7 +46,7 @@ deactivated if it's not in use by any other policy.`,
 			"provider_json": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      `Provider JSON allows for expressive providervalues. This argument conflicts with the other 'provider_xxx' arguments.  The [CreateProvider](https://developer.okta.com/docs/reference/api/authenticators-admin/#request) illustrates detailed provider values for a Duo authenticator. [Provider values](https://developer.okta.com/docs/reference/api/authenticators-admin/#authenticators-administration-api-object)are listed in Okta API.`,
+				Description:      "Provider in JSON format",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
@@ -80,18 +66,18 @@ deactivated if it's not in use by any other policy.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     statusActive,
-				Description: "Authenticator status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`",
+				Description: "Authenticator status: ACTIVE or INACTIVE",
 			},
 			"type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "he type of Authenticator. Values include: `password`, `security_question`, `phone`, `email`, `app`, `federated`, and `security_key`.",
+				Description: "The type of Authenticator",
 			},
 			// General Provider Arguments
 			"provider_auth_port": {
 				Type:          schema.TypeInt,
 				Optional:      true,
-				Description:   "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured. Used only for authenticators with type `security_key`.  Conflicts with `provider_json` argument.",
+				Description:   "The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured",
 				RequiredWith:  []string{"provider_hostname"},
 				ConflictsWith: []string{"provider_json"},
 				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
@@ -105,14 +91,14 @@ deactivated if it's not in use by any other policy.`,
 				Type:          schema.TypeString,
 				Optional:      true,
 				Default:       "localhost",
-				Description:   "Server host name or IP address. Default is `localhost`. Used only for authenticators with type `security_key`.  Conflicts with `provider_json` argument.",
+				Description:   "Server host name or IP address",
 				ConflictsWith: []string{"provider_json"},
 			},
 			"provider_shared_secret": {
 				Type:          schema.TypeString,
 				Sensitive:     true,
 				Optional:      true,
-				Description:   "An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server. Used only for authenticators with type `security_key`.  Conflicts with `provider_json` argument.",
+				Description:   "An authentication key that must be defined when the RADIUS server is configured, and must be the same on both the RADIUS client and server.",
 				RequiredWith:  []string{"provider_hostname"},
 				ConflictsWith: []string{"provider_json"},
 			},
@@ -120,7 +106,7 @@ deactivated if it's not in use by any other policy.`,
 				Type:          schema.TypeString,
 				Optional:      true,
 				Default:       "global.assign.userName.login",
-				Description:   "Username template expected by the provider. Used only for authenticators with type `security_key`.  Conflicts with `provider_json` argument.",
+				Description:   "Format expected by the provider",
 				RequiredWith:  []string{"provider_hostname"},
 				ConflictsWith: []string{"provider_json"},
 			},
@@ -128,19 +114,19 @@ deactivated if it's not in use by any other policy.`,
 			"provider_host": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Description:   "(DUO specific) - The Duo Security API hostname. Conflicts with `provider_json` argument.",
+				Description:   "The Duo Security API hostname",
 				ConflictsWith: []string{"provider_json"},
 			},
 			"provider_integration_key": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Description:   "(DUO specific) - The Duo Security integration key.  Conflicts with `provider_json` argument.",
+				Description:   "The Duo Security integration key",
 				ConflictsWith: []string{"provider_json"},
 			},
 			"provider_secret_key": {
 				Type:          schema.TypeString,
 				Optional:      true,
-				Description:   "(DUO specific) - The Duo Security secret key.  Conflicts with `provider_json` argument.",
+				Description:   "The Duo Security secret key",
 				ConflictsWith: []string{"provider_json"},
 			},
 			// General Provider Attributes

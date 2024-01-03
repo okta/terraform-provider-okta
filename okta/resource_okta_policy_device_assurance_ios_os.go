@@ -51,7 +51,7 @@ func (r *policyDeviceAssuranceIOSResource) Metadata(_ context.Context, req resou
 
 func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages a device assurance policy for ios.",
+		Description: "Manages device assurance on policy",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Policy assurance id",
@@ -61,7 +61,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of the device assurance policy.",
+				Description: "Policy device assurance name",
 				Required:    true,
 			},
 			"platform": schema.StringAttribute{
@@ -69,7 +69,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				Computed:    true,
 			},
 			"jailbreak": schema.BoolAttribute{
-				Description: "Is the device jailbroken in the device assurance policy.",
+				Description: "The device jailbreak. Only for android and iOS platform",
 				Optional:    true,
 				Validators: []validator.Bool{
 					boolvalidator.AtLeastOneOf(path.Expressions{
@@ -79,7 +79,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"os_version": schema.StringAttribute{
-				Description: "Minimum os version of the device in the device assurance policy.",
+				Description: "The device os minimum version",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.AtLeastOneOf(path.Expressions{
@@ -89,7 +89,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"screenlock_type": schema.SetAttribute{
-				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
+				Description: "List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{
@@ -100,19 +100,19 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"created_date": schema.StringAttribute{
-				Description: "Created date of the device assurance polic",
+				Description: "Created date",
 				Computed:    true,
 			},
 			"created_by": schema.StringAttribute{
-				Description: "Created by of the device assurance polic",
+				Description: "Created by",
 				Computed:    true,
 			},
 			"last_update": schema.StringAttribute{
-				Description: "Last update of the device assurance polic",
+				Description: "Last update",
 				Computed:    true,
 			},
 			"last_updated_by": schema.StringAttribute{
-				Description: "Last updated by of the device assurance polic",
+				Description: "Last updated by",
 				Computed:    true,
 			},
 		},

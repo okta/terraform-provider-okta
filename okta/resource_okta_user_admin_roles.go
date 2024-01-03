@@ -20,7 +20,7 @@ func resourceUserAdminRoles() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Resource to manage a set of administrator roles for a specific user. This resource allows you to manage admin roles for a single user, independent of the user schema itself.",
+		Description: "Resource to manage a set of administrator roles for a specific user.",
 		Schema: map[string]*schema.Schema{
 			"user_id": {
 				Type:        schema.TypeString,
@@ -31,7 +31,7 @@ func resourceUserAdminRoles() *schema.Resource {
 			"admin_roles": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).",
+				Description: "User Okta admin roles - ie. ['APP_ADMIN', 'USER_ADMIN']",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -39,7 +39,7 @@ func resourceUserAdminRoles() *schema.Resource {
 			"disable_notifications": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails. These admins also won't have access to contact Okta Support and open support cases on behalf of your org.",
+				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails",
 				Default:     false,
 			},
 		},

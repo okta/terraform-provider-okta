@@ -1,1 +1,0 @@
-terraform import okta_policy_rule_mfa.example &#60;policy id&#62;/&#60;rule id&#62;

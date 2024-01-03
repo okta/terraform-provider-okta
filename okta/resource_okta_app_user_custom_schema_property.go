@@ -20,16 +20,6 @@ func resourceAppUserSchemaProperty() *schema.Resource {
 		UpdateContext: resourceAppUserSchemaPropertyUpdate,
 		DeleteContext: resourceAppUserSchemaPropertyDelete,
 		Importer:      createNestedResourceImporter([]string{"app_id", "index"}),
-		Description: `Creates an Application User Schema property.
-
-This resource allows you to create and configure a custom user schema property and associate it with an application.
-Make sure that the app instance is 'active' before creating the schema property, because in some cases API might return '404' error.
-
-**IMPORTANT:** With 'enum', list its values as strings even though the 'type'
-may be something other than string. This is a limitation of the schema defintion
-in the Terraform Plugin SDK runtime and we juggle the type correctly when making
-Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
-'array_*' variation of 'enum' and 'one_of'`,
 		Schema: buildSchema(
 			userSchemaSchema,
 			userBaseSchemaSchema,
@@ -44,7 +34,7 @@ Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 				"union": {
 					Type:          schema.TypeBool,
 					Optional:      true,
-					Description:   "If `type` is set to `array`, used to set whether attribute value is determined by group priority `false`, or combine values across groups `true`. Can not be set to `true` if `scope` is set to `SELF`.",
+					Description:   "Allows to assign attribute's group priority",
 					Default:       false,
 					ConflictsWith: []string{"enum"},
 				},
@@ -58,7 +48,7 @@ Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 				"master": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					Description: "Master priority for the user schema property. It can be set to `PROFILE_MASTER` or `OKTA`",
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:     "PROFILE_MASTER",
 				},
 			}),

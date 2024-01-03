@@ -1,1 +1,0 @@
-terraform import okta_domain.example &#60;domain_id&#62;

@@ -17,12 +17,6 @@ func resourceCaptchaOrgWideSettings() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `Manages Org-Wide CAPTCHA settings
-
-~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
-
-This resource allows you to configure which parts of the authentication flow requires users to pass the CAPTCHA logic.
-CAPTCHA org-wide settings can be disabled by unsetting 'captcha_id' and 'enabled_for'.`,
 		Schema: map[string]*schema.Schema{
 			"captcha_id": {
 				Type:        schema.TypeString,
@@ -35,7 +29,7 @@ CAPTCHA org-wide settings can be disabled by unsetting 'captcha_id' and 'enabled
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Description:  "Array of pages that have CAPTCHA enabled. Valid values: `SSR`, `SSPR` and `SIGN_IN`.",
+				Description:  "Set of pages that have CAPTCHA enabled",
 				RequiredWith: []string{"captcha_id"},
 			},
 		},

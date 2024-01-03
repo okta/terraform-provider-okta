@@ -35,17 +35,16 @@ func resourceGroup() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Creates an Okta Group. This resource allows you to create and configure an Okta Group.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The name of the Okta Group.",
+				Description: "Group name",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The description of the Okta Group.",
+				Description: "Group description",
 			},
 			"skip_users": {
 				Type:        schema.TypeBool,

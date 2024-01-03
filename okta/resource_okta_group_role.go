@@ -51,7 +51,6 @@ func resourceGroupRole() *schema.Resource {
 				return false
 			}),
 		),
-		Description: "Assigns Admin roles to Okta Groups. This resource allows you to assign Okta administrator roles to Okta Groups. This resource provides a one-to-one interface between the Okta group and the admin role.",
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
@@ -60,41 +59,27 @@ func resourceGroupRole() *schema.Resource {
 				ForceNew:    true,
 			},
 			"role_type": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Admin role assigned to the group. It can be any one of the following values:
-	"API_ADMIN",
-	"APP_ADMIN",
-	"CUSTOM",
-	"GROUP_MEMBERSHIP_ADMIN",
-	"HELP_DESK_ADMIN",
-	"MOBILE_ADMIN",
-	"ORG_ADMIN",
-	"READ_ONLY_ADMIN",
-	"REPORT_ADMIN",
-	"SUPER_ADMIN",
-	"USER_ADMIN"
-	. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
-
-	- "USER_ADMIN" is the Group Administrator.`,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Type of Role to assign",
+				ForceNew:    true,
 			},
 			"target_group_list": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "A list of group IDs you would like as the targets of the admin role. - Only supported when used with the role types: `GROUP_MEMBERSHIP_ADMIN`, `HELP_DESK_ADMIN`, or `USER_ADMIN`.",
+				Description: "List of groups ids for the targets of the admin role.",
 			},
 			"target_app_list": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "A list of app names (name represents set of app instances, like 'salesforce' or 'facebook'), or a combination of app name and app instance ID (like 'facebook.0oapsqQ6dv19pqyEo0g3') you would like as the targets of the admin role. - Only supported when used with the role type `APP_ADMIN`.",
+				Description: "List of apps ids for the targets of the admin role.",
 			},
 			"disable_notifications": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails. These admins also won't have access to contact Okta Support and open support cases on behalf of your org.",
+				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails",
 				Default:     false,
 			},
 		},

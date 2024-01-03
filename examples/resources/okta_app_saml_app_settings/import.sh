@@ -1,1 +1,0 @@
-terraform import okta_app_saml_app_settings.example &#60;app id&#62

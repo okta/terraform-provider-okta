@@ -19,7 +19,6 @@ func resourceNetworkZone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "Creates an Okta Network Zone. This resource allows you to create and configure an Okta Network Zone.",
 		Schema: map[string]*schema.Schema{
 			"dynamic_locations": {
 				Type:        schema.TypeSet,
@@ -30,7 +29,7 @@ func resourceNetworkZone() *schema.Resource {
 			"dynamic_proxy_type": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Type of proxy being controlled by this dynamic network zone - can be one of `Any`, `TorAnonymizer` or `NotTorAnonymizer`.",
+				Description: "Type of proxy being controlled by this network zone",
 			},
 			"gateways": {
 				Type:        schema.TypeSet,
@@ -46,23 +45,23 @@ func resourceNetworkZone() *schema.Resource {
 			"proxies": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`",
+				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Type of the Network Zone - can either be `IP` or `DYNAMIC` only",
+				Description: "Type of the Network Zone - can either be IP or DYNAMIC only",
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Network Status - can either be `ACTIVE` or `INACTIVE` only",
+				Description: "Network Status - can either be ACTIVE or INACTIVE only",
 			},
 			"usage": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Usage of the Network Zone - can be either `POLICY` or `BLOCKLIST`. By default, it is `POLICY`",
+				Description: "Zone's purpose: POLICY or BLOCKLIST",
 				Default:     "POLICY",
 			},
 			"asns": {

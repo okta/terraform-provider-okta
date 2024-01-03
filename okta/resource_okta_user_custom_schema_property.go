@@ -35,7 +35,6 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Creates a User Schema property. This resource allows you to create and configure a custom user schema property.",
 		Schema: buildSchema(
 			userBaseSchemaSchema,
 			userSchemaSchema,
@@ -43,24 +42,21 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 			userPatternSchema,
 			map[string]*schema.Schema{
 				"scope": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Default:     "NONE",
-					Description: "determines whether an app user attribute can be set at the Individual or Group Level. Default: `NONE`",
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "NONE",
 				},
 				"master": {
 					Type:     schema.TypeString,
 					Optional: true,
 					// Accepting an empty value to allow for zero value (when provisioning is off)
-					Description: " Master priority for the user schema property. It can be set to `PROFILE_MASTER`, `OVERRIDE` or `OKTA`.",
+					Description: "SubSchema profile manager, if not set it will inherit its setting.",
 					Default:     "PROFILE_MASTER",
 				},
 				"master_override_priority": {
-					Type:     schema.TypeList,
-					Optional: true,
-					Description: `Prioritized list of profile sources (required when 'master' is 'OVERRIDE').
-	- 'type' - (Optional) - Type of profile source.
-	- 'value' - (Required) - ID of profile source.`,
+					Type:        schema.TypeList,
+					Optional:    true,
+					Description: "",
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"type": {

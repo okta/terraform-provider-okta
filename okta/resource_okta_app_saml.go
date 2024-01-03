@@ -47,39 +47,21 @@ func resourceAppSaml() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
-		Description: `This resource allows you to create and configure a SAML Application.
-
--> During an apply if there is change in 'status' the app will first be
-activated or deactivated in accordance with the 'status' change. Then, all
-other arguments that changed will be applied.
-		
--> If you receive the error 'You do not have permission to access the feature
-you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
-request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: buildAppSchema(map[string]*schema.Schema{
 			"preconfigured_app": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: `Name of application from the Okta Integration Network. For instance 'slack'. If not included a custom app will be created.  If not provided the following arguments are required:
-'sso_url'
-'recipient'
-'destination'
-'audience'
-'subject_name_id_template'
-'subject_name_id_format'
-'signature_algorithm'
-'digest_algorithm'
-'authn_context_class_ref'`,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Name of preexisting SAML application. For instance 'slack'",
+				ForceNew:    true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return new == ""
 				},
 			},
 			"key_name": {
 				Type:         schema.TypeString,
-				Description:  "Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`",
+				Description:  "Certificate name. This modulates the rotation of keys. New name == new key.",
 				Optional:     true,
 				RequiredWith: []string{"key_years_valid"},
 			},
@@ -91,7 +73,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"key_years_valid": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Number of years the certificate is valid (2 - 10 years).",
+				Description: "Number of years the certificate is valid.",
 			},
 			"keys": {
 				Type:        schema.TypeList,
@@ -106,12 +88,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 						},
 						"kty": {
 							Type:        schema.TypeString,
-							Description: "Key type. Identifies the cryptographic algorithm family used with the key.",
+							Description: "Key type",
 							Computed:    true,
 						},
 						"use": {
 							Type:        schema.TypeString,
-							Description: "Intended use of the public key.",
+							Description: "Acceptable usage of the certificate",
 							Computed:    true,
 						},
 						"created": {
@@ -192,7 +174,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Display auto submit toolbar. Default is: `false`",
+				Description: "Display auto submit toolbar",
 			},
 			"hide_ios": {
 				Type:        schema.TypeBool,
@@ -285,7 +267,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"honor_force_authn": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Prompt user to re-authenticate if SP asks for it. Default is: `false`",
+				Description: "Prompt user to re-authenticate if SP asks for it",
 				Default:     false,
 			},
 			"authn_context_class_ref": {
@@ -316,7 +298,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
-				Description: "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
+				Description: "List of ACS endpoints for this SAML application",
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
@@ -326,7 +308,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 						"filter_type": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Type of group attribute filter. Valid values are: `STARTS_WITH`, `EQUALS`, `CONTAINS`, or `REGEX`",
+							Description: "Type of group attribute filter",
 						},
 						"filter_value": {
 							Type:        schema.TypeString,
@@ -342,7 +324,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 							Type:        schema.TypeString,
 							Optional:    true,
 							Default:     "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
-							Description: "The attribute namespace. It can be set to `urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified`, `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`, or `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`",
+							Description: "The name format of the attribute",
 						},
 						"type": {
 							Type:        schema.TypeString,
@@ -373,7 +355,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"single_logout_certificate": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests.  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).",
+				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests",
 				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
 				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 					oldCert, err := certNormalize(oldValue)
@@ -394,12 +376,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     saml20,
-				Description: "SAML version for the app's sign-on mode. Valid values are: `2.0` or `1.1`. Default is `2.0`",
+				Description: "SAML version for the app's sign-on mode",
 			},
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.y",
+				Description: "Id of this apps authentication policy",
 			},
 			"embed_url": {
 				Type:        schema.TypeString,

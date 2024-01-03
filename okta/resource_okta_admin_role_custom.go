@@ -19,11 +19,7 @@ func resourceAdminRoleCustom() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `Resource to manage administrative Role assignments for a User
-
-These operations allow the creation and manipulation of custom roles as custom collections of permissions.
-
-~> **NOTE:** This an Early Access feature.`,
+		Description: "Resource to manage administrative Role assignments for a User",
 		Schema: map[string]*schema.Schema{
 			"label": {
 				Type:        schema.TypeString,
@@ -42,39 +38,7 @@ These operations allow the creation and manipulation of custom roles as custom c
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Description: `The permissions that the new Role grants. At least one
-				permission must be specified when creating custom role. Valid values: "okta.authzServers.manage",
-			  "okta.authzServers.read",
-			  "okta.apps.assignment.manage",
-			  "okta.apps.manage",
-			  "okta.apps.read",
-			  "okta.customizations.manage",
-			  "okta.customizations.read",
-			  "okta.groups.appAssignment.manage",
-			  "okta.groups.create",
-			  "okta.groups.manage",
-			  "okta.groups.members.manage",
-			  "okta.groups.read",
-			  "okta.profilesources.import.run",
-			  "okta.users.appAssignment.manage",
-			  "okta.users.create",
-			  "okta.users.credentials.expirePassword",
-			  "okta.users.credentials.manage",
-			  "okta.users.credentials.resetFactors",
-			  "okta.users.credentials.resetPassword",
-			  "okta.users.groupMembership.manage",
-			  "okta.users.lifecycle.activate",
-			  "okta.users.lifecycle.clearSessions",
-			  "okta.users.lifecycle.deactivate",
-			  "okta.users.lifecycle.delete",
-			  "okta.users.lifecycle.manage",
-			  "okta.users.lifecycle.suspend",
-			  "okta.users.lifecycle.unlock",
-			  "okta.users.lifecycle.unsuspend",
-			  "okta.users.manage",
-			  "okta.users.read",
-			  "okta.users.userprofile.manage",
-			  "okta.workflows.invoke".,`,
+				Description: "The permissions that the new Role grants.",
 			},
 		},
 	}

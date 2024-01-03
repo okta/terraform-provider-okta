@@ -33,7 +33,7 @@ var (
 			Type:        schema.TypeString,
 			Optional:    true,
 			Default:     statusActive,
-			Description: "Policy Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`",
+			Description: "Policy Status: ACTIVE or INACTIVE.",
 		},
 		"groups_included": {
 			Type:        schema.TypeSet,
@@ -74,10 +74,9 @@ var (
 	}
 
 	statusSchema = &schema.Schema{
-		Type:        schema.TypeString,
-		Optional:    true,
-		Default:     statusActive,
-		Description: "Default to `ACTIVE`",
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  statusActive,
 	}
 
 	isOieSchema = &schema.Schema{
