@@ -98,20 +98,7 @@ func (d *OrgMetadataDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *OrgMetadataDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	config, ok := req.ProviderData.(*Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Datasource Configure Type",
-			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	d.config = config
+	d.config = dataSourceConfiguration(req, resp)
 }
 
 func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

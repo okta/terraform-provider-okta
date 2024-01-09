@@ -300,6 +300,32 @@ func doesResourceExist(response *sdk.Response, err error) (bool, error) {
 	return true, nil
 }
 
+func doesResourceExistV3(response *okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, responseErrV3(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, responseErrV3(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func suppressErrorOn404(resp *sdk.Response, err error) error {
@@ -425,6 +451,17 @@ func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) e
 // The status should help with debugability. Potentially also could check for an empty error and omit
 // it when it occurs and build some more context.
 func responseErr(resp *sdk.Response, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+func responseErrV3(resp *okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {
