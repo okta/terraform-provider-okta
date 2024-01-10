@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -199,13 +200,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// when pkce_required is not set in the HCL
-					if old == "true" && new == "false" {
-						return true
-					}
-					return false
-				},
+				Computed:    true,
 			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
@@ -299,7 +294,7 @@ func resourceAppOAuth() *schema.Resource {
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
 				Description:      "Custom JSON that represents an OAuth application's profile",
-				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 			"jwks": {
 				Type:     schema.TypeList,
@@ -416,7 +411,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d)
+	app := buildAppOAuth(d, true)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
 	_, _, err := client.Application.CreateApplication(ctx, app, params)
@@ -668,7 +663,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d)
+	app := buildAppOAuth(d, false)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
@@ -703,7 +698,7 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := sdk.NewOpenIdConnectApplication()
 	appType := d.Get("type").(string)
@@ -747,12 +742,19 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
 
+	// pkce_required handled based on API docs
+	// see: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 	var pkceRequired *bool
 	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
-	// only explicitly set pkce_required to true for browser and native apps
-	// when it isn't set in the HCL
-	if pkceVal.IsNull() && (appType == "native" || appType == "browser") {
-		pkceRequired = boolPtr(true)
+	if pkceVal.IsNull() {
+		if authMethod == "" {
+			diag.Errorf("'pkce_required' must be set to true when 'token_endpoint_auth_method' is none")
+			return app
+		} else if isNew && (appType == "native" || appType == "browser") {
+			pkceRequired = boolPtr(true)
+		} else {
+			pkceRequired = boolPtr(false)
+		}
 	} else {
 		switch {
 		case pkceVal.True():
