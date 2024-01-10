@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -302,7 +303,7 @@ other arguments that changed will be applied.`,
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
 				Description:      "Custom JSON that represents an OAuth application's profile",
-				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 			"jwks": {
 				Type:     schema.TypeList,
