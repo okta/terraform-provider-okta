@@ -73,7 +73,7 @@ func getDefaultBrand(ctx context.Context, m interface{}) (*okta.BrandWithEmbedde
 	}
 
 	for _, brand := range brands {
-		if *brand.IsDefault {
+		if brand.GetIsDefault() {
 			return &brand, nil
 		}
 	}

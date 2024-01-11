@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -248,6 +249,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	return []func() datasource.DataSource{
 		NewOrgMetadataDataSource,
 		NewDefaultSigninPageDataSource,
+		NewLogStreamDataSource,
 	}
 }
 
@@ -257,6 +259,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewAppAccessPolicyAssignmentResource,
 		NewAppOAuthRoleAssignmentResource,
 		NewBrandResource,
+		NewLogStreamResource,
 		NewPolicyDeviceAssuranceAndroidResource,
 		NewPolicyDeviceAssuranceChromeOSResource,
 		NewPolicyDeviceAssuranceIOSResource,
@@ -265,4 +268,38 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewCustomizedSigninResource,
 		NewPreviewSigninResource,
 	}
+}
+
+func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) *Config {
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	config, ok := req.ProviderData.(*Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Data Source Configure Type",
+			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+
+	return config
+}
+
+func resourceConfiguration(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *Config {
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	p, ok := req.ProviderData.(*Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+
+	return p
 }

@@ -218,7 +218,8 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 	mgr := newFixtureManager("resources", appOAuth, t.Name())
-	config := mgr.GetFixtures("custom_attributes.tf", t)
+	configBlankCustomAttributes := mgr.GetFixtures("blank_custom_attributes.tf", t)
+	configCustomAttributes := mgr.GetFixtures("custom_attributes.tf", t)
 	groupWhitelistConfig := mgr.GetFixtures("group_for_groups_claim.tf", t)
 	updatedConfig := mgr.GetFixtures("remove_custom_attributes.tf", t)
 	resourceName := fmt.Sprintf("%s.test", appOAuth)
@@ -230,7 +231,16 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				Config: configBlankCustomAttributes,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "profile", ""),
+				),
+			},
+			{
+				Config: configCustomAttributes,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
