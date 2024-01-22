@@ -128,3 +128,42 @@ resource "okta_email_domain" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaBrand_Issue_1846_with_classic_application_uri(t *testing.T) {
+	mgr := newFixtureManager("resources", brand, t.Name())
+	resourceName := fmt.Sprintf("%s.test", brand)
+	step1 := `
+resource okta_trusted_origin test{
+	name   = "testAcc-replace_with_uuid"
+	origin = "https://examplesss.com"
+	scopes = ["CORS", "REDIRECT"]
+}
+
+resource okta_brand test{
+	name                                = "testAcc-replace_with_uuid"
+	agree_to_custom_privacy_policy      = true
+	custom_privacy_policy_url           = "https://example.com"
+	default_app_classic_application_uri = "https://examplesss.com"
+	locale                              = "en"
+	remove_powered_by_okta              = true
+}`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(step1),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "agree_to_custom_privacy_policy", "true"),
+					resource.TestCheckResourceAttr(resourceName, "custom_privacy_policy_url", "https://example.com"),
+					resource.TestCheckResourceAttr(resourceName, "default_app_classic_application_uri", "https://examplesss.com"),
+					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
+					resource.TestCheckResourceAttr(resourceName, "locale", "en"),
+					resource.TestCheckResourceAttr(resourceName, "remove_powered_by_okta", "true"),
+				),
+			},
+		},
+	})
+}

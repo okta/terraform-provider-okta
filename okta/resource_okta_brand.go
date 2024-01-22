@@ -312,7 +312,11 @@ func buildUpdateBrandRequest(model brandResourceModel) (okta.BrandRequest, error
 	defaultApp := &okta.DefaultApp{}
 	if !model.DefaultAppAppInstanceID.IsNull() && model.DefaultAppAppInstanceID.ValueString() != "" {
 		defaultApp.AppInstanceId = model.DefaultAppAppInstanceID.ValueStringPointer()
+	}
+	if !model.DefaultAppAppLinkName.IsNull() && model.DefaultAppAppLinkName.ValueString() != "" {
 		defaultApp.AppLinkName = model.DefaultAppAppLinkName.ValueStringPointer()
+	}
+	if !model.DefaultAppClassicApplicationURI.IsNull() && model.DefaultAppClassicApplicationURI.ValueString() != "" {
 		defaultApp.ClassicApplicationUri = model.DefaultAppClassicApplicationURI.ValueStringPointer()
 	}
 	return okta.BrandRequest{
