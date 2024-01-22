@@ -22,7 +22,7 @@ func resourceTrustedOrigin() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
-				Description: "Whether the Trusted Origin is active or not - can only be issued post-creation",
+				Description: "Whether the Trusted Origin is active or not - can only be issued post-creation. Default: `true`",
 			},
 			"name": {
 				Type:        schema.TypeString,
