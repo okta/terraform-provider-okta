@@ -44,13 +44,20 @@ func resourceIdpOidc() *schema.Resource {
 				Optional: true,
 			},
 			"client_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Unique identifier (opens new window)issued by the AS for the Okta IdP instance",
 			},
 			"client_secret": {
-				Type:      schema.TypeString,
-				Required:  true,
-				Sensitive: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Sensitive:   true,
+				Description: "Client secret issued (opens new window)by the AS for the Okta IdP instance",
+			},
+			"pkce_required": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/idps/#oauth-2-0-and-openid-connect-client-object",
 			},
 			"issuer_url": {
 				Type:     schema.TypeString,
@@ -116,6 +123,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	_ = d.Set("issuer_url", idp.Protocol.Issuer.Url)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
+	if idp.Protocol.Credentials.Client.PKCERequired != nil {
+		_ = d.Set("pkce_required", idp.Protocol.Credentials.Client.PKCERequired)
+	}
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
@@ -172,6 +182,14 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 		len(d.Get("subject_match_attribute").(string)) > 0 {
 		return sdk.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
+	client := &sdk.IdentityProviderCredentialsClient{
+		ClientId:     d.Get("client_id").(string),
+		ClientSecret: d.Get("client_secret").(string),
+	}
+	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
+	if !pkceVal.IsNull() {
+		client.PKCERequired = boolPtr(d.Get("pkce_required").(bool))
+	}
 	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       "OIDC",
@@ -194,10 +212,7 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 			Scopes:     convertInterfaceToStringSet(d.Get("scopes")),
 			Type:       d.Get("protocol_type").(string),
 			Credentials: &sdk.IdentityProviderCredentials{
-				Client: &sdk.IdentityProviderCredentialsClient{
-					ClientId:     d.Get("client_id").(string),
-					ClientSecret: d.Get("client_secret").(string),
-				},
+				Client: client,
 			},
 			Issuer: &sdk.ProtocolEndpoint{
 				Url: d.Get("issuer_url").(string),
