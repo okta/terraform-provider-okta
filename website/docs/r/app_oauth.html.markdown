@@ -256,9 +256,11 @@ terraform {
     }
     tls = {
       source = "hashicorp/tls"
+      version = "4.0.5"
     }
     jwks = {
       source = "iwarapter/jwks"
+      version = "0.1.0"
     }
   }
 }
