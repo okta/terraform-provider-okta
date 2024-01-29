@@ -2,7 +2,9 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -88,9 +90,19 @@ var (
 )
 
 func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, policyType string) (*sdk.Policy, error) {
-	policy, err := findSystemPolicyByType(ctx, m, policyType)
+	policies, err := findSystemPolicyByType(ctx, m, policyType)
 	if err != nil {
 		return nil, err
+	}
+	var policy *sdk.Policy
+	for _, p := range policies {
+		if strings.Contains(p.Name, "Default") || strings.Contains(p.Description, "default") {
+			policy = p
+			break
+		}
+	}
+	if policy == nil {
+		return nil, fmt.Errorf("cannot find default %v policy", policyType)
 	}
 	groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, &query.Params{Q: "Everyone"})
 	if err != nil {
@@ -261,16 +273,19 @@ func findDefaultAccessPolicy(ctx context.Context, m interface{}) (*sdk.Policy, e
 	if isClassicOrg(ctx, m) {
 		return nil, nil
 	}
-
-	policy, err := findSystemPolicyByType(ctx, m, "ACCESS_POLICY")
+	policies, err := findSystemPolicyByType(ctx, m, "ACCESS_POLICY")
 	if err != nil {
 		return nil, fmt.Errorf("error finding default ACCESS_POLICY %+v", err)
 	}
-	return policy, nil
+	if len(policies) != 1 {
+		return nil, errors.New("cannot find default ACCESS_POLICY policy")
+	}
+	return policies[0], nil
 }
 
 // findSystemPolicyByType System policy is the default policy regardless of name
-func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*sdk.Policy, error) {
+func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) ([]*sdk.Policy, error) {
+	res := make([]*sdk.Policy, 0)
 	client := getOktaClientFromMetadata(m)
 	qp := query.NewQueryParams(query.WithType(_type))
 	policies, _, err := client.Policy.ListPolicies(ctx, qp)
@@ -281,11 +296,11 @@ func findSystemPolicyByType(ctx context.Context, m interface{}, _type string) (*
 	for _, p := range policies {
 		policy := p.(*sdk.Policy)
 		if *policy.System {
-			return policy, nil
+			res = append(res, policy)
 		}
 	}
 
-	return nil, fmt.Errorf("default system %q policy not found", _type)
+	return res, nil
 }
 
 func findPolicyByNameAndType(ctx context.Context, m interface{}, name, policyType string) (*sdk.Policy, error) {

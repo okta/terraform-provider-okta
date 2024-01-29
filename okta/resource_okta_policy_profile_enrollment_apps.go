@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,7 +45,7 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
-	err := setDefaultPolicyID(ctx, d, m)
+	err := setDefaultProfileEnrollmentPolicyID(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -67,7 +68,7 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
-	err := setDefaultPolicyID(ctx, d, m)
+	err := setDefaultProfileEnrollmentPolicyID(ctx, d, m)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -154,10 +155,20 @@ func listPolicyEnrollmentAppIDs(ctx context.Context, client *sdk.APISupplement, 
 	return appIDs, nil
 }
 
-func setDefaultPolicyID(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	policy, err := findSystemPolicyByType(ctx, m, sdk.ProfileEnrollmentPolicyType)
+func setDefaultProfileEnrollmentPolicyID(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+	policies, err := findSystemPolicyByType(ctx, m, sdk.ProfileEnrollmentPolicyType)
 	if err != nil {
 		return err
+	}
+	var policy *sdk.Policy
+	for _, p := range policies {
+		if strings.Contains(p.Name, "Default") {
+			policy = p
+			break
+		}
+	}
+	if policy == nil {
+		return errors.New("cannot find default PROFILE_ENROLLMENT policy")
 	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == policy.Id {
