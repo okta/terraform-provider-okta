@@ -664,7 +664,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 
-	app := buildAppOAuth(d)
+	app := buildAppOAuth(d, false)
 	// When omit_secret is true on update, we make sure that do not include
 	// the client secret value in the api call.
 	// This is to ensure that when this is "toggled on", the apply which this occurs also does
