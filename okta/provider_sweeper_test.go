@@ -48,7 +48,7 @@ var testResourcePrefix = "testAcc"
 // can find.
 //
 //	go clean -testcache && \
-//	TF_LOG=warn OKTA_ACC_TEST_FORCE_SWEEPERS=1 make testacc TEST=./okta TESTARGS='-run=TestRunForcedSweeper'
+//	TF_LOG=warn OKTA_ACC_TEST_FORCE_SWEEPERS=1 TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^TestRunForcedSweeper$ ./okta
 func TestRunForcedSweeper(t *testing.T) {
 	if os.Getenv("OKTA_VCR_TF_ACC") != "" {
 		t.Skip("forced sweeper is live and will never be run within VCR")
@@ -84,6 +84,7 @@ func TestRunForcedSweeper(t *testing.T) {
 	sweepGroups(testClient)
 	sweepGroupCustomSchema(testClient)
 	sweepLinkDefinitions(testClient)
+	sweepLogStreams(testClient)
 	sweepNetworkZones(testClient)
 	sweepMfaPolicies(testClient)
 	sweepPasswordPolicies(testClient)
@@ -147,6 +148,7 @@ func sweepTestApps(client *testClient) error {
 		return err
 	}
 	var warnings []string
+	var errors []string
 	for _, app := range appList {
 		warn := fmt.Sprintf("failed to sweep an application, there may be dangling resources. ID %s, label %s", app.Id, app.Label)
 		_, err := client.sdkV2Client.Application.DeactivateApplication(context.Background(), app.Id)
@@ -158,12 +160,16 @@ func sweepTestApps(client *testClient) error {
 			warnings = append(warnings, warn)
 			continue
 		} else if err != nil {
-			return err
+			errors = append(errors, fmt.Sprintf("app id: %q, error: %s", app.Id, err.Error()))
+			continue
 		}
 		logSweptResource("app", app.Id, app.Name)
 	}
 	if len(warnings) > 0 {
 		return fmt.Errorf("sweep failures: %s", strings.Join(warnings, ", "))
+	}
+	if len(errors) > 0 {
+		return fmt.Errorf("sweep errors: %s", strings.Join(errors, ", "))
 	}
 	return nil
 }
@@ -350,6 +356,34 @@ func sweepLinkDefinitions(client *testClient) error {
 				continue
 			}
 			logSweptResource("linked object definition", object.Primary.Name, object.Primary.Title)
+		}
+	}
+	return condenseError(errorList)
+}
+
+func sweepLogStreams(client *testClient) error {
+	var errorList []error
+	streams, _, err := client.sdkV3Client.LogStreamAPI.ListLogStreams(context.Background()).Execute()
+	if err != nil {
+		return err
+	}
+	for _, stream := range streams {
+		var id, name string
+		if stream.LogStreamAws != nil {
+			name = stream.LogStreamAws.Name
+			id = stream.LogStreamAws.Id
+		}
+		if stream.LogStreamSplunk != nil {
+			name = stream.LogStreamSplunk.Name
+			id = stream.LogStreamSplunk.Id
+		}
+
+		if strings.HasPrefix(name, testResourcePrefix) {
+			if _, err = client.sdkV3Client.LogStreamAPI.DeleteLogStream(context.Background(), id).Execute(); err != nil {
+				errorList = append(errorList, err)
+				continue
+			}
+			logSweptResource("log stream", id, name)
 		}
 	}
 	return condenseError(errorList)

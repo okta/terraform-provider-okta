@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -136,20 +137,20 @@ func resourceAppOAuth() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				// No ForceNew to avoid recreating when going from false => true
-				Description: "This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.",
+				Description: "This tells the provider not manage the client_secret value in state. When this is false (the default), it will cause the auto-generated client_secret to be persisted in the client_secret attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.",
 				Default:     false,
 			},
 			"client_secret": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Sensitive:   true,
-				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
+				Description: "OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"client_basic_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
-				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
+				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
 			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
@@ -199,13 +200,7 @@ func resourceAppOAuth() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					// when pkce_required is not set in the HCL
-					if old == "true" && new == "false" {
-						return true
-					}
-					return false
-				},
+				Computed:    true,
 			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
@@ -299,7 +294,7 @@ func resourceAppOAuth() *schema.Resource {
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
 				Description:      "Custom JSON that represents an OAuth application's profile",
-				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 			"jwks": {
 				Type:     schema.TypeList,
@@ -416,12 +411,16 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d)
+	app := buildAppOAuth(d, true)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(ctx, app, params)
+	appResp, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
+	}
+	app, err = verifyOidcAppType(appResp)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
@@ -533,10 +532,6 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	} else {
 		_ = d.Set("implicit_assignment", false)
-	}
-	// If this is ever changed omit it.
-	if d.Get("omit_secret").(bool) {
-		_ = d.Set("client_secret", "")
 	}
 
 	c := m.(*Config)
@@ -668,12 +663,32 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d)
-	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
+
+	app := buildAppOAuth(d, false)
+	// When omit_secret is true on update, we make sure that do not include
+	// the client secret value in the api call.
+	// This is to ensure that when this is "toggled on", the apply which this occurs also does
+	// not do a final "reset" of the client secret value to the original stored in state.
+	if d.Get("omit_secret").(bool) {
+		app.Credentials.OauthClient.ClientSecret = ""
+	}
+	appResp, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if !d.Get("omit_secret").(bool) {
+	app, err = verifyOidcAppType(appResp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	// The `client_secret` value is always returned from the API on update
+	// regardless if we pass a value or not.
+	// We need to make sure that we set the value in state based upon the `omit_secret` behavior
+	// When `true`: We blank out the secret value
+	// When `false`: We set the secret value to the value returned from the API
+	if d.Get("omit_secret").(bool) {
+		_ = d.Set("client_secret", "")
+	} else {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	if d.HasChange("logo") {
@@ -703,7 +718,7 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
+func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplication {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := sdk.NewOpenIdConnectApplication()
 	appType := d.Get("type").(string)
@@ -747,12 +762,19 @@ func buildAppOAuth(d *schema.ResourceData) *sdk.OpenIdConnectApplication {
 		UserNameTemplate: buildUserNameTemplate(d),
 	}
 
+	// pkce_required handled based on API docs
+	// see: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 	var pkceRequired *bool
 	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
-	// only explicitly set pkce_required to true for browser and native apps
-	// when it isn't set in the HCL
-	if pkceVal.IsNull() && (appType == "native" || appType == "browser") {
-		pkceRequired = boolPtr(true)
+	if pkceVal.IsNull() {
+		if authMethod == "" {
+			diag.Errorf("'pkce_required' must be set to true when 'token_endpoint_auth_method' is none")
+			return app
+		} else if isNew && (appType == "native" || appType == "browser") {
+			pkceRequired = boolPtr(true)
+		} else {
+			pkceRequired = boolPtr(false)
+		}
 	} else {
 		switch {
 		case pkceVal.True():
@@ -930,4 +952,12 @@ func validateAppOAuth(d *schema.ResourceData, m interface{}) error {
 		return errors.New("'response_types' must contain at least one of ['token', 'id_token'] when 'grant_types' contains 'implicit'")
 	}
 	return nil
+}
+
+func verifyOidcAppType(app sdk.App) (*sdk.OpenIdConnectApplication, error) {
+	oidcApp, ok := app.(*sdk.OpenIdConnectApplication)
+	if !ok {
+		return nil, fmt.Errorf("unexpected application response return from Okta: %v", app)
+	}
+	return oidcApp, nil
 }

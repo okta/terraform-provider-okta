@@ -82,7 +82,7 @@ func TestAppUpdateStatus(t *testing.T) {
 			// NOTE: diff represents new state
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"status": &terraform.ResourceAttrDiff{
+					"status": {
 						Old: "ACTIVE",
 						New: "INACTIVE",
 					},
@@ -102,7 +102,7 @@ func TestAppUpdateStatus(t *testing.T) {
 			name: "activate an app only",
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"status": &terraform.ResourceAttrDiff{
+					"status": {
 						Old: "INACTIVE",
 						New: "ACTIVE",
 					},
@@ -123,11 +123,11 @@ func TestAppUpdateStatus(t *testing.T) {
 			name: "deactivate an app and update app values",
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"status": &terraform.ResourceAttrDiff{
+					"status": {
 						Old: "ACTIVE",
 						New: "INACTIVE",
 					},
-					"test": &terraform.ResourceAttrDiff{
+					"test": {
 						Old: "old",
 						New: "new",
 					},
@@ -147,11 +147,11 @@ func TestAppUpdateStatus(t *testing.T) {
 			name: "activate an app and update app values",
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"status": &terraform.ResourceAttrDiff{
+					"status": {
 						Old: "INACTIVE",
 						New: "ACTIVE",
 					},
-					"test": &terraform.ResourceAttrDiff{
+					"test": {
 						Old: "old",
 						New: "new",
 					},
@@ -171,7 +171,7 @@ func TestAppUpdateStatus(t *testing.T) {
 			name: "update inactive app",
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"test": &terraform.ResourceAttrDiff{
+					"test": {
 						Old: "old",
 						New: "new",
 					},
@@ -190,7 +190,7 @@ func TestAppUpdateStatus(t *testing.T) {
 			name: "update active app",
 			diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"test": &terraform.ResourceAttrDiff{
+					"test": {
 						Old: "old",
 						New: "new",
 					},
