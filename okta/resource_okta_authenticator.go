@@ -287,9 +287,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
-	if d.Get("key").(string) == "custom_otp" {
-
-	} else if d.Get("type").(string) == "security_key" {
+	if d.Get("type").(string) == "security_key" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 			Configuration: &sdk.AuthenticatorProviderConfiguration{
@@ -315,13 +313,15 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 			},
 		}
 	} else {
-		if s, ok := d.GetOk("settings"); ok {
-			var settings sdk.AuthenticatorSettings
-			err := json.Unmarshal([]byte(s.(string)), &settings)
-			if err != nil {
-				return nil, err
+		if d.Get("key").(string) != "custom_otp" {
+			if s, ok := d.GetOk("settings"); ok {
+				var settings sdk.AuthenticatorSettings
+				err := json.Unmarshal([]byte(s.(string)), &settings)
+				if err != nil {
+					return nil, err
+				}
+				authenticator.Settings = &settings
 			}
-			authenticator.Settings = &settings
 		}
 	}
 
