@@ -137,20 +137,20 @@ func resourceAppOAuth() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				// No ForceNew to avoid recreating when going from false => true
-				Description: "This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.",
+				Description: "This tells the provider not manage the client_secret value in state. When this is false (the default), it will cause the auto-generated client_secret to be persisted in the client_secret attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.",
 				Default:     false,
 			},
 			"client_secret": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Sensitive:   true,
-				Description: "OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.",
+				Description: "OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"client_basic_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
-				Description: "OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.",
+				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
 			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
@@ -414,9 +414,13 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	app := buildAppOAuth(d, true)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := client.Application.CreateApplication(ctx, app, params)
+	appResp, _, err := client.Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
+	}
+	app, err = verifyOidcAppType(appResp)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 	d.SetId(app.Id)
 	if !d.Get("omit_secret").(bool) {
@@ -528,10 +532,6 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
 	} else {
 		_ = d.Set("implicit_assignment", false)
-	}
-	// If this is ever changed omit it.
-	if d.Get("omit_secret").(bool) {
-		_ = d.Set("client_secret", "")
 	}
 
 	c := m.(*Config)
@@ -663,12 +663,32 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 	if err := validateAppOAuth(d, m); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d, false)
-	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
+
+	app := buildAppOAuth(d)
+	// When omit_secret is true on update, we make sure that do not include
+	// the client secret value in the api call.
+	// This is to ensure that when this is "toggled on", the apply which this occurs also does
+	// not do a final "reset" of the client secret value to the original stored in state.
+	if d.Get("omit_secret").(bool) {
+		app.Credentials.OauthClient.ClientSecret = ""
+	}
+	appResp, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if !d.Get("omit_secret").(bool) {
+	app, err = verifyOidcAppType(appResp)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	// The `client_secret` value is always returned from the API on update
+	// regardless if we pass a value or not.
+	// We need to make sure that we set the value in state based upon the `omit_secret` behavior
+	// When `true`: We blank out the secret value
+	// When `false`: We set the secret value to the value returned from the API
+	if d.Get("omit_secret").(bool) {
+		_ = d.Set("client_secret", "")
+	} else {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	if d.HasChange("logo") {
@@ -932,4 +952,12 @@ func validateAppOAuth(d *schema.ResourceData, m interface{}) error {
 		return errors.New("'response_types' must contain at least one of ['token', 'id_token'] when 'grant_types' contains 'implicit'")
 	}
 	return nil
+}
+
+func verifyOidcAppType(app sdk.App) (*sdk.OpenIdConnectApplication, error) {
+	oidcApp, ok := app.(*sdk.OpenIdConnectApplication)
+	if !ok {
+		return nil, fmt.Errorf("unexpected application response return from Okta: %v", app)
+	}
+	return oidcApp, nil
 }
