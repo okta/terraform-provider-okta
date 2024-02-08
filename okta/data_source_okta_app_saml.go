@@ -319,11 +319,22 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		if len(appList) < 1 {
 			return diag.Errorf("no SAML application found with provided filter: %s", filters)
 		}
-		if filters.Label != "" && appList[0].Label != filters.Label {
-			return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
+
+		if filters.Label != "" {
+			foundMatch := false
+			for _, appItx := range appList {
+				if appItx.Label == filters.Label {
+					app = appItx
+					foundMatch = true
+				}
+			}
+			if !foundMatch {
+				return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
+			}
+		} else {
+			logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
+			app = appList[0]
 		}
-		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
-		app = appList[0]
 	}
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
