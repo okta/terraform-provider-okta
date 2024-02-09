@@ -1,5 +1,28 @@
 # Changelog
 
+## 4.7.0 (February 9, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* New datasource: `okta_default_signin_page` retrieve the default signin page of a brand Okta [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* New datasource: `okta_log_stream` retrieve log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde), [@randomVariable2](https://github.com/randomVariable2)!
+
+* New resource `okta_log_stream` manage log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde), [@randomVariable2](https://github.com/randomVariable2)!
+* New resource `okta_customized_signin_page` manage the customized signin page of a brand [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* New resource `okta_preview_signin_page` manage the preview signin page of a brand [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+* Add tfplugindocs template for resource and index [#1854](https://github.com/okta/terraform-provider-okta/pull/1854). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add pkce_required to okta_idp_oidc [#1878](https://github.com/okta/terraform-provider-okta/pull/1878). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
+### BUG FIXES
+* Removed suppression of pkce_required [#1869](https://github.com/okta/terraform-provider-okta/pull/1869). Thanks, [@cvirtucio](https://github.com/cvirtucio)!
+* Fix nil pointer from default brand [#1870](https://github.com/okta/terraform-provider-okta/pull/1870). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix okta_brand unset classic_application_uri [#1877](https://github.com/okta/terraform-provider-okta/pull/1877). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix import wrong default policies [#1880](https://github.com/okta/terraform-provider-okta/pull/1880). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Make omit_secret safer to set okta_app_oauth [#1888](https://github.com/okta/terraform-provider-okta/pull/1888). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
+* Fix issue okta_domain fail instantly after creation [#1895](https://github.com/okta/terraform-provider-okta/pull/1895). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.6.3 (November 29, 2023)
 
 ### BUG FIXES
@@ -46,8 +69,8 @@
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
-* New resource: `okta_app_oauth_role_assignment` allow the assignment of admin roles on OAuth Clients in Okta - [1756](https://github.com/okta/terraform-provider-okta/pull/1756). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
-* New datasource: `okta_org_metadata` [1768](https://github.com/okta/terraform-provider-okta/pull/1768). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
+* New resource: `okta_app_oauth_role_assignment` allow the assignment of admin roles on OAuth Clients in Okta - [#1756](https://github.com/okta/terraform-provider-okta/pull/1756). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
+* New datasource: `okta_org_metadata` [#1768](https://github.com/okta/terraform-provider-okta/pull/1768). Thanks, [@tgoodsell-tempus](https://github.com/tgoodsell-tempus)
 * Add `risk_score` argument to resource `okta_app_signon_policy_rule` [#1761](https://github.com/okta/terraform-provider-okta/pull/1761). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 
 ### BUG FIXES
