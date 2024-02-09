@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 func resourceTheme() *schema.Resource {
@@ -131,27 +131,23 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 
 	if val, ok := d.GetOk("sign_in_page_touch_point_variant"); ok {
-		if siptpv, err := okta.NewSignInPageTouchPointVariantFromValue(val.(string)); err == nil {
-			theme.SignInPageTouchPointVariant = siptpv
-		}
+		siptpv := val.(string)
+		theme.SignInPageTouchPointVariant = &siptpv
 	}
 
 	if val, ok := d.GetOk("end_user_dashboard_touch_point_variant"); ok {
-		if eudtpv, err := okta.NewEndUserDashboardTouchPointVariantFromValue(val.(string)); err == nil {
-			theme.EndUserDashboardTouchPointVariant = eudtpv
-		}
+		eudtpv := val.(string)
+		theme.EndUserDashboardTouchPointVariant = &eudtpv
 	}
 
 	if val, ok := d.GetOk("error_page_touch_point_variant"); ok {
-		if eptpv, err := okta.NewErrorPageTouchPointVariantFromValue(val.(string)); err == nil {
-			theme.ErrorPageTouchPointVariant = eptpv
-		}
+		eptpv := val.(string)
+		theme.ErrorPageTouchPointVariant = &eptpv
 	}
 
 	if val, ok := d.GetOk("email_template_touch_point_variant"); ok {
-		if ettpv, err := okta.NewEmailTemplateTouchPointVariantFromValue(val.(string)); err == nil {
-			theme.EmailTemplateTouchPointVariant = ettpv
-		}
+		ettpv := val.(string)
+		theme.EmailTemplateTouchPointVariant = &ettpv
 	}
 
 	themeResp, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()

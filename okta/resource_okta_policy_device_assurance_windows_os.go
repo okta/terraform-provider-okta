@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -363,15 +363,11 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindowsResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
 	windows := &okta.DeviceAssuranceWindowsPlatform{}
 	windows.SetName(model.Name.ValueString())
-	windows.SetPlatform(okta.PLATFORM_WINDOWS)
+	windows.SetPlatform("WINDOWS")
 	if len(model.DiskEncryptionType) > 0 {
-		diskEncryptionType := make([]okta.DiskEncryptionTypeDesktop, 0)
+		diskEncryptionType := make([]string, 0)
 		for _, det := range model.DiskEncryptionType {
-			v, err := okta.NewDiskEncryptionTypeDesktopFromValue(det.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
-			}
-			diskEncryptionType = append(diskEncryptionType, *v)
+			diskEncryptionType = append(diskEncryptionType, det.ValueString())
 		}
 		windows.DiskEncryptionType = &okta.DeviceAssuranceMacOSPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
 	}
@@ -379,13 +375,9 @@ func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindows
 		windows.OsVersion = &okta.OSVersionFourComponents{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
-		screenlockType := make([]okta.ScreenLockType, 0)
+		screenlockType := make([]string, 0)
 		for _, det := range model.ScreenLockType {
-			v, err := okta.NewScreenLockTypeFromValue(det.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
-			}
-			screenlockType = append(screenlockType, *v)
+			screenlockType = append(screenlockType, det.ValueString())
 		}
 		windows.ScreenLockType = &okta.DeviceAssuranceAndroidPlatformAllOfScreenLockType{Include: screenlockType}
 	}
@@ -404,31 +396,19 @@ func buildDeviceAssuranceWindowsPolicyRequest(model policyDeviceAssuranceWindows
 		dtc.DeviceEnrollmentDomain = model.TpspDeviceEnrollmentDomain.ValueStringPointer()
 		dtc.DiskEncrypted = model.TpspDiskEncrypted.ValueBoolPointer()
 		if !model.TpspKeyTrustLevel.IsNull() {
-			v, err := okta.NewKeyTrustLevelBrowserKeyFromValue(model.TpspKeyTrustLevel.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
-			}
-			dtc.KeyTrustLevel = v
+			dtc.KeyTrustLevel = model.TpspKeyTrustLevel.ValueStringPointer()
 		}
 		dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
 		if !model.TpspOsVersion.IsNull() {
 			dtc.OsVersion = &okta.OSVersionFourComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
 		}
 		if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
-			v, err := okta.NewPasswordProtectionWarningTriggerFromValue(model.TpspPasswordProtectionWarningTrigger.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
-			}
-			dtc.PasswordProtectionWarningTrigger = v
+			dtc.PasswordProtectionWarningTrigger = model.TpspPasswordProtectionWarningTrigger.ValueStringPointer()
 		}
 		dtc.RealtimeUrlCheckMode = model.TpspRealtimeURLCheckMode.ValueBoolPointer()
 
 		if !model.TpspSafeBrowsingProtectionLevel.IsNull() {
-			v, err := okta.NewSafeBrowsingProtectionLevelFromValue(model.TpspSafeBrowsingProtectionLevel.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: windows}, err
-			}
-			dtc.SafeBrowsingProtectionLevel = v
+			dtc.SafeBrowsingProtectionLevel = model.TpspSafeBrowsingProtectionLevel.ValueStringPointer()
 		}
 		dtc.ScreenLockSecured = model.TpspScreenLockSecured.ValueBoolPointer()
 		dtc.SecureBootEnabled = model.TpspSecureBootEnabled.ValueBoolPointer()

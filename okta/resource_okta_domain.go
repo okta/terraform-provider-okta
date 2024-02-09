@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 func resourceDomain() *schema.Resource {
@@ -132,7 +132,7 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.Errorf("failed to set DNS records: %v", err)
 	}
-	if domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_COMPLETED || domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_IN_PROGRESS || domain.GetValidationStatus() == okta.DOMAINVALIDATIONSTATUS_COMPLETED {
+	if domain.GetValidationStatus() == "IN_PROGRESS" || domain.GetValidationStatus() == "VERIFIED" || domain.GetValidationStatus() == "COMPLETED" {
 		return nil
 	}
 
@@ -172,12 +172,8 @@ func validateDomain(ctx context.Context, d *schema.ResourceData, m interface{}, 
 }
 
 func buildDomain(d *schema.ResourceData) (okta.DomainRequest, error) {
-	certSourceType, err := okta.NewDomainCertificateSourceTypeFromValue(d.Get("certificate_source_type").(string))
-	if err != nil {
-		return okta.DomainRequest{}, err
-	}
 	return okta.DomainRequest{
 		Domain:                d.Get("name").(string),
-		CertificateSourceType: *certSourceType,
+		CertificateSourceType: (d.Get("certificate_source_type").(string)),
 	}, nil
 }

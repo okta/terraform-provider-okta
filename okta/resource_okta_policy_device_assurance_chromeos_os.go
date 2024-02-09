@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -278,7 +278,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChromeOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
 	chromeOS := &okta.DeviceAssuranceChromeOSPlatform{}
 	chromeOS.SetName(model.Name.ValueString())
-	chromeOS.SetPlatform(okta.PLATFORM_CHROMEOS)
+	chromeOS.SetPlatform("CHROMEOS")
 
 	var thirdPartySignalProviders okta.DeviceAssuranceChromeOSPlatformAllOfThirdPartySignalProviders
 	var dtc okta.DTCChromeOS
@@ -291,30 +291,18 @@ func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChrome
 	dtc.DeviceEnrollmentDomain = model.TpspDeviceEnrollmentDomain.ValueStringPointer()
 	dtc.DiskEncrypted = model.TpspDiskEncrypted.ValueBoolPointer()
 	if !model.TpspKeyTrustLevel.IsNull() {
-		v, err := okta.NewKeyTrustLevelOSModeFromValue(model.TpspKeyTrustLevel.ValueString())
-		if err != nil {
-			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
-		}
-		dtc.KeyTrustLevel = v
+		dtc.KeyTrustLevel = model.TpspKeyTrustLevel.ValueStringPointer()
 	}
 	dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
 	if !model.TpspOsVersion.IsNull() {
 		dtc.OsVersion = &okta.OSVersionFourComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
 	}
 	if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
-		v, err := okta.NewPasswordProtectionWarningTriggerFromValue(model.TpspPasswordProtectionWarningTrigger.ValueString())
-		if err != nil {
-			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
-		}
-		dtc.PasswordProtectionWarningTrigger = v
+		dtc.PasswordProtectionWarningTrigger = model.TpspPasswordProtectionWarningTrigger.ValueStringPointer()
 	}
 	dtc.RealtimeUrlCheckMode = model.TpspRealtimeURLCheckMode.ValueBoolPointer()
 	if !model.TpspSafeBrowsingProtectionLevel.IsNull() {
-		v, err := okta.NewSafeBrowsingProtectionLevelFromValue(model.TpspSafeBrowsingProtectionLevel.ValueString())
-		if err != nil {
-			return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: chromeOS}, err
-		}
-		dtc.SafeBrowsingProtectionLevel = v
+		dtc.SafeBrowsingProtectionLevel = model.TpspSafeBrowsingProtectionLevel.ValueStringPointer()
 	}
 	dtc.ScreenLockSecured = model.TpspScreenLockSecured.ValueBoolPointer()
 	dtc.SiteIsolationEnabled = model.TpspSiteIsolationEnabled.ValueBoolPointer()

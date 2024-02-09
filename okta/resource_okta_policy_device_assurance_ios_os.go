@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -243,20 +243,16 @@ func (r *policyDeviceAssuranceIOSResource) Update(ctx context.Context, req resou
 func buildDeviceAssuranceIOSPolicyRequest(model policyDeviceAssuranceIOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
 	iOS := &okta.DeviceAssuranceIOSPlatform{}
 	iOS.SetName(model.Name.ValueString())
-	iOS.SetPlatform(okta.PLATFORM_IOS)
+	iOS.SetPlatform("IOS")
 
 	iOS.Jailbreak = model.JailBreak.ValueBoolPointer()
 	if !model.OsVersion.IsNull() {
-		iOS.OsVersion = &okta.OSVersionThreeComponents{Minimum: model.OsVersion.ValueStringPointer()}
+		iOS.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
-		screenlockType := make([]okta.ScreenLockType, 0)
+		screenlockType := make([]string, 0)
 		for _, det := range model.ScreenLockType {
-			v, err := okta.NewScreenLockTypeFromValue(det.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceIOSPlatform: iOS}, err
-			}
-			screenlockType = append(screenlockType, *v)
+			screenlockType = append(screenlockType, det.ValueString())
 		}
 		iOS.ScreenLockType = &okta.DeviceAssuranceAndroidPlatformAllOfScreenLockType{Include: screenlockType}
 	}

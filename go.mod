@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.30.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/okta/okta-sdk-golang/v3 v3.0.19
+	github.com/okta/okta-sdk-golang/v4 v4.0.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.8.4
 	gopkg.in/dnaeon/go-vcr.v3 v3.1.2

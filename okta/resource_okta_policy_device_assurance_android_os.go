@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -280,30 +280,22 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroidResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
 	android := &okta.DeviceAssuranceAndroidPlatform{}
 	android.SetName(model.Name.ValueString())
-	android.SetPlatform(okta.PLATFORM_ANDROID)
+	android.SetPlatform("ANDROID")
 	if len(model.DiskEncryptionType) > 0 {
-		diskEncryptionType := make([]okta.DiskEncryptionTypeAndroid, 0)
+		diskEncryptionType := make([]string, 0)
 		for _, det := range model.DiskEncryptionType {
-			v, err := okta.NewDiskEncryptionTypeAndroidFromValue(det.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceAndroidPlatform: android}, err
-			}
-			diskEncryptionType = append(diskEncryptionType, *v)
+			diskEncryptionType = append(diskEncryptionType, det.ValueString())
 		}
 		android.DiskEncryptionType = &okta.DeviceAssuranceAndroidPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
 	}
 	android.Jailbreak = model.JailBreak.ValueBoolPointer()
 	if !model.OsVersion.IsNull() {
-		android.OsVersion = &okta.OSVersionFourComponents{Minimum: model.OsVersion.ValueStringPointer()}
+		android.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
-		screenlockType := make([]okta.ScreenLockType, 0)
+		screenlockType := make([]string, 0)
 		for _, det := range model.ScreenLockType {
-			v, err := okta.NewScreenLockTypeFromValue(det.ValueString())
-			if err != nil {
-				return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceAndroidPlatform: android}, err
-			}
-			screenlockType = append(screenlockType, *v)
+			screenlockType = append(screenlockType, det.ValueString())
 		}
 		android.ScreenLockType = &okta.DeviceAssuranceAndroidPlatformAllOfScreenLockType{Include: screenlockType}
 	}
