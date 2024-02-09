@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 func resourceAuthServerScope() *schema.Resource {
@@ -126,19 +126,11 @@ func resourceAuthServerScopeDelete(ctx context.Context, d *schema.ResourceData, 
 func buildAuthServerScope(d *schema.ResourceData) (okta.OAuth2Scope, error) {
 	scope := okta.OAuth2Scope{}
 	if consent, ok := d.GetOk("consent"); ok {
-		consentStr, err := okta.NewOAuth2ScopeConsentTypeFromValue(consent.(string))
-		if err != nil {
-			return okta.OAuth2Scope{}, err
-		}
-		scope.SetConsent(*consentStr)
+		scope.SetConsent(consent.(string))
 	}
 	scope.SetDescription(d.Get("description").(string))
 	if metadataPublish, ok := d.GetOk("metadata_publish"); ok {
-		metadataPublishStr, err := okta.NewOAuth2ScopeMetadataPublishFromValue(metadataPublish.(string))
-		if err != nil {
-			return okta.OAuth2Scope{}, err
-		}
-		scope.SetMetadataPublish(*metadataPublishStr)
+		scope.SetMetadataPublish(metadataPublish.(string))
 	}
 	scope.SetName(d.Get("name").(string))
 	scope.SetDisplayName(d.Get("display_name").(string))

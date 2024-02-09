@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 func NewBrandResource() resource.Resource {

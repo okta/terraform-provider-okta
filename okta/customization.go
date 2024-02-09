@@ -8,7 +8,7 @@ import (
 	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 type signinPageModel struct {
@@ -96,7 +96,7 @@ func mapSignInPageToState(ctx context.Context, data *okta.SignInPage, state *sig
 		widgetCustomizations.AuthenticatorPageCustomLinkLabel = types.StringPointerValue(customization.AuthenticatorPageCustomLinkLabel)
 		widgetCustomizations.AuthenticatorPageCustomLinkURL = types.StringPointerValue(customization.AuthenticatorPageCustomLinkUrl)
 		widgetCustomizations.ClassicRecoveryFlowEmailOrUsernameLabel = types.StringPointerValue(customization.ClassicRecoveryFlowEmailOrUsernameLabel)
-		widgetCustomizations.WidgetGeneration = types.StringPointerValue((*string)(customization.WidgetGeneration.Ptr()))
+		widgetCustomizations.WidgetGeneration = types.StringPointerValue(customization.WidgetGeneration)
 	}
 	customizationValue, diags := types.ObjectValueFrom(ctx, state.WidgetCustomizations.AttributeTypes(ctx), widgetCustomizations)
 	if diags.HasError() {
@@ -136,7 +136,7 @@ func buildSignInPageRequest(ctx context.Context, model signinPageModel) (okta.Si
 	wc.AuthenticatorPageCustomLinkLabel = wcm.AuthenticatorPageCustomLinkLabel.ValueStringPointer()
 	wc.AuthenticatorPageCustomLinkUrl = wcm.AuthenticatorPageCustomLinkURL.ValueStringPointer()
 	wc.ClassicRecoveryFlowEmailOrUsernameLabel = wcm.ClassicRecoveryFlowEmailOrUsernameLabel.ValueStringPointer()
-	wc.SetWidgetGeneration(okta.WidgetGeneration(wcm.WidgetGeneration.ValueString()))
+	wc.SetWidgetGeneration(wcm.WidgetGeneration.ValueString())
 
 	sp.SetWidgetCustomizations(wc)
 	return sp, nil

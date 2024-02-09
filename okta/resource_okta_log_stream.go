@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/okta/okta-sdk-golang/v3/okta"
+	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
 const (
@@ -410,7 +410,7 @@ func buildLogStreamCreateBody(ctx context.Context, m *logStreamModel) *okta.List
 		Id:     m.ID.ValueString(),
 		Name:   m.Name.ValueString(),
 		Status: m.Status.ValueString(),
-		Type:   okta.LogStreamType(m.Type.ValueString()),
+		Type:   m.Type.ValueString(),
 	}
 
 	settings := &logStreamSettingsModel{}
@@ -421,7 +421,7 @@ func buildLogStreamCreateBody(ctx context.Context, m *logStreamModel) *okta.List
 		var settingAws okta.LogStreamSettingsAws
 		settingAws.AccountId = settings.AccountID.ValueString()
 		settingAws.EventSourceName = settings.EventSourceName.ValueString()
-		settingAws.Region = okta.AwsRegion(settings.Region.ValueString())
+		settingAws.Region = settings.Region.ValueString()
 		return &okta.ListLogStreams200ResponseInner{
 			LogStreamAws: &okta.LogStreamAws{
 				LogStream: ls,
@@ -430,7 +430,7 @@ func buildLogStreamCreateBody(ctx context.Context, m *logStreamModel) *okta.List
 		}
 	case logStreamTypeSplunk:
 		var settingSplunk okta.LogStreamSettingsSplunk
-		settingSplunk.Edition = okta.SplunkEdition(settings.Edition.ValueString())
+		settingSplunk.Edition = settings.Edition.ValueString()
 		settingSplunk.Host = settings.Host.ValueString()
 		settingSplunk.Token = settings.Token.ValueString()
 		return &okta.ListLogStreams200ResponseInner{
@@ -447,7 +447,7 @@ func buildLogStreamReplaceBody(ctx context.Context, m *logStreamModel) *okta.Rep
 	_type := m.Type.ValueString()
 	ls := okta.LogStreamPutSchema{
 		Name: m.Name.ValueString(),
-		Type: okta.LogStreamType(m.Type.ValueString()),
+		Type: m.Type.ValueString(),
 	}
 
 	settings := &logStreamSettingsModel{}
@@ -458,7 +458,7 @@ func buildLogStreamReplaceBody(ctx context.Context, m *logStreamModel) *okta.Rep
 		var settingAws okta.LogStreamSettingsAws
 		settingAws.AccountId = settings.AccountID.ValueString()
 		settingAws.EventSourceName = settings.EventSourceName.ValueString()
-		settingAws.Region = okta.AwsRegion(settings.Region.ValueString())
+		settingAws.Region = settings.Region.ValueString()
 		return &okta.ReplaceLogStreamRequest{
 			LogStreamAwsPutSchema: &okta.LogStreamAwsPutSchema{
 				LogStreamPutSchema: ls,
@@ -467,7 +467,7 @@ func buildLogStreamReplaceBody(ctx context.Context, m *logStreamModel) *okta.Rep
 		}
 	case logStreamTypeSplunk:
 		var settingSplunk okta.LogStreamSettingsSplunkPut
-		settingSplunk.Edition = okta.SplunkEdition(settings.Edition.ValueString())
+		settingSplunk.Edition = settings.Edition.ValueString()
 		settingSplunk.Host = settings.Host.ValueString()
 		return &okta.ReplaceLogStreamRequest{
 			LogStreamSplunkPutSchema: &okta.LogStreamSplunkPutSchema{
