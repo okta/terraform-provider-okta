@@ -5,9 +5,9 @@
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
 * New datasource: `okta_default_signin_page` retrieve the default signin page of a brand Okta [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
-* New datasource: `okta_log_stream` retrieve log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde)!
+* New datasource: `okta_log_stream` retrieve log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde), [@randomVariable2](https://github.com/randomVariable2)!
 
-* New resource `okta_log_stream` manage log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde)!
+* New resource `okta_log_stream` manage log stream [#1843](https://github.com/okta/terraform-provider-okta/pull/1843). Thanks, [@monde](https://github.com/monde), [@randomVariable2](https://github.com/randomVariable2)!
 * New resource `okta_customized_signin_page` manage the customized signin page of a brand [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * New resource `okta_preview_signin_page` manage the preview signin page of a brand [#1842](https://github.com/okta/terraform-provider-okta/pull/1842). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 
