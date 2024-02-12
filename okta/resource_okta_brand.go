@@ -66,6 +66,7 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			},
 			"email_domain_id": schema.StringAttribute{
 				Description: "Email Domain ID tied to this brand",
+				Optional:    true,
 				Computed:    true,
 			},
 			"locale": schema.StringAttribute{
