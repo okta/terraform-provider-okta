@@ -2,7 +2,9 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
@@ -18,8 +20,22 @@ func resourceGroupMemberships() *schema.Resource {
 		ReadContext:   resourceGroupMembershipsRead,
 		UpdateContext: resourceGroupMembershipsUpdate,
 		DeleteContext: resourceGroupMembershipsDelete,
-		Importer:      createNestedResourceImporter([]string{"id", "track_all_users"}),
-		Description:   "Resource to manage a set of group memberships for a specific group.",
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+				importID := strings.Split(d.Id(), "/")
+				if len(importID) > 2 {
+					return nil, errors.New("invalid format used for import ID, format must be 'group_id' or 'group_id/true'")
+				}
+				if len(importID) == 2 {
+					d.Set("track_all_users", importID[1] == "true")
+				}
+				d.SetId(importID[0])
+				d.Set("group_id", importID[0])
+				return []*schema.ResourceData{d}, nil
+			},
+		},
+
+		Description: "Resource to manage a set of group memberships for a specific group.",
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:        schema.TypeString,
