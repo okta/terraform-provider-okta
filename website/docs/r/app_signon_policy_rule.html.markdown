@@ -238,6 +238,10 @@ resource "okta_app_signon_policy_rule" "test" {
     os_type = "WINDOWS"
     type    = "DESKTOP"
   }
+  platform_include {
+    os_type = "CHROMEOS"
+    type    = "DESKTOP"
+  }
   priority                               = 98
   re_authentication_frequency            = "PT43800H"
   type                                   = "ASSURANCE"
@@ -312,7 +316,7 @@ The following arguments are supported:
 - `platform_include` - (Optional) List of particular platforms or devices to match on.
     - `type` - (Optional) One of: `"ANY"`, `"MOBILE"`, `"DESKTOP"`
     - `os_expression` - (Optional) Only available and required when using `os_type = "OTHER"`
-    - `os_type` - (Optional) One of: `"ANY"`, `"IOS"`, `"WINDOWS"`, `"ANDROID"`, `"OTHER"`, `"OSX"`, `"MACOS"`
+    - `os_type` - (Optional) One of: `"ANY"`, `"IOS"`, `"WINDOWS"`, `"ANDROID"`, `"OTHER"`, `"OSX"`, `"MACOS"`, `"CHROMEOS"`
 
 - `custom_expression` - (Optional) This is an advanced optional setting. If the expression is formatted incorrectly or conflicts with conditions set above, the rule may not match any users.
 
