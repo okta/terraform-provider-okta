@@ -154,7 +154,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	var err error
 	// soft create if the authenticator already exists
-	authenticator, _ := findAuthenticator(ctx, m, d.Get("name").(string), d.Get("key").(string))
+	authenticator, _ := findAuthenticator(ctx, m, "", d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
 		authenticator, err = buildAuthenticator(d)
@@ -165,16 +165,11 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		qp := &query.Params{
 			Activate: boolPtr(activate),
 		}
-		if(d.Get("key").(string) == "custom_otp"){
-			qp = &query.Params{
-				Activate: boolPtr(false),
-			}
-		}
 		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		if(d.Get("key").(string) == "custom_otp"){
+		if d.Get("key").(string) == "custom_otp" {
 			var otp *sdk.OTP
 			otp, err = buildOTP(d)
 			if err != nil {
@@ -197,17 +192,6 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		if status.(string) == statusInactive {
 			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		} else {
-			if(d.Get("key").(string) == "custom_otp"){
-				var otp *sdk.OTP
-				otp, err = buildOTP(d)
-				if err != nil {
-					return diag.FromErr(err)
-				}
-				_, err = getOktaClientFromMetadata(m).Authenticator.SetSettingsOTP(ctx, *otp, d.Id())
-				if err != nil {
-					return diag.FromErr(err)
-				}
-			}
 			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
@@ -287,9 +271,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
-	if d.Get("key").(string) == "custom_otp" {
-
-	} else if d.Get("type").(string) == "security_key" {
+	if d.Get("type").(string) == "security_key" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 			Configuration: &sdk.AuthenticatorProviderConfiguration{
@@ -315,13 +297,15 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 			},
 		}
 	} else {
-		if s, ok := d.GetOk("settings"); ok {
-			var settings sdk.AuthenticatorSettings
-			err := json.Unmarshal([]byte(s.(string)), &settings)
-			if err != nil {
-				return nil, err
+		if d.Get("key").(string) != "custom_otp" {
+			if s, ok := d.GetOk("settings"); ok {
+				var settings sdk.AuthenticatorSettings
+				err := json.Unmarshal([]byte(s.(string)), &settings)
+				if err != nil {
+					return nil, err
+				}
+				authenticator.Settings = &settings
 			}
-			authenticator.Settings = &settings
 		}
 	}
 
