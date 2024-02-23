@@ -31,9 +31,6 @@ func resourceAuthenticator() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Display name of the Authenticator",
-				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
-				},
 			},
 			"settings": {
 				Type:             schema.TypeString,
@@ -172,6 +169,17 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		if err != nil {
 			return diag.FromErr(err)
 		}
+		if d.Get("key").(string) == "custom_otp" {
+			var otp *sdk.OTP
+			otp, err = buildOTP(d)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+			_, err = getOktaClientFromMetadata(m).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+		}
 	}
 
 	d.SetId(authenticator.Id)
@@ -289,13 +297,15 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 			},
 		}
 	} else {
-		if s, ok := d.GetOk("settings"); ok {
-			var settings sdk.AuthenticatorSettings
-			err := json.Unmarshal([]byte(s.(string)), &settings)
-			if err != nil {
-				return nil, err
+		if d.Get("key").(string) != "custom_otp" {
+			if s, ok := d.GetOk("settings"); ok {
+				var settings sdk.AuthenticatorSettings
+				err := json.Unmarshal([]byte(s.(string)), &settings)
+				if err != nil {
+					return nil, err
+				}
+				authenticator.Settings = &settings
 			}
-			authenticator.Settings = &settings
 		}
 	}
 
@@ -309,6 +319,20 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 	}
 
 	return &authenticator, nil
+}
+
+func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
+	otp := sdk.OTP{}
+	if s, ok := d.GetOk("settings"); ok {
+		var settings sdk.AuthenticatorSettingsOTP
+		err := json.Unmarshal([]byte(s.(string)), &settings)
+		if err != nil {
+			return nil, err
+		}
+		otp.Settings = &settings
+	}
+
+	return &otp, nil
 }
 
 func validateAuthenticator(d *schema.ResourceData) error {
