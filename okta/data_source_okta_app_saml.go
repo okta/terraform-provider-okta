@@ -320,20 +320,22 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 			return diag.Errorf("no SAML application found with provided filter: %s", filters)
 		}
 
+		// Okta API for list apps uses a starts with query on label and name
+		// which could result in multiple matches on the data source's "label"
+		// property.  We need to further inspect for an exact label match.
 		if filters.Label != "" {
-			foundMatch := false
-			for _, appItx := range appList {
-				if appItx.Label == filters.Label {
-					app = appItx
-					foundMatch = true
+			// guard on nils, an app is always set
+			app = appList[0]
+			for i, _app := range appList {
+				if _app.Label == filters.Label {
+					app = appList[i]
 					break
 				}
 			}
-			if !foundMatch {
-				return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
-			}
 		} else {
-			logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
+			if len(appList) > 1 {
+				logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
+			}
 			app = appList[0]
 		}
 	}
