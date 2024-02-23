@@ -326,6 +326,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 				if appItx.Label == filters.Label {
 					app = appItx
 					foundMatch = true
+					break
 				}
 			}
 			if !foundMatch {
