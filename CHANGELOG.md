@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.8.0 (February 28, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add supoort to custom_otp on `okta_authenticator` [#1864](https://github.com/okta/terraform-provider-okta/pull/1864). Thanks, [@isaacokta](https://github.com/isaacokta)!
+
+### BUG FIXES
+* Fix import okta_group_memberships [#1899](https://github.com/okta/terraform-provider-okta/pull/1899). Thanks, [@c4po](https://github.com/c4po)!
+
 ## 4.7.0 (February 9, 2024)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
