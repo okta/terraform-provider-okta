@@ -98,7 +98,7 @@ data "okta_app_saml" "example" {
 
 - `saml_signed_request_enabled` - SAML Signed Request enabled
 
-- `signature_algorithm` - Signature algorithm used ot digitally sign the assertion and response.
+- `signature_algorithm` - Signature algorithm used to digitally sign the assertion and response.
 
 - `single_logout_certificate` - x509 encoded certificate that the Service Provider uses to sign Single Logout requests.
 

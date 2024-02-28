@@ -42,7 +42,7 @@ data "okta_user" "example" {
 
 ### Optional
 
-- `compound_search_operator` (String) Search operator used when joining mulitple search clauses
+- `compound_search_operator` (String) Search operator used when joining multiple search clauses
 - `delay_read_seconds` (String) Force delay of the user read by N seconds. Useful when eventual consistency of user information needs to be allowed for.
 - `search` (Block Set) Filter to find user/users. Each filter will be concatenated with the compound search operator. Please be aware profile properties must match what is in Okta, which is likely camel case. Expression is a free form expression filter https://developer.okta.com/docs/reference/core-okta-api/#filter . The set name/value/comparison properties will be ignored if expression is present (see [below for nested schema](#nestedblock--search))
 - `skip_groups` (Boolean) Do not populate user groups information (prevents additional API call)

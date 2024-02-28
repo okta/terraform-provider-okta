@@ -22,7 +22,7 @@ Manages device assurance on policy
 - `disk_encryption_type` (Set of String) List of disk encryption type, can be ALL_INTERNAL_VOLUMES
 - `os_version` (String) The device os minimum version
 - `screenlock_type` (Set of String) List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE
-- `secure_hardware_present` (Boolean) Indicates if the device constains a secure hardware functionality
+- `secure_hardware_present` (Boolean) Indicates if the device contains a secure hardware functionality
 - `third_party_signal_providers` (Boolean) Check to include third party signal provider
 - `tpsp_browser_version` (String) Third party signal provider minimum browser version
 - `tpsp_builtin_dns_client_enabled` (Boolean) Third party signal provider builtin dns client enable
