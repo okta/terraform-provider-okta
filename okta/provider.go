@@ -337,6 +337,7 @@ func Provider() *schema.Provider {
 			appSaml:                  dataSourceAppSaml(),
 			appSignOnPolicy:          dataSourceAppSignOnPolicy(),
 			appUserAssignments:       dataSourceAppUserAssignments(),
+			appUserProfile:           dataSourceAppUserProfile(),
 			authenticator:            dataSourceAuthenticator(),
 			authServer:               dataSourceAuthServer(),
 			authServerClaim:          dataSourceAuthServerClaim(),
