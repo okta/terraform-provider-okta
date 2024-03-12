@@ -64,7 +64,7 @@ func dataSourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "and",
-				Description: "Search operator used when joining mulitple search clauses",
+				Description: "Search operator used when joining multiple search clauses",
 			},
 			"delay_read_seconds": {
 				Type:        schema.TypeString,

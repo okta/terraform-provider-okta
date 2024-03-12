@@ -111,7 +111,7 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				},
 			},
 			"secure_hardware_present": schema.BoolAttribute{
-				Description: "Indicates if the device constains a secure hardware functionality",
+				Description: "Indicates if the device contains a secure hardware functionality",
 				Optional:    true,
 				Validators: []validator.Bool{
 					boolvalidator.AtLeastOneOf(path.Expressions{

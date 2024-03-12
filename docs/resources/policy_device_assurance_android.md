@@ -23,7 +23,7 @@ Manages device assurance on policy
 - `jailbreak` (Boolean) The device jailbreak. Only for android and iOS platform
 - `os_version` (String) The device os minimum version
 - `screenlock_type` (Set of String) List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE
-- `secure_hardware_present` (Boolean) Indicates if the device constains a secure hardware functionality
+- `secure_hardware_present` (Boolean) Indicates if the device contains a secure hardware functionality
 
 ### Read-Only
 

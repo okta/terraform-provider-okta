@@ -244,7 +244,7 @@ The following arguments are supported:
 
 - `saml_version` - (Optional) SAML version for the app's sign-on mode. Valid values are: `"2.0"` or `"1.1"`. Default is `"2.0"`.
 
-- `signature_algorithm` - (Optional) Signature algorithm used ot digitally sign the assertion and response.
+- `signature_algorithm` - (Optional) Signature algorithm used to digitally sign the assertion and response.
 
 - `single_logout_certificate` - (Optional) x509 encoded certificate that the Service Provider uses to sign Single Logout requests.  Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 

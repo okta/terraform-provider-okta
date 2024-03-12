@@ -257,7 +257,7 @@ func resourceAppSaml() *schema.Resource {
 			"signature_algorithm": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Signature algorithm used ot digitally sign the assertion and response",
+				Description: "Signature algorithm used to digitally sign the assertion and response",
 			},
 			"digest_algorithm": {
 				Type:        schema.TypeString,

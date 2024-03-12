@@ -51,7 +51,7 @@ description: |-
 - `response_signed` (Boolean) Determines whether the SAML auth response message is digitally signed
 - `saml_signed_request_enabled` (Boolean) SAML Signed Request enabled
 - `saml_version` (String) SAML version for the app's sign-on mode
-- `signature_algorithm` (String) Signature algorithm used ot digitally sign the assertion and response
+- `signature_algorithm` (String) Signature algorithm used to digitally sign the assertion and response
 - `single_logout_certificate` (String) x509 encoded certificate that the Service Provider uses to sign Single Logout requests
 - `single_logout_issuer` (String) The issuer of the Service Provider that generates the Single Logout request
 - `single_logout_url` (String) The location where the logout response is sent
