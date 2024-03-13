@@ -38,5 +38,6 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `system` (Boolean) The rule is the system (default) rule for its associated policy
 
 

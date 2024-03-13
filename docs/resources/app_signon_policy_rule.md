@@ -36,6 +36,7 @@ description: |-
 - `platform_include` (Block Set) (see [below for nested schema](#nestedblock--platform_include))
 - `priority` (Number) Priority of the rule.
 - `re_authentication_frequency` (String) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session
+- `risk_score` (String) The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH
 - `status` (String) Status of the rule
 - `type` (String) The Verification Method type
 - `user_types_excluded` (Set of String) Set of User Type IDs to exclude
@@ -46,6 +47,7 @@ description: |-
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `system` (Boolean) Often the "Catch-all Rule" this rule is the system (default) rule for its associated policy
 
 <a id="nestedblock--platform_include"></a>
 ### Nested Schema for `platform_include`

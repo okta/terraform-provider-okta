@@ -17,8 +17,8 @@ description: |-
 
 - `authorization_binding` (String)
 - `authorization_url` (String)
-- `client_id` (String)
-- `client_secret` (String, Sensitive)
+- `client_id` (String) Unique identifier (opens new window)issued by the AS for the Okta IdP instance
+- `client_secret` (String, Sensitive) Client secret issued (opens new window)by the AS for the Okta IdP instance
 - `issuer_url` (String)
 - `jwks_binding` (String)
 - `jwks_url` (String)
@@ -38,6 +38,7 @@ description: |-
 - `groups_filter` (Set of String)
 - `issuer_mode` (String) Indicates whether Okta uses the original Okta org domain URL, custom domain URL, or dynamic. See Identity Provider attributes - issuerMode - https://developer.okta.com/docs/reference/api/idps/#identity-provider-attributes
 - `max_clock_skew` (Number)
+- `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/idps/#oauth-2-0-and-openid-connect-client-object
 - `profile_master` (Boolean)
 - `protocol_type` (String)
 - `provisioning_action` (String)

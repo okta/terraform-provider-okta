@@ -29,7 +29,7 @@ description: |-
 - `authentication_policy` (String) Id of this apps authentication policy
 - `auto_key_rotation` (Boolean) Requested key rotation mode.
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
-- `client_basic_secret` (String, Sensitive) OAuth client secret key, this can be set when token_endpoint_auth_method is client_secret_basic.
+- `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.
 - `client_id` (String) OAuth client ID. If set during creation, app is created with this id.
 - `client_uri` (String) URI to a web page providing information about the client.
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED
@@ -47,14 +47,14 @@ description: |-
 - `login_uri` (String) URI that initiates login.
 - `logo` (String) Local path to logo of the application.
 - `logo_uri` (String) URI that references a logo for the client.
-- `omit_secret` (Boolean) This tells the provider not to persist the application's secret to state. If this is ever changes from true => false your app will be recreated.
+- `omit_secret` (Boolean) This tells the provider not manage the client_secret value in state. When this is false (the default), it will cause the auto-generated client_secret to be persisted in the client_secret attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.
 - `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 - `policy_uri` (String) URI to web page providing client policy document.
 - `post_logout_redirect_uris` (Set of String) List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.
 - `profile` (String) Custom JSON that represents an OAuth application's profile
 - `redirect_uris` (List of String) List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.
-- `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation
-- `refresh_token_rotation` (String) *Early Access Property* Refresh token rotation behavior
+- `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token
+- `refresh_token_rotation` (String) *Early Access Property* Refresh token rotation behavior, required with grant types refresh_token
 - `response_types` (Set of String) List of OAuth 2.0 response type strings.
 - `status` (String) Status of application.
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
@@ -68,7 +68,7 @@ description: |-
 
 ### Read-Only
 
-- `client_secret` (String, Sensitive) OAuth client secret key. This will be in plain text in your statefile unless you set omit_secret above.
+- `client_secret` (String, Sensitive) OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above.
 - `id` (String) The ID of this resource.
 - `logo_url` (String) URL of the application's logo
 - `name` (String) Name of the app.
@@ -104,6 +104,8 @@ Optional:
 
 - `e` (String) RSA Exponent
 - `n` (String) RSA Modulus
+- `x` (String) X coordinate of the elliptic curve point
+- `y` (String) Y coordinate of the elliptic curve point
 
 
 <a id="nestedblock--timeouts"></a>
