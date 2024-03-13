@@ -24,6 +24,7 @@ description: |-
 - `email_verification` (Boolean) Indicates whether email verification should occur before access is granted
 - `inline_hook_id` (String) ID of a Registration Inline Hook
 - `profile_attributes` (Block List) A list of attributes to prompt the user during registration or progressive profiling (see [below for nested schema](#nestedblock--profile_attributes))
+- `progressive_profiling_action` (String) Enabled or disabled progressive profiling action rule conditions: ENABLED or DISABLED
 - `target_group_id` (String) The ID of a Group that this User should be added to
 - `ui_schema_id` (String) Value created by the backend. If present all policy updates must include this attribute/value.
 

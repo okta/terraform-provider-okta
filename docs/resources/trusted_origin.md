@@ -21,7 +21,7 @@ description: |-
 
 ### Optional
 
-- `active` (Boolean) Whether the Trusted Origin is active or not - can only be issued post-creation
+- `active` (Boolean) Whether the Trusted Origin is active or not - can only be issued post-creation. Default: `true`
 
 ### Read-Only
 

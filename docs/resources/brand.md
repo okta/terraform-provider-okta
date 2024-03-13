@@ -25,12 +25,12 @@ Manages brand
 - `default_app_app_instance_id` (String) Default app app instance id
 - `default_app_app_link_name` (String) Default app app link name
 - `default_app_classic_application_uri` (String) Default app classic application uri
-- `email_domain_id` (String) Email Domain ID tied to this brand
 - `locale` (String) The language specified as an IETF BCP 47 language tag
 - `remove_powered_by_okta` (Boolean) Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard
 
 ### Read-Only
 
+- `email_domain_id` (String) Email Domain ID tied to this brand
 - `id` (String) Brand id
 - `is_default` (Boolean) Is this the default brand
 - `links` (String) Link relations for this object - JSON HAL - Discoverable resources related to the brand
