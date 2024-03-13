@@ -274,7 +274,8 @@ resource "okta_app_signon_policy_rule" "test" {
       "possession" : {
         "deviceBound" : "REQUIRED",
         "hardwareProtection" : "REQUIRED",
-        "userPresence" : "OPTIONAL"
+        "userPresence" : "OPTIONAL",
+        "userVerification" : "OPTIONAL"
       }
     })
   ]

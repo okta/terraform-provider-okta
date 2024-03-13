@@ -9,6 +9,7 @@ type PossessionConstraint struct {
 	HardwareProtection string   `json:"hardwareProtection,omitempty"`
 	PhishingResistant  string   `json:"phishingResistant,omitempty"`
 	UserPresence       string   `json:"userPresence,omitempty"`
+	UserVerification   string   `json:"userVerification,omitempty"`
 }
 
 func NewPossessionConstraint() *PossessionConstraint {
