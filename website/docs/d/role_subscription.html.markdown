@@ -22,7 +22,7 @@ data "okta_role_subscription" "example" {
 ## Arguments Reference
 
 - `role_type` - (Required) Type of the role. Valid values:
-  `"API_ADMIN"`,
+  `"API_ACCESS_MANAGEMENT_ADMIN"`,
   `"APP_ADMIN"`,
   `"CUSTOM"`,
   `"GROUP_MEMBERSHIP_ADMIN"`,
