@@ -31,6 +31,9 @@ func resourceAuthenticator() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Display name of the Authenticator",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return true
+				},
 			},
 			"settings": {
 				Type:             schema.TypeString,
