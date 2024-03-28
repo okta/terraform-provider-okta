@@ -21,8 +21,7 @@ func TestAccResourceOktaAuthenticatorOTP(t *testing.T) {
 		  "algorithm" : "HMacSHA256",
 		  "passCodeLength" : 6
 		})
-	}
-`
+	}`
 	resourceName := fmt.Sprintf("%s.otp", authenticator)
 
 	oktaResourceTest(t, resource.TestCase{
