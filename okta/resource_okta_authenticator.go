@@ -154,7 +154,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	var err error
 	// soft create if the authenticator already exists
-	authenticator, _ := findAuthenticator(ctx, m, "", d.Get("key").(string))
+	authenticator, _ := findAuthenticator(ctx, m, d.Get("name").(string), d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
 		authenticator, err = buildAuthenticator(d)
