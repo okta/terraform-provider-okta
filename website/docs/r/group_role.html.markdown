@@ -29,7 +29,7 @@ The following arguments are supported:
 - `group_id` - (Required) The ID of group to attach admin roles to.
 
 - `role_type` - (Required) Admin role assigned to the group. It can be any one of the following values:
-  `"API_ADMIN"`,
+  `"API_ACCESS_MANAGEMENT_ADMIN"`,
   `"APP_ADMIN"`,
   `"CUSTOM"`,
   `"GROUP_MEMBERSHIP_ADMIN"`,
