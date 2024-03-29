@@ -29,7 +29,9 @@ the authenticator doesn't exist then a one time 'POST /api/v1/authenticators' to
 create the authenticator (hard create) will be performed. Thereafter, that
 authenticator is never deleted, it is only deactivated (soft delete). Therefore,
 if the authenticator already exists create is just a soft import of an existing
-authenticator.
+authenticator. This does not apply to custom_otp authenticator. There can be
+multiple custom_otp authenticator that exist. To create new custom_otp authenticator,
+new name must be provides. Using old name will simple reactivating the old authenticator
 
 -> **Delete:** Authenticators can not be truly deleted therefore delete is soft.
 Delete will attempt to deativate the authenticator. An authenticator can only be
