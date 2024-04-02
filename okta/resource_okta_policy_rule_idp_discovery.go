@@ -24,7 +24,6 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 			"idp_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "OKTA",
 			},
 			"app_include": {
 				Type:        schema.TypeSet,
@@ -55,6 +54,14 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     userIDPatternResource,
+			},
+			"selection_type": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"provider_expression": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 		}),
 	}
@@ -180,16 +187,38 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, s
 
 // Build Policy Sign On Rule from resource data
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
+	var provider *sdk.IdpDiscoveryRuleProvider
+	if idpType, ok := d.GetOk("idp_type"); ok {
+		provider = &sdk.IdpDiscoveryRuleProvider{
+			Type: idpType.(string),
+			ID:   d.Get("idp_id").(string),
+		}
+	}
+	providers := []*sdk.IdpDiscoveryRuleProvider{}
+	if provider != nil {
+		providers = append(providers, provider)
+	}
+	var expression *sdk.IdpMatchingCriteria
+	if providerExpression, ok := d.GetOk("provider_expression"); ok {
+		expression = &sdk.IdpMatchingCriteria{
+			ProviderExpression: providerExpression.(string),
+		}
+	}
+	matchingCriteria := []*sdk.IdpMatchingCriteria{}
+	if expression != nil {
+		matchingCriteria = append(matchingCriteria, expression)
+	}
+	idp := sdk.IdpDiscoveryRuleIdp{}
+	if len(providers) > 0 {
+		idp.Providers = providers
+	}
+	if len(matchingCriteria) > 0 {
+		idp.MatchingCriteria = matchingCriteria
+	}
+	idp.IdpSelectionType = d.Get("selection_type").(string)
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
-			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: []*sdk.IdpDiscoveryRuleProvider{
-					{
-						Type: d.Get("idp_type").(string),
-						ID:   d.Get("idp_id").(string),
-					},
-				},
-			},
+			IDP: &idp,
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{
 			App: buildAppConditions(d),

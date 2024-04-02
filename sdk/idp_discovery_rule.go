@@ -33,7 +33,14 @@ type (
 	}
 
 	IdpDiscoveryRuleIdp struct {
-		Providers []*IdpDiscoveryRuleProvider `json:"providers"`
+		Providers        []*IdpDiscoveryRuleProvider `json:"providers"`
+		MatchingCriteria []*IdpMatchingCriteria      `json:"matchCriteria"`
+		IdpSelectionType string                      `json:"idpSelectionType,omitempty"`
+	}
+
+	IdpMatchingCriteria struct {
+		ProviderExpression string `json:"providerExpression,omitempty"`
+		PropertyName       string `json:"propertyName,omitempty"`
 	}
 
 	IdpDiscoveryRuleNetwork struct {

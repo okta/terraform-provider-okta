@@ -78,3 +78,28 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaPolicyRuleIdpDiscoveryDynamic(t *testing.T) {
+	mgr := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
+	config := mgr.GetFixtures("dynamic.tf", t)
+	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkRuleDestroy(policyRuleIdpDiscovery),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "provider_expression", "login.identifier.substringAfter('@')"),
+					resource.TestCheckResourceAttr(resourceName, "selection_type", "DYNAMIC"),
+				),
+			},
+		},
+	})
+}
