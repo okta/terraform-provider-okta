@@ -1,0 +1,1 @@
+terraform import okta_behavior.example &#60;behavior id&#62;

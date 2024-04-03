@@ -15,6 +15,7 @@ func resourceAuthServerPolicy() *schema.Resource {
 		UpdateContext: resourceAuthServerPolicyUpdate,
 		DeleteContext: resourceAuthServerPolicyDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
+		Description:   "Creates an Authorization Server Policy. This resource allows you to create and configure an Authorization Server Policy.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,

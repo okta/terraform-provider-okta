@@ -16,6 +16,9 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 		ReadContext:   resourceAppOAuthAPIScopeRead,
 		UpdateContext: resourceAppOAuthAPIScopeUpdate,
 		DeleteContext: resourceAppOAuthAPIScopeDelete,
+		Description: `Manages API scopes for OAuth applications. 
+This resource allows you to grant or revoke API scopes for OAuth2 applications within your organization.
+Note: you have to create an application before using this resource.`,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 				scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Id(), nil)

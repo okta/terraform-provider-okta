@@ -17,6 +17,13 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 		UpdateContext: resourceAuthServerPolicyRuleUpdate,
 		DeleteContext: resourceAuthServerPolicyRuleDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "policy_id", "id"}),
+		Description: `Creates an Authorization Server Policy Rule.
+This resource allows you to create and configure an Authorization Server Policy Rule.
+-> This resource is concurrency safe. However, when creating/updating/deleting
+multiple rules belonging to a policy, the Terraform meta argument
+['depends_on'](https://www.terraform.io/language/meta-arguments/depends_on)
+should be added to each rule chaining them all in sequence. Base the sequence on
+the 'priority' property in ascending value.`,
 		Schema: map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
@@ -56,7 +63,7 @@ func resourceAuthServerPolicyRule() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Description: "Accepted grant type values: authorization_code, implicit, password, client_credentials",
+				Description: "Accepted grant type values, `authorization_code`, `implicit`, `password`, `client_credentials`, `urn:ietf:params:oauth:grant-type:saml2-bearer` (*Early Access Property*), `urn:ietf:params:oauth:grant-type:token-exchange` (*Early Access Property*),`urn:ietf:params:oauth:grant-type:device_code` (*Early Access Property*), `interaction_code` (*OIE only*). For `implicit` value either `user_whitelist` or `group_whitelist` should be set.",
 			},
 			"scope_whitelist": {
 				Type:        schema.TypeSet,

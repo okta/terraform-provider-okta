@@ -23,32 +23,41 @@ func resourceGroupRule() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `Creates an Okta Group Rule.
+This resource allows you to create and configure an Okta Group Rule.
+-> If the Okta API marks the 'status' of the rule as 'INVALID' the Okta
+Terraform Provider will act in a force/replace manner and call the API to delete
+the underlying rule resource and create a new rule resource.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The name of the Group Rule (min character 1; max characters 50).",
 			},
 			"group_assignments": {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				// Actions cannot be updated even on a deactivated rule
-				ForceNew: true,
+				ForceNew:    true,
+				Description: "The list of group ids to assign the users to.",
 			},
 			"expression_type": {
-				Type:     schema.TypeString,
-				Default:  "urn:okta:expression:1.0",
-				Optional: true,
+				Type:        schema.TypeString,
+				Default:     "urn:okta:expression:1.0",
+				Optional:    true,
+				Description: "The expression type to use to invoke the rule. The default is `urn:okta:expression:1.0`.",
 			},
 			"expression_value": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The expression value.",
 			},
 			"status": statusSchema,
 			"remove_assigned_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Remove users added by this rule from the assigned group after deleting this resource",
+				Description: "Remove users added by this rule from the assigned group after deleting this resource. Default is `false`",
 			},
 			"users_excluded": {
 				Type:        schema.TypeSet,

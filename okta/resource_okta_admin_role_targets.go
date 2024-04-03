@@ -49,7 +49,7 @@ func resourceAdminRoleTargets() *schema.Resource {
 			"role_type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Type of the role that is assigned to the user and supports optional targets",
+				Description: "Type of the role that is assigned to the user and supports optional targets. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types)",
 				ForceNew:    true,
 			},
 			"role_id": {
@@ -67,7 +67,7 @@ func resourceAdminRoleTargets() *schema.Resource {
 			"groups": {
 				Type:          schema.TypeSet,
 				Optional:      true,
-				Description:   "List of group IDs",
+				Description:   "List of group IDs. Conflicts with apps",
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				ConflictsWith: []string{"apps"},
 			},

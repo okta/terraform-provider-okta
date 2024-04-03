@@ -13,6 +13,7 @@ func resourceEventHookVerification() *schema.Resource {
 		ReadContext:   resourceFuncNoOp,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
+		Description:   "Verifies the Event Hook. The resource won't be created unless the URI provided in the event hook returns a valid JSON object with verification. See [Event Hooks](https://developer.okta.com/docs/concepts/event-hooks/#one-time-verification-request) documentation for details.",
 		Schema: map[string]*schema.Schema{
 			"event_hook_id": {
 				Type:        schema.TypeString,

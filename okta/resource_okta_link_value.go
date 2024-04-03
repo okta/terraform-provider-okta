@@ -17,24 +17,25 @@ func resourceLinkValue() *schema.Resource {
 		UpdateContext: resourceLinkValueUpdate,
 		DeleteContext: resourceLinkValueDelete,
 		Importer:      createNestedResourceImporter([]string{"primary_name", "primary_user_id"}),
+		Description:   "Manages users relationships. Link value operations allow you to create relationships between primary and associated users.",
 		Schema: map[string]*schema.Schema{
 			"primary_name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of the 'primary' relationship being assigned.",
+				Description: "Name of the `primary` relationship being assigned.",
 			},
 			"primary_user_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "User ID to be assigned to 'primary' for the 'associated' user in the specified relationship.",
+				Description: "User ID to be assigned to `primary` for the 'associated' user in the specified relationship.",
 			},
 			"associated_user_ids": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Set of User IDs or login values of the users to be assigned the 'associated' relationship.",
+				Description: "Set of User IDs or login values of the users to be assigned the `associated` relationship.",
 			},
 		},
 	}

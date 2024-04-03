@@ -19,21 +19,22 @@ func resourceUserType() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
+		Description: "Creates a User type. This resource allows you to create and configure a User Type.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the user type",
+				Description: "Name of the User Type.",
 			},
 			"display_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The display name of the user type",
+				Description: "Display Name of the User Type.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "A human-readable description of the User type",
+				Description: "Description of the User Type.",
 			},
 		},
 	}

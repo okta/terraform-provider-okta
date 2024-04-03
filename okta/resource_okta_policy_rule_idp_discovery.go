@@ -16,45 +16,65 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 		UpdateContext: resourcePolicyRuleIdpDiscoveryUpdate,
 		DeleteContext: resourcePolicyRuleIdpDiscoveryDelete,
 		Importer:      createPolicyRuleImporter(),
+		Description: `Creates an IdP Discovery Policy Rule.
+		
+This resource allows you to create and configure an IdP Discovery Policy Rule.
+-> If you receive the error 'You do not have permission to access the feature
+you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
+request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		Schema: buildBaseRuleSchema(map[string]*schema.Schema{
 			"idp_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The identifier for the Idp the rule should route to if all conditions are met.",
 			},
 			"idp_type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "OKTA",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "OKTA",
+				Description: "Type of Idp. One of: `SAML2`, `IWA`, `AgentlessDSSO`, `X509`, `FACEBOOK`, `GOOGLE`, `LINKEDIN`, `MICROSOFT`, `OIDC`. Default: `OKTA`",
 			},
 			"app_include": {
-				Type:        schema.TypeSet,
-				Elem:        appResource,
-				Optional:    true,
-				Description: "Applications to include in discovery rule",
+				Type:     schema.TypeSet,
+				Elem:     appResource,
+				Optional: true,
+				Description: `Applications to include in discovery rule.
+- 'id' - (Optional) Use if 'type' is 'APP' to indicate the application id to include.
+- 'name' - (Optional) Use if the 'type' is 'APP_TYPE' to indicate the type of application(s) to include in instances where an entire group (i.e. 'yahoo_mail') of applications should be included.
+- 'type' - (Required) One of: 'APP', 'APP_TYPE'`,
 			},
 			"app_exclude": {
 				Type:        schema.TypeSet,
 				Elem:        appResource,
 				Optional:    true,
-				Description: "Applications to exclude in discovery rule",
+				Description: "Applications to exclude in discovery. See `app_include` for details.",
 			},
 			"platform_include": {
 				Type:     schema.TypeSet,
 				Elem:     platformIncludeResource,
 				Optional: true,
+				Description: `Platform to include in discovery rule.
+- 'type' - (Optional) One of: 'ANY', 'MOBILE', 'DESKTOP'
+- 'os_expression - (Optional) Only available when using os_type = 'OTHER'
+- 'os_type' - (Optional) One of: 'ANY', 'IOS', 'WINDOWS', 'ANDROID', 'OTHER', 'OSX'`,
 			},
 			"user_identifier_type": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "One of: `IDENTIFIER`, `ATTRIBUTE`",
 			},
 			"user_identifier_attribute": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Profile attribute matching can only have a single value that describes the type indicated in `user_identifier_type`. This is the attribute or identifier that the `user_identifier_patterns` are checked against.",
 			},
 			"user_identifier_patterns": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     userIDPatternResource,
+				Description: `Specifies a User Identifier pattern condition to match against. If 'match_type' of 'EXPRESSION' is used, only a *single* element can be set, otherwise multiple elements of matching patterns may be provided.
+- 'match_type' - (Optional) The kind of pattern. For regex, use 'EXPRESSION'. For simple string matches, use one of the following: 'SUFFIX', 'EQUALS', 'STARTS_WITH', 'CONTAINS'
+- 'value' - (Optional) The regex or simple match string to match against.`,
 			},
 		}),
 	}

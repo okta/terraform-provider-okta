@@ -1,0 +1,33 @@
+---
+page_title: "{{.Type}}: {{.Name}}"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Type}}: {{.Name}}
+
+{{ .Description | trimspace }}
+
+~> `okta_app_oauth_redirect_uri` has been marked deprecated and will be removed
+in the v5 release of the provider. Operators should manage the redirect URIs for
+an oauth app directly on that resource.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ tffile .ExampleFile }}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{- end }}

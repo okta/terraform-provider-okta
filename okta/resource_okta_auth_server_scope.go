@@ -15,6 +15,7 @@ func resourceAuthServerScope() *schema.Resource {
 		UpdateContext: resourceAuthServerScopeUpdate,
 		DeleteContext: resourceAuthServerScopeDelete,
 		Importer:      createNestedResourceImporter([]string{"auth_server_id", "id"}),
+		Description:   "Creates an Authorization Server Scope. This resource allows you to create and configure an Authorization Server Scope.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -40,13 +41,13 @@ func resourceAuthServerScope() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "IMPLICIT",
-				Description: "EA Feature and thus it is simply ignored if the feature is off",
+				Description: "Indicates whether a consent dialog is needed for the scope. It can be set to `REQUIRED` or `IMPLICIT`. Default: `IMPLICIT`",
 			},
 			"metadata_publish": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "ALL_CLIENTS",
-				Description: "Whether to publish metadata or not, matching API type despite the fact it could just be a boolean",
+				Description: "Whether to publish metadata or not. It can be set to `ALL_CLIENTS` or `NO_CLIENTS`. Default: `ALL_CLIENTS`",
 			},
 			"default": {
 				Type:        schema.TypeBool,

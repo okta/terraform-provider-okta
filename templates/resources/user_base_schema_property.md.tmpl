@@ -1,0 +1,37 @@
+---
+page_title: "{{.Type}}: {{.Name}}"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Type}}: {{.Name}}
+
+{{ .Description | trimspace }}
+
+## IMPORTANT NOTE: 
+
+Based on the [official documentation](https://developer.okta.com/docs/reference/api/schemas/#user-profile-base-subschema)
+base properties can not be modified, except to update permissions, to change the nullability of `firstName` and 
+`lastName` (`required` property) or to specify a `pattern` for `login`. Currently, `title` and `type` are required, so
+they should be set to the current values of the base property. This will be fixed in the future releases, as this is 
+a breaking change.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ tffile .ExampleFile }}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{- end }}

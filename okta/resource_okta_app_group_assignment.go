@@ -37,6 +37,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
+		Description: "Assigns a group to an application. This resource allows you to create an App Group assignment.",
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:        schema.TypeString,
