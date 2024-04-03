@@ -72,6 +72,9 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 'digest_algorithm'
 'authn_context_class_ref'`,
 				ForceNew: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return new == ""
+				},
 			},
 			"key_name": {
 				Type:         schema.TypeString,
