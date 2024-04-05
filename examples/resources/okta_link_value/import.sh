@@ -1,0 +1,1 @@
+terraform import okta_link_value.example &#60;primary_name&#62;/&#60;primary_user_id&#62;

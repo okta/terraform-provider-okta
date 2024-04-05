@@ -17,12 +17,13 @@ func resourceTrustedOrigin() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Creates a Trusted Origin. This resource allows you to create and configure a Trusted Origin.",
 		Schema: map[string]*schema.Schema{
 			"active": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
-				Description: "Whether the Trusted Origin is active or not - can only be issued post-creation. Default: `true`",
+				Description: "Whether the Trusted Origin is active or not - can only be issued post-creation. By default, it is `true`.",
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -38,7 +39,7 @@ func resourceTrustedOrigin() *schema.Resource {
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "Scopes of the Trusted Origin - can either be CORS or REDIRECT only",
+				Description: "Scopes of the Trusted Origin - can either be `CORS` and/or `REDIRECT`",
 			},
 		},
 	}

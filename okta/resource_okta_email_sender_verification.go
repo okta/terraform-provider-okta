@@ -14,6 +14,7 @@ func resourceEmailSenderVerification() *schema.Resource {
 		ReadContext:   resourceFuncNoOp,
 		DeleteContext: resourceFuncNoOp,
 		Importer:      nil,
+		Description:   "Verifies the email sender. The resource won't be created if the email sender could not be verified.",
 		Schema: map[string]*schema.Schema{
 			"sender_id": {
 				Type:        schema.TypeString,

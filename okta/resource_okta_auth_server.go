@@ -17,11 +17,12 @@ func resourceAuthServer() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Creates an Authorization Server. This resource allows you to create and configure an Authorization Server.",
 		Schema: map[string]*schema.Schema{
 			"audiences": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "Currently Okta only supports a single value here",
+				Description: "The recipients that the tokens are intended for. This becomes the `aud` claim in an access token. Currently Okta only supports a single value here.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": statusSchema,
@@ -44,7 +45,7 @@ func resourceAuthServer() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "AUTO",
-				Description: "Credential rotation mode, in many cases you cannot set this to MANUAL, the API will ignore the value and you will get a perpetual diff. This should rarely be used.",
+				Description: "The key rotation mode for the authorization server. Can be `AUTO` or `MANUAL`. Default: `AUTO`",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -59,13 +60,13 @@ func resourceAuthServer() *schema.Resource {
 			"issuer": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "allows you to use a custom issuer URL",
+				Description: "The complete URL for a Custom Authorization Server. This becomes the `iss` claim in an access token.",
 			},
 			"issuer_mode": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "ORG_URL",
-				Description: "*Early Access Property*. Indicates which value is specified in the issuer of the tokens that a Custom Authorization Server returns: the original Okta org domain URL or a custom domain URL",
+				Description: "*Early Access Property*. Allows you to use a custom issuer URL. It can be set to `CUSTOM_URL`, `ORG_URL`, or `DYNAMIC`. Default: `ORG_URL`",
 			},
 		},
 	}

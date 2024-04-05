@@ -72,7 +72,7 @@ func (r *policyDeviceAssuranceWindowsResource) Metadata(_ context.Context, req r
 
 func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages device assurance on policy",
+		Description: "Manages a device assurance policy for windows.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Policy assurance id",
@@ -82,7 +82,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Policy device assurance name",
+				Description: "Name of the device assurance policy.",
 				Required:    true,
 			},
 			"platform": schema.StringAttribute{
@@ -94,7 +94,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 			},
 			// use set to avoid order change as v3 does not have diff suppress func
 			"disk_encryption_type": schema.SetAttribute{
-				Description: "List of disk encryption type, can be ALL_INTERNAL_VOLUMES",
+				Description: "List of disk encryption type, can be `ALL_INTERNAL_VOLUMES`",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{
@@ -106,7 +106,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"os_version": schema.StringAttribute{
-				Description: "The device os minimum version",
+				Description: "Minimum os version of the device in the device assurance policy.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.AtLeastOneOf(path.Expressions{
@@ -117,7 +117,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"secure_hardware_present": schema.BoolAttribute{
-				Description: "Indicates if the device contains a secure hardware functionality",
+				Description: "Is the device secure with hardware in the device assurance policy.",
 				Optional:    true,
 				Validators: []validator.Bool{
 					boolvalidator.AtLeastOneOf(path.Expressions{
@@ -128,7 +128,7 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"screenlock_type": schema.SetAttribute{
-				Description: "List of screenlock type, can be BIOMETRIC or BIOMETRIC, PASSCODE",
+				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
 				Optional:    true,
 				ElementType: types.StringType,
 				Validators: []validator.Set{

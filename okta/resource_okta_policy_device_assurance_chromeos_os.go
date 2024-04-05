@@ -58,7 +58,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Metadata(_ context.Context, req 
 
 func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages device assurance on policy",
+		Description: "Manages a device assurance policy for chromeos.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Policy assurance id",
@@ -68,7 +68,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Policy device assurance name",
+				Description: "Name of the device assurance policy.",
 				Required:    true,
 			},
 			"platform": schema.StringAttribute{

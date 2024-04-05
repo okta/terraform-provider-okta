@@ -19,16 +19,20 @@ func resourceAppBasicAuth() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
+		Description: `This resource allows you to create and configure an Auto Login Okta Application.
+-> During an apply if there is change in status the app will first be
+activated or deactivated in accordance with the status change. Then, all
+other arguments that changed will be applied.`,
 		Schema: buildAppSchemaWithVisibility(map[string]*schema.Schema{
 			"auth_url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Login button field",
+				Description: "The URL of the authenticating site for this app.",
 			},
 			"url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Login password field",
+				Description: "The URL of the sign-in page for this app.",
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{

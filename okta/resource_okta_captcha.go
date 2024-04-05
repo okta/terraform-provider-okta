@@ -17,6 +17,9 @@ func resourceCaptcha() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `Creates different types of captcha.
+		~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+		This resource allows you to create and configure a CAPTCHA.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -27,7 +30,7 @@ func resourceCaptcha() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Captcha type",
+				Description: "Type of the captcha. Valid values: `HCAPTCHA`, `RECAPTCHA_V2`",
 			},
 			"site_key": {
 				Type:        schema.TypeString,

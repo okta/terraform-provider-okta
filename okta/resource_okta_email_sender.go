@@ -17,6 +17,7 @@ func resourceEmailSender() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: "Creates custom email sender. This resource allows you to create and configure a custom email sender.",
 		Schema: map[string]*schema.Schema{
 			"from_name": {
 				Type:        schema.TypeString,

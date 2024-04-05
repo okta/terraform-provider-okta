@@ -23,6 +23,13 @@ func resourceGroupCustomSchemaProperty() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `Creates a Group Schema property.
+This resource allows you to create and configure a custom group schema property.
+**IMPORTANT:** With 'enum', list its values as strings even though the 'type'
+may be something other than string. This is a limitation of the schema defintion
+in the Terraform Plugin SDK runtime and we juggle the type correctly when making
+Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
+'array_*' variation of 'enum' and 'one_of'.`,
 		Schema: buildSchema(
 			userBaseSchemaSchema,
 			userSchemaSchema,
@@ -35,13 +42,13 @@ func resourceGroupCustomSchemaProperty() *schema.Resource {
 				"master": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					Description: "SubSchema profile manager, if not set it will inherit its setting.",
+					Description: "Master priority for the group schema property. It can be set to `PROFILE_MASTER`, `OVERRIDE` or `OKTA`. Default: `PROFILE_MASTER`",
 					Default:     "PROFILE_MASTER",
 				},
 				"master_override_priority": {
 					Type:        schema.TypeList,
 					Optional:    true,
-					Description: "",
+					Description: "Prioritized list of profile sources (required when `master` is `OVERRIDE`).",
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"type": {
