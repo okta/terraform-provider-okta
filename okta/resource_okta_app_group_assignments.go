@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -270,6 +271,7 @@ func buildProfile(d *schema.ResourceData, i int, assignment *sdk.ApplicationGrou
 	return string(jsonProfile)
 }
 
+// TODU
 // splitAssignmentsTargets uses schema change to determine what if any
 // assignments to keep and which to remove. This is in the context of the local
 // terraform state. Get changes returns old state vs new state. Anything in the
@@ -294,16 +296,23 @@ func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.
 
 	oldIDs := map[string]interface{}{}
 	newIDs := map[string]interface{}{}
-	for _, old := range oldState {
-		if o, ok := old.(map[string]interface{}); ok {
-			id := o["id"].(string)
-			oldIDs[id] = o
-		}
-	}
+	hash := make(map[string]bool)
+	intersectionIDs := map[string]interface{}{}
 	for _, new := range newState {
 		if n, ok := new.(map[string]interface{}); ok {
 			id := n["id"].(string)
 			newIDs[id] = n
+			hash[id] = true
+		}
+	}
+
+	for _, old := range oldState {
+		if o, ok := old.(map[string]interface{}); ok {
+			id := o["id"].(string)
+			oldIDs[id] = o
+			if hash[id] {
+				intersectionIDs[id] = o
+			}
 		}
 	}
 
@@ -319,26 +328,107 @@ func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.
 
 	// anything in the new state treat as an assign even though it might already
 	// exist and might be unchanged
-	for id, group := range newIDs {
-		a := group.(map[string]interface{})
-		assignment := &sdk.ApplicationGroupAssignment{
-			Id: id,
-		}
-		if profile, ok := a["profile"]; ok {
-			var p interface{}
-			if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
-				assignment.Profile = p
+	for id, newGroup := range newIDs {
+		if oldGroup, ok := intersectionIDs[id]; ok {
+			if !reflect.DeepEqual(oldGroup, newGroup) {
+				a := newGroup.(map[string]interface{})
+				assignment := &sdk.ApplicationGroupAssignment{
+					Id: id,
+				}
+				if profile, ok := a["profile"]; ok {
+					var p interface{}
+					if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
+						assignment.Profile = p
+					}
+					err = nil // need to reset err as it is a named return value
+				}
+				if priority, ok := a["priority"]; ok {
+					assignment.PriorityPtr = int64Ptr(priority.(int))
+				}
+				toAssign = append(toAssign, assignment)
 			}
-			err = nil // need to reset err as it is a named return value
+		} else {
+			a := newGroup.(map[string]interface{})
+			assignment := &sdk.ApplicationGroupAssignment{
+				Id: id,
+			}
+			if profile, ok := a["profile"]; ok {
+				var p interface{}
+				if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
+					assignment.Profile = p
+				}
+				err = nil // need to reset err as it is a named return value
+			}
+			if priority, ok := a["priority"]; ok {
+				assignment.PriorityPtr = int64Ptr(priority.(int))
+			}
+			toAssign = append(toAssign, assignment)
 		}
-		if priority, ok := a["priority"]; ok {
-			assignment.PriorityPtr = int64Ptr(priority.(int))
-		}
-		toAssign = append(toAssign, assignment)
 	}
 
 	return
 }
+
+// func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.ApplicationGroupAssignment, err error) {
+// 	o, n := d.GetChange("group")
+// 	oldState, ok := o.([]interface{})
+// 	if !ok {
+// 		err = fmt.Errorf("expected old groups to be slice, got %T", o)
+// 		return
+// 	}
+// 	newState, ok := n.([]interface{})
+// 	if !ok {
+// 		err = fmt.Errorf("expected new groups to be slice, got %T", n)
+// 		return
+// 	}
+
+// 	oldIDs := map[string]interface{}{}
+// 	newIDs := map[string]interface{}{}
+// 	for _, old := range oldState {
+// 		if o, ok := old.(map[string]interface{}); ok {
+// 			id := o["id"].(string)
+// 			oldIDs[id] = o
+// 		}
+// 	}
+// 	for _, new := range newState {
+// 		if n, ok := new.(map[string]interface{}); ok {
+// 			id := n["id"].(string)
+// 			newIDs[id] = n
+// 		}
+// 	}
+
+// 	// delete
+// 	for id := range oldIDs {
+// 		if newIDs[id] == nil {
+// 			// only id is needed
+// 			toRemove = append(toRemove, &sdk.ApplicationGroupAssignment{
+// 				Id: id,
+// 			})
+// 		}
+// 	}
+
+// 	// anything in the new state treat as an assign even though it might already
+// 	// exist and might be unchanged
+// 	for id, group := range newIDs {
+// 		a := group.(map[string]interface{})
+// 		assignment := &sdk.ApplicationGroupAssignment{
+// 			Id: id,
+// 		}
+// 		if profile, ok := a["profile"]; ok {
+// 			var p interface{}
+// 			if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
+// 				assignment.Profile = p
+// 			}
+// 			err = nil // need to reset err as it is a named return value
+// 		}
+// 		if priority, ok := a["priority"]; ok {
+// 			assignment.PriorityPtr = int64Ptr(priority.(int))
+// 		}
+// 		toAssign = append(toAssign, assignment)
+// 	}
+
+// 	return
+// }
 
 func groupAssignmentToTFGroup(assignment *sdk.ApplicationGroupAssignment) map[string]interface{} {
 	jsonProfile, _ := json.Marshal(assignment.Profile)
