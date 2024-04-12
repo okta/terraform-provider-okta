@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.8.1 (April 12, 2024)
+
+### BUG FIXES
+* Update api management role_type documentation [#1935](https://github.com/okta/terraform-provider-okta/pull/1935). Thanks, [@HeroesFR](https://github.com/HeroesFR)!
+* Update Doc link and removed dead link [#1940](https://github.com/okta/terraform-provider-okta/pull/1940). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Fix webauthn authenticator issue since 4.8.0 [#1938](https://github.com/okta/terraform-provider-okta/pull/1938). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix issue of cannot create new custom_otp authenticator [#1947](https://github.com/okta/terraform-provider-okta/pull/1947). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Update example dead links[#1962](https://github.com/okta/terraform-provider-okta/pull/1962). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
 ## 4.8.0 (February 28, 2024)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
