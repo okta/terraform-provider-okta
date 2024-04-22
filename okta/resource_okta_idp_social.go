@@ -94,6 +94,31 @@ func resourceIdpSocial() *schema.Resource {
 				Optional:    true,
 				Description: "The Team ID associated with your Apple developer account",
 			},
+			"trust_issuer": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Trust issuer for the Okta IdP instance.",
+			},
+			"trust_audience": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Trust audience for the Okta IdP instance.",
+			},
+			"trust_kid": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Trust kid for the Okta IdP instance.",
+			},
+			"trust_revocation": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Trust revocation for the Okta IdP instance.",
+			},
+			"trust_revocation_cache_lifetime": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Trust revocation cache lifetime for the Okta IdP instance.",
+			},
 		}),
 	}
 }
@@ -127,15 +152,28 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	if idp.Policy.Provisioning.Conditions != nil {
+		_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+		_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	}
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	_ = d.Set("protocol_type", idp.Protocol.Type)
-	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	if idp.Protocol.Credentials.Client != nil {
+		_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
+		_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	}
+	if idp.Protocol.Credentials.Trust != nil {
+		_ = d.Set("trust_issuer", idp.Protocol.Credentials.Trust.Issuer)
+		_ = d.Set("trust_audience", idp.Protocol.Credentials.Trust.Audience)
+		_ = d.Set("trust_kid", idp.Protocol.Credentials.Trust.Kid)
+		_ = d.Set("trust_revocation", idp.Protocol.Credentials.Trust.Revocation)
+		if idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr != nil {
+			_ = d.Set("trust_revocation_cache_lifetime", *idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr)
+		}
+	}
 	if idp.Type == "APPLE" {
 		_ = d.Set("apple_kid", idp.Protocol.Credentials.Signing.Kid)
 		_ = d.Set("apple_team_id", idp.Protocol.Credentials.Signing.TeamId)
