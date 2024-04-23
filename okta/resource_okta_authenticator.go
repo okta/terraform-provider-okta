@@ -34,6 +34,8 @@ multiple custom_otp authenticator. To create new custom_otp authenticator, a new
 name and key = custom_otp is required. If an old name is used, it will simply 
 reactivate the old custom_otp authenticator
 
+-> **Update:** custom_otp authenticator cannot be updated
+
 -> **Delete:** Authenticators can not be truly deleted therefore delete is soft.
 Delete will attempt to deativate the authenticator. An authenticator can only be
 deactivated if it's not in use by any other policy.`,
@@ -49,7 +51,7 @@ deactivated if it's not in use by any other policy.`,
 				Required:    true,
 				Description: "Display name of the Authenticator",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return true
+					return d.Get("legacy_ignore_name").(bool)
 				},
 			},
 			"settings": {
@@ -156,6 +158,12 @@ deactivated if it's not in use by any other policy.`,
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`",
+			},
+			"legacy_ignore_name": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Name does not trigger change detection (legacy behavior)",
 			},
 		},
 	}
@@ -358,13 +366,17 @@ func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
 func validateAuthenticator(d *schema.ResourceData) error {
 	typ := d.Get("type").(string)
 	if typ == "security_key" {
-		h := d.Get("provider_hostname").(string)
-		_, pok := d.GetOk("provider_auth_port")
-		s := d.Get("provider_shared_secret").(string)
-		templ := d.Get("provider_user_name_template").(string)
-		if h == "" || s == "" || templ == "" || !pok {
-			return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
-				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+		if d.Get("key").(string) != "custom_otp" {
+			h := d.Get("provider_hostname").(string)
+			_, pok := d.GetOk("provider_auth_port")
+			s := d.Get("provider_shared_secret").(string)
+			templ := d.Get("provider_user_name_template").(string)
+			if h == "" || s == "" || templ == "" || !pok {
+				return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
+					"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+			}
+		} else {
+			return fmt.Errorf("custom_otp is not updatable")
 		}
 	}
 
