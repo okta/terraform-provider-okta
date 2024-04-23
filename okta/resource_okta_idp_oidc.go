@@ -89,6 +89,11 @@ func resourceIdpOidc() *schema.Resource {
 				Sensitive:   true,
 				Description: "Client secret issued by AS for the Okta IdP instance.",
 			},
+			"pkce_required": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/idps/#oauth-2-0-and-openid-connect-client-object",
+			},
 			"issuer_url": {
 				Type:        schema.TypeString,
 				Required:    true,
