@@ -119,3 +119,39 @@ resource "okta_app_bookmark" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAppBookmarkApplication_authenticationPolicy_OIEonly(t *testing.T) {
+	mgr := newFixtureManager("resources", appBookmark, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("app_with_authentication_policy.tf", t)
+	resourceName := fmt.Sprintf("%s.test", appBookmark)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "authentication_policy"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "authentication_policy"),
+				),
+			},
+		},
+	})
+}
