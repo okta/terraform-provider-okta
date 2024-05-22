@@ -398,6 +398,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "The ID of the associated `app_signon_policy`. If this property is removed from the application the `default` sign-on-policy will be associated with this application.y",
 			},
 			"embed_url": {
@@ -467,7 +468,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(d, app.Links)
+	setAuthenticationPolicy(ctx, m, d, app.Links)
 	if app.Settings != nil {
 		if app.Settings.SignOn != nil {
 			err = setSamlSettings(d, app.Settings.SignOn)

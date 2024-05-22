@@ -365,6 +365,7 @@ other arguments that changed will be applied.`,
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
 			},
 			"jwks_uri": {
@@ -510,7 +511,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(d, app.Links)
+	setAuthenticationPolicy(ctx, m, d, app.Links)
 	var rawProfile string
 	if app.Profile != nil {
 		p, _ := json.Marshal(app.Profile)

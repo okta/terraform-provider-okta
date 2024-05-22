@@ -40,6 +40,7 @@ other arguments that changed will be applied.`,
 			"authentication_policy": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
 			},
 		}),
@@ -82,7 +83,7 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m inte
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(d, app.Links)
+	setAuthenticationPolicy(ctx, m, d, app.Links)
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)

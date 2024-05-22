@@ -340,7 +340,7 @@ func oktaResourceTest(t *testing.T, c resource.TestCase) {
 			t.Skipf("%q test is attempting to write %s.yaml cassette, delete it first before attempting new write, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
 			return
 		}
-
+		c.ProviderFactories = nil
 		c.ProtoV5ProviderFactories = vcrProviderFactoriesForTest(mgr)
 		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
 		resource.Test(t, c)
