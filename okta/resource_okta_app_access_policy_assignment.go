@@ -44,7 +44,7 @@ func (r *appAccessPolicyAssignmentResource) Metadata(_ context.Context, req reso
 
 func (r *appAccessPolicyAssignmentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages assignment of Access Policy to an Application",
+		Description: "Manages assignment of Access Policy to an Application. Warning: do not use as this will update okta_app_*.authentication_policy and vice versa",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The ID of the resource. This ID is simply the application ID.",
