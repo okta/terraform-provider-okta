@@ -341,8 +341,10 @@ func mapBrandToState(data *okta.BrandWithEmbedded, state *brandResourceModel) di
 	state.AgreeToCustomPrivacyPolicy = types.BoolPointerValue(data.AgreeToCustomPrivacyPolicy)
 	state.CustomPrivacyPolicyURL = types.StringPointerValue(data.CustomPrivacyPolicyUrl)
 	state.RemovePoweredByOkta = types.BoolPointerValue(data.RemovePoweredByOkta)
-	state.DefaultAppAppInstanceID = types.StringPointerValue(data.DefaultApp.AppInstanceId)
-	state.DefaultAppAppLinkName = types.StringPointerValue(data.DefaultApp.AppLinkName)
+	if data.DefaultApp != nil {
+		state.DefaultAppAppInstanceID = types.StringPointerValue(data.DefaultApp.AppInstanceId)
+		state.DefaultAppAppLinkName = types.StringPointerValue(data.DefaultApp.AppLinkName)
+	}
 	state.DefaultAppClassicApplicationURI = types.StringPointerValue(data.DefaultApp.ClassicApplicationUri)
 	links, _ := json.Marshal(data.GetLinks())
 	state.Links = types.StringValue(string(links))
