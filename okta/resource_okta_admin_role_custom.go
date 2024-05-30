@@ -21,9 +21,7 @@ func resourceAdminRoleCustom() *schema.Resource {
 		},
 		Description: `Resource to manage administrative Role assignments for a User
 
-These operations allow the creation and manipulation of custom roles as custom collections of permissions.
-
-~> **NOTE:** This an Early Access feature.`,
+These operations allow the creation and manipulation of custom roles as custom collections of permissions.`,
 		Schema: map[string]*schema.Schema{
 			"label": {
 				Type:        schema.TypeString,
