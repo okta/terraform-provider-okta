@@ -74,6 +74,9 @@ func resourceProfileMapping() *schema.Resource {
 				Default: false,
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -108,7 +111,8 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 	}
 	d.SetId(mapping.Id)
 	newMapping := buildMapping(d)
-	if d.Get("delete_when_absent").(bool) {
+	deleteWhenAbsent, ok := d.GetOk("delete_when_absent")
+	if ok && deleteWhenAbsent.(bool) {
 		newMapping.Properties = mergeProperties(newMapping.Properties, getDeleteProperties(d, mapping.Properties))
 	}
 	_, _, err = getOktaClientFromMetadata(m).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
@@ -131,12 +135,14 @@ func resourceProfileMappingRead(ctx context.Context, d *schema.ResourceData, m i
 		d.SetId("")
 		return nil
 	}
+	_ = d.Set("source_id", mapping.Source.Id)
 	_ = d.Set("source_type", mapping.Source.Type)
 	_ = d.Set("source_name", mapping.Source.Name)
 	_ = d.Set("target_type", mapping.Target.Type)
 	_ = d.Set("target_id", mapping.Target.Id)
 	_ = d.Set("target_name", mapping.Target.Name)
-	if !d.Get("delete_when_absent").(bool) {
+	deleteWhenAbsent, ok := d.GetOk("delete_when_absent")
+	if ok && !deleteWhenAbsent.(bool) {
 		current := buildMappingProperties(d.Get("mappings").(*schema.Set))
 		for k := range mapping.Properties {
 			if _, ok := current[k]; !ok {
@@ -159,7 +165,8 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 		return diag.Errorf("no profile mappings found for source ID '%s' and target ID '%s'", sourceID, targetID)
 	}
 	newMapping := buildMapping(d)
-	if d.Get("delete_when_absent").(bool) {
+	deleteWhenAbsent, ok := d.GetOk("delete_when_absent")
+	if ok && deleteWhenAbsent.(bool) {
 		newMapping.Properties = mergeProperties(newMapping.Properties, getDeleteProperties(d, mapping.Properties))
 	}
 	_, _, err = getOktaClientFromMetadata(m).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
