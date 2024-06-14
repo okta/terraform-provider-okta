@@ -17,7 +17,9 @@ func resourceEmailDomain() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: "Creates email domain. This resource allows you to create and configure an email domain.",
+		Description: `Creates email domain. This resource allows you to create and configure an email domain. 
+		
+**IMPORTANT:** Due to the way Okta's API conflict with terraform design principle, updating the relationship between email_domain and brand is not configurable through terraform and has to be done through clickOps`,
 		Schema: map[string]*schema.Schema{
 			"brand_id": {
 				Type:        schema.TypeString,
