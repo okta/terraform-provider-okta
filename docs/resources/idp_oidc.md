@@ -57,6 +57,7 @@ resource "okta_idp_oidc" "example" {
 - `groups_filter` (Set of String) Whitelist of Okta Group identifiers that are allowed for the `APPEND` or `SYNC` `groups_action`.
 - `issuer_mode` (String) Indicates whether Okta uses the original Okta org domain URL, a custom domain URL, or dynamic. It can be `ORG_URL`, `CUSTOM_URL`, or `DYNAMIC`. Default: `ORG_URL`
 - `max_clock_skew` (Number) Maximum allowable clock-skew when processing messages from the IdP.
+- `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/idps/#oauth-2-0-and-openid-connect-client-object
 - `profile_master` (Boolean) Determines if the IdP should act as a source of truth for user profile attributes.
 - `protocol_type` (String) The type of protocol to use. It can be `OIDC` or `OAUTH2`. Default: `OIDC`
 - `provisioning_action` (String) Provisioning action for an IdP user during authentication. Default: `AUTO`

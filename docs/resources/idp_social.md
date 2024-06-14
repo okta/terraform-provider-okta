@@ -68,6 +68,11 @@ resource "okta_idp_social" "example" {
 - `id` (String) The ID of this resource.
 - `token_binding` (String) The method of making a token request. It can be set to `HTTP-POST` or `HTTP-REDIRECT`.
 - `token_url` (String) IdP Authorization Server (AS) endpoint to exchange the authorization code grant for an access token.
+- `trust_audience` (String) Trust audience for the Okta IdP instance.
+- `trust_issuer` (String) Trust issuer for the Okta IdP instance.
+- `trust_kid` (String) Trust kid for the Okta IdP instance.
+- `trust_revocation` (String) Trust revocation for the Okta IdP instance.
+- `trust_revocation_cache_lifetime` (Number) Trust revocation cache lifetime for the Okta IdP instance.
 
 ## Import
 
