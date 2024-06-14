@@ -21,6 +21,7 @@ const (
 	adminRoleCustomAssignments    = "okta_admin_role_custom_assignments"
 	adminRoleTargets              = "okta_admin_role_targets"
 	app                           = "okta_app"
+	apps                          = "okta_apps"
 	appAutoLogin                  = "okta_app_auto_login"
 	appBasicAuth                  = "okta_app_basic_auth"
 	appBookmark                   = "okta_app_bookmark"
@@ -81,6 +82,7 @@ const (
 	groupMemberships              = "okta_group_memberships"
 	groupRole                     = "okta_group_role"
 	groupRule                     = "okta_group_rule"
+	groupRules                    = "okta_group_rules"
 	groups                        = "okta_groups"
 	groupSchemaProperty           = "okta_group_schema_property"
 	idpMetadataSaml               = "okta_idp_metadata_saml"
@@ -330,7 +332,9 @@ func Provider() *schema.Provider {
 			userType:                      resourceUserType(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			adminRoleCustom:          dataSourceAdminRoleCustom(),
 			app:                      dataSourceApp(),
+			apps:                     dataSourceApps(),
 			appGroupAssignments:      dataSourceAppGroupAssignments(),
 			appMetadataSaml:          dataSourceAppMetadataSaml(),
 			appOAuth:                 dataSourceAppOauth(),
@@ -356,6 +360,7 @@ func Provider() *schema.Provider {
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),
 			groupRule:                dataSourceGroupRule(),
+			groupRules:               dataSourceGroupRules(),
 			groups:                   dataSourceGroups(),
 			idpMetadataSaml:          dataSourceIdpMetadataSaml(),
 			idpOidc:                  dataSourceIdpOidc(),
