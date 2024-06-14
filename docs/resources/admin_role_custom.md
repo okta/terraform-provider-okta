@@ -3,7 +3,6 @@ page_title: "Resource: okta_admin_role_custom"
 description: |-
   Resource to manage administrative Role assignments for a User
   These operations allow the creation and manipulation of custom roles as custom collections of permissions.
-  ~> NOTE: This an Early Access feature.
 ---
 
 # Resource: okta_admin_role_custom
@@ -11,8 +10,6 @@ description: |-
 Resource to manage administrative Role assignments for a User
 
 These operations allow the creation and manipulation of custom roles as custom collections of permissions.
-
-~> **NOTE:** This an Early Access feature.
 
 ## Example Usage
 

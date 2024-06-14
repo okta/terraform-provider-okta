@@ -2,11 +2,14 @@
 page_title: "Resource: okta_email_domain"
 description: |-
   Creates email domain. This resource allows you to create and configure an email domain.
+  IMPORTANT: Due to the way Okta's API conflict with terraform design principle, updating the relationship between email_domain and brand is not configurable through terraform and has to be done through clickOps
 ---
 
 # Resource: okta_email_domain
 
-Creates email domain. This resource allows you to create and configure an email domain.
+Creates email domain. This resource allows you to create and configure an email domain. 
+		
+**IMPORTANT:** Due to the way Okta's API conflict with terraform design principle, updating the relationship between email_domain and brand is not configurable through terraform and has to be done through clickOps
 
 ## Example Usage
 

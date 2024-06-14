@@ -2,13 +2,14 @@
 page_title: "Resource: okta_app_group_assignments"
 description: |-
   Assigns groups to an application. This resource allows you to create multiple App Group assignments.
+  Important: Do not use in conjunction with for_each
 ---
 
 # Resource: okta_app_group_assignments
 
-Assigns groups to an application. This resource allows you to create multiple App Group assignments.
-
-Important: Do not use in conjunction with for_each
+Assigns groups to an application. This resource allows you to create multiple App Group assignments. 
+		
+**Important**: Do not use in conjunction with for_each
 
 ## Example Usage
 

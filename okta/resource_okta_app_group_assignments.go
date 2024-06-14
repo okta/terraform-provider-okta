@@ -22,7 +22,9 @@ func resourceAppGroupAssignments() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Assigns groups to an application. This resource allows you to create multiple App Group assignments. Important: Do not use in conjunction with for_each",
+		Description: `Assigns groups to an application. This resource allows you to create multiple App Group assignments. 
+		
+**Important**: Do not use in conjunction with for_each`,
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:        schema.TypeString,
