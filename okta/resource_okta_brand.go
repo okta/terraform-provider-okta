@@ -47,7 +47,9 @@ func (r *brandResource) Metadata(_ context.Context, req resource.MetadataRequest
 
 func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages brand. This resource allows you to create and configure an Okta [Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).",
+		Description: `Manages brand. This resource allows you to create and configure an Okta [Brand](https://developer.okta.com/docs/reference/api/brands/#brand-object).
+		
+**IMPORTANT:** Due to the way Okta's API conflict with terraform design principle, updating the relationship between email_domain and brand is not configurable through terraform and has to be done through clickOps`,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Brand id",
@@ -153,7 +155,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	updateReqBody, err := buildUpdateBrandRequest(state)
+	updateReqBody, err := buildUpdateBrandRequest(state, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to build brand request",
@@ -211,7 +213,7 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		}
 
 		for _, brand := range brands {
-			if *brand.IsDefault {
+			if brand.GetIsDefault() {
 				brandWithEmbedded = &brand
 			}
 		}
@@ -261,7 +263,36 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	reqBody, err := buildUpdateBrandRequest(state)
+	var brandWithEmbedded *okta.BrandWithEmbedded
+	var err error
+
+	if state.BrandID.ValueString() == "default" {
+		brands, _, err := r.oktaSDKClientV3.CustomizationAPI.ListBrands(ctx).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"failed to get list brand",
+				err.Error(),
+			)
+			return
+		}
+
+		for _, brand := range brands {
+			if brand.GetIsDefault() {
+				brandWithEmbedded = &brand
+			}
+		}
+	} else {
+		brandWithEmbedded, _, err = r.oktaSDKClientV3.CustomizationAPI.GetBrand(ctx, state.ID.ValueString()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"failed to read brand",
+				err.Error(),
+			)
+			return
+		}
+	}
+
+	reqBody, err := buildUpdateBrandRequest(state, brandWithEmbedded.EmailDomainId)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to build brand request",
@@ -309,7 +340,7 @@ func buildCreateBrandRequest(model brandResourceModel) (okta.CreateBrandRequest,
 	}, nil
 }
 
-func buildUpdateBrandRequest(model brandResourceModel) (okta.BrandRequest, error) {
+func buildUpdateBrandRequest(model brandResourceModel, emailDomainID *string) (okta.BrandRequest, error) {
 	defaultApp := &okta.DefaultApp{}
 	if !model.DefaultAppAppInstanceID.IsNull() && model.DefaultAppAppInstanceID.ValueString() != "" {
 		defaultApp.AppInstanceId = model.DefaultAppAppInstanceID.ValueStringPointer()
@@ -325,6 +356,7 @@ func buildUpdateBrandRequest(model brandResourceModel) (okta.BrandRequest, error
 		AgreeToCustomPrivacyPolicy: model.AgreeToCustomPrivacyPolicy.ValueBoolPointer(),
 		CustomPrivacyPolicyUrl:     model.CustomPrivacyPolicyURL.ValueStringPointer(),
 		DefaultApp:                 defaultApp,
+		EmailDomainId:              emailDomainID,
 		Locale:                     model.Locale.ValueStringPointer(),
 		RemovePoweredByOkta:        model.RemovePoweredByOkta.ValueBoolPointer(),
 	}, nil
