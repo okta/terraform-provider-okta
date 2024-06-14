@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.9.0 (June 14, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add add import `okta_profile_mapping` [#2004](https://github.com/okta/terraform-provider-okta/pull/2004). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add support for dpop via okta-sdk-golang [#2009](https://github.com/okta/terraform-provider-okta/pull/2009). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES
+* Fix provider crash when import `okta_idp_social` [#1978](https://github.com/okta/terraform-provider-okta/pull/1978). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix cannot create new custom_otp authenticator [#1982](https://github.com/okta/terraform-provider-okta/pull/1982). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix `okta_idp_oidc` crash [#1984](https://github.com/okta/terraform-provider-okta/pull/1984). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Update feature_request.md [#1988](https://github.com/okta/terraform-provider-okta/pull/1988). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Fix `okta_app_*` unable to import authentication policy [#1993](https://github.com/okta/terraform-provider-okta/pull/1993). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix crash creating `okta_resource_set` from devices [#1997](https://github.com/okta/terraform-provider-okta/pull/1997). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix panic when `okta_brand` does not have default app [#1999](https://github.com/okta/terraform-provider-okta/pull/1999). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix `okta_brand` getting detach from email domain after update[#2008](https://github.com/okta/terraform-provider-okta/pull/2008). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ## 4.8.1 (April 12, 2024)
 
 ### BUG FIXES
@@ -14,7 +31,7 @@
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
-* Add supoort to custom_otp on `okta_authenticator` [#1864](https://github.com/okta/terraform-provider-okta/pull/1864). Thanks, [@isaacokta](https://github.com/isaacokta)!
+* Add support to custom_otp on `okta_authenticator` [#1864](https://github.com/okta/terraform-provider-okta/pull/1864). Thanks, [@isaacokta](https://github.com/isaacokta)!
 
 ### BUG FIXES
 * Fix import okta_group_memberships [#1899](https://github.com/okta/terraform-provider-okta/pull/1899). Thanks, [@c4po](https://github.com/c4po)!
