@@ -376,8 +376,8 @@ func mapBrandToState(data *okta.BrandWithEmbedded, state *brandResourceModel) di
 	if data.DefaultApp != nil {
 		state.DefaultAppAppInstanceID = types.StringPointerValue(data.DefaultApp.AppInstanceId)
 		state.DefaultAppAppLinkName = types.StringPointerValue(data.DefaultApp.AppLinkName)
+		state.DefaultAppClassicApplicationURI = types.StringPointerValue(data.DefaultApp.ClassicApplicationUri)
 	}
-	state.DefaultAppClassicApplicationURI = types.StringPointerValue(data.DefaultApp.ClassicApplicationUri)
 	links, _ := json.Marshal(data.GetLinks())
 	state.Links = types.StringValue(string(links))
 	return diags
