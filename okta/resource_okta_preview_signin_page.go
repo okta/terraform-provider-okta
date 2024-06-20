@@ -58,12 +58,8 @@ func (r *previewSigninPageResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	reqBody, err := buildSignInPageRequest(ctx, state)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to build preview sign in page",
-			err.Error(),
-		)
+	reqBody, diags := buildSignInPageRequest(ctx, state)
+	if diags.HasError() {
 		return
 	}
 
@@ -134,12 +130,8 @@ func (r *previewSigninPageResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	reqBody, err := buildSignInPageRequest(ctx, state)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to build preview sign in page",
-			err.Error(),
-		)
+	reqBody, diags := buildSignInPageRequest(ctx, state)
+	if diags.HasError() {
 		return
 	}
 

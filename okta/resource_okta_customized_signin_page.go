@@ -58,12 +58,8 @@ func (r *customizedSigninPageResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	reqBody, err := buildSignInPageRequest(ctx, state)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to build customized sign in page",
-			err.Error(),
-		)
+	reqBody, diags := buildSignInPageRequest(ctx, state)
+	if diags.HasError() {
 		return
 	}
 
@@ -134,12 +130,8 @@ func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	reqBody, err := buildSignInPageRequest(ctx, state)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to build customized sign in page",
-			err.Error(),
-		)
+	reqBody, diags := buildSignInPageRequest(ctx, state)
+	if diags.HasError() {
 		return
 	}
 
