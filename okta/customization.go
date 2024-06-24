@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	datasourceSchema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -20,12 +21,11 @@ type signinPageModel struct {
 	WidgetCustomizations         types.Object `tfsdk:"widget_customizations"`
 }
 
-// // TODU
-// type contentSecurityPolicySettingModel struct {
-// 	Mode      types.String `tfsdk:"mode"`
-// 	ReportUri types.String `tfsdk:"report_uri"`
-// 	SrcList   types.List   `tfsdk:"src_list"`
-// }
+type contentSecurityPolicySettingModel struct {
+	Mode      types.String `tfsdk:"mode"`
+	ReportUri types.String `tfsdk:"report_uri"`
+	SrcList   types.List   `tfsdk:"src_list"`
+}
 
 type widgetCustomizationsModel struct {
 	SignInLabel                             types.String `tfsdk:"sign_in_label"`
@@ -56,23 +56,25 @@ func mapSignInPageToState(ctx context.Context, data *okta.SignInPage, state *sig
 	state.ID = types.StringValue(state.BrandID.ValueString())
 	state.PageContent = types.StringPointerValue(data.PageContent)
 	state.WidgetVersion = types.StringPointerValue(data.WidgetVersion)
-	// contentSecuritySetting := &contentSecurityPolicySettingModel{}
-	// if setting, ok := defaultSigninPage.GetContentSecurityPolicySettingOk(); ok {
-	// 	contentSecuritySetting.Mode = types.StringPointerValue(setting.Mode)
-	// 	contentSecuritySetting.ReportUri = types.StringPointerValue(setting.ReportUri)
-	// 	srcList, diags := types.ListValueFrom(ctx, types.StringType, []string{"abc", "xyz"})
-	// 	if diags.HasError() {
-	// 		resp.Diagnostics.Append(diags...)
-	// 		return
-	// 	}
-	// 	contentSecuritySetting.SrcList = srcList
-	// }
-	// settingValue, diags := types.ObjectValueFrom(ctx, data.ContentSecurityPolicySetting.AttributeTypes(ctx), contentSecuritySetting)
-	// if diags.HasError() {
-	// 	resp.Diagnostics.Append(diags...)
-	// 	return
-	// }
-	// data.ContentSecurityPolicySetting = settingValue
+	if setting, ok := data.GetContentSecurityPolicySettingOk(); ok {
+		srcList := make([]attr.Value, 0)
+		for _, v := range setting.SrcList {
+			srcList = append(srcList, types.StringValue(v))
+		}
+		listValues := types.ListValueMust(types.StringType, srcList)
+		elements := map[string]attr.Value{
+			"src_list":   listValues,
+			"mode":       types.StringPointerValue(setting.Mode),
+			"report_uri": types.StringPointerValue(setting.ReportUri),
+		}
+		elementTypes := map[string]attr.Type{
+			"src_list":   types.ListType{ElemType: types.StringType},
+			"mode":       types.StringType,
+			"report_uri": types.StringType,
+		}
+		settingValue := types.ObjectValueMust(elementTypes, elements)
+		state.ContentSecurityPolicySetting = settingValue
+	}
 
 	widgetCustomizations := &widgetCustomizationsModel{}
 	if customization, ok := data.GetWidgetCustomizationsOk(); ok {
@@ -107,7 +109,7 @@ func mapSignInPageToState(ctx context.Context, data *okta.SignInPage, state *sig
 	return diags
 }
 
-func buildSignInPageRequest(ctx context.Context, model signinPageModel) (okta.SignInPage, error) {
+func buildSignInPageRequest(ctx context.Context, model signinPageModel) (okta.SignInPage, diag.Diagnostics) {
 	sp := okta.SignInPage{}
 	sp.SetPageContent(model.PageContent.ValueString())
 	sp.SetWidgetVersion(model.WidgetVersion.ValueString())
@@ -139,6 +141,26 @@ func buildSignInPageRequest(ctx context.Context, model signinPageModel) (okta.Si
 	wc.SetWidgetGeneration(wcm.WidgetGeneration.ValueString())
 
 	sp.SetWidgetCustomizations(wc)
+
+	csp := okta.ContentSecurityPolicySetting{}
+	cspm := &contentSecurityPolicySettingModel{}
+	diags := model.ContentSecurityPolicySetting.As(ctx, cspm, basetypes.ObjectAsOptions{})
+	if diags.HasError() {
+		return *okta.NewSignInPage(), diags
+	}
+	csp.Mode = cspm.Mode.ValueStringPointer()
+	csp.ReportUri = cspm.ReportUri.ValueStringPointer()
+	elements := make([]types.String, 0, len(cspm.SrcList.Elements()))
+	diags = cspm.SrcList.ElementsAs(ctx, &elements, false)
+	if diags.HasError() {
+		return *okta.NewSignInPage(), diags
+	}
+	convertElements := make([]string, 0)
+	for _, v := range elements {
+		convertElements = append(convertElements, v.ValueString())
+	}
+	csp.SrcList = convertElements
+	sp.SetContentSecurityPolicySetting(csp)
 	return sp, nil
 }
 
@@ -300,10 +322,10 @@ var resourceSignInSchema = resourceSchema.Schema{
 		},
 		"widget_version": resourceSchema.StringAttribute{
 			Description: `widget version specified as a Semver. The following are currently supported
-			*, ^1, ^2, ^3, ^4, ^5, ^6, ^7, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 2.1, 2.2, 2.3, 2.4, 
-			2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 2.14, 2.15, 2.16, 2.17, 2.18, 2.19, 2.20, 2.21, 
-			3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 5.0, 5.1, 5.2, 5.3, 
-			5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12, 5.13, 5.14, 5.15, 5.16, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 
+			*, ^1, ^2, ^3, ^4, ^5, ^6, ^7, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 2.1, 2.2, 2.3, 2.4,
+			2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 2.14, 2.15, 2.16, 2.17, 2.18, 2.19, 2.20, 2.21,
+			3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 5.0, 5.1, 5.2, 5.3,
+			5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12, 5.13, 5.14, 5.15, 5.16, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5,
 			6.6, 6.7, 6.8, 6.9, 7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 7.10, 7.11, 7.12, 7.13.`,
 			Required: true,
 		},
@@ -322,17 +344,6 @@ var resourceSignInSchema = resourceSchema.Schema{
 					Description: "",
 					Optional:    true,
 				},
-				// NOTED: ListAttribute when used inside Blocks will result in the following error
-				// An unexpected error was encountered while verifying an attribute value
-				// matched its expected type to prevent unexpected behavior or panics. This is
-				// always an error in the provider. Please report the following to the provider
-				// developer:
-				// Expected framework type from provider logic:
-				// types.ListType[basetypes.StringType] / underlying type:
-				// tftypes.List[tftypes.String]
-				// Received framework type from provider logic: types.ListType[!!! MISSING TYPE
-				// !!!] / underlying type: tftypes.List[tftypes.DynamicPseudoType]
-				// NOTED: This behavior does not happened when ListAttribute used inside Attributes
 				"src_list": resourceSchema.ListAttribute{
 					Description: "",
 					Optional:    true,
