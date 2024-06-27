@@ -366,3 +366,12 @@ func TestNoChangeInObjectUnmarshaledFromJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestIntersection(t *testing.T) {
+	old := []string{"a", "b", "c", "d", "e"}
+	new := []string{"c", "d", "e", "f", "g"}
+	intersection, exclusiveOld, exclusiveNew := Intersection(old, new)
+	assert.Equal(t, []string{"c", "d", "e"}, intersection)
+	assert.Equal(t, []string{"a", "b"}, exclusiveOld)
+	assert.Equal(t, []string{"f", "g"}, exclusiveNew)
+}

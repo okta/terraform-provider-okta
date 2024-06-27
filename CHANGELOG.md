@@ -3,7 +3,7 @@
 ## 4.8.1 (June 24, 2024)
 
 ### BUG FIXES
-* Fix panic okta brand when there is no default app [#2023](https://github.com/okta/terraform-provider-okta/pull/2023). Thanks, [@HeroesFR](https://github.com/HeroesFR)!
+* Fix panic `okta_brand` when there is no default app [#2023](https://github.com/okta/terraform-provider-okta/pull/2023). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Fix issue content security policy not being applied for `okta_customized_signin_page` and `okta_preview_signin_page`  [#2024](https://github.com/okta/terraform-provider-okta/pull/2024). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 
 ## 4.9.0 (June 14, 2024)
