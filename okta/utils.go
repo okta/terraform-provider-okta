@@ -628,3 +628,30 @@ func noChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 
 	return reflect.DeepEqual(oldObj, newObj)
 }
+
+func Intersection(old []string, new []string) (intersection []string, exclusiveOld []string, exclusiveNew []string) {
+	intersection = make([]string, 0)
+	exclusiveOld = make([]string, 0)
+	exclusiveNew = make([]string, 0)
+	oldElementMap := make(map[string]bool)
+	newElementMap := make(map[string]bool)
+	for _, o := range old {
+		oldElementMap[o] = true
+	}
+	for _, n := range new {
+		newElementMap[n] = true
+	}
+	for _, n := range new {
+		if oldElementMap[n] {
+			intersection = append(intersection, n)
+		} else {
+			exclusiveNew = append(exclusiveNew, n)
+		}
+	}
+	for _, o := range old {
+		if !newElementMap[o] {
+			exclusiveOld = append(exclusiveOld, o)
+		}
+	}
+	return
+}
