@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
@@ -67,16 +68,12 @@ func (r *trustedServerResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	elements := make([]types.String, 0, len(state.Trusted.Elements()))
-	resp.Diagnostics.Append(state.Trusted.ElementsAs(ctx, &elements, false)...)
+	listTrustedServers, diags := convertTFTypeSetToGoTypeListString(ctx, state.Trusted)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	convertedElements := make([]string, 0)
-	for _, v := range elements {
-		convertedElements = append(convertedElements, v.ValueString())
-	}
-	listAuthorizationServer, _, err := r.oktaSDKClientV3.AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: convertedElements}).Execute()
+	listAuthorizationServer, _, err := r.oktaSDKClientV3.AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: listTrustedServers}).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create trusted servers",
@@ -131,17 +128,13 @@ func (r *trustedServerResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	elements := make([]types.String, 0, len(state.Trusted.Elements()))
-	resp.Diagnostics.Append(state.Trusted.ElementsAs(ctx, &elements, false)...)
+	listTrustedServers, diags := convertTFTypeSetToGoTypeListString(ctx, state.Trusted)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	convertedElements := make([]string, 0)
-	for _, v := range elements {
-		convertedElements = append(convertedElements, v.ValueString())
-	}
 
-	for _, trustedServerID := range convertedElements {
+	for _, trustedServerID := range listTrustedServers {
 		_, err := r.oktaSDKClientV3.AuthorizationServerAssocAPI.DeleteAssociatedServer(ctx, state.AuthSeverID.ValueString(), trustedServerID).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -166,27 +159,19 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	oldTrustedIDs := make([]types.String, 0, len(state.Trusted.Elements()))
-	resp.Diagnostics.Append(state.Trusted.ElementsAs(ctx, &oldTrustedIDs, false)...)
+	oldTrustedIDs, diags := convertTFTypeSetToGoTypeListString(ctx, state.Trusted)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	convertedOldTrustedIDs := make([]string, 0)
-	for _, v := range oldTrustedIDs {
-		convertedOldTrustedIDs = append(convertedOldTrustedIDs, v.ValueString())
-	}
 
-	newTrustedIDs := make([]types.String, 0, len(plan.Trusted.Elements()))
-	resp.Diagnostics.Append(plan.Trusted.ElementsAs(ctx, &newTrustedIDs, false)...)
+	newTrustedIDs, diags := convertTFTypeSetToGoTypeListString(ctx, plan.Trusted)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	convertedNewTrustedIDs := make([]string, 0)
-	for _, v := range newTrustedIDs {
-		convertedNewTrustedIDs = append(convertedNewTrustedIDs, v.ValueString())
-	}
 
-	_, toDelete, toAdd := Intersection(convertedOldTrustedIDs, convertedNewTrustedIDs)
+	_, toDelete, toAdd := Intersection(oldTrustedIDs, newTrustedIDs)
 	var err error
 	listAuthorizationServer := make([]okta.AuthorizationServer, 0)
 	if len(toAdd) > 0 {
@@ -226,4 +211,17 @@ func mapTrustedServersToState(data []okta.AuthorizationServer, state *trustedSer
 	var diags diag.Diagnostics
 	state.ID = types.StringValue(state.AuthSeverID.ValueString())
 	return diags
+}
+
+func convertTFTypeSetToGoTypeListString(ctx context.Context, set basetypes.SetValue) ([]string, diag.Diagnostics) {
+	res := make([]string, 0)
+	elements := make([]types.String, 0, len(set.Elements()))
+	diags := set.ElementsAs(ctx, &elements, false)
+	if diags.HasError() {
+		return nil, diags
+	}
+	for _, v := range elements {
+		res = append(res, v.ValueString())
+	}
+	return res, nil
 }
