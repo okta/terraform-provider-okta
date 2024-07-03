@@ -430,3 +430,57 @@ func TestAccResourceOktaAppSaml_certdiff(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSaml_Issue2021(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+	config := `
+resource "okta_app_saml" "test" {
+  accessibility_self_service     = "false"
+  assertion_signed               = "true"
+  audience                       = "https://example.com/audience"
+  authn_context_class_ref        = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+  auto_submit_toolbar            = "false"
+  default_relay_state            = "/"
+  destination                    = "https://example.com/audience"
+  digest_algorithm               = "SHA256"
+  hide_ios                       = "true"
+  hide_web                       = "true"
+  honor_force_authn              = "true"
+  idp_issuer                     = "http://www.okta.com/$${org.externalKey}"
+  implicit_assignment            = "false"
+  label                          = "SAML APP"
+  recipient                      = "https://example.com/audience"
+  response_signed                = "true"
+  saml_signed_request_enabled    = "true"
+  saml_version                   = "2.0"
+  signature_algorithm            = "RSA_SHA256"
+  sso_url                        = "https://example.com/sso"
+  status                         = "ACTIVE"
+  subject_name_id_format         = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+  subject_name_id_template       = "$${user.userName}"
+  user_name_template             = "user.login"
+  user_name_template_push_status = "PUSH"
+  user_name_template_type        = "CUSTOM"
+  single_logout_certificate      = "MIID2zCCAsOgAwIBAgIUHBaBGrGVVkp2kC+yPrhXc5N2+4swDQYJKoZIhvcNAQEL\r\nBQAwfTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM\r\nGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEUMBIGA1UEAwwLZXhhbXBsZS5jb20x\r\nIDAeBgkqhkiG9w0BCQEWEWhlbGxvQGV4YW1wbGUuY29tMB4XDTI0MDYxODAzNTU0\r\nMVoXDTI1MDYxODAzNTU0MVowfTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUt\r\nU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEUMBIGA1UE\r\nAwwLZXhhbXBsZS5jb20xIDAeBgkqhkiG9w0BCQEWEWhlbGxvQGV4YW1wbGUuY29t\r\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4G7iJpERa657fZdWVKpM\r\nxY+8KBtTe/bPx7v+7ccOA9JhsGoiJIilaqTEGi+VmLS0yBJJ75e0eRuCufXxdUU9\r\ncPtze6vVppIXjNDYKkCb4FpMJCXDR94ojYD28Q4j7R+A5MgoVaL4m6bQMxN4Gtu4\r\nww9tVoXXMtKlYm57Z+44KZ9zX9ZT7h5tpPk4bws2ooi3mv8tpPhh63s+eSdShL/0\r\nPLcaTRmeL3tCZ2R07Ea7ZHZix+DSAFGZ3MfhE0/q8PoEj8WSuvJtL7XhRq1xUsFL\r\nEQGGZNy4DJecu6mjhieKpsaQGSpMrMcmekvLaEtL6bOepDqVBsyzyvCzM+46LXGd\r\nhQIDAQABo1MwUTAdBgNVHQ4EFgQUlyqz0r9lJLuXVGY6XocwikJMzfIwHwYDVR0j\r\nBBgwFoAUlyqz0r9lJLuXVGY6XocwikJMzfIwDwYDVR0TAQH/BAUwAwEB/zANBgkq\r\nhkiG9w0BAQsFAAOCAQEAo9aqKVV+zIpaosBxCN5GQIhY6soa8FgEhcZrZvd2iL67\r\n9aLYDY46RnJgpa4RS+M0gTlp9u+3dH6uvuo8CmR243IOGH9LOWd624UN+tka+3PM\r\n50A7Uxo3KFfmOZi+ym5xn+UADJx8uUrH1owlMhFZMPWLr/JuoBAxVNI8KRXFhW4U\r\npcHmKvqU7GZo7m2QwE0JIJ5p00ED66jNky/IAqoexikbhZ8IgzTbtlWFzbqVKNq1\r\nzvcCEc4LXKytMQCCWv71HBNMfBvR4tEbcKmxe356IHcs+dmEFtg3dfEBfH5U5VoS\r\n1RqP+9+AB4coGpnm7F660PSwfyQwBZo5/a0HLqbZFA=="
+}
+
+`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttrSet(resourceName, "single_logout_certificate"),
+					resource.TestCheckNoResourceAttr(resourceName, "single_logout_url"),
+					resource.TestCheckNoResourceAttr(resourceName, "single_logout_issuer"),
+				),
+			},
+		},
+	})
+}
