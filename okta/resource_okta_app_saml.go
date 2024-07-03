@@ -361,19 +361,18 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "The issuer of the Service Provider that generates the Single Logout request",
-				RequiredWith: []string{"single_logout_url", "single_logout_certificate"},
+				RequiredWith: []string{"single_logout_url"},
 			},
 			"single_logout_url": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "The location where the logout response is sent",
-				RequiredWith: []string{"single_logout_issuer", "single_logout_certificate"},
+				RequiredWith: []string{"single_logout_issuer"},
 			},
 			"single_logout_certificate": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "x509 encoded certificate that the Service Provider uses to sign Single Logout requests. Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).",
-				RequiredWith: []string{"single_logout_issuer", "single_logout_url"},
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "x509 encoded certificate that the Service Provider uses to sign Single Logout requests. Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).",
 				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
 					oldCert, err := certNormalize(oldValue)
 					if err != nil {
@@ -635,6 +634,12 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 		AuthnContextClassRef:     d.Get("authn_context_class_ref").(string),
 		Slo:                      &sdk.SingleLogout{Enabled: boolPtr(false)},
 		SamlSignedRequestEnabled: boolPtr(d.Get("saml_signed_request_enabled").(bool)),
+	}
+	x5c, ok := d.GetOk("single_logout_certificate")
+	if ok && x5c != "" {
+		app.Settings.SignOn.SpCertificate = &sdk.SpCertificate{
+			X5c: []string{d.Get("single_logout_certificate").(string)},
+		}
 	}
 	sli := d.Get("single_logout_issuer").(string)
 	if sli != "" {
