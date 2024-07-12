@@ -2,9 +2,17 @@
 package sdk
 
 type KnowledgeConstraint struct {
-	Methods          []string `json:"methods,omitempty"`
-	ReauthenticateIn string   `json:"reauthenticateIn,omitempty"`
-	Types            []string `json:"types,omitempty"`
+	AuthenticationMethods         []AuthenticationMethodObject `json:"authenticationMethods,omitempty"`
+	ExcludedAuthenticationMethods []AuthenticationMethodObject `json:"excludedAuthenticationMethods,omitempty"`
+	Methods                       []string                     `json:"methods,omitempty"`
+	ReauthenticateIn              string                       `json:"reauthenticateIn,omitempty"`
+	Types                         []string                     `json:"types,omitempty"`
+	Required                      bool                         `json:"required"`
+}
+
+type AuthenticationMethodObject struct {
+	Key    string `json:"key,omitempty"`
+	Method string `json:"method,omitempty"`
 }
 
 func NewKnowledgeConstraint() *KnowledgeConstraint {
