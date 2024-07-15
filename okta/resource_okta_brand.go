@@ -4,15 +4,12 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
@@ -78,20 +75,11 @@ func (r *brandResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description: "Is a required input flag with when changing custom_privacy_url, shouldn't be considered as a readable property",
 				Optional:    true,
 				Computed:    true,
-				Validators: []validator.Bool{
-					boolvalidator.AlsoRequires(path.Expressions{
-						path.MatchRoot("custom_privacy_policy_url"),
-					}...),
-				},
 			},
 			"custom_privacy_policy_url": schema.StringAttribute{
 				Description: "Custom privacy policy URL",
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.AlsoRequires(path.Expressions{
-						path.MatchRoot("agree_to_custom_privacy_policy"),
-					}...),
-				},
+				Computed:    true,
 			},
 			"remove_powered_by_okta": schema.BoolAttribute{
 				Description: `Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard`,
