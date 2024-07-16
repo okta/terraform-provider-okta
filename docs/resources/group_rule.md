@@ -54,5 +54,5 @@ resource "okta_group_rule" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_group_rule.example &#60;group rule id&#62;
+terraform import okta_group_rule.example <group rule id>
 ```

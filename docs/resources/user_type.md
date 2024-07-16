@@ -36,5 +36,5 @@ resource "okta_user_type" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user_type.example &#60;user type id&#62;
+terraform import okta_user_type.example <user type id>
 ```

@@ -63,5 +63,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_group_assignment.example &#60;app_id&#62;/&#60;group_id&#62
+terraform import okta_app_group_assignment.example <app_id>/<group_id>
 ```

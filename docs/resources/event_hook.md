@@ -67,5 +67,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_event_hook.example &#60;hook id&#62;
+terraform import okta_event_hook.example <hook id>
 ```

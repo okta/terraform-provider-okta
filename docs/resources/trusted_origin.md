@@ -40,5 +40,5 @@ resource "okta_trusted_origin" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_trusted_origin.example &#60;trusted origin id&#62;
+terraform import okta_trusted_origin.example <trusted origin id>
 ```

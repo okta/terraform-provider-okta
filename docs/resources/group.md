@@ -50,5 +50,5 @@ resource "okta_group" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_group.example &#60;group id&#62;
+terraform import okta_group.example <group id>
 ```

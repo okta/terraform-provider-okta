@@ -47,5 +47,5 @@ resource "okta_user_admin_roles" "test" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user_admin_roles.example &#60;user id&#62;
+terraform import okta_user_admin_roles.example <user id>
 ```

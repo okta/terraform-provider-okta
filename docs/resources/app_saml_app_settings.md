@@ -55,5 +55,5 @@ resource "okta_app_saml_app_settings" "test" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_saml_app_settings.example &#60;app id&#62
+terraform import okta_app_saml_app_settings.example <app id>
 ```

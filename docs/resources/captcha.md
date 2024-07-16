@@ -42,5 +42,5 @@ resource "okta_captcha" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_captcha.example &#60;captcha id&#62;
+terraform import okta_captcha.example <captcha id>
 ```

@@ -46,5 +46,5 @@ resource "okta_auth_server_scope" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_auth_server_scope.example &#60;auth server id&#62;/&#60;scope id&#62;
+terraform import okta_auth_server_scope.example <auth server id>/<scope id>
 ```

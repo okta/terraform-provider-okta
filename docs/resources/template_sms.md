@@ -55,5 +55,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_template_sms.example &#60;template type&#62;
+terraform import okta_template_sms.example <template type>
 ```

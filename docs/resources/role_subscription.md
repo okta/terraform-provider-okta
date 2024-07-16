@@ -71,5 +71,5 @@ resource "okta_role_subscription" "test" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_role_subscription.example &#60;role_type&#62;/&#60;notification_type&#62;
+terraform import okta_role_subscription.example <role_type>/<notification_type>
 ```
