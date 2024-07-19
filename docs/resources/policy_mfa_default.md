@@ -51,7 +51,8 @@ resource "okta_policy_mfa_default" "oie_example" {
 ### Optional
 
 - `duo` (Map of String)
-- `external_idp` (Map of String)
+- `external_idp` (Map of String, Deprecated)
+- `external_idps` (Set of Map of String)
 - `fido_u2f` (Map of String)
 - `fido_webauthn` (Map of String)
 - `google_otp` (Map of String)

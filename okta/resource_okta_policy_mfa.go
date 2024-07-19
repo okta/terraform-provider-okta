@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -113,6 +114,38 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 			}
 			authenticators = append(authenticators, authenticator)
 		}
+		_, ok := d.GetOk("external_idps")
+		if ok {
+			rawExternalIDPs := d.Get("external_idps").(*schema.Set).List()
+			for _, r := range rawExternalIDPs {
+				rawExternalIDP := r.(map[string]interface{})
+				enroll := rawExternalIDP["enroll"]
+				if enroll == nil {
+					continue
+				}
+				id := rawExternalIDP["id"]
+				if id == nil {
+					continue
+				}
+				authenticator := &sdk.PolicyAuthenticator{
+					Key: "external_idp",
+					ID:  id.(string),
+					Enroll: &sdk.Enroll{
+						Self: enroll.(string),
+					},
+				}
+				constraints := rawExternalIDP["constraints"]
+				if constraints != nil {
+					c, ok := constraints.(string)
+					if ok {
+						slice := strings.Split(c, ",")
+						sort.Strings(slice)
+						authenticator.Constraints = &sdk.PolicyAuthenticatorConstraints{AaguidGroups: slice}
+					}
+				}
+				authenticators = append(authenticators, authenticator)
+			}
+		}
 
 		return &sdk.SdkPolicySettings{
 			Type:           "AUTHENTICATORS",
@@ -201,22 +234,52 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 }
 
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
+	externalIdps := make([]interface{}, 0)
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			if authenticator.Constraints != nil {
-				slice := authenticator.Constraints.AaguidGroups
-				sort.Strings(slice)
-				_ = d.Set(k, map[string]interface{}{
-					"enroll":      authenticator.Enroll.Self,
-					"constraints": strings.Join(slice, ","),
-				})
+			if k != "external_idp" {
+				if authenticator.Constraints != nil {
+					slice := authenticator.Constraints.AaguidGroups
+					sort.Strings(slice)
+					_ = d.Set(k, map[string]interface{}{
+						"enroll":      authenticator.Enroll.Self,
+						"constraints": strings.Join(slice, ","),
+					})
+				} else {
+					_ = d.Set(k, map[string]interface{}{
+						"enroll": authenticator.Enroll.Self,
+					})
+				}
+				return
 			} else {
-				_ = d.Set(k, map[string]interface{}{
-					"enroll": authenticator.Enroll.Self,
-				})
+				if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
+					if authenticator.Constraints != nil {
+						slice := authenticator.Constraints.AaguidGroups
+						sort.Strings(slice)
+						_ = d.Set(k, map[string]interface{}{
+							"enroll":      authenticator.Enroll.Self,
+							"constraints": strings.Join(slice, ","),
+						})
+					} else {
+						_ = d.Set(k, map[string]interface{}{
+							"enroll": authenticator.Enroll.Self,
+						})
+					}
+				} else {
+					m := make(map[string]interface{})
+					m["enroll"] = authenticator.Enroll.Self
+					m["id"] = authenticator.ID
+					if authenticator.Constraints != nil {
+						slice := authenticator.Constraints.AaguidGroups
+						sort.Strings(slice)
+						m["constraints"] = strings.Join(slice, ",")
+					}
+				}
 			}
-			return
 		}
+	}
+	if len(externalIdps) > 0 {
+		_ = d.Set("external_idps", externalIdps)
 	}
 }
 
@@ -225,16 +288,43 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 	res := make(map[string]*schema.Schema)
 	// Note: It's okay to append and have duplicates as we're setting back into a map here
 	for _, key := range append(sdk.FactorProviders, sdk.AuthenticatorProviders...) {
-		res[key] = &schema.Schema{
-			Optional: true,
-			Type:     schema.TypeMap,
+		if key == "external_idp" {
+			res[key] = &schema.Schema{
+				Optional: true,
+				Type:     schema.TypeMap,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Deprecated: "Since okta now support multiple external_idps, this will be deprecated. Please use `external_idps` instead",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.HasSuffix(k, ".%") || new == ""
+				},
+				ConflictsWith: []string{"external_idps"},
+			}
+		} else {
+			res[key] = &schema.Schema{
+				Optional: true,
+				Type:     schema.TypeMap,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return strings.HasSuffix(k, ".%") || new == ""
+				},
+			}
+		}
+	}
+	res["external_idps"] = &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeSet,
+		Elem: &schema.Schema{
+			Type: schema.TypeMap,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				return strings.HasSuffix(k, ".%") || new == ""
-			},
-		}
+		},
+		DiffSuppressFunc: structure.SuppressJsonDiff,
+		ConflictsWith:    []string{"external_idp"},
 	}
 	return res
 }

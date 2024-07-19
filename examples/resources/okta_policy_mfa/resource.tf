@@ -33,3 +33,33 @@ resource "okta_policy_mfa" "oie_example" {
 
   groups_included = ["${data.okta_group.everyone.id}"]
 }
+
+// policy_mfa that support multiple external_idps
+resource "okta_policy_mfa" "oie_example" {
+  name        = "MFA Policy OIE"
+  status      = "ACTIVE"
+  description = "Example MFA policy that uses Okta Identity Engine (OIE) with authenticators"
+  is_oie      = true
+
+  okta_email = {
+    enroll = "REQUIRED"
+  }
+
+  google_otp = {
+    enroll = "REQUIRED"
+  }
+
+  external_idps = [
+    {
+      "enroll" : "OPTIONAL",
+      "id" : "id1",
+    },
+    {
+      "enroll" : "NOT_ALLOWED",
+      "id" : "id2",
+    }
+  ]
+
+
+  groups_included = ["${data.okta_group.everyone.id}"]
+}
