@@ -3,16 +3,12 @@ package okta
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
@@ -91,47 +87,19 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				Description: "List of disk encryption type, can be `ALL_INTERNAL_VOLUMES`",
 				Optional:    true,
 				ElementType: types.StringType,
-				Validators: []validator.Set{
-					setvalidator.AtLeastOneOf(path.Expressions{
-						path.MatchRoot("os_version"),
-						path.MatchRoot("secure_hardware_present"),
-						path.MatchRoot("screenlock_type"),
-					}...),
-				},
 			},
 			"os_version": schema.StringAttribute{
 				Description: "Minimum os version of the device in the device assurance policy.",
 				Optional:    true,
-				Validators: []validator.String{
-					stringvalidator.AtLeastOneOf(path.Expressions{
-						path.MatchRoot("disk_encryption_type"),
-						path.MatchRoot("secure_hardware_present"),
-						path.MatchRoot("screenlock_type"),
-					}...),
-				},
 			},
 			"secure_hardware_present": schema.BoolAttribute{
 				Description: "Is the device secure with hardware in the device assurance policy.",
 				Optional:    true,
-				Validators: []validator.Bool{
-					boolvalidator.AtLeastOneOf(path.Expressions{
-						path.MatchRoot("disk_encryption_type"),
-						path.MatchRoot("os_version"),
-						path.MatchRoot("screenlock_type"),
-					}...),
-				},
 			},
 			"screenlock_type": schema.SetAttribute{
 				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
 				Optional:    true,
 				ElementType: types.StringType,
-				Validators: []validator.Set{
-					setvalidator.AtLeastOneOf(path.Expressions{
-						path.MatchRoot("disk_encryption_type"),
-						path.MatchRoot("os_version"),
-						path.MatchRoot("secure_hardware_present"),
-					}...),
-				},
 			},
 			"third_party_signal_providers": schema.BoolAttribute{
 				Description: "Check to include third party signal provider",
