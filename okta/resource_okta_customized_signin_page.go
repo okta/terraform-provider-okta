@@ -75,7 +75,14 @@ func (r *customizedSigninPageResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	customizedSigninPage, _, err := r.Config.oktaSDKClientV3.CustomizationAPI.GetCustomizedSignInPage(ctx, state.BrandID.ValueString()).Execute()
+	var brandID string
+	if state.BrandID.ValueString() != "" {
+		brandID = state.BrandID.ValueString()
+	} else {
+		brandID = state.ID.ValueString()
+	}
+
+	customizedSigninPage, _, err := r.Config.oktaSDKClientV3.CustomizationAPI.GetCustomizedSignInPage(ctx, brandID).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving customized signin page",
