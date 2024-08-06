@@ -103,5 +103,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_group_schema_property.example &#60;index&#62;
+terraform import okta_group_schema_property.example <index>
 ```

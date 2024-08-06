@@ -42,5 +42,5 @@ resource "okta_policy_signon" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_policy_signon.example &#60;policy id&#62;
+terraform import okta_policy_signon.example <policy_id>
 ```

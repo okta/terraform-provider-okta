@@ -82,5 +82,5 @@ resource "okta_resource_set" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_resource_set.example &#60;resource_set_id&#62;
+terraform import okta_resource_set.example <resource_set_id>
 ```

@@ -56,5 +56,5 @@ resource "okta_user_factor_question" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user_factor_question.example &#60;user id&#62;/&#60;question factor id&#62;
+terraform import okta_user_factor_question.example <user_id>/<question_factor_id>
 ```

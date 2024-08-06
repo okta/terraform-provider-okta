@@ -53,5 +53,5 @@ resource "okta_group_role" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_group_role.example &#60;group id&#62;/&#60;role id&#62;
+terraform import okta_group_role.example <group_id>/<role_id>
 ```

@@ -55,5 +55,5 @@ resource "okta_admin_role_targets" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_admin_role_targets.example &#60;user id&#62;/&#60;role type&#62;
+terraform import okta_admin_role_targets.example <user_id>/<role_type>
 ```

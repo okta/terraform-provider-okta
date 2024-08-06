@@ -45,5 +45,5 @@ resource "okta_auth_server_policy" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_auth_server_policy.example &#60;auth server id&#62;/&#60;policy id&#62;
+terraform import okta_auth_server_policy.example <auth_server_id>/<policy_id>
 ```

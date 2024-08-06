@@ -49,5 +49,5 @@ resource "okta_brand" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_brand.example &#60;brand id&#62;
+terraform import okta_brand.example <brand_id>
 ```
