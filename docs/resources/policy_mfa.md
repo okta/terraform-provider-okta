@@ -123,5 +123,5 @@ resource "okta_policy_mfa" "oie_example" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import okta_policy_mfa.example &#60;policy id&#62;
+terraform import okta_policy_mfa.example <policy_id>
 ```

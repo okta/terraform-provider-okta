@@ -55,5 +55,5 @@ resource "okta_network_zone" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_network_zone.example &#60;zone id&#62;
+terraform import okta_network_zone.example <zone_id>
 ```
