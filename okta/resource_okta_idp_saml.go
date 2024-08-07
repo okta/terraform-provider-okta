@@ -167,6 +167,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
 	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
 	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+	_ = d.Set("name_format", idp.Protocol.Settings.NameFormat)
 	syncIdpSamlAlgo(d, idp.Protocol.Algorithms)
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
@@ -262,6 +263,9 @@ func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 					Kid:      d.Get("kid").(string),
 					Audience: d.Get("audience").(string),
 				},
+			},
+			Settings: &sdk.ProtocolSettings{
+				NameFormat: d.Get("name_format").(string),
 			},
 		},
 	}
