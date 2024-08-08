@@ -76,7 +76,6 @@ Optional:
 
 - `push_status` (String)
 
-## Import
 
 Import is supported using the following syntax:
 

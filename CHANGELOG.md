@@ -1,6 +1,27 @@
 # Changelog
 
-## 4.8.1 (June 24, 2024)
+## 4.10.0 (Aug 6, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add resource  `okta_trusted_server` [#2030](https://github.com/okta/terraform-provider-okta/pull/2030). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add support for dpop in local-sdk [#2037](https://github.com/okta/terraform-provider-okta/pull/2037). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add support authenticationMethods in `okta_app_signon_policy_rule` [#2029](https://github.com/okta/terraform-provider-okta/pull/2029). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add support for multiple external idps for `okta_policy_mfa` [#2044](https://github.com/okta/terraform-provider-okta/pull/2044). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add additional examples to documentation `okta_org_metadata` [#2045](https://github.com/okta/terraform-provider-okta/pull/2045). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Add support for enhanced dynamic network zone for `okta_network_zone` [#2057](https://github.com/okta/terraform-provider-okta/pull/2057). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+authenticationMethods
+
+### BUG FIXES
+* Fix `okta_app_saml` cannot assign certificate [#2033](https://github.com/okta/terraform-provider-okta/pull/2033). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Reverted commit on import `okta_profile_mapping` resource due to odd behavior surrounding d.GetOK() [#2053](https://github.com/okta/terraform-provider-okta/pull/2053). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix `okta_user` doc [#2039](https://github.com/okta/terraform-provider-okta/pull/2039). Thanks, [@sean1588](https://github.com/sean1588)!
+* Fix the issue of attribute "custom_privacy_policy_url" must be specified when "agree_to_custom_privacy_policy" is specified [#2041](https://github.com/okta/terraform-provider-okta/pull/2041). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix the validator issue not allow `okta_policy_device_assurance_macos` and `okta_policy_device_assurance_windows` use with third party signal providers[#2046](https://github.com/okta/terraform-provider-okta/pull/2046). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix issue of not able to terraform destroy `okta_network_zone` [#2057](https://github.com/okta/terraform-provider-okta/pull/2057). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+## 4.9.1 (June 24, 2024)
 
 ### BUG FIXES
 * Fix panic `okta_brand` when there is no default app [#2023](https://github.com/okta/terraform-provider-okta/pull/2023). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
@@ -10,7 +31,7 @@
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 
-* Add add import `okta_profile_mapping` [#2004](https://github.com/okta/terraform-provider-okta/pull/2004). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add import `okta_profile_mapping` [#2004](https://github.com/okta/terraform-provider-okta/pull/2004). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Add support for dpop via okta-sdk-golang [#2009](https://github.com/okta/terraform-provider-okta/pull/2009). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 
 ### BUG FIXES

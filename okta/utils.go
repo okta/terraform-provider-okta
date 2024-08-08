@@ -22,6 +22,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -343,6 +344,14 @@ func v3suppressErrorOn404(resp *okta.APIResponse, err error) error {
 	return v3responseErr(resp, err)
 }
 
+// TODO switch to suppressErrorOn404 when migration complete
+func v5suppressErrorOn404(resp *v5okta.APIResponse, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return v5responseErr(resp, err)
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
 func suppressErrorOn401(what string, meta interface{}, resp *sdk.Response, err error) error {
@@ -369,6 +378,10 @@ func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
 
 func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
 	return meta.(*Config).oktaSDKClientV3
+}
+
+func getOktaV5ClientFromMetadata(meta interface{}) *v5okta.APIClient {
+	return meta.(*Config).oktaSDKClientV5
 }
 
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
@@ -474,6 +487,18 @@ func responseErrV3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to responseErr when migration complete
 func v3responseErr(resp *okta.APIResponse, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+// TODO switch to responseErr when migration complete
+func v5responseErr(resp *v5okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {

@@ -14,6 +14,7 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.ip_network_zone_example", networkZone)
 	dynamicResourceName := fmt.Sprintf("%s.dynamic_network_zone_example", networkZone)
+	dynamicV2ResourceName := fmt.Sprintf("%s.dynamic_v2_network_zone_example", networkZone)
 
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
@@ -33,6 +34,12 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(dynamicResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic", mgr.Seed)),
 					resource.TestCheckResourceAttr(dynamicResourceName, "type", "DYNAMIC"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "2"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic V2", mgr.Seed)),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "type", "DYNAMIC_V2"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "dynamic_locations.#", "2"),
+					resource.TestCheckNoResourceAttr(dynamicV2ResourceName, "dynamic_locations_exclude.#"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "ip_service_categories_include.#", "1"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "ip_service_categories_exclude.#", "1"),
 				),
 			},
 			{
@@ -48,6 +55,12 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(dynamicResourceName, "type", "DYNAMIC"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "dynamic_locations.#", "3"),
 					resource.TestCheckResourceAttr(dynamicResourceName, "asns.#", "1"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "name", fmt.Sprintf("testAcc_%d Dynamic V2 Updated", mgr.Seed)),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "type", "DYNAMIC_V2"),
+					resource.TestCheckNoResourceAttr(dynamicV2ResourceName, "dynamic_locations.#"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "dynamic_locations_exclude.#", "2"),
+					resource.TestCheckResourceAttr(dynamicV2ResourceName, "ip_service_categories_include.#", "3"),
+					resource.TestCheckNoResourceAttr(dynamicV2ResourceName, "ip_service_categories_exclude.#"),
 				),
 			},
 		},
