@@ -274,6 +274,7 @@ func (r *logStreamResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
+
 func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state logStreamModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
@@ -343,7 +344,6 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 	// change detection there
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	// don't need to check for error, we are returning already
-
 }
 
 func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

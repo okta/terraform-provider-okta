@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,17 +14,36 @@ func dataSourceAppGroupAssignments() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppGroupAssignmentsRead,
 		Schema: map[string]*schema.Schema{
-			"id": {
+			"app_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "ID of the Okta App being queried for groups",
 				ForceNew:    true,
 			},
 			"groups": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "List of groups IDs assigned to the app",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"app_id": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Id of the group associated with the application",
+						},
+						"priority": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "Priority of group assignment",
+						},
+						"profile": {
+							Type:        schema.TypeString,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Computed:    true,
+							Description: "JSON document containing the assigned group's [profile](https://developer.okta.com/docs/reference/api/apps/#profile-object)",
+						},
+					},
+				},
 			},
 		},
 		Description: "Get a set of groups assigned to an Okta application.",
@@ -32,31 +52,37 @@ func dataSourceAppGroupAssignments() *schema.Resource {
 
 func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(m)
-	id := d.Get("id").(string)
+	appId := d.Get("app_id").(string)
 
-	groupAssignments, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})
+	groupAssignments, resp, err := client.Application.ListApplicationGroupAssignments(ctx, appId, &query.Params{})
 	if err != nil {
-		return diag.Errorf("unable to query for groups from app (%s): %s", id, err)
+		return diag.Errorf("unable to query for groups from app (%s): %s", appId, err)
 	}
 
-	for {
-		var moreAssignments []*sdk.ApplicationGroupAssignment
-		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &moreAssignments)
-			if err != nil {
-				return diag.Errorf("unable to query for groups from app (%s): %s", id, err)
-			}
-			groupAssignments = append(groupAssignments, moreAssignments...)
-		} else {
-			break
+	for resp.HasNextPage() {
+		var additionalGroups []*sdk.ApplicationGroupAssignment
+		resp, err = resp.Next(ctx, &additionalGroups)
+		if err != nil {
+			return diag.Errorf("unable to query for groups from app (%s): %s", appId, err)
+		}
+		groupAssignments = append(groupAssignments, additionalGroups...)
+	}
+
+	groups := make([]map[string]interface{}, len(groupAssignments))
+	for i, group := range groupAssignments {
+		profile, err := json.Marshal(group.Profile)
+		if err != nil {
+			return diag.Errorf("unable to marshal app group profile: %s", err)
+		}
+		groups[i] = map[string]interface{}{
+			"id":       group.Id,
+			"priority": group.Priority,
+			// "profile":  group.Profile,
+			"profile": string(profile),
 		}
 	}
 
-	var groups []string
-	for _, assignment := range groupAssignments {
-		groups = append(groups, assignment.Id)
-	}
-	_ = d.Set("groups", convertStringSliceToSet(groups))
-	d.SetId(id)
+	d.Set("groups", groups)
+	d.SetId(appId)
 	return nil
 }
