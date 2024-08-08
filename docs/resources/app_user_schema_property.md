@@ -96,5 +96,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_user_schema_property.example &#60;app id&#62;/&#60;property name&#62;
+terraform import okta_app_user_schema_property.example <app id>/<property name>
 ```

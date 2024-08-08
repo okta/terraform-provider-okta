@@ -60,5 +60,5 @@ resource "okta_app_access_policy_assignment" "assignment" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_access_policy_assignment.example &#60;app id&#62;
+terraform import okta_app_access_policy_assignment.example <app id>
 ```

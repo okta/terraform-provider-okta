@@ -281,5 +281,5 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_saml.example &#60;app id&#62
+terraform import okta_app_saml.example <app id>
 ```

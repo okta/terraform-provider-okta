@@ -79,5 +79,5 @@ resource "okta_idp_social" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_idp_social.example &#60;idp id&#62;
+terraform import okta_idp_social.example <idp id>
 ```

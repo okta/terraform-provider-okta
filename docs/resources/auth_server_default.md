@@ -42,5 +42,5 @@ resource "okta_auth_server_default" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_auth_server_default.example &#60;default&#62;
+terraform import okta_auth_server_default.example <default>
 ```

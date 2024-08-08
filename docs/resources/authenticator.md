@@ -104,5 +104,5 @@ resource "okta_authenticator" "otp" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_authenticator.example &#60;authenticator_id&#62;
+terraform import okta_authenticator.example <authenticator_id>
 ```

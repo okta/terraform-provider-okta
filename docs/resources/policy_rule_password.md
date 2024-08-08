@@ -39,5 +39,5 @@ Creates a Password Policy Rule. This resource allows you to create and configure
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import okta_policy_rule_password.example &#60;policy id&#62;/&#60;rule id&#62;
+$ terraform import okta_policy_rule_password.example <policy id>/<rule id>
 ```

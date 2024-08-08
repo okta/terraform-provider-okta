@@ -40,5 +40,5 @@ resource "okta_app_oauth_api_scope" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_oauth_api_scope.example &#60;app id&#62
+terraform import okta_app_oauth_api_scope.example <app id>
 ```

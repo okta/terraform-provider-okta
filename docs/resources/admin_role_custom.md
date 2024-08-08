@@ -74,5 +74,5 @@ resource "okta_admin_role_custom" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_admin_role_custom.example &#60;custom role id&#62
+terraform import okta_admin_role_custom.example <custom role id>
 ```

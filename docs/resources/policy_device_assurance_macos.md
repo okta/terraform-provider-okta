@@ -76,5 +76,5 @@ resource "okta_policy_device_assurance_macos" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_policy_device_assurance_macos.example &#60;device assurance id&#62;
+terraform import okta_policy_device_assurance_macos.example <device assurance id>
 ```

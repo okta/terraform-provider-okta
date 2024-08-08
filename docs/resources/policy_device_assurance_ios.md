@@ -46,5 +46,5 @@ resource "okta_policy_device_assurance_ios" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_policy_device_assurance_ios.example &#60;device assurance id&#62;
+terraform import okta_policy_device_assurance_ios.example <device assurance id>
 ```

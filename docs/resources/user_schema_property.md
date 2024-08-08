@@ -101,5 +101,5 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user_schema_property.example &#60;user type id&#62;.&#60;index&#62;
+terraform import okta_user_schema_property.example <user type id>.<index>
 ```
