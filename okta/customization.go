@@ -114,53 +114,61 @@ func buildSignInPageRequest(ctx context.Context, model signinPageModel) (okta.Si
 	sp.SetPageContent(model.PageContent.ValueString())
 	sp.SetWidgetVersion(model.WidgetVersion.ValueString())
 
-	wc := okta.SignInPageAllOfWidgetCustomizations{}
-	wcm := &widgetCustomizationsModel{}
-	model.WidgetCustomizations.As(ctx, wcm, basetypes.ObjectAsOptions{})
+	if !model.WidgetVersion.IsNull() {
+		wc := okta.SignInPageAllOfWidgetCustomizations{}
+		wcm := &widgetCustomizationsModel{}
+		diags := model.WidgetCustomizations.As(ctx, wcm, basetypes.ObjectAsOptions{})
+		if diags.HasError() {
+			return *okta.NewSignInPage(), diags
+		}
+		wc.SignInLabel = wcm.SignInLabel.ValueStringPointer()
+		wc.UsernameLabel = wcm.UsernameLabel.ValueStringPointer()
+		wc.UsernameInfoTip = wcm.UsernameInfoTip.ValueStringPointer()
+		wc.PasswordLabel = wcm.PasswordLabel.ValueStringPointer()
+		wc.PasswordInfoTip = wcm.PasswordInfoTip.ValueStringPointer()
+		wc.ShowPasswordVisibilityToggle = wcm.ShowPasswordVisibilityToggle.ValueBoolPointer()
+		wc.ShowUserIdentifier = wcm.ShowUserIdentifier.ValueBoolPointer()
+		wc.ForgotPasswordLabel = wcm.ForgotPasswordLabel.ValueStringPointer()
+		wc.ForgotPasswordUrl = wcm.ForgotPasswordURL.ValueStringPointer()
+		wc.UnlockAccountLabel = wcm.UnlockAccountLabel.ValueStringPointer()
+		wc.UnlockAccountUrl = wcm.UnlockAccountURL.ValueStringPointer()
+		wc.HelpLabel = wcm.HelpLabel.ValueStringPointer()
+		wc.HelpUrl = wcm.HelpURL.ValueStringPointer()
+		wc.CustomLink1Label = wcm.CustomLink1Label.ValueStringPointer()
+		wc.CustomLink1Url = wcm.CustomLink1URL.ValueStringPointer()
+		wc.CustomLink2Label = wcm.CustomLink2Label.ValueStringPointer()
+		wc.CustomLink2Url = wcm.CustomLink2URL.ValueStringPointer()
+		wc.AuthenticatorPageCustomLinkLabel = wcm.AuthenticatorPageCustomLinkLabel.ValueStringPointer()
+		wc.AuthenticatorPageCustomLinkUrl = wcm.AuthenticatorPageCustomLinkURL.ValueStringPointer()
+		wc.ClassicRecoveryFlowEmailOrUsernameLabel = wcm.ClassicRecoveryFlowEmailOrUsernameLabel.ValueStringPointer()
+		wc.SetWidgetGeneration(wcm.WidgetGeneration.ValueString())
 
-	wc.SignInLabel = wcm.SignInLabel.ValueStringPointer()
-	wc.UsernameLabel = wcm.UsernameLabel.ValueStringPointer()
-	wc.UsernameInfoTip = wcm.UsernameInfoTip.ValueStringPointer()
-	wc.PasswordLabel = wcm.PasswordLabel.ValueStringPointer()
-	wc.PasswordInfoTip = wcm.PasswordInfoTip.ValueStringPointer()
-	wc.ShowPasswordVisibilityToggle = wcm.ShowPasswordVisibilityToggle.ValueBoolPointer()
-	wc.ShowUserIdentifier = wcm.ShowUserIdentifier.ValueBoolPointer()
-	wc.ForgotPasswordLabel = wcm.ForgotPasswordLabel.ValueStringPointer()
-	wc.ForgotPasswordUrl = wcm.ForgotPasswordURL.ValueStringPointer()
-	wc.UnlockAccountLabel = wcm.UnlockAccountLabel.ValueStringPointer()
-	wc.UnlockAccountUrl = wcm.UnlockAccountURL.ValueStringPointer()
-	wc.HelpLabel = wcm.HelpLabel.ValueStringPointer()
-	wc.HelpUrl = wcm.HelpURL.ValueStringPointer()
-	wc.CustomLink1Label = wcm.CustomLink1Label.ValueStringPointer()
-	wc.CustomLink1Url = wcm.CustomLink1URL.ValueStringPointer()
-	wc.CustomLink2Label = wcm.CustomLink2Label.ValueStringPointer()
-	wc.CustomLink2Url = wcm.CustomLink2URL.ValueStringPointer()
-	wc.AuthenticatorPageCustomLinkLabel = wcm.AuthenticatorPageCustomLinkLabel.ValueStringPointer()
-	wc.AuthenticatorPageCustomLinkUrl = wcm.AuthenticatorPageCustomLinkURL.ValueStringPointer()
-	wc.ClassicRecoveryFlowEmailOrUsernameLabel = wcm.ClassicRecoveryFlowEmailOrUsernameLabel.ValueStringPointer()
-	wc.SetWidgetGeneration(wcm.WidgetGeneration.ValueString())
+		sp.SetWidgetCustomizations(wc)
+	}
 
-	sp.SetWidgetCustomizations(wc)
+	if !model.ContentSecurityPolicySetting.IsNull() {
+		csp := okta.ContentSecurityPolicySetting{}
+		cspm := &contentSecurityPolicySettingModel{}
+		diags := model.ContentSecurityPolicySetting.As(ctx, cspm, basetypes.ObjectAsOptions{})
+		if diags.HasError() {
+			return *okta.NewSignInPage(), diags
+		}
+		csp.Mode = cspm.Mode.ValueStringPointer()
+		csp.ReportUri = cspm.ReportUri.ValueStringPointer()
+		elements := make([]types.String, 0, len(cspm.SrcList.Elements()))
+		diags = cspm.SrcList.ElementsAs(ctx, &elements, false)
+		if diags.HasError() {
+			return *okta.NewSignInPage(), diags
+		}
+		convertElements := make([]string, 0)
+		for _, v := range elements {
+			convertElements = append(convertElements, v.ValueString())
+		}
+		csp.SrcList = convertElements
 
-	csp := okta.ContentSecurityPolicySetting{}
-	cspm := &contentSecurityPolicySettingModel{}
-	diags := model.ContentSecurityPolicySetting.As(ctx, cspm, basetypes.ObjectAsOptions{})
-	if diags.HasError() {
-		return *okta.NewSignInPage(), diags
+		sp.SetContentSecurityPolicySetting(csp)
 	}
-	csp.Mode = cspm.Mode.ValueStringPointer()
-	csp.ReportUri = cspm.ReportUri.ValueStringPointer()
-	elements := make([]types.String, 0, len(cspm.SrcList.Elements()))
-	diags = cspm.SrcList.ElementsAs(ctx, &elements, false)
-	if diags.HasError() {
-		return *okta.NewSignInPage(), diags
-	}
-	convertElements := make([]string, 0)
-	for _, v := range elements {
-		convertElements = append(convertElements, v.ValueString())
-	}
-	csp.SrcList = convertElements
-	sp.SetContentSecurityPolicySetting(csp)
+
 	return sp, nil
 }
 
