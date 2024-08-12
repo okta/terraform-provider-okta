@@ -40,6 +40,7 @@ func resourceDomain() *schema.Resource {
 			"brand_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "Brand id of the domain",
 			},
 			"dns_records": {
@@ -114,6 +115,8 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface
 	}
 
 	d.Set("name", domain.GetDomain())
+	d.Set("certificate_source_type", domain.GetCertificateSourceType())
+	d.Set("brand_id", domain.GetBrandId())
 
 	if vd != nil {
 		_ = d.Set("validation_status", vd.GetValidationStatus())
