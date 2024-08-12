@@ -123,5 +123,5 @@ resource "okta_email_customization" "forgot_password_es" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_email_customization.example &#60;customization_id&#62;/&#60;brand_id&#62;/&#60;template_name&#62;
+terraform import okta_email_customization.example <customization_id>/<brand_id>/<template_name>
 ```
