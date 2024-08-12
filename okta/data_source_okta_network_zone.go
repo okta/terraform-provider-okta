@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 func dataSourceNetworkZone() *schema.Resource {
@@ -28,30 +28,36 @@ func dataSourceNetworkZone() *schema.Resource {
 			"dynamic_locations": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode",
+				Description: "Array of locations ISO-3166-1(2) included. Format code: countryCode OR countryCode-regionCode. Use with type `DYNAMIC` or `DYNAMIC_V2`",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"dynamic_locations_exclude": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Array of locations ISO-3166-1(2) excluded. Format code: countryCode OR countryCode-regionCode. Use with type `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"dynamic_proxy_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Type of proxy being controlled by this network zone",
+				Description: "Type of proxy being controlled by this dynamic network zone - can be one of `Any`, `TorAnonymizer` or `NotTorAnonymizer`. Use with type `DYNAMIC`",
 			},
 			"gateways": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
+				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Use with type `IP`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"proxies": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples",
+				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Type of the Network Zone - can either be IP or DYNAMIC only",
+				Description: "Type of the Network Zone - can be `IP`, `DYNAMIC` or `DYNAMIC_V2` only",
 			},
 			"usage": {
 				Type:        schema.TypeString,
@@ -61,13 +67,25 @@ func dataSourceNetworkZone() *schema.Resource {
 			"asns": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Format of each array value: a string representation of an ASN numeric value",
+				Description: "List of asns included. Format of each array value: a string representation of an ASN numeric value. Use with type `DYNAMIC` or `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"status": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Network Status - can either be ACTIVE or INACTIVE only",
+			},
+			"ip_service_categories_include": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "List of ip service included. Use with type `DYNAMIC_V2`",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"ip_service_categories_exclude": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "List of ip service excluded. Use with type `DYNAMIC_V2`",
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 		Description: "Gets Okta Network Zone.",
@@ -82,55 +100,50 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 	}
 	var (
 		err  error
-		zone *sdk.NetworkZone
+		zone *v5okta.ListNetworkZones200ResponseInner
 	)
 	if id != "" {
-		zone, _, err = getOktaClientFromMetadata(m).NetworkZone.GetNetworkZone(ctx, id)
+		zone, _, err = getOktaV5ClientFromMetadata(m).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
 	} else {
 		zone, err = findNetworkZoneByName(ctx, m, name)
 	}
 	if err != nil {
 		return diag.Errorf("failed to find network zone: %v", err)
 	}
-	d.SetId(zone.Id)
-	_ = d.Set("name", zone.Name)
-	_ = d.Set("type", zone.Type)
-	_ = d.Set("status", zone.Status)
-	_ = d.Set("usage", zone.Usage)
-	_ = d.Set("dynamic_proxy_type", zone.ProxyType)
-	_ = d.Set("asns", convertStringSliceToSetNullable(zone.Asns))
-	err = setNonPrimitives(d, map[string]interface{}{
-		"gateways":          flattenAddresses(zone.Gateways),
-		"proxies":           flattenAddresses(zone.Proxies),
-		"dynamic_locations": flattenDynamicLocations(zone.Locations),
-	})
+	nzID, err := concreteNetworkzoneID(zone)
+	if err != nil {
+		return diag.Errorf("failed to create network zone: %v", err)
+	}
+	d.SetId(nzID)
+
+	err = mapNetworkZoneToState(d, zone)
 	if err != nil {
 		return diag.Errorf("failed to set network zone properties: %v", err)
 	}
 	return nil
 }
 
-func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*sdk.NetworkZone, error) {
-	client := getOktaClientFromMetadata(m)
-	zones, resp, err := client.NetworkZone.ListNetworkZones(ctx, nil)
+func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*v5okta.ListNetworkZones200ResponseInner, error) {
+	client := getOktaV5ClientFromMetadata(m)
+	zones, resp, err := client.NetworkZoneAPI.ListNetworkZones(ctx).Execute()
 	if err != nil {
 		return nil, err
 	}
 	for i := range zones {
-		if zones[i].Name == name {
-			return zones[i], nil
+		if getNetworkZoneName(zones[i]) == name {
+			return &zones[i], nil
 		}
 	}
 	for {
-		var moreZones []*sdk.NetworkZone
+		var moreZones []v5okta.ListNetworkZones200ResponseInner
 		if resp.HasNextPage() {
-			resp, err = resp.Next(ctx, &moreZones)
+			resp, err = resp.Next(&moreZones)
 			if err != nil {
 				return nil, err
 			}
 			for i := range moreZones {
-				if moreZones[i].Name == name {
-					return moreZones[i], nil
+				if getNetworkZoneName(moreZones[i]) == name {
+					return &zones[i], nil
 				}
 			}
 		} else {
@@ -138,4 +151,18 @@ func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*sd
 		}
 	}
 	return nil, fmt.Errorf("network zone with name '%s' does not exist", name)
+}
+
+func getNetworkZoneName(data v5okta.ListNetworkZones200ResponseInner) string {
+	var name string
+	nz := data.GetActualInstance()
+	switch v := nz.(type) {
+	case *v5okta.DynamicNetworkZone:
+		name = v.GetName()
+	case *v5okta.EnhancedDynamicNetworkZone:
+		name = v.GetName()
+	case *v5okta.IPNetworkZone:
+		name = v.GetName()
+	}
+	return name
 }
