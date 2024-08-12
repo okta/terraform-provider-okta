@@ -46,7 +46,8 @@ func (r *customizedSigninPageResource) Create(ctx context.Context, req resource.
 	}
 
 	reqBody, diags := buildSignInPageRequest(ctx, state)
-	if diags.HasError() {
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
@@ -125,7 +126,8 @@ func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.
 	}
 
 	reqBody, diags := buildSignInPageRequest(ctx, state)
-	if diags.HasError() {
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 

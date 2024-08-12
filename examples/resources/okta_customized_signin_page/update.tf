@@ -10,4 +10,10 @@ resource "okta_customized_signin_page" "test" {
   widget_customizations {
     widget_generation = "G2"
   }
+  content_security_policy_setting {
+    mode       = "report_only"
+    report_uri = ""
+    src_list   = ["https://idp.example.com/authorize", "https://idp.example.com/authoriz"]
+  }
 }
+
