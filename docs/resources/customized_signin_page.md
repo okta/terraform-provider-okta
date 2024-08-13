@@ -94,5 +94,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_customized_signin_page.example &#60;customized_signin_page_id&#62;
+terraform import okta_customized_signin_page.example <customized_signin_page_id>
 ```

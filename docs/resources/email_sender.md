@@ -49,5 +49,5 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_email_sender.example &#60;sender id&#62;
+terraform import okta_email_sender.example <sender_id>
 ```

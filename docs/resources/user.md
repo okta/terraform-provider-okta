@@ -10,9 +10,8 @@ Creates an Okta User. This resource allows you to create and configure an Okta U
 
 ## Example Usage
 
-### Full profile
-
 ```terraform
+### Full profile:
 resource "okta_user" "example" {
   first_name         = "John"
   last_name          = "Smith"
@@ -46,11 +45,8 @@ resource "okta_user" "example" {
   user_type          = "Employee"
   zip_code           = "11111"
 }
-```
 
-### With Password Inline Hook
-
-```
+### With Password Inline Hook:
 resource "okta_user" "test2" {
   first_name           = "John"
   last_name            = "Smith"
@@ -135,5 +131,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user.example &#60;user id&#62;
+terraform import okta_user.example <user_id>
 ```

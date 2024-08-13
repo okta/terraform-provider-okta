@@ -76,10 +76,9 @@ Optional:
 
 - `push_status` (String)
 
-## Import
 
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_profile_mapping.example &#60;id&#62;
+terraform import okta_profile_mapping.example <id>
 ```

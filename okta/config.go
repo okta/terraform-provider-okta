@@ -19,13 +19,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 const (
-	OktaTerraformProviderVersion   = "4.9.1"
+	OktaTerraformProviderVersion   = "4.10.0"
 	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 )
 
@@ -59,6 +60,7 @@ type (
 		maxAPICapacity          int // experimental
 		oktaSDKClientV2         *sdk.Client
 		oktaSDKClientV3         *okta.APIClient
+		oktaSDKClientV5         *v5okta.APIClient
 		oktaSDKsupplementClient *sdk.APISupplement
 		logger                  hclog.Logger
 		queriedWellKnown        bool
@@ -248,6 +250,12 @@ func (c *Config) loadClients(ctx context.Context) error {
 		return err
 	}
 	c.oktaSDKClientV3 = v3Client
+
+	v5Client, err := oktaV5SDKClient(c)
+	if err != nil {
+		return err
+	}
+	c.oktaSDKClientV5 = v5Client
 
 	// TODO: remove sdk client when v3 client is fully utilized within the provider
 	client, err := oktaSDKClient(c)
@@ -529,6 +537,123 @@ func oktaV3SDKClient(c *Config) (client *okta.APIClient, err error) {
 		return nil, err
 	}
 	client = okta.NewAPIClient(config)
+	return client, nil
+}
+
+func oktaV5SDKClient(c *Config) (client *v5okta.APIClient, err error) {
+	var httpClient *http.Client
+	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
+	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
+	if c.backoff {
+		retryableClient := retryablehttp.NewClient()
+		retryableClient.RetryWaitMin = time.Second * time.Duration(c.minWait)
+		retryableClient.RetryWaitMax = time.Second * time.Duration(c.maxWait)
+		retryableClient.RetryMax = c.retryCount
+		retryableClient.Logger = c.logger
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		} else {
+			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		}
+		retryableClient.ErrorHandler = errHandler
+		retryableClient.CheckRetry = checkRetry
+		httpClient = retryableClient.StandardClient()
+		c.logger.Info(fmt.Sprintf("running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
+	} else {
+		httpClient = cleanhttp.DefaultClient()
+		if debugHttpRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		} else {
+			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		}
+		c.logger.Info("running with default http client")
+	}
+
+	// adds transport governor to retryable or default client
+	if c.maxAPICapacity > 0 && c.maxAPICapacity < 100 {
+		c.logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.maxAPICapacity))
+		apiMutex, err := apimutex.NewAPIMutex(c.maxAPICapacity)
+		if err != nil {
+			return nil, err
+		}
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.logger)
+	}
+	var orgUrl string
+	var disableHTTPS bool
+	if c.httpProxy != "" {
+		orgUrl = strings.TrimSuffix(c.httpProxy, "/")
+		disableHTTPS = strings.HasPrefix(orgUrl, "http://")
+	} else {
+		orgUrl = fmt.Sprintf("https://%v.%v", c.orgName, c.domain)
+	}
+	_, err = url.Parse(orgUrl)
+	if err != nil {
+		return nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+	}
+
+	setters := []v5okta.ConfigSetter{
+		v5okta.WithOrgUrl(orgUrl),
+		v5okta.WithCache(false),
+		v5okta.WithHttpClientPtr(httpClient),
+		v5okta.WithRateLimitMaxBackOff(int64(c.maxWait)),
+		v5okta.WithRequestTimeout(int64(c.requestTimeout)),
+		v5okta.WithRateLimitMaxRetries(int32(c.retryCount)),
+		v5okta.WithUserAgentExtra(OktaTerraformProviderUserAgent),
+	}
+	// v3 client also needs http proxy explicitly set
+	if c.httpProxy != "" {
+		_url, err := url.Parse(c.httpProxy)
+		if err != nil {
+			return nil, err
+		}
+		host := v5okta.WithProxyHost(_url.Hostname())
+		setters = append(setters, host)
+
+		sPort := _url.Port()
+		if sPort == "" {
+			sPort = "80"
+		}
+		iPort, err := strconv.Atoi(sPort)
+		if err != nil {
+			return nil, err
+		}
+		port := v5okta.WithProxyPort(int32(iPort))
+		setters = append(setters, port)
+	}
+
+	switch {
+	case c.accessToken != "":
+		setters = append(
+			setters,
+			v5okta.WithToken(c.accessToken), v5okta.WithAuthorizationMode("Bearer"),
+		)
+
+	case c.apiToken != "":
+		setters = append(
+			setters,
+			v5okta.WithToken(c.apiToken), v5okta.WithAuthorizationMode("SSWS"),
+		)
+
+	case c.privateKey != "":
+		setters = append(
+			setters,
+			v5okta.WithPrivateKey(c.privateKey), v5okta.WithPrivateKeyId(c.privateKeyId), v5okta.WithScopes(c.scopes), v5okta.WithClientId(c.clientID), v5okta.WithAuthorizationMode("PrivateKey"),
+		)
+	}
+
+	if disableHTTPS {
+		setters = append(setters, v5okta.WithTestingDisableHttpsCheck(true))
+	}
+
+	config, err := v5okta.NewConfiguration(setters...)
+	if err != nil {
+		return nil, err
+	}
+	client = v5okta.NewAPIClient(config)
 	return client, nil
 }
 

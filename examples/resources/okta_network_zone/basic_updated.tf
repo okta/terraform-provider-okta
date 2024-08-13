@@ -21,3 +21,11 @@ resource "okta_network_zone" "dynamic_proxy_example" {
   usage              = "POLICY"
   dynamic_proxy_type = "NotTorAnonymizer"
 }
+
+resource "okta_network_zone" "dynamic_v2_network_zone_example" {
+  name                          = "testAcc_replace_with_uuid Dynamic V2 Updated"
+  type                          = "DYNAMIC_V2"
+  status                        = "ACTIVE"
+  dynamic_locations_exclude     = ["BE-VAN", "CN-BJ"]
+  ip_service_categories_include = ["SYMANTEC_VPN", "TRENDMICRO_VPN", "GOOGLE_VPN"]
+}
