@@ -31,6 +31,11 @@ const (
 	tokenExchange     = "urn:ietf:params:oauth:grant-type:token-exchange"
 	saml2Bearer       = "urn:ietf:params:oauth:grant-type:saml2-bearer"
 	deviceCode        = "urn:ietf:params:oauth:grant-type:device_code"
+	oob               = "urn:okta:params:oauth:grant-type:oob"
+	otp               = "urn:okta:params:oauth:grant-type:otp"
+	mfaOob            = "http://auth0.com/oauth/grant-type/mfa-oob"
+	mfaOtp            = "http://auth0.com/oauth/grant-type/mfa-otp"
+	ciba              = "urn:openid:params:grant-type:ciba"
 )
 
 // Building out structure for the conditional validation logic. It looks like customizing the diff
@@ -51,6 +56,11 @@ var appRequirementsByType = map[string]*applicationMap{
 			tokenExchange,
 			deviceCode,
 			interactionCode,
+			oob,
+			otp,
+			mfaOob,
+			mfaOtp,
+			ciba,
 		},
 	},
 	"native": {
@@ -66,6 +76,10 @@ var appRequirementsByType = map[string]*applicationMap{
 			tokenExchange,
 			deviceCode,
 			interactionCode,
+			oob,
+			otp,
+			mfaOob,
+			mfaOtp,
 		},
 	},
 	"browser": {
@@ -77,6 +91,10 @@ var appRequirementsByType = map[string]*applicationMap{
 			tokenExchange,
 			deviceCode,
 			interactionCode,
+			oob,
+			otp,
+			mfaOob,
+			mfaOtp,
 		},
 	},
 	"service": {
@@ -87,6 +105,10 @@ var appRequirementsByType = map[string]*applicationMap{
 			tokenExchange,
 			deviceCode,
 			interactionCode,
+			oob,
+			otp,
+			mfaOob,
+			mfaOtp,
 		},
 		RequiredGrantTypes: []string{
 			clientCredentials,
