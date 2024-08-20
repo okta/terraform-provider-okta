@@ -1,1 +1,1 @@
-terraform import okta_group.example &#60;group id&#62;
+terraform import okta_group.example <group_id>

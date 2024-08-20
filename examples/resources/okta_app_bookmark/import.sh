@@ -1,1 +1,1 @@
-terraform import okta_app_bookmark.example &#60;app id&#62t
+terraform import okta_app_bookmark.example <app_id>

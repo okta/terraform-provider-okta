@@ -1,1 +1,1 @@
-terraform import okta_trusted_origin.example &#60;trusted origin id&#62;
+terraform import okta_trusted_origin.example <trusted_origin_id>

@@ -1,1 +1,1 @@
-terraform import okta_brand.example &#60;brand id&#62;
+terraform import okta_brand.example <brand_id>

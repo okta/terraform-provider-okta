@@ -1,1 +1,1 @@
-terraform import okta_policy_device_assurance_chromeos.example &#60;device assurance id&#62;
+terraform import okta_policy_device_assurance_chromeos.example <device_assurance_id>

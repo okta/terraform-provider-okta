@@ -1,1 +1,1 @@
-terraform import okta_app_oauth_redirect_uri.example &#60;app id&#62;/&#60;uri&#62
+terraform import okta_app_oauth_redirect_uri.example <app_id>/<uri>

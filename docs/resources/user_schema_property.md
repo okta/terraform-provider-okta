@@ -98,13 +98,10 @@ Required:
 
 ## Import
 
-User schema property of default user type can be imported via the property variableName.
-```shell
-terraform import okta_user_schema_property.example <variableName>
-```
-
 Import is supported using the following syntax:
 
 ```shell
+terraform import okta_user_schema_property.example <variableName>
+
 terraform import okta_user_schema_property.example <user_type_id>.<index>
 ```

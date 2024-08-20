@@ -1,1 +1,1 @@
-terraform import okta_auth_server.example &#60;auth server id&#62;
+terraform import okta_auth_server.example <auth_server_id>
