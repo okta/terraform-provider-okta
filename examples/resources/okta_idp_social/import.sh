@@ -1,1 +1,1 @@
-terraform import okta_idp_social.example &#60;idp id&#62;
+terraform import okta_idp_social.example <idp_id>

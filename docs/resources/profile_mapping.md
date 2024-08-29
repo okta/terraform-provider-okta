@@ -77,8 +77,3 @@ Optional:
 - `push_status` (String)
 
 
-Import is supported using the following syntax:
-
-```shell
-terraform import okta_profile_mapping.example <id>
-```

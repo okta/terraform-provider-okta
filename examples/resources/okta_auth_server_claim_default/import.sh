@@ -1,1 +1,1 @@
-terraform import okta_auth_server_claim_default.example &#60;auth server id&#62;/&#60;claim name&#62;
+terraform import okta_auth_server_claim_default.example <auth_server_id>/<claim_name>

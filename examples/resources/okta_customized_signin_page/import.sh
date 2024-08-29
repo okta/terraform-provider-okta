@@ -1,1 +1,1 @@
-terraform import okta_customized_signin_page.example &#60;brand_id&#62;
+terraform import okta_customized_signin_page.example <brand_id>

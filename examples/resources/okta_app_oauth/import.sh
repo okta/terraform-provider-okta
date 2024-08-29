@@ -1,1 +1,1 @@
-terraform import okta_app_oauth.example &#60;app id&#62
+terraform import okta_app_oauth.example <app_id>

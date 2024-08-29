@@ -1,1 +1,1 @@
-terraform import okta_idp_saml_key.example &#60;key id&#62;
+terraform import okta_idp_saml_key.example <key_id>

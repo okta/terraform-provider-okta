@@ -1,1 +1,1 @@
-terraform import okta_app_user.example &#60;app id&#62;/&#60;user id&#62;
+terraform import okta_app_user.example <app_id>/<user_id>

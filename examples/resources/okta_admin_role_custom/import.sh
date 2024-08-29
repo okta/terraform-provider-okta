@@ -1,1 +1,1 @@
-terraform import okta_admin_role_custom.example &#60;custom role id&#62
+terraform import okta_admin_role_custom.example <custom_role_id>
