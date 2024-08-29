@@ -59,3 +59,26 @@ func TestAccResourceOktaGroupAdminRole_crud(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaGroupCustomRole_crud(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", groupRole)
+	mgr := newFixtureManager("resources", groupRole, t.Name())
+	config := mgr.GetFixtures("custom.tf", t)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(group, doesGroupExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "role_type", "CUSTOM"),
+					resource.TestCheckResourceAttrSet(resourceName, "role_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "resource_set_id"),
+				),
+			},
+		},
+	})
+}

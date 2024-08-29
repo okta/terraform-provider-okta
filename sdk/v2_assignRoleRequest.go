@@ -2,5 +2,7 @@
 package sdk
 
 type AssignRoleRequest struct {
-	Type string `json:"type,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Role        string `json:"role,omitempty"`
+	ResourceSet string `json:"resource-set,omitempty"`
 }

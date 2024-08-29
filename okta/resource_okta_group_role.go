@@ -96,6 +96,16 @@ func resourceGroupRole() *schema.Resource {
 				Description: "When this setting is enabled, the admins won't receive any of the default Okta administrator emails. These admins also won't have access to contact Okta Support and open support cases on behalf of your org.",
 				Default:     false,
 			},
+			"role_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Role ID. Required for role_type = `CUSTOM`",
+			},
+			"resource_set_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Resource Set ID. Required for role_type = `CUSTOM`",
+			},
 		},
 	}
 }
@@ -105,7 +115,14 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, m inte
 	roleType := d.Get("role_type").(string)
 	client := getOktaClientFromMetadata(m)
 	logger(m).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
-	role, _, err := client.Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{Type: roleType},
+	role, _, err := client.Group.AssignRoleToGroup(
+		ctx,
+		groupID,
+		sdk.AssignRoleRequest{
+			Type:        roleType,
+			Role:        d.Get("role_id").(string),
+			ResourceSet: d.Get("resource_set_id").(string),
+		},
 		&query.Params{DisableNotifications: boolPtr(d.Get("disable_notifications").(bool))})
 	if err != nil {
 		return diag.Errorf("failed to assign role %s to group %s: %v", roleType, groupID, err)
