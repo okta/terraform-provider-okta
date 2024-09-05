@@ -68,16 +68,3 @@ func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
 	return filters, nil
 }
 
-func getAppsFilters(d *schema.ResourceData) (*appFilters, error) {
-	label := d.Get("label").(string)
-	labelPrefix := d.Get("label_prefix").(string)
-
-	filters := &appFilters{
-		Label:       label,
-		LabelPrefix: labelPrefix,
-	}
-	if d.Get("active_only").(bool) {
-		filters.Status = fmt.Sprintf(`status eq "%s"`, statusActive)
-	}
-	return filters, nil
-}

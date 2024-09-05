@@ -331,8 +331,8 @@ func Provider() *schema.Provider {
 			userType:                      resourceUserType(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			app:                      dataSourceApp(),
-			apps:                     dataSourceApps(),
+			app: dataSourceApp(),
+
 			appGroupAssignments:      dataSourceAppGroupAssignments(),
 			appMetadataSaml:          dataSourceAppMetadataSaml(),
 			appOAuth:                 dataSourceAppOauth(),

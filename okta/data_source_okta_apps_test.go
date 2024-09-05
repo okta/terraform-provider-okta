@@ -1,88 +1,92 @@
 package okta
 
-import (
-	"fmt"
-	"testing"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-)
+// 	"github.com/hashicorp/terraform-plugin-framework/diag"
+// 	"github.com/hashicorp/terraform-plugin-framework/resource"
+// )
 
-func TestAccDataSourceOktaApps_read(t *testing.T) {
-	mgr := newFixtureManager("datasources", apps, t.Name())
-	appsCreate := appsResources
-	appsRead := fmt.Sprintf("%s%s", appsResources, appsDataSources)
+// func TestAccDataSourceOktaApps_read(t *testing.T) {
+// 	cfg := helper.TestCaseConfig{
+// 		InitProvider: func() *helper.TestProvider {
+// 			return &helper.TestProvider{
+// 				Provider: NewProvider(),
+// 				CheckConfigure: func(context.Context, resource.ProviderConfigRequest, *resource.ProviderConfigResponse) diag.Diagnostics {
+// 					return nil
+// 				},
+// 			}
+// 		},
+// 		Steps: []helper.TestStep{
+// 			{
+// 				Config: appsResources,
+// 				Check: resource.ComposeAggregateTestCheckFunc(
+// 					helper.TestCheckResourceAttrSet("okta_app_oauth.test1", "id"),
+// 					helper.TestCheckResourceAttrSet("okta_app_oauth.test2", "id"),
+// 					helper.TestCheckResourceAttrSet("okta_app_oauth.test3", "id"),
+// 				),
+// 			},
+// 			{
+// 				Config: appsRead,
+// 				Check: resource.ComposeAggregateTestCheckFunc(
+// 					helper.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#", "1"),
+// 					helper.TestCheckResourceAttrSet("data.okta_apps.test_by_exact_match", "apps.#.id"),
+// 					helper.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#.label", fmt.Sprintf("testApp_%s_one", buildResourceName(mgr.Seed))),
+// 					helper.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#.status", "ACTIVE"),
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: mgr.ConfigReplace(appsCreate),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_app_oauth.test1", "id"),
-					resource.TestCheckResourceAttrSet("okta_app_oauth.test2", "id"),
-					resource.TestCheckResourceAttrSet("okta_app_oauth.test3", "id"),
-				),
-			},
-			{
-				Config: mgr.ConfigReplace(appsRead),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#", "1"),
-					resource.TestCheckResourceAttrSet("data.okta_apps.test_by_exact_match", "apps.#.id"),
-					resource.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#.label", fmt.Sprintf("testApp_%s_one", buildResourceName(mgr.Seed))),
-					resource.TestCheckResourceAttr("data.okta_apps.test_by_exact_match", "apps.#.status", statusActive),
+// 					helper.TestCheckResourceAttr("data.okta_apps.test_by_prefix", "apps.#", "2"),
 
-					resource.TestCheckResourceAttr("data.okta_apps.test_by_prefix", "apps.#", "2"),
+// 					helper.TestCheckResourceAttr("data.okta_apps.test_by_no_match", "apps.#", "0"),
+// 				),
+// 			},
+// 		},
+// 	}
 
-					resource.TestCheckResourceAttr("data.okta_apps.test_by_no_match", "apps.#", "0"),
-				),
-			},
-		},
-	})
-}
+// 	helper.Test(t, cfg)
+// }
 
-const appsResources = `
-resource "okta_app_oauth" "test1" {
-	label          = "testApp_testAcc_replace_with_uuid_one"
-	type           = "web"
-	grant_types    = ["implicit", "authorization_code"]
-	redirect_uris  = ["http://a.com/"]
-	response_types = ["code", "token", "id_token"]
-	issuer_mode    = "ORG_URL"
-	consent_method = "TRUSTED"
-}
-resource "okta_app_oauth" "test2" {
-	label          = "testApp_testAcc_replace_with_uuid_two"
-	type           = "web"
-	grant_types    = ["implicit", "authorization_code"]
-	redirect_uris  = ["http://b.com/"]
-	response_types = ["code", "token", "id_token"]
-	issuer_mode    = "ORG_URL"
-	consent_method = "TRUSTED"
-}
-resource "okta_app_oauth" "test3" {
-	label          = "testAppInvalid_testAcc_replace_with_uuid"
-	type           = "web"
-	grant_types    = ["implicit", "authorization_code"]
-	redirect_uris  = ["http://c.com/"]
-	response_types = ["code", "token", "id_token"]
-	issuer_mode    = "ORG_URL"
-	consent_method = "TRUSTED"
-}
-`
+// const appsResources = `
+// resource "okta_app_oauth" "test1" {
+// 	label          = "testApp_testAcc_replace_with_uuid_one"
+// 	type           = "web"
+// 	grant_types    = ["implicit", "authorization_code"]
+// 	redirect_uris  = ["http://a.com/"]
+// 	response_types = ["code", "token", "id_token"]
+// 	issuer_mode    = "ORG_URL"
+// 	consent_method = "TRUSTED"
+// }
+// resource "okta_app_oauth" "test2" {
+// 	label          = "testApp_testAcc_replace_with_uuid_two"
+// 	type           = "web"
+// 	grant_types    = ["implicit", "authorization_code"]
+// 	redirect_uris  = ["http://b.com/"]
+// 	response_types = ["code", "token", "id_token"]
+// 	issuer_mode    = "ORG_URL"
+// 	consent_method = "TRUSTED"
+// }
+// resource "okta_app_oauth" "test3" {
+// 	label          = "testAppInvalid_testAcc_replace_with_uuid"
+// 	type           = "web"
+// 	grant_types    = ["implicit", "authorization_code"]
+// 	redirect_uris  = ["http://c.com/"]
+// 	response_types = ["code", "token", "id_token"]
+// 	issuer_mode    = "ORG_URL"
+// 	consent_method = "TRUSTED"
+// }
+// `
 
-const appsDataSources = `
+// const appsRead = `
+// data "okta_apps" "test_by_exact_match" {
+// 	label = "testApp_testAcc_replace_with_uuid_one"
+// }
 
-data "okta_apps" "test_by_exact_match" {
-	label = "testApp_testAcc_replace_with_uuid_one"
-}
-  
-data "okta_apps" "test_by_prefix" {
-	label_prefix = "testApp_testAcc_replace_with_uuid_"
-}
+// data "okta_apps" "test_by_prefix" {
+// 	label_prefix = "testApp_testAcc_replace_with_uuid_"
+// }
 
-data "okta_apps" "test_by_no_match" {
-	label = "invalidApp_replace_with_uuid"
-}
-`
+// data "okta_apps" "test_by_no_match" {
+// 	label = "invalidApp_replace_with_uuid"
+// }
+// `

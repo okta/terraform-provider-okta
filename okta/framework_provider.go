@@ -250,6 +250,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 		NewOrgMetadataDataSource,
 		NewDefaultSigninPageDataSource,
 		NewLogStreamDataSource,
+		NewAppsDataSource,
 	}
 }
 
