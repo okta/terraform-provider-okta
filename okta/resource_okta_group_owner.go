@@ -23,11 +23,11 @@ type groupOwnerResource struct {
 }
 
 type groupOwnerResourceModel struct {
-	DisplayName types.String `tfsdk:"displayName"`
-	GroupID     types.String `tfsdk:"groupId"`
+	DisplayName types.String `tfsdk:"display_name"`
+	GroupID     types.String `tfsdk:"group_id"`
 	ID          types.String `tfsdk:"id"`
-	OriginId    types.String `tfsdk:"originId"`
-	OriginType  types.String `tfsdk:"originType"`
+	OriginId    types.String `tfsdk:"origin_id"`
+	OriginType  types.String `tfsdk:"origin_type"`
 	Resolved    types.Bool   `tfsdk:"resolved"`
 	Type        types.String `tfsdk:"type"`
 }
@@ -40,11 +40,11 @@ func (r *groupOwnerResource) Schema(_ context.Context, _ resource.SchemaRequest,
 	resp.Schema = schema.Schema{
 		Description: `Manages group owner resource.`,
 		Attributes: map[string]schema.Attribute{
-			"displayName": schema.StringAttribute{
+			"display_name": schema.StringAttribute{
 				Description: "The display name of the group owner",
 				Computed:    true,
 			},
-			"groupId": schema.StringAttribute{
+			"group_id": schema.StringAttribute{
 				Description: "The id of the group",
 				Required:    true,
 			},
@@ -55,15 +55,15 @@ func (r *groupOwnerResource) Schema(_ context.Context, _ resource.SchemaRequest,
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"originId": schema.StringAttribute{
+			"origin_id": schema.StringAttribute{
 				Description: "The ID of the app instance if the originType is APPLICATION. This value is NULL if originType is OKTA_DIRECTORY.",
 				Computed:    true,
 			},
-			"originType": schema.StringAttribute{
+			"origin_type": schema.StringAttribute{
 				Description: "The source where group ownership is managed. Enum: \"APPLICATION\" \"OKTA_DIRECTORY\"",
 				Computed:    true,
 			},
-			"resolved": schema.StringAttribute{
+			"resolved": schema.BoolAttribute{
 				Description: "If originType is APPLICATION, this parameter is set to FALSE until the owner's originId is reconciled with an associated Okta ID.",
 				Computed:    true,
 			},

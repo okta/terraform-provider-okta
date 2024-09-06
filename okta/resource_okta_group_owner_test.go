@@ -15,10 +15,10 @@ func TestAccResourceOktaGroupOwner_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupOwner)
 	oktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          testAccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      checkUserFactorDestroy(t.Name(), groupOwner),
+			PreCheck:                 testAccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+			CheckDestroy:             checkUserFactorDestroy(t.Name(), groupOwner),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
