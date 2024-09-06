@@ -23,13 +23,14 @@ type groupOwnerResource struct {
 }
 
 type groupOwnerResourceModel struct {
-	DisplayName types.String `tfsdk:"display_name"`
-	GroupID     types.String `tfsdk:"group_id"`
-	ID          types.String `tfsdk:"id"`
-	OriginId    types.String `tfsdk:"origin_id"`
-	OriginType  types.String `tfsdk:"origin_type"`
-	Resolved    types.Bool   `tfsdk:"resolved"`
-	Type        types.String `tfsdk:"type"`
+	DisplayName    types.String `tfsdk:"display_name"`
+	GroupID        types.String `tfsdk:"group_id"`
+	IdOfGroupOwner types.String `tfsdk:"id_of_group_owner"`
+	ID             types.String `tfsdk:"id"`
+	OriginId       types.String `tfsdk:"origin_id"`
+	OriginType     types.String `tfsdk:"origin_type"`
+	Resolved       types.Bool   `tfsdk:"resolved"`
+	Type           types.String `tfsdk:"type"`
 }
 
 func (r *groupOwnerResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -48,8 +49,12 @@ func (r *groupOwnerResource) Schema(_ context.Context, _ resource.SchemaRequest,
 				Description: "The id of the group",
 				Required:    true,
 			},
+			"id_of_group_owner": schema.StringAttribute{
+				Description: "The user id of the group owner",
+				Required:    true,
+			},
 			"id": schema.StringAttribute{
-				Description: "The id of the group owner",
+				Description: "The id of the group owner resource",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
@@ -99,7 +104,7 @@ func (r *groupOwnerResource) Create(ctx context.Context, req resource.CreateRequ
 	createdGroupOwner, _, err := r.oktaSDKClientV5.GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to create group owner",
+			"failed to create group owner for group "+state.GroupID.ValueString()+" for group owner user id: "+createReqBody.GetId()+", type: "+createReqBody.GetType(),
 			err.Error(),
 		)
 		return
@@ -212,7 +217,7 @@ func (r *groupOwnerResource) ImportState(ctx context.Context, req resource.Impor
 
 func buildCreateGroupOwnerRequest(model groupOwnerResourceModel) (okta.AssignGroupOwnerRequestBody, error) {
 	return okta.AssignGroupOwnerRequestBody{
-		Id:   model.ID.ValueStringPointer(),
+		Id:   model.IdOfGroupOwner.ValueStringPointer(),
 		Type: model.Type.ValueStringPointer(),
 	}, nil
 }
