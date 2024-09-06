@@ -25,7 +25,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
-	github.com/okta/okta-sdk-golang/v5 v5.0.0
+	github.com/okta/okta-sdk-golang/v5 v5.0.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/dnaeon/go-vcr.v3 v3.1.2
