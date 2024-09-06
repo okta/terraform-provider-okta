@@ -77,6 +77,7 @@ const (
 	factor                        = "okta_factor"
 	factorTotp                    = "okta_factor_totp"
 	group                         = "okta_group"
+	groupOwner                    = "okta_group_owner"
 	groupEveryone                 = "okta_everyone_group"
 	groupMemberships              = "okta_group_memberships"
 	groupRole                     = "okta_group_role"
