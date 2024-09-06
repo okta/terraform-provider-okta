@@ -222,7 +222,6 @@ func mapGroupOwnerToState(data *okta.GroupOwner, state *groupOwnerResourceModel)
 
 	state.ID = types.StringPointerValue(data.Id)
 	state.DisplayName = types.StringPointerValue(data.DisplayName)
-	//state.GroupID = types.StringPointerValue(data.groupID) // TODO: groupID is already present in state - no need to set it again here?
 	state.OriginId = types.StringPointerValue(data.OriginId)
 	state.OriginType = types.StringPointerValue(data.OriginType)
 	state.Resolved = types.BoolPointerValue(data.Resolved)
