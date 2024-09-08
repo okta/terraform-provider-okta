@@ -61,7 +61,7 @@ resource "okta_resource_set" "example" {
 }
 ```
 
-### To Specify specific Groups
+### To Provide permissions to specific Groups
 
 ```terraform
 locals {
