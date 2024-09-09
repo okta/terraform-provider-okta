@@ -268,6 +268,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewPolicyDeviceAssuranceWindowsResource,
 		NewCustomizedSigninResource,
 		NewPreviewSigninResource,
+		GroupOwnerResource,
 	}
 }
 
