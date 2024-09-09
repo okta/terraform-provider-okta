@@ -5,4 +5,4 @@ be found in the
 [Group Owners](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/GroupOwner/#tag/GroupOwner) API
 documentation.
 
-- Example [basic.tf](./basic.tf)
+- Example [resource.tf](./resource.tf)
