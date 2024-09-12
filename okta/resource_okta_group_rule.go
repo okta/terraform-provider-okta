@@ -176,7 +176,7 @@ func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m inte
 		}
 	}
 	remove := d.Get("remove_assigned_users").(bool)
-	_, err := client.Group.DeleteGroupRule(ctx, d.Id(), &query.Params{RemoveUsers: &remove})
+	_, err := client.Group.DeleteGroupRule(ctx, d.Id(), &query.Params{removeUsers: &remove})
 	if err != nil {
 		return diag.Errorf("failed to delete group rule: %v", err)
 	}
