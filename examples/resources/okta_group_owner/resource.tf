@@ -10,7 +10,7 @@ resource "okta_group" "test" {
 }
 
 resource "okta_group_owner" "test" {
-  group_id                  = okta_group.test.id
-  id_of_group_owner         = okta_user.test.id
-  type                      = "USER"
+  group_id          = okta_group.test.id
+  id_of_group_owner = okta_user.test.id
+  type              = "USER"
 }
