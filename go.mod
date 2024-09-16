@@ -7,7 +7,7 @@ toolchain go1.21.3
 require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/cenkalti/backoff v2.2.1+incompatible
-	github.com/cenkalti/backoff/v4 v4.2.1
+	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/crewjam/saml v0.4.14
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
