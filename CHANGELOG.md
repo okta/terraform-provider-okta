@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.11.0 (Sep 16, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+
+* Add `GroupOwner` resource [#2079](https://github.com/okta/terraform-provider-okta/pull/2079). Thanks, [@arvindkrishnakumar-okta](https://github.com/arvindkrishnakumar-okta)!
+* add support for custom role in okta_group_role [#2074](https://github.com/okta/terraform-provider-okta/pull/2074). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* add userVerificationMethods to API Payload [#2061](https://github.com/okta/terraform-provider-okta/pull/2061). Thanks, [@pro4tlzz](https://github.com/pro4tlzz)!
+* additional app_oauth grant types [#2067](https://github.com/okta/terraform-provider-okta/pull/2067). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### IMPROVEMENTS
+* fix resource_set example in docs [#2075](https://github.com/okta/terraform-provider-okta/pull/2075). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Documentation: fix square bracket character encoding [#2056](https://github.com/okta/terraform-provider-okta/pull/2056). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
+### BUG FIXES
+
+* fix issue when content security policy is null [#2043](https://github.com/okta/terraform-provider-okta/pull/2043). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* fix customized sign in import [#2051](https://github.com/okta/terraform-provider-okta/pull/2051). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* fix import okta_domain [#2062](https://github.com/okta/terraform-provider-okta/pull/2062). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* bugfix name format resource_okta_idp_saml.go [#2050](https://github.com/okta/terraform-provider-okta/pull/2050). Thanks, [@aemard](https://github.com/aemard)!
+
 ## 4.10.0 (Aug 6, 2024)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:

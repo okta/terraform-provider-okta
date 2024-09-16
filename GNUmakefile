@@ -94,6 +94,7 @@ vet:
 fmt: tools # Format the code
 	@echo "formatting the code with $(GOFMT)..."
 	@$(GOFMT) -l -w .
+	@terraform fmt -recursive ./examples/
 
 fmtcheck:
 	@gofumpt -d -l .
