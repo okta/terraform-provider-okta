@@ -211,5 +211,4 @@ resource "okta_idp_oidc" "test" {
 			},
 		},
 	})
-
 }
