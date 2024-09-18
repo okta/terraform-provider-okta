@@ -180,7 +180,6 @@ The only difference is that these fields are immutable and can not be managed: '
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
-				Default:     "PT1H",
 			},
 			"constraints": {
 				Type: schema.TypeList,
