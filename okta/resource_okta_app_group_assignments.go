@@ -36,7 +36,6 @@ func resourceAppGroupAssignments() *schema.Resource {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "A group to assign to this application",
-				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -107,7 +106,8 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
 	if currentGroupAssignments == nil {
-		d.SetId("")
+		// if there are no groups assigned to the Okta app, create the resource in TF state and return
+		// Required to explicitly manage that no groups should be assigned to an Okta application
 		return nil
 	}
 	g, ok := d.GetOk("group")
@@ -115,7 +115,7 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		groupAssignments := syncGroups(d, g.([]interface{}), currentGroupAssignments)
 		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
-			return diag.Errorf("failed to set OAuth application properties: %v", err)
+			return diag.Errorf("failed to set group properties: %v", err)
 		}
 	} else {
 		groupAssignments := make([]map[string]interface{}, len(currentGroupAssignments))
@@ -124,7 +124,7 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		}
 		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
-			return diag.Errorf("failed to set OAuth application properties: %v", err)
+			return diag.Errorf("failed to set group properties: %v", err)
 		}
 	}
 	return nil
