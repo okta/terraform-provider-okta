@@ -132,7 +132,6 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 	var err error
 
 	listGroupOwners, _, err := r.Config.oktaSDKClientV5.GroupOwnerAPI.ListGroupOwners(ctx, state.GroupID.ValueString()).Execute()
-
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving list group owners",
@@ -144,7 +143,14 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 	for _, groupOwner := range listGroupOwners {
 		if groupOwner.GetId() == state.ID.ValueString() {
 			grpOwner = &groupOwner
+			break
 		}
+	}
+
+	if grpOwner == nil {
+		// The resource no longer exists; remove it from state
+		resp.State.RemoveResource(ctx)
+		return
 	}
 
 	resp.Diagnostics.Append(mapGroupOwnerToState(grpOwner, &state)...)
