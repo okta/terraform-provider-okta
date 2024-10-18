@@ -2,6 +2,48 @@ version: 2.1
 
 orbs:
   general-platform-helpers: okta/general-platform-helpers@1.9
+  python: circleci/python@2.0.3
+  aws-cli: circleci/aws-cli@5.1
+
+jobs:
+  reversing-labs:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout 
+      - run:
+          name: Install Python
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+            sudo pip install --upgrade pip
+      - run:
+          name: Download Reverse Labs Scanner
+          command: |
+            curl https://dso-resources.oktasecurity.com/scanner \
+              -H "x-api-key: $RESOURCE_TOKEN" \
+              --output rl_wrapper-0.0.2+35ababa-py3-none-any.whl
+      - run:
+          name: Install RL Wrapper
+          command: |
+            pip install ./rl_wrapper-0.0.2+35ababa-py3-none-any.whl
+      - aws-cli/setup:
+          profile_name: default
+          role_arn: $AWS_ARN
+          region: us-east-1
+      - run: >-
+          eval "$(aws configure export-credentials --profile default --format env)" 2> /dev/null
+      - run:
+          name: Run Reversing Labs Wrapper Scanner
+          command: |
+            rl-wrapper \
+              --artifact ${CIRCLE_WORKING_DIRECTORY/#\~/$HOME} \
+              --name $CIRCLE_PROJECT_REPONAME\
+              --version $CIRCLE_SHA1\
+              --repository $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME \
+              --commit $CIRCLE_SHA1 \
+              --build-env "circleci" \
+              --suppress_output
 
 workflows:
   # See OKTA-634442
@@ -11,3 +53,8 @@ workflows:
           name: "Scan with Semgrep"
           context:
             - static-analysis
+  "Malware Scanner":
+    jobs:
+      - reversing-labs:
+          context:
+            - okta-dcp
