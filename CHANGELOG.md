@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.11.1 (Oct 18, 2024)
+### BUG FIXES
+* fix issue when group owner is empty [#2101](https://github.com/okta/terraform-provider-okta/pull/2043). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
+
 ## 4.11.0 (Sep 16, 2024)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
