@@ -74,6 +74,36 @@ These operations allow the creation and manipulation of custom roles as custom c
 			  "okta.users.userprofile.manage",
 			  "okta.workflows.invoke".,`,
 			},
+			"permission_conditions": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: "Use a Condition object to further restrict a permission in a Custom Admin Role. For example, you can restrict access to specific profile attributes.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"permission": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "The Permission/Object to which the conditions apply",
+						},
+						"include": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Description: "Permission/Object Attributes to which access is allowed",
+						},
+						"exclude": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Description: "Permission/Object Attributes to which access isn't allowed",
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -88,6 +118,15 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
 	d.SetId(role.Id)
+
+	// Handle permission conditions
+	if conditions, ok := d.GetOk("permission_conditions"); ok {
+		err := managePermissionConditions(ctx, getAPISupplementFromMetadata(m), d.Id(), conditions.([]interface{}))
+		if err != nil {
+			return diag.Errorf("failed to manage permission conditions: %v", err)
+		}
+	}
+
 	return nil
 }
 
@@ -123,24 +162,33 @@ func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, 
 			return diag.Errorf("failed to update custom admin role: %v", err)
 		}
 	}
-	if !d.HasChange("permissions") {
-		return nil
-	}
-	oldPermissions, newPermissions := d.GetChange("permissions")
-	oldSet := oldPermissions.(*schema.Set)
-	newSet := newPermissions.(*schema.Set)
+	if d.HasChange("permissions") {
+		oldPermissions, newPermissions := d.GetChange("permissions")
+		oldSet := oldPermissions.(*schema.Set)
+		newSet := newPermissions.(*schema.Set)
 
-	permissionsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	permissionsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+		permissionsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+		permissionsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
-	err := addCustomRolePermissions(ctx, client, d.Id(), permissionsToAdd)
-	if err != nil {
-		return diag.FromErr(err)
+		err := addCustomRolePermissions(ctx, client, d.Id(), permissionsToAdd)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = removeCustomRolePermissions(ctx, client, d.Id(), permissionsToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
-	err = removeCustomRolePermissions(ctx, client, d.Id(), permissionsToRemove)
-	if err != nil {
-		return diag.FromErr(err)
+
+	// Handle permission conditions update
+	if d.HasChange("permission_conditions") {
+		conditions := d.Get("permission_conditions").([]interface{})
+		err := managePermissionConditions(ctx, client, d.Id(), conditions)
+		if err != nil {
+			return diag.Errorf("failed to manage permission conditions: %v", err)
+		}
 	}
+
 	return nil
 }
 
@@ -192,6 +240,32 @@ func removeCustomRolePermissions(ctx context.Context, client *sdk.APISupplement,
 		_, err := client.DeleteCustomRolePermission(ctx, roleIdOrLabel, permission)
 		if err != nil {
 			return fmt.Errorf("failed to remove %s permission from the custom role %s: %v", permission, roleIdOrLabel, err)
+		}
+	}
+	return nil
+}
+
+func managePermissionConditions(ctx context.Context, client *sdk.APISupplement, roleId string, conditions []interface{}) error {
+	for _, condition := range conditions {
+		condMap := condition.(map[string]interface{})
+		permission := condMap["permission"].(string)
+		include := convertInterfaceArrToStringArr(condMap["include"].([]interface{}))
+		exclude := convertInterfaceArrToStringArr(condMap["exclude"].([]interface{}))
+
+		// Create the condition payload
+		permissionCondition := sdk.PermissionCondition{
+			Include: map[string][]string{
+				permission: include,
+			},
+			Exclude: map[string][]string{
+				permission: exclude,
+			},
+		}
+
+		// Update the permission with conditions
+		_, err := client.UpdateCustomRolePermissionCondition(ctx, roleId, permission, permissionCondition)
+		if err != nil {
+			return fmt.Errorf("failed to update permission condition for %s: %v", permission, err)
 		}
 	}
 	return nil
