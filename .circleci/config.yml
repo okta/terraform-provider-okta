@@ -8,7 +8,7 @@ orbs:
 jobs:
   reversing-labs:
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/go:1.21.13
     steps:
       - checkout 
       - run:
@@ -33,6 +33,11 @@ jobs:
           region: us-east-1
       - run: >-
           eval "$(aws configure export-credentials --profile default --format env)" 2> /dev/null
+      - run:
+          name: Build binary to scan
+          command: |
+            go mod vendor
+            go build
       - run:
           name: Run Reversing Labs Wrapper Scanner
           command: |
