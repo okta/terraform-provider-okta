@@ -67,3 +67,4 @@ func getAppFilters(d *schema.ResourceData) (*appFilters, error) {
 	}
 	return filters, nil
 }
+
