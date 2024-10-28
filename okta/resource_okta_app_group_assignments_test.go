@@ -334,3 +334,40 @@ func clickOpsCheckIfGroupIsAssignedToApp(appResourceName string, groups ...strin
 		return nil
 	}
 }
+
+// This test demonstrate the ability to unassigned all groups from app without having to destroy the resource
+// This behavior is already enabled by the API
+func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
+	mgr := newFixtureManager("resources", appGroupAssignments, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated_empty.tf", t)
+
+	group1 := fmt.Sprintf("%s.test1", group)
+	group2 := fmt.Sprintf("%s.test2", group)
+	group3 := fmt.Sprintf("%s.test3", group)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppGroupAssignmentsExist(resourceName, group1, group2, group3),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttr(resourceName, "group.#", "3"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttr(resourceName, "group.#", "0"),
+				),
+			},
+		},
+	})
+}
