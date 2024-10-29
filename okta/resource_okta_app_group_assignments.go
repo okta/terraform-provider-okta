@@ -34,9 +34,8 @@ func resourceAppGroupAssignments() *schema.Resource {
 			},
 			"group": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "A group to assign to this application",
-				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -115,7 +114,7 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		groupAssignments := syncGroups(d, g.([]interface{}), currentGroupAssignments)
 		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
-			return diag.Errorf("failed to set OAuth application properties: %v", err)
+			return diag.Errorf("failed to set group properties: %v", err)
 		}
 	} else {
 		groupAssignments := make([]map[string]interface{}, len(currentGroupAssignments))
@@ -124,7 +123,7 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		}
 		err := setNonPrimitives(d, map[string]interface{}{"group": groupAssignments})
 		if err != nil {
-			return diag.Errorf("failed to set OAuth application properties: %v", err)
+			return diag.Errorf("failed to set group properties: %v", err)
 		}
 	}
 	return nil
