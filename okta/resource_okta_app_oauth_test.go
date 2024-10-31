@@ -907,3 +907,34 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppOauth_1952(t *testing.T) {
+	mgr := newFixtureManager("resources", appOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", appOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+	label         = "MyApp"
+	type          = "web"
+	redirect_uris = ["http://d.com/"]
+	hide_ios      = true
+	hide_web      = true
+	omit_secret   = true
+	}
+`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "authorization_code"),
+				),
+			},
+		},
+	})
+}

@@ -256,6 +256,7 @@ other arguments that changed will be applied.`,
 					Type: schema.TypeString,
 				},
 				Optional:    true,
+				Computed:    true,
 				Description: "List of OAuth 2.0 response type strings.",
 			},
 			"grant_types": {
@@ -264,6 +265,7 @@ other arguments that changed will be applied.`,
 					Type: schema.TypeString,
 				},
 				Optional:    true,
+				Computed:    true,
 				Description: "List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.",
 			},
 			"tos_uri": {
@@ -920,6 +922,10 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 
 func validateGrantTypes(d *schema.ResourceData) error {
 	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
+	// If grant_types are not set, we default to the bare minimum in func buildAppOAuth
+	if len(grantTypeList) < 1 {
+		return nil
+	}
 	appType := d.Get("type").(string)
 	appMap, ok := appRequirementsByType[appType]
 	if !ok {
