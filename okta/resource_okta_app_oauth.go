@@ -920,6 +920,10 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 
 func validateGrantTypes(d *schema.ResourceData) error {
 	grantTypeList := convertInterfaceToStringSet(d.Get("grant_types"))
+	// If grant_types are not set, we default to the bare minimum in func buildAppOAuth
+	if len(grantTypeList) < 1 {
+		return nil
+	}
 	appType := d.Get("type").(string)
 	appMap, ok := appRequirementsByType[appType]
 	if !ok {
