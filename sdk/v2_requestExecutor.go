@@ -355,7 +355,6 @@ func CreateClientAssertion(orgURL, clientID string, privateKeySinger jose.Signer
 }
 
 func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertion string, scopes []string, maxRetries int32, maxBackoff int64) (*RequestAccessToken, string, *rsa.PrivateKey, error) {
-	var tokenRequestBuff io.ReadWriter
 	query := urlpkg.Values{}
 	tokenRequestURL := orgURL + "/oauth2/v1/token"
 
@@ -364,7 +363,17 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 	query.Add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
 	query.Add("client_assertion", clientAssertion)
 	tokenRequestURL += "?" + query.Encode()
-	tokenRequest, err := http.NewRequest("POST", tokenRequestURL, tokenRequestBuff)
+
+  body := map[string]string {
+    "grant_type": "client_credentials",
+    "scope": strings.Join(scopes, " "),
+    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+    "client_assertion": clientAssertion,
+  }
+
+  jsonBody, _ := json.Marshal(body)
+
+	tokenRequest, err := http.NewRequest("POST", tokenRequestURL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, "", nil, err
 	}
