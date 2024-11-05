@@ -6,14 +6,14 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 785
+        content_length: 804
         transfer_encoding: []
         trailer: {}
         host: classic-00.dne-okta.com
         remote_addr: ""
         request_uri: ""
         body: |
-            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"oauthClient":{"autoKeyRotation":true,"pkce_required":false,"token_endpoint_auth_method":"client_secret_basic"}},"label":"testAcc_569562530","name":"oidc_client","settings":{"app":{},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"application_type":"web","consent_method":"TRUSTED","grant_types":["authorization_code","implicit"],"idp_initiated_login":{"default_scope":[],"mode":"DISABLED"},"issuer_mode":"ORG_URL","redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"wildcard_redirect":"DISABLED"}},"signOnMode":"OPENID_CONNECT","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true}}}
+            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"oauthClient":{"autoKeyRotation":true,"pkce_required":false,"token_endpoint_auth_method":"client_secret_basic"}},"label":"testAcc_569562530","name":"oidc_client","settings":{"app":{},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"application_type":"web","consent_method":"TRUSTED","grant_types":["authorization_code","implicit"],"idp_initiated_login":{"default_scope":[],"mode":"DISABLED"},"issuer_mode":"ORG_URL","redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"wildcard_redirect":"DISABLED"}},"signOnMode":"OPENID_CONNECT","visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true}}}
         form: {}
         headers:
             Accept:
@@ -32,15 +32,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","client_secret":"Y1JEMCM-0renApEPZ29E6wX7tLRFxj14kPymzQunzOHd86D2v0LkOOdUJlRbKI5F","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","client_secret":"no2LXFb-yk67u1zz15K93yVezJlJlvCXaVYzW4Ffmt0fLy7ZWgqObrIrKwCrOgsS","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
+                - Tue, 05 Nov 2024 21:09:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 889.273623ms
+        duration: 1.071464125s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -69,15 +73,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"id":"00o5ptm04a2LyDEyk1d7","cell":"op3","_links":{"organization":{"href":"https://classic-00.oktapreview.com"}},"pipeline":"v1","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":true,"pssoEnabled":false}}'
+        body: '{"id":"00o5ptm04a2LyDEyk1d7","cell":"op3","_links":{"organization":{"href":"https://classic-00.oktapreview.com"}},"pipeline":"v1","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":true,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":false}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
+                - Tue, 05 Nov 2024 21:09:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 32.912563ms
+        duration: 107.2955ms
     - id: 2
       request:
         proto: HTTP/1.1
@@ -96,7 +104,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -106,15 +114,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
+                - Tue, 05 Nov 2024 21:09:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 88.883041ms
+        duration: 161.271667ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -133,7 +145,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oa9i782smyrjxJZu1d7/settings/oauth/idToken
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oai7uu3r1Qod2Yzh1d7/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
@@ -143,15 +155,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oa9i782smyrjxJZu1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oai7uu3r1Qod2Yzh1d7","issuerMode":"ORG_URL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
+                - Tue, 05 Nov 2024 21:09:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 64.031713ms
+        duration: 100.587166ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -170,7 +186,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -180,15 +196,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
+                - Tue, 05 Nov 2024 21:09:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 96.202488ms
+        duration: 130.657ms
     - id: 5
       request:
         proto: HTTP/1.1
@@ -207,7 +227,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oa9i782smyrjxJZu1d7/settings/oauth/idToken
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oai7uu3r1Qod2Yzh1d7/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
@@ -217,17 +237,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oa9i782smyrjxJZu1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oai7uu3r1Qod2Yzh1d7","issuerMode":"ORG_URL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:20 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+                - Tue, 05 Nov 2024 21:09:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 74.638611ms
+        duration: 92.546792ms
     - id: 6
       request:
         proto: HTTP/1.1
@@ -246,7 +268,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -256,15 +278,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 81.522089ms
+        duration: 96.675833ms
     - id: 7
       request:
         proto: HTTP/1.1
@@ -283,7 +309,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oa9i782smyrjxJZu1d7/settings/oauth/idToken
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oai7uu3r1Qod2Yzh1d7/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
@@ -293,15 +319,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oa9i782smyrjxJZu1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oai7uu3r1Qod2Yzh1d7","issuerMode":"ORG_URL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 93.74817ms
+        duration: 117.351042ms
     - id: 8
       request:
         proto: HTTP/1.1
@@ -330,17 +360,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 91.544676ms
+        duration: 123.945959ms
     - id: 9
       request:
         proto: HTTP/1.1
@@ -369,17 +403,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 99.528178ms
+        duration: 129.74ms
     - id: 10
       request:
         proto: HTTP/1.1
@@ -398,7 +436,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -408,15 +446,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 130.084856ms
+        duration: 131.70575ms
     - id: 11
       request:
         proto: HTTP/1.1
@@ -435,7 +477,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -445,15 +487,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 81.687194ms
+        duration: 108.103084ms
     - id: 12
       request:
         proto: HTTP/1.1
@@ -482,17 +528,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 99.10397ms
+        duration: 133.949083ms
     - id: 13
       request:
         proto: HTTP/1.1
@@ -521,18 +571,63 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:21 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 107.563009ms
+        duration: 144.961375ms
     - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 05 Nov 2024 21:09:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 110.801417ms
+    - id: 15
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -560,54 +655,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 105.504113ms
-    - id: 15
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
-        status: 200 OK
-        code: 200
-        duration: 112.446546ms
+        duration: 119.345667ms
     - id: 16
       request:
         proto: HTTP/1.1
@@ -636,17 +698,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:40 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 126.918751ms
+        duration: 146.929584ms
     - id: 17
       request:
         proto: HTTP/1.1
@@ -665,7 +731,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -675,15 +741,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 103.73173ms
+        duration: 124.248ms
     - id: 18
       request:
         proto: HTTP/1.1
@@ -702,7 +772,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oa9i782smyrjxJZu1d7/settings/oauth/idToken
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oai7uu3r1Qod2Yzh1d7/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
@@ -712,15 +782,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oa9i782smyrjxJZu1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://classic-00.oktapreview.com","orgUrl":null,"customUrl":null,"audience":"0oai7uu3r1Qod2Yzh1d7","issuerMode":"ORG_URL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 66.245019ms
+        duration: 122.534625ms
     - id: 19
       request:
         proto: HTTP/1.1
@@ -739,7 +813,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -749,15 +823,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 66.113252ms
+        duration: 101.736834ms
     - id: 20
       request:
         proto: HTTP/1.1
@@ -786,17 +864,23 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 85.491273ms
+        duration: 126.219375ms
     - id: 21
       request:
         proto: HTTP/1.1
@@ -825,17 +909,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 118.443336ms
+        duration: 132.93825ms
     - id: 22
       request:
         proto: HTTP/1.1
@@ -854,7 +942,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -864,15 +952,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 67.369234ms
+        duration: 91.509583ms
     - id: 23
       request:
         proto: HTTP/1.1
@@ -901,17 +993,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 77.602787ms
+        duration: 120.564916ms
     - id: 24
       request:
         proto: HTTP/1.1
@@ -940,17 +1036,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oa9i782smyrjxJZu1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2023-08-15T23:52:20.000Z","created":"2023-08-15T23:52:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa9i782smyrjxJZu1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED"}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oa9i782smyrjxJZu1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate"}}}]'
+        body: '[{"id":"0oai7uu3r1Qod2Yzh1d7","orn":"orn:oktapreview:idp:00o5ptm04a2LyDEyk1d7:apps:oidc_client:0oai7uu3r1Qod2Yzh1d7","name":"oidc_client","label":"testAcc_569562530","status":"ACTIVE","lastUpdated":"2024-11-05T21:09:38.000Z","created":"2024-11-05T21:09:38.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"RwDaGE-iT82hX655Q4f0UIf43qDZbNdJM3JkppJkusM"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oai7uu3r1Qod2Yzh1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.oktapreview.com/home/oidc_client/0oai7uu3r1Qod2Yzh1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"groups":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/credentials/secrets"}],"users":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/users"},"deactivate":{"href":"https://classic-00.oktapreview.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:22 GMT
+                - Tue, 05 Nov 2024 21:09:41 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/apps?limit=1&q=testAcc_569562530&filter=status+eq+%22ACTIVE%22>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 84.417636ms
+        duration: 136.202917ms
     - id: 25
       request:
         proto: HTTP/1.1
@@ -969,7 +1069,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7/lifecycle/deactivate
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -981,13 +1081,17 @@ interactions:
         uncompressed: true
         body: '{}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:52:23 GMT
+                - Tue, 05 Nov 2024 21:09:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 94.157241ms
+        duration: 175.407875ms
     - id: 26
       request:
         proto: HTTP/1.1
@@ -1006,7 +1110,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/apps/0oa9i782smyrjxJZu1d7
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oai7uu3r1Qod2Yzh1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -1018,8 +1122,14 @@ interactions:
         uncompressed: false
         body: ""
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Date:
-                - Tue, 15 Aug 2023 23:52:23 GMT
+                - Tue, 05 Nov 2024 21:09:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 204 No Content
         code: 204
-        duration: 348.865306ms
+        duration: 318.49875ms
