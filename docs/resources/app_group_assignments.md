@@ -34,7 +34,10 @@ resource "okta_app_group_assignments" "example" {
 ### Required
 
 - `app_id` (String) The ID of the application to assign a group to.
-- `group` (Block List, Min: 1) A group to assign to this application (see [below for nested schema](#nestedblock--group))
+
+### Optional
+
+- `group` (Block List) A group to assign to this application (see [below for nested schema](#nestedblock--group))
 
 ### Read-Only
 
