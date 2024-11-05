@@ -193,6 +193,7 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *s
 		_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
 	}
 	_ = d.Set("auto_submit_toolbar", vis.AutoSubmitToolbar)
+	_ = d.Set("auto_launch", vis.AutoLaunch)
 	_ = d.Set("hide_ios", vis.Hide.IOS)
 	_ = d.Set("hide_web", vis.Hide.Web)
 	if notes != nil {
