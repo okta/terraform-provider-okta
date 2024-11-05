@@ -46,6 +46,7 @@ resource "okta_app_secure_password_store" "example" {
 - `accessibility_self_service` (Boolean) Enable self service. Default is `false`
 - `admin_note` (String) Application notes for admins.
 - `app_links_json` (String) Displays specific appLinks for the app. The value for each application link should be boolean.
+- `auto_launch` (Boolean) Auto launch
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
 - `credentials_scheme` (String) Application credentials scheme. One of: `EDIT_USERNAME_AND_PASSWORD`, `ADMIN_SETS_CREDENTIALS`, `EDIT_PASSWORD_ONLY`, `EXTERNAL_PASSWORD_SYNC`, or `SHARED_USERNAME_AND_PASSWORD`
 - `enduser_note` (String) Application notes for end users.

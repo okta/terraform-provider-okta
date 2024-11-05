@@ -40,6 +40,7 @@ resource "okta_app_basic_auth" "example" {
 - `accessibility_self_service` (Boolean) Enable self service. Default is `false`
 - `admin_note` (String) Application notes for admins.
 - `app_links_json` (String) Displays specific appLinks for the app. The value for each application link should be boolean.
+- `auto_launch` (Boolean) Auto launch
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
 - `enduser_note` (String) Application notes for end users.
 - `hide_ios` (Boolean) Do not display application icon on mobile app

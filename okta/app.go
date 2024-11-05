@@ -111,6 +111,12 @@ var (
 			Default:     false,
 			Description: "Display auto submit toolbar",
 		},
+		"auto_launch": {
+			Type:        schema.TypeBool,
+			Optional:    true,
+			Default:     false,
+			Description: "Auto launch",
+		},
 		"hide_ios": {
 			Type:        schema.TypeBool,
 			Optional:    true,
@@ -242,8 +248,10 @@ func buildAppVisibility(d *schema.ResourceData) *sdk.ApplicationVisibility {
 	autoSubmit := d.Get("auto_submit_toolbar").(bool)
 	hideMobile := d.Get("hide_ios").(bool)
 	hideWeb := d.Get("hide_web").(bool)
+	autoLaunch := d.Get("auto_launch").(bool)
 	appVis := &sdk.ApplicationVisibility{
 		AutoSubmitToolbar: &autoSubmit,
+		AutoLaunch:        &autoLaunch,
 		Hide: &sdk.ApplicationVisibilityHide{
 			IOS: &hideMobile,
 			Web: &hideWeb,

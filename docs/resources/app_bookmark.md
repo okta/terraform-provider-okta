@@ -39,6 +39,7 @@ resource "okta_app_bookmark" "example" {
 - `admin_note` (String) Application notes for admins.
 - `app_links_json` (String) Displays specific appLinks for the app. The value for each application link should be boolean.
 - `authentication_policy` (String) The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.
+- `auto_launch` (Boolean) Auto launch
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
 - `enduser_note` (String) Application notes for end users.
 - `hide_ios` (Boolean) Do not display application icon on mobile app

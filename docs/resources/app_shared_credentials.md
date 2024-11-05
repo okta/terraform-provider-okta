@@ -55,6 +55,7 @@ resource "okta_app_shared_credentials" "example" {
 - `accessibility_self_service` (Boolean) Enable self service. Default is `false`
 - `admin_note` (String) Application notes for admins.
 - `app_links_json` (String) Displays specific appLinks for the app. The value for each application link should be boolean.
+- `auto_launch` (Boolean) Auto launch
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
 - `button_field` (String) Login button field
 - `checkbox` (String) CSS selector for the checkbox
