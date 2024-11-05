@@ -193,6 +193,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Default:     false,
 				Description: "Display auto submit toolbar. Default is: `false`",
 			},
+			"auto_launch": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Auto launch. Default is: `false`",
+			},
 			"hide_ios": {
 				Type:        schema.TypeBool,
 				Optional:    true,

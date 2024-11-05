@@ -308,6 +308,12 @@ other arguments that changed will be applied.`,
 				Default:     false,
 				Description: "Display auto submit toolbar",
 			},
+			"auto_launch": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Auto launch. Default is: `false`",
+			},
 			"hide_ios": {
 				Type:        schema.TypeBool,
 				Optional:    true,
