@@ -33,15 +33,16 @@ This resource allows you to configure default MFA Policy.
 }
 
 func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	id := d.Id()
-	if id == "" {
-		policy, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		id = policy.Id
+	var id string
+	// Issue #2107, where adding a new MFA_ENROLL policy change the priority of the default policy, leading to the default policy unable to update
+	// It is now required that the default policy is set again for every create and update, and the only thing that can be change is factor/authenticator
+	policy, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
+	if err != nil {
+		return diag.FromErr(err)
 	}
-	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	id = policy.Id
+
+	_, _, err = getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}
