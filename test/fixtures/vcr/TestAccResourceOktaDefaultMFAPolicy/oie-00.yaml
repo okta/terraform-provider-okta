@@ -31,13 +31,17 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 166.608871ms
+        duration: 386.609041ms
     - id: 1
       request:
         proto: HTTP/1.1
@@ -68,13 +72,17 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 79.43124ms
+        duration: 100.568208ms
     - id: 2
       request:
         proto: HTTP/1.1
@@ -103,17 +111,23 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00p9ds39t0kLZtU7E1d7","status":"ACTIVE","name":"Test","description":"DS","priority":1,"system":false,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2023-08-08T22:35:52.000Z","lastUpdated":"2023-08-15T23:03:18.000Z","settings":{"type":"AUTHENTICATORS","authenticators":[{"key":"okta_email","enroll":{"self":"OPTIONAL"}},{"key":"okta_verify","enroll":{"self":"OPTIONAL"}},{"key":"onprem_mfa","enroll":{"self":"OPTIONAL"}},{"key":"okta_password","enroll":{"self":"REQUIRED"}},{"key":"webauthn","enroll":{"self":"OPTIONAL"},"constraints":{"aaguidGroups":["fff","ds"]}},{"key":"security_question","enroll":{"self":"OPTIONAL"}},{"key":"yubikey_token","enroll":{"self":"OPTIONAL"}}]},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"MFA_ENROLL"},{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:03:18.000Z","settings":{"type":"AUTHENTICATORS","authenticators":[{"key":"okta_email","enroll":{"self":"REQUIRED"}},{"key":"okta_verify","enroll":{"self":"OPTIONAL"}},{"key":"onprem_mfa","enroll":{"self":"NOT_ALLOWED"}},{"key":"okta_password","enroll":{"self":"REQUIRED"}},{"key":"webauthn","enroll":{"self":"NOT_ALLOWED"},"constraints":{"aaguidGroups":["ANY"]}},{"key":"security_question","enroll":{"self":"NOT_ALLOWED"}},{"key":"yubikey_token","enroll":{"self":"NOT_ALLOWED"}}]},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}]'
+        body: '[{"id":"00p9ds39t0kLZtU7E1d7","status":"INACTIVE","name":"Test","description":"DS","priority":1,"system":false,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2023-08-08T22:35:52.000Z","lastUpdated":"2023-08-18T22:51:32.000Z","settings":{"type":"AUTHENTICATORS","authenticators":[{"key":"custom_otp","enroll":{"self":"NOT_ALLOWED"}},{"key":"okta_email","enroll":{"self":"OPTIONAL"}},{"key":"okta_verify","enroll":{"self":"OPTIONAL"}},{"key":"onprem_mfa","enroll":{"self":"OPTIONAL"}},{"key":"okta_password","enroll":{"self":"REQUIRED"}},{"key":"webauthn","enroll":{"self":"REQUIRED"},"constraints":{"aaguidGroups":["w is","ds"]}},{"key":"security_question","enroll":{"self":"OPTIONAL"}},{"key":"yubikey_token","enroll":{"self":"NOT_ALLOWED"}}]},"_links":{"mappings":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"},{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-01-31T18:32:17.000Z","settings":{"type":"AUTHENTICATORS","authenticators":[{"key":"custom_otp","enroll":{"self":"OPTIONAL"}},{"key":"okta_email","enroll":{"self":"REQUIRED"}},{"key":"okta_verify","enroll":{"self":"OPTIONAL"}},{"key":"onprem_mfa","enroll":{"self":"NOT_ALLOWED"}},{"key":"okta_password","enroll":{"self":"REQUIRED"}},{"key":"webauthn","enroll":{"self":"NOT_ALLOWED"},"constraints":{"aaguidGroups":["ANY"]}},{"key":"security_question","enroll":{"self":"NOT_ALLOWED"}},{"key":"yubikey_token","enroll":{"self":"NOT_ALLOWED"}}]},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:14 GMT
             Link:
                 - <https://oie-00.dne-okta.com/api/v1/policies?type=MFA_ENROLL>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 64.358131ms
+        duration: 123.052834ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -142,15 +156,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2023-08-15T23:45:25.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}}]'
+        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2024-11-06T16:04:40.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}}]'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 72.52982ms
+        duration: 117.687292ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -182,15 +200,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:46.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:15.000Z","settings":{"type":"FACTORS","factors":{"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 209.580668ms
+        duration: 342.169584ms
     - id: 5
       request:
         proto: HTTP/1.1
@@ -219,15 +241,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:46.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:15.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 77.161866ms
+        duration: 102.624041ms
     - id: 6
       request:
         proto: HTTP/1.1
@@ -256,15 +284,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:46.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:15.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:46 GMT
+                - Wed, 06 Nov 2024 21:00:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 85.713814ms
+        duration: 115.003708ms
     - id: 7
       request:
         proto: HTTP/1.1
@@ -295,13 +327,17 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:47 GMT
+                - Wed, 06 Nov 2024 21:00:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 52.801257ms
+        duration: 89.130458ms
     - id: 8
       request:
         proto: HTTP/1.1
@@ -330,15 +366,21 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:46.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:15.000Z","settings":{"type":"FACTORS","factors":{"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:47 GMT
+                - Wed, 06 Nov 2024 21:00:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
         status: 200 OK
         code: 200
-        duration: 80.649395ms
+        duration: 107.000416ms
     - id: 9
       request:
         proto: HTTP/1.1
@@ -369,13 +411,17 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:47 GMT
+                - Wed, 06 Nov 2024 21:00:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 69.370513ms
+        duration: 101.643459ms
     - id: 10
       request:
         proto: HTTP/1.1
@@ -404,17 +450,19 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:46.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:15.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:47 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+                - Wed, 06 Nov 2024 21:00:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 66.633639ms
+        duration: 116.538375ms
     - id: 11
       request:
         proto: HTTP/1.1
@@ -445,13 +493,17 @@ interactions:
         uncompressed: true
         body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"INACTIVE","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:47 GMT
+                - Wed, 06 Nov 2024 21:00:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 68.5422ms
+        duration: 106.670792ms
     - id: 12
       request:
         proto: HTTP/1.1
@@ -482,13 +534,17 @@ interactions:
         uncompressed: true
         body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"ACTIVE","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
+                - Wed, 06 Nov 2024 21:00:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 129.854471ms
+        duration: 226.218875ms
     - id: 13
       request:
         proto: HTTP/1.1
@@ -519,14 +575,102 @@ interactions:
         uncompressed: true
         body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"ACTIVE","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
+                - Wed, 06 Nov 2024 21:00:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 58.549389ms
+        duration: 102.651166ms
     - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=MFA_ENROLL
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p9ds39t0kLZtU7E1d7","status":"INACTIVE","name":"Test","description":"DS","priority":1,"system":false,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2023-08-08T22:35:52.000Z","lastUpdated":"2023-08-18T22:51:32.000Z","settings":{"type":"AUTHENTICATORS","authenticators":[{"key":"custom_otp","enroll":{"self":"NOT_ALLOWED"}},{"key":"okta_email","enroll":{"self":"OPTIONAL"}},{"key":"google_otp","enroll":{"self":"NOT_ALLOWED"}},{"key":"okta_verify","enroll":{"self":"OPTIONAL"}},{"key":"onprem_mfa","enroll":{"self":"OPTIONAL"}},{"key":"okta_password","enroll":{"self":"REQUIRED"}},{"key":"webauthn","enroll":{"self":"REQUIRED"},"constraints":{"aaguidGroups":["w is","ds"]}},{"key":"security_question","enroll":{"self":"OPTIONAL"}},{"key":"yubikey_token","enroll":{"self":"NOT_ALLOWED"}}]},"_links":{"mappings":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p9ds39t0kLZtU7E1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"},{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:16.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=MFA_ENROLL>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 116.099ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups?q=Everyone
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00g5qwjvgrD3WR89l1d7","created":"2022-10-07T23:16:57.000Z","lastUpdated":"2022-10-07T23:16:57.000Z","lastMembershipUpdated":"2024-11-06T16:04:40.000Z","objectClass":["okta:user_group"],"type":"BUILT_IN","profile":{"name":"Everyone","description":"All users in your organization"},"_links":{"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/users"},"apps":{"href":"https://oie-00.oktapreview.com/api/v1/groups/00g5qwjvgrD3WR89l1d7/apps"}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 118.943833ms
+    - id: 16
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -557,92 +701,102 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
+                - Wed, 06 Nov 2024 21:00:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 213.780302ms
-    - id: 15
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
-        status: 200 OK
-        code: 200
-        duration: 82.888407ms
-    - id: 16
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-        status: 200 OK
-        code: 200
-        duration: 60.527ms
+        duration: 298.862958ms
     - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 117.7095ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 117.334334ms
+    - id: 19
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -672,89 +826,17 @@ interactions:
         uncompressed: true
         body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"ACTIVE","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:48 GMT
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 63.650304ms
-    - id: 18
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/org/factors/okta_password
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
-        status: 200 OK
-        code: 200
-        duration: 76.278236ms
-    - id: 19
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-        status: 200 OK
-        code: 200
-        duration: 61.566059ms
+        duration: 95.650375ms
     - id: 20
       request:
         proto: HTTP/1.1
@@ -785,13 +867,17 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 59.881405ms
+        duration: 100.706125ms
     - id: 21
       request:
         proto: HTTP/1.1
@@ -810,7 +896,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/org/factors/google_otp
+        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -820,127 +906,20 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"ACTIVE","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 80.829006ms
+        duration: 117.651208ms
     - id: 22
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
-        status: 200 OK
-        code: 200
-        duration: 72.292203ms
-    - id: 23
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/org/factors/google_otp/lifecycle/deactivate
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"INACTIVE","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}}}}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:49 GMT
-        status: 200 OK
-        code: 200
-        duration: 204.767271ms
-    - id: 24
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
-        headers:
-            Content-Type:
-                - application/json
-            Date:
-                - Tue, 15 Aug 2023 23:45:50 GMT
-        status: 200 OK
-        code: 200
-        duration: 83.302578ms
-    - id: 25
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -970,13 +949,140 @@ interactions:
         uncompressed: true
         body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:50 GMT
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 76.368151ms
+        duration: 101.517833ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/factors/google_otp
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"ACTIVE","_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 106.809041ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"google_otp":{"enroll":{"self":"OPTIONAL"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 107.998667ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/factors/google_otp/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"google_otp","provider":"GOOGLE","factorType":"token:software:totp","status":"INACTIVE","_links":{"activate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/google_otp","hints":{"allow":["GET"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 126.096458ms
     - id: 26
       request:
         proto: HTTP/1.1
@@ -1005,18 +1111,102 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2023-08-15T23:45:48.000Z","settings":{"type":"FACTORS","factors":{"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:50 GMT
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+                - Wed, 06 Nov 2024 21:00:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 61.502825ms
+        duration: 114.279167ms
     - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/org/factors/okta_password
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"okta_password","provider":"OKTA","factorType":"password","status":"ACTIVE","_links":{"profiles":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/profiles","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password","hints":{"allow":["GET"]}},"deactivate":{"href":"https://oie-00.oktapreview.com/api/v1/org/factors/okta_password/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 101.5865ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00p61ie814HusCkTk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00p61ie814HusCkTk1d7","status":"ACTIVE","name":"Default Policy","description":"The default policy applies in all situations if no other policy applies.","priority":2,"system":true,"conditions":{"people":{"groups":{"include":["00g5qwjvgrD3WR89l1d7"]}}},"created":"2022-11-04T22:27:14.000Z","lastUpdated":"2024-11-06T21:00:17.000Z","settings":{"type":"FACTORS","factors":{"okta_push":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"rsa_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"yubikey_token":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"fido_webauthn":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"hotp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_otp":{"enroll":{"self":"NOT_ALLOWED"},"consent":{"type":"NONE"}},"okta_password":{"enroll":{"self":"REQUIRED"},"consent":{"type":"NONE"}}}},"_links":{"self":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.oktapreview.com/api/v1/policies/00p61ie814HusCkTk1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"MFA_ENROLL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 06 Nov 2024 21:00:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 101.165959ms
+    - id: 29
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1044,12 +1234,16 @@ interactions:
         trailer: {}
         content_length: -1
         uncompressed: false
-        body: '{"errorCode":"E0000020","errorSummary":"Bad request.","errorLink":"E0000020","errorId":"oae3JrMlUZRR0i0npdrDlNIiA","errorCauses":[]}'
+        body: '{"errorCode":"E0000020","errorSummary":"Bad request.","errorLink":"E0000020","errorId":"oaet9DfD4oTQ8-Gj-uvHi-Pqg","errorCauses":[]}'
         headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 15 Aug 2023 23:45:51 GMT
+                - Wed, 06 Nov 2024 21:00:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
         status: 400 Bad Request
         code: 400
-        duration: 66.758375ms
+        duration: 100.049458ms

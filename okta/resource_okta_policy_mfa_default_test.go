@@ -98,3 +98,39 @@ resource "okta_policy_mfa_default" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaDefaultMFAPolicyIssue2107(t *testing.T) {
+	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
+	config := mgr.GetFixtures("priority.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", policyMfaDefault)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "priority", "1"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "REQUIRED"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "priority", "2"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "OPTIONAL"),
+				),
+			},
+		},
+	})
+}
