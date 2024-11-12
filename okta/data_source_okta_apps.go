@@ -42,6 +42,18 @@ type OktaAppModel struct {
 	Features    types.List   `tfsdk:"features"`
 	AdminNote   types.String `tfsdk:"admin_note"`
 	EndUserNote types.String `tfsdk:"enduser_note"`
+	Visibility  types.Object `tfsdk:"visibility"`
+}
+
+type OktaAppVisibility struct {
+	AutoLaunch        types.Bool   `tfsdk:"auto_launch"`
+	AutoSubmitToolbar types.Bool   `tfsdk:"auto_submit_toolbar"`
+	Hide              types.Object `tfsdk:"hide"`
+}
+
+type OktaAppVisibilityHide struct {
+	IOS types.Bool `tfsdk:"ios"`
+	Web types.Bool `tfsdk:"web"`
 }
 
 type OktaApp interface {
@@ -53,6 +65,7 @@ type OktaApp interface {
 	GetStatus() string
 	GetSignOnMode() string
 	GetFeatures() []string
+	GetVisibility() okta.ApplicationVisibility
 }
 
 func (d *AppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -99,6 +112,18 @@ func (d *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"features":     types.ListType{ElemType: types.StringType},
 						"admin_note":   types.StringType,
 						"enduser_note": types.StringType,
+						"visibility": types.ObjectType{
+							AttrTypes: map[string]attr.Type{
+								"auto_launch":         types.BoolType,
+								"auto_submit_toolbar": types.BoolType,
+								"hide": types.ObjectType{
+									AttrTypes: map[string]attr.Type{
+										"ios": types.BoolType,
+										"web": types.BoolType,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -155,6 +180,35 @@ func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 
 		adminNotes, userNotes := getNotes(oktaApp)
 
+		hideValue := map[string]attr.Value{
+			"ios": types.BoolPointerValue(oktaApp.GetVisibility().Hide.IOS),
+			"web": types.BoolPointerValue(oktaApp.GetVisibility().Hide.Web),
+		}
+		hideTypes := map[string]attr.Type{
+			"ios": types.BoolType,
+			"web": types.BoolType,
+		}
+
+		hide, _ := types.ObjectValue(hideTypes, hideValue)
+
+		visibilityValue := map[string]attr.Value{
+			"hide":                hide,
+			"auto_launch":         types.BoolPointerValue(oktaApp.GetVisibility().AutoLaunch),
+			"auto_submit_toolbar": types.BoolPointerValue(oktaApp.GetVisibility().AutoSubmitToolbar),
+		}
+		visibilityTypes := map[string]attr.Type{
+			"hide": types.ObjectType{
+				AttrTypes: map[string]attr.Type{
+					"ios": types.BoolType,
+					"web": types.BoolType,
+				},
+			},
+			"auto_launch":         types.BoolType,
+			"auto_submit_toolbar": types.BoolType,
+		}
+
+		visibility, _ := types.ObjectValue(visibilityTypes, visibilityValue)
+
 		state.Apps = append(state.Apps, OktaAppModel{
 			ID:          types.StringValue(oktaApp.GetId()),
 			Created:     types.StringValue(oktaApp.GetCreated().Format(time.RFC3339)),
@@ -166,6 +220,7 @@ func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 			Features:    FeaturesList,
 			AdminNote:   types.StringValue(adminNotes),
 			EndUserNote: types.StringValue(userNotes),
+			Visibility:  visibility,
 		})
 	}
 
