@@ -21,6 +21,7 @@ const (
 	adminRoleCustomAssignments    = "okta_admin_role_custom_assignments"
 	adminRoleTargets              = "okta_admin_role_targets"
 	app                           = "okta_app"
+	apps                          = "okta_apps"
 	appAutoLogin                  = "okta_app_auto_login"
 	appBasicAuth                  = "okta_app_basic_auth"
 	appBookmark                   = "okta_app_bookmark"
