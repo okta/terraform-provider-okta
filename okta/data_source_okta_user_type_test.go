@@ -11,12 +11,13 @@ func TestAccDataSourceOktaUserType_read(t *testing.T) {
 	resourceName := fmt.Sprintf("data.%s.test", userType)
 	mgr := newFixtureManager("data-sources", userType, t.Name())
 	createUserType := mgr.GetFixtures("okta_user_type.tf", t)
-	config := mgr.GetFixtures("datasource.tf", t)
+	readNameConfig := mgr.GetFixtures("read_name.tf", t)
+	readIdConfig := mgr.GetFixtures("read_id.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: createUserType,
@@ -25,9 +26,15 @@ func TestAccDataSourceOktaUserType_read(t *testing.T) {
 				),
 			},
 			{
-				Config: config,
+				Config: readNameConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			{
+				Config: readIdConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(fmt.Sprintf("data.%s.test2", userType), "name"),
 				),
 			},
 		},

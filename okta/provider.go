@@ -373,7 +373,6 @@ func Provider() *schema.Provider {
 			userProfileMappingSource: dataSourceUserProfileMappingSource(),
 			users:                    dataSourceUsers(),
 			userSecurityQuestions:    dataSourceUserSecurityQuestions(),
-			userType:                 dataSourceUserType(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}

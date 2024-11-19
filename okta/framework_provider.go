@@ -251,6 +251,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 		NewDefaultSigninPageDataSource,
 		NewLogStreamDataSource,
 		NewAppsDataSource,
+		NewUserTypeDataSource,
 	}
 }
 
