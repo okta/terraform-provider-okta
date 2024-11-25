@@ -1,8 +1,27 @@
 # Changelog
 
-## 4.11.1 (Oct 18, 2024)
+## 4.12.0 (Nov 25, 2024)
+
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+* Add datasource okta_apps [#2136](https://github.com/okta/terraform-provider-okta/pull/2136). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Add datasource okta_device_assurance_policy [#2146](https://github.com/okta/terraform-provider-okta/pull/2146). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### IMPROVEMENT
+* Updated example for permissions for custom role resource doc[#2118](https://github.com/okta/terraform-provider-okta/pull/2118). Thanks, [@sinsync](https://github.com/sinsync)!
+* Allow okta_app_group_assignments to have 0 group. [#2117](https://github.com/okta/terraform-provider-okta/pull/2117). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Update example group related for resource_set resource doc [#2128](https://github.com/okta/terraform-provider-okta/pull/2128). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add support for getting okta_user_type by id [#2141](https://github.com/okta/terraform-provider-okta/pull/2141). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
 ### BUG FIXES
-* fix issue when group owner is empty [#2101](https://github.com/okta/terraform-provider-okta/pull/2043). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Fix issue defaults for grant_types on okta_app_oauth are not being picked up [#2122](https://github.com/okta/terraform-provider-okta/pull/2122). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix priority mismatch when adding new mfa policy, leading to update error [#2130](https://github.com/okta/terraform-provider-okta/pull/2130). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix network zone pagination [#2142](https://github.com/okta/terraform-provider-okta/pull/2142). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
+## 4.11.1 (Oct 18, 2024)
+
+### BUG FIXES
+* fix issue when group owner is empty [#2101](https://github.com/okta/terraform-provider-okta/pull/2101). Thanks, [@exitcode0](https://github.com/exitcode0)!
 
 
 ## 4.11.0 (Sep 16, 2024)
