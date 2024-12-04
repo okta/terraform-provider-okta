@@ -145,10 +145,12 @@ resource "okta_app_signon_policy_rule" "test" {
     jsonencode({
       "knowledge" : {
         "reauthenticateIn" : "PT2H",
-        "types" : ["password"]
+        "types" : ["password"],
+        "required" : false
       },
       "possession" : {
-        "deviceBound" : "REQUIRED"
+        "deviceBound" : "REQUIRED",
+        "required" : false
       }
     }),
     jsonencode({
@@ -156,7 +158,8 @@ resource "okta_app_signon_policy_rule" "test" {
         "deviceBound" : "REQUIRED",
         "hardwareProtection" : "REQUIRED",
         "userPresence" : "OPTIONAL",
-        "userVerification" : "OPTIONAL"
+        "userVerification" : "OPTIONAL",
+        "required" : false
       }
     })
   ]

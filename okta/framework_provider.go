@@ -2,12 +2,14 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -15,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -271,7 +274,8 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewPolicyDeviceAssuranceWindowsResource,
 		NewCustomizedSigninResource,
 		NewPreviewSigninResource,
-		GroupOwnerResource,
+		NewGroupOwnerResource,
+		NewAppSignOnPolicyResource,
 	}
 }
 
@@ -307,4 +311,81 @@ func resourceConfiguration(req resource.ConfigureRequest, resp *resource.Configu
 	}
 
 	return p
+}
+
+func frameworkResourceOIEOnlyFeatureError(name string) diag.Diagnostics {
+	return frameworkOIEOnlyFeatureError("resources", name)
+}
+
+func frameworkOIEOnlyFeatureError(kind, name string) diag.Diagnostics {
+	url := fmt.Sprintf("https://registry.terraform.io/providers/okta/okta/latest/docs/%s/%s", kind, string(name[5:]))
+	if kind == "resources" {
+		kind = "resource"
+	}
+	if kind == "data-sources" {
+		kind = "datasource"
+	}
+	var diags diag.Diagnostics
+	diags.AddError(fmt.Sprintf("%q is a %s for OIE Orgs only", name, kind), fmt.Sprintf(", see %s", url))
+	return diags
+}
+
+func frameworkIsClassicOrg(ctx context.Context, config *Config) bool {
+	return config.IsClassicOrg(ctx)
+}
+
+func frameworkFindDefaultAccessPolicy(ctx context.Context, config *Config) (okta.ListPolicies200ResponseInner, error) {
+	if frameworkIsClassicOrg(ctx, config) {
+		return okta.ListPolicies200ResponseInner{}, nil
+	}
+	policies, err := framworkFindSystemPolicyByType(ctx, config, "ACCESS_POLICY")
+	if err != nil {
+		return okta.ListPolicies200ResponseInner{}, fmt.Errorf("error finding default ACCESS_POLICY %+v", err)
+	}
+	if len(policies) != 1 {
+		return okta.ListPolicies200ResponseInner{}, errors.New("cannot find default ACCESS_POLICY policy")
+	}
+	return policies[0], nil
+}
+
+type OktaPolicy interface {
+	GetId() string
+	GetSystem() bool
+}
+
+func framworkFindSystemPolicyByType(ctx context.Context, config *Config, _type string) ([]okta.ListPolicies200ResponseInner, error) {
+	res := []okta.ListPolicies200ResponseInner{}
+	policies, _, err := config.oktaSDKClientV5.PolicyAPI.ListPolicies(ctx).Type_(_type).Execute()
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range policies {
+		policy := p.GetActualInstance().(OktaPolicy)
+		if policy.GetSystem() {
+			res = append(res, p)
+		}
+	}
+
+	return res, nil
+}
+
+func frameworkListApps(ctx context.Context, config *Config, filters *appFilters, limit int64) ([]okta.ListApplications200ResponseInner, error) {
+	req := config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Limit(int32(limit))
+	if filters != nil {
+		req = req.Filter(filters.Status)
+		req = req.Q(filters.getQ())
+	}
+	apps, resp, err := req.Execute()
+	if err != nil {
+		return nil, err
+	}
+	for resp.HasNextPage() {
+		var nextApps []okta.ListApplications200ResponseInner
+		resp, err = resp.Next(&nextApps)
+		if err != nil {
+			return nil, err
+		}
+		apps = append(apps, nextApps...)
+	}
+	return apps, nil
 }
