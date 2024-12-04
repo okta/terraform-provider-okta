@@ -313,7 +313,7 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
-		return diag.Errorf("failed to create app sign on policy rule: %v", err)
+		return diag.Errorf("failed to update app sign on policy rule: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
