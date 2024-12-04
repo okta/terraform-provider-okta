@@ -48,6 +48,7 @@ func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
 					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT1H"),
 					resource.TestCheckResourceAttr(resourceName, "risk_score", "LOW"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
 			{
