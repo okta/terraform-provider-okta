@@ -56,7 +56,6 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 	resp.Schema = schema.Schema{
 		Description: "Get a policy assurance from Okta.",
 		Attributes: map[string]schema.Attribute{
-			// TODU
 			"id": schema.StringAttribute{
 				Description: "ID of the user type to retrieve, conflicts with `name`.",
 				Optional:    true,

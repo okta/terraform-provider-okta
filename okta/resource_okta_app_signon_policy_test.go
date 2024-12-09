@@ -15,10 +15,10 @@ func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkPolicyDestroy(appSignOnPolicy),
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkPolicyDestroy(appSignOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -51,10 +51,10 @@ func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
 func TestAccResourceOktaAppSignOnPolicy_destroy(t *testing.T) {
 	mgr := newFixtureManager("resources", groupSchemaProperty, t.Name())
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkOktaGroupSchemasDestroy,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkOktaGroupSchemasDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(`
@@ -146,6 +146,12 @@ data "okta_app_signon_policy" "testB" {
 	app_id = okta_app_oauth.test2.id
 }
 `),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrPair("data.okta_app_signon_policy.testA", "id", "data.okta_app_signon_policy.testB", "id"),
+				),
+			},
+			{
+				RefreshState: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrPair("data.okta_app_signon_policy.testA", "id", "data.okta_app_signon_policy.testB", "id"),
 					resource.TestCheckResourceAttrPair("data.okta_policy.test", "id", "data.okta_app_signon_policy.testA", "id"),
