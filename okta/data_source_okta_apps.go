@@ -173,7 +173,10 @@ func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 
 	// Convert the list of applications to the Terraform schema.
 	for _, app := range applicationList {
-		oktaApp := app.GetActualInstance().(OktaApp)
+		oktaApp, ok := app.GetActualInstance().(OktaApp)
+		if !ok {
+			continue
+		}
 
 		FeaturesList, err := types.ListValueFrom(ctx, types.StringType, oktaApp.GetFeatures())
 		resp.Diagnostics.Append(err...)
