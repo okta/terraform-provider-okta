@@ -66,6 +66,7 @@ type OktaApp interface {
 	GetSignOnMode() string
 	GetFeatures() []string
 	GetVisibility() okta.ApplicationVisibility
+	GetLinks() okta.ApplicationLinks
 }
 
 func (d *AppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
