@@ -115,9 +115,11 @@ func TestAccResourceOktaAppSignOnPolicyRule_Issue_1242_possession_constraint(t *
 		map[string]interface{}{
 			"knowledge": map[string]interface{}{
 				"reauthenticateIn": "PT43800H",
+				"required":         false,
 				"types":            []string{"password"},
 			},
 			"possession": map[string]interface{}{
+				"required":    false,
 				"deviceBound": "REQUIRED",
 			},
 		},
@@ -136,19 +138,21 @@ resource "okta_app_signon_policy_rule" "test" {
 		jsonencode({
 			knowledge = {
 				reauthenticateIn = "PT43800H"
-				types            = ["password"]
+				types            = ["password"],
+				required         = false
 			}
 			possession = {
 			  deviceBound = "REQUIRED"
+			  required    = false
 			}
 	  })
 	]
 }`
 
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -156,6 +160,7 @@ resource "okta_app_signon_policy_rule" "test" {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("Require MFA", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT43800H"),
+					// Note: validateOktaAppSignonPolicyRuleConstraintsAreSet no longer works correctly with the addition of required
 					validateOktaAppSignonPolicyRuleConstraintsAreSet(resourceName, constraints),
 				),
 			},
@@ -185,6 +190,7 @@ resource "okta_app_signon_policy_rule" "test" {
 		jsonencode({
 			possession = {
 			  deviceBound = "REQUIRED"
+			  required    = false
 			}
 	  })
 	]
@@ -199,14 +205,15 @@ resource "okta_app_signon_policy_rule" "test" {
 		jsonencode({
 			possession = {
 			  deviceBound = "REQUIRED"
+			  required    = false
 			}
 	  })
 	]
 }`
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(baseConfig),

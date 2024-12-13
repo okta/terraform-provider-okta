@@ -92,9 +92,14 @@ resource "okta_app_signon_policy_rule" "some_rule" {
 - `description` (String) Description of the policy.
 - `name` (String) Name of the policy.
 
+### Optional
+
+- `catch_all` (Boolean) Default rules of the policy set to `DENY` or not. If `false`, it is set to `DENY`. **WARNING** setting this attribute to false change the OKTA default behavior. Use at your own risk. This is only apply during creation, so import or update will not work
+
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `default_rule_id` (String) Default rules id of the policy
+- `id` (String) Policy id
 
 ## Import
 

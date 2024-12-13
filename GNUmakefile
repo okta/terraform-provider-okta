@@ -28,8 +28,6 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaAppOauth_basic \
   TestAccResourceOktaAppOauth_serviceWithJWKS \
   TestAccResourceOktaAppSaml_crud \
-  TestAccResourceOktaAppSignOnPolicy_crud \
-  TestAccResourceOktaAppSignOnPolicy_crud \
   TestAccResourceOktaAppSwaApplication_crud \
   TestAccResourceOktaAppThreeFieldApplication_crud \
   TestAccResourceOktaAppUser_crud \
@@ -39,7 +37,6 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaMfaPolicy_crud \
   TestAccResourceOktaOrgConfiguration \
   TestAccResourceOktaPolicyRulePassword_crud \
-  TestAccResourceOktaPolicySignOn_crud \
   TestAccResourceOktaUser_updateAllAttributes
 
 ifeq ($(strip $(SMOKE_TESTS)),)

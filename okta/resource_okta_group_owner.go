@@ -14,7 +14,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
-func GroupOwnerResource() resource.Resource {
+func NewGroupOwnerResource() resource.Resource {
 	return &groupOwnerResource{}
 }
 
