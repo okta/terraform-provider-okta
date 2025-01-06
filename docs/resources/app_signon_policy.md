@@ -106,5 +106,5 @@ resource "okta_app_signon_policy_rule" "some_rule" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_signon_policy_rule.example <policy_id>
+terraform import okta_app_signon_policy.example <policy_id>
 ```
