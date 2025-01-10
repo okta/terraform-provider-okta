@@ -1,0 +1,728 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:26 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 827.838833ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:27 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 211.120083ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 26
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"recipients":"NO_USERS"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"NO_USERS","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 217.09175ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"NO_USERS","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.942792ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:28 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 209.947375ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:29 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 201.047625ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"NO_USERS","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 209.483958ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:30 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 205.380708ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:31 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 205.542125ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"NO_USERS","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 209.529333ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:31 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 204.005334ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 29
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"recipients":"ADMINS_ONLY"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"ADMINS_ONLY","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 214.825416ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"ADMINS_ONLY","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 223.335917ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:33 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.586583ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:34 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 204.095709ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"recipients":"ADMINS_ONLY","_links":{"template":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/templates/email/UserActivation/settings","hints":{"allow":["GET","PUT"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.833833ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bndj6aib7aQzEPT6y1d7","name":"oie-00","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":true,"emailDomainId":"OeDjl12acmIcI5J5B1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6aib7aQzEPT6y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjl12acmIcI5J5B1d7","hints":{"allow":["GET","PUT"]}}}},{"id":"bndj6db8gaBx3uAL41d7","name":"Elastic.co (External)","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"emailDomainId":"OeDjjwmc37W56NbwV1d7","defaultApp":{"appInstanceId":"0oaj6aib9keq33lPY1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.oktapreview.com/api/v1/brands/bndj6db8gaBx3uAL41d7","hints":{"allow":["GET","PUT","DELETE"]}},"emailDomain":{"href":"https://oie-00.oktapreview.com/api/v1/email-domains/OeDjjwmc37W56NbwV1d7","hints":{"allow":["GET","PUT"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 10 Jan 2025 06:05:35 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 207.300333ms
