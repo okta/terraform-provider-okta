@@ -140,17 +140,16 @@ func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.S
 	for _, res := range resources {
 		if res.Links != nil {
 			links := res.Links.(map[string]interface{})
-			var url string
-			for _, v := range links {
-				_, ok := v.(map[string]interface{})
-				if ok {
-					for _, link := range v.(map[string]interface{}) {
-						url = link.(string)
+			var urlStr string
+			if selfURL, ok := links["self"]; ok {
+				if _, ok := selfURL.(map[string]interface{}); ok {
+					for _, link := range selfURL.(map[string]interface{}) {
+						urlStr = link.(string)
 						break
 					}
 				}
 			}
-			arr = append(arr, url)
+			arr = append(arr, urlStr)
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
