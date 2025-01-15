@@ -276,6 +276,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 		NewPreviewSigninResource,
 		NewGroupOwnerResource,
 		NewAppSignOnPolicyResource,
+		NewEmailTemplateSettingsResource,
 	}
 }
 

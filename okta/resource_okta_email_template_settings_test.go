@@ -8,15 +8,16 @@ import (
 )
 
 func TestAccResourceOktaEmailTemplateSettings(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", emailTemplateSettings)
-	mgr := newFixtureManager("resources", emailTemplateSettings, t.Name())
+	_resource := "okta_email_template_settings"
+	resourceName := fmt.Sprintf("%s.test", _resource)
+	mgr := newFixtureManager("resources", _resource, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      nil,
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

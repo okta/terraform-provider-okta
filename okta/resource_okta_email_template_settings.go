@@ -3,102 +3,165 @@ package okta
 import (
 	"context"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
-func resourceEmailTemplateSettings() *schema.Resource {
-	return &schema.Resource{
-		CreateContext: resourceEmailTemplateSettingsPut,
-		ReadContext:   resourceEmailTemplateSettingsRead,
-		UpdateContext: resourceEmailTemplateSettingsPut,
-		DeleteContext: resourceFuncNoOp,
-		Importer:      createNestedResourceImporter([]string{"brand_id", "template_name"}),
-		Description: `Update settings for an email template belonging to a brand in an Okta organization.
-		Use this resource to get and set the [settings for an email template](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/CustomTemplates/#tag/CustomTemplates/operation/getEmailSettings) 
-        belonging to a brand in an Okta organization.`,
-		Schema: map[string]*schema.Schema{
-			"brand_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Brand ID",
+var (
+	_ resource.Resource                = &emailTemplateSettingsResource{}
+	_ resource.ResourceWithConfigure   = &emailTemplateSettingsResource{}
+	_ resource.ResourceWithImportState = &emailTemplateSettingsResource{}
+)
+
+func NewEmailTemplateSettingsResource() resource.Resource {
+	return &emailTemplateSettingsResource{}
+}
+
+type emailTemplateSettingsResource struct {
+	*Config
+}
+
+type emailTemplateSettingsResourceModel struct {
+	ID           types.String `tfsdk:"id"`
+	BrandID      types.String `tfsdk:"brand_id"`
+	TemplateName types.String `tfsdk:"template_name"`
+	Recipients   types.String `tfsdk:"recipients"`
+}
+
+func (r *emailTemplateSettingsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_email_template_settings"
+}
+
+func (r *emailTemplateSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: `Manages email template settings`,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The ID of the resource. This is a compound ID of the brand ID and the template name.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
-			"template_name": {
-				Type:        schema.TypeString,
+			"brand_id": schema.StringAttribute{
+				Description: "The ID of the brand.",
 				Required:    true,
+			},
+			"template_name": schema.StringAttribute{
 				Description: "Email template name - Example values: `AccountLockout`,`ADForgotPassword`,`ADForgotPasswordDenied`,`ADSelfServiceUnlock`,`ADUserActivation`,`AuthenticatorEnrolled`,`AuthenticatorReset`,`ChangeEmailConfirmation`,`EmailChallenge`,`EmailChangeConfirmation`,`EmailFactorVerification`,`ForgotPassword`,`ForgotPasswordDenied`,`IGAReviewerEndNotification`,`IGAReviewerNotification`,`IGAReviewerPendingNotification`,`IGAReviewerReassigned`,`LDAPForgotPassword`,`LDAPForgotPasswordDenied`,`LDAPSelfServiceUnlock`,`LDAPUserActivation`,`MyAccountChangeConfirmation`,`NewSignOnNotification`,`OktaVerifyActivation`,`PasswordChanged`,`PasswordResetByAdmin`,`PendingEmailChange`,`RegistrationActivation`,`RegistrationEmailVerification`,`SelfServiceUnlock`,`SelfServiceUnlockOnUnlockedAccount`,`UserActivation`",
-			},
-			"recipients": {
-				Type:        schema.TypeString,
 				Required:    true,
+			},
+			"recipients": schema.StringAttribute{
 				Description: "The recipients the emails of this template will be sent to - Valid values: `ALL_USERS`, `ADMINS_ONLY`, `NO_USERS`",
+				Required:    true,
 			},
 		},
 	}
 }
 
-func resourceEmailTemplateSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	ets, diagErr := etsValues("read", d)
-	if diagErr != nil {
-		return diagErr
-	}
-
-	emailTemplateSettings, resp, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetEmailSettings(ctx, ets.brandID, ets.templateName).Execute()
-	if err := v3suppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to get email template settings: %v", err)
-	}
-	if emailTemplateSettings == nil {
-		d.SetId("")
-		return nil
-	}
-
-	_ = d.Set("brand_id", ets.brandID)
-	_ = d.Set("template_name", ets.templateName)
-	_ = d.Set("recipients", emailTemplateSettings.GetRecipients())
-
-	return nil
+func (r *emailTemplateSettingsResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(req, resp)
 }
 
-func resourceEmailTemplateSettingsPut(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	ets, diagErr := etsValues("update", d)
-	if diagErr != nil {
-		return diagErr
+func (r *emailTemplateSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan emailTemplateSettingsResourceModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	es := okta.EmailSettings{}
-	if recipients, ok := d.GetOk("recipients"); ok {
-		es.Recipients = recipients.(string)
-	}
-
-	_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceEmailSettings(ctx, ets.brandID, ets.templateName).EmailSettings(es).Execute()
+	err := r.put(ctx, plan)
 	if err != nil {
-		return diag.Errorf("failed to update email template settings: %v", err)
+		resp.Diagnostics.AddError(
+			"failed to update email template settings",
+			err.Error(),
+		)
+		return
 	}
+	plan.ID = types.StringValue(formatId(plan.BrandID.ValueString(), plan.TemplateName.ValueString()))
 
-	d.SetId(fmt.Sprintf("%s/%s", ets.brandID, ets.templateName))
-	return resourceEmailTemplateSettingsRead(ctx, d, m)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
-type etsHelper struct {
-	brandID      string
-	templateName string
+func (r *emailTemplateSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state emailTemplateSettingsResourceModel
+	diags := req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	emailSettings, _, err := r.oktaSDKClientV3.CustomizationAPI.GetEmailSettings(ctx, state.BrandID.ValueString(), state.TemplateName.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read email template settings",
+			err.Error(),
+		)
+		return
+	}
+
+	state.Recipients = types.StringValue(emailSettings.Recipients)
+
+	diags = resp.State.Set(ctx, state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 }
 
-func etsValues(action string, d *schema.ResourceData) (*etsHelper, diag.Diagnostics) {
-	brandID, ok := d.GetOk("brand_id")
-	if !ok {
-		return nil, diag.Errorf("brand_id required to %s email template settings", action)
+func (r *emailTemplateSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	return
+}
+
+func (r *emailTemplateSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan emailTemplateSettingsResourceModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	templateName, ok := d.GetOk("template_name")
-	if !ok {
-		return nil, diag.Errorf("template name required to %s email template settings", action)
+	err := r.put(ctx, plan)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update email template settings",
+			err.Error(),
+		)
+		return
 	}
+	plan.ID = types.StringValue(formatId(plan.BrandID.ValueString(), plan.TemplateName.ValueString()))
 
-	return &etsHelper{
-		brandID:      brandID.(string),
-		templateName: templateName.(string),
-	}, nil
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+}
+
+func (r *emailTemplateSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+func (r *emailTemplateSettingsResource) put(ctx context.Context, plan emailTemplateSettingsResourceModel) error {
+	emailSettings := buildEmailSettings(plan)
+	_, err := r.oktaSDKClientV3.CustomizationAPI.ReplaceEmailSettings(ctx, plan.BrandID.ValueString(), plan.TemplateName.ValueString()).EmailSettings(emailSettings).Execute()
+	return err
+}
+
+func formatId(brandID string, templateName string) string {
+	return fmt.Sprintf("%s/%s", brandID, templateName)
+}
+
+func buildEmailSettings(model emailTemplateSettingsResourceModel) okta.EmailSettings {
+	emailSettings := okta.EmailSettings{}
+	emailSettings.SetRecipients(model.Recipients.ValueString())
+	return emailSettings
 }
