@@ -74,7 +74,7 @@ func resourceGroupRole() *schema.Resource {
 	"REPORT_ADMIN",
 	"SUPER_ADMIN",
 	"USER_ADMIN"
-	. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
+	. See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles).
 	- "USER_ADMIN" is the Group Administrator.`,
 				ForceNew: true,
 			},

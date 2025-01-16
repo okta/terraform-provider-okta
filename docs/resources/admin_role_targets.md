@@ -37,7 +37,7 @@ resource "okta_admin_role_targets" "example" {
 
 ### Required
 
-- `role_type` (String) Type of the role that is assigned to the user and supports optional targets. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types)
+- `role_type` (String) Type of the role that is assigned to the user and supports optional targets. See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles)
 - `user_id` (String) User associated with the role
 
 ### Optional

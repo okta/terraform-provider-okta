@@ -31,7 +31,7 @@ func resourceUserAdminRoles() *schema.Resource {
 			"admin_roles": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).",
+				Description: "The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles).",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},

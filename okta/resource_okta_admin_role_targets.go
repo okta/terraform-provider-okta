@@ -49,7 +49,7 @@ func resourceAdminRoleTargets() *schema.Resource {
 			"role_type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Type of the role that is assigned to the user and supports optional targets. See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types)",
+				Description: "Type of the role that is assigned to the user and supports optional targets. See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles)",
 				ForceNew:    true,
 			},
 			"role_id": {
