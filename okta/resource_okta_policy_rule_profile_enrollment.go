@@ -106,6 +106,12 @@ enrollment policy, it allows the default policy rule to be updated.`,
 				Description: "Enabled or disabled progressive profiling action rule conditions: `ENABLED` or `DISABLED`. Default: `DISABLED`",
 				Default:     "DISABLED",
 			},
+			"enroll_authenticator_types": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Enrolls authenticator types",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 		},
 	}
 }
@@ -181,6 +187,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 		}
 	}
 	_ = d.Set("profile_attributes", arr)
+	_ = d.Set("enroll_authenticator_types", convertStringSliceToSetNullable(rule.Actions.ProfileEnrollment.EnrollAuthenticatorTypes))
 	return nil
 }
 
@@ -271,6 +278,10 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *sch
 	}
 	if usi, ok := d.GetOk("ui_schema_id"); ok {
 		ruleAction.UiSchemaId = usi.(string)
+	}
+
+	if eat, ok := d.GetOk("enroll_authenticator_types"); ok {
+		ruleAction.EnrollAuthenticatorTypes = convertInterfaceToStringSetNullable(eat)
 	}
 
 	updateRule.Actions = sdk.SdkPolicyRuleActions{

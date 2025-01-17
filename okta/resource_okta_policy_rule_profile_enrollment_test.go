@@ -53,6 +53,8 @@ resource "okta_group" "test" {
 					resource.TestCheckResourceAttr(resourceName, "unknown_user_action", "REGISTER"),
 					resource.TestCheckResourceAttr(resourceName, "email_verification", "true"),
 					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "enroll_authenticator_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "enroll_authenticator_types.0", "password"),
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "profile_attributes.0.name", "email"),
 				),
