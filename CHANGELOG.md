@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.13.0 (Jan 17, 2025)
+### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
+* Add attribute to okta_app_signon_policy to create a 'Catch All' rule that's 'DENY' [#2153](https://github.com/okta/terraform-provider-okta/pull/2153). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Add resource for okta_email_template_settings [#2179](https://github.com/okta/terraform-provider-okta/pull/2179). Thanks, [@s-nel](https://github.com/s-nel)!
+
+### IMPROVEMENT
+* Updated client assertion with ID, avoid reuse[#2155](https://github.com/okta/terraform-provider-okta/pull/2155). Thanks, Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+### BUG FIXES
+* Fix issue os_expression does not show in okta_app_signon_policy_rule and okta_policy_rule_idp_discovery [#2154](https://github.com/okta/terraform-provider-okta/pull/2154). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix type conversion failed due to nil value [#2159](https://github.com/okta/terraform-provider-okta/pull/2159). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix issue of getting incorrect links for okta_resource_set [#2174](https://github.com/okta/terraform-provider-okta/pull/2174). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix issue of dangling okta_user_admin_roles due to user deletion [#2176](https://github.com/okta/terraform-provider-okta/pull/2176). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
 ## 4.12.0 (Nov 25, 2024)
 
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
