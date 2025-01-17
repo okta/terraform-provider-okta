@@ -3,6 +3,7 @@ package okta
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -68,6 +69,7 @@ func (r *emailTemplateSettingsResource) Configure(_ context.Context, req resourc
 	r.Config = resourceConfiguration(req, resp)
 }
 
+// Unable to true create because there must always be a template setting
 func (r *emailTemplateSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan emailTemplateSettingsResourceModel
 
@@ -118,8 +120,8 @@ func (r *emailTemplateSettingsResource) Read(ctx context.Context, req resource.R
 	}
 }
 
+// Noop for delete because there must always be a template setting
 func (r *emailTemplateSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	return
 }
 
 func (r *emailTemplateSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
