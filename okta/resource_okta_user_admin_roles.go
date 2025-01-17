@@ -31,7 +31,7 @@ func resourceUserAdminRoles() *schema.Resource {
 			"admin_roles": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).",
+				Description: "The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles).",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -59,10 +59,18 @@ func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := setAdminRoles(ctx, d, m)
+	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+
 	if err != nil {
-		return diag.Errorf("failed to set read user's roles: %v", err)
+		if err := suppressErrorOn404(resp, err); err == nil {
+			// The targetd_user or their roles have been deleted since our last Terraform run.
+			d.SetId("")
+			return nil
+		}
+		return diag.Errorf("failed to get user admin roles: %v", err)
 	}
+
+	_ = d.Set("admin_roles", schema.NewSet(schema.HashString, adminRoles))
 	return nil
 }
 
