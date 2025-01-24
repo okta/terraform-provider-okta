@@ -358,3 +358,41 @@ func TestAccResourceOktaAppSignOnPolicyRuleDefault(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSignOnPolicyRuleOsExpression(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
+	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("os_expression.tf", t)
+	updatedConfig := mgr.GetFixtures("os_expression_updated.tf", t)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test1"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.os_expression", ""),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.os_type", "OTHER"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.type", "DESKTOP"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test1"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.os_expression", ""),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.os_type", "IOS"),
+					resource.TestCheckResourceAttr(resourceName, "platform_include.0.type", "MOBILE"),
+				),
+			},
+		},
+	})
+}
