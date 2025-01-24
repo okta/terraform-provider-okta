@@ -461,10 +461,13 @@ func buildAccessPolicyPlatformInclude(d *schema.ResourceData) []*sdk.PlatformCon
 	valueList := v.(*schema.Set).List()
 	for _, item := range valueList {
 		if value, ok := item.(map[string]interface{}); ok {
-			var expr string
+			var expr *string
 			if typ := getMapString(value, "os_type"); typ == "OTHER" {
-				if v := getMapString(value, "os_expression"); v != "" {
-					expr = v
+				if v, ok := value["os_expression"]; ok {
+					if v != nil {
+						res := v.(string)
+						expr = &res
+					}
 				}
 			}
 			includeList = append(includeList, &sdk.PlatformConditionEvaluatorPlatform{
@@ -483,15 +486,18 @@ func flattenAccessPolicyPlatformInclude(platform *sdk.PlatformPolicyRuleConditio
 	var flattened []interface{}
 	if platform != nil && platform.Include != nil {
 		for _, v := range platform.Include {
-			var expr string
-			if v.Os.Expression != "" {
+			var expr *string
+			if v.Os.Expression != nil {
 				expr = v.Os.Expression
 			}
-			flattened = append(flattened, map[string]interface{}{
-				"os_expression": expr,
-				"os_type":       v.Os.Type,
-				"type":          v.Type,
-			})
+			m := map[string]interface{}{
+				"os_type": v.Os.Type,
+				"type":    v.Type,
+			}
+			if expr != nil {
+				m["os_expression"] = *expr
+			}
+			flattened = append(flattened, m)
 		}
 	}
 	return schema.NewSet(schema.HashResource(platformIncludeResource), flattened)
