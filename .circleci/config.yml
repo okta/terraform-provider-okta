@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  general-platform-helpers: okta/general-platform-helpers@1.9
+  platform-helpers: okta/platform-helpers@1.9
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
 
@@ -54,7 +54,7 @@ workflows:
   # See OKTA-634442
   semgrep:
     jobs:
-      - general-platform-helpers/job-semgrep-scan:
+      - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
           context:
             - static-analysis
