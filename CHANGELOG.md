@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.13.0 (Jan 24, 2025)
+
+### BUG FIXES
+* Fix issue os_expression does not distinguished between null and empty string [#2187](https://github.com/okta/terraform-provider-okta/pull/2187). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+* Fix force_new in catch_all in okta_app_signon_policy [#2188](https://github.com/okta/terraform-provider-okta/pull/2188). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
+
+
 ## 4.13.0 (Jan 17, 2025)
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:
 * Add attribute to okta_app_signon_policy to create a 'Catch All' rule that's 'DENY' [#2153](https://github.com/okta/terraform-provider-okta/pull/2153). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
