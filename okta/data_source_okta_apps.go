@@ -152,7 +152,7 @@ func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	filterValue := strings.Join(filters, " AND ")
 
 	// Read the list of applications from Okta.
-	apiRequest := d.config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue)
+	apiRequest := d.config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue).Limit(200)
 	applicationList, apiResp, err := apiRequest.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Read Okta Apps", fmt.Sprintf("Error retrieving apps: %s", err.Error()))
