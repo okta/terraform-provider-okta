@@ -312,7 +312,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Description: "Saml Inline Hook setting",
 			},
 			"acs_endpoints": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
@@ -521,6 +521,15 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.Errorf("failed to set Application Credential Key Values: %v", err)
 	}
 
+	// acsEndpoints
+	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 {
+		acsEndponts := make([]string, len(app.Settings.SignOn.AcsEndpoints))
+		for _, ae := range app.Settings.SignOn.AcsEndpoints {
+			acsEndponts[ae.Index] = ae.Url
+		}
+		_ = d.Set("acs_endpoints", acsEndponts)
+	}
+
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
@@ -547,7 +556,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	client := getOktaClientFromMetadata(m)
 	app, err := buildSamlApp(d)
 	if err != nil {
-		return diag.Errorf("failed to create SAML application: %v", err)
+		return diag.Errorf("failed to build SAML application: %v", err)
 	}
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
@@ -657,7 +666,7 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	}
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
-	acsEndpoints := convertInterfaceToStringSet(d.Get("acs_endpoints"))
+	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
 
 	// If there are acs endpoints, implies this flag should be true.
 	allowMultipleAcsEndpoints := false

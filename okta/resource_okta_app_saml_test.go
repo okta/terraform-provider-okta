@@ -484,3 +484,69 @@ resource "okta_app_saml" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSaml_Issue2171AcsEndpoints(t *testing.T) {
+	mgr := newFixtureManager("resources", appSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+	config := `
+resource "okta_app_saml" "test" {
+  acs_endpoints = [%s]
+
+  label                    = "testAcc_replace_with_uuid"
+  sso_url                  = "http://google.com"
+  recipient                = "http://here.com"
+  destination              = "http://its-about-the-journey.com"
+  audience                 = "http://audience.com"
+  subject_name_id_template = "$${source.login}"
+  subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+  response_signed          = true
+  assertion_signed         = true
+  signature_algorithm      = "RSA_SHA1"
+  digest_algorithm         = "SHA1"
+  honor_force_authn        = true
+  authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+}
+`
+	acsEndpoints1 := "\"https://example.com\",\"https://okta.com\""
+	acsEndpoints2 := "\"https://okta.com\",\"https://example.com\""
+	acsEndpoints3 := "\"https://okta.com\",\"https://middle.example.com\",\"https://example.com\""
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, acsEndpoints1)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://example.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://okta.com"),
+				),
+			},
+			{
+				// demonstrate flipping order is respected
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, acsEndpoints2)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://okta.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://example.com"),
+				),
+			},
+			{
+				// demonstrate inserting and order is respected
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, acsEndpoints3)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.0", "https://okta.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.1", "https://middle.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints.2", "https://example.com"),
+				),
+			},
+		},
+	})
+}

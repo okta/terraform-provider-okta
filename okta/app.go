@@ -369,7 +369,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 				for i := range acsEndpointsObj {
 					acsEndpoints[i] = acsEndpointsObj[i].Url
 				}
-				_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
+				_ = d.Set("acs_endpoints", acsEndpoints)
 			}
 		} else {
 			_ = d.Set("acs_endpoints", nil)
