@@ -42,8 +42,8 @@ func dataSourceAuthServerPolicy() *schema.Resource {
 	}
 }
 
-func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policies, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListAuthorizationServerPolicies(ctx, d.Get("auth_server_id").(string))
+func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policies, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServerPolicies(ctx, d.Get("auth_server_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to list auth server policies: %v", err)
 	}

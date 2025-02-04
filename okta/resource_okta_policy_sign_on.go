@@ -22,17 +22,17 @@ func resourcePolicySignOn() *schema.Resource {
 	}
 }
 
-func resourcePolicySignOnCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicySignOnCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildSignOnPolicy(d)
-	err := createPolicy(ctx, d, m, template)
+	err := createPolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to create sign-on policy: %v", err)
 	}
-	return resourcePolicySignOnRead(ctx, d, m)
+	return resourcePolicySignOnRead(ctx, d, meta)
 }
 
-func resourcePolicySignOnRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicySignOnRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get sign-on policy: %v", err)
 	}
@@ -46,17 +46,17 @@ func resourcePolicySignOnRead(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func resourcePolicySignOnUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicySignOnUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildSignOnPolicy(d)
-	err := updatePolicy(ctx, d, m, template)
+	err := updatePolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update sign-on policy: %v", err)
 	}
-	return resourcePolicySignOnRead(ctx, d, m)
+	return resourcePolicySignOnRead(ctx, d, meta)
 }
 
-func resourcePolicySignOnDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deletePolicy(ctx, d, m)
+func resourcePolicySignOnDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete sign-on policy: %v", err)
 	}

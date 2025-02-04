@@ -52,8 +52,8 @@ other arguments that changed will be applied.`,
 	}
 }
 
-func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBookmark(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
@@ -62,20 +62,20 @@ func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, m in
 		return diag.Errorf("failed to create bookmark application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
-	return resourceAppBookmarkRead(ctx, d, m)
+	return resourceAppBookmarkRead(ctx, d, meta)
 }
 
-func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewBookmarkApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get bookmark application: %v", err)
 	}
@@ -83,7 +83,7 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m inte
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, m, d, app.Links)
+	setAuthenticationPolicy(ctx, meta, d, app.Links)
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
@@ -91,8 +91,8 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -100,29 +100,29 @@ func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, m in
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBookmark(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update bookmark application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 		}
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
 	}
-	return resourceAppBookmarkRead(ctx, d, m)
+	return resourceAppBookmarkRead(ctx, d, meta)
 }
 
-func resourceAppBookmarkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppBookmarkDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete bookmark application: %v", err)
 	}

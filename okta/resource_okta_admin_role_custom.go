@@ -102,12 +102,12 @@ These operations allow the creation and manipulation of custom roles as custom c
 	}
 }
 
-func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cr, err := buildCustomAdminRole(d, true)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
-	role, _, err := getAPISupplementFromMetadata(m).CreateCustomRole(ctx, *cr)
+	role, _, err := getAPISupplementFromMetadata(meta).CreateCustomRole(ctx, *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
@@ -115,8 +115,8 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	role, resp, err := getAPISupplementFromMetadata(m).GetCustomRole(ctx, d.Id())
+func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	role, resp, err := getAPISupplementFromMetadata(meta).GetCustomRole(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find custom admin role: %v", err)
 	}
@@ -130,7 +130,7 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m 
 	}
 	_ = d.Set("label", role.Label)
 	_ = d.Set("description", role.Description)
-	perms, _, err := getAPISupplementFromMetadata(m).ListCustomRolePermissions(ctx, d.Id())
+	perms, _, err := getAPISupplementFromMetadata(meta).ListCustomRolePermissions(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to list permissions for custom admin role: %v", err)
 	}
@@ -138,8 +138,8 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getAPISupplementFromMetadata(m)
+func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		cr, _ := buildCustomAdminRole(d, false)
 		_, _, err := client.UpdateCustomRole(ctx, d.Id(), *cr)
@@ -168,8 +168,8 @@ func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceAdminRoleCustomDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getAPISupplementFromMetadata(m).DeleteCustomRole(ctx, d.Id())
+func resourceAdminRoleCustomDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	resp, err := getAPISupplementFromMetadata(meta).DeleteCustomRole(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role: %v", err)
 	}

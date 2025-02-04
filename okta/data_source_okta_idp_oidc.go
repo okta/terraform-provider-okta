@@ -113,7 +113,7 @@ func dataSourceIdpOidc() *schema.Resource {
 	}
 }
 
-func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -124,9 +124,9 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interf
 		oidc *sdk.IdentityProvider
 	)
 	if id != "" {
-		oidc, err = getIdentityProviderByID(ctx, m, id, oidcIdp)
+		oidc, err = getIdentityProviderByID(ctx, meta, id, oidcIdp)
 	} else {
-		oidc, err = getIdpByNameAndType(ctx, m, name, oidcIdp)
+		oidc, err = getIdpByNameAndType(ctx, meta, name, oidcIdp)
 	}
 	if err != nil {
 		return diag.FromErr(err)

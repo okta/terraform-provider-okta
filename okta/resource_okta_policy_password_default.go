@@ -15,8 +15,8 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 		UpdateContext: resourcePolicyPasswordDefaultUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				policy, err := setDefaultPolicy(ctx, d, m, sdk.PasswordPolicyType)
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				policy, err := setDefaultPolicy(ctx, d, meta, sdk.PasswordPolicyType)
 				if err != nil {
 					return nil, err
 				}
@@ -179,25 +179,25 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Id()
 	if id == "" {
-		policy, err := setDefaultPolicy(ctx, d, m, sdk.PasswordPolicyType)
+		policy, err := setDefaultPolicy(ctx, d, meta, sdk.PasswordPolicyType)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 		id = policy.Id
 		_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
 	}
-	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default password policy: %v", err)
 	}
-	return resourcePolicyPasswordDefaultRead(ctx, d, m)
+	return resourcePolicyPasswordDefaultRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get default password policy: %v", err)
 	}

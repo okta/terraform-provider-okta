@@ -39,15 +39,15 @@ access will be granted for eight hours. Removing this resource will revoke Okta 
 	}
 }
 
-func resourceOrgSupportCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	support, _, err := getOktaClientFromMetadata(m).OrgSetting.GrantOktaSupport(ctx)
+func resourceOrgSupportCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	support, _, err := getOktaClientFromMetadata(meta).OrgSetting.GrantOktaSupport(ctx)
 	if err != nil {
 		return diag.Errorf("failed to grant org support: %v", err)
 	}
 	eb, ok := d.GetOk("extend_by")
 	if ok && eb.(int) > 0 {
 		for i := 0; i < eb.(int); i++ {
-			support, _, err = getOktaClientFromMetadata(m).OrgSetting.ExtendOktaSupport(ctx)
+			support, _, err = getOktaClientFromMetadata(meta).OrgSetting.ExtendOktaSupport(ctx)
 			if err != nil {
 				return diag.Errorf("failed to extend org support: %v", err)
 			}
@@ -59,8 +59,8 @@ func resourceOrgSupportCreate(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func resourceOrgSupportRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	support, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgOktaSupportSettings(ctx)
+func resourceOrgSupportRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	support, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgOktaSupportSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org support settings: %v", err)
 	}
@@ -71,8 +71,8 @@ func resourceOrgSupportRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func resourceOrgSupportDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).OrgSetting.RevokeOktaSupport(ctx)
+func resourceOrgSupportDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getOktaClientFromMetadata(meta).OrgSetting.RevokeOktaSupport(ctx)
 	if err != nil {
 		return diag.Errorf("failed to revoke okta support: %v", err)
 	}

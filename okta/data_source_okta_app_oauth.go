@@ -158,20 +158,20 @@ func dataSourceAppOauth() *schema.Resource {
 	}
 }
 
-func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
 		return diag.Errorf("invalid OAuth app filters: %v", err)
 	}
 	var app *sdk.OpenIdConnectApplication
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
 		app = respApp.(*sdk.OpenIdConnectApplication)
 	} else {
-		re := getOktaClientFromMetadata(m).GetRequestExecutor()
+		re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
 		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
@@ -188,7 +188,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		if filters.Label != "" && appList[0].Label != filters.Label {
 			return diag.Errorf("no OAuth application found with the provided label: %s", filters.Label)
 		}
-		logger(m).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
+		logger(meta).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
 
@@ -212,7 +212,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 		_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
 		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
 
-		secret, err := getCurrentlyActiveClientSecret(ctx, m, app.Id)
+		secret, err := getCurrentlyActiveClientSecret(ctx, meta, app.Id)
 		if err != nil {
 			return diag.Errorf("failed to fetch OAuth client secret: %v", err)
 		}
@@ -252,8 +252,8 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, m inter
 }
 
 // getCurrentlyActiveClientSecret See: https://developer.okta.com/docs/reference/api/apps/#list-client-secrets
-func getCurrentlyActiveClientSecret(ctx context.Context, m interface{}, appId string) (string, error) {
-	secrets, _, err := getOktaClientFromMetadata(m).Application.ListClientSecretsForApplication(ctx, appId)
+func getCurrentlyActiveClientSecret(ctx context.Context, meta interface{}, appId string) (string, error) {
+	secrets, _, err := getOktaClientFromMetadata(meta).Application.ListClientSecretsForApplication(ctx, appId)
 	if err != nil {
 		return "", err
 	}

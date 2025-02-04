@@ -20,8 +20,8 @@ func resourceAppOAuthAPIScope() *schema.Resource {
 This resource allows you to grant or revoke API scopes for OAuth2 applications within your organization.
 Note: you have to create an application before using this resource.`,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Id(), nil)
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Id(), nil)
 				if err != nil {
 					return nil, err
 				}
@@ -64,18 +64,18 @@ Note: you have to create an application before using this resource.`,
 	}
 }
 
-func resourceAppOAuthAPIScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthAPIScopeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	scopes := convertInterfaceToStringSetNullable(d.Get("scopes"))
 	grantScopeList := getOAuthApiScopeList(scopes, d.Get("issuer").(string))
-	err := grantOAuthApiScopes(ctx, d, m, grantScopeList)
+	err := grantOAuthApiScopes(ctx, d, meta, grantScopeList)
 	if err != nil {
 		return diag.Errorf("failed to create application scope consent grant: %v", err)
 	}
-	return resourceAppOAuthAPIScopeRead(ctx, d, m)
+	return resourceAppOAuthAPIScopeRead(ctx, d, meta)
 }
 
-func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
 	}
@@ -93,20 +93,20 @@ func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceAppOAuthAPIScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopes, _, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+func resourceAppOAuthAPIScopeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
 	}
 
 	grantList, revokeList := getOAuthApiScopeUpdateLists(d, scopes)
 	grantScopeList := getOAuthApiScopeList(grantList, d.Get("issuer").(string))
-	err = grantOAuthApiScopes(ctx, d, m, grantScopeList)
+	err = grantOAuthApiScopes(ctx, d, meta, grantScopeList)
 	if err != nil {
 		return diag.Errorf("failed to create application scope consent grant: %v", err)
 	}
 
-	scopeMap, err := getOAuthApiScopeIdMap(ctx, d, m)
+	scopeMap, err := getOAuthApiScopeIdMap(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grant: %v", err)
 	}
@@ -115,16 +115,16 @@ func resourceAppOAuthAPIScopeUpdate(ctx context.Context, d *schema.ResourceData,
 	for _, scope := range revokeList {
 		revokeListIds = append(revokeListIds, scopeMap[scope])
 	}
-	err = revokeOAuthApiScope(ctx, d, m, revokeListIds)
+	err = revokeOAuthApiScope(ctx, d, meta, revokeListIds)
 	if err != nil {
 		return diag.Errorf("failed to revoke application scope consent grant: %v", err)
 	}
 
-	return resourceAppOAuthAPIScopeRead(ctx, d, m)
+	return resourceAppOAuthAPIScopeRead(ctx, d, meta)
 }
 
-func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scopeMap, err := getOAuthApiScopeIdMap(ctx, d, m)
+func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	scopeMap, err := getOAuthApiScopeIdMap(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grant: %v", err)
 	}
@@ -133,7 +133,7 @@ func resourceAppOAuthAPIScopeDelete(ctx context.Context, d *schema.ResourceData,
 	for _, scope := range scopes {
 		revokeListIds = append(revokeListIds, scopeMap[scope])
 	}
-	err = revokeOAuthApiScope(ctx, d, m, revokeListIds)
+	err = revokeOAuthApiScope(ctx, d, meta, revokeListIds)
 	if err != nil {
 		return diag.Errorf("failed to revoke application scope consent grant: %v", err)
 	}
@@ -160,9 +160,9 @@ func getOAuthApiScopeList(scopeIds []string, issuer string) []*sdk.OAuth2ScopeCo
 }
 
 // Fetches current granted application scopes and returns a map with names and IDs.
-func getOAuthApiScopeIdMap(ctx context.Context, d *schema.ResourceData, m interface{}) (map[string]string, error) {
+func getOAuthApiScopeIdMap(ctx context.Context, d *schema.ResourceData, meta interface{}) (map[string]string, error) {
 	result := make(map[string]string)
-	currentScopes, resp, err := getOktaClientFromMetadata(m).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+	currentScopes, resp, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get application scope consent grants: %v", err)
 	}
@@ -184,9 +184,9 @@ func setOAuthApiScopes(d *schema.ResourceData, to []*sdk.OAuth2ScopeConsentGrant
 }
 
 // Grant a list of scopes to an OAuth application. For convenience this function takes a list of OAuth2ScopeConsentGrant structs.
-func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, m interface{}, scopeGrants []*sdk.OAuth2ScopeConsentGrant) error {
+func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, meta interface{}, scopeGrants []*sdk.OAuth2ScopeConsentGrant) error {
 	for _, scopeGrant := range scopeGrants {
-		_, _, err := getOktaClientFromMetadata(m).Application.GrantConsentToScope(ctx, d.Get("app_id").(string), *scopeGrant)
+		_, _, err := getOktaClientFromMetadata(meta).Application.GrantConsentToScope(ctx, d.Get("app_id").(string), *scopeGrant)
 		if err != nil {
 			return fmt.Errorf("failed to grant application api scope: %v", err)
 		}
@@ -195,9 +195,9 @@ func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 // Revoke a list of scopes from an OAuth application. The scope ID is needed for a revoke.
-func revokeOAuthApiScope(ctx context.Context, d *schema.ResourceData, m interface{}, ids []string) error {
+func revokeOAuthApiScope(ctx context.Context, d *schema.ResourceData, meta interface{}, ids []string) error {
 	for _, id := range ids {
-		resp, err := getOktaClientFromMetadata(m).Application.RevokeScopeConsentGrant(ctx, d.Get("app_id").(string), id)
+		resp, err := getOktaClientFromMetadata(meta).Application.RevokeScopeConsentGrant(ctx, d.Get("app_id").(string), id)
 		if err := suppressErrorOn404(resp, err); err != nil {
 			return fmt.Errorf("failed to revoke application api scope: %v", err)
 		}

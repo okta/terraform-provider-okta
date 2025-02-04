@@ -36,8 +36,8 @@ func dataSourceUserSecurityQuestions() *schema.Resource {
 	}
 }
 
-func dataSourceUserSecurityQuestionsQuestionsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	sq, _, err := getOktaClientFromMetadata(m).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
+func dataSourceUserSecurityQuestionsQuestionsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	sq, _, err := getOktaClientFromMetadata(meta).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to list security questions for '%s' user: %v", d.Get("user_id").(string), err)
 	}

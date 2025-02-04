@@ -28,13 +28,13 @@ func dataSourceAppSignOnPolicy() *schema.Resource {
 	}
 }
 
-func dataSourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func dataSourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return datasourceOIEOnlyFeatureError(appSignOnPolicy)
 	}
 
 	app := sdk.NewApplication()
-	_, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), app, nil)
+	_, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, d.Get("app_id").(string), app, nil)
 	if err != nil {
 		return diag.Errorf("failed get app by ID: %v", err)
 	}
@@ -43,7 +43,7 @@ func dataSourceAppSignOnPolicyRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.Errorf("app does not support sign-on policy or this feature is not available")
 	}
 	policy := &sdk.Policy{}
-	_policy, _, err := getOktaClientFromMetadata(m).Policy.GetPolicy(ctx, path.Base(accessPolicy), policy, nil)
+	_policy, _, err := getOktaClientFromMetadata(meta).Policy.GetPolicy(ctx, path.Base(accessPolicy), policy, nil)
 	if err != nil {
 		return diag.Errorf("failed get policy by ID: %v", err)
 	}

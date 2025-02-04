@@ -71,8 +71,8 @@ Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 // Sometime Okta API does not update or create custom property on the first try, thus that require running
 // `terraform apply` several times. This simple retry resolves that issue. (If) After this issue will be resolved,
 // this retry logic will be demolished.
-func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating group custom schema property", "name", d.Get("index").(string))
+func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating group custom schema property", "name", d.Get("index").(string))
 	err := validateUserSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -82,7 +82,7 @@ func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		return diag.FromErr(err)
 	}
 	custom := buildCustomGroupSchema(d.Get("index").(string), groupCustomSchemaAttribute)
-	subSchema, err := alterCustomGroupSchema(ctx, m, d.Get("index").(string), custom, false)
+	subSchema, err := alterCustomGroupSchema(ctx, meta, d.Get("index").(string), custom, false)
 	if err != nil {
 		return diag.Errorf("failed to create or update group custom schema property %s: %v", d.Get("index").(string), err)
 	}
@@ -94,9 +94,9 @@ func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading group custom schema property", "name", d.Get("index").(string))
-	s, _, err := getOktaClientFromMetadata(m).GroupSchema.GetGroupSchema(ctx)
+func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("reading group custom schema property", "name", d.Get("index").(string))
+	s, _, err := getOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get group custom schema property: %v", err)
 	}
@@ -113,7 +113,7 @@ func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, schema *sdk.GroupSchema, isDeleteOperation bool) (*sdk.GroupSchemaAttribute, error) {
+func alterCustomGroupSchema(ctx context.Context, meta interface{}, index string, schema *sdk.GroupSchema, isDeleteOperation bool) (*sdk.GroupSchemaAttribute, error) {
 	var schemaAttribute *sdk.GroupSchemaAttribute
 
 	boc := newExponentialBackOffWithContext(ctx, 120*time.Second)
@@ -123,9 +123,9 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 		// juggle types on the fly.
 
 		retypeGroupSchemaPropertyEnums(schema)
-		updated, resp, err := getOktaClientFromMetadata(m).GroupSchema.UpdateGroupSchema(ctx, *schema)
+		updated, resp, err := getOktaClientFromMetadata(meta).GroupSchema.UpdateGroupSchema(ctx, *schema)
 		stringifyGroupSchemaPropertyEnums(schema)
-		if doNotRetry(m, err) {
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 
@@ -138,7 +138,7 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 			}
 			return backoff.Permanent(err)
 		}
-		s, _, err := getOktaClientFromMetadata(m).GroupSchema.GetGroupSchema(ctx)
+		s, _, err := getOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to get group custom schema property: %v", err))
 		}
@@ -151,14 +151,14 @@ func alterCustomGroupSchema(ctx context.Context, m interface{}, index string, sc
 		return errors.New("failed to apply changes after several retries")
 	}, boc)
 	if err != nil {
-		logger(m).Error("failed to apply changes after several retries", err)
+		logger(meta).Error("failed to apply changes after several retries", err)
 	}
 	return schemaAttribute, err
 }
 
-func resourceGroupSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupSchemaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := buildCustomGroupSchema(d.Id(), nil)
-	_, err := alterCustomGroupSchema(ctx, m, d.Get("index").(string), custom, true)
+	_, err := alterCustomGroupSchema(ctx, meta, d.Get("index").(string), custom, true)
 	if err != nil {
 		return diag.Errorf("failed to delete group schema property %s: %v", d.Get("index").(string), err)
 	}

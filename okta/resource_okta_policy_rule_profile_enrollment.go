@@ -122,43 +122,43 @@ enrollment policy, it allows the default policy rule to be updated.`,
 // create other rules. Instead, consider editing the default one to meet your
 // needs."
 // https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy
-func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	policy, _, err := getAPISupplementFromMetadata(m).GetPolicy(ctx, d.Get("policy_id").(string))
+	policy, _, err := getAPISupplementFromMetadata(meta).GetPolicy(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
 	}
 	if policy.Type != sdk.ProfileEnrollmentPolicyType {
 		return diag.Errorf("provided policy is not of type %s", sdk.ProfileEnrollmentPolicyType)
 	}
-	rules, _, err := getAPISupplementFromMetadata(m).ListPolicyRules(ctx, d.Get("policy_id").(string))
+	rules, _, err := getAPISupplementFromMetadata(meta).ListPolicyRules(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get list profile enrollment policy rules: %v", err)
 	}
 	if len(rules) == 0 {
 		return diag.Errorf("this policy should contain one default Catch-All rule, but it doesn't")
 	}
-	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, m, d, rules[0].Id)
+	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, meta, d, rules[0].Id)
 	if err != nil {
 		return diag.Errorf("failed to prepare update of existing profile enrollment policy rule: %v", err)
 	}
-	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, *updateRule)
+	rule, _, err := getAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update existing profile enrollment policy rule: %v", err)
 	}
 	d.SetId(rule.Id)
-	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, m)
+	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, meta)
 }
 
-func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	rule, resp, err := getAPISupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile enrollment policy rule: %v", err)
 	}
@@ -191,25 +191,25 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
-	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, m, d, d.Id())
+	updateRule, err := buildPolicyRuleProfileEnrollment(ctx, meta, d, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to prepare update profile enrollment policy rule: %v", err)
 	}
-	_, _, err = getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), *updateRule)
+	_, _, err = getAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}
-	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, m)
+	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, meta)
 }
 
 // You cannot delete a default rule in a policy
-func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyRuleProfileEnrollment)
 	}
 
@@ -218,8 +218,8 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 
 // buildPolicyRuleProfileEnrollment build profile enrollment policy rule from
 // copy of existing rule
-func buildPolicyRuleProfileEnrollment(ctx context.Context, m interface{}, d *schema.ResourceData, id string) (*sdk.SdkPolicyRule, error) {
-	rule, resp, err := getAPISupplementFromMetadata(m).GetPolicyRule(ctx, d.Get("policy_id").(string), id)
+func buildPolicyRuleProfileEnrollment(ctx context.Context, meta interface{}, d *schema.ResourceData, id string) (*sdk.SdkPolicyRule, error) {
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), id)
 	if err = suppressErrorOn404(resp, err); err != nil {
 		return nil, err
 	}

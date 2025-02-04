@@ -74,8 +74,8 @@ func dataSourceAuthServerClaims() *schema.Resource {
 	}
 }
 
-func dataSourceAuthServerClaimsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	claims, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListOAuth2Claims(ctx, d.Get("auth_server_id").(string))
+func dataSourceAuthServerClaimsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	claims, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListOAuth2Claims(ctx, d.Get("auth_server_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to list authorization server claims: %v", err)
 	}

@@ -36,10 +36,10 @@ func resourceUserGroupMemberships() *schema.Resource {
 	}
 }
 
-func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	err := addUserToGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
@@ -47,7 +47,7 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
 		ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
-		if doNotRetry(m, err) {
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 		if err != nil {
@@ -65,10 +65,10 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
@@ -77,15 +77,15 @@ func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	} else {
 		d.SetId("")
-		logger(m).Info("user (%s) did not have expected group memberships or did not exist", userId)
+		logger(meta).Info("user (%s) did not have expected group memberships or did not exist", userId)
 		return nil
 	}
 }
 
-func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := convertInterfaceToStringSetNullable(d.Get("groups"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	err := removeUserFromGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
@@ -93,9 +93,9 @@ func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 
 	old, new := d.GetChange("groups")
 	oldSet := old.(*schema.Set)

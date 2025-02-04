@@ -169,17 +169,17 @@ func resourcePolicyPassword() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPasswordPolicy(d)
-	err := createPolicy(ctx, d, m, template)
+	err := createPolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to create password policy: %v", err)
 	}
-	return resourcePolicyPasswordRead(ctx, d, m)
+	return resourcePolicyPasswordRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get password policy: %v", err)
 	}
@@ -267,17 +267,17 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func resourcePolicyPasswordUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPasswordPolicy(d)
-	err := updatePolicy(ctx, d, m, template)
+	err := updatePolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update password policy: %v", err)
 	}
-	return resourcePolicyPasswordRead(ctx, d, m)
+	return resourcePolicyPasswordRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deletePolicy(ctx, d, m)
+func resourcePolicyPasswordDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete password policy: %v", err)
 	}

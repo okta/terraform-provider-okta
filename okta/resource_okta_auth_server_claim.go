@@ -65,18 +65,18 @@ func resourceAuthServerClaim() *schema.Resource {
 	}
 }
 
-func resourceAuthServerClaimCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerClaimCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	claim := buildAuthServerClaim(d)
-	respClaim, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateOAuth2Claim(ctx, d.Get("auth_server_id").(string), claim)
+	respClaim, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.CreateOAuth2Claim(ctx, d.Get("auth_server_id").(string), claim)
 	if err != nil {
 		return diag.Errorf("failed to create auth server claim: %v", err)
 	}
 	d.SetId(respClaim.Id)
-	return resourceAuthServerClaimRead(ctx, d, m)
+	return resourceAuthServerClaimRead(ctx, d, meta)
 }
 
-func resourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	claim, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
+func resourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	claim, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server claim: %v", err)
 	}
@@ -97,22 +97,22 @@ func resourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceAuthServerClaimUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerClaimUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	claim := buildAuthServerClaim(d)
-	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), claim)
+	_, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), claim)
 	if err != nil {
 		return diag.Errorf("failed to update auth server claim: %v", err)
 	}
-	return resourceAuthServerClaimRead(ctx, d, m)
+	return resourceAuthServerClaimRead(ctx, d, meta)
 }
 
-func resourceAuthServerClaimDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerClaimDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// 'valueType' of 'SYSTEM' implies a default claim and cannot be deleted.
 	// System claims can be excluded from id tokens by changing the value of 'alwaysIncludeInToken'.
 	if d.Get("value_type").(string) == "SYSTEM" && d.Get("always_include_in_token").(bool) {
 		return nil
 	}
-	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
+	_, err := getOktaClientFromMetadata(meta).AuthorizationServer.DeleteOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete auth server claim: %v", err)
 	}

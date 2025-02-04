@@ -45,17 +45,17 @@ func resourcePolicyMfaRule() *schema.Resource {
 	}
 }
 
-func resourcePolicyMfaRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyMfaRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildMfaPolicyRule(d)
-	err := createRule(ctx, d, m, template, policyRulePassword)
+	err := createRule(ctx, d, meta, template, policyRulePassword)
 	if err != nil {
 		return diag.Errorf("failed to create MFA policy rule: %v", err)
 	}
-	return resourcePolicyMfaRuleRead(ctx, d, m)
+	return resourcePolicyMfaRuleRead(ctx, d, meta)
 }
 
-func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rule, err := getPolicyRule(ctx, d, m)
+func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get MFA policy rule: %v", err)
 	}
@@ -80,17 +80,17 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourcePolicyMfaRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyMfaRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildMfaPolicyRule(d)
-	err := updateRule(ctx, d, m, template)
+	err := updateRule(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update MFA policy rule: %v", err)
 	}
-	return resourcePolicyMfaRuleRead(ctx, d, m)
+	return resourcePolicyMfaRuleRead(ctx, d, meta)
 }
 
-func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteRule(ctx, d, m, false)
+func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, meta, false)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy rule: %v", err)
 	}

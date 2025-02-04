@@ -28,11 +28,11 @@ func resourceDomainVerification() *schema.Resource {
 	}
 }
 
-func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
-		domain, _, err := getOktaClientFromMetadata(m).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
-		if doNotRetry(m, err) {
+		domain, _, err := getOktaClientFromMetadata(meta).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 		if err != nil {

@@ -52,11 +52,11 @@ func dataSourceGroupRule() *schema.Resource {
 	}
 }
 
-func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var rule *sdk.GroupRule
 	ruleID, idOk := d.GetOk("id")
 	if idOk {
-		respRule, _, err := getOktaClientFromMetadata(m).Group.GetGroupRule(ctx, ruleID.(string), nil)
+		respRule, _, err := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, ruleID.(string), nil)
 		if err != nil {
 			return diag.Errorf("failed get group rule by ID: %v", err)
 		}
@@ -66,7 +66,7 @@ func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m inte
 		if nameOk {
 			name := ruleName.(string)
 			searchParams := &query.Params{Search: name, Limit: 1}
-			rules, _, err := getOktaClientFromMetadata(m).Group.ListGroupRules(ctx, searchParams)
+			rules, _, err := getOktaClientFromMetadata(meta).Group.ListGroupRules(ctx, searchParams)
 			switch {
 			case err != nil:
 				return diag.Errorf("failed to get group rule by name: %v", err)

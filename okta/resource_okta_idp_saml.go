@@ -119,25 +119,25 @@ func resourceIdpSaml() *schema.Resource {
 	}
 }
 
-func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp, err := buildIdPSaml(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
+	respIdp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create SAML identity provider: %v", err)
 	}
 	d.SetId(respIdp.Id)
-	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change SAML identity provider's status: %v", err)
 	}
-	return resourceIdpSamlRead(ctx, d, m)
+	return resourceIdpSamlRead(ctx, d, meta)
 }
 
-func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, d.Id())
+func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	idp, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider: %v", err)
 	}
@@ -179,8 +179,8 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if idp.Status != "" {
 		_ = d.Set("status", idp.Status)
 	}
-	mapping, resp, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
-	if err := suppressErrorOn401("resource okta_idp_saml.user_type_id", m, resp, err); err != nil {
+	mapping, resp, err := getProfileMappingBySourceID(ctx, idp.Id, "", meta)
+	if err := suppressErrorOn401("resource okta_idp_saml.user_type_id", meta, resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider profile mapping: %v", err)
 	}
 	if mapping != nil {
@@ -202,20 +202,20 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp, err := buildIdPSaml(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	_, _, err = getOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider: %v", err)
 	}
-	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider's status: %v", err)
 	}
-	return resourceIdpSamlRead(ctx, d, m)
+	return resourceIdpSamlRead(ctx, d, meta)
 }
 
 func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {

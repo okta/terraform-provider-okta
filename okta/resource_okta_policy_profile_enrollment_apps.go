@@ -47,18 +47,18 @@ This resource allows you to manage the apps in the Profile Enrollment Policy.
 	}
 }
 
-func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
-	err := setDefaultProfileEnrollmentPolicyID(ctx, d, m)
+	err := setDefaultProfileEnrollmentPolicyID(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	policyID := d.Get("policy_id").(string)
 	apps := convertInterfaceToStringSetNullable(d.Get("apps"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 
 	for i := range apps {
 		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], policyID)
@@ -70,16 +70,16 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 	return nil
 }
 
-func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
-	err := setDefaultProfileEnrollmentPolicyID(ctx, d, m)
+	err := setDefaultProfileEnrollmentPolicyID(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	apps, err := listPolicyEnrollmentAppIDs(ctx, getAPISupplementFromMetadata(m), d.Id())
+	apps, err := listPolicyEnrollmentAppIDs(ctx, getAPISupplementFromMetadata(meta), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of enrollment policy apps: %v", err)
 	}
@@ -88,8 +88,8 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
@@ -99,7 +99,7 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 	appsToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	appsToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	policyID := d.Get("policy_id").(string)
 
 	for i := range appsToAdd {
@@ -121,14 +121,14 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 	return nil
 }
 
-func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollmentApps)
 	}
 
 	defaultPolicyID := d.Get("default_policy_id").(string)
 	apps := convertInterfaceToStringSetNullable(d.Get("apps"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 
 	for i := range apps {
 		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], defaultPolicyID)
@@ -162,8 +162,8 @@ func listPolicyEnrollmentAppIDs(ctx context.Context, client *sdk.APISupplement, 
 	return appIDs, nil
 }
 
-func setDefaultProfileEnrollmentPolicyID(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	policies, err := findSystemPolicyByType(ctx, m, sdk.ProfileEnrollmentPolicyType)
+func setDefaultProfileEnrollmentPolicyID(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	policies, err := findSystemPolicyByType(ctx, meta, sdk.ProfileEnrollmentPolicyType)
 	if err != nil {
 		return err
 	}

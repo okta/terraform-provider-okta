@@ -420,7 +420,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 	}
 }
 
-func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateAppSaml(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -431,17 +431,17 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err = getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	_, _, err = getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
 	// Make sure to track in terraform prior to the creation of cert in case there is an error.
 	d.SetId(app.Id)
-	err = tryCreateCertificate(ctx, d, m, app.Id)
+	err = tryCreateCertificate(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 	}
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SAML application: %v", err)
 	}
@@ -449,17 +449,17 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// New applications (other than Office365, Radius, and MFA) are assigned to the default Policy.
 	// TODO: determine how to inspect app for MFA status
 	if app.Name != "office365" && app.Name != "radius" {
-		err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 		if err != nil {
 			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
 		}
 	}
-	return resourceAppSamlRead(ctx, d, m)
+	return resourceAppSamlRead(ctx, d, meta)
 }
 
-func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewSamlApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get SAML application: %v", err)
 	}
@@ -467,7 +467,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, m, d, app.Links)
+	setAuthenticationPolicy(ctx, meta, d, app.Links)
 	if app.Settings != nil {
 		if app.Settings.SignOn != nil {
 			err = setSamlSettings(d, app.Settings.SignOn)
@@ -497,7 +497,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if app.Credentials.Signing.Kid != "" && app.Status != statusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
-		keyMetadata, metadataRoot, err := getAPISupplementFromMetadata(m).GetSAMLMetadata(ctx, d.Id(), keyID)
+		keyMetadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, d.Id(), keyID)
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
@@ -512,7 +512,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
 
-	keys, err := fetchAppKeys(ctx, m, app.Id)
+	keys, err := fetchAppKeys(ctx, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to load existing keys for SAML application: %f", err)
 	}
@@ -539,13 +539,13 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateAppSaml(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -553,7 +553,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to build SAML application: %v", err)
@@ -563,28 +563,28 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("failed to update SAML application: %v", err)
 	}
 	if d.HasChange("key_name") {
-		err = tryCreateCertificate(ctx, d, m, app.Id)
+		err = tryCreateCertificate(ctx, d, meta, app.Id)
 		if err != nil {
 			return diag.Errorf("failed to create new certificate for SAML application: %v", err)
 		}
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
 		}
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
 	}
-	return resourceAppSamlRead(ctx, d, m)
+	return resourceAppSamlRead(ctx, d, meta)
 }
 
-func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete SAML application: %v", err)
 	}
@@ -715,8 +715,8 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 }
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
-func generateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) (*sdk.JsonWebKey, error) {
-	requestExecutor := getRequestExecutor(m)
+func generateCertificate(ctx context.Context, d *schema.ResourceData, meta interface{}, appID string) (*sdk.JsonWebKey, error) {
+	requestExecutor := getRequestExecutor(meta)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
 	req, err := requestExecutor.NewRequest("POST", url, nil)
@@ -729,16 +729,16 @@ func generateCertificate(ctx context.Context, d *schema.ResourceData, m interfac
 	return key, err
 }
 
-func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, m interface{}, appID string) error {
+func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, meta interface{}, appID string) error {
 	if _, ok := d.GetOk("key_name"); ok {
-		key, err := generateCertificate(ctx, d, m, appID)
+		key, err := generateCertificate(ctx, d, meta, appID)
 		if err != nil {
 			return err
 		}
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
-		client := getOktaClientFromMetadata(m)
+		client := getOktaClientFromMetadata(meta)
 		app, err := buildSamlApp(d)
 		if err != nil {
 			return err

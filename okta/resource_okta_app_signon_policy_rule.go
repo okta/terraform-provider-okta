@@ -203,33 +203,33 @@ The only difference is that these fields are immutable and can not be managed: '
 	}
 }
 
-func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	rule, _, err := getAPISupplementFromMetadata(m).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
 	d.SetId(rule.Id)
 	if status, ok := d.GetOk("status"); ok {
 		if status.(string) == statusInactive {
-			_, err = getAPISupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 			if err != nil {
 				return diag.Errorf("failed to deactivate app sign on policy rule: %v", err)
 			}
 		}
 	}
-	return resourceAppSignOnPolicyRuleRead(ctx, d, m)
+	return resourceAppSignOnPolicyRuleRead(ctx, d, meta)
 }
 
-func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
-	rule, resp, err := getAPISupplementFromMetadata(m).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get app sign on policy rule: %v", err)
 	}
@@ -301,8 +301,8 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -311,26 +311,26 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		// Conditions can't be set on the default/system rule
 		rule.Conditions = nil
 	}
-	_, _, err := getAPISupplementFromMetadata(m).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
 		return diag.Errorf("failed to update app sign on policy rule: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, err = getAPISupplementFromMetadata(m).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		} else {
-			_, err = getAPISupplementFromMetadata(m).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change app sign on policy rule status: %v", err)
 		}
 	}
-	return resourceAppSignOnPolicyRuleRead(ctx, d, m)
+	return resourceAppSignOnPolicyRuleRead(ctx, d, meta)
 }
 
-func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(appSignOnPolicyRule)
 	}
 
@@ -338,7 +338,7 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 		// You cannot delete a default rule in a policy
 		return nil
 	}
-	_, err := getAPISupplementFromMetadata(m).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	_, err := getAPISupplementFromMetadata(meta).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete app sign-on policy rule: %v", err)
 	}

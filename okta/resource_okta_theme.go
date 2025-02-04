@@ -25,7 +25,7 @@ func resourceTheme() *schema.Resource {
 	}
 }
 
-func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	bid, ok := d.GetOk("brand_id")
 	if !ok {
 		return diag.Errorf("brand_id required to create theme")
@@ -45,7 +45,7 @@ func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.Errorf("theme_id required to create theme")
 	}
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
@@ -60,8 +60,8 @@ func resourceThemeCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading theme", "id", d.Id())
+func resourceThemeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("reading theme", "id", d.Id())
 
 	bid, ok := d.GetOk("brand_id")
 	if !ok {
@@ -69,7 +69,7 @@ func resourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{
 	}
 	brandID := bid.(string)
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, d.Id()).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get theme: %v", err)
 	}
@@ -83,8 +83,8 @@ func resourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{
 	return nil
 }
 
-func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating theme", "id", d.Id())
+func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("updating theme", "id", d.Id())
 
 	bid, ok := d.GetOk("brand_id")
 	if !ok {
@@ -95,19 +95,19 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	// peform delete/upload on the logo/favicon/background_image first so any
 	// errors there will interrupt apply on the theme itself
 	if d.HasChange("logo") {
-		err := handleThemeLogo(ctx, d, m, brandID, d.Id())
+		err := handleThemeLogo(ctx, d, meta, brandID, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to handle logo for theme: %v", err)
 		}
 	}
 	if d.HasChange("favicon") {
-		err := handleThemeFavicon(ctx, d, m, brandID, d.Id())
+		err := handleThemeFavicon(ctx, d, meta, brandID, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to handle favicon for theme: %v", err)
 		}
 	}
 	if d.HasChange("background_image") {
-		err := handleThemeBackgroundImage(ctx, d, m, brandID, d.Id())
+		err := handleThemeBackgroundImage(ctx, d, meta, brandID, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to handle background_image for theme: %v", err)
 		}
@@ -151,7 +151,7 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 		theme.EmailTemplateTouchPointVariant = &ettpv
 	}
 
-	themeResp, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()
+	themeResp, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ReplaceBrandTheme(ctx, brandID, d.Id()).Theme(theme).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update theme: %v", err)
 	}
@@ -165,13 +165,13 @@ func resourceThemeUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceThemeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceThemeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// fake delete
 	d.SetId("")
 	return nil
 }
 
-func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid resource import specifier, expecting the following format: <brand_id>/<theme_id>")
@@ -179,7 +179,7 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 	brandID := parts[0]
 	themeID := parts[1]
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get theme: %v", err)
 	}
@@ -194,10 +194,10 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 	return []*schema.ResourceData{d}, nil
 }
 
-func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
+func handleThemeLogo(ctx context.Context, d *schema.ResourceData, meta interface{}, brandID, themeID string) error {
 	newPath := d.Get("logo")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -205,14 +205,14 @@ func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{},
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeLogo(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.UploadBrandThemeLogo(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
-func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
+func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, meta interface{}, brandID, themeID string) error {
 	newPath := d.Get("favicon")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -220,14 +220,14 @@ func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeFavicon(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.UploadBrandThemeFavicon(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }
 
-func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
+func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, meta interface{}, brandID, themeID string) error {
 	newPath := d.Get("background_image")
 	if newPath == "" {
-		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
+		_, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
 		return err
 	}
 	fo, err := os.Open(newPath.(string))
@@ -235,6 +235,6 @@ func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m i
 		return err
 	}
 	defer fo.Close()
-	_, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.UploadBrandThemeBackgroundImage(ctx, brandID, themeID).File(fo).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.UploadBrandThemeBackgroundImage(ctx, brandID, themeID).File(fo).Execute()
 	return err
 }

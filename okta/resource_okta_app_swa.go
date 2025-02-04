@@ -75,8 +75,8 @@ other arguments that changed will be applied.`,
 	}
 }
 
-func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSwa(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
@@ -85,16 +85,16 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diag.Errorf("failed to create SWA application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA application: %v", err)
 	}
-	return resourceAppSwaRead(ctx, d, m)
+	return resourceAppSwaRead(ctx, d, meta)
 }
 
-func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewSwaApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get SWA application: %v", err)
 	}
@@ -118,8 +118,8 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -127,25 +127,25 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSwa(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update SWA application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for SWA application: %v", err)
 		}
 	}
-	return resourceAppSwaRead(ctx, d, m)
+	return resourceAppSwaRead(ctx, d, meta)
 }
 
-func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete SWA application: %v", err)
 	}

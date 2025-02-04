@@ -46,10 +46,10 @@ func resourceUserAdminRoles() *schema.Resource {
 	}
 }
 
-func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	roles := convertInterfaceToStringSetNullable(d.Get("admin_roles"))
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	err := assignAdminRolesToUser(ctx, userId, roles, d.Get("disable_notifications").(bool), client)
 	if err != nil {
 		return diag.FromErr(err)
@@ -58,8 +58,8 @@ func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
+func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(meta))
 
 	if err != nil {
 		if err := suppressErrorOn404(resp, err); err == nil {
@@ -74,9 +74,9 @@ func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	if !d.HasChange("admin_roles") && d.HasChange("disable_notifications") {
 		roles := convertInterfaceToStringSet(d.Get("admin_roles"))
 		// we just need to update an existing role assignment status by passing just the query parameter.
@@ -109,9 +109,9 @@ func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userID := d.Get("user_id").(string)
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	roles, _, err := listUserOnlyRoles(ctx, client, userID)
 	if err != nil {
 		return diag.Errorf("failed to list user's roles: %v", err)

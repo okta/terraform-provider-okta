@@ -60,9 +60,9 @@ func resourceUser() *schema.Resource {
 		UpdateContext: resourceUserUpdate,
 		DeleteContext: resourceUserDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				user, _, err := getOktaClientFromMetadata(m).User.GetUser(ctx, d.Id())
+				user, _, err := getOktaClientFromMetadata(meta).User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -393,8 +393,8 @@ func resourceUser() *schema.Resource {
 	}
 }
 
-func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating user", "login", d.Get("login").(string))
+func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating user", "login", d.Get("login").(string))
 	profile := populateUserProfile(d)
 	qp := query.NewQueryParams()
 
@@ -430,7 +430,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		Profile:     profile,
 		Credentials: uc,
 	}
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	user, _, err := client.User.CreateUser(ctx, userBody, qp)
 	if err != nil {
 		return diag.Errorf("failed to create user: %v", err)
@@ -440,7 +440,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	// status changing can only happen after user is created as well
 	if d.Get("status").(string) == userStatusSuspended || d.Get("status").(string) == userStatusDeprovisioned {
-		err := updateUserStatus(m, ctx, user.Id, d.Get("status").(string), client)
+		err := updateUserStatus(meta, ctx, user.Id, d.Get("status").(string), client)
 		if err != nil {
 			return diag.Errorf("failed to update user status: %v", err)
 		}
@@ -448,22 +448,22 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	expire, ok := d.GetOk("expire_password_on_create")
 	if ok && expire.(bool) {
-		_, _, err = getOktaClientFromMetadata(m).User.ExpirePassword(ctx, user.Id)
+		_, _, err = getOktaClientFromMetadata(meta).User.ExpirePassword(ctx, user.Id)
 		if err != nil {
 			return diag.Errorf("failed to expire user's password: %v", err)
 		}
 	}
 
-	return resourceUserRead(ctx, d, m)
+	return resourceUserRead(ctx, d, meta)
 }
 
-func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceUserReadFilterCustomAttributes(ctx, d, m, []string{})
+func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return resourceUserReadFilterCustomAttributes(ctx, d, meta, []string{})
 }
 
-func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.ResourceData, m interface{}, filteredCustomAttributes []string) diag.Diagnostics {
-	logger(m).Info("reading user", "id", d.Id())
-	client := getOktaClientFromMetadata(m)
+func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.ResourceData, meta interface{}, filteredCustomAttributes []string) diag.Diagnostics {
+	logger(meta).Info("reading user", "id", d.Id())
+	client := getOktaClientFromMetadata(meta)
 	user, resp, err := client.User.GetUser(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user: %v", err)
@@ -482,8 +482,8 @@ func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.Resou
 	return nil
 }
 
-func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating user", "id", d.Id())
+func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("updating user", "id", d.Id())
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
@@ -499,7 +499,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	recoveryQuestionChange := d.HasChange("recovery_question")
 	recoveryAnswerChange := d.HasChange("recovery_answer")
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	if passwordChange {
 		user, _, err := client.User.GetUser(ctx, d.Id())
 		if err != nil {
@@ -514,7 +514,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	// run the update status func first so a user that was previously deprovisioned
 	// can be updated further if it's status changed in it's terraform configs
 	if statusChange {
-		err := updateUserStatus(m, ctx, d.Id(), status, client)
+		err := updateUserStatus(meta, ctx, d.Id(), status, client)
 		if err != nil {
 			return diag.Errorf("failed to update user status: %v", err)
 		}
@@ -609,12 +609,12 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 
 	filteredCustomAttributes := convertInterfaceToStringSet(d.Get("custom_profile_attributes_to_ignore"))
 
-	return resourceUserReadFilterCustomAttributes(ctx, d, m, filteredCustomAttributes)
+	return resourceUserReadFilterCustomAttributes(ctx, d, meta, filteredCustomAttributes)
 }
 
-func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("deleting user", "id", d.Id())
-	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(m))
+func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("deleting user", "id", d.Id())
+	err := ensureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(meta))
 	if err != nil {
 		return diag.FromErr(err)
 	}

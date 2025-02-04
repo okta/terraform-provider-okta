@@ -154,21 +154,21 @@ func resourcePolicySignOnRule() *schema.Resource {
 	}
 }
 
-func resourcePolicySignOnRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicySignOnRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateSignOnPolicyRule(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	template := buildSignOnPolicyRule(d)
-	err = createRule(ctx, d, m, template, policyRuleSignOn)
+	err = createRule(ctx, d, meta, template, policyRuleSignOn)
 	if err != nil {
 		return diag.Errorf("failed to create sign-on policy rule: %v", err)
 	}
-	return resourcePolicySignOnRuleRead(ctx, d, m)
+	return resourcePolicySignOnRuleRead(ctx, d, meta)
 }
 
-func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rule, err := getPolicyRule(ctx, d, m)
+func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get sign-on policy rule: %v", err)
 	}
@@ -246,21 +246,21 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourcePolicySignOnRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicySignOnRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateSignOnPolicyRule(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	template := buildSignOnPolicyRule(d)
-	err = updateRule(ctx, d, m, template)
+	err = updateRule(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update sign-on policy rule: %v", err)
 	}
-	return resourcePolicySignOnRuleRead(ctx, d, m)
+	return resourcePolicySignOnRuleRead(ctx, d, meta)
 }
 
-func resourcePolicySignOnRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteRule(ctx, d, m, true)
+func resourcePolicySignOnRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, meta, true)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy rule: %v", err)
 	}

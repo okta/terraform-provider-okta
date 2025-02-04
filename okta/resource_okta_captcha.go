@@ -47,12 +47,12 @@ func resourceCaptcha() *schema.Resource {
 	}
 }
 
-func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	captcha, _, err := getAPISupplementFromMetadata(m).CreateCaptcha(ctx, buildCaptcha(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).CreateCaptcha(ctx, buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to create CAPTCHA: %v", err)
 	}
@@ -60,12 +60,12 @@ func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	captcha, resp, err := getAPISupplementFromMetadata(m).GetCaptcha(ctx, d.Id())
+	captcha, resp, err := getAPISupplementFromMetadata(meta).GetCaptcha(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find CAPTCHA: %v", err)
 	}
@@ -79,25 +79,25 @@ func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceCaptchaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to update CAPTCHA: %v", err)
 	}
 	return nil
 }
 
-func resourceCaptchaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captcha)
 	}
 
-	logger(m).Info("deleting Captcha", "name", d.Get("name").(string))
-	_, err := getAPISupplementFromMetadata(m).DeleteCaptcha(ctx, d.Id())
+	logger(meta).Info("deleting Captcha", "name", d.Get("name").(string))
+	_, err := getAPISupplementFromMetadata(meta).DeleteCaptcha(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete CAPTCHA: %v", err)
 	}

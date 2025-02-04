@@ -57,9 +57,9 @@ documentation for notes on how to generate a domain certificate with Let's Encry
 	}
 }
 
-func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := buildDomainCertificate(d)
-	_, err := getOktaClientFromMetadata(m).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
+	_, err := getOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
 	if err != nil {
 		return diag.Errorf("failed to create domain's certificate: %v", err)
 	}
@@ -67,9 +67,9 @@ func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceDomainCertificateUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceDomainCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := buildDomainCertificate(d)
-	_, err := getOktaClientFromMetadata(m).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
+	_, err := getOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
 	if err != nil {
 		return diag.Errorf("failed to update domain's certificate: %v", err)
 	}

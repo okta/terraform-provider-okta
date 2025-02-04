@@ -68,28 +68,28 @@ recreation.`,
 	}
 }
 
-func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	responseProfile, _, err := getAPISupplementFromMetadata(m).CreateHotpFactorProfile(ctx, *profile)
+	responseProfile, _, err := getAPISupplementFromMetadata(meta).CreateHotpFactorProfile(ctx, *profile)
 	if err != nil {
 		return diag.Errorf("failed to create TOTP factor: %v", err)
 	}
 	d.SetId(responseProfile.ID)
-	return resourceFactorTOTPRead(ctx, d, m)
+	return resourceFactorTOTPRead(ctx, d, meta)
 }
 
-func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	_, _, err := getAPISupplementFromMetadata(m).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
 	if err != nil {
 		return diag.Errorf("failed to update TOTP factor: %v", err)
 	}
 
-	return resourceFactorTOTPRead(ctx, d, m)
+	return resourceFactorTOTPRead(ctx, d, meta)
 }
 
-func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	profile, resp, err := getAPISupplementFromMetadata(m).GetHotpFactorProfile(ctx, d.Id())
+func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	profile, resp, err := getAPISupplementFromMetadata(meta).GetHotpFactorProfile(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get TOTP factor: %v", err)
 	}
@@ -106,10 +106,10 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
 
-	_, err := getAPISupplementFromMetadata(m).DeleteHotpFactorProfile(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(meta).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete TOTP factor: %v", err)
 	}

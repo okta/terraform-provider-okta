@@ -16,7 +16,7 @@ func resourceUserBaseSchemaProperty() *schema.Resource {
 		UpdateContext: resourceUserBaseSchemaCreate,
 		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
 				resourceUserType := "default"
 				if strings.Contains(d.Id(), ".") {
@@ -61,26 +61,26 @@ func resourceUserBaseSchemaResourceV0() *schema.Resource {
 	return &schema.Resource{Schema: userBaseSchemaSchema}
 }
 
-func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: Okta API will ignore parallel calls to `POST
 	// /api/v1/meta/schemas/user/{userId}` so a mutex to affect TF
 	// `-parallelism=1` behavior is needed here.
 	oktaMutexKV.Lock(userBaseSchemaProperty)
 	defer oktaMutexKV.Unlock(userBaseSchemaProperty)
 
-	if err := updateUserBaseSubschema(ctx, d, m); err != nil {
+	if err := updateUserBaseSubschema(ctx, d, meta); err != nil {
 		return err
 	}
 	d.SetId(d.Get("index").(string))
-	return resourceUserBaseSchemaRead(ctx, d, m)
+	return resourceUserBaseSchemaRead(ctx, d, meta)
 }
 
-func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to get user base schema: %v", err)
 	}
-	us, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
+	us, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 	if err != nil {
 		return diag.Errorf("failed to get user base schema: %v", err)
 	}
@@ -94,18 +94,18 @@ func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m i
 }
 
 // create or modify a subschema
-func updateUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func updateUserBaseSubschema(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateUserBaseSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	schemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+	schemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user base schema: %v", err)
 	}
 	base := buildBaseUserSchema(d)
 	url := fmt.Sprintf("/api/v1/meta/schemas/user/%v", schemaID)
-	re := getOktaClientFromMetadata(m).GetRequestExecutor()
+	re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").
 		NewRequest("POST", url, base)
 	if err != nil {

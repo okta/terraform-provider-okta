@@ -22,7 +22,7 @@ func resourceAdminRoleTargets() *schema.Resource {
 		UpdateContext: resourceAdminRoleUpdate,
 		DeleteContext: resourceAdminRoleDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
 					return nil, errors.New("invalid resource import specifier. Use: terraform import <user_id>/<role_type>")
@@ -30,7 +30,7 @@ func resourceAdminRoleTargets() *schema.Resource {
 				if !contains(rolesWithTargets, parts[1]) {
 					return nil, fmt.Errorf("invalid role type, use one of %s", strings.Join(rolesWithTargets, ","))
 				}
-				err := checkRoleAssignment(ctx, d, m, parts[0], parts[1])
+				err := checkRoleAssignment(ctx, d, meta, parts[0], parts[1])
 				if err != nil {
 					return nil, err
 				}
@@ -75,27 +75,27 @@ func resourceAdminRoleTargets() *schema.Resource {
 	}
 }
 
-func resourceAdminRoleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
-	err := checkRoleAssignment(ctx, d, m, d.Get("user_id").(string), d.Get("role_type").(string))
+func resourceAdminRoleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
+	err := checkRoleAssignment(ctx, d, meta, d.Get("user_id").(string), d.Get("role_type").(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if d.Get("role_type").(string) == "APP_ADMIN" {
-		err = addUserAppTargets(ctx, d, m, convertInterfaceToStringSet(d.Get("apps")))
+		err = addUserAppTargets(ctx, d, meta, convertInterfaceToStringSet(d.Get("apps")))
 	} else {
-		err = addUserGroupTargets(ctx, d, m, convertInterfaceToStringSet(d.Get("groups")))
+		err = addUserGroupTargets(ctx, d, meta, convertInterfaceToStringSet(d.Get("groups")))
 	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("user_id").(string), d.Get("role_type").(string)))
-	return resourceAdminRoleRead(ctx, d, m)
+	return resourceAdminRoleRead(ctx, d, meta)
 }
 
-func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
-	role, resp, err := getOktaClientFromMetadata(m).User.GetUserRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
+func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("reading admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
+	role, resp, err := getOktaClientFromMetadata(meta).User.GetUserRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get role assigned to a user: %v", err)
 	}
@@ -104,13 +104,13 @@ func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 		return nil
 	}
 	if d.Get("role_type").(string) == "APP_ADMIN" {
-		apps, err := listUserApplicationTargets(ctx, d, m)
+		apps, err := listUserApplicationTargets(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to read app targets: %v", err)
 		}
 		_ = d.Set("apps", convertStringSliceToSet(apps))
 	} else {
-		groups, err := listUserGroupTargets(ctx, d, m)
+		groups, err := listUserGroupTargets(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to read group targets: %v", err)
 		}
@@ -119,59 +119,59 @@ func resourceAdminRoleRead(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func resourceAdminRoleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
+func resourceAdminRoleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("updating admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
 	if d.Get("role_type").(string) == "APP_ADMIN" {
 		expectedApps := convertInterfaceToStringSet(d.Get("apps"))
 		if len(expectedApps) == 0 {
-			err := clearAndRefreshRole(ctx, d, m)
+			err := clearAndRefreshRole(ctx, d, meta)
 			if err != nil {
 				return diag.FromErr(err)
 			}
 			return nil
 		}
-		existingApps, err := listUserApplicationTargets(ctx, d, m)
+		existingApps, err := listUserApplicationTargets(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to update app targets: %v", err)
 		}
 		appsToAdd, appsToRemove := splitTargets(expectedApps, existingApps)
-		err = addUserAppTargets(ctx, d, m, appsToAdd)
+		err = addUserAppTargets(ctx, d, meta, appsToAdd)
 		if err != nil {
 			return diag.Errorf("failed to update app targets: %v", err)
 		}
-		err = removeUserAppTargets(ctx, d, m, appsToRemove)
+		err = removeUserAppTargets(ctx, d, meta, appsToRemove)
 		if err != nil {
 			return diag.Errorf("failed to update app targets: %v", err)
 		}
 	} else {
 		expectedGroups := convertInterfaceToStringSet(d.Get("groups"))
 		if len(expectedGroups) == 0 {
-			err := clearAndRefreshRole(ctx, d, m)
+			err := clearAndRefreshRole(ctx, d, meta)
 			if err != nil {
 				return diag.FromErr(err)
 			}
 			return nil
 		}
-		existingGroups, err := listUserGroupTargets(ctx, d, m)
+		existingGroups, err := listUserGroupTargets(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to update group targets: %v", err)
 		}
 		groupsToAdd, groupsToRemove := splitTargets(expectedGroups, existingGroups)
-		err = addUserGroupTargets(ctx, d, m, groupsToAdd)
+		err = addUserGroupTargets(ctx, d, meta, groupsToAdd)
 		if err != nil {
 			return diag.Errorf("failed to update group targets: %v", err)
 		}
-		err = removeUserGroupTargets(ctx, d, m, groupsToRemove)
+		err = removeUserGroupTargets(ctx, d, meta, groupsToRemove)
 		if err != nil {
 			return diag.Errorf("failed to update group targets: %v", err)
 		}
 	}
-	return resourceAdminRoleRead(ctx, d, m)
+	return resourceAdminRoleRead(ctx, d, meta)
 }
 
-func resourceAdminRoleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("removing admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
-	_, err := removeAllTargets(ctx, d, m)
+func resourceAdminRoleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("removing admin role targets", "role", d.Get("role_type").(string), "user", d.Get("user_id").(string))
+	_, err := removeAllTargets(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -192,8 +192,8 @@ func splitTargets(expectedApps, existingApps []string) (appsToAdd, appsToRemove 
 	return
 }
 
-func clearAndRefreshRole(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	newRoleID, err := removeAllTargets(ctx, d, m)
+func clearAndRefreshRole(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	newRoleID, err := removeAllTargets(ctx, d, meta)
 	if err != nil {
 		return err
 	}
@@ -203,13 +203,13 @@ func clearAndRefreshRole(ctx context.Context, d *schema.ResourceData, m interfac
 
 // to avoid exception when removing last target group or app,
 // the API consumer should delete the role assignment and recreate it.
-func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}) (string, error) {
-	resp, err := getOktaClientFromMetadata(m).User.RemoveRoleFromUser(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
+func removeAllTargets(ctx context.Context, d *schema.ResourceData, meta interface{}) (string, error) {
+	resp, err := getOktaClientFromMetadata(meta).User.RemoveRoleFromUser(ctx, d.Get("user_id").(string), d.Get("role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return "", fmt.Errorf("failed to unassign '%s' role from user: %v", d.Get("role_type").(string), err)
 	}
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusConflict, http.StatusBadRequest})
-	role, _, err := getOktaClientFromMetadata(m).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
+	role, _, err := getOktaClientFromMetadata(meta).User.AssignRoleToUser(ctx, d.Get("user_id").(string),
 		sdk.AssignRoleRequest{Type: d.Get("role_type").(string)}, nil)
 	if err != nil {
 		d.SetId("")
@@ -221,17 +221,17 @@ func removeAllTargets(ctx context.Context, d *schema.ResourceData, m interface{}
 	return role.Id, nil
 }
 
-func addUserAppTargets(ctx context.Context, d *schema.ResourceData, m interface{}, apps []string) error {
+func addUserAppTargets(ctx context.Context, d *schema.ResourceData, meta interface{}, apps []string) error {
 	for i := range apps {
 		app := strings.Split(apps[i], ".")
 		if len(app) == 1 {
-			_, err := getOktaClientFromMetadata(m).User.AddApplicationTargetToAdminRoleForUser(ctx,
+			_, err := getOktaClientFromMetadata(meta).User.AddApplicationTargetToAdminRoleForUser(ctx,
 				d.Get("user_id").(string), d.Get("role_id").(string), app[0])
 			if err != nil {
 				return fmt.Errorf("failed to add an app target to an app administrator role given to a user: %v", err)
 			}
 		} else {
-			_, err := getOktaClientFromMetadata(m).User.AddApplicationTargetToAppAdminRoleForUser(ctx,
+			_, err := getOktaClientFromMetadata(meta).User.AddApplicationTargetToAppAdminRoleForUser(ctx,
 				d.Get("user_id").(string), d.Get("role_id").(string), app[0], strings.Join(app[1:], ""))
 			if err != nil {
 				return fmt.Errorf("failed to add an app instance target to an app administrator role given to a user: %v", err)
@@ -241,17 +241,17 @@ func addUserAppTargets(ctx context.Context, d *schema.ResourceData, m interface{
 	return nil
 }
 
-func removeUserAppTargets(ctx context.Context, d *schema.ResourceData, m interface{}, apps []string) error {
+func removeUserAppTargets(ctx context.Context, d *schema.ResourceData, meta interface{}, apps []string) error {
 	for i := range apps {
 		app := strings.Split(apps[i], ".")
 		if len(app) == 1 {
-			_, err := getOktaClientFromMetadata(m).User.RemoveApplicationTargetFromApplicationAdministratorRoleForUser(ctx,
+			_, err := getOktaClientFromMetadata(meta).User.RemoveApplicationTargetFromApplicationAdministratorRoleForUser(ctx,
 				d.Get("user_id").(string), d.Get("role_id").(string), app[0])
 			if err != nil {
 				return fmt.Errorf("failed to remove an app target from an app administrator role given to a user: %v", err)
 			}
 		} else {
-			_, err := getOktaClientFromMetadata(m).User.RemoveApplicationTargetFromAdministratorRoleForUser(ctx,
+			_, err := getOktaClientFromMetadata(meta).User.RemoveApplicationTargetFromAdministratorRoleForUser(ctx,
 				d.Get("user_id").(string), d.Get("role_id").(string), app[0], strings.Join(app[1:], ""))
 			if err != nil {
 				return fmt.Errorf("failed to remove an app instance target from an app administrator role given to a user: %v", err)
@@ -261,9 +261,9 @@ func removeUserAppTargets(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func addUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interface{}, groups []string) error {
+func addUserGroupTargets(ctx context.Context, d *schema.ResourceData, meta interface{}, groups []string) error {
 	for i := range groups {
-		_, err := getOktaClientFromMetadata(m).User.AddGroupTargetToRole(ctx,
+		_, err := getOktaClientFromMetadata(meta).User.AddGroupTargetToRole(ctx,
 			d.Get("user_id").(string), d.Get("role_id").(string), groups[i])
 		if err != nil {
 			return fmt.Errorf("failed to add a group target to a group administrator role given to a user: %v", err)
@@ -272,9 +272,9 @@ func addUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func removeUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interface{}, groups []string) error {
+func removeUserGroupTargets(ctx context.Context, d *schema.ResourceData, meta interface{}, groups []string) error {
 	for i := range groups {
-		_, err := getOktaClientFromMetadata(m).User.RemoveGroupTargetFromRole(ctx,
+		_, err := getOktaClientFromMetadata(meta).User.RemoveGroupTargetFromRole(ctx,
 			d.Get("user_id").(string), d.Get("role_id").(string), groups[i])
 		if err != nil {
 			return fmt.Errorf("failed to add a group target to a group administrator role given to a user: %v", err)
@@ -283,9 +283,9 @@ func removeUserGroupTargets(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func listUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interface{}) ([]string, error) {
+func listUserGroupTargets(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]string, error) {
 	var resGroups []string
-	groups, resp, err := getOktaClientFromMetadata(m).User.
+	groups, resp, err := getOktaClientFromMetadata(meta).User.
 		ListGroupTargetsForRole(ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, err
@@ -307,9 +307,9 @@ func listUserGroupTargets(ctx context.Context, d *schema.ResourceData, m interfa
 	return resGroups, nil
 }
 
-func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, m interface{}) ([]string, error) {
+func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]string, error) {
 	var resApps []string
-	apps, resp, err := getOktaClientFromMetadata(m).User.
+	apps, resp, err := getOktaClientFromMetadata(meta).User.
 		ListApplicationTargetsForApplicationAdministratorRoleForUser(
 			ctx, d.Get("user_id").(string), d.Get("role_id").(string), &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
@@ -319,7 +319,7 @@ func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, m i
 		for _, app := range apps {
 			if app.Id != "" {
 				a := sdk.NewApplication()
-				_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, app.Id, a, nil)
+				_, resp, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, app.Id, a, nil)
 				if err := suppressErrorOn404(resp, err); err != nil {
 					return nil, err
 				}
@@ -344,8 +344,8 @@ func listUserApplicationTargets(ctx context.Context, d *schema.ResourceData, m i
 	return resApps, nil
 }
 
-func checkRoleAssignment(ctx context.Context, d *schema.ResourceData, m interface{}, userID, roleType string) error {
-	roles, _, err := getOktaClientFromMetadata(m).User.ListAssignedRolesForUser(ctx, userID, nil)
+func checkRoleAssignment(ctx context.Context, d *schema.ResourceData, meta interface{}, userID, roleType string) error {
+	roles, _, err := getOktaClientFromMetadata(meta).User.ListAssignedRolesForUser(ctx, userID, nil)
 	if err != nil {
 		return fmt.Errorf("failed to get list of roles associated with the user: %v", err)
 	}

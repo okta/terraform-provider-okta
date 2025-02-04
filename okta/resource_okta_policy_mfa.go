@@ -25,17 +25,17 @@ func resourcePolicyMfa() *schema.Resource {
 	}
 }
 
-func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	policy := buildMFAPolicy(d)
-	err := createPolicy(ctx, d, m, policy)
+	err := createPolicy(ctx, d, meta, policy)
 	if err != nil {
 		return diag.Errorf("failed to create MFA policy: %v", err)
 	}
-	return resourcePolicyMfaRead(ctx, d, m)
+	return resourcePolicyMfaRead(ctx, d, meta)
 }
 
-func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get MFA policy: %v", err)
 	}
@@ -52,17 +52,17 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	policy := buildMFAPolicy(d)
-	err := updatePolicy(ctx, d, m, policy)
+	err := updatePolicy(ctx, d, meta, policy)
 	if err != nil {
 		return diag.Errorf("failed to update MFA policy: %v", err)
 	}
-	return resourcePolicyMfaRead(ctx, d, m)
+	return resourcePolicyMfaRead(ctx, d, meta)
 }
 
-func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deletePolicy(ctx, d, m)
+func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy: %v", err)
 	}

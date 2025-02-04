@@ -78,20 +78,20 @@ func dataSourceApp() *schema.Resource {
 	}
 }
 
-func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	filters, err := getAppFilters(d)
 	if err != nil {
 		return diag.Errorf("invalid app filters: %v", err)
 	}
 	var app *sdk.Application
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
 		app = respApp.(*sdk.Application)
 	} else {
-		appList, err := listApps(ctx, getOktaClientFromMetadata(m), filters, 1)
+		appList, err := listApps(ctx, getOktaClientFromMetadata(meta), filters, 1)
 		if err != nil {
 			return diag.Errorf("failed to list apps: %v", err)
 		}
@@ -113,7 +113,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, m interface{
 			}
 		} else {
 			if len(appList) > 1 {
-				logger(m).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
+				logger(meta).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 			}
 			app = appList[0]
 		}

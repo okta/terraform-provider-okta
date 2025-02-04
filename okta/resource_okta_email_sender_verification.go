@@ -27,8 +27,8 @@ func resourceEmailSenderVerification() *schema.Resource {
 	}
 }
 
-func resourceEmailSenderVerificationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	sender, _, err := getAPISupplementFromMetadata(m).GetEmailSender(ctx, d.Get("sender_id").(string))
+func resourceEmailSenderVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	sender, _, err := getAPISupplementFromMetadata(meta).GetEmailSender(ctx, d.Get("sender_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get custom email sender: %v", err)
 	}
@@ -39,7 +39,7 @@ func resourceEmailSenderVerificationCreate(ctx context.Context, d *schema.Resour
 		PendingID:               sender.ID,
 		PendingDNSValidation:    sender.DNSValidation,
 	}
-	_, err = getAPISupplementFromMetadata(m).ValidateEmailSender(ctx, sender.ID, esv)
+	_, err = getAPISupplementFromMetadata(meta).ValidateEmailSender(ctx, sender.ID, esv)
 	if err != nil {
 		return diag.Errorf("failed to verify custom email sender: %v", err)
 	}

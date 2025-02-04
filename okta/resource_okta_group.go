@@ -22,7 +22,7 @@ func resourceGroup() *schema.Resource {
 		UpdateContext: resourceGroupUpdate,
 		DeleteContext: resourceGroupDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				importID := strings.Split(d.Id(), "/")
 				if len(importID) == 1 {
 					return []*schema.ResourceData{d}, nil
@@ -81,17 +81,17 @@ func resourceGroup() *schema.Resource {
 	}
 }
 
-func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating group", "name", d.Get("name").(string))
+func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating group", "name", d.Get("name").(string))
 	group := buildGroup(d)
-	responseGroup, _, err := getOktaClientFromMetadata(m).Group.CreateGroup(ctx, *group)
+	responseGroup, _, err := getOktaClientFromMetadata(meta).Group.CreateGroup(ctx, *group)
 	if err != nil {
 		return diag.Errorf("failed to create group: %v", err)
 	}
 	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
-		g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, responseGroup.Id)
-		if doNotRetry(m, err) {
+		g, resp, err := getOktaClientFromMetadata(meta).Group.GetGroup(ctx, responseGroup.Id)
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 		if err := suppressErrorOn404(resp, err); err != nil {
@@ -107,12 +107,12 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	d.SetId(responseGroup.Id)
 
-	return resourceGroupRead(ctx, d, m)
+	return resourceGroupRead(ctx, d, meta)
 }
 
-func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading group", "id", d.Id(), "name", d.Get("name").(string))
-	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, d.Id())
+func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("reading group", "id", d.Id(), "name", d.Get("name").(string))
+	g, resp, err := getOktaClientFromMetadata(meta).Group.GetGroup(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get group: %v", err)
 	}
@@ -136,19 +136,19 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{
 	return nil
 }
 
-func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating group", "id", d.Id(), "name", d.Get("name").(string))
+func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("updating group", "id", d.Id(), "name", d.Get("name").(string))
 	group := buildGroup(d)
-	_, _, err := getOktaClientFromMetadata(m).Group.UpdateGroup(ctx, d.Id(), *group)
+	_, _, err := getOktaClientFromMetadata(meta).Group.UpdateGroup(ctx, d.Id(), *group)
 	if err != nil {
 		return diag.Errorf("failed to update group: %v", err)
 	}
-	return resourceGroupRead(ctx, d, m)
+	return resourceGroupRead(ctx, d, meta)
 }
 
-func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("deleting group", "id", d.Id(), "name", d.Get("name").(string))
-	_, err := getOktaClientFromMetadata(m).Group.DeleteGroup(ctx, d.Id())
+func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("deleting group", "id", d.Id(), "name", d.Get("name").(string))
+	_, err := getOktaClientFromMetadata(meta).Group.DeleteGroup(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete group: %v", err)
 	}

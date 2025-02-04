@@ -15,7 +15,7 @@ func resourceUserType() *schema.Resource {
 		UpdateContext: resourceUserTypeUpdate,
 		DeleteContext: resourceUserTypeDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -40,26 +40,26 @@ func resourceUserType() *schema.Resource {
 	}
 }
 
-func resourceUserTypeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	newUserType, _, err := getOktaClientFromMetadata(m).UserType.CreateUserType(ctx, buildUserType(d))
+func resourceUserTypeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	newUserType, _, err := getOktaClientFromMetadata(meta).UserType.CreateUserType(ctx, buildUserType(d))
 	if err != nil {
 		return diag.Errorf("failed to create user type: %v", err)
 	}
 	d.SetId(newUserType.Id)
-	return resourceUserTypeRead(ctx, d, m)
+	return resourceUserTypeRead(ctx, d, meta)
 }
 
-func resourceUserTypeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserTypeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userType := buildUserType(d)
-	_, _, err := getOktaClientFromMetadata(m).UserType.UpdateUserType(ctx, d.Id(), userType)
+	_, _, err := getOktaClientFromMetadata(meta).UserType.UpdateUserType(ctx, d.Id(), userType)
 	if err != nil {
 		return diag.Errorf("failed to update user type: %v", err)
 	}
-	return resourceUserTypeRead(ctx, d, m)
+	return resourceUserTypeRead(ctx, d, meta)
 }
 
-func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	userType, resp, err := getOktaClientFromMetadata(m).UserType.GetUserType(ctx, d.Id())
+func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	userType, resp, err := getOktaClientFromMetadata(meta).UserType.GetUserType(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user type: %v", err)
 	}
@@ -73,8 +73,8 @@ func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getOktaClientFromMetadata(m).UserType.DeleteUserType(ctx, d.Id())
+func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(meta).UserType.DeleteUserType(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete user type: %v", err)
 	}

@@ -121,7 +121,7 @@ the 'priority' property in ascending value.`,
 	}
 }
 
-func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	oktaMutexKV.Lock(authServerPolicyRule)
 	defer oktaMutexKV.Unlock(authServerPolicyRule)
 
@@ -129,17 +129,17 @@ func resourceAuthServerPolicyRuleCreate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	resp, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServerPolicyRule(
+	resp, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.CreateAuthorizationServerPolicyRule(
 		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), buildAuthServerPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create auth server policy rule: %v", err)
 	}
 	d.SetId(resp.Id)
-	return resourceAuthServerPolicyRuleRead(ctx, d, m)
+	return resourceAuthServerPolicyRuleRead(ctx, d, meta)
 }
 
-func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServerPolicyRule, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServerPolicyRule(
+func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	authServerPolicyRule, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServerPolicyRule(
 		ctx, d.Get("auth_server_id").(string), d.Get("policy_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server policy rule: %v", err)
@@ -182,7 +182,7 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	oktaMutexKV.Lock(authServerPolicyRule)
 	defer oktaMutexKV.Unlock(authServerPolicyRule)
 
@@ -190,7 +190,7 @@ func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServerPolicyRule(
+	_, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),
 		d.Get("policy_id").(string), d.Id(),
@@ -200,25 +200,25 @@ func resourceAuthServerPolicyRuleUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to update auth server policy rule: %v", err)
 	}
 	if d.HasChange("status") {
-		err := handleAuthServerPolicyRuleLifecycle(ctx, d, m)
+		err := handleAuthServerPolicyRuleLifecycle(ctx, d, meta)
 		if err != nil {
 			return err
 		}
 	}
-	return resourceAuthServerPolicyRuleRead(ctx, d, m)
+	return resourceAuthServerPolicyRuleRead(ctx, d, meta)
 }
 
-func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var err error
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus == newStatus {
 		return nil
 	}
 	if newStatus == statusActive {
-		_, err = getOktaClientFromMetadata(m).AuthorizationServer.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+		_, err = getOktaClientFromMetadata(meta).AuthorizationServer.ActivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
 			d.Get("policy_id").(string), d.Id())
 	} else {
-		_, err = getOktaClientFromMetadata(m).AuthorizationServer.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
+		_, err = getOktaClientFromMetadata(meta).AuthorizationServer.DeactivateAuthorizationServerPolicyRule(ctx, d.Get("auth_server_id").(string),
 			d.Get("policy_id").(string), d.Id())
 	}
 	if err != nil {
@@ -227,11 +227,11 @@ func handleAuthServerPolicyRuleLifecycle(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	oktaMutexKV.Lock(authServerPolicyRule)
 	defer oktaMutexKV.Unlock(authServerPolicyRule)
 
-	_, err := getOktaClientFromMetadata(m).AuthorizationServer.DeleteAuthorizationServerPolicyRule(
+	_, err := getOktaClientFromMetadata(meta).AuthorizationServer.DeleteAuthorizationServerPolicyRule(
 		ctx,
 		d.Get("auth_server_id").(string),
 		d.Get("policy_id").(string),

@@ -20,7 +20,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 		DeleteContext: resourceAppGroupAssignmentDelete,
 		UpdateContext: resourceAppGroupAssignmentUpdate,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
 					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<group_id>")
@@ -28,7 +28,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 				_ = d.Set("app_id", parts[0])
 				_ = d.Set("group_id", parts[1])
 				_ = d.Set("retain_assignment", false)
-				assignment, _, err := getOktaClientFromMetadata(m).Application.
+				assignment, _, err := getOktaClientFromMetadata(meta).Application.
 					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
 				if err != nil {
 					return nil, err
@@ -83,9 +83,9 @@ func resourceAppGroupAssignment() *schema.Resource {
 	}
 }
 
-func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusInternalServerError})
-	assignment, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
+	assignment, _, err := getOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -95,12 +95,12 @@ func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("failed to create application group assignment: %v", err)
 	}
 	d.SetId(assignment.Id)
-	return resourceAppGroupAssignmentRead(ctx, d, m)
+	return resourceAppGroupAssignmentRead(ctx, d, meta)
 }
 
-func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// Create actually does a PUT
-	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplicationGroupAssignment(
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -109,11 +109,11 @@ func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.Errorf("failed to update application group assignment: %v", err)
 	}
-	return resourceAppGroupAssignmentRead(ctx, d, m)
+	return resourceAppGroupAssignmentRead(ctx, d, meta)
 }
 
-func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	g, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationGroupAssignment(
+func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	g, resp, err := getOktaClientFromMetadata(meta).Application.GetApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -137,14 +137,14 @@ func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	retain := d.Get("retain_assignment").(bool)
 	if retain {
 		// The assignment should be retained, bail before DeleteApplicationGroupAssignment is called
 		return nil
 	}
 
-	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationGroupAssignment(
+	_, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),

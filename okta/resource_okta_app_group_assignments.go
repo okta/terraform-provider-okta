@@ -17,7 +17,7 @@ func resourceAppGroupAssignments() *schema.Resource {
 		DeleteContext: resourceAppGroupAssignmentsDelete,
 		UpdateContext: resourceAppGroupAssignmentsUpdate,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				_ = d.Set("app_id", d.Id())
 				return []*schema.ResourceData{d}, nil
 			},
@@ -70,8 +70,8 @@ func resourceAppGroupAssignments() *schema.Resource {
 	}
 }
 
-func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	assignments := tfGroupsToGroupAssignments(d)
 
 	// run through all groups in the set and create an assignment
@@ -89,11 +89,11 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 
 	// okta_app_group_assignments completely control all assignments for an application
 	d.SetId(d.Get("app_id").(string))
-	return resourceAppGroupAssignmentsRead(ctx, d, m)
+	return resourceAppGroupAssignmentsRead(ctx, d, meta)
 }
 
-func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	// remember, current group assignments is an API call and are all groups
 	// assigned to the app, even those initiated outside the provider, for
 	// instance those assignments from "click ops"
@@ -129,8 +129,8 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	appID := d.Get("app_id").(string)
 	toAssign, toRemove, err := splitAssignmentsTargets(d)
 	if err != nil {
@@ -154,11 +154,11 @@ func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceDa
 	if err != nil {
 		return diag.Errorf("failed to add/update group assignment: %v", err)
 	}
-	return resourceAppGroupAssignmentsRead(ctx, d, m)
+	return resourceAppGroupAssignmentsRead(ctx, d, meta)
 }
 
-func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	for _, rawGroup := range d.Get("group").([]interface{}) {
 		group := rawGroup.(map[string]interface{})
 		resp, err := client.Application.DeleteApplicationGroupAssignment(

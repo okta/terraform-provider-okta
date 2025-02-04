@@ -41,24 +41,24 @@ func resourceFactor() *schema.Resource {
 	}
 }
 
-func resourceFactorPut(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, _, err := getAPISupplementFromMetadata(m).GetOrgFactor(ctx, d.Get("provider_id").(string))
+func resourceFactorPut(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	factor, _, err := getAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Get("provider_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
 	// To avoid API errors we check downstream status
 	if statusMismatch(d, factor) {
-		err := activateFactor(ctx, d, m)
+		err := activateFactor(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to activate factor: %v", err)
 		}
 	}
 	d.SetId(d.Get("provider_id").(string))
-	return resourceFactorRead(ctx, d, m)
+	return resourceFactorRead(ctx, d, meta)
 }
 
-func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	factor, resp, err := getAPISupplementFromMetadata(m).GetOrgFactor(ctx, d.Id())
+func resourceFactorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	factor, resp, err := getAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
@@ -71,11 +71,11 @@ func resourceFactorRead(ctx context.Context, d *schema.ResourceData, m interface
 	return nil
 }
 
-func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if !d.Get("active").(bool) {
 		return nil
 	}
-	_, resp, err := getAPISupplementFromMetadata(m).DeactivateOrgFactor(ctx, d.Id())
+	_, resp, err := getAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, d.Id())
 	// http.StatusBadRequest means that factor can not be deactivated
 	if resp != nil && resp.StatusCode == http.StatusBadRequest {
 		return nil
@@ -86,13 +86,13 @@ func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func activateFactor(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func activateFactor(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	var err error
 	id := d.Get("provider_id").(string)
 	if d.Get("active").(bool) {
-		_, _, err = getAPISupplementFromMetadata(m).ActivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(meta).ActivateOrgFactor(ctx, id)
 	} else {
-		_, _, err = getAPISupplementFromMetadata(m).DeactivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, id)
 	}
 	return err
 }
