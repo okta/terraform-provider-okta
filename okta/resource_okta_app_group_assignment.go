@@ -132,7 +132,7 @@ func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData,
 	}
 	_ = d.Set("profile", string(jsonProfile))
 	if g.PriorityPtr != nil {
-		_ = d.Set("priority", *g.PriorityPtr)
+		_ = d.Set("priority", g.PriorityPtr)
 	}
 	return nil
 }

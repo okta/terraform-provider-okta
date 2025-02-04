@@ -182,10 +182,10 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
 	_ = d.Set("mfa_lifetime", rule.Actions.SignOn.FactorLifetime)
 	if rule.Actions.SignOn.Session.MaxSessionIdleMinutesPtr != nil {
-		_ = d.Set("session_idle", *rule.Actions.SignOn.Session.MaxSessionIdleMinutesPtr)
+		_ = d.Set("session_idle", rule.Actions.SignOn.Session.MaxSessionIdleMinutesPtr)
 	}
 	if rule.Actions.SignOn.Session.MaxSessionLifetimeMinutesPtr != nil {
-		_ = d.Set("session_lifetime", *rule.Actions.SignOn.Session.MaxSessionLifetimeMinutesPtr)
+		_ = d.Set("session_lifetime", rule.Actions.SignOn.Session.MaxSessionLifetimeMinutesPtr)
 	}
 	_ = d.Set("session_persistent", rule.Actions.SignOn.Session.UsePersistentCookie)
 	if rule.Actions.SignOn.FactorPromptMode != "" {

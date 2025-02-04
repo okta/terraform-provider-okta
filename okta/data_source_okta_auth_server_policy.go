@@ -56,7 +56,7 @@ func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData,
 		_ = d.Set("description", policy.Description)
 		_ = d.Set("assigned_clients", convertStringSliceToSet(policy.Conditions.Clients.Include))
 		if policy.PriorityPtr != nil {
-			_ = d.Set("priority", *policy.PriorityPtr)
+			_ = d.Set("priority", policy.PriorityPtr)
 		}
 		return nil
 	}

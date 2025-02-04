@@ -164,10 +164,10 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 	syncBaseUserSchema(d, subschema)
 	_ = d.Set("description", subschema.Description)
 	if subschema.MinLengthPtr != nil {
-		_ = d.Set("min_length", *subschema.MinLengthPtr)
+		_ = d.Set("min_length", subschema.MinLengthPtr)
 	}
 	if subschema.MaxLengthPtr != nil {
-		_ = d.Set("max_length", *subschema.MaxLengthPtr)
+		_ = d.Set("max_length", subschema.MaxLengthPtr)
 	}
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)

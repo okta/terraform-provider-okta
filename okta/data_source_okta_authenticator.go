@@ -126,7 +126,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 		if authenticator.Type == "security_key" {
 			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
 			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", *authenticator.Provider.Configuration.AuthPortPtr)
+				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
 			}
 			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
 		}

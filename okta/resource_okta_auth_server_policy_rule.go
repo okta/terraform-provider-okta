@@ -152,17 +152,17 @@ func resourceAuthServerPolicyRuleRead(ctx context.Context, d *schema.ResourceDat
 	_ = d.Set("name", authServerPolicyRule.Name)
 	_ = d.Set("status", authServerPolicyRule.Status)
 	if authServerPolicyRule.PriorityPtr != nil {
-		_ = d.Set("priority", *authServerPolicyRule.PriorityPtr)
+		_ = d.Set("priority", authServerPolicyRule.PriorityPtr)
 	}
 	_ = d.Set("type", authServerPolicyRule.Type)
 	if authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutesPtr != nil {
-		_ = d.Set("access_token_lifetime_minutes", *authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutesPtr)
+		_ = d.Set("access_token_lifetime_minutes", authServerPolicyRule.Actions.Token.AccessTokenLifetimeMinutesPtr)
 	}
 	if authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutesPtr != nil {
-		_ = d.Set("refresh_token_lifetime_minutes", *authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutesPtr)
+		_ = d.Set("refresh_token_lifetime_minutes", authServerPolicyRule.Actions.Token.RefreshTokenLifetimeMinutesPtr)
 	}
 	if authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutesPtr != nil {
-		_ = d.Set("refresh_token_window_minutes", *authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutesPtr)
+		_ = d.Set("refresh_token_window_minutes", authServerPolicyRule.Actions.Token.RefreshTokenWindowMinutesPtr)
 	}
 
 	if authServerPolicyRule.Actions.Token.InlineHook != nil {

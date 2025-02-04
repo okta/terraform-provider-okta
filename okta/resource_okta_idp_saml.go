@@ -154,7 +154,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 		_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
 	}
 	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)

@@ -183,7 +183,7 @@ func appRead(d *schema.ResourceData, name, status, signOn, label string, accy *s
 	_ = d.Set("sign_on_mode", signOn)
 	_ = d.Set("label", label)
 	if accy != nil {
-		_ = d.Set("accessibility_self_service", *accy.SelfService)
+		_ = d.Set("accessibility_self_service", accy.SelfService)
 		_ = d.Set("accessibility_error_redirect_url", accy.ErrorRedirectUrl)
 		_ = d.Set("accessibility_login_redirect_url", accy.LoginRedirectUrl)
 	}

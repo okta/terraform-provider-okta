@@ -176,7 +176,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 	}
 	_ = d.Set("unknown_user_action", rule.Actions.ProfileEnrollment.UnknownUserAction)
 	_ = d.Set("ui_schema_id", rule.Actions.ProfileEnrollment.UiSchemaId)
-	_ = d.Set("email_verification", *rule.Actions.ProfileEnrollment.ActivationRequirements.EmailVerification)
+	_ = d.Set("email_verification", rule.Actions.ProfileEnrollment.ActivationRequirements.EmailVerification)
 	_ = d.Set("access", rule.Actions.ProfileEnrollment.Access)
 	arr := make([]map[string]interface{}, len(rule.Actions.ProfileEnrollment.ProfileAttributes))
 	for i := range rule.Actions.ProfileEnrollment.ProfileAttributes {

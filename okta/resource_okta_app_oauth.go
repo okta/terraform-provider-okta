@@ -562,7 +562,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
-		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+		_ = d.Set("implicit_assignment", app.Settings.ImplicitAssignment)
 	} else {
 		_ = d.Set("implicit_assignment", false)
 	}
@@ -625,7 +625,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	if oauthClient.RefreshToken != nil {
 		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
 		if oauthClient.RefreshToken.LeewayPtr != nil {
-			_ = d.Set("refresh_token_leeway", *oauthClient.RefreshToken.LeewayPtr)
+			_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.LeewayPtr)
 		}
 	}
 	if oauthClient.Jwks != nil {

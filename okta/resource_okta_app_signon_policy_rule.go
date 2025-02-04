@@ -240,7 +240,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 	_ = d.Set("system", boolFromBoolPtr(rule.System))
 	_ = d.Set("name", rule.Name)
 	if rule.PriorityPtr != nil {
-		_ = d.Set("priority", *rule.PriorityPtr)
+		_ = d.Set("priority", rule.PriorityPtr)
 	}
 	_ = d.Set("status", rule.Status)
 	if rule.Actions.AppSignOn != nil {

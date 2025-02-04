@@ -490,7 +490,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interfac
 	_ = d.Set("embed_url", linksValue(app.Links, "appLinks", "href"))
 
 	if app.Settings.ImplicitAssignment != nil {
-		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+		_ = d.Set("implicit_assignment", app.Settings.ImplicitAssignment)
 	} else {
 		_ = d.Set("implicit_assignment", false)
 	}

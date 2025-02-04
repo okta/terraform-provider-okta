@@ -149,7 +149,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("type", idp.Type)
 	_ = d.Set("name", idp.Name)
 	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	if idp.Policy.Provisioning.Conditions != nil {
@@ -171,7 +171,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interf
 		_ = d.Set("trust_kid", idp.Protocol.Credentials.Trust.Kid)
 		_ = d.Set("trust_revocation", idp.Protocol.Credentials.Trust.Revocation)
 		if idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr != nil {
-			_ = d.Set("trust_revocation_cache_lifetime", *idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr)
+			_ = d.Set("trust_revocation_cache_lifetime", idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr)
 		}
 	}
 	if idp.Type == "APPLE" {
