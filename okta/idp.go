@@ -164,8 +164,10 @@ func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Clien
 
 func syncEndpoint(key string, e *sdk.ProtocolEndpoint, d *schema.ResourceData) {
 	if e != nil {
-		_ = d.Set(key+"_binding", e.Binding)
-		_ = d.Set(key+"_url", e.Url)
+		//lintignore:R001
+		_ = d.Set(fmt.Sprintf("%s_binding", key), e.Binding)
+		//lintignore:R001
+		_ = d.Set(fmt.Sprintf("%s_url", key), e.Url)
 	}
 }
 

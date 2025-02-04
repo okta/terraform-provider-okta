@@ -226,6 +226,7 @@ func syncSettings(d *schema.ResourceData, settings *sdk.SdkPolicySettings) {
 
 func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 	if f != nil {
+		//lintignore:R001
 		_ = d.Set(k, map[string]interface{}{
 			"consent_type": f.Consent.Type,
 			"enroll":       f.Enroll.Self,
@@ -241,11 +242,13 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 				if authenticator.Constraints != nil {
 					slice := authenticator.Constraints.AaguidGroups
 					sort.Strings(slice)
+					//lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll":      authenticator.Enroll.Self,
 						"constraints": strings.Join(slice, ","),
 					})
 				} else {
+					//lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll": authenticator.Enroll.Self,
 					})
@@ -256,11 +259,13 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 					if authenticator.Constraints != nil {
 						slice := authenticator.Constraints.AaguidGroups
 						sort.Strings(slice)
+						//lintignore:R001
 						_ = d.Set(k, map[string]interface{}{
 							"enroll":      authenticator.Enroll.Self,
 							"constraints": strings.Join(slice, ","),
 						})
 					} else {
+						//lintignore:R001
 						_ = d.Set(k, map[string]interface{}{
 							"enroll": authenticator.Enroll.Self,
 						})
