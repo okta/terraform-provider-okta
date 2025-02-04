@@ -25,7 +25,7 @@ func main() {
 	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
 	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)))
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	providers := []func() tfprotov5.ProviderServer{
@@ -42,7 +42,7 @@ func main() {
 	// use the muxer
 	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err)
 	}
 
 	var serveOpts []tf5server.ServeOpt

@@ -77,7 +77,7 @@ func init() {
 	// mux'd provider (v2 + v3) - terraform-plugin-mux
 	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err)
 	}
 	testAccMergeProvidersFactories = map[string]func() (tfprotov5.ProviderServer, error){
 		"okta": func() (tfprotov5.ProviderServer, error) {
@@ -391,7 +391,7 @@ func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.P
 
 			muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 			if err != nil {
-				log.Fatalf(err.Error())
+				log.Fatal(err)
 			}
 
 			return muxServer, nil
