@@ -301,6 +301,7 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password Recovery Answer",
 			},
+			//lintignore:S018
 			"password_hash": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
