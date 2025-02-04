@@ -83,9 +83,14 @@ smoke-test-play-vcr-acc:
 test-record-vcr-acc:
 	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta
 
+qc: vet staticcheck lint
+
 vet:
-	@echo "==> Checking source code against go vet and staticcheck"
+	@echo "==> Checking source code against go vet"
 	@go vet ./...
+
+staticcheck:
+	@echo "==> Checking source code against staticcheck"
 	@staticcheck ./...
 
 fmt: tools # Format the code
@@ -133,14 +138,14 @@ lint:
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.4.0
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
+	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
 
 tools-update:
-	@go install mvdan.cc/gofumpt@v0.4.0
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
+	@go install mvdan.cc/gofumpt@v0.7.0
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
+	@go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

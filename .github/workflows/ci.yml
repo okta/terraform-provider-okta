@@ -22,12 +22,8 @@ jobs:
       - name: Check Formatting
         run: make fmtcheck
 
-      - name: Vet Code
-        run: make vet
-
-      # skip there is a bug in https://github.com/bflad/tfproviderlint/issues/255
-      #- name: Lint Code
-      #  run: make lint
+      - name: QC Code
+        run: make qc
 
       - name: Check Build
         run: make build
