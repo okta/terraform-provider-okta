@@ -155,3 +155,57 @@ resource "okta_policy_mfa" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaMfaPolicy_Issue_2139_yubikey_token(t *testing.T) {
+	mgr := newFixtureManager("resources", policyMfa, t.Name())
+	config := `
+data "okta_group" "all" {
+  name = "Everyone"
+}
+resource "okta_policy_mfa" "test" {
+    name        = "testAcc_replace_with_uuid"
+    description = "Terraform Acceptance Test MFA Policy Yubikey Token"
+    status      = "ACTIVE"
+    is_oie      = true
+    groups_included = [data.okta_group.all.id]
+    okta_password = {
+      enroll = "REQUIRED"
+    }
+    yubikey_token = {
+      enroll = "%s"
+    }
+}
+	`
+	resourceName := fmt.Sprintf("%s.test", policyMfa)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkPolicyDestroy(policyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, "OPTIONAL")),
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Yubikey Token"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "yubikey_token.enroll", "OPTIONAL"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, "REQUIRED")),
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Yubikey Token"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "yubikey_token.enroll", "REQUIRED"),
+				),
+			},
+		},
+	})
+}
