@@ -322,7 +322,7 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints [
 	}
 }
 
-func TestAccResourceOktaAppSignOnPolicyRuleDefault_crud(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_default_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("default.tf", t)
@@ -361,7 +361,7 @@ func TestAccResourceOktaAppSignOnPolicyRuleDefault_crud(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaAppSignOnPolicyRuleOsExpression_crud(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_os_expression_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("os_expression.tf", t)

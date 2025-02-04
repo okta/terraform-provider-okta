@@ -266,7 +266,7 @@ func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaUserHashedPassword_crud(t *testing.T) {
+func TestAccResourceOktaUser_hashed_password_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("password_hash.tf", t)
 	configUpdated := mgr.GetFixtures("password_hash_updated.tf", t)
@@ -396,11 +396,11 @@ resource okta_user "test" {
 `, r)
 }
 
-// TestIssue1216Suppress403Errors
+// TestAccResourceOktaUser_issue_1216_Suppress403Errors
 // https://github.com/okta/terraform-provider-okta/issues/1216 When this test
 // runs with an API token of Org Admin (not Super Admin) the resource will fail
 // when the admin roles are gathered.
-func TestIssue1216Suppress403Errors(t *testing.T) {
+func TestAccResourceOktaUser_issue_1216_Suppress403Errors(t *testing.T) {
 	if !orgAdminOnlyTest(t) {
 		return
 	}
