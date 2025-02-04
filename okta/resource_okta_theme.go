@@ -195,7 +195,7 @@ func resourceThemeImportStateContext(ctx context.Context, d *schema.ResourceData
 }
 
 func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
-	_, newPath := d.GetChange("logo")
+	newPath := d.Get("logo")
 	if newPath == "" {
 		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeLogo(ctx, brandID, themeID).Execute()
 		return err
@@ -210,7 +210,7 @@ func handleThemeLogo(ctx context.Context, d *schema.ResourceData, m interface{},
 }
 
 func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
-	_, newPath := d.GetChange("favicon")
+	newPath := d.Get("favicon")
 	if newPath == "" {
 		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeFavicon(ctx, brandID, themeID).Execute()
 		return err
@@ -225,7 +225,7 @@ func handleThemeFavicon(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func handleThemeBackgroundImage(ctx context.Context, d *schema.ResourceData, m interface{}, brandID, themeID string) error {
-	_, newPath := d.GetChange("background_image")
+	newPath := d.Get("background_image")
 	if newPath == "" {
 		_, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.DeleteBrandThemeBackgroundImage(ctx, brandID, themeID).Execute()
 		return err
