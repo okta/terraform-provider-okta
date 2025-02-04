@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaLinkValue(t *testing.T) {
+func TestAccResourceOktaLinkValue_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", linkValue, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)

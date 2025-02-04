@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaEmailTemplateSettings(t *testing.T) {
+func TestAccResourceOktaEmailTemplateSettings_crud(t *testing.T) {
 	_resource := "okta_email_template_settings"
 	resourceName := fmt.Sprintf("%s.test", _resource)
 	mgr := newFixtureManager("resources", _resource, t.Name())

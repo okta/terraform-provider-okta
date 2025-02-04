@@ -201,6 +201,7 @@ resource "okta_user_base_schema_property" "mobilephone" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
+		CheckDestroy:      nil,
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaTheme_import_update(t *testing.T) {
+func TestAccResourceOktaTheme_existing_update(t *testing.T) {
 	mgr := newFixtureManager("resources", theme, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)

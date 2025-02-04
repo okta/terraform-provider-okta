@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaAuthServerClaimDefault(t *testing.T) {
+func TestAccResourceOktaAuthServerClaimDefault_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", authServerClaimDefault)
 	mgr := newFixtureManager("resources", authServerClaimDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

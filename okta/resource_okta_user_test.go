@@ -266,7 +266,7 @@ func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaUserHashedPassword(t *testing.T) {
+func TestAccResourceOktaUserHashedPassword_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", user, t.Name())
 	config := mgr.GetFixtures("password_hash.tf", t)
 	configUpdated := mgr.GetFixtures("password_hash_updated.tf", t)

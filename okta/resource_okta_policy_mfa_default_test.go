@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaDefaultMFAPolicy(t *testing.T) {
+func TestAccResourceOktaDefaultMFAPolicy_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -99,7 +99,7 @@ resource "okta_policy_mfa_default" "test" {
 	})
 }
 
-func TestAccResourceOktaDefaultMFAPolicyIssue2107(t *testing.T) {
+func TestAccResourceOktaDefaultMFAPolicy_issue_2107(t *testing.T) {
 	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
 	config := mgr.GetFixtures("priority.tf", t)
 	updatedConfig := mgr.GetFixtures("priority_updated.tf", t)

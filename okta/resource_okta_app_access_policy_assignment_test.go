@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaAppAccessPolicyAssignment(t *testing.T) {
+func TestAccResourceOktaAppAccessPolicyAssignment_crud(t *testing.T) {
 	_resource := "okta_app_access_policy_assignment"
 	mgr := newFixtureManager("resources", _resource, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -17,6 +17,7 @@ func TestAccResourceOktaAppAccessPolicyAssignment(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", _resource)
 	oktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

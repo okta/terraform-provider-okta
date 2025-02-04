@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaAuthenticatorOTP(t *testing.T) {
+func TestAccResourceOktaAuthenticatorOTP_crud(t *testing.T) {
 	config := `
 	resource "okta_authenticator" "otp" {
 		name   = "Custom OTP"

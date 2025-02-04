@@ -35,7 +35,7 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaGroup_crud \
   TestAccResourceOktaMfaPolicyRule_crud \
   TestAccResourceOktaMfaPolicy_crud \
-  TestAccResourceOktaOrgConfiguration \
+  TestAccResourceOktaOrgConfiguration_crud \
   TestAccResourceOktaPolicyRulePassword_crud \
   TestAccResourceOktaUser_updateAllAttributes
 
