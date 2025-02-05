@@ -288,7 +288,7 @@ func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints []interface{}) resource.TestCheckFunc {
+func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, expectedConstraints []interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("rule not found: %s", rule)
 		ruleRS, ok := s.RootModule().Resources[rule]
@@ -307,13 +307,29 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints [
 		if err != nil {
 			return fmt.Errorf("unable to marshal constraints, err: %+v", err)
 		}
-		var _constraints []interface{}
-		err = json.Unmarshal([]byte(constraintsJSON), &_constraints)
+		var gotConstraints []interface{}
+		err = json.Unmarshal([]byte(constraintsJSON), &gotConstraints)
 		if err != nil {
 			return fmt.Errorf("unable to unmarshal constraints, err: %+v", err)
 		}
-		expectedJSON, _ := json.Marshal(constraints)
-		// NOTE: this could be brittle comparing the string literal of the two constraints
+		if reflect.DeepEqual(expectedConstraints, gotConstraints) {
+			// object equivelence, ok
+			return nil
+		}
+		expectedJSON, _ := json.Marshal(expectedConstraints)
+
+		// reserialize to absolutely generatic objects
+		var _expected []interface{}
+		var _got []interface{}
+		_ = json.Unmarshal([]byte(expectedJSON), &_expected)
+		_ = json.Unmarshal([]byte(constraintsJSON), &_got)
+		if reflect.DeepEqual(_expected, _got) {
+			// absolute object equivelence, ok
+			return nil
+		}
+
+		// last attempt of string equivelence of JSON is brittle comparing the
+		// string literal of the two constraints
 		if !reflect.DeepEqual(expectedJSON, constraintsJSON) {
 			return fmt.Errorf("expected constraints:\n%s\ngot:\n%s", expectedJSON, constraintsJSON)
 		}
