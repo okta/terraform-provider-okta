@@ -86,18 +86,31 @@ func TestRunForcedSweeper(t *testing.T) {
 	sweepLinkDefinitions(testClient)
 	sweepLogStreams(testClient)
 	sweepNetworkZones(testClient)
-	sweepMfaPolicies(testClient)
-	sweepPasswordPolicies(testClient)
-	sweepPolicyRuleIdpDiscovery(testClient)
-	sweepMfaPolicyRules(testClient)
-	sweepPolicyRulePasswords(testClient)
-	sweepSignOnPolicyRules(testClient)
-	sweepAccessPolicies(testClient)
-	sweepSignOnPolicies(testClient)
 	sweepResourceSets(testClient)
 	sweepUsers(testClient)
 	sweepUserCustomSchema(testClient)
 	sweepUserTypes(testClient)
+
+	// policy rules clean up needs to occur before policies
+	// policy rules
+	sweepPolicyRulesAccess(testClient)
+	sweepPolicyRulesIdpDiscovery(testClient)
+	sweepPolicyRulesMFA(testClient)
+	sweepPolicyRulesOauthAuthorization(testClient)
+	sweepPolicyRulesOktaSignOn(testClient)
+	sweepPolicyRulesPassword(testClient)
+	sweepPolicyRulesProfileEnrollment(testClient)
+	sweepPolicyRulesSignOn(testClient)
+
+	// policies
+	sweepPoliciesAccess(testClient)
+	sweepPoliciesIDPDiscovery(testClient)
+	sweepPoliciesMFA(testClient)
+	sweepPoliciesOauthAuthorization(testClient)
+	sweepPoliciesOktaSignOn(testClient)
+	sweepPoliciesPassword(testClient)
+	sweepPoliciesProfileEnrollment(testClient)
+	sweepPoliciesSignOn(testClient)
 }
 
 // Sets up sweeper to clean up dangling resources
@@ -407,36 +420,68 @@ func sweepNetworkZones(client *testClient) error {
 	return condenseError(errorList)
 }
 
-func sweepMfaPolicies(client *testClient) error {
-	return sweepPolicyByType(sdk.MfaPolicyType, client)
-}
-
-func sweepPasswordPolicies(client *testClient) error {
-	return sweepPolicyByType(sdk.PasswordPolicyType, client)
-}
-
-func sweepAccessPolicies(client *testClient) error {
+func sweepPoliciesAccess(client *testClient) error {
 	return sweepPolicyByType(sdk.AccessPolicyType, client)
 }
 
-func sweepPolicyRuleIdpDiscovery(client *testClient) error {
+func sweepPolicyRulesAccess(client *testClient) error {
+	return sweepPolicyRulesByType(sdk.AccessPolicyType, client)
+}
+
+func sweepPoliciesIDPDiscovery(client *testClient) error {
+	return sweepPolicyByType(sdk.IdpDiscoveryType, client)
+}
+
+func sweepPolicyRulesIdpDiscovery(client *testClient) error {
 	return sweepPolicyRulesByType(sdk.IdpDiscoveryType, client)
 }
 
-func sweepMfaPolicyRules(client *testClient) error {
+func sweepPoliciesMFA(client *testClient) error {
+	return sweepPolicyByType(sdk.MfaPolicyType, client)
+}
+
+func sweepPolicyRulesMFA(client *testClient) error {
 	return sweepPolicyRulesByType(sdk.MfaPolicyType, client)
 }
 
-func sweepPolicyRulePasswords(client *testClient) error {
-	return sweepPolicyRulesByType(sdk.PasswordPolicyType, client)
+func sweepPoliciesOauthAuthorization(client *testClient) error {
+	return sweepPolicyByType(sdk.OauthAuthorizationPolicyType, client)
 }
 
-func sweepSignOnPolicyRules(client *testClient) error {
+func sweepPolicyRulesOauthAuthorization(client *testClient) error {
+	return sweepPolicyRulesByType(sdk.OauthAuthorizationPolicyType, client)
+}
+
+func sweepPoliciesOktaSignOn(client *testClient) error {
+	return sweepPolicyByType(sdk.SignOnPolicyType, client)
+}
+
+func sweepPolicyRulesOktaSignOn(client *testClient) error {
 	return sweepPolicyRulesByType(sdk.SignOnPolicyType, client)
 }
 
-func sweepSignOnPolicies(client *testClient) error {
-	return sweepPolicyByType(sdk.SignOnPolicyType, client)
+func sweepPoliciesPassword(client *testClient) error {
+	return sweepPolicyByType(sdk.PasswordPolicyType, client)
+}
+
+func sweepPolicyRulesPassword(client *testClient) error {
+	return sweepPolicyRulesByType(sdk.PasswordPolicyType, client)
+}
+
+func sweepPoliciesProfileEnrollment(client *testClient) error {
+	return sweepPolicyByType(sdk.ProfileEnrollmentPolicyType, client)
+}
+
+func sweepPolicyRulesProfileEnrollment(client *testClient) error {
+	return sweepPolicyRulesByType(sdk.ProfileEnrollmentPolicyType, client)
+}
+
+func sweepPoliciesSignOn(client *testClient) error {
+	return sweepPolicyByType(sdk.SignOnPolicyRuleType, client)
+}
+
+func sweepPolicyRulesSignOn(client *testClient) error {
+	return sweepPolicyRulesByType(sdk.SignOnPolicyRuleType, client)
 }
 
 func sweepResourceSets(client *testClient) error {
