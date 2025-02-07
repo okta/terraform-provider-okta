@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -40,6 +41,7 @@ type testClient struct {
 	sdkV2Client         *sdk.Client
 	sdkSupplementClient *sdk.APISupplement
 	sdkV3Client         *okta.APIClient
+	sdkV5Client         *v5okta.APIClient
 }
 
 var testResourcePrefix = "testAcc"
@@ -71,6 +73,7 @@ func TestRunForcedSweeper(t *testing.T) {
 		sdkV2Client:         sdkV2ClientForTest(),
 		sdkSupplementClient: sdkSupplementClientForTest(),
 		sdkV3Client:         sdkV3ClientForTest(),
+		sdkV5Client:         sdkV5ClientForTest(),
 	}
 
 	sweepCustomRoles(testClient)

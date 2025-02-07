@@ -27,6 +27,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"gopkg.in/dnaeon/go-vcr.v3/cassette"
 	"gopkg.in/dnaeon/go-vcr.v3/recorder"
@@ -38,6 +39,7 @@ var (
 	testAccProvidersFactories       map[string]func() (*schema.Provider, error)
 	testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
 	testAccMergeProvidersFactories  map[string]func() (tfprotov5.ProviderServer, error)
+	testSdkV5Client                 *v5okta.APIClient
 	testSdkV3Client                 *okta.APIClient
 	testSdkV2Client                 *sdk.Client
 	testSdkSupplementClient         *sdk.APISupplement
@@ -264,6 +266,13 @@ func TestProviderValidate(t *testing.T) {
 	}
 }
 
+func sdkV5ClientForTest() *v5okta.APIClient {
+	if testSdkV5Client != nil {
+		return testSdkV5Client
+	}
+	return sdkV5Client
+}
+
 func sdkV3ClientForTest() *okta.APIClient {
 	if testSdkV3Client != nil {
 		return testSdkV3Client
@@ -367,6 +376,7 @@ func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.P
 
 				// this is needed so teardown api calls are recorded by VCR and
 				// we don't run ACC tests in parallel
+				testSdkV5Client = config.oktaSDKClientV5
 				testSdkV3Client = config.oktaSDKClientV3
 				testSdkV2Client = config.oktaSDKClientV2
 				testSdkSupplementClient = config.oktaSDKsupplementClient
