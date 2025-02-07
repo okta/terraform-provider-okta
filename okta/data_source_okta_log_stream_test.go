@@ -21,7 +21,7 @@ func TestAccDataSourceOktaLogStream_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					//resource.TestCheckResourceAttrSet(awsDataSource, "id"),
+					// resource.TestCheckResourceAttrSet(awsDataSource, "id"),
 					resource.TestCheckResourceAttr(awsDataSource, "name", fmt.Sprintf("%s AWS", buildResourceName(mgr.Seed))),
 					resource.TestCheckResourceAttr(awsDataSource, "type", "aws_eventbridge"),
 					resource.TestCheckResourceAttr(awsDataSource, "status", "ACTIVE"),
@@ -29,7 +29,7 @@ func TestAccDataSourceOktaLogStream_read(t *testing.T) {
 					resource.TestCheckResourceAttr(awsDataSource, "settings.region", "eu-west-3"),
 					resource.TestCheckResourceAttr(awsDataSource, "settings.event_source_name", fmt.Sprintf("%s_AWS", buildResourceName(mgr.Seed))),
 
-					//resource.TestCheckResourceAttrSet(splunkDataSource, "id"),
+					// resource.TestCheckResourceAttrSet(splunkDataSource, "id"),
 					resource.TestCheckResourceAttr(splunkDataSource, "name", fmt.Sprintf("%s Splunk", buildResourceName(mgr.Seed))),
 					resource.TestCheckResourceAttr(splunkDataSource, "type", "splunk_cloud_logstreaming"),
 					resource.TestCheckResourceAttr(splunkDataSource, "status", "ACTIVE"),
