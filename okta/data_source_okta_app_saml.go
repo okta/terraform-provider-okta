@@ -306,7 +306,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		app = respApp.(*sdk.SamlApplication)
 	} else {
 		re := getOktaClientFromMetadata(m).GetRequestExecutor()
-		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.getQ()}
+		qp := &query.Params{Filter: filters.Status, Q: filters.getQ()}
 		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
 			return diag.Errorf("failed to list SAML apps: %v", err)
@@ -319,11 +319,23 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		if len(appList) < 1 {
 			return diag.Errorf("no SAML application found with provided filter: %s", filters)
 		}
-		if filters.Label != "" && appList[0].Label != filters.Label {
-			return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
+
+		if filters.Label != "" {
+			foundMatch := false
+			for _, appItx := range appList {
+				if appItx.Label == filters.Label {
+					app = appItx
+					foundMatch = true
+					break
+				}
+			}
+			if !foundMatch {
+				return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
+			}
+		} else {
+			logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
+			app = appList[0]
 		}
-		logger(m).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
-		app = appList[0]
 	}
 	d.SetId(app.Id)
 	_ = d.Set("label", app.Label)
