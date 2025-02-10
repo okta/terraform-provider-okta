@@ -183,7 +183,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "client_secret_basic",
-				Description: "Requested authentication method for the token endpoint.",
+				Description: "Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.",
 			},
 			// API docs say that auto_key_rotation will alwas be set true if it
 			// is missing on input therefore we can declare it's default to be
