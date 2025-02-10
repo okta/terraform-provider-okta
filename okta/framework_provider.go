@@ -256,6 +256,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 		NewAppsDataSource,
 		NewUserTypeDataSource,
 		NewDeviceAssurancePolicyDataSource,
+		NewAppGroupAssignmentsDataSource,
 	}
 }
 
