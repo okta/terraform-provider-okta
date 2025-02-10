@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -254,10 +255,15 @@ other arguments that changed will be applied.`,
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{ // Normally we don't do input validation, but these values are unlikely to change as they are part of the OAuth 2.0 spec
+						"code",
+						"token",
+						"id_token",
+					}, false),
 				},
 				Optional:    true,
 				Computed:    true,
-				Description: "List of OAuth 2.0 response type strings.",
+				Description: "List of OAuth 2.0 response type strings. Valid values are any combination of: `code`, `token`, and `id_token`.",
 			},
 			"grant_types": {
 				Type: schema.TypeSet,
