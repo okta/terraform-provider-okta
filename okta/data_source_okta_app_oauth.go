@@ -151,7 +151,7 @@ func dataSourceAppOauth() *schema.Resource {
 			"wildcard_redirect": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris",
+				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: \"SUBDOMAIN\", \"DISABLED\".",
 			},
 		}),
 		Description: "Get a OIDC application from Okta.",
