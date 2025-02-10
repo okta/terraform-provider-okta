@@ -104,10 +104,10 @@ resource "okta_app_oauth" "example" {
 - `redirect_uris` (List of String) List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.
 - `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token
 - `refresh_token_rotation` (String) *Early Access Property* Refresh token rotation behavior, required with grant types refresh_token
-- `response_types` (Set of String) List of OAuth 2.0 response type strings.
+- `response_types` (Set of String) List of OAuth 2.0 response type strings. Valid values are any combination of: `code`, `token`, and `id_token`.
 - `status` (String) Status of application. By default, it is `ACTIVE`
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint.
+- `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.
 - `tos_uri` (String) URI to web page providing client tos (terms of service).
 - `user_name_template` (String) Username template. Default: `${source.login}`
 - `user_name_template_push_status` (String) Push username on update. Valid values: `PUSH` and `DONT_PUSH`
