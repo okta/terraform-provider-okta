@@ -25,9 +25,9 @@ func dataSourceDefaultPolicy() *schema.Resource {
 	}
 }
 
-func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceDefaultPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	policyType := d.Get("type").(string)
-	policies, err := findSystemPolicyByType(ctx, m, policyType)
+	policies, err := findSystemPolicyByType(ctx, meta, policyType)
 	if err != nil {
 		return diag.FromErr(err)
 	}

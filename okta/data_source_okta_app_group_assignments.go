@@ -30,8 +30,8 @@ func dataSourceAppGroupAssignments() *schema.Resource {
 	}
 }
 
-func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	id := d.Get("id").(string)
 
 	groupAssignments, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})

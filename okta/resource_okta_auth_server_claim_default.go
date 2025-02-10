@@ -89,8 +89,8 @@ This resource allows you to configure Default Authorization Server Claims.`,
 	}
 }
 
-func resourceAuthServerClaimDefaultRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	claim, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
+func resourceAuthServerClaimDefaultRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	claim, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server default claim: %v", err)
 	}
@@ -110,16 +110,16 @@ func resourceAuthServerClaimDefaultRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if d.Id() == "" {
-		claim, err := findClaim(ctx, m, d.Get("auth_server_id").(string), d.Get("name").(string))
+		claim, err := findClaim(ctx, meta, d.Get("auth_server_id").(string), d.Get("name").(string))
 		if err != nil {
 			return diag.FromErr(err)
 		}
 		d.SetId(claim.Id)
 		if d.Get("name").(string) != "sub" && d.Get("always_include_in_token").(bool) != *claim.AlwaysIncludeInToken {
 			claim.AlwaysIncludeInToken = boolPtr(d.Get("always_include_in_token").(bool))
-			claim, _, err = getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), *claim)
+			claim, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), *claim)
 			if err != nil {
 				return diag.Errorf("failed to update auth server default claim: %v", err)
 			}
@@ -146,14 +146,14 @@ func resourceAuthServerClaimDefaultUpdate(ctx context.Context, d *schema.Resourc
 	}
 	if (d.Get("name").(string) != "sub" && !d.HasChange("always_include_in_token")) || // for the default claims except `sub` only `always_include_in_token` field can be updated
 		(d.Get("name").(string) == "sub" && !d.HasChange("value")) { // for the `sub` claim only `value` field can be updated
-		return resourceAuthServerClaimDefaultRead(ctx, d, m)
+		return resourceAuthServerClaimDefaultRead(ctx, d, meta)
 	}
 	claim := buildAuthServerClaimDefault(d)
-	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), claim)
+	_, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.UpdateOAuth2Claim(ctx, d.Get("auth_server_id").(string), d.Id(), claim)
 	if err != nil {
 		return diag.Errorf("failed to update auth server default claim: %v", err)
 	}
-	return resourceAuthServerClaimDefaultRead(ctx, d, m)
+	return resourceAuthServerClaimDefaultRead(ctx, d, meta)
 }
 
 func buildAuthServerClaimDefault(d *schema.ResourceData) sdk.OAuth2Claim {
@@ -168,8 +168,8 @@ func buildAuthServerClaimDefault(d *schema.ResourceData) sdk.OAuth2Claim {
 	}
 }
 
-func findClaim(ctx context.Context, m interface{}, serverID, name string) (*sdk.OAuth2Claim, error) {
-	claims, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.ListOAuth2Claims(ctx, serverID)
+func findClaim(ctx context.Context, meta interface{}, serverID, name string) (*sdk.OAuth2Claim, error) {
+	claims, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListOAuth2Claims(ctx, serverID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list auth server claims: %v", err)
 	}

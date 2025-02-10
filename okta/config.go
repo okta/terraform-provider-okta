@@ -33,6 +33,7 @@ const (
 var (
 	// NOTE: Minor hack where runtime needs to know about testing environment.
 	// Global clients are convenience for testing only
+	sdkV5Client         *v5okta.APIClient
 	sdkV3Client         *okta.APIClient
 	sdkV2Client         *sdk.Client
 	sdkSupplementClient *sdk.APISupplement
@@ -231,6 +232,7 @@ func (c *Config) SetTimeOperations(op TimeOperations) {
 }
 
 func (c *Config) resetHttpTransport(transport *http.RoundTripper) {
+	c.oktaSDKClientV5.GetConfig().HTTPClient.Transport = *transport
 	c.oktaSDKClientV3.GetConfig().HTTPClient.Transport = *transport
 	c.oktaSDKClientV2.GetConfig().HttpClient.Transport = *transport
 
@@ -273,6 +275,7 @@ func (c *Config) loadClients(ctx context.Context) error {
 
 	// NOTE: global clients are convenience for testing only; however do not
 	// remove this code
+	sdkV5Client = c.oktaSDKClientV5
 	sdkV3Client = c.oktaSDKClientV3
 	sdkV2Client = c.oktaSDKClientV2
 	sdkSupplementClient = c.oktaSDKsupplementClient
@@ -713,6 +716,7 @@ func (o *ProductionTimeOperations) DoNotRetry(err error) bool {
 
 // Sleep facade to actual time.Sleep in production
 func (o *ProductionTimeOperations) Sleep(d time.Duration) {
+	//lintignore:R018
 	time.Sleep(d)
 }
 
@@ -731,6 +735,7 @@ func (o *TestTimeOperations) DoNotRetry(err error) bool {
 // Sleep no sleeping when test is in VCR play mode
 func (o *TestTimeOperations) Sleep(d time.Duration) {
 	if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
+		//lintignore:R018
 		time.Sleep(d)
 	}
 }

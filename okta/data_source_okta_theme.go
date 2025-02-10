@@ -29,7 +29,7 @@ func dataSourceTheme() *schema.Resource {
 	}
 }
 
-func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	bid, ok := d.GetOk("brand_id")
 	if !ok {
 		return diag.Errorf("brand_id required for email template")
@@ -42,7 +42,7 @@ func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	themeID := tid.(string)
 
-	theme, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}

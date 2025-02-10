@@ -39,17 +39,17 @@ func resourcePolicyPasswordRule() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPolicyRulePassword(d)
-	err := createRule(ctx, d, m, template, policyRulePassword)
+	err := createRule(ctx, d, meta, template, policyRulePassword)
 	if err != nil {
 		return diag.Errorf("failed to create password policy rule: %v", err)
 	}
-	return resourcePolicyPasswordRuleRead(ctx, d, m)
+	return resourcePolicyPasswordRuleRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rule, err := getPolicyRule(ctx, d, m)
+func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	rule, err := getPolicyRule(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get password policy rule: %v", err)
 	}
@@ -67,17 +67,17 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPolicyRulePassword(d)
-	err := updateRule(ctx, d, m, template)
+	err := updateRule(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update password policy rule: %v", err)
 	}
-	return resourcePolicyPasswordRuleRead(ctx, d, m)
+	return resourcePolicyPasswordRuleRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteRule(ctx, d, m, false)
+func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteRule(ctx, d, meta, false)
 	if err != nil {
 		return diag.Errorf("failed to delete password policy rule: %v", err)
 	}

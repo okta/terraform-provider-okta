@@ -57,10 +57,10 @@ func dataSourceAppMetadataSaml() *schema.Resource {
 	}
 }
 
-func dataSourceAppMetadataSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceAppMetadataSamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("app_id").(string)
 	kid := d.Get("key_id").(string)
-	metadata, metadataRoot, err := getAPISupplementFromMetadata(m).GetSAMLMetadata(ctx, id, kid)
+	metadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, id, kid)
 	if err != nil {
 		return diag.Errorf("failed to get app's SAML metadata: %v", err)
 	}

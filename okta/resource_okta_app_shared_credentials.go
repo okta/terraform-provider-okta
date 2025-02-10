@@ -84,25 +84,25 @@ other arguments that changed will be applied.`,
 	}
 }
 
-func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := buildAppSharedCredentials(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SWA shared credentials application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
 	}
-	return resourceAppSharedCredentialsRead(ctx, d, m)
+	return resourceAppSharedCredentialsRead(ctx, d, meta)
 }
 
-func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewBrowserPluginApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get SWA shared credentials application: %v", err)
 	}
@@ -129,8 +129,8 @@ func resourceAppSharedCredentialsRead(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -138,25 +138,25 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSharedCredentials(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update SWA shared credentials application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
 		}
 	}
-	return resourceAppSharedCredentialsRead(ctx, d, m)
+	return resourceAppSharedCredentialsRead(ctx, d, meta)
 }
 
-func resourceAppSharedCredentialsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppSharedCredentialsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete SWA shared credentials application: %v", err)
 	}

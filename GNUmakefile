@@ -4,6 +4,7 @@ WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
+TFPROVIDERLINTX=tfproviderlintx
 STATICCHECK=staticcheck
 
 # Expression to match against tests
@@ -35,7 +36,7 @@ DEFAULT_SMOKE_TESTS?=\
   TestAccResourceOktaGroup_crud \
   TestAccResourceOktaMfaPolicyRule_crud \
   TestAccResourceOktaMfaPolicy_crud \
-  TestAccResourceOktaOrgConfiguration \
+  TestAccResourceOktaOrgConfiguration_crud \
   TestAccResourceOktaPolicyRulePassword_crud \
   TestAccResourceOktaUser_updateAllAttributes
 
@@ -75,17 +76,22 @@ testacc:
 	TF_ACC=1 go test $(TEST) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
 
 smoke-test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ ./okta
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ ./$(PKG_NAME)
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
+
+qc: vet staticcheck lint
 
 vet:
-	@echo "==> Checking source code against go vet and staticcheck"
+	@echo "==> Checking source code against go vet"
 	@go vet ./...
+
+staticcheck:
+	@echo "==> Checking source code against staticcheck"
 	@staticcheck ./...
 
 fmt: tools # Format the code
@@ -108,39 +114,29 @@ test-compile:
 	go test -c $(TEST) $(TESTARGS)
 
 lint:
-	@echo "==> Checking source code against linters..."
+	@echo "==> Checking source code against linter tfproviderlint ..."
 	@$(TFPROVIDERLINT) \
 		-c 1 \
-		-AT001 \
-    -R004 \
-		-S001 \
-		-S002 \
-		-S003 \
-		-S004 \
-		-S005 \
-		-S007 \
-		-S008 \
-		-S009 \
-		-S010 \
-		-S011 \
-		-S012 \
-		-S013 \
-		-S014 \
-		-S015 \
-		-S016 \
-		-S017 \
-		-S019 \
+		./$(PKG_NAME)
+
+lintx:
+	# NOTE tfproviderlintx is very opinionated, don't add it to qc target
+	@echo "==> Checking source code against linter tfproviderlintx ..."
+	@$(TFPROVIDERLINTX) \
+		-c 1 \
 		./$(PKG_NAME)
 
 tools:
-	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.4.0
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
+	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
+	@which $(TFPROVIDERLINTX) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.30.0
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
 
 tools-update:
-	@go install mvdan.cc/gofumpt@v0.4.0
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.28.1
-	@go install honnef.co/go/tools/cmd/staticcheck@v0.4.2
+	@go install mvdan.cc/gofumpt@v0.7.0
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.30.0
+	@go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

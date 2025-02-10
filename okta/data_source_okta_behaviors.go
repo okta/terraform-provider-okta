@@ -58,13 +58,13 @@ func dataSourceBehaviors() *schema.Resource {
 	}
 }
 
-func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	qp := &query.Params{Limit: defaultPaginationLimit}
 	q, ok := d.GetOk("q")
 	if ok {
 		qp.Q = q.(string)
 	}
-	behaviors, _, err := getAPISupplementFromMetadata(m).ListBehaviors(ctx, qp)
+	behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, qp)
 	if err != nil {
 		return diag.Errorf("failed to list behaviors: %v", err)
 	}

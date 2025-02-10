@@ -45,21 +45,21 @@ These operations allow the creation and manipulation of custom roles as custom c
 	}
 }
 
-func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cr, err := buildAdminRoleCustomAssignment(d)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
-	_, err = getAPISupplementFromMetadata(m).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
+	_, err = getAPISupplementFromMetadata(meta).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("resource_set_id").(string), d.Get("custom_role_id").(string)))
-	return resourceAdminRoleCustomAssignmentsRead(ctx, d, m)
+	return resourceAdminRoleCustomAssignmentsRead(ctx, d, meta)
 }
 
-func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	members, resp, err := listResourceSetBindingMembers(ctx, getAPISupplementFromMetadata(m), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	members, resp, err := listResourceSetBindingMembers(ctx, getAPISupplementFromMetadata(meta), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to list members assigned to the custom role: %v", err)
 	}
@@ -71,11 +71,11 @@ func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.Resou
 	return nil
 }
 
-func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if !d.HasChange("members") {
 		return nil
 	}
-	client := getAPISupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(meta)
 	oldMembers, newMembers := d.GetChange("members")
 	oldSet := oldMembers.(*schema.Set)
 	newSet := newMembers.(*schema.Set)
@@ -92,8 +92,8 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 	return nil
 }
 
-func resourceAdminRoleCustomAssignmentsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getAPISupplementFromMetadata(m).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+func resourceAdminRoleCustomAssignmentsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	resp, err := getAPISupplementFromMetadata(meta).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role assignment: %v", err)
 	}

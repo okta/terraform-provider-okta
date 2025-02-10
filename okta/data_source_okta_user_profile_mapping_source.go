@@ -32,8 +32,8 @@ func dataSourceUserProfileMappingSource() *schema.Resource {
 	}
 }
 
-func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	mappings, resp, err := getOktaClientFromMetadata(m).ProfileMapping.ListProfileMappings(ctx, &query.Params{Limit: defaultPaginationLimit})
+func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	mappings, resp, err := getOktaClientFromMetadata(meta).ProfileMapping.ListProfileMappings(ctx, &query.Params{Limit: defaultPaginationLimit})
 	if err != nil {
 		return diag.Errorf("failed to list mappings: %v", err)
 	}

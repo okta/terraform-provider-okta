@@ -169,17 +169,17 @@ func resourcePolicyPassword() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPasswordPolicy(d)
-	err := createPolicy(ctx, d, m, template)
+	err := createPolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to create password policy: %v", err)
 	}
-	return resourcePolicyPasswordRead(ctx, d, m)
+	return resourcePolicyPasswordRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get password policy: %v", err)
 	}
@@ -199,48 +199,48 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 			return diag.Errorf("error setting notification channels for resource %s: %v", d.Id(), err)
 		}
 		if policy.Settings.Password.Complexity.MinLengthPtr != nil {
-			_ = d.Set("password_min_length", *policy.Settings.Password.Complexity.MinLengthPtr)
+			_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLengthPtr)
 		}
 		if policy.Settings.Password.Complexity.MinLowerCasePtr != nil {
-			_ = d.Set("password_min_lowercase", *policy.Settings.Password.Complexity.MinLowerCasePtr)
+			_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCasePtr)
 		}
 		if policy.Settings.Password.Complexity.MinUpperCasePtr != nil {
-			_ = d.Set("password_min_uppercase", *policy.Settings.Password.Complexity.MinUpperCasePtr)
+			_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCasePtr)
 		}
 		if policy.Settings.Password.Complexity.MinNumberPtr != nil {
-			_ = d.Set("password_min_number", *policy.Settings.Password.Complexity.MinNumberPtr)
+			_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumberPtr)
 		}
 		if policy.Settings.Password.Complexity.MinSymbolPtr != nil {
-			_ = d.Set("password_min_symbol", *policy.Settings.Password.Complexity.MinSymbolPtr)
+			_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbolPtr)
 		}
 		_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
 		if policy.Settings.Password.Complexity.Dictionary != nil && policy.Settings.Password.Complexity.Dictionary.Common != nil {
 			_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
 		}
 		if policy.Settings.Password.Age.MaxAgeDaysPtr != nil {
-			_ = d.Set("password_max_age_days", *policy.Settings.Password.Age.MaxAgeDaysPtr)
+			_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDaysPtr)
 		}
 		if policy.Settings.Password.Age.ExpireWarnDaysPtr != nil {
-			_ = d.Set("password_expire_warn_days", *policy.Settings.Password.Age.ExpireWarnDaysPtr)
+			_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDaysPtr)
 		}
 		if policy.Settings.Password.Age.MinAgeMinutesPtr != nil {
-			_ = d.Set("password_min_age_minutes", *policy.Settings.Password.Age.MinAgeMinutesPtr)
+			_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutesPtr)
 		}
 		if policy.Settings.Password.Age.HistoryCountPtr != nil {
-			_ = d.Set("password_history_count", *policy.Settings.Password.Age.HistoryCountPtr)
+			_ = d.Set("password_history_count", policy.Settings.Password.Age.HistoryCountPtr)
 		}
 		if policy.Settings.Password.Lockout.MaxAttemptsPtr != nil {
-			_ = d.Set("password_max_lockout_attempts", *policy.Settings.Password.Lockout.MaxAttemptsPtr)
+			_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttemptsPtr)
 		}
 		if policy.Settings.Password.Lockout.AutoUnlockMinutesPtr != nil {
-			_ = d.Set("password_auto_unlock_minutes", *policy.Settings.Password.Lockout.AutoUnlockMinutesPtr)
+			_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutesPtr)
 		}
 		_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
 		if policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr != nil {
-			_ = d.Set("question_min_length", *policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr)
+			_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr)
 		}
 		if policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr != nil {
-			_ = d.Set("recovery_email_token", *policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr)
+			_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr)
 		}
 		_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
 		_ = d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)
@@ -267,17 +267,17 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func resourcePolicyPasswordUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	template := buildPasswordPolicy(d)
-	err := updatePolicy(ctx, d, m, template)
+	err := updatePolicy(ctx, d, meta, template)
 	if err != nil {
 		return diag.Errorf("failed to update password policy: %v", err)
 	}
-	return resourcePolicyPasswordRead(ctx, d, m)
+	return resourcePolicyPasswordRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deletePolicy(ctx, d, m)
+func resourcePolicyPasswordDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete password policy: %v", err)
 	}

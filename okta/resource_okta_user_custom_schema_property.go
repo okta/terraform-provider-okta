@@ -21,7 +21,7 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 		UpdateContext: resourceUserSchemaCreateOrUpdate,
 		DeleteContext: resourceUserSchemaDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				resourceIndex := d.Id()
 				resourceUserType := "default"
 				if strings.Contains(d.Id(), ".") {
@@ -101,8 +101,8 @@ func resourceUserSchemaResourceV0() *schema.Resource {
 	})}
 }
 
-func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating user custom schema property", "name", d.Get("index").(string))
+func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating user custom schema property", "name", d.Get("index").(string))
 	err := validateUserSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -112,7 +112,7 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	custom := buildCustomUserSchema(d.Get("index").(string), userCustomSchemaAttribute)
-	subSchema, err := alterCustomUserSchema(ctx, m, d.Get("user_type").(string), d.Get("index").(string), custom, false)
+	subSchema, err := alterCustomUserSchema(ctx, meta, d.Get("user_type").(string), d.Get("index").(string), custom, false)
 	if err != nil {
 		return diag.Errorf("failed to create or update user custom schema property %s: %v", d.Get("index").(string), err)
 	}
@@ -124,13 +124,13 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("reading user custom schema property", "name", d.Get("index").(string))
-	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), d.Get("user_type").(string))
+func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("reading user custom schema property", "name", d.Get("index").(string))
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema property: %v", err)
 	}
-	s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
+	s, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema property: %v", err)
 	}
@@ -146,8 +146,8 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index string, schema *sdk.UserSchema, isDeleteOperation bool) (*sdk.UserSchemaAttribute, error) {
-	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(m), userType)
+func alterCustomUserSchema(ctx context.Context, meta interface{}, userType, index string, schema *sdk.UserSchema, isDeleteOperation bool) (*sdk.UserSchemaAttribute, error) {
+	typeSchemaID, err := getUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), userType)
 	if err != nil {
 		return nil, err
 	}
@@ -160,9 +160,9 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		// juggle types on the fly.
 
 		retypeUserSchemaPropertyEnums(schema)
-		updated, resp, err := getOktaClientFromMetadata(m).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
+		updated, resp, err := getOktaClientFromMetadata(meta).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
 		stringifyUserSchemaPropertyEnums(schema)
-		if doNotRetry(m, err) {
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 
@@ -175,7 +175,7 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 			}
 			return backoff.Permanent(err)
 		}
-		s, _, err := getOktaClientFromMetadata(m).UserSchema.GetUserSchema(ctx, typeSchemaID)
+		s, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to get user custom schema property: %v", err))
 		}
@@ -188,14 +188,14 @@ func alterCustomUserSchema(ctx context.Context, m interface{}, userType, index s
 		return errors.New("failed to apply changes after several retries")
 	}, boc)
 	if err != nil {
-		logger(m).Error("failed to apply changes after several retries", err)
+		logger(meta).Error("failed to apply changes after several retries", err)
 	}
 	return schemaAttribute, err
 }
 
-func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceUserSchemaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := buildCustomUserSchema(d.Id(), nil)
-	_, err := alterCustomUserSchema(ctx, m, d.Get("user_type").(string), d.Get("index").(string), custom, true)
+	_, err := alterCustomUserSchema(ctx, meta, d.Get("user_type").(string), d.Get("index").(string), custom, true)
 	if err != nil {
 		return diag.Errorf("failed to delete user schema property %s: %v", d.Get("index").(string), err)
 	}

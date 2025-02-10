@@ -80,11 +80,11 @@ func dataSourceDomain() *schema.Resource {
 	}
 }
 
-func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	did, _ := d.GetOk("domain_id_or_name")
 	domainID := did.(string)
 
-	domains, _, err := getOktaClientFromMetadata(m).Domain.ListDomains(ctx)
+	domains, _, err := getOktaClientFromMetadata(meta).Domain.ListDomains(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get domains: %v", err)
 	}

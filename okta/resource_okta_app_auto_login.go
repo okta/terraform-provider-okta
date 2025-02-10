@@ -79,25 +79,25 @@ other arguments that changed will be applied.`,
 	}
 }
 
-func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := buildAppAutoLogin(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create auto login application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for auto login application: %v", err)
 	}
-	return resourceAppAutoLoginRead(ctx, d, m)
+	return resourceAppAutoLoginRead(ctx, d, meta)
 }
 
-func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewAutoLoginApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get auto login application: %v", err)
 	}
@@ -127,8 +127,8 @@ func resourceAppAutoLoginRead(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -137,23 +137,23 @@ func resourceAppAutoLoginUpdate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	app := buildAppAutoLogin(d)
-	err = updateAppByID(ctx, d.Id(), m, app)
+	err = updateAppByID(ctx, d.Id(), meta, app)
 	if err != nil {
 		return diag.Errorf("failed to update auto login application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for auto login application: %v", err)
 		}
 	}
-	return resourceAppAutoLoginRead(ctx, d, m)
+	return resourceAppAutoLoginRead(ctx, d, meta)
 }
 
-func resourceAppAutoLoginDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppAutoLoginDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete auto login application: %v", err)
 	}

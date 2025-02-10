@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaGroupAdminRole_crud(t *testing.T) {
+func TestAccResourceOktaGroupRole_admin_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRole)
 	resourceName2 := fmt.Sprintf("%s.test_app", groupRole)
 	mgr := newFixtureManager("resources", groupRole, t.Name())
@@ -60,7 +60,7 @@ func TestAccResourceOktaGroupAdminRole_crud(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaGroupCustomRole_crud(t *testing.T) {
+func TestAccResourceOktaGroupRole_custom_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", groupRole)
 	mgr := newFixtureManager("resources", groupRole, t.Name())
 	config := mgr.GetFixtures("custom.tf", t)

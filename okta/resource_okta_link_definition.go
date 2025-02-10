@@ -60,7 +60,7 @@ definition, links based on that definition are unavailable. Note that this resou
 	}
 }
 
-func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: Okta API will ignore parallel calls to `POST
 	// /api/v1/meta/schemas/user/linkedObjects` so a mutex to affect TF
 	// `-parallelism=1` behavior is needed here.
@@ -81,7 +81,7 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 			Type:        "USER",
 		},
 	}
-	_, _, err := getOktaClientFromMetadata(m).LinkedObject.AddLinkedObjectDefinition(ctx, linkedObject)
+	_, _, err := getOktaClientFromMetadata(meta).LinkedObject.AddLinkedObjectDefinition(ctx, linkedObject)
 	if err != nil {
 		return diag.Errorf("failed to create linked object: %v", err)
 	}
@@ -89,8 +89,8 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	linkedObject, resp, err := getOktaClientFromMetadata(m).LinkedObject.GetLinkedObjectDefinition(ctx, d.Id())
+func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	linkedObject, resp, err := getOktaClientFromMetadata(meta).LinkedObject.GetLinkedObjectDefinition(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get linked object: %v", err)
 	}
@@ -110,14 +110,14 @@ func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func resourceLinkDefinitionDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceLinkDefinitionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: Okta API will ignore parallel calls to `DELETE
 	// /api/v1/meta/schemas/user/linkedObjects` so a mutex to affect TF
 	// `-parallelism=1` behavior is needed here.
 	oktaMutexKV.Lock(linkDefinition)
 	defer oktaMutexKV.Unlock(linkDefinition)
 
-	resp, err := getOktaClientFromMetadata(m).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
+	resp, err := getOktaClientFromMetadata(meta).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to remove linked object: %v", err)
 	}

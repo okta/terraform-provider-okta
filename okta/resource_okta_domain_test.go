@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaDomain(t *testing.T) {
+func TestAccResourceOktaDomain_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", domain, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

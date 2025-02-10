@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccMaxApiCapacity(t *testing.T) {
+func TestAccMaxApiCapacity_read(t *testing.T) {
 	if skipVCRTest(t) {
 		return
 	}

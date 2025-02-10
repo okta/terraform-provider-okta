@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaAppSignOnPolicyRule(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -152,6 +152,7 @@ resource "okta_app_signon_policy_rule" "test" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -168,11 +169,11 @@ resource "okta_app_signon_policy_rule" "test" {
 	})
 }
 
-// TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_import_default_rule
+// TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_existing_default_rule
 // https://github.com/okta/terraform-provider-okta/issues/1245
 // This ACC was used to find and fix the issues with importing then interacting
 // with the default rule of an okta_app_signon_policy
-func TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_import_default_rule(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_Issue_1245_existing_default_rule(t *testing.T) {
 	resourceName := "okta_app_signon_policy_rule.test"
 	policyName := "okta_app_signon_policy.test"
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
@@ -213,6 +214,7 @@ resource "okta_app_signon_policy_rule" "test" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -286,7 +288,7 @@ func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 	return nil
 }
 
-func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints []interface{}) resource.TestCheckFunc {
+func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, expectedConstraints []interface{}) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("rule not found: %s", rule)
 		ruleRS, ok := s.RootModule().Resources[rule]
@@ -305,13 +307,29 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints [
 		if err != nil {
 			return fmt.Errorf("unable to marshal constraints, err: %+v", err)
 		}
-		var _constraints []interface{}
-		err = json.Unmarshal([]byte(constraintsJSON), &_constraints)
+		var gotConstraints []interface{}
+		err = json.Unmarshal([]byte(constraintsJSON), &gotConstraints)
 		if err != nil {
 			return fmt.Errorf("unable to unmarshal constraints, err: %+v", err)
 		}
-		expectedJSON, _ := json.Marshal(constraints)
-		// NOTE: this could be brittle comparing the string literal of the two constraints
+		if reflect.DeepEqual(expectedConstraints, gotConstraints) {
+			// object equivelence, ok
+			return nil
+		}
+		expectedJSON, _ := json.Marshal(expectedConstraints)
+
+		// reserialize to absolutely generatic objects
+		var _expected []interface{}
+		var _got []interface{}
+		_ = json.Unmarshal([]byte(expectedJSON), &_expected)
+		_ = json.Unmarshal([]byte(constraintsJSON), &_got)
+		if reflect.DeepEqual(_expected, _got) {
+			// absolute object equivelence, ok
+			return nil
+		}
+
+		// last attempt of string equivelence of JSON is brittle comparing the
+		// string literal of the two constraints
 		if !reflect.DeepEqual(expectedJSON, constraintsJSON) {
 			return fmt.Errorf("expected constraints:\n%s\ngot:\n%s", expectedJSON, constraintsJSON)
 		}
@@ -320,7 +338,7 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, constraints [
 	}
 }
 
-func TestAccResourceOktaAppSignOnPolicyRuleDefault(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_default_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("default.tf", t)
@@ -359,7 +377,7 @@ func TestAccResourceOktaAppSignOnPolicyRuleDefault(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaAppSignOnPolicyRuleOsExpression(t *testing.T) {
+func TestAccResourceOktaAppSignOnPolicyRule_os_expression_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
 	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("os_expression.tf", t)

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaEmailDomain(t *testing.T) {
+func TestAccResourceOktaEmailDomain_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", emailDomain, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailDomain)

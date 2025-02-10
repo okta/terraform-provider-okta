@@ -193,6 +193,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 						value = parts[i]
 					}
 				}
+				//lintignore:R001
 				_ = d.Set(field, value)
 			}
 
@@ -452,6 +453,7 @@ func appendUnique(arr []string, el string) []string {
 func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {
 		if v != nil {
+			//lintignore:R001
 			if err := d.Set(k, v); err != nil {
 				return fmt.Errorf("error setting %s for resource %s: %s", k, d.Id(), err)
 			}

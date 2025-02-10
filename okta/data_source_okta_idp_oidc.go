@@ -113,7 +113,7 @@ func dataSourceIdpOidc() *schema.Resource {
 	}
 }
 
-func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -124,9 +124,9 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interf
 		oidc *sdk.IdentityProvider
 	)
 	if id != "" {
-		oidc, err = getIdentityProviderByID(ctx, m, id, oidcIdp)
+		oidc, err = getIdentityProviderByID(ctx, meta, id, oidcIdp)
 	} else {
-		oidc, err = getIdpByNameAndType(ctx, m, name, oidcIdp)
+		oidc, err = getIdpByNameAndType(ctx, meta, name, oidcIdp)
 	}
 	if err != nil {
 		return diag.FromErr(err)
@@ -143,7 +143,7 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, m interf
 	_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
 	_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
 	if oidc.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", *oidc.Policy.MaxClockSkewPtr)
+		_ = d.Set("max_clock_skew", oidc.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("scopes", convertStringSliceToSet(oidc.Protocol.Scopes))
 	if oidc.IssuerMode != "" {

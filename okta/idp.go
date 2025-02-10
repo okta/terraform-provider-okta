@@ -112,8 +112,8 @@ func buildIdpSchema(idpSchema map[string]*schema.Schema) map[string]*schema.Sche
 	return buildSchema(baseIdpSchema, idpSchema)
 }
 
-func getIdentityProviderByID(ctx context.Context, m interface{}, id, providerType string) (*sdk.IdentityProvider, error) {
-	idp, _, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, id)
+func getIdentityProviderByID(ctx context.Context, meta interface{}, id, providerType string) (*sdk.IdentityProvider, error) {
+	idp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get identity provider with id '%s': %v", id, err)
 	}
@@ -123,9 +123,9 @@ func getIdentityProviderByID(ctx context.Context, m interface{}, id, providerTyp
 	return idp, nil
 }
 
-func getIdpByNameAndType(ctx context.Context, m interface{}, name, providerType string) (*sdk.IdentityProvider, error) {
+func getIdpByNameAndType(ctx context.Context, meta interface{}, name, providerType string) (*sdk.IdentityProvider, error) {
 	queryParams := &query.Params{Limit: 1, Q: name, Type: providerType}
-	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.ListIdentityProviders(ctx, queryParams)
+	idps, _, err := getOktaClientFromMetadata(meta).IdentityProvider.ListIdentityProviders(ctx, queryParams)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find identity provider '%s': %v", name, err)
 	}
@@ -135,8 +135,8 @@ func getIdpByNameAndType(ctx context.Context, m interface{}, name, providerType 
 	return idps[0], nil
 }
 
-func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	_, resp, err := client.IdentityProvider.DeactivateIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate identity provider: %v", err)
@@ -164,8 +164,10 @@ func setIdpStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Clien
 
 func syncEndpoint(key string, e *sdk.ProtocolEndpoint, d *schema.ResourceData) {
 	if e != nil {
-		_ = d.Set(key+"_binding", e.Binding)
-		_ = d.Set(key+"_url", e.Url)
+		//lintignore:R001
+		_ = d.Set(fmt.Sprintf("%s_binding", key), e.Binding)
+		//lintignore:R001
+		_ = d.Set(fmt.Sprintf("%s_url", key), e.Url)
 	}
 }
 

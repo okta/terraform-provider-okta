@@ -131,25 +131,25 @@ func resourceIdpOidc() *schema.Resource {
 	}
 }
 
-func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp, err := buildIdPOidc(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	respIdp, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProvider(ctx, idp)
+	respIdp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create OIDC identity provider: %v", err)
 	}
 	d.SetId(respIdp.Id)
-	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change OIDC identity provider's status: %v", err)
 	}
-	return resourceIdpRead(ctx, d, m)
+	return resourceIdpRead(ctx, d, meta)
 }
 
-func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	idp, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, d.Id())
+func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	idp, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get OIDC identity provider: %v", err)
 	}
@@ -160,7 +160,7 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
 	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
@@ -186,7 +186,7 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
-	mapping, _, err := getProfileMappingBySourceID(ctx, idp.Id, "", m)
+	mapping, _, err := getProfileMappingBySourceID(ctx, idp.Id, "", meta)
 	if err != nil {
 		return diag.Errorf("failed to get identity provider profile mapping: %v", err)
 	}
@@ -209,20 +209,20 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	return nil
 }
 
-func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp, err := buildIdPOidc(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaClientFromMetadata(m).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	_, _, err = getOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider: %v", err)
 	}
-	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(m), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider's status: %v", err)
 	}
-	return resourceIdpRead(ctx, d, m)
+	return resourceIdpRead(ctx, d, meta)
 }
 
 func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {

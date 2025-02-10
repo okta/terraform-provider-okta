@@ -26,13 +26,13 @@ func dataSourceEmailTemplate() *schema.Resource {
 	}
 }
 
-func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
-		logger(m).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrand(ctx, brandID.(string)).Execute()
+		logger(meta).Info("reading brand by ID", "id", brandID.(string))
+		brand, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand for email template: %v", err)
 		}
@@ -45,7 +45,7 @@ func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("name required for email template: %v", err)
 	}
 
-	template, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetEmailTemplate(ctx, brandID.(string), templateName.(string)).Execute()
+	template, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailTemplate(ctx, brandID.(string), templateName.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}

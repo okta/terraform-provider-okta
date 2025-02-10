@@ -69,21 +69,21 @@ func resourceAuthServerScope() *schema.Resource {
 	}
 }
 
-func resourceAuthServerScopeCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerScopeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	scope, err := buildAuthServerScope(d)
 	if err != nil {
 		return diag.Errorf("failed to build auth server scope: %v", err)
 	}
-	respScope, _, err := getOktaV3ClientFromMetadata(m).AuthorizationServerAPI.CreateOAuth2Scope(ctx, d.Get("auth_server_id").(string)).OAuth2Scope(scope).Execute()
+	respScope, _, err := getOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.CreateOAuth2Scope(ctx, d.Get("auth_server_id").(string)).OAuth2Scope(scope).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create auth server scope: %v", err)
 	}
 	d.SetId(respScope.GetId())
-	return resourceAuthServerScopeRead(ctx, d, m)
+	return resourceAuthServerScopeRead(ctx, d, meta)
 }
 
-func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	scope, resp, err := getOktaV3ClientFromMetadata(m).AuthorizationServerAPI.GetOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).Execute()
+func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	scope, resp, err := getOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.GetOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get auth server scope: %v", err)
 	}
@@ -104,20 +104,20 @@ func resourceAuthServerScopeRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceAuthServerScopeUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerScopeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	scope, err := buildAuthServerScope(d)
 	if err != nil {
 		return diag.Errorf("failed to build auth server scope: %v", err)
 	}
-	_, _, err = getOktaV3ClientFromMetadata(m).AuthorizationServerAPI.ReplaceOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).OAuth2Scope(scope).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.ReplaceOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).OAuth2Scope(scope).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update auth server scope: %v", err)
 	}
-	return resourceAuthServerScopeRead(ctx, d, m)
+	return resourceAuthServerScopeRead(ctx, d, meta)
 }
 
-func resourceAuthServerScopeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getOktaV3ClientFromMetadata(m).AuthorizationServerAPI.DeleteOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).Execute()
+func resourceAuthServerScopeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	resp, err := getOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.DeleteOAuth2Scope(ctx, d.Get("auth_server_id").(string), d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete auth server scope: %v", err)
 	}

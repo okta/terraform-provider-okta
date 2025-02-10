@@ -27,6 +27,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"gopkg.in/dnaeon/go-vcr.v3/cassette"
 	"gopkg.in/dnaeon/go-vcr.v3/recorder"
@@ -38,6 +39,7 @@ var (
 	testAccProvidersFactories       map[string]func() (*schema.Provider, error)
 	testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
 	testAccMergeProvidersFactories  map[string]func() (tfprotov5.ProviderServer, error)
+	testSdkV5Client                 *v5okta.APIClient
 	testSdkV3Client                 *okta.APIClient
 	testSdkV2Client                 *sdk.Client
 	testSdkSupplementClient         *sdk.APISupplement
@@ -77,7 +79,7 @@ func init() {
 	// mux'd provider (v2 + v3) - terraform-plugin-mux
 	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err)
 	}
 	testAccMergeProvidersFactories = map[string]func() (tfprotov5.ProviderServer, error){
 		"okta": func() (tfprotov5.ProviderServer, error) {
@@ -113,13 +115,13 @@ func TestMain(m *testing.M) {
 		setupSweeper(linkDefinition, sweepLinkDefinitions)
 		setupSweeper(logStream, sweepLogStreams)
 		setupSweeper(networkZone, sweepNetworkZones)
-		setupSweeper(policyMfa, sweepMfaPolicies)
-		setupSweeper(policyPassword, sweepPasswordPolicies)
-		setupSweeper(policyRuleIdpDiscovery, sweepPolicyRuleIdpDiscovery)
-		setupSweeper(policyRuleMfa, sweepMfaPolicyRules)
-		setupSweeper(policyRulePassword, sweepPolicyRulePasswords)
-		setupSweeper(policyRuleSignOn, sweepSignOnPolicyRules)
-		setupSweeper(policySignOn, sweepAccessPolicies)
+		setupSweeper(policyMfa, sweepPoliciesMFA)
+		setupSweeper(policyPassword, sweepPoliciesPassword)
+		setupSweeper(policyRuleIdpDiscovery, sweepPolicyRulesIdpDiscovery)
+		setupSweeper(policyRuleMfa, sweepPolicyRulesMFA)
+		setupSweeper(policyRulePassword, sweepPolicyRulesPassword)
+		setupSweeper(policyRuleSignOn, sweepPolicyRulesOktaSignOn)
+		setupSweeper(policySignOn, sweepPoliciesAccess)
 		// setupSweeper(policySignOn, sweepSignOnPolicies)
 		setupSweeper(resourceSet, sweepResourceSets)
 		setupSweeper(user, sweepUsers)
@@ -264,6 +266,13 @@ func TestProviderValidate(t *testing.T) {
 	}
 }
 
+func sdkV5ClientForTest() *v5okta.APIClient {
+	if testSdkV5Client != nil {
+		return testSdkV5Client
+	}
+	return sdkV5Client
+}
+
 func sdkV3ClientForTest() *okta.APIClient {
 	if testSdkV3Client != nil {
 		return testSdkV3Client
@@ -367,6 +376,7 @@ func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.P
 
 				// this is needed so teardown api calls are recorded by VCR and
 				// we don't run ACC tests in parallel
+				testSdkV5Client = config.oktaSDKClientV5
 				testSdkV3Client = config.oktaSDKClientV3
 				testSdkV2Client = config.oktaSDKClientV2
 				testSdkSupplementClient = config.oktaSDKsupplementClient
@@ -391,7 +401,7 @@ func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.P
 
 			muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
 			if err != nil {
-				log.Fatalf(err.Error())
+				log.Fatal(err)
 			}
 
 			return muxServer, nil

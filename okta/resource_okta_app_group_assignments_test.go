@@ -149,6 +149,7 @@ resource "okta_app_group_assignments" "test" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
+		CheckDestroy:      nil,
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

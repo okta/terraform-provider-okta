@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccResourceOktaPolicyRuleProfileEnrollment(t *testing.T) {
+func TestAccResourceOktaPolicyRuleProfileEnrollment_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", policyRuleProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

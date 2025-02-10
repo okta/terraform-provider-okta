@@ -76,22 +76,22 @@ func statusIsInvalidDiffFn(status string) bool {
 	return status == statusInvalid
 }
 
-func resourceGroupRuleCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusInternalServerError})
 	groupRule := buildGroupRule(d)
-	responseGroupRule, _, err := getOktaClientFromMetadata(m).Group.CreateGroupRule(ctx, *groupRule)
+	responseGroupRule, _, err := getOktaClientFromMetadata(meta).Group.CreateGroupRule(ctx, *groupRule)
 	if err != nil {
 		return diag.Errorf("failed to create group rule: %v", err)
 	}
 	d.SetId(responseGroupRule.Id)
-	if err := handleGroupRuleLifecycle(ctx, d, m); err != nil {
+	if err := handleGroupRuleLifecycle(ctx, d, meta); err != nil {
 		return diag.Errorf("failed to change group rule status: %v", err)
 	}
-	return resourceGroupRuleRead(ctx, d, m)
+	return resourceGroupRuleRead(ctx, d, meta)
 }
 
-func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	g, resp, err := getOktaClientFromMetadata(m).Group.GetGroupRule(ctx, d.Id(), nil)
+func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	g, resp, err := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, d.Id(), nil)
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get group rule: %v", err)
 	}
@@ -121,11 +121,11 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	desiredStatus := d.Get("status").(string)
 	// Only inactive rules can be changed, thus we should handle this first
 	if d.HasChange("status") {
-		err := handleGroupRuleLifecycle(ctx, d, m)
+		err := handleGroupRuleLifecycle(ctx, d, meta)
 		if err != nil {
 			return diag.Errorf("failed to change group rule status: %v", err)
 		}
@@ -133,7 +133,7 @@ func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	// invalid group rules can not be updated
 	if hasGroupRuleChange(d) && desiredStatus != statusInvalid {
-		client := getOktaClientFromMetadata(m)
+		client := getOktaClientFromMetadata(meta)
 		rule := buildGroupRule(d)
 		if desiredStatus == statusActive {
 			// Only inactive rules can be changed, thus we should deactivate the rule in case it was "ACTIVE"
@@ -154,7 +154,7 @@ func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, m inte
 			}
 		}
 	}
-	return resourceGroupRuleRead(ctx, d, m)
+	return resourceGroupRuleRead(ctx, d, meta)
 }
 
 func hasGroupRuleChange(d *schema.ResourceData) bool {
@@ -166,8 +166,8 @@ func hasGroupRuleChange(d *schema.ResourceData) bool {
 	return false
 }
 
-func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
 		// suppress error for INACTIVE group rules
@@ -206,8 +206,8 @@ func buildGroupRule(d *schema.ResourceData) *sdk.GroupRule {
 	}
 }
 
-func handleGroupRuleLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	client := getOktaClientFromMetadata(m)
+func handleGroupRuleLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	client := getOktaClientFromMetadata(meta)
 	if d.Get("status").(string) == statusActive {
 		_, err := client.Group.ActivateGroupRule(ctx, d.Id())
 		return err
