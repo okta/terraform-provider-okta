@@ -1,10 +1,12 @@
 package okta
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaEmailTemplateSettings_crud(t *testing.T) {
@@ -32,6 +34,26 @@ func TestAccResourceOktaEmailTemplateSettings_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "recipients", "ADMINS_ONLY"),
 					resource.TestCheckResourceAttr(resourceName, "template_name", "UserActivation"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+					brandID := rs.Primary.Attributes["brand_id"]
+					templateName := rs.Primary.Attributes["template_name"]
+					return fmt.Sprintf("%s/%s", brandID, templateName), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
+					return nil
+				},
 			},
 		},
 	})
