@@ -3,8 +3,8 @@ package okta
 import (
 	"context"
 	"fmt"
+	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -149,7 +149,17 @@ func (r *emailTemplateSettingsResource) Update(ctx context.Context, req resource
 }
 
 func (r *emailTemplateSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	idParts := strings.Split(req.ID, "/")
+
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		resp.Diagnostics.AddError("Invalid Import Identifier", "Expected import identifier with format <brand_id>/<template_name>")
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &emailTemplateSettingsResourceModel{
+		ID:           types.StringValue(req.ID),
+		BrandID:      types.StringValue(idParts[0]),
+		TemplateName: types.StringValue(idParts[1]),
+	})...)
 }
 
 func (r *emailTemplateSettingsResource) put(ctx context.Context, plan emailTemplateSettingsResourceModel) error {
