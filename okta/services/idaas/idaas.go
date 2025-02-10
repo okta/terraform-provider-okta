@@ -162,6 +162,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAdminRoleCustomDataSource,
 		newUserRiskDataSource,
 		newPostAuthSessionPolicyDataSource,
+		newAppGroupAssignmentsDataSource,
 	}
 }
 
@@ -264,7 +265,6 @@ func ProviderDataSources() map[string]*schema.Resource {
 	// Wrap all SDK data sources with panic recovery
 	return resources.WrapSDKDataSources(map[string]*schema.Resource{
 		resources.OktaIDaaSApp:                      dataSourceApp(),
-		resources.OktaIDaaSAppGroupAssignments:      dataSourceAppGroupAssignments(),
 		resources.OktaIDaaSAppMetadataSaml:          dataSourceAppMetadataSaml(),
 		resources.OktaIDaaSAppOAuth:                 dataSourceAppOauth(),
 		resources.OktaIDaaSAppSaml:                  dataSourceAppSaml(),
