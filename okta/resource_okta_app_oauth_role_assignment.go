@@ -13,7 +13,9 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
 var (
+	_ resource.Resource                   = &appOAuthRoleAssignmentResource{}
 	_ resource.ResourceWithValidateConfig = &appOAuthRoleAssignmentResource{}
 	_ resource.ResourceWithImportState    = &appOAuthRoleAssignmentResource{}
 )

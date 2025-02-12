@@ -16,11 +16,15 @@ import (
 	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
-var _ datasource.DataSource = &AppsDataSource{}
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &appsDataSource{}
+	_ datasource.DataSourceWithConfigure = &appsDataSource{}
+)
 
-func NewAppsDataSource() datasource.DataSource { return &AppsDataSource{} }
+func NewAppsDataSource() datasource.DataSource { return &appsDataSource{} }
 
-type AppsDataSource struct{ config *Config }
+type appsDataSource struct{ config *Config }
 
 type AppsDataSourceModel struct {
 	ActiveOnly        types.Bool     `tfsdk:"active_only"`
@@ -69,11 +73,11 @@ type OktaApp interface {
 	GetLinks() okta.ApplicationLinks
 }
 
-func (d *AppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *appsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_apps"
 }
 
-func (d *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *appsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"active_only": schema.BoolAttribute{
@@ -132,11 +136,11 @@ func (d *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 	}
 }
 
-func (d *AppsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *appsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.config = dataSourceConfiguration(req, resp)
 }
 
-func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state AppsDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 

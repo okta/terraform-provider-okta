@@ -14,6 +14,12 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &userTypeDataSource{}
+	_ datasource.DataSourceWithConfigure = &userTypeDataSource{}
+)
+
 type userTypeModel struct {
 	ID          types.String `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`

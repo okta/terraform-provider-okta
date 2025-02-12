@@ -16,6 +16,12 @@ import (
 	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &deviceAssurancePolicyDataSource{}
+	_ datasource.DataSourceWithConfigure = &deviceAssurancePolicyDataSource{}
+)
+
 func NewDeviceAssurancePolicyDataSource() datasource.DataSource {
 	return &deviceAssurancePolicyDataSource{}
 }

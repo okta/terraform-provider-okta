@@ -13,6 +13,12 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &logStreamDataSource{}
+	_ datasource.DataSourceWithConfigure = &logStreamDataSource{}
+)
+
 func NewLogStreamDataSource() datasource.DataSource {
 	return &logStreamDataSource{}
 }

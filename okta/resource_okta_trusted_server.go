@@ -14,6 +14,15 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &trustedServerResource{}
+	_ resource.ResourceWithConfigure   = &trustedServerResource{}
+
+	// TODO: implement import
+	// _ resource.ResourceWithImportState = &trustedServerResource{}
+)
+
 func NewTrustedServerResource() resource.Resource {
 	return &trustedServerResource{}
 }

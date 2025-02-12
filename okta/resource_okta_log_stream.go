@@ -17,6 +17,13 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &logStreamResource{}
+	_ resource.ResourceWithConfigure   = &logStreamResource{}
+	_ resource.ResourceWithImportState = &logStreamResource{}
+)
+
 const (
 	logStreamTypeEventBridge          = "aws_eventbridge"
 	logStreamTypeSplunk               = "splunk_cloud_logstreaming"
