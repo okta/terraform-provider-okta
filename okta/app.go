@@ -52,14 +52,16 @@ var (
 			Description: "URL of the application's logo",
 		},
 		"admin_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for admins.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Application notes for admins.",
+			ValidateDiagFunc: strMaxLength(250),
 		},
 		"enduser_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for end users.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Application notes for end users.",
+			ValidateDiagFunc: strMaxLength(250),
 		},
 		"app_links_json": {
 			Type:             schema.TypeString,
