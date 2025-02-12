@@ -241,12 +241,12 @@ func (c *Config) resetHttpTransport(transport *http.RoundTripper) {
 	c.oktaSDKsupplementClient = &sdk.APISupplement{
 		RequestExecutor: re,
 	}
-	// NOTE: global clients are convenience for testing only
+	// NOTE: global clients are a convenience for testing only
 	sdkSupplementClient = c.oktaSDKsupplementClient
 }
 
 // loadClients initializes the Okta SDK clients
-func (c *Config) loadClients(ctx context.Context) error {
+func (c *Config) loadClients() error {
 	v3Client, err := oktaV3SDKClient(c)
 	if err != nil {
 		return err

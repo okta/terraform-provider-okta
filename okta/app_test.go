@@ -213,7 +213,7 @@ func TestAppUpdateStatus(t *testing.T) {
 
 			var m interface{}
 			c := NewConfig(d)
-			err = c.loadClients(context.Background())
+			err = c.loadClients()
 			require.NoError(t, err)
 			m = c
 

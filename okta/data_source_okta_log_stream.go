@@ -95,7 +95,7 @@ func (d *logStreamDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (d *logStreamDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *logStreamDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
