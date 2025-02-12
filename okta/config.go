@@ -58,7 +58,7 @@ type (
 		maxWait                 int
 		logLevel                int
 		requestTimeout          int
-		maxAPICapacity          int // experimental
+		maxAPICapacity          int
 		oktaSDKClientV2         *sdk.Client
 		oktaSDKClientV3         *okta.APIClient
 		oktaSDKClientV5         *v5okta.APIClient
