@@ -30,6 +30,19 @@ func dataSourceGroups() *schema.Resource {
 				Optional:    true,
 				Description: "Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups",
 			},
+			"limit": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "The maximum number of groups returned by the Okta API, between 1 and 10000.",
+				Default:     defaultPaginationLimit,
+				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
+					value := v.(int)
+					if value < 1 || value > 10000 {
+						errors = append(errors, fmt.Errorf("limit must be between 1 and 10000"))
+					}
+					return
+				},
+			},
 			"groups": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -69,20 +82,27 @@ func dataSourceGroups() *schema.Resource {
 }
 
 func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	qp := &query.Params{Limit: defaultPaginationLimit}
+	limit, ok := d.GetOk("limit")
+	if !ok {
+		limit = defaultPaginationLimit
+	}
+	qp := &query.Params{Limit: limit.(int64)}
+
 	groupType, ok := d.GetOk("type")
 	if ok {
 		qp.Filter = fmt.Sprintf("type eq \"%s\"", groupType.(string))
 	}
+
 	q, ok := d.GetOk("q")
 	if ok {
-		qp.Limit = 10000
 		qp.Q = q.(string)
 	}
+
 	search, ok := d.GetOk("search")
 	if ok {
 		qp.Search = search.(string)
 	}
+
 	groups, err := listGroups(ctx, getOktaClientFromMetadata(meta), qp)
 	if err != nil {
 		return diag.Errorf("failed to list groups: %v", err)
