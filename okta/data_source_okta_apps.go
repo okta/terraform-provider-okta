@@ -24,7 +24,9 @@ var (
 
 func NewAppsDataSource() datasource.DataSource { return &appsDataSource{} }
 
-type appsDataSource struct{ config *Config }
+type appsDataSource struct{
+	*Config
+}
 
 type AppsDataSourceModel struct {
 	ActiveOnly        types.Bool     `tfsdk:"active_only"`
@@ -137,7 +139,7 @@ func (d *appsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 }
 
 func (d *appsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -156,7 +158,7 @@ func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	filterValue := strings.Join(filters, " AND ")
 
 	// Read the list of applications from Okta.
-	apiRequest := d.config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue).Limit(int32(defaultPaginationLimit))
+	apiRequest := d.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue).Limit(int32(defaultPaginationLimit))
 	applicationList, apiResp, err := apiRequest.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Read Okta Apps", fmt.Sprintf("Error retrieving apps: %s", err.Error()))

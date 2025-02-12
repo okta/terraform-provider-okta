@@ -27,7 +27,7 @@ func NewDeviceAssurancePolicyDataSource() datasource.DataSource {
 }
 
 type deviceAssurancePolicyDataSource struct {
-	config *Config
+	*Config
 }
 
 func (d *deviceAssurancePolicyDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -183,7 +183,7 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 }
 
 func (d *deviceAssurancePolicyDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *deviceAssurancePolicyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -195,9 +195,9 @@ func (d *deviceAssurancePolicyDataSource) Read(ctx context.Context, req datasour
 	}
 	var devicePolicyAssuranceResp *okta.ListDeviceAssurancePolicies200ResponseInner
 	if data.ID.ValueString() != "" {
-		devicePolicyAssuranceResp, _, err = d.config.oktaSDKClientV5.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
+		devicePolicyAssuranceResp, _, err = d.oktaSDKClientV5.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
 	} else {
-		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.config.oktaSDKClientV5, data.Name.ValueString())
+		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.oktaSDKClientV5, data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(
