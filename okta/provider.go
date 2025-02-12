@@ -382,7 +382,7 @@ func Provider() *schema.Provider {
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 	config := NewConfig(d)
-	if err := config.loadClients(ctx); err != nil {
+	if err := config.loadClients(); err != nil {
 		return nil, diag.Errorf("[ERROR] failed to load sdk clients: %v", err)
 	}
 	config.SetTimeOperations(NewProductionTimeOperations())

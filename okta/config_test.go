@@ -41,7 +41,7 @@ func TestConfigLoadAndValidate(t *testing.T) {
 		}
 		config.logger = hclog.New(hclog.DefaultOptions)
 
-		err := config.loadClients(context.TODO())
+		err := config.loadClients()
 		if err == nil {
 			err = config.verifyCredentials(context.TODO())
 		}

@@ -237,7 +237,7 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 		p.httpProxy = data.HTTPProxy.ValueString()
 	}
 
-	if err := p.loadClients(ctx); err != nil {
+	if err := p.loadClients(); err != nil {
 		resp.Diagnostics.AddError("failed to load default value to provider", err.Error())
 		return
 	}
