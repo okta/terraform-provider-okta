@@ -133,6 +133,6 @@ arguments](https://www.terraform.io/docs/configuration/providers.html) (e.g.
 
 - `request_timeout` - (Optional) Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.
 
-- `max_api_capacity` - (Optional, experimental) sets what percentage of capacity the provider can use of the total
+- `max_api_capacity` - (Optional) sets what percentage of capacity the provider can use of the total
   rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets.
   See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt. Can be set to a value between 1 and 100.
