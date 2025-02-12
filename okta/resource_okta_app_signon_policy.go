@@ -16,6 +16,13 @@ import (
 	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &appSignOnPolicyResource{}
+	_ resource.ResourceWithConfigure   = &appSignOnPolicyResource{}
+	_ resource.ResourceWithImportState = &appSignOnPolicyResource{}
+)
+
 func NewAppSignOnPolicyResource() resource.Resource {
 	return &appSignOnPolicyResource{}
 }

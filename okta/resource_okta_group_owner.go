@@ -14,6 +14,13 @@ import (
 	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &groupOwnerResource{}
+	_ resource.ResourceWithConfigure   = &groupOwnerResource{}
+	_ resource.ResourceWithImportState = &groupOwnerResource{}
+)
+
 func NewGroupOwnerResource() resource.Resource {
 	return &groupOwnerResource{}
 }

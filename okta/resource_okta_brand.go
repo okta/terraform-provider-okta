@@ -14,6 +14,13 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ resource.Resource                = &brandResource{}
+	_ resource.ResourceWithConfigure   = &brandResource{}
+	_ resource.ResourceWithImportState = &brandResource{}
+)
+
 func NewBrandResource() resource.Resource {
 	return &brandResource{}
 }

@@ -9,11 +9,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ datasource.DataSource              = &logStreamDataSource{}
+	_ datasource.DataSourceWithConfigure = &logStreamDataSource{}
+)
+
 func NewOrgMetadataDataSource() datasource.DataSource {
-	return &OrgMetadataDataSource{}
+	return &orgMetadataDataSource{}
 }
 
-type OrgMetadataDataSource struct {
+type orgMetadataDataSource struct {
 	config *Config
 }
 
@@ -35,11 +41,11 @@ type OrgMetadataDomainsModel struct {
 	Alternate    types.String `tfsdk:"alternate"`
 }
 
-func (d *OrgMetadataDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *orgMetadataDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_org_metadata"
 }
 
-func (d *OrgMetadataDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *orgMetadataDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description:         "Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.",
 		MarkdownDescription: "Retrieves the well-known org metadata, which includes the id, configured custom domains, authentication pipeline, and various other org settings.",
@@ -97,11 +103,11 @@ func (d *OrgMetadataDataSource) Schema(ctx context.Context, req datasource.Schem
 	}
 }
 
-func (d *OrgMetadataDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *orgMetadataDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.config = dataSourceConfiguration(req, resp)
 }
 
-func (d *OrgMetadataDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *orgMetadataDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data OrgMetadataDataSourceModel
 
 	resp.Diagnostics.Append(resp.State.Get(ctx, &data)...)
