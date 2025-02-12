@@ -24,7 +24,7 @@ func NewLogStreamDataSource() datasource.DataSource {
 }
 
 type logStreamDataSource struct {
-	config *Config
+	*Config
 }
 
 func (d *logStreamDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -96,7 +96,7 @@ func (d *logStreamDataSource) Schema(ctx context.Context, req datasource.SchemaR
 }
 
 func (d *logStreamDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *logStreamDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -109,9 +109,9 @@ func (d *logStreamDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	var logStreamResp *okta.ListLogStreams200ResponseInner
 	if data.ID.ValueString() != "" {
-		logStreamResp, _, err = d.config.oktaSDKClientV3.LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
+		logStreamResp, _, err = d.oktaSDKClientV3.LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
 	} else {
-		logStreamResp, err = findLogStreamByName(ctx, d.config.oktaSDKClientV3, data.Name.ValueString())
+		logStreamResp, err = findLogStreamByName(ctx, d.oktaSDKClientV3, data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(

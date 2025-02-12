@@ -20,7 +20,7 @@ func NewOrgMetadataDataSource() datasource.DataSource {
 }
 
 type orgMetadataDataSource struct {
-	config *Config
+	*Config
 }
 
 type OrgMetadataDataSourceModel struct {
@@ -104,7 +104,7 @@ func (d *orgMetadataDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *orgMetadataDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *orgMetadataDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -115,7 +115,7 @@ func (d *orgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	org, _, err := d.config.oktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
+	org, _, err := d.oktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving org metadata",

@@ -32,7 +32,7 @@ func NewUserTypeDataSource() datasource.DataSource {
 }
 
 type userTypeDataSource struct {
-	config *Config
+	*Config
 }
 
 func (d *userTypeDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -74,7 +74,7 @@ func (d *userTypeDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 }
 
 func (d *userTypeDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *userTypeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -86,9 +86,9 @@ func (d *userTypeDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 	var userTypeResp *sdk.UserType
 	if data.ID.ValueString() != "" {
-		userTypeResp, _, err = d.config.oktaSDKClientV2.UserType.GetUserType(ctx, data.ID.ValueString())
+		userTypeResp, _, err = d.oktaSDKClientV2.UserType.GetUserType(ctx, data.ID.ValueString())
 	} else {
-		userTypeResp, err = findUserTypeByName(ctx, d.config.oktaSDKClientV2, data.Name.ValueString())
+		userTypeResp, err = findUserTypeByName(ctx, d.oktaSDKClientV2, data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(
