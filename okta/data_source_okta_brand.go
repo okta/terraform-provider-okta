@@ -25,19 +25,19 @@ func dataSourceBrand() *schema.Resource {
 	}
 }
 
-func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var brand *okta.BrandWithEmbedded
 	var err error
 	brandID := d.Get("brand_id").(string)
 
 	if brandID == "default" {
-		brand, err = getDefaultBrand(ctx, m)
+		brand, err = getDefaultBrand(ctx, meta)
 		if err != nil {
 			return diag.Errorf("failed to get default brand for org: %v", err)
 		}
 	} else {
-		logger(m).Info("reading brand by ID", "id", brandID)
-		brand, _, err = getOktaV3ClientFromMetadata(m).CustomizationAPI.GetBrand(ctx, brandID).Execute()
+		logger(meta).Info("reading brand by ID", "id", brandID)
+		brand, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand: %v", err)
 		}

@@ -88,24 +88,24 @@ func dataSourceUser() *schema.Resource {
 	}
 }
 
-func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			logger(m).Info("delaying user read by ", delay, " seconds")
-			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
+			logger(meta).Info("delaying user read by ", delay, " seconds")
+			meta.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			logger(m).Warn("user read delay value ", n, " is not an integer")
+			logger(meta).Warn("user read delay value ", n, " is not an integer")
 		}
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	var user *sdk.User
 	var err error
 	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
 	if ok {
-		logger(m).Info("reading user by ID", "id", userID.(string))
+		logger(meta).Info("reading user by ID", "id", userID.(string))
 		user, _, err = client.User.GetUser(ctx, userID.(string))
 		if err != nil {
 			return diag.Errorf("failed to get user: %v", err)
@@ -113,7 +113,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	} else if searchCriteriaOk {
 		var users []*sdk.User
 		sc := getSearchCriteria(d)
-		logger(m).Info("reading user using search", "search", sc)
+		logger(meta).Info("reading user using search", "search", sc)
 		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})
 		if err != nil {
 			return diag.Errorf("failed to list users: %v", err)
@@ -130,11 +130,11 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	}
 	if val := d.Get("skip_roles"); val != nil {
 		if skip, ok := val.(bool); ok && !skip {
-			err = setAdminRoles(ctx, d, m)
+			err = setAdminRoles(ctx, d, meta)
 			if err != nil {
 				return diag.Errorf("failed to set user's admin roles: %v", err)
 			}
-			err = setRoles(ctx, d, m)
+			err = setRoles(ctx, d, meta)
 			if err != nil {
 				return diag.Errorf("failed to set user's roles: %v", err)
 			}

@@ -37,19 +37,19 @@ func resourceAppOAuthRedirectURI() *schema.Resource {
 	}
 }
 
-func resourceAppOAuthRedirectURICreate(kind string) func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthRedirectURICreate(kind string) func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 		d.SetId(d.Get("uri").(string))
-		err := appendRedirectURI(ctx, d, m, kind)
+		err := appendRedirectURI(ctx, d, meta, kind)
 		if err != nil {
 			return diag.Errorf("failed to create %q: %v", kind, err)
 		}
-		return resourceFuncNoOp(ctx, d, m)
+		return resourceFuncNoOp(ctx, d, meta)
 	}
 }
 
-func resourceAppOAuthRedirectURIRead(kind string) func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthRedirectURIRead(kind string) func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 		aid, ok := d.GetOk("app_id")
 		if !ok || aid.(string) == "" {
 			return diag.Errorf("app_id not set on resource")
@@ -57,7 +57,7 @@ func resourceAppOAuthRedirectURIRead(kind string) func(ctx context.Context, d *s
 		appID := aid.(string)
 
 		app := sdk.NewOpenIdConnectApplication()
-		if err := fetchAppByID(ctx, appID, m, app); err != nil {
+		if err := fetchAppByID(ctx, appID, meta, app); err != nil {
 			return diag.Errorf("application %q not found: %q", appID, err)
 		}
 		if app.Id == "" {
@@ -77,17 +77,17 @@ func resourceAppOAuthRedirectURIRead(kind string) func(ctx context.Context, d *s
 			return diag.Errorf("unknown resource type %q", kind)
 		}
 
-		return resourceFuncNoOp(ctx, d, m)
+		return resourceFuncNoOp(ctx, d, meta)
 	}
 }
 
-func resourceAppOAuthRedirectURIUpdate(kind string) func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthRedirectURIUpdate(kind string) func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 		if d.HasChange("app_id") {
 			return diag.Errorf("it is invalid to change the app_id of this resource once set")
 		}
 		if !d.HasChange("uri") {
-			return resourceFuncNoOp(ctx, d, m)
+			return resourceFuncNoOp(ctx, d, meta)
 		}
 
 		o, n := d.GetChange("uri")
@@ -97,23 +97,23 @@ func resourceAppOAuthRedirectURIUpdate(kind string) func(ctx context.Context, d 
 		if newURI == "" {
 			return diag.Errorf("it is invalid to change uri to a blank value")
 		}
-		if err := changeOauthAppRedirectURI(ctx, d, m, kind, oldURI, newURI); err != nil {
+		if err := changeOauthAppRedirectURI(ctx, d, meta, kind, oldURI, newURI); err != nil {
 			return diag.Errorf("failed to update %q's uri: %v", kind, err)
 		}
 		d.SetId(newURI)
-		return resourceFuncNoOp(ctx, d, m)
+		return resourceFuncNoOp(ctx, d, meta)
 	}
 }
 
-func resourceAppOAuthRedirectURIDelete(kind string) func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return func(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthRedirectURIDelete(kind string) func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 		appID := d.Get("app_id").(string)
 
 		oktaMutexKV.Lock(appID)
 		defer oktaMutexKV.Unlock(appID)
 
 		app := sdk.NewOpenIdConnectApplication()
-		err := fetchAppByID(ctx, appID, m, app)
+		err := fetchAppByID(ctx, appID, meta, app)
 		if err != nil {
 			return diag.Errorf("failed to get application: %v", err)
 		}
@@ -124,36 +124,36 @@ func resourceAppOAuthRedirectURIDelete(kind string) func(ctx context.Context, d 
 		switch kind {
 		case "okta_app_oauth_redirect_uri":
 			if !contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
-				logger(m).Info(fmt.Sprintf("application with appID %s does not have redirect URI %s", appID, d.Id()))
-				return resourceFuncNoOp(ctx, d, m)
+				logger(meta).Info(fmt.Sprintf("application with appID %s does not have redirect URI %s", appID, d.Id()))
+				return resourceFuncNoOp(ctx, d, meta)
 			}
 			app.Settings.OauthClient.RedirectUris = remove(app.Settings.OauthClient.RedirectUris, d.Id())
 		case "okta_app_oauth_post_logout_redirect_uri":
 			if !contains(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id()) {
-				logger(m).Info(fmt.Sprintf("application with appID %s does not have post logout redirect URI %s", appID, d.Id()))
-				return resourceFuncNoOp(ctx, d, m)
+				logger(meta).Info(fmt.Sprintf("application with appID %s does not have post logout redirect URI %s", appID, d.Id()))
+				return resourceFuncNoOp(ctx, d, meta)
 			}
 			app.Settings.OauthClient.PostLogoutRedirectUris = remove(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id())
 		default:
 			return diag.Errorf("unknown resource type %q", kind)
 		}
 
-		err = updateAppByID(ctx, appID, m, app)
+		err = updateAppByID(ctx, appID, meta, app)
 		if err != nil {
 			return diag.Errorf("failed to delete uri for %q: %v", kind, err)
 		}
-		return resourceFuncNoOp(ctx, d, m)
+		return resourceFuncNoOp(ctx, d, meta)
 	}
 }
 
-func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{}, uriType string) error {
+func appendRedirectURI(ctx context.Context, d *schema.ResourceData, meta interface{}, uriType string) error {
 	appID := d.Get("app_id").(string)
 
 	oktaMutexKV.Lock(appID)
 	defer oktaMutexKV.Unlock(appID)
 
 	app := sdk.NewOpenIdConnectApplication()
-	if err := fetchAppByID(ctx, appID, m, app); err != nil {
+	if err := fetchAppByID(ctx, appID, meta, app); err != nil {
 		return err
 	}
 	if app.Id == "" {
@@ -164,13 +164,13 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 	switch uriType {
 	case "okta_app_oauth_redirect_uri":
 		if contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
-			logger(m).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
+			logger(meta).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
 			return nil
 		}
 		app.Settings.OauthClient.RedirectUris = append(app.Settings.OauthClient.RedirectUris, uri)
 	case "okta_app_oauth_post_logout_redirect_uri":
 		if contains(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id()) {
-			logger(m).Info(fmt.Sprintf("application with appID %s already has post logout redirect URI %s", appID, d.Id()))
+			logger(meta).Info(fmt.Sprintf("application with appID %s already has post logout redirect URI %s", appID, d.Id()))
 			return nil
 		}
 		app.Settings.OauthClient.PostLogoutRedirectUris = append(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id())
@@ -178,7 +178,7 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 		return fmt.Errorf("unknown resource type %q", uriType)
 	}
 
-	return updateAppByID(ctx, appID, m, app)
+	return updateAppByID(ctx, appID, meta, app)
 }
 
 // changeOauthAppRedirectURI will update the redirect uris on the given
@@ -186,14 +186,14 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{
 // the app and add toAddURI if it doesn't already exist as a redirect URI on the
 // app. Blank values are ignored. This function is intended for resources
 // okta_app_oauth_redirect_uri and okta_app_oauth_post_logout_redirect_uri
-func changeOauthAppRedirectURI(ctx context.Context, d *schema.ResourceData, m interface{}, uriType, toRemoveURI, toAddURI string) error {
+func changeOauthAppRedirectURI(ctx context.Context, d *schema.ResourceData, meta interface{}, uriType, toRemoveURI, toAddURI string) error {
 	appID := d.Get("app_id").(string)
 
 	oktaMutexKV.Lock(appID)
 	defer oktaMutexKV.Unlock(appID)
 
 	app := sdk.NewOpenIdConnectApplication()
-	if err := fetchAppByID(ctx, appID, m, app); err != nil {
+	if err := fetchAppByID(ctx, appID, meta, app); err != nil {
 		return err
 	}
 	if app.Id == "" {
@@ -211,5 +211,5 @@ func changeOauthAppRedirectURI(ctx context.Context, d *schema.ResourceData, m in
 		return fmt.Errorf("unknown resource type %q", uriType)
 	}
 
-	return updateAppByID(ctx, appID, m, app)
+	return updateAppByID(ctx, appID, meta, app)
 }

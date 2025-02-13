@@ -42,12 +42,12 @@ This resource allows you to configure the client-based rate limit and rate limit
 	}
 }
 
-func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getAPISupplementFromMetadata(m).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
+func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
 	if err != nil {
 		return diag.Errorf("failed to set client-based rate limiting: %v", err)
 	}
-	_, _, err = getAPISupplementFromMetadata(m).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
+	_, _, err = getAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
 	if err != nil {
 		return diag.Errorf("failed to set rate limiting communications: %v", err)
 	}
@@ -55,28 +55,28 @@ func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, m i
 	return nil
 }
 
-func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rl, _, err := getAPISupplementFromMetadata(m).GetClientBasedRateLimiting(ctx)
+func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	rl, _, err := getAPISupplementFromMetadata(meta).GetClientBasedRateLimiting(ctx)
 	if err != nil || rl.GranularModeSettings == nil {
 		return diag.Errorf("failed to get client-based rate limiting: %v", err)
 	}
 	_ = d.Set("login", rl.GranularModeSettings.LoginPage)
 	_ = d.Set("authorize", rl.GranularModeSettings.OAuth2Authorize)
-	comm, _, err := getAPISupplementFromMetadata(m).GetRateLimitingCommunications(ctx)
+	comm, _, err := getAPISupplementFromMetadata(meta).GetRateLimitingCommunications(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get rate limiting communications: %v", err)
 	}
-	_ = d.Set("communications_enabled", *comm.RateLimitNotification)
+	_ = d.Set("communications_enabled", comm.RateLimitNotification)
 	d.SetId("rate_limiting")
 	return nil
 }
 
-func resourceRateLimitingUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getAPISupplementFromMetadata(m).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
+func resourceRateLimitingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
 	if err != nil {
 		return diag.Errorf("failed to set client-based rate limiting: %v", err)
 	}
-	_, _, err = getAPISupplementFromMetadata(m).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
+	_, _, err = getAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
 	if err != nil {
 		return diag.Errorf("failed to set rate limiting communications: %v", err)
 	}

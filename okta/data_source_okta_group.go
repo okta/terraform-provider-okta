@@ -61,25 +61,25 @@ func dataSourceGroup() *schema.Resource {
 	}
 }
 
-func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			logger(m).Info("delaying group read by ", delay, " seconds")
-			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
+			logger(meta).Info("delaying group read by ", delay, " seconds")
+			meta.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			logger(m).Warn("group read delay value ", n, " is not an integer")
+			logger(meta).Warn("group read delay value ", n, " is not an integer")
 		}
 	}
 
-	return findGroup(ctx, d.Get("name").(string), d, m, false)
+	return findGroup(ctx, d.Get("name").(string), d, meta, false)
 }
 
-func findGroup(ctx context.Context, name string, d *schema.ResourceData, m interface{}, isEveryone bool) diag.Diagnostics {
+func findGroup(ctx context.Context, name string, d *schema.ResourceData, meta interface{}, isEveryone bool) diag.Diagnostics {
 	var group *sdk.Group
 	groupID, ok := d.GetOk("id")
 	if ok {
-		respGroup, _, err := getOktaClientFromMetadata(m).Group.GetGroup(ctx, groupID.(string))
+		respGroup, _, err := getOktaClientFromMetadata(meta).Group.GetGroup(ctx, groupID.(string))
 		if err != nil {
 			return diag.Errorf("failed get group by ID: %v", err)
 		}
@@ -99,13 +99,13 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
 		}
 
-		logger(m).Info("looking for data source group", "query", searchParams.String())
-		groups, _, err := getOktaClientFromMetadata(m).Group.ListGroups(ctx, searchParams)
+		logger(meta).Info("looking for data source group", "query", searchParams.String())
+		groups, _, err := getOktaClientFromMetadata(meta).Group.ListGroups(ctx, searchParams)
 		if err != nil {
 			return diag.Errorf("failed to query for groups: %v", err)
 		}
 		if len(groups) > 1 {
-			logger(m).Warn("data source group query matches", len(groups), "groups")
+			logger(meta).Warn("data source group query matches", len(groups), "groups")
 			for _, g := range groups {
 				// exact match on name
 				if g.Profile.Name == name {
@@ -138,7 +138,7 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 			group = groups[0]
 			if group.Profile.Name != name {
 				// keep old behavior that a fuzzy match is acceptable if query only returns one group
-				logger(m).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", group.Profile.Name)
+				logger(meta).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", group.Profile.Name)
 			}
 		}
 	}
@@ -151,7 +151,7 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, m inter
 	if !d.Get("include_users").(bool) {
 		return nil
 	}
-	userIDList, err := listGroupUserIDs(ctx, m, d.Id())
+	userIDList, err := listGroupUserIDs(ctx, meta, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to list group user IDs: %v", err)
 	}

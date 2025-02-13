@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -182,7 +183,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "client_secret_basic",
-				Description: "Requested authentication method for the token endpoint.",
+				Description: "Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.",
 			},
 			// API docs say that auto_key_rotation will alwas be set true if it
 			// is missing on input therefore we can declare it's default to be
@@ -254,10 +255,15 @@ other arguments that changed will be applied.`,
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
+					ValidateFunc: validation.StringInSlice([]string{ // Normally we don't do input validation, but these values are unlikely to change as they are part of the OAuth 2.0 spec
+						"code",
+						"token",
+						"id_token",
+					}, false),
 				},
 				Optional:    true,
 				Computed:    true,
-				Description: "List of OAuth 2.0 response type strings.",
+				Description: "List of OAuth 2.0 response type strings. Valid values are any combination of: `code`, `token`, and `id_token`.",
 			},
 			"grant_types": {
 				Type: schema.TypeSet,
@@ -371,6 +377,7 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
+			//lintignore:S018
 			"groups_claim": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
@@ -436,12 +443,12 @@ var groupsClaimResource = &schema.Resource{
 	},
 }
 
-func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d, m); err != nil {
+	if err := validateAppOAuth(d, meta); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	app := buildAppOAuth(d, true)
@@ -459,25 +466,25 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if !d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 	}
-	err = setAppOauthGroupsClaim(ctx, d, m)
+	err = setAppOauthGroupsClaim(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
 	}
-	return resourceAppOAuthRead(ctx, d, m)
+	return resourceAppOAuthRead(ctx, d, meta)
 }
 
-func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	c := m.(*Config)
+func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	c := meta.(*Config)
 	if c.IsOAuth20Auth() {
-		logger(m).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -500,14 +507,14 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		gc.ValueType = gct
 	}
-	_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 	return err
 }
 
-func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	c := m.(*Config)
+func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	c := meta.(*Config)
 	if c.IsOAuth20Auth() {
-		logger(m).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -519,15 +526,15 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, m in
 		gc := &sdk.AppOauthGroupClaim{
 			IssuerMode: d.Get("issuer_mode").(string),
 		}
-		_, err := getAPISupplementFromMetadata(m).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
 	}
-	return setAppOauthGroupsClaim(ctx, d, m)
+	return setAppOauthGroupsClaim(ctx, d, meta)
 }
 
-func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewOpenIdConnectApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get OAuth application: %v", err)
 	}
@@ -535,7 +542,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, m, d, app.Links)
+	setAuthenticationPolicy(ctx, meta, d, app.Links)
 	var rawProfile string
 	if app.Profile != nil {
 		p, _ := json.Marshal(app.Profile)
@@ -562,16 +569,16 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	}
 	_ = d.Set("logo_url", linksValue(app.Links, "logo", "href"))
 	if app.Settings.ImplicitAssignment != nil {
-		_ = d.Set("implicit_assignment", *app.Settings.ImplicitAssignment)
+		_ = d.Set("implicit_assignment", app.Settings.ImplicitAssignment)
 	} else {
 		_ = d.Set("implicit_assignment", false)
 	}
 
-	c := m.(*Config)
+	c := meta.(*Config)
 	if c.IsOAuth20Auth() {
-		logger(m).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
 	} else {
-		gc, err := flattenGroupsClaim(ctx, d, m)
+		gc, err := flattenGroupsClaim(ctx, d, meta)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -581,8 +588,8 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
 }
 
-func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, m interface{}) (*schema.Set, error) {
-	gc, resp, err := getAPISupplementFromMetadata(m).GetAppOauthGroupsClaim(ctx, d.Id())
+func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) (*schema.Set, error) {
+	gc, resp, err := getAPISupplementFromMetadata(meta).GetAppOauthGroupsClaim(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
 	}
@@ -625,7 +632,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	if oauthClient.RefreshToken != nil {
 		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
 		if oauthClient.RefreshToken.LeewayPtr != nil {
-			_ = d.Set("refresh_token_leeway", *oauthClient.RefreshToken.LeewayPtr)
+			_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.LeewayPtr)
 		}
 	}
 	if oauthClient.Jwks != nil {
@@ -680,8 +687,8 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	return nil
 }
 
-func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -689,11 +696,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d, m); err != nil {
+	if err := validateAppOAuth(d, meta); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 
@@ -725,26 +732,26 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, m inter
 		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 		}
 	}
-	err = updateAppOauthGroupsClaim(ctx, d, m)
+	err = updateAppOauthGroupsClaim(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, m, app.Id)
+	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
 	if err != nil {
 		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
 	}
-	return resourceAppOAuthRead(ctx, d, m)
+	return resourceAppOAuthRead(ctx, d, meta)
 }
 
-func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete OAuth application: %v", err)
 	}
@@ -935,12 +942,12 @@ func validateGrantTypes(d *schema.ResourceData) error {
 	return conditionalValidator("grant_types", appType, appMap.RequiredGrantTypes, appMap.ValidGrantTypes, grantTypeList)
 }
 
-func validateAppOAuth(d *schema.ResourceData, m interface{}) error {
+func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
-		c := m.(*Config)
+		c := meta.(*Config)
 		if c.IsOAuth20Auth() {
-			logger(m).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
+			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
 		} else {
 			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
 			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {

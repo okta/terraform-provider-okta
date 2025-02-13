@@ -82,8 +82,8 @@ func dataSourceAuthenticator() *schema.Resource {
 	}
 }
 
-func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return datasourceOIEOnlyFeatureError(authenticator)
 	}
 
@@ -98,9 +98,9 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 		err           error
 	)
 	if id != "" {
-		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, id)
+		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, id)
 	} else {
-		authenticator, err = findAuthenticator(ctx, m, name, key)
+		authenticator, err = findAuthenticator(ctx, meta, name, key)
 	}
 	if err != nil {
 		return diag.FromErr(err)
@@ -126,7 +126,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 		if authenticator.Type == "security_key" {
 			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
 			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", *authenticator.Provider.Configuration.AuthPortPtr)
+				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
 			}
 			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
 		}
@@ -144,8 +144,8 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func findAuthenticator(ctx context.Context, m interface{}, name, key string) (*sdk.Authenticator, error) {
-	authenticators, _, err := getOktaClientFromMetadata(m).Authenticator.ListAuthenticators(ctx)
+func findAuthenticator(ctx context.Context, meta interface{}, name, key string) (*sdk.Authenticator, error) {
+	authenticators, _, err := getOktaClientFromMetadata(meta).Authenticator.ListAuthenticators(ctx)
 	if err != nil {
 		return nil, err
 	}

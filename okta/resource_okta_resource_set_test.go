@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccResourceOktaResourceSet(t *testing.T) {
+func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resourceSet, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -131,6 +131,7 @@ resource "okta_resource_set" "test" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
+		CheckDestroy:      nil,
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			{

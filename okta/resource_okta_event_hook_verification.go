@@ -25,8 +25,8 @@ func resourceEventHookVerification() *schema.Resource {
 	}
 }
 
-func resourceEventHookVerificationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).EventHook.VerifyEventHook(ctx, d.Get("event_hook_id").(string))
+func resourceEventHookVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getOktaClientFromMetadata(meta).EventHook.VerifyEventHook(ctx, d.Get("event_hook_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to verify event hook sender: %v", err)
 	}

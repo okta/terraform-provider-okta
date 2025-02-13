@@ -51,21 +51,21 @@ The 'resources' field supports the following:
 	}
 }
 
-func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	set, err := buildResourceSet(d, true)
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
-	rs, _, err := getAPISupplementFromMetadata(m).CreateResourceSet(ctx, *set)
+	rs, _, err := getAPISupplementFromMetadata(meta).CreateResourceSet(ctx, *set)
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
 	d.SetId(rs.Id)
-	return resourceResourceSetRead(ctx, d, m)
+	return resourceResourceSetRead(ctx, d, meta)
 }
 
-func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	rs, resp, err := getAPISupplementFromMetadata(m).GetResourceSet(ctx, d.Id())
+func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	rs, resp, err := getAPISupplementFromMetadata(meta).GetResourceSet(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get resource set: %v", err)
 	}
@@ -75,7 +75,7 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	_ = d.Set("label", rs.Label)
 	_ = d.Set("description", rs.Description)
-	resources, err := listResourceSetResources(ctx, getAPISupplementFromMetadata(m), d.Id())
+	resources, err := listResourceSetResources(ctx, getAPISupplementFromMetadata(meta), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
@@ -83,8 +83,8 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getAPISupplementFromMetadata(m)
+func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		set, _ := buildResourceSet(d, false)
 		_, _, err := client.UpdateResourceSet(ctx, d.Id(), *set)
@@ -111,8 +111,8 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	resp, err := getAPISupplementFromMetadata(m).DeleteResourceSet(ctx, d.Id())
+func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	resp, err := getAPISupplementFromMetadata(meta).DeleteResourceSet(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete resource set: %v", err)
 	}

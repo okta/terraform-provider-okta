@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func TestAccResourceOktaOrgConfiguration(t *testing.T) {
+func TestAccResourceOktaOrgConfiguration_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", orgConfiguration)
 	mgr := newFixtureManager("resources", orgConfiguration, t.Name())
 	config := mgr.GetFixtures("standard.tf", t)
@@ -23,6 +23,7 @@ func TestAccResourceOktaOrgConfiguration(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
+		CheckDestroy:      nil,
 		ProviderFactories: testAccProvidersFactories,
 		Steps: []resource.TestStep{
 			// We get around the TF testing runtime not having good setup and

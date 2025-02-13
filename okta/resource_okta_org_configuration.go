@@ -129,47 +129,47 @@ func resourceOrgConfiguration() *schema.Resource {
 	}
 }
 
-func resourceOrgSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.PartialUpdateOrgSetting(ctx, buildOrgSettings(d, nil))
+func resourceOrgSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	settings, _, err := getOktaClientFromMetadata(meta).OrgSetting.PartialUpdateOrgSetting(ctx, buildOrgSettings(d, nil))
 	if err != nil {
 		return diag.Errorf("failed to create org settings: %v", err)
 	}
 	d.SetId(settings.Id)
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(meta).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}
 	}
-	err = updateCommunicationSettings(ctx, d, m)
+	err = updateCommunicationSettings(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = updateContactUsers(ctx, d, m)
+	err = updateContactUsers(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return resourceOrgSettingsRead(ctx, d, m)
+	return resourceOrgSettingsRead(ctx, d, meta)
 }
 
-func resourceOrgSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgSettings(ctx)
+func resourceOrgSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	settings, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org settings: %v", err)
 	}
 	setOrgSettings(d, settings)
-	comm, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOktaCommunicationSettings(ctx)
+	comm, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOktaCommunicationSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org communication settings: %v", err)
 	}
 	_ = d.Set("opt_out_communication_emails", comm.OptOutEmailUsers)
-	billingContact, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgContactUser(ctx, "BILLING")
+	billingContact, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgContactUser(ctx, "BILLING")
 	if err != nil {
 		return diag.Errorf("failed to get billing contact user: %v", err)
 	}
 	_ = d.Set("billing_contact_user", billingContact.UserId)
-	technicalContact, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgContactUser(ctx, "TECHNICAL")
+	technicalContact, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgContactUser(ctx, "TECHNICAL")
 	if err != nil {
 		return diag.Errorf("failed to get technical contact user: %v", err)
 	}
@@ -177,49 +177,49 @@ func resourceOrgSettingsRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// We are doing a full update so read in existing values before updating not
 	// managed in the provider so we don't null them inadvertantly.
 	// See the difference between POST (partial) PUT (full) updates
 	// https://developer.okta.com/docs/reference/api/org/#update-org-settings
-	settings, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgSettings(ctx)
+	settings, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to read prior to update org settings: %v", err)
 	}
 
-	_, _, err = getOktaClientFromMetadata(m).OrgSetting.UpdateOrgSetting(ctx, buildOrgSettings(d, settings))
+	_, _, err = getOktaClientFromMetadata(meta).OrgSetting.UpdateOrgSetting(ctx, buildOrgSettings(d, settings))
 	if err != nil {
 		return diag.Errorf("failed to update org settings: %v", err)
 	}
 	logo, ok := d.GetOk("logo")
 	if ok {
-		_, err := getAPISupplementFromMetadata(m).UploadOrgLogo(ctx, logo.(string))
+		_, err := getAPISupplementFromMetadata(meta).UploadOrgLogo(ctx, logo.(string))
 		if err != nil {
 			return diag.Errorf("failed to upload org logo: %v", err)
 		}
 	}
-	err = updateCommunicationSettings(ctx, d, m)
+	err = updateCommunicationSettings(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	err = updateContactUsers(ctx, d, m)
+	err = updateContactUsers(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return resourceOrgSettingsRead(ctx, d, m)
+	return resourceOrgSettingsRead(ctx, d, meta)
 }
 
-func updateCommunicationSettings(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	comm, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOktaCommunicationSettings(ctx)
+func updateCommunicationSettings(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	comm, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOktaCommunicationSettings(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get org communication settings: %v", err)
 	}
 	o, ok := d.GetOk("opt_out_communication_emails")
 	if ok && *comm.OptOutEmailUsers != o.(bool) {
 		if o.(bool) {
-			_, _, err = getOktaClientFromMetadata(m).OrgSetting.OptOutUsersFromOktaCommunicationEmails(ctx)
+			_, _, err = getOktaClientFromMetadata(meta).OrgSetting.OptOutUsersFromOktaCommunicationEmails(ctx)
 		} else {
-			_, _, err = getOktaClientFromMetadata(m).OrgSetting.OptInUsersToOktaCommunicationEmails(ctx)
+			_, _, err = getOktaClientFromMetadata(meta).OrgSetting.OptInUsersToOktaCommunicationEmails(ctx)
 		}
 		if err != nil {
 			return fmt.Errorf("failed to update org communication settings: %v", err)
@@ -228,26 +228,26 @@ func updateCommunicationSettings(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func updateContactUsers(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	billingContact, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgContactUser(ctx, "BILLING")
+func updateContactUsers(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	billingContact, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgContactUser(ctx, "BILLING")
 	if err != nil {
 		return fmt.Errorf("failed to get billing contact user: %v", err)
 	}
 	billing, ok := d.GetOk("billing_contact_user")
 	if ok && billingContact.UserId != billing.(string) {
-		_, _, err := getOktaClientFromMetadata(m).OrgSetting.UpdateOrgContactUser(ctx,
+		_, _, err := getOktaClientFromMetadata(meta).OrgSetting.UpdateOrgContactUser(ctx,
 			"BILLING", sdk.UserIdString{UserId: billing.(string)})
 		if err != nil {
 			return fmt.Errorf("failed to update billing contact user: %v", err)
 		}
 	}
-	technicalContact, _, err := getOktaClientFromMetadata(m).OrgSetting.GetOrgContactUser(ctx, "TECHNICAL")
+	technicalContact, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgContactUser(ctx, "TECHNICAL")
 	if err != nil {
 		return fmt.Errorf("failed to get technical contact user: %v", err)
 	}
 	technical, ok := d.GetOk("technical_contact_user")
 	if ok && technicalContact.UserId != technical.(string) {
-		_, _, err := getOktaClientFromMetadata(m).OrgSetting.UpdateOrgContactUser(ctx,
+		_, _, err := getOktaClientFromMetadata(meta).OrgSetting.UpdateOrgContactUser(ctx,
 			"TECHNICAL", sdk.UserIdString{UserId: technical.(string)})
 		if err != nil {
 			return fmt.Errorf("failed to update technical contact user: %v", err)

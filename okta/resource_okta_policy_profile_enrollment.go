@@ -35,32 +35,32 @@ This resource allows you to create and configure a Profile Enrollment Policy.`,
 	}
 }
 
-func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	policy, _, err := getAPISupplementFromMetadata(m).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
+	policy, _, err := getAPISupplementFromMetadata(meta).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
 	}
 	d.SetId(policy.Id)
 	status, ok := d.GetOk("status")
 	if ok && status.(string) == statusInactive {
-		_, err = getOktaClientFromMetadata(m).Policy.DeactivatePolicy(ctx, policy.Id)
+		_, err = getOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, policy.Id)
 		if err != nil {
 			return diag.Errorf("failed to deactivate profile enrollment policy: %v", err)
 		}
 	}
-	return resourcePolicyProfileEnrollmentRead(ctx, d, m)
+	return resourcePolicyProfileEnrollmentRead(ctx, d, meta)
 }
 
-func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	policy, err := getPolicy(ctx, d, m)
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
 	}
@@ -72,35 +72,35 @@ func resourcePolicyProfileEnrollmentRead(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, err = getOktaClientFromMetadata(m).Policy.ActivatePolicy(ctx, d.Id())
+			_, err = getOktaClientFromMetadata(meta).Policy.ActivatePolicy(ctx, d.Id())
 		} else {
-			_, err = getOktaClientFromMetadata(m).Policy.DeactivatePolicy(ctx, d.Id())
+			_, err = getOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change profile enrollment policy status: %v", err)
 		}
 	}
-	return resourcePolicyProfileEnrollmentRead(ctx, d, m)
+	return resourcePolicyProfileEnrollmentRead(ctx, d, meta)
 }
 
-func resourcePolicyProfileEnrollmentDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourcePolicyProfileEnrollmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(policyProfileEnrollment)
 	}
 
-	err := deletePolicy(ctx, d, m)
+	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete profile enrollment policy: %v", err)
 	}

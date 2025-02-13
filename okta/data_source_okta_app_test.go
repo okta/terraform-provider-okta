@@ -49,7 +49,7 @@ resource "okta_app_oauth" "test" {
 }`, i)
 }
 
-func TestAccDataSourceOktaAppLabelTest_read(t *testing.T) {
+func TestAccDataSourceOktaApp_label_read(t *testing.T) {
 	mgr := newFixtureManager("data-sources", app, t.Name())
 	config := testLabelConfig(mgr.Seed)
 

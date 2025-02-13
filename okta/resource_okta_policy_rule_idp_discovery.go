@@ -80,7 +80,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 	}
 }
 
-func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validatePolicyRuleIdpDiscovery(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -89,27 +89,27 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	logger(m).Info("creating IdP discovery policy rule", "policy_id", policyID)
+	logger(meta).Info("creating IdP discovery policy rule", "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getAPISupplementFromMetadata(m).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(meta).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to create IDP discovery policy rule: %v", err)
 	}
 	d.SetId(rule.ID)
-	err = setRuleStatus(ctx, d, m, rule.Status)
+	err = setRuleStatus(ctx, d, meta, rule.Status)
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule status: %v", err)
 	}
-	return resourcePolicyRuleIdpDiscoveryRead(ctx, d, m)
+	return resourcePolicyRuleIdpDiscoveryRead(ctx, d, meta)
 }
 
-func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	logger(m).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	rule, resp, err := getAPISupplementFromMetadata(m).GetIdpDiscoveryRule(ctx, policyID, d.Id())
+	logger(meta).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetIdpDiscoveryRule(ctx, policyID, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get IDP discovery policy rule: %v", err)
 	}
@@ -142,7 +142,7 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validatePolicyRuleIdpDiscovery(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -151,33 +151,33 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	logger(m).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	logger(meta).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getAPISupplementFromMetadata(m).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(meta).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to update IDP discovery policy rule: %v", err)
 	}
-	err = setRuleStatus(ctx, d, m, rule.Status)
+	err = setRuleStatus(ctx, d, meta, rule.Status)
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule status: %v", err)
 	}
-	return resourcePolicyRuleIdpDiscoveryRead(ctx, d, m)
+	return resourcePolicyRuleIdpDiscoveryRead(ctx, d, meta)
 }
 
-func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	logger(m).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	_, err := getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
+	logger(meta).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	_, err := getOktaClientFromMetadata(meta).Policy.DeletePolicyRule(ctx, policyID, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete IDP discovery policy rule: %v", err)
 	}
 	return nil
 }
 
-func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, status string) error {
+func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}, status string) error {
 	desiredStatus := d.Get("status").(string)
 	if status == desiredStatus {
 		return nil
@@ -186,10 +186,10 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, m interface{}, s
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
 	}
-	logger(m).Info("setting IdP discovery policy rule status", "id", d.Id(),
+	logger(meta).Info("setting IdP discovery policy rule status", "id", d.Id(),
 		"policy_id", policyID, "status", desiredStatus)
 	var err error
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	if desiredStatus == statusInactive {
 		_, err = client.Policy.DeactivatePolicyRule(ctx, policyID, d.Id())
 	} else {

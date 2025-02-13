@@ -13,6 +13,7 @@ func TestAccResourceOktaTrustedServers_crud(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{

@@ -28,6 +28,6 @@ func dataSourceEveryoneGroup() *schema.Resource {
 	}
 }
 
-func dataSourceEveryoneGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return findGroup(ctx, groupProfileEveryone, d, m, true)
+func dataSourceEveryoneGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return findGroup(ctx, groupProfileEveryone, d, meta, true)
 }

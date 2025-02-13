@@ -57,16 +57,16 @@ func resourceAppUserBaseSchemaResourceV0() *schema.Resource {
 	}, userBaseSchemaSchema)}
 }
 
-func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
+func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := updateAppUserBaseSubschema(ctx, d, meta); err != nil {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-	return resourceAppUserBaseSchemaRead(ctx, d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, meta)
 }
 
-func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	us, _, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	us, _, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get app user base schema: %v", err)
 	}
@@ -79,22 +79,22 @@ func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if err := updateAppUserBaseSubschema(ctx, d, m); err != nil {
+func resourceAppUserBaseSchemaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := updateAppUserBaseSubschema(ctx, d, meta); err != nil {
 		return err
 	}
-	return resourceAppUserBaseSchemaRead(ctx, d, m)
+	return resourceAppUserBaseSchemaRead(ctx, d, meta)
 }
 
 // create or modify a subschema
-func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateAppUserBaseSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	base := buildBaseUserSchema(d)
 	url := fmt.Sprintf("/api/v1/meta/schemas/apps/%v/default", d.Get("app_id").(string))
-	re := getOktaClientFromMetadata(m).GetRequestExecutor()
+	re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").
 		NewRequest("POST", url, base)
 	if err != nil {

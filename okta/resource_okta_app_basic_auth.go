@@ -43,8 +43,8 @@ other arguments that changed will be applied.`,
 	}
 }
 
-func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBasicAuth(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
@@ -53,16 +53,16 @@ func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, m i
 		return diag.Errorf("failed to create basic auth application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for basic auth application: %v", err)
 	}
-	return resourceAppBasicAuthRead(ctx, d, m)
+	return resourceAppBasicAuthRead(ctx, d, meta)
 }
 
-func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewBasicAuthApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get basic auth application: %v", err)
 	}
@@ -77,8 +77,8 @@ func resourceAppBasicAuthRead(ctx context.Context, d *schema.ResourceData, m int
 	return nil
 }
 
-func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -86,25 +86,25 @@ func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, m i
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBasicAuth(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update basic auth application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for basic auth application: %v", err)
 		}
 	}
-	return resourceAppBasicAuthRead(ctx, d, m)
+	return resourceAppBasicAuthRead(ctx, d, meta)
 }
 
-func resourceAppBasicAuthDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppBasicAuthDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete basic auth application: %v", err)
 	}

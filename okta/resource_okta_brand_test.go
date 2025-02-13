@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaBrandCRUD(t *testing.T) {
+func TestAccResourceOktaBrand_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", brand, t.Name())
 	resourceName := fmt.Sprintf("%s.test", brand)
 	step1 := `
@@ -26,6 +26,7 @@ resource okta_brand test{
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -81,6 +82,7 @@ resource "okta_email_domain" "test" {
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{
@@ -150,6 +152,7 @@ resource okta_brand test{
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:                 testAccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
 		Steps: []resource.TestStep{
 			{

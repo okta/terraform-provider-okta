@@ -80,35 +80,35 @@ page regarding what notifications are available for specific admin roles.`,
 	}
 }
 
-func resourceRoleSubscriptionCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoleSubscriptionCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateSubscriptions(d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	status, ok := d.GetOk("status")
 	if !ok {
-		return resourceRoleSubscriptionRead(ctx, d, m)
+		return resourceRoleSubscriptionRead(ctx, d, meta)
 	}
-	subscription, _, err := getOktaClientFromMetadata(m).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+	subscription, _, err := getOktaClientFromMetadata(meta).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
 	if subscription.Status != status.(string) {
 		if status == "subscribed" {
-			_, err = getOktaClientFromMetadata(m).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+			_, err = getOktaClientFromMetadata(meta).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 		} else {
-			_, err = getOktaClientFromMetadata(m).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+			_, err = getOktaClientFromMetadata(meta).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 		}
 		if err != nil {
 			return diag.Errorf("failed to change subscription: %v", err)
 		}
 	}
 	d.SetId(d.Get("notification_type").(string))
-	return resourceRoleSubscriptionRead(ctx, d, m)
+	return resourceRoleSubscriptionRead(ctx, d, meta)
 }
 
-func resourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	subscription, _, err := getOktaClientFromMetadata(m).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+func resourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	subscription, _, err := getOktaClientFromMetadata(meta).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}
@@ -120,7 +120,7 @@ func resourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceRoleSubscriptionUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceRoleSubscriptionUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	err := validateSubscriptions(d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.FromErr(err)
@@ -130,9 +130,9 @@ func resourceRoleSubscriptionUpdate(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 	if newStatus == "subscribed" {
-		_, err = getOktaClientFromMetadata(m).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+		_, err = getOktaClientFromMetadata(meta).Subscription.SubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	} else {
-		_, err = getOktaClientFromMetadata(m).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+		_, err = getOktaClientFromMetadata(meta).Subscription.UnsubscribeRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	}
 	if err != nil {
 		return diag.Errorf("failed to change subscription: %v", err)

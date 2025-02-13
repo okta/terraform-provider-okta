@@ -68,8 +68,8 @@ func resourceThreatInsightSettings() *schema.Resource {
 	}
 }
 
-func resourceThreatInsightSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	conf, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
+func resourceThreatInsightSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conf, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update threat insight configuration: %v", err)
 	}
@@ -79,8 +79,8 @@ func resourceThreatInsightSettingsCreate(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceThreatInsightSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	conf, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.GetCurrentConfiguration(ctx)
+func resourceThreatInsightSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	conf, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.GetCurrentConfiguration(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get threat insight configuration: %v", err)
 	}
@@ -90,16 +90,16 @@ func resourceThreatInsightSettingsRead(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceThreatInsightSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
+func resourceThreatInsightSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update threat insight configuration: %v", err)
 	}
 	return nil
 }
 
-func resourceThreatInsightSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, _, err := getOktaClientFromMetadata(m).ThreatInsightConfiguration.UpdateConfiguration(ctx, sdk.ThreatInsightConfiguration{Action: "none"})
+func resourceThreatInsightSettingsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, sdk.ThreatInsightConfiguration{Action: "none"})
 	if err != nil {
 		return diag.Errorf("failed to set default threat insight configuration: %v", err)
 	}

@@ -72,25 +72,25 @@ func resourceAuthServer() *schema.Resource {
 	}
 }
 
-func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	authServer := buildAuthServer(d)
-	responseAuthServer, _, err := getOktaClientFromMetadata(m).AuthorizationServer.CreateAuthorizationServer(ctx, *authServer)
+	responseAuthServer, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.CreateAuthorizationServer(ctx, *authServer)
 	if err != nil {
 		return diag.Errorf("failed to create authorization server: %v", err)
 	}
 	d.SetId(responseAuthServer.Id)
 	if d.Get("credentials_rotation_mode").(string) == "MANUAL" {
 		// Auth servers can only be set to manual on update. No clue why.
-		dErr := resourceAuthServerUpdate(ctx, d, m)
+		dErr := resourceAuthServerUpdate(ctx, d, meta)
 		if dErr != nil {
 			return dErr
 		}
 	}
-	return resourceAuthServerRead(ctx, d, m)
+	return resourceAuthServerRead(ctx, d, meta)
 }
 
-func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	authServer, resp, err := getOktaClientFromMetadata(m).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
+func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	authServer, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authorization server: %v", err)
 	}
@@ -124,23 +124,23 @@ func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, m inter
 	return nil
 }
 
-func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if d.HasChange("status") {
-		err := handleAuthServerLifecycle(ctx, d, m)
+		err := handleAuthServerLifecycle(ctx, d, meta)
 		if err != nil {
 			return err
 		}
 	}
 	authServer := buildAuthServer(d)
-	_, _, err := getOktaClientFromMetadata(m).AuthorizationServer.UpdateAuthorizationServer(ctx, d.Id(), *authServer)
+	_, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServer(ctx, d.Id(), *authServer)
 	if err != nil {
 		return diag.Errorf("failed to update authorization server: %v", err)
 	}
-	return resourceAuthServerRead(ctx, d, m)
+	return resourceAuthServerRead(ctx, d, meta)
 }
 
-func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	if d.Get("status").(string) == statusActive {
 		_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, d.Id())
 		if err != nil {
@@ -155,8 +155,8 @@ func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	resp, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate authorization server: %v", err)

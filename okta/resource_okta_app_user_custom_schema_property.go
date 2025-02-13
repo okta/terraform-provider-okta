@@ -112,24 +112,24 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 	}, userSchemaSchema, userBaseSchemaSchema)}
 }
 
-func resourceAppUserSchemaPropertyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := setAppUserSchemaProperty(ctx, d, m)
+func resourceAppUserSchemaPropertyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := setAppUserSchemaProperty(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
-	return resourceAppUserSchemaPropertyRead(ctx, d, m)
+	return resourceAppUserSchemaPropertyRead(ctx, d, meta)
 }
 
-func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	err := validateAppUserSchemaProperty(d)
 	if err != nil {
 		return err
 	}
 	boc := newExponentialBackOffWithContext(ctx, 30*time.Second)
 	err = backoff.Retry(func() error {
-		if err := updateAppUserSubSchemaProperty(ctx, d, m); err != nil {
-			if doNotRetry(m, err) {
+		if err := updateAppUserSubSchemaProperty(ctx, d, meta); err != nil {
+			if doNotRetry(meta, err) {
 				return backoff.Permanent(err)
 			}
 			if errors.Is(err, errInvalidElemFormat) {
@@ -137,7 +137,7 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 			}
 			return err
 		}
-		us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+		us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 		if err := suppressErrorOn404(resp, err); err != nil {
 			return err
 		}
@@ -150,8 +150,8 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, m int
 	return err
 }
 
-func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	us, resp, err := getOktaClientFromMetadata(m).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get application user schema property: %v", err)
 	}
@@ -174,18 +174,18 @@ func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceDa
 	return nil
 }
 
-func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := setAppUserSchemaProperty(ctx, d, m)
+func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := setAppUserSchemaProperty(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return resourceAppUserSchemaPropertyRead(ctx, d, m)
+	return resourceAppUserSchemaPropertyRead(ctx, d, meta)
 }
 
-func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := buildCustomUserSchema(d.Get("index").(string), nil)
 	retypeUserSchemaPropertyEnums(custom)
-	_, _, err := getOktaClientFromMetadata(m).UserSchema.
+	_, _, err := getOktaClientFromMetadata(meta).UserSchema.
 		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
 		return diag.Errorf("failed to delete application user schema property: %v", err)
@@ -193,7 +193,7 @@ func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	subSchema, err := buildUserCustomSchemaAttribute(d)
 	if err != nil {
 		return err
@@ -207,9 +207,9 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	retypeUserSchemaPropertyEnums(custom)
 	boc := newExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
-		_, _, err := getOktaClientFromMetadata(m).UserSchema.
+		_, _, err := getOktaClientFromMetadata(meta).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
-		if doNotRetry(m, err) {
+		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}
 		if err == nil {

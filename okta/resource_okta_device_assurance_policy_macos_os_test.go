@@ -6,9 +6,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaPolicyDeviceAssuranceMacOS(t *testing.T) {
+func TestAccResourceOktaPolicyDeviceAssuranceMacOS_crud(t *testing.T) {
 	oktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: testAccProtoV5ProviderFactories,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: `resource okta_policy_device_assurance_macos test{

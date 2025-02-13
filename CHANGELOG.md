@@ -1,11 +1,26 @@
 # Changelog
 
-## 4.13.0 (Jan 24, 2025)
+## 4.14.0 (Feb 11, 2025)
+
+### IMPROVEMENTS
+
+* Improve code quality controls for code merges [#2213](https://github.com/okta/terraform-provider-okta/pull/2213). Thanks, [@monde](https://github.com/monde)!
+* Improve resource `okta_app_oauth` docs for `token_endpoint_auth_method` [#2211](https://github.com/okta/terraform-provider-okta/pull/2211). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Improve resource `okta_app_oauth` docs for `wildcard_redirect` [#2207](https://github.com/okta/terraform-provider-okta/pull/2207). Thanks, [@exitcode0](https://github.com/exitcode0)!
+* Improve resource `okta_app_oauth` docs for `response_types` [#2206](https://github.com/okta/terraform-provider-okta/pull/2206). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
+### BUG FIXES
+
+* Ensure `yubikey_token` authenticator on `okta_policy_mfa` is respected [#2205](https://github.com/okta/terraform-provider-okta/pull/2205). Thanks, [@monde](https://github.com/monde)!
+* Resource `okta_app_saml`'s `acs_endpoints` is a list and respects ordering [#2204](https://github.com/okta/terraform-provider-okta/pull/2204). Thanks, [@monde](https://github.com/monde)!
+* Brand ID and Template Name are incorporated into `okta_email_template_settings` import [#2202](https://github.com/okta/terraform-provider-okta/pull/2201). Thanks, [@steveAG](https://github.com/steveAG)!
+* Data source `okta_apps` page size is 200 [#2200](https://github.com/okta/terraform-provider-okta/pull/2200). Thanks, [@exitcode0](https://github.com/exitcode0)!
+
+## 4.13.1 (Jan 24, 2025)
 
 ### BUG FIXES
 * Fix issue os_expression does not distinguished between null and empty string [#2187](https://github.com/okta/terraform-provider-okta/pull/2187). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
 * Fix force_new in catch_all in okta_app_signon_policy [#2188](https://github.com/okta/terraform-provider-okta/pull/2188). Thanks, [@duytiennguyen-okta](https://github.com/duytiennguyen-okta)!
-
 
 ## 4.13.0 (Jan 17, 2025)
 ### NEW - RESOURCES, DATA SOURCES, PROPERTIES, ATTRIBUTES, ENV VARS:

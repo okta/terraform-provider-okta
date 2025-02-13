@@ -72,8 +72,8 @@ func resourceEventHook() *schema.Resource {
 	}
 }
 
-func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	hook := buildEventHook(d)
 	newHook, _, err := client.EventHook.CreateEventHook(ctx, *hook)
 	if err != nil {
@@ -84,11 +84,11 @@ func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.Errorf("failed to set event hook status: %v", err)
 	}
-	return resourceEventHookRead(ctx, d, m)
+	return resourceEventHookRead(ctx, d, meta)
 }
 
-func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	hook, resp, err := getOktaClientFromMetadata(m).EventHook.GetEventHook(ctx, d.Id())
+func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	hook, resp, err := getOktaClientFromMetadata(meta).EventHook.GetEventHook(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get event hook: %v", err)
 	}
@@ -110,8 +110,8 @@ func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, m interf
 	return nil
 }
 
-func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	hook := buildEventHook(d)
 	newHook, _, err := client.EventHook.UpdateEventHook(ctx, d.Id(), *hook)
 	if err != nil {
@@ -121,11 +121,11 @@ func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	if err != nil {
 		return diag.Errorf("failed to set event hook status: %v", err)
 	}
-	return resourceEventHookRead(ctx, d, m)
+	return resourceEventHookRead(ctx, d, meta)
 }
 
-func resourceEventHookDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceEventHookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 
 	_, _, err := client.EventHook.DeactivateEventHook(ctx, d.Id())
 	if err != nil {

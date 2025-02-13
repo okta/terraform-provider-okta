@@ -70,23 +70,23 @@ func resourceBehavior() *schema.Resource {
 	}
 }
 
-func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("creating location behavior", "name", d.Get("name").(string))
+func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("creating location behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	behavior, _, err := getAPISupplementFromMetadata(m).CreateBehavior(ctx, buildBehavior(d))
+	behavior, _, err := getAPISupplementFromMetadata(meta).CreateBehavior(ctx, buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to create location behavior: %v", err)
 	}
 	d.SetId(behavior.ID)
-	return resourceBehaviorRead(ctx, d, m)
+	return resourceBehaviorRead(ctx, d, meta)
 }
 
-func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("getting behavior", "id", d.Id())
-	behavior, resp, err := getAPISupplementFromMetadata(m).GetBehavior(ctx, d.Id())
+func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("getting behavior", "id", d.Id())
+	behavior, resp, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find behavior: %v", err)
 	}
@@ -101,28 +101,28 @@ func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return nil
 }
 
-func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("updating location behavior", "name", d.Get("name").(string))
+func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("updating location behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getAPISupplementFromMetadata(m).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
+	_, _, err = getAPISupplementFromMetadata(meta).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to update location behavior: %v", err)
 	}
 	if d.HasChange("status") {
-		err := handleBehaviorLifecycle(ctx, d, m)
+		err := handleBehaviorLifecycle(ctx, d, meta)
 		if err != nil {
 			return err
 		}
 	}
-	return resourceBehaviorRead(ctx, d, m)
+	return resourceBehaviorRead(ctx, d, meta)
 }
 
-func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	logger(m).Info("deleting location behavior", "name", d.Get("name").(string))
-	_, err := getAPISupplementFromMetadata(m).DeleteBehavior(ctx, d.Id())
+func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	logger(meta).Info("deleting location behavior", "name", d.Get("name").(string))
+	_, err := getAPISupplementFromMetadata(meta).DeleteBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete location behavior: %v", err)
 	}
@@ -151,17 +151,17 @@ func buildBehavior(d *schema.ResourceData) sdk.Behavior {
 	return b
 }
 
-func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getAPISupplementFromMetadata(m)
+func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getAPISupplementFromMetadata(meta)
 	if d.Get("status").(string) == statusActive {
-		logger(m).Info("activating behavior", "name", d.Get("name").(string))
+		logger(meta).Info("activating behavior", "name", d.Get("name").(string))
 		_, err := client.ActivateBehavior(ctx, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to activate behavior: %v", err)
 		}
 		return nil
 	}
-	logger(m).Info("deactivating behavior", "name", d.Get("name").(string))
+	logger(meta).Info("deactivating behavior", "name", d.Get("name").(string))
 	_, err := client.DeactivateBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to deactivate behavior: %v", err)

@@ -48,7 +48,7 @@ func resourceEmailCustomization() *schema.Resource {
 	}
 }
 
-func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	brandID, ok := d.GetOk("brand_id")
 	if !ok {
 		return diag.Errorf("brand_id required to create email customization")
@@ -75,7 +75,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		etcr.Body = body.(string)
 	}
 
-	client := getOktaV3ClientFromMetadata(m)
+	client := getOktaV3ClientFromMetadata(meta)
 
 	customization, _, err := client.CustomizationAPI.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
 	if err != nil {
@@ -92,13 +92,13 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	etcr, diagErr := etcrValues("read", d)
 	if diagErr != nil {
 		return diagErr
 	}
 
-	customization, resp, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	customization, resp, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email customization: %v", err)
 	}
@@ -116,7 +116,7 @@ func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	etcr, diagErr := etcrValues("update", d)
 	if diagErr != nil {
 		return diagErr
@@ -136,7 +136,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		cr.Body = body.(string)
 	}
 
-	customization, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
+	customization, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email customization: %v", err)
 	}
@@ -151,13 +151,13 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	etcr, diagErr := etcrValues("delete", d)
 	if diagErr != nil {
 		return diagErr
 	}
 
-	client := getOktaV3ClientFromMetadata(m)
+	client := getOktaV3ClientFromMetadata(meta)
 	// If this is the last customization template call the delete all endpoint
 	// as the API doesn't allow deleting the last template explicitly should the
 	// template be the default.  "Returns a 409 Conflict if the email

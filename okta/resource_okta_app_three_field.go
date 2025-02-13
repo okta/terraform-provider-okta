@@ -93,8 +93,8 @@ func resourceAppThreeField() *schema.Resource {
 	}
 }
 
-func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppThreeField(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
@@ -103,16 +103,16 @@ func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, m 
 		return diag.Errorf("failed to create three field application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for three field application: %v", err)
 	}
-	return resourceAppThreeFieldRead(ctx, d, m)
+	return resourceAppThreeFieldRead(ctx, d, meta)
 }
 
-func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewSwaThreeFieldApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get three field application: %v", err)
 	}
@@ -139,8 +139,8 @@ func resourceAppThreeFieldRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -148,25 +148,25 @@ func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, m 
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppThreeField(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update three field application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for three field application: %v", err)
 		}
 	}
-	return resourceAppThreeFieldRead(ctx, d, m)
+	return resourceAppThreeFieldRead(ctx, d, meta)
 }
 
-func resourceAppThreeFieldDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppThreeFieldDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete three field application: %v", err)
 	}

@@ -44,9 +44,11 @@ func (d *appGroupAssignmentsDataSource) Schema(_ context.Context, _ datasource.S
 	}
 }
 
+
 func (d *appGroupAssignmentsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.config = dataSourceConfiguration(req, resp)
 }
+
 
 func (d *appGroupAssignmentsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state appGroupAssignmentsDataSourceModel

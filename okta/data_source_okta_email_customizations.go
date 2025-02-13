@@ -30,7 +30,7 @@ func dataSourceEmailCustomizations() *schema.Resource {
 	}
 }
 
-func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if !ok {
@@ -42,7 +42,7 @@ func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("template name required for email customizations: %v", err)
 	}
 
-	customizations, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ListEmailCustomizations(ctx, brandID.(string), templateName.(string)).Execute()
+	customizations, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListEmailCustomizations(ctx, brandID.(string), templateName.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list email customizations: %v", err)
 	}

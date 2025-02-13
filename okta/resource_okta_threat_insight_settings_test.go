@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceOktaThreatInsightSettings(t *testing.T) {
+func TestAccResourceOktaThreatInsightSettings_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", threatInsightSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
@@ -40,8 +40,8 @@ func TestAccResourceOktaThreatInsightSettings(t *testing.T) {
 	})
 }
 
-// TestAccResourceOktaThreatInsightSettingsNetworkZoneOrdering https://github.com/okta/terraform-provider-okta/issues/1221
-func TestAccResourceOktaThreatInsightSettingsNetworkZoneOrdering(t *testing.T) {
+// TestAccResourceOktaThreatInsightSettings_issue_1221_NetworkZoneOrdering https://github.com/okta/terraform-provider-okta/issues/1221
+func TestAccResourceOktaThreatInsightSettings_issue_1221_NetworkZoneOrdering(t *testing.T) {
 	mgr := newFixtureManager("resources", threatInsightSettings, t.Name())
 	resourceName := fmt.Sprintf("%s.test", threatInsightSettings)
 	config := `

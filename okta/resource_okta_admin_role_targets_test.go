@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaAdminRoleTargets(t *testing.T) {
+func TestAccResourceOktaAdminRoleTargets_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", adminRoleTargets, t.Name())
 	basic := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)

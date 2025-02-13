@@ -40,12 +40,12 @@ CAPTCHA org-wide settings can be disabled by unsetting 'captcha_id' and 'enabled
 	}
 }
 
-func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
-	captcha, _, err := getAPISupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to set org-wide CAPTCHA settings: %v", err)
 	}
@@ -55,12 +55,12 @@ func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
-	captcha, _, err := getAPISupplementFromMetadata(m).GetOrgWideCaptchaSettings(ctx)
+	captcha, _, err := getAPISupplementFromMetadata(meta).GetOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org-wide CAPTCHA settings: %v", err)
 	}
@@ -74,12 +74,12 @@ func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
-	captcha, _, err := getAPISupplementFromMetadata(m).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update org-wide CAPTCHA settings: %v", err)
 	}
@@ -88,12 +88,12 @@ func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.Resourc
 	return nil
 }
 
-func resourceCaptchaOrgWideSettingsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceCaptchaOrgWideSettingsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(captchaOrgWideSettings)
 	}
 
-	_, err := getAPISupplementFromMetadata(m).DeleteOrgWideCaptchaSettings(ctx)
+	_, err := getAPISupplementFromMetadata(meta).DeleteOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to delete org-wide CAPTCHA settings: %v", err)
 	}

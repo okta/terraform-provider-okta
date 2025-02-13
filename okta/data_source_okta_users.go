@@ -74,14 +74,14 @@ func dataSourceUsers() *schema.Resource {
 	}
 }
 
-func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			logger(m).Info("delaying users read by ", delay, " seconds")
-			m.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
+			logger(meta).Info("delaying users read by ", delay, " seconds")
+			meta.(*Config).timeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			logger(m).Warn("users read delay value ", n, " is not an integer")
+			logger(meta).Warn("users read delay value ", n, " is not an integer")
 		}
 	}
 
@@ -91,11 +91,11 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 		err   error
 	)
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 
 	if groupId, ok := d.GetOk("group_id"); ok {
 		id = groupId.(string)
-		users, err = listGroupUsers(ctx, m, id)
+		users, err = listGroupUsers(ctx, meta, id)
 	} else if _, ok := d.GetOk("search"); ok {
 		params := &query.Params{Search: getSearchCriteria(d), Limit: defaultPaginationLimit, SortOrder: "0"}
 		id = fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(params.String())))

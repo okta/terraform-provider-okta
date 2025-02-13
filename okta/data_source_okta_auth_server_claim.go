@@ -66,7 +66,7 @@ func dataSourceAuthServerClaim() *schema.Resource {
 	}
 }
 
-func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -77,9 +77,9 @@ func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, 
 		claim *sdk.OAuth2Claim
 	)
 	if id != "" {
-		claim, _, err = getOktaClientFromMetadata(m).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), id)
+		claim, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), id)
 	} else {
-		claim, err = getAuthServerClaimByName(ctx, m, d.Get("auth_server_id").(string), name)
+		claim, err = getAuthServerClaimByName(ctx, meta, d.Get("auth_server_id").(string), name)
 	}
 	if err != nil {
 		return diag.FromErr(err)
@@ -97,8 +97,8 @@ func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func getAuthServerClaimByName(ctx context.Context, m interface{}, authServerID, name string) (*sdk.OAuth2Claim, error) {
-	claims, _, err := getOktaClientFromMetadata(m).AuthorizationServer.ListOAuth2Claims(ctx, authServerID)
+func getAuthServerClaimByName(ctx context.Context, meta interface{}, authServerID, name string) (*sdk.OAuth2Claim, error) {
+	claims, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListOAuth2Claims(ctx, authServerID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list authorization server claims: %v", err)
 	}

@@ -45,7 +45,7 @@ func TestAccResourceOktaProfileMapping_crud(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaProfileMapping_import(t *testing.T) {
+func TestAccResourceOktaProfileMapping_existing(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", profileMapping)
 	config := `
 	resource "okta_profile_mapping" "test" {
@@ -97,6 +97,7 @@ func TestAccResourceOktaProfileMapping_import(t *testing.T) {
 	`
 	oktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

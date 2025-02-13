@@ -48,11 +48,11 @@ func dataSourceBehavior() *schema.Resource {
 	}
 }
 
-func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var behavior *sdk.Behavior
 	behaviorID, ok := d.GetOk("id")
 	if ok {
-		respBehavior, _, err := getAPISupplementFromMetadata(m).GetBehavior(ctx, behaviorID.(string))
+		respBehavior, _, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, behaviorID.(string))
 		if err != nil {
 			return diag.Errorf("failed get behavior by ID: %v", err)
 		}
@@ -60,15 +60,15 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, m inter
 	} else {
 		name := d.Get("name").(string)
 		searchParams := &query.Params{Q: name, Limit: 1}
-		logger(m).Info("looking for behavior", "query", searchParams.String())
-		behaviors, _, err := getAPISupplementFromMetadata(m).ListBehaviors(ctx, searchParams)
+		logger(meta).Info("looking for behavior", "query", searchParams.String())
+		behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, searchParams)
 		switch {
 		case err != nil:
 			return diag.Errorf("failed to query for behaviors: %v", err)
 		case len(behaviors) < 1:
 			return diag.Errorf("behavior with name '%s' does not exist", name)
 		case behaviors[0].Name != name:
-			logger(m).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
+			logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
 		}
 		behavior = behaviors[0]
 	}

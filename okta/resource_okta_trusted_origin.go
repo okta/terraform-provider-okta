@@ -45,11 +45,11 @@ func resourceTrustedOrigin() *schema.Resource {
 	}
 }
 
-func resourceTrustedOriginCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceTrustedOriginCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if !d.Get("active").(bool) {
 		return diag.Errorf("can not create inactive trusted origin, only existing trusted origins can be deactivated")
 	}
-	trustedOrigin, _, err := getOktaClientFromMetadata(m).TrustedOrigin.CreateOrigin(ctx, buildTrustedOrigin(d))
+	trustedOrigin, _, err := getOktaClientFromMetadata(meta).TrustedOrigin.CreateOrigin(ctx, buildTrustedOrigin(d))
 	if err != nil {
 		return diag.Errorf("failed to create trusted origin: %v", err)
 	}
@@ -61,8 +61,8 @@ func resourceTrustedOriginCreate(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceTrustedOriginRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	trustedOrigin, resp, err := getOktaClientFromMetadata(m).TrustedOrigin.GetOrigin(ctx, d.Id())
+func resourceTrustedOriginRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	trustedOrigin, resp, err := getOktaClientFromMetadata(meta).TrustedOrigin.GetOrigin(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get trusted origin: %v", err)
 	}
@@ -77,8 +77,8 @@ func resourceTrustedOriginRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceTrustedOriginUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(m)
+func resourceTrustedOriginUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := getOktaClientFromMetadata(meta)
 	if d.HasChange("active") {
 		var err error
 		if d.Get("active").(bool) {
@@ -101,8 +101,8 @@ func resourceTrustedOriginUpdate(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceTrustedOriginDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getOktaClientFromMetadata(m).TrustedOrigin.DeleteOrigin(ctx, d.Id())
+func resourceTrustedOriginDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(meta).TrustedOrigin.DeleteOrigin(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete trusted origin: %v", err)
 	}

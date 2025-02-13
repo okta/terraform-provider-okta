@@ -56,6 +56,6 @@ data "okta_app_oauth" "test" {
 - `response_types` (Set of String) List of OAuth 2.0 response type strings.
 - `status` (String) Status of application.
 - `type` (String) The type of OAuth application.
-- `wildcard_redirect` (String) Indicates if the client is allowed to use wildcard matching of redirect_uris
+- `wildcard_redirect` (String) Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: "SUBDOMAIN", "DISABLED".
 
 

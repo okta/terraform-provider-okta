@@ -162,7 +162,7 @@ func dataSourceIdpSocial() *schema.Resource {
 	}
 }
 
-func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -173,7 +173,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 		idp *sdk.IdentityProvider
 	)
 	if id != "" {
-		idp, _, err = getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProvider(ctx, id)
+		idp, _, err = getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
 		if err != nil {
 			return diag.Errorf("failed to get social identity provider with id '%s': %v", id, err)
 		}
@@ -181,7 +181,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 			return diag.Errorf("social identity provider with id '%s' does not exist", id)
 		}
 	} else {
-		idp, err = getSocialIdPByName(ctx, m, name)
+		idp, err = getSocialIdPByName(ctx, meta, name)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -190,7 +190,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("status", idp.Status)
 	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", *idp.Policy.MaxClockSkewPtr)
+		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
 	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
@@ -227,8 +227,8 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, m inte
 	return nil
 }
 
-func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*sdk.IdentityProvider, error) {
-	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.
+func getSocialIdPByName(ctx context.Context, meta interface{}, name string) (*sdk.IdentityProvider, error) {
+	idps, _, err := getOktaClientFromMetadata(meta).IdentityProvider.
 		ListIdentityProviders(ctx, &query.Params{Q: name, Limit: defaultPaginationLimit})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get social identity provider with name '%s': %w", name, err)
@@ -253,7 +253,7 @@ func getSocialIdPByName(ctx context.Context, m interface{}, name string) (*sdk.I
 		return nil, fmt.Errorf("social identity provider with name '%s' does not exist", name)
 	}
 	if len(idps) > 1 {
-		logger(m).Warn(fmt.Sprintf("found multiple social IdPs with name '%s': "+
+		logger(meta).Warn(fmt.Sprintf("found multiple social IdPs with name '%s': "+
 			"using the first one which may only be a partial match", name))
 	}
 	return idps[0], nil

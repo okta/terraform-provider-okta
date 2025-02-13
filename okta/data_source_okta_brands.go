@@ -15,8 +15,8 @@ func dataSourceBrands() *schema.Resource {
 	}
 }
 
-func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	brands, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ListBrands(ctx).Execute()
+func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	brands, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrands(ctx).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brands: %v", err)
 	}

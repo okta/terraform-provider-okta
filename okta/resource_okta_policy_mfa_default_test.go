@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaDefaultMFAPolicy(t *testing.T) {
+func TestAccResourceOktaPolicyMFADefault_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
@@ -48,10 +48,10 @@ func TestAccResourceOktaDefaultMFAPolicy(t *testing.T) {
 	})
 }
 
-// TestAccResourceOktaMfaPolicyDefault_Issue_1481 deals with fixing/testing
+// TestAccResourceOktaPolicyMFADefault_issue_1481 deals with fixing/testing
 // Panic runtime error in 3.43.0 on okta_policy_mfa_default resource #1481
 // https://github.com/okta/terraform-provider-okta/issues/1481
-func TestAccResourceOktaMfaPolicyDefault_Issue_1481(t *testing.T) {
+func TestAccResourceOktaPolicyMFADefault_issue_1481(t *testing.T) {
 	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
 	config := `
 resource "okta_policy_mfa_default" "test" {
@@ -99,7 +99,7 @@ resource "okta_policy_mfa_default" "test" {
 	})
 }
 
-func TestAccResourceOktaDefaultMFAPolicyIssue2107(t *testing.T) {
+func TestAccResourceOktaPolicyMFADefault_issue_2107(t *testing.T) {
 	mgr := newFixtureManager("resources", policyMfaDefault, t.Name())
 	config := mgr.GetFixtures("priority.tf", t)
 	updatedConfig := mgr.GetFixtures("priority_updated.tf", t)

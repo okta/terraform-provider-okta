@@ -16,14 +16,14 @@ func dataSourceThemes() *schema.Resource {
 	}
 }
 
-func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if !ok {
 		return diag.Errorf("brand_id required for themes: %v", err)
 	}
 
-	themes, _, err := getOktaV3ClientFromMetadata(m).CustomizationAPI.ListBrandThemes(ctx, brandID.(string)).Execute()
+	themes, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrandThemes(ctx, brandID.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brand themes: %v", err)
 	}

@@ -31,8 +31,8 @@ func dataSourcePolicy() *schema.Resource {
 	}
 }
 
-func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := findPolicyByNameAndType(ctx, m, d.Get("name").(string), d.Get("type").(string))
+func dataSourcePolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := findPolicyByNameAndType(ctx, meta, d.Get("name").(string), d.Get("type").(string))
 	if err != nil {
 		return diag.FromErr(err)
 	}

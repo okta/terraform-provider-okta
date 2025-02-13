@@ -68,7 +68,7 @@ func dataSourceGroups() *schema.Resource {
 	}
 }
 
-func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	qp := &query.Params{Limit: defaultPaginationLimit}
 	groupType, ok := d.GetOk("type")
 	if ok {
@@ -83,7 +83,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	if ok {
 		qp.Search = search.(string)
 	}
-	groups, err := listGroups(ctx, getOktaClientFromMetadata(m), qp)
+	groups, err := listGroups(ctx, getOktaClientFromMetadata(meta), qp)
 	if err != nil {
 		return diag.Errorf("failed to list groups: %v", err)
 	}

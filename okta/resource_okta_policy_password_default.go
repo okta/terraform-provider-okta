@@ -15,8 +15,8 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 		UpdateContext: resourcePolicyPasswordDefaultUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				policy, err := setDefaultPolicy(ctx, d, m, sdk.PasswordPolicyType)
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				policy, err := setDefaultPolicy(ctx, d, meta, sdk.PasswordPolicyType)
 				if err != nil {
 					return nil, err
 				}
@@ -179,25 +179,25 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 	}
 }
 
-func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Id()
 	if id == "" {
-		policy, err := setDefaultPolicy(ctx, d, m, sdk.PasswordPolicyType)
+		policy, err := setDefaultPolicy(ctx, d, meta, sdk.PasswordPolicyType)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 		id = policy.Id
 		_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
 	}
-	_, _, err := getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default password policy: %v", err)
 	}
-	return resourcePolicyPasswordDefaultRead(ctx, d, m)
+	return resourcePolicyPasswordDefaultRead(ctx, d, meta)
 }
 
-func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get default password policy: %v", err)
 	}
@@ -212,45 +212,45 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("password_dictionary_lookup", policy.Settings.Password.Complexity.Dictionary.Common.Exclude)
 	}
 	if policy.Settings.Password.Complexity.MinLengthPtr != nil {
-		_ = d.Set("password_min_length", *policy.Settings.Password.Complexity.MinLengthPtr)
+		_ = d.Set("password_min_length", policy.Settings.Password.Complexity.MinLengthPtr)
 	}
 	if policy.Settings.Password.Complexity.MinLowerCasePtr != nil {
-		_ = d.Set("password_min_lowercase", *policy.Settings.Password.Complexity.MinLowerCasePtr)
+		_ = d.Set("password_min_lowercase", policy.Settings.Password.Complexity.MinLowerCasePtr)
 	}
 	if policy.Settings.Password.Complexity.MinUpperCasePtr != nil {
-		_ = d.Set("password_min_uppercase", *policy.Settings.Password.Complexity.MinUpperCasePtr)
+		_ = d.Set("password_min_uppercase", policy.Settings.Password.Complexity.MinUpperCasePtr)
 	}
 	if policy.Settings.Password.Complexity.MinNumberPtr != nil {
-		_ = d.Set("password_min_number", *policy.Settings.Password.Complexity.MinNumberPtr)
+		_ = d.Set("password_min_number", policy.Settings.Password.Complexity.MinNumberPtr)
 	}
 	if policy.Settings.Password.Complexity.MinSymbolPtr != nil {
-		_ = d.Set("password_min_symbol", *policy.Settings.Password.Complexity.MinSymbolPtr)
+		_ = d.Set("password_min_symbol", policy.Settings.Password.Complexity.MinSymbolPtr)
 	}
 	_ = d.Set("password_exclude_username", policy.Settings.Password.Complexity.ExcludeUsername)
 	if policy.Settings.Password.Age.MaxAgeDaysPtr != nil {
-		_ = d.Set("password_max_age_days", *policy.Settings.Password.Age.MaxAgeDaysPtr)
+		_ = d.Set("password_max_age_days", policy.Settings.Password.Age.MaxAgeDaysPtr)
 	}
 	if policy.Settings.Password.Age.ExpireWarnDaysPtr != nil {
-		_ = d.Set("password_expire_warn_days", *policy.Settings.Password.Age.ExpireWarnDaysPtr)
+		_ = d.Set("password_expire_warn_days", policy.Settings.Password.Age.ExpireWarnDaysPtr)
 	}
 	if policy.Settings.Password.Age.MinAgeMinutesPtr != nil {
-		_ = d.Set("password_min_age_minutes", *policy.Settings.Password.Age.MinAgeMinutesPtr)
+		_ = d.Set("password_min_age_minutes", policy.Settings.Password.Age.MinAgeMinutesPtr)
 	}
 	if policy.Settings.Password.Age.HistoryCountPtr != nil {
-		_ = d.Set("password_history_count", *policy.Settings.Password.Age.HistoryCountPtr)
+		_ = d.Set("password_history_count", policy.Settings.Password.Age.HistoryCountPtr)
 	}
 	if policy.Settings.Password.Lockout.MaxAttemptsPtr != nil {
-		_ = d.Set("password_max_lockout_attempts", *policy.Settings.Password.Lockout.MaxAttemptsPtr)
+		_ = d.Set("password_max_lockout_attempts", policy.Settings.Password.Lockout.MaxAttemptsPtr)
 	}
 	if policy.Settings.Password.Lockout.AutoUnlockMinutesPtr != nil {
-		_ = d.Set("password_auto_unlock_minutes", *policy.Settings.Password.Lockout.AutoUnlockMinutesPtr)
+		_ = d.Set("password_auto_unlock_minutes", policy.Settings.Password.Lockout.AutoUnlockMinutesPtr)
 	}
 	_ = d.Set("password_show_lockout_failures", policy.Settings.Password.Lockout.ShowLockoutFailures)
 	if policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr != nil {
-		_ = d.Set("question_min_length", *policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr)
+		_ = d.Set("question_min_length", policy.Settings.Recovery.Factors.RecoveryQuestion.Properties.Complexity.MinLengthPtr)
 	}
 	if policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr != nil {
-		_ = d.Set("recovery_email_token", *policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr)
+		_ = d.Set("recovery_email_token", policy.Settings.Recovery.Factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutesPtr)
 	}
 	_ = d.Set("sms_recovery", policy.Settings.Recovery.Factors.OktaSms.Status)
 	_ = d.Set("email_recovery", policy.Settings.Recovery.Factors.OktaEmail.Status)

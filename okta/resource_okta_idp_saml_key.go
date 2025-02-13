@@ -60,20 +60,20 @@ func resourceIdpSigningKey() *schema.Resource {
 	}
 }
 
-func resourceIdpSigningKeyCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpSigningKeyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cert := sdk.JsonWebKey{
 		X5c: convertInterfaceToStringSet(d.Get("x5c")),
 	}
-	key, _, err := getOktaClientFromMetadata(m).IdentityProvider.CreateIdentityProviderKey(ctx, cert)
+	key, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProviderKey(ctx, cert)
 	if err != nil {
 		return diag.Errorf("failed to create identity provider signing key: %v", err)
 	}
 	d.SetId(key.Kid)
-	return resourceIdpSigningKeyRead(ctx, d, m)
+	return resourceIdpSigningKeyRead(ctx, d, meta)
 }
 
-func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	key, resp, err := getOktaClientFromMetadata(m).IdentityProvider.GetIdentityProviderKey(ctx, d.Id())
+func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	key, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProviderKey(ctx, d.Id())
 	if err := suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get identity provider signing key: %v", err)
 	}
@@ -96,16 +96,16 @@ func resourceIdpSigningKeyRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceIdpSigningKeyUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceIdpSigningKeyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	cert := sdk.JsonWebKey{
 		X5c: convertInterfaceToStringSet(d.Get("x5c")),
 	}
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	newKey, _, err := client.IdentityProvider.CreateIdentityProviderKey(ctx, cert)
 	if err != nil {
 		return diag.Errorf("failed to create identity provider signing key: %v", err)
 	}
-	idps, _, err := getOktaClientFromMetadata(m).IdentityProvider.
+	idps, _, err := getOktaClientFromMetadata(meta).IdentityProvider.
 		ListIdentityProviders(ctx, &query.Params{Limit: defaultPaginationLimit, Type: saml2Idp})
 	if err != nil {
 		return diag.Errorf("failed to list identity providers: %v", err)
@@ -121,16 +121,16 @@ func resourceIdpSigningKeyUpdate(ctx context.Context, d *schema.ResourceData, m 
 			return diag.Errorf("failed to update identity provider using new key: %v", err)
 		}
 	}
-	_, err = getOktaClientFromMetadata(m).IdentityProvider.DeleteIdentityProviderKey(ctx, d.Id())
+	_, err = getOktaClientFromMetadata(meta).IdentityProvider.DeleteIdentityProviderKey(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete identity provider signing key: %v", err)
 	}
 	d.SetId(newKey.Kid)
-	return resourceIdpSigningKeyRead(ctx, d, m)
+	return resourceIdpSigningKeyRead(ctx, d, meta)
 }
 
-func resourceIdpSigningKeyDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := getOktaClientFromMetadata(m).IdentityProvider.DeleteIdentityProviderKey(ctx, d.Id())
+func resourceIdpSigningKeyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, err := getOktaClientFromMetadata(meta).IdentityProvider.DeleteIdentityProviderKey(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete identity provider signing key: %v", err)
 	}

@@ -92,7 +92,7 @@ func dataSourceNetworkZone() *schema.Resource {
 	}
 }
 
-func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -103,9 +103,9 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 		zone *v5okta.ListNetworkZones200ResponseInner
 	)
 	if id != "" {
-		zone, _, err = getOktaV5ClientFromMetadata(m).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
+		zone, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
 	} else {
-		zone, err = findNetworkZoneByName(ctx, m, name)
+		zone, err = findNetworkZoneByName(ctx, meta, name)
 	}
 	if err != nil {
 		return diag.Errorf("failed to find network zone: %v", err)
@@ -123,8 +123,8 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func findNetworkZoneByName(ctx context.Context, m interface{}, name string) (*v5okta.ListNetworkZones200ResponseInner, error) {
-	client := getOktaV5ClientFromMetadata(m)
+func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (*v5okta.ListNetworkZones200ResponseInner, error) {
+	client := getOktaV5ClientFromMetadata(meta)
 	zones, resp, err := client.NetworkZoneAPI.ListNetworkZones(ctx).Execute()
 	if err != nil {
 		return nil, err

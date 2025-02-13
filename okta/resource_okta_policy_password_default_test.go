@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaDefaultPasswordPolicy(t *testing.T) {
+func TestAccResourceOktaDefaultPasswordPolicy_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", policyPasswordDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)

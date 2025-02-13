@@ -92,7 +92,7 @@ func dataSourceIdpSaml() *schema.Resource {
 	}
 }
 
-func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	if id == "" && name == "" {
@@ -103,9 +103,9 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, m interf
 		idp *sdk.IdentityProvider
 	)
 	if id != "" {
-		idp, err = getIdentityProviderByID(ctx, m, id, saml2Idp)
+		idp, err = getIdentityProviderByID(ctx, meta, id, saml2Idp)
 	} else {
-		idp, err = getIdpByNameAndType(ctx, m, name, saml2Idp)
+		idp, err = getIdpByNameAndType(ctx, meta, name, saml2Idp)
 	}
 	if err != nil {
 		return diag.FromErr(err)

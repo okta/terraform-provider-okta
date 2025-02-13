@@ -16,8 +16,8 @@ func resourcePolicyMfaDefault() *schema.Resource {
 		UpdateContext: resourcePolicyMfaDefaultCreateOrUpdate,
 		DeleteContext: resourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-				_, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				_, err := setDefaultPolicy(ctx, d, meta, sdk.MfaPolicyType)
 				if err != nil {
 					return nil, err
 				}
@@ -32,25 +32,25 @@ This resource allows you to configure default MFA Policy.
 	}
 }
 
-func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var id string
 	// Issue #2107, where adding a new MFA_ENROLL policy change the priority of the default policy, leading to the default policy unable to update
 	// It is now required that the default policy is set again for every create and update, and the only thing that can be change is factor/authenticator
-	policy, err := setDefaultPolicy(ctx, d, m, sdk.MfaPolicyType)
+	policy, err := setDefaultPolicy(ctx, d, meta, sdk.MfaPolicyType)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	id = policy.Id
 
-	_, _, err = getAPISupplementFromMetadata(m).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	_, _, err = getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}
-	return resourcePolicyMfaDefaultRead(ctx, d, m)
+	return resourcePolicyMfaDefaultRead(ctx, d, meta)
 }
 
-func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	policy, err := getPolicy(ctx, d, m)
+func resourcePolicyMfaDefaultRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	policy, err := getPolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to get default MFA policy: %v", err)
 	}

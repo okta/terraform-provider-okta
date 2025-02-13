@@ -18,7 +18,7 @@ func resourceAppUser() *schema.Resource {
 		UpdateContext: resourceAppUserUpdate,
 		DeleteContext: resourceAppUserDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				parts := strings.Split(d.Id(), "/")
 				if len(parts) != 2 {
 					return nil, errors.New("invalid resource import specifier. Use: terraform import <app_id>/<user_id>")
@@ -28,7 +28,7 @@ func resourceAppUser() *schema.Resource {
 				_ = d.Set("user_id", parts[1])
 				_ = d.Set("retain_assignment", false)
 
-				assignment, _, err := getOktaClientFromMetadata(m).Application.
+				assignment, _, err := getOktaClientFromMetadata(meta).Application.
 					GetApplicationUser(ctx, parts[0], parts[1], nil)
 				if err != nil {
 					return nil, err
@@ -89,9 +89,9 @@ func resourceAppUser() *schema.Resource {
 	}
 }
 
-func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var app *sdk.AutoLoginApplication
-	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
+	respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}
@@ -108,7 +108,7 @@ func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 		_ = d.Set("has_shared_username", false)
 	}
-	u, _, err := getOktaClientFromMetadata(m).Application.AssignUserToApplication(
+	u, _, err := getOktaClientFromMetadata(meta).Application.AssignUserToApplication(
 		ctx,
 		d.Get("app_id").(string),
 		*getAppUser(d),
@@ -117,12 +117,12 @@ func resourceAppUserCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.Errorf("failed to assign user to application: %v", err)
 	}
 	d.SetId(u.Id)
-	return resourceAppUserRead(ctx, d, m)
+	return resourceAppUserRead(ctx, d, meta)
 }
 
-func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var app *sdk.AutoLoginApplication
-	respApp, _, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
+	respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application by ID: %v", err)
 	}
@@ -139,7 +139,7 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 		_ = d.Set("has_shared_username", false)
 	}
-	_, _, err = getOktaClientFromMetadata(m).Application.UpdateApplicationUser(
+	_, _, err = getOktaClientFromMetadata(meta).Application.UpdateApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
@@ -148,12 +148,12 @@ func resourceAppUserUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	if err != nil {
 		return diag.Errorf("failed to update application's user: %v", err)
 	}
-	return resourceAppUserRead(ctx, d, m)
+	return resourceAppUserRead(ctx, d, meta)
 }
 
-func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var app *sdk.AutoLoginApplication
-	respApp, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
+	respApp, resp, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, d.Get("app_id").(string), sdk.NewAutoLoginApplication(), nil)
 	if is404(resp) {
 		d.SetId("")
 		return nil
@@ -167,7 +167,7 @@ func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interfac
 	} else {
 		_ = d.Set("has_shared_username", false)
 	}
-	u, resp, err := getOktaClientFromMetadata(m).Application.GetApplicationUser(
+	u, resp, err := getOktaClientFromMetadata(meta).Application.GetApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
@@ -190,14 +190,14 @@ func resourceAppUserRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return nil
 }
 
-func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	retain := d.Get("retain_assignment").(bool)
 	if retain {
 		// The assignment should be retained, bail before DeleteApplicationUser is called
 		return nil
 	}
 
-	_, err := getOktaClientFromMetadata(m).Application.DeleteApplicationUser(
+	_, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaCaptchaOrgWideSettings(t *testing.T) {
+func TestAccResourceOktaCaptchaOrgWideSettings_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", captchaOrgWideSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)

@@ -41,18 +41,18 @@ app_settings_json field in okta_app_saml resource and can be used in cases where
 	}
 }
 
-func resourceAppSamlSettingsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	id, err := updateOrCreateAppSettings(ctx, d, m)
+func resourceAppSamlSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	id, err := updateOrCreateAppSettings(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(id)
-	return resourceAppSamlSettingsRead(ctx, d, m)
+	return resourceAppSamlSettingsRead(ctx, d, meta)
 }
 
-func resourceAppSamlSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSamlSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewSamlApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get SAML application: %v", err)
 	}
@@ -76,18 +76,18 @@ func resourceAppSamlSettingsRead(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceAppSamlSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	_, err := updateOrCreateAppSettings(ctx, d, m)
+func resourceAppSamlSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_, err := updateOrCreateAppSettings(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	return resourceAppSamlSettingsRead(ctx, d, m)
+	return resourceAppSamlSettingsRead(ctx, d, meta)
 }
 
-func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, m interface{}) (string, error) {
+func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, meta interface{}) (string, error) {
 	app := sdk.NewSamlApplication()
 	appID := d.Get("app_id").(string)
-	err := fetchAppByID(ctx, appID, m, app)
+	err := fetchAppByID(ctx, appID, meta, app)
 	if err != nil {
 		return "", fmt.Errorf("failed to get SAML application: %v", err)
 	}
@@ -97,7 +97,7 @@ func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, m in
 	settings := make(sdk.ApplicationSettingsApplication)
 	_ = json.Unmarshal([]byte(d.Get("settings").(string)), &settings)
 	app.Settings.App = &settings
-	_, _, err = getOktaClientFromMetadata(m).Application.UpdateApplication(ctx, appID, app)
+	_, _, err = getOktaClientFromMetadata(meta).Application.UpdateApplication(ctx, appID, app)
 	if err != nil {
 		return "", fmt.Errorf("failed to update SAML application's settings: %v", err)
 	}

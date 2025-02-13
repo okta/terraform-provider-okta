@@ -232,8 +232,8 @@ data "okta_group" "test_b" {
 	return fmt.Sprintf("%s%s%s", prepend, clause, append)
 }
 
-// TestAccResourceOktaGroupMembershipsIssue1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
-func TestAccResourceOktaGroupMembershipsIssue1119(t *testing.T) {
+// TestAccResourceOktaGroupMemberships_issue_1119 addresses https://github.com/okta/terraform-provider-okta/issues/1119
+func TestAccResourceOktaGroupMemberships_issue_1119(t *testing.T) {
 	if !allowLongRunningACCTest(t) {
 		return
 	}

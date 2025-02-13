@@ -216,6 +216,7 @@ func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckF
 func sleepInSecondsForTest(t int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
+			//lintignore:R018
 			time.Sleep(time.Duration(t) * time.Second)
 		}
 		return nil

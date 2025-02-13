@@ -118,7 +118,7 @@ func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
 	if policy.PriorityPtr != nil {
-		_ = d.Set("priority", *policy.PriorityPtr)
+		_ = d.Set("priority", policy.PriorityPtr)
 	}
 	d.SetId(policy.Id)
 	return policy, nil
@@ -256,7 +256,7 @@ func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error
 	_ = d.Set("description", policy.Description)
 	_ = d.Set("status", policy.Status)
 	if policy.PriorityPtr != nil {
-		_ = d.Set("priority", *policy.PriorityPtr)
+		_ = d.Set("priority", policy.PriorityPtr)
 	}
 	if policy.Conditions != nil &&
 		policy.Conditions.People != nil &&

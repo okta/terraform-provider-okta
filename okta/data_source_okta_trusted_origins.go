@@ -59,13 +59,13 @@ func dataSourceTrustedOrigins() *schema.Resource {
 	}
 }
 
-func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	qp := &query.Params{Limit: defaultPaginationLimit}
 	filter, ok := d.GetOk("filter")
 	if ok {
 		qp.Filter = filter.(string)
 	}
-	trustedOrigins, err := collectTrustedOrigins(ctx, getOktaClientFromMetadata(m), qp)
+	trustedOrigins, err := collectTrustedOrigins(ctx, getOktaClientFromMetadata(meta), qp)
 	if err != nil {
 		return diag.Errorf("failed to trusted origins: %v", err)
 	}

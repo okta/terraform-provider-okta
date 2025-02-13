@@ -104,25 +104,25 @@ func resourceAppSecurePasswordStore() *schema.Resource {
 	}
 }
 
-func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := buildAppSecurePasswordStore(d)
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := getOktaClientFromMetadata(m).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
 	d.SetId(app.Id)
-	err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for secure password store application: %v", err)
 	}
-	return resourceAppSecurePasswordStoreRead(ctx, d, m)
+	return resourceAppSecurePasswordStoreRead(ctx, d, meta)
 }
 
-func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	app := sdk.NewSecurePasswordStoreApplication()
-	err := fetchApp(ctx, d, m, app)
+	err := fetchApp(ctx, d, meta, app)
 	if err != nil {
 		return diag.Errorf("failed to get secure password store application: %v", err)
 	}
@@ -150,8 +150,8 @@ func resourceAppSecurePasswordStoreRead(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
-func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	additionalChanges, err := appUpdateStatus(ctx, d, m)
+func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	additionalChanges, err := appUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -159,25 +159,25 @@ func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.Resourc
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSecurePasswordStore(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {
 		return diag.Errorf("failed to update secure password store application: %v", err)
 	}
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, m, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
 			return diag.Errorf("failed to upload logo for secure password store application: %v", err)
 		}
 	}
-	return resourceAppSecurePasswordStoreRead(ctx, d, m)
+	return resourceAppSecurePasswordStoreRead(ctx, d, meta)
 }
 
-func resourceAppSecurePasswordStoreDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	err := deleteApplication(ctx, d, m)
+func resourceAppSecurePasswordStoreDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete secure password store application: %v", err)
 	}

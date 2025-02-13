@@ -175,14 +175,14 @@ deactivated if it's not in use by any other policy.`,
 // performed. Thereafter, that authenticator is never deleted, it is only
 // deactivated (soft delete). Therefore, if the authenticator already exists
 // create is just a soft import of an existing authenticator.
-func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
 	var err error
 	// soft create if the authenticator already exists
-	authenticator, _ := findAuthenticator(ctx, m, d.Get("name").(string), d.Get("key").(string))
+	authenticator, _ := findAuthenticator(ctx, meta, d.Get("name").(string), d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
 		authenticator, err = buildAuthenticator(d)
@@ -193,7 +193,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 		qp := &query.Params{
 			Activate: boolPtr(activate),
 		}
-		authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
+		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -203,7 +203,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 			if err != nil {
 				return diag.FromErr(err)
 			}
-			_, err = getOktaClientFromMetadata(m).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
+			_, err = getOktaClientFromMetadata(meta).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -218,9 +218,9 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 	if ok && authenticator.Status != status.(string) {
 		var err error
 		if status.(string) == statusInactive {
-			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		} else {
-			authenticator, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -231,12 +231,12 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
-	authenticator, _, err := getOktaClientFromMetadata(m).Authenticator.GetAuthenticator(ctx, d.Id())
+	authenticator, _, err := getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
@@ -245,8 +245,8 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, m in
 	return nil
 }
 
-func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
@@ -258,35 +258,35 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
-	_, _, err = getOktaClientFromMetadata(m).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
+	_, _, err = getOktaClientFromMetadata(meta).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == statusActive {
-			_, _, err = getOktaClientFromMetadata(m).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		} else {
-			_, _, err = getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
 		}
 	}
-	return resourceAuthenticatorRead(ctx, d, m)
+	return resourceAuthenticatorRead(ctx, d, meta)
 }
 
 // resourceAuthenticatorDelete Delete is soft, authenticators are immutable for
 // true delete. However, deactivate the authenticator as a stand in for delete.
 // Authenticators that are utilized by existing policies can not be deactivated.
-func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if isClassicOrg(ctx, m) {
+func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if isClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(authenticator)
 	}
 
-	_, _, err := getOktaClientFromMetadata(m).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+	_, _, err := getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 	if err != nil {
-		logger(m).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
+		logger(meta).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
 	}
 
 	return nil
@@ -413,7 +413,7 @@ func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.Resource
 		if authenticator.Type == "security_key" {
 			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
 			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", *authenticator.Provider.Configuration.AuthPortPtr)
+				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
 			}
 			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
 		}
