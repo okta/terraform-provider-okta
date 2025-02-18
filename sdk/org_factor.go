@@ -34,6 +34,7 @@ const (
 	PhoneNumberFactor      = "phone_number" // OIE only (Combo of OktaSms + OktaCall)
 	RsaTokenFactor         = "rsa_token"
 	SecurityQuestionFactor = "security_question" // OIE only (Evolution/rename from okta_question)
+	SmartCardIdpFactor     = "smart_card_idp"
 	SymantecVipFactor      = "symantec_vip"
 	WebauthnFactor         = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
 	YubikeyTokenFactor     = "yubikey_token"
