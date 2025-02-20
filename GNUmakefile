@@ -1,4 +1,6 @@
 SWEEP?=global
+UNIT_TESTS?=$$(go list ./... |grep -v 'vendor'|grep -v 'okta.services.idaas')
+ACC_TESTS=./okta/services/idaas
 TEST?=$$(go list ./... |grep -v 'vendor')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=okta
@@ -69,11 +71,11 @@ sweep:
 	go test $(TEST) -sweep=$(SWEEP) $(SWEEPARGS)
 
 test:
-	echo $(TEST) | \
+	echo $(UNIT_TESTS) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
 testacc:
-	TF_ACC=1 go test $(TEST) $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	TF_ACC=1 go test $(ACC_TESTS) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)

@@ -10,7 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5/tf5server"
 	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 	"github.com/hashicorp/terraform-plugin-mux/tf6to5server"
-	"github.com/okta/terraform-provider-okta/okta"
+	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/fwprovider"
+	"github.com/okta/terraform-provider-okta/okta/provider"
 )
 
 // Ensure the documentation is formatted properly.
@@ -23,14 +25,14 @@ func main() {
 	var debug bool
 
 	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
-	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(okta.NewFrameworkProvider(okta.OktaTerraformProviderVersion)))
+	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(fwprovider.NewFrameworkProvider(config.OktaTerraformProviderVersion)))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	providers := []func() tfprotov5.ProviderServer{
 		// v2 plugin
-		okta.Provider().GRPCProvider,
+		provider.Provider().GRPCProvider,
 		// v3 plugin
 		func() tfprotov5.ProviderServer {
 			return framework
