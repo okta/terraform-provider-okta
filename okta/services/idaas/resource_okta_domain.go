@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,6 +27,10 @@ func resourceDomain() *schema.Resource {
 				Required:    true,
 				Description: "Custom Domain name",
 				ForceNew:    true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Okta API downcases domain names
+					return strings.EqualFold(old, new)
+				},
 			},
 			"certificate_source_type": {
 				Type:        schema.TypeString,
