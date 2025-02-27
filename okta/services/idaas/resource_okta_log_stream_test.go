@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -24,7 +23,7 @@ func TestAccResourceOktaLogStream_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSLogStream, doesLogStreamExist),
 		// Of note:
 		//   Step 1:
@@ -90,7 +89,7 @@ func TestAccResourceOktaLogStream_crud(t *testing.T) {
 }
 
 func doesLogStreamExist(id string) (bool, error) {
-	client := provider.SdkV3ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV3()
 	_, response, err := client.LogStreamAPI.GetLogStream(context.Background(), id).Execute()
 	return utils.DoesResourceExistV3(response, err)
 }

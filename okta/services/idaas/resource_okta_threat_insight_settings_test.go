@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -20,10 +19,10 @@ func TestAccResourceOktaThreatInsightSettings_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSThreatInsightSettings)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkOktaThreatInsightSettingsDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkOktaThreatInsightSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -76,10 +75,10 @@ func TestAccResourceOktaThreatInsightSettings_issue_1221_NetworkZoneOrdering(t *
 	}
 	`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkOktaThreatInsightSettingsDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkOktaThreatInsightSettingsDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -97,7 +96,7 @@ func checkOktaThreatInsightSettingsDestroy(s *terraform.State) error {
 		if rs.Type != resources.OktaIDaaSThreatInsightSettings {
 			continue
 		}
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		conf, _, err := client.ThreatInsightConfiguration.GetCurrentConfiguration(context.Background())
 		if err != nil {
 			return fmt.Errorf("failed to get threat insight configuration: %v", err)

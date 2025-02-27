@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyProfileEnrollment() *schema.Resource {
+func resourcePolicyProfileEnrollment() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyProfileEnrollmentCreate,
 		ReadContext:   resourcePolicyProfileEnrollmentRead,
@@ -41,14 +41,14 @@ func resourcePolicyProfileEnrollmentCreate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSPolicyProfileEnrollment)
 	}
 
-	policy, _, err := GetAPISupplementFromMetadata(meta).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
+	policy, _, err := getAPISupplementFromMetadata(meta).CreatePolicy(ctx, buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to create profile enrollment policy: %v", err)
 	}
 	d.SetId(policy.Id)
 	status, ok := d.GetOk("status")
 	if ok && status.(string) == StatusInactive {
-		_, err = GetOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, policy.Id)
+		_, err = getOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, policy.Id)
 		if err != nil {
 			return diag.Errorf("failed to deactivate profile enrollment policy: %v", err)
 		}
@@ -78,16 +78,16 @@ func resourcePolicyProfileEnrollmentUpdate(ctx context.Context, d *schema.Resour
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSPolicyProfileEnrollment)
 	}
 
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, d.Id(), buildPolicyProfileEnrollment(d))
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == StatusActive {
-			_, err = GetOktaClientFromMetadata(meta).Policy.ActivatePolicy(ctx, d.Id())
+			_, err = getOktaClientFromMetadata(meta).Policy.ActivatePolicy(ctx, d.Id())
 		} else {
-			_, err = GetOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, d.Id())
+			_, err = getOktaClientFromMetadata(meta).Policy.DeactivatePolicy(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change profile enrollment policy status: %v", err)

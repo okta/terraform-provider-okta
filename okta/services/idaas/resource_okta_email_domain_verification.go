@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceEmailDomainVerification() *schema.Resource {
+func resourceEmailDomainVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailDomainVerificationCreate,
 		ReadContext:   utils.ResourceFuncNoOp,
@@ -27,7 +27,7 @@ func ResourceEmailDomainVerification() *schema.Resource {
 }
 
 func resourceEmailDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.VerifyEmailDomain(ctx, d.Get("email_domain_id").(string)).Execute()
+	_, _, err := getOktaV3ClientFromMetadata(meta).EmailDomainAPI.VerifyEmailDomain(ctx, d.Get("email_domain_id").(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to verify email domain: %v", err)
 	}

@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceNetworkZone() *schema.Resource {
+func resourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceNetworkZoneCreate,
 		ReadContext:   resourceNetworkZoneRead,
@@ -104,7 +104,7 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	zone, _, err := GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
+	zone, _, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
@@ -117,7 +117,7 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	zone, resp, err := GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, d.Id()).Execute()
+	zone, resp, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return diag.Errorf("failed to get network zone: %v", err)
 	}
@@ -141,7 +141,7 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+	_, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
@@ -149,11 +149,11 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, resp, err := GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+	_, resp, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate network zone: %v", err)
 	}
-	resp, err = GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeleteNetworkZone(ctx, d.Id()).Execute()
+	resp, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeleteNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return diag.Errorf("failed to delete network zone: %v", err)
 	}

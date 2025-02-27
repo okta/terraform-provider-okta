@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceIdpMetadataSaml() *schema.Resource {
+func dataSourceIdpMetadataSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceIdpSamlMetadataRead,
 		Schema: map[string]*schema.Schema{
@@ -65,7 +65,7 @@ func DataSourceIdpMetadataSaml() *schema.Resource {
 func dataSourceIdpSamlMetadataRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := d.Get("idp_id").(string)
 	d.SetId(fmt.Sprintf("%s_metadata", id))
-	metadata, metadataRoot, err := GetAPISupplementFromMetadata(meta).GetSAMLIdpMetadata(ctx, id)
+	metadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLIdpMetadata(ctx, id)
 	if err != nil {
 		return diag.Errorf("failed to get SAML IdP metadata: %v", err)
 	}

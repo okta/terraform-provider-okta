@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceRoleSubscription() *schema.Resource {
+func dataSourceRoleSubscription() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceRoleSubscriptionRead,
 		Schema: map[string]*schema.Schema{
@@ -33,7 +33,7 @@ func DataSourceRoleSubscription() *schema.Resource {
 }
 
 func dataSourceRoleSubscriptionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	subscription, _, err := GetOktaClientFromMetadata(meta).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
+	subscription, _, err := getOktaClientFromMetadata(meta).Subscription.GetRoleSubscriptionByNotificationType(ctx, d.Get("role_type").(string), d.Get("notification_type").(string))
 	if err != nil {
 		return diag.Errorf("failed get subscription: %v", err)
 	}

@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -23,10 +22,10 @@ func TestAccResourceOktaPolicyRulePassword_crud(t *testing.T) {
 	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -57,10 +56,10 @@ func TestAccResourceOktaPolicyRulePassword_priorityError(t *testing.T) {
 	config := testOktaPolicyRulePriorityError(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -78,10 +77,10 @@ func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
 	name := acctest.BuildResourceName(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -137,7 +136,7 @@ func checkRuleDestroy(ruleType string) func(*terraform.State) error {
 }
 
 func doesRuleExistsUpstream(policyID, ruleID string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	rule, resp, err := client.GetPolicyRule(context.Background(), policyID, ruleID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

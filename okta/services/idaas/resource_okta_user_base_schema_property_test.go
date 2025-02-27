@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -25,10 +24,10 @@ func TestAccResourceOktaUserBaseSchema_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", resources.OktaIDaaSUserBaseSchemaProperty, firstNameTestProp)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      nil, // can't delete base properties
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil, // can't delete base properties
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -83,10 +82,10 @@ func TestAccResourceOktaUserBaseSchema_login_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.%s", resources.OktaIDaaSUserBaseSchemaProperty, loginTestProp)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      nil, // can't delete base properties
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil, // can't delete base properties
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -155,7 +154,7 @@ func testOktaUserBaseSchemasExists(resourceName string) resource.TestCheckFunc {
 // /api/v1/meta/schemas/user/{userId}` and our fix is to use a calling mutex in
 // the resource to impose the equivelent of `terraform -parallelism=1`
 func TestAccResourceOktaUserBaseSchema_login_multiple_properties_crud(t *testing.T) {
-	if provider.SkipVCRTest(t) {
+	if acctest.SkipVCRTest(t) {
 		return
 	}
 	config := `
@@ -202,10 +201,10 @@ resource "okta_user_base_schema_property" "mobilephone" {
 	roConfig := fmt.Sprintf(config, ro...)
 	rwConfig := fmt.Sprintf(config, rw...)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: roConfig,

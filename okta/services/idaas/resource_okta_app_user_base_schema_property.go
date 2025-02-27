@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceAppUserBaseSchemaProperty() *schema.Resource {
+func resourceAppUserBaseSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppUserBaseSchemaCreate,
 		ReadContext:   resourceAppUserBaseSchemaRead,
@@ -67,7 +67,7 @@ func resourceAppUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	us, _, err := GetOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+	us, _, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get app user base schema: %v", err)
 	}
@@ -95,7 +95,7 @@ func updateAppUserBaseSubschema(ctx context.Context, d *schema.ResourceData, met
 	}
 	base := buildBaseUserSchema(d)
 	url := fmt.Sprintf("/api/v1/meta/schemas/apps/%v/default", d.Get("app_id").(string))
-	re := GetOktaClientFromMetadata(meta).GetRequestExecutor()
+	re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").
 		NewRequest("POST", url, base)
 	if err != nil {

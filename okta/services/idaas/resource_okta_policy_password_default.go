@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyPasswordDefault() *schema.Resource {
+func resourcePolicyPasswordDefault() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyPasswordDefaultUpdate,
 		ReadContext:   resourcePolicyPasswordDefaultRead,
@@ -190,7 +190,7 @@ func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.Resource
 		id = policy.Id
 		_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
 	}
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultPasswordPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default password policy: %v", err)
 	}

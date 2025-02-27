@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceCaptcha() *schema.Resource {
+func resourceCaptcha() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCaptchaCreate,
 		ReadContext:   resourceCaptchaRead,
@@ -54,7 +54,7 @@ func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, meta int
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
 	}
 
-	captcha, _, err := GetAPISupplementFromMetadata(meta).CreateCaptcha(ctx, buildCaptcha(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).CreateCaptcha(ctx, buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to create CAPTCHA: %v", err)
 	}
@@ -67,7 +67,7 @@ func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
 	}
 
-	captcha, resp, err := GetAPISupplementFromMetadata(meta).GetCaptcha(ctx, d.Id())
+	captcha, resp, err := getAPISupplementFromMetadata(meta).GetCaptcha(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find CAPTCHA: %v", err)
 	}
@@ -86,7 +86,7 @@ func resourceCaptchaUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
 	}
 
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
 	if err != nil {
 		return diag.Errorf("failed to update CAPTCHA: %v", err)
 	}
@@ -98,8 +98,8 @@ func resourceCaptchaDelete(ctx context.Context, d *schema.ResourceData, meta int
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
 	}
 
-	Logger(meta).Info("deleting Captcha", "name", d.Get("name").(string))
-	_, err := GetAPISupplementFromMetadata(meta).DeleteCaptcha(ctx, d.Id())
+	logger(meta).Info("deleting Captcha", "name", d.Get("name").(string))
+	_, err := getAPISupplementFromMetadata(meta).DeleteCaptcha(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete CAPTCHA: %v", err)
 	}

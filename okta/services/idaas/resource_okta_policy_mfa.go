@@ -13,7 +13,7 @@ import (
 )
 
 // resourcePolicyMfa requires Org Feature Flag OKTA_MFA_POLICY
-func ResourcePolicyMfa() *schema.Resource {
+func resourcePolicyMfa() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyMfaCreate,
 		ReadContext:   resourcePolicyMfaRead,

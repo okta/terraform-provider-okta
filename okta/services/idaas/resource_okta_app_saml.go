@@ -39,7 +39,7 @@ var (
 	}
 )
 
-func ResourceAppSaml() *schema.Resource {
+func resourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSamlCreate,
 		ReadContext:   resourceAppSamlRead,
@@ -432,7 +432,7 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err = GetOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
+	_, _, err = getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
@@ -498,7 +498,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	if app.Credentials.Signing.Kid != "" && app.Status != StatusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
-		keyMetadata, metadataRoot, err := GetAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, d.Id(), keyID)
+		keyMetadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, d.Id(), keyID)
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
@@ -554,7 +554,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to build SAML application: %v", err)
@@ -717,7 +717,7 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 
 // Keep in mind that at the time of writing this the official SDK did not support generating certs.
 func generateCertificate(ctx context.Context, d *schema.ResourceData, meta interface{}, appID string) (*sdk.JsonWebKey, error) {
-	requestExecutor := GetRequestExecutor(meta)
+	requestExecutor := getRequestExecutor(meta)
 	years := d.Get("key_years_valid").(int)
 	url := fmt.Sprintf("/api/v1/apps/%s/credentials/keys/generate?validityYears=%d", appID, years)
 	req, err := requestExecutor.NewRequest("POST", url, nil)
@@ -739,7 +739,7 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, meta inte
 
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
-		client := GetOktaClientFromMetadata(meta)
+		client := getOktaClientFromMetadata(meta)
 		app, err := buildSamlApp(d)
 		if err != nil {
 			return err

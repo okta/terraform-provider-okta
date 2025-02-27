@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceIdpSocial() *schema.Resource {
+func resourceIdpSocial() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIdpSocialCreate,
 		ReadContext:   resourceIdpSocialRead,
@@ -126,12 +126,12 @@ func ResourceIdpSocial() *schema.Resource {
 
 func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp := buildIdPSocial(d)
-	respIdp, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
+	respIdp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create social identity provider: %v", err)
 	}
 	d.SetId(respIdp.Id)
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change social identity provider's status: %v", err)
 	}
@@ -139,7 +139,7 @@ func resourceIdpSocialCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	idp, resp, err := GetOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
+	idp, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get identity provider: %v", err)
 	}
@@ -209,11 +209,11 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta int
 
 func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	idp := buildIdPSocial(d)
-	_, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	_, _, err := getOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update social identity provider: %v", err)
 	}
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to update social identity provider's status: %v", err)
 	}

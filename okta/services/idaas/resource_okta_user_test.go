@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
@@ -29,10 +28,10 @@ func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:  config,
@@ -103,10 +102,10 @@ func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 func TestAccResourceOktaUser_invalidCustomProfileAttribute(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testOktaUserConfigInvalidCustomProfileAttribute(mgr.SeedStr()),
@@ -125,10 +124,10 @@ func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -197,10 +196,10 @@ func TestAccResourceOktaUser_updateCredentials(t *testing.T) {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -248,10 +247,10 @@ func TestAccResourceOktaUser_statusDeprovisioned(t *testing.T) {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -278,10 +277,10 @@ func TestAccResourceOktaUser_hashed_password_crud(t *testing.T) {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -314,10 +313,10 @@ func TestAccResourceOktaUser_updateDeprovisioned(t *testing.T) {
 	config := mgr.GetFixtures("deprovisioned.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -340,10 +339,10 @@ func TestAccResourceOktaUser_loginUpdates(t *testing.T) {
 	updatedEmail := fmt.Sprintf("testAccUpdated-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -358,7 +357,7 @@ func TestAccResourceOktaUser_loginUpdates(t *testing.T) {
 }
 
 func checkUserDestroy(s *terraform.State) error {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	for _, r := range s.RootModule().Resources {
 		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
 			if resp != nil && resp.Response.StatusCode == http.StatusNotFound {
@@ -421,10 +420,10 @@ resource "okta_user" "test" {
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

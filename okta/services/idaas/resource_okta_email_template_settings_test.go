@@ -19,7 +19,7 @@ func TestAccResourceOktaEmailTemplateSettings_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceFactorTOTP() *schema.Resource {
+func resourceFactorTOTP() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceFactorTOTPCreate,
 		ReadContext:   resourceFactorTOTPRead,
@@ -71,7 +71,7 @@ recreation.`,
 
 func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	responseProfile, _, err := GetAPISupplementFromMetadata(meta).CreateHotpFactorProfile(ctx, *profile)
+	responseProfile, _, err := getAPISupplementFromMetadata(meta).CreateHotpFactorProfile(ctx, *profile)
 	if err != nil {
 		return diag.Errorf("failed to create TOTP factor: %v", err)
 	}
@@ -81,7 +81,7 @@ func resourceFactorTOTPCreate(ctx context.Context, d *schema.ResourceData, meta 
 
 func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	profile := buildTotpFactorProfile(d)
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateHotpFactorProfile(ctx, d.Id(), *profile)
 	if err != nil {
 		return diag.Errorf("failed to update TOTP factor: %v", err)
 	}
@@ -90,7 +90,7 @@ func resourceFactorTOTPUpdate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	profile, resp, err := GetAPISupplementFromMetadata(meta).GetHotpFactorProfile(ctx, d.Id())
+	profile, resp, err := getAPISupplementFromMetadata(meta).GetHotpFactorProfile(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get TOTP factor: %v", err)
 	}
@@ -110,7 +110,7 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, meta in
 func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
 
-	_, err := GetAPISupplementFromMetadata(meta).DeleteHotpFactorProfile(ctx, d.Id())
+	_, err := getAPISupplementFromMetadata(meta).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete TOTP factor: %v", err)
 	}

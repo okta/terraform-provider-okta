@@ -25,7 +25,7 @@ var (
 	// _ resource.ResourceWithImportState = &trustedServerResource{}
 )
 
-func NewTrustedServerResource() resource.Resource {
+func newTrustedServerResource() resource.Resource {
 	return &trustedServerResource{}
 }
 
@@ -84,7 +84,7 @@ func (r *trustedServerResource) Create(ctx context.Context, req resource.CreateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	listAuthorizationServer, _, err := r.OktaSDKClientV3.AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: listTrustedServers}).Execute()
+	listAuthorizationServer, _, err := r.OktaIDaaSClient.OktaSDKClientV3().AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: listTrustedServers}).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create trusted servers",
@@ -112,7 +112,7 @@ func (r *trustedServerResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	listAuthorizationServer, _, err := r.Config.OktaSDKClientV3.AuthorizationServerAssocAPI.ListAssociatedServersByTrustedType(ctx, state.AuthSeverID.ValueString()).Trusted(true).Execute()
+	listAuthorizationServer, _, err := r.OktaIDaaSClient.OktaSDKClientV3().AuthorizationServerAssocAPI.ListAssociatedServersByTrustedType(ctx, state.AuthSeverID.ValueString()).Trusted(true).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving list trusted server",
@@ -146,7 +146,7 @@ func (r *trustedServerResource) Delete(ctx context.Context, req resource.DeleteR
 	}
 
 	for _, trustedServerID := range listTrustedServers {
-		_, err := r.OktaSDKClientV3.AuthorizationServerAssocAPI.DeleteAssociatedServer(ctx, state.AuthSeverID.ValueString(), trustedServerID).Execute()
+		_, err := r.OktaIDaaSClient.OktaSDKClientV3().AuthorizationServerAssocAPI.DeleteAssociatedServer(ctx, state.AuthSeverID.ValueString(), trustedServerID).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("failed to delete trusted server %v", trustedServerID),
@@ -186,7 +186,7 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 	var err error
 	listAuthorizationServer := make([]okta.AuthorizationServer, 0)
 	if len(toAdd) > 0 {
-		listAuthorizationServer, _, err = r.OktaSDKClientV3.AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: toAdd}).Execute()
+		listAuthorizationServer, _, err = r.OktaIDaaSClient.OktaSDKClientV3().AuthorizationServerAssocAPI.CreateAssociatedServers(ctx, state.AuthSeverID.ValueString()).AssociatedServerMediated(okta.AssociatedServerMediated{Trusted: toAdd}).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to update trusted servers",
@@ -197,7 +197,7 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	for _, trustedServerID := range toDelete {
-		_, err := r.OktaSDKClientV3.AuthorizationServerAssocAPI.DeleteAssociatedServer(ctx, state.AuthSeverID.ValueString(), trustedServerID).Execute()
+		_, err := r.OktaIDaaSClient.OktaSDKClientV3().AuthorizationServerAssocAPI.DeleteAssociatedServer(ctx, state.AuthSeverID.ValueString(), trustedServerID).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("failed to delete trusted server %v", trustedServerID),

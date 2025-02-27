@@ -23,7 +23,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &deviceAssurancePolicyDataSource{}
 )
 
-func NewDeviceAssurancePolicyDataSource() datasource.DataSource {
+func newDeviceAssurancePolicyDataSource() datasource.DataSource {
 	return &deviceAssurancePolicyDataSource{}
 }
 
@@ -196,9 +196,9 @@ func (d *deviceAssurancePolicyDataSource) Read(ctx context.Context, req datasour
 	}
 	var devicePolicyAssuranceResp *okta.ListDeviceAssurancePolicies200ResponseInner
 	if data.ID.ValueString() != "" {
-		devicePolicyAssuranceResp, _, err = d.OktaSDKClientV5.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
+		devicePolicyAssuranceResp, _, err = d.OktaIDaaSClient.OktaSDKClientV5().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
 	} else {
-		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.OktaSDKClientV5, data.Name.ValueString())
+		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.OktaIDaaSClient.OktaSDKClientV5(), data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(

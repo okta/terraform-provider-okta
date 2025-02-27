@@ -13,7 +13,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceAppSaml() *schema.Resource {
+func dataSourceAppSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppSamlRead,
 		Schema: utils.BuildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
@@ -300,13 +300,13 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	var app *sdk.SamlApplication
 	if filters.ID != "" {
-		respApp, _, err := GetOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewSamlApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewSamlApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
 		app = respApp.(*sdk.SamlApplication)
 	} else {
-		re := GetOktaClientFromMetadata(meta).GetRequestExecutor()
+		re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.GetQ()}
 		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
@@ -323,7 +323,7 @@ func dataSourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta int
 		if filters.Label != "" && appList[0].Label != filters.Label {
 			return diag.Errorf("no SAML application found with the provided label: %s", filters.Label)
 		}
-		Logger(meta).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
+		logger(meta).Info("found multiple SAML applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
 	d.SetId(app.Id)

@@ -16,7 +16,7 @@ var (
 	_ resource.ResourceWithImportState = &previewSigninPageResource{}
 )
 
-func NewPreviewSigninResource() resource.Resource {
+func newPreviewSigninResource() resource.Resource {
 	return &previewSigninPageResource{}
 }
 
@@ -51,7 +51,7 @@ func (r *previewSigninPageResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	previewSigninPage, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplacePreviewSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
+	previewSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplacePreviewSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update preview sign in page",
@@ -76,7 +76,7 @@ func (r *previewSigninPageResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	previewSigninPage, _, err := r.Config.OktaSDKClientV3.CustomizationAPI.GetPreviewSignInPage(ctx, state.BrandID.ValueString()).Execute()
+	previewSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetPreviewSignInPage(ctx, state.BrandID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving preview signin page",
@@ -101,7 +101,7 @@ func (r *previewSigninPageResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	_, err := r.OktaSDKClientV3.CustomizationAPI.DeletePreviewSignInPage(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.DeletePreviewSignInPage(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete preview signin page",
@@ -123,7 +123,7 @@ func (r *previewSigninPageResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	previewSigninPage, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplacePreviewSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
+	previewSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplacePreviewSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update preview sign in page",

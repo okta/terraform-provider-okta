@@ -27,7 +27,7 @@ var (
 	_ resource.ResourceWithImportState = &appSignOnPolicyResource{}
 )
 
-func NewAppSignOnPolicyResource() resource.Resource {
+func newAppSignOnPolicyResource() resource.Resource {
 	return &appSignOnPolicyResource{}
 }
 
@@ -116,7 +116,7 @@ func (r *appSignOnPolicyResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	accessPolicy, _, err := r.OktaSDKClientV5.PolicyAPI.CreatePolicy(ctx).Policy(buildV5AccessPolicy(state)).Execute()
+	accessPolicy, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.CreatePolicy(ctx).Policy(buildV5AccessPolicy(state)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create access policy",
@@ -173,7 +173,7 @@ func (r *appSignOnPolicyResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	accessPolicy, _, err := r.OktaSDKClientV5.PolicyAPI.GetPolicy(ctx, state.ID.ValueString()).Execute()
+	accessPolicy, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.GetPolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read access policy",
@@ -218,7 +218,7 @@ func (r *appSignOnPolicyResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	apps, err := listApps(ctx, r.Config, nil, utils.DefaultPaginationLimit)
+	apps, err := listAppsV5(ctx, r.Config, nil, utils.DefaultPaginationLimit)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to list apps in preparation to delete authentication policy: %v",
@@ -242,11 +242,11 @@ func (r *appSignOnPolicyResource) Delete(ctx context.Context, req resource.Delet
 		if path.Base(accessPolicy) == state.ID.ValueString() {
 			// update the app with the default policy, ignore errors
 			dp := defaultPolicy.GetActualInstance().(OktaPolicy)
-			r.OktaSDKClientV5.ApplicationPoliciesAPI.AssignApplicationPolicy(ctx, app.GetId(), dp.GetId()).Execute()
+			r.OktaIDaaSClient.OktaSDKClientV5().ApplicationPoliciesAPI.AssignApplicationPolicy(ctx, app.GetId(), dp.GetId()).Execute()
 		}
 	}
 
-	_, err = r.OktaSDKClientV5.PolicyAPI.DeletePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err = r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.DeletePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete access policy",
@@ -269,7 +269,7 @@ func (r *appSignOnPolicyResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	accessPolicy, _, err := r.OktaSDKClientV5.PolicyAPI.ReplacePolicy(ctx, state.ID.ValueString()).Policy(buildV5AccessPolicy(state)).Execute()
+	accessPolicy, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.ReplacePolicy(ctx, state.ID.ValueString()).Policy(buildV5AccessPolicy(state)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update access policy",

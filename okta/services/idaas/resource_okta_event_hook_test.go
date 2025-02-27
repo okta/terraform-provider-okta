@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -25,10 +24,10 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSEventHook, eventHookExists),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSEventHook, eventHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -117,7 +116,7 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 }
 
 func eventHookExists(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	eh, resp, err := client.EventHook.GetEventHook(context.Background(), id)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return false, err

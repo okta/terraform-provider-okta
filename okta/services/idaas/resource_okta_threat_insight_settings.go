@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceThreatInsightSettings() *schema.Resource {
+func resourceThreatInsightSettings() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceThreatInsightSettingsCreate,
 		ReadContext:   resourceThreatInsightSettingsRead,
@@ -70,7 +70,7 @@ func ResourceThreatInsightSettings() *schema.Resource {
 }
 
 func resourceThreatInsightSettingsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf, _, err := GetOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
+	conf, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update threat insight configuration: %v", err)
 	}
@@ -81,7 +81,7 @@ func resourceThreatInsightSettingsCreate(ctx context.Context, d *schema.Resource
 }
 
 func resourceThreatInsightSettingsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conf, _, err := GetOktaClientFromMetadata(meta).ThreatInsightConfiguration.GetCurrentConfiguration(ctx)
+	conf, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.GetCurrentConfiguration(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get threat insight configuration: %v", err)
 	}
@@ -92,7 +92,7 @@ func resourceThreatInsightSettingsRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceThreatInsightSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
+	_, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, buildThreatInsightSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update threat insight configuration: %v", err)
 	}
@@ -100,7 +100,7 @@ func resourceThreatInsightSettingsUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceThreatInsightSettingsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, sdk.ThreatInsightConfiguration{Action: "none"})
+	_, _, err := getOktaClientFromMetadata(meta).ThreatInsightConfiguration.UpdateConfiguration(ctx, sdk.ThreatInsightConfiguration{Action: "none"})
 	if err != nil {
 		return diag.Errorf("failed to set default threat insight configuration: %v", err)
 	}

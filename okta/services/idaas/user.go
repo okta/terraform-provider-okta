@@ -271,7 +271,7 @@ func getRoles(ctx context.Context, id string, c *sdk.Client) ([]interface{}, err
 }
 
 func setRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	roleTypes, err := getRoles(ctx, d.Id(), GetOktaClientFromMetadata(m))
+	roleTypes, err := getRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
 	if err != nil {
 		return fmt.Errorf("failed to get roles: %v", err)
 	}
@@ -322,7 +322,7 @@ func getAdminRoles(ctx context.Context, id string, c *sdk.Client) ([]interface{}
 }
 
 func setAdminRoles(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	roleTypes, resp, err := getAdminRoles(ctx, d.Id(), GetOktaClientFromMetadata(m))
+	roleTypes, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(m))
 	if err := utils.SuppressErrorOn403("setting admin roles", m, resp, err); err != nil {
 		return fmt.Errorf("failed to get admin roles: %v", err)
 	}

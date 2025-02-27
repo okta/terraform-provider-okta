@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceEmailDomain() *schema.Resource {
+func resourceEmailDomain() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailDomainCreate,
 		ReadContext:   resourceEmailDomainRead,
@@ -82,7 +82,7 @@ func ResourceEmailDomain() *schema.Resource {
 }
 
 func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailDomain, _, err := GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.CreateEmailDomain(ctx).EmailDomain(buildEmailDomain(d)).Execute()
+	emailDomain, _, err := getOktaV3ClientFromMetadata(meta).EmailDomainAPI.CreateEmailDomain(ctx).EmailDomain(buildEmailDomain(d)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create email domain: %v", err)
 	}
@@ -91,7 +91,7 @@ func resourceEmailDomainCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailDomain, resp, err := GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(meta).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
@@ -120,7 +120,7 @@ func resourceEmailDomainRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEmailDomainUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.ReplaceEmailDomain(ctx, d.Id()).UpdateEmailDomain(buildUpdateEmailDomain(d)).Execute()
+	_, _, err := getOktaV3ClientFromMetadata(meta).EmailDomainAPI.ReplaceEmailDomain(ctx, d.Id()).UpdateEmailDomain(buildUpdateEmailDomain(d)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email domain: %v", err)
 	}
@@ -128,14 +128,14 @@ func resourceEmailDomainUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailDomain, resp, err := GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
+	emailDomain, resp, err := getOktaV3ClientFromMetadata(meta).EmailDomainAPI.GetEmailDomain(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
 	if emailDomain == nil || emailDomain.GetValidationStatus() == "DELETED" {
 		return nil
 	}
-	_, err = GetOktaV3ClientFromMetadata(meta).EmailDomainAPI.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
+	_, err = getOktaV3ClientFromMetadata(meta).EmailDomainAPI.DeleteEmailDomain(ctx, emailDomain.GetId()).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return diag.Errorf("failed to delete email domain: %v", err)
 	}

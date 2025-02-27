@@ -114,7 +114,7 @@ func buildIdpSchema(idpSchema map[string]*schema.Schema) map[string]*schema.Sche
 }
 
 func getIdentityProviderByID(ctx context.Context, meta interface{}, id, providerType string) (*sdk.IdentityProvider, error) {
-	idp, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
+	idp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get identity provider with id '%s': %v", id, err)
 	}
@@ -126,7 +126,7 @@ func getIdentityProviderByID(ctx context.Context, meta interface{}, id, provider
 
 func getIdpByNameAndType(ctx context.Context, meta interface{}, name, providerType string) (*sdk.IdentityProvider, error) {
 	queryParams := &query.Params{Limit: 1, Q: name, Type: providerType}
-	idps, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.ListIdentityProviders(ctx, queryParams)
+	idps, _, err := getOktaClientFromMetadata(meta).IdentityProvider.ListIdentityProviders(ctx, queryParams)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find identity provider '%s': %v", name, err)
 	}
@@ -137,7 +137,7 @@ func getIdpByNameAndType(ctx context.Context, meta interface{}, name, providerTy
 }
 
 func resourceIdpDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	_, resp, err := client.IdentityProvider.DeactivateIdentityProvider(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate identity provider: %v", err)

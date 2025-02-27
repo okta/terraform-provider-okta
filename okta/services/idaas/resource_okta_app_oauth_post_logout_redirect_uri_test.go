@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -21,10 +20,10 @@ func TestAccResourceOktaAppOAuthApplication_postLogoutRedirectCrud(t *testing.T)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuthPostLogoutRedirectURI)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -58,7 +57,7 @@ func createPostLogoutRedirectURIExists(resourceName string) resource.TestCheckFu
 
 		uri := rs.Primary.ID
 		appID := rs.Primary.Attributes["app_id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		app := sdk.NewOpenIdConnectApplication()
 		_, response, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 

@@ -17,7 +17,7 @@ func TestAccResourceOktaAppAccessPolicyAssignment_crud(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", _resource)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{

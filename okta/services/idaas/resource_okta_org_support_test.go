@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -20,10 +19,10 @@ func TestAccResourceOktaOrgSupport_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("extended.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkSupportDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkSupportDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -47,7 +46,7 @@ func checkSupportDestroy(s *terraform.State) error {
 		if rs.Type != resources.OktaIDaaSOrgSupport {
 			continue
 		}
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		support, _, err := client.OrgSetting.GetOrgOktaSupportSettings(context.Background())
 		if err != nil {
 			return err

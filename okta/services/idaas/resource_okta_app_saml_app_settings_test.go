@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -22,10 +21,10 @@ func TestAccResourceOktaAppSamlAppSettings_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSamlAppSettings)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -53,7 +52,7 @@ func checkAppSamlAppSettingsExists(resourceName string) resource.TestCheckFunc {
 			return missingErr
 		}
 		appID := rs.Primary.Attributes["app_id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		app := sdk.NewSamlApplication()
 		_, _, err := client.Application.GetApplication(context.Background(), appID, app, nil)
 		if err != nil {

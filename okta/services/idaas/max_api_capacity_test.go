@@ -6,12 +6,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func TestAccMaxApiCapacity_read(t *testing.T) {
-	if provider.SkipVCRTest(t) {
+	if acctest.SkipVCRTest(t) {
 		return
 	}
 
@@ -25,10 +24,10 @@ func TestAccMaxApiCapacity_read(t *testing.T) {
 	// hack max api capacity value is enabled by env var
 	os.Setenv("MAX_API_CAPACITY", "50")
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      nil,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

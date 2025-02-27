@@ -28,7 +28,7 @@ type userTypeModel struct {
 	Description types.String `tfsdk:"description"`
 }
 
-func NewUserTypeDataSource() datasource.DataSource {
+func newUserTypeDataSource() datasource.DataSource {
 	return &userTypeDataSource{}
 }
 
@@ -87,9 +87,9 @@ func (d *userTypeDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 	var userTypeResp *sdk.UserType
 	if data.ID.ValueString() != "" {
-		userTypeResp, _, err = d.OktaSDKClientV2.UserType.GetUserType(ctx, data.ID.ValueString())
+		userTypeResp, _, err = d.OktaIDaaSClient.OktaSDKClientV2().UserType.GetUserType(ctx, data.ID.ValueString())
 	} else {
-		userTypeResp, err = findUserTypeByName(ctx, d.OktaSDKClientV2, data.Name.ValueString())
+		userTypeResp, err = findUserTypeByName(ctx, d.OktaIDaaSClient.OktaSDKClientV2(), data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(

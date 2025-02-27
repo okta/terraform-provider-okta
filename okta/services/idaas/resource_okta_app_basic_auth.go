@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppBasicAuth() *schema.Resource {
+func resourceAppBasicAuth() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppBasicAuthCreate,
 		ReadContext:   resourceAppBasicAuthRead,
@@ -45,7 +45,7 @@ other arguments that changed will be applied.`,
 }
 
 func resourceAppBasicAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBasicAuth(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
@@ -87,7 +87,7 @@ func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBasicAuth(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

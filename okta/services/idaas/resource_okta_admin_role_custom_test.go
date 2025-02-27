@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -19,10 +18,10 @@ func TestAccResourceOktaAdminRoleCustom_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAdminRoleCustom)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          acctest.AccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-			CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAdminRoleCustom, doesAdminRoleCustomExist),
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAdminRoleCustom, doesAdminRoleCustomExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -45,7 +44,7 @@ func TestAccResourceOktaAdminRoleCustom_crud(t *testing.T) {
 }
 
 func doesAdminRoleCustomExist(id string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetCustomRole(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }

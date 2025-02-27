@@ -11,7 +11,7 @@ import (
 
 const oidcIdp = "OIDC"
 
-func DataSourceIdpOidc() *schema.Resource {
+func dataSourceIdpOidc() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceIdpOidcRead,
 		Schema: map[string]*schema.Schema{

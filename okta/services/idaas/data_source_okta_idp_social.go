@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceIdpSocial() *schema.Resource {
+func dataSourceIdpSocial() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceIdpSocialRead,
 		Schema: map[string]*schema.Schema{
@@ -174,7 +174,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta i
 		idp *sdk.IdentityProvider
 	)
 	if id != "" {
-		idp, _, err = GetOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
+		idp, _, err = getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, id)
 		if err != nil {
 			return diag.Errorf("failed to get social identity provider with id '%s': %v", id, err)
 		}
@@ -229,7 +229,7 @@ func dataSourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func getSocialIdPByName(ctx context.Context, meta interface{}, name string) (*sdk.IdentityProvider, error) {
-	idps, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.
+	idps, _, err := getOktaClientFromMetadata(meta).IdentityProvider.
 		ListIdentityProviders(ctx, &query.Params{Q: name, Limit: utils.DefaultPaginationLimit})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get social identity provider with name '%s': %w", name, err)
@@ -254,7 +254,7 @@ func getSocialIdPByName(ctx context.Context, meta interface{}, name string) (*sd
 		return nil, fmt.Errorf("social identity provider with name '%s' does not exist", name)
 	}
 	if len(idps) > 1 {
-		Logger(meta).Warn(fmt.Sprintf("found multiple social IdPs with name '%s': "+
+		logger(meta).Warn(fmt.Sprintf("found multiple social IdPs with name '%s': "+
 			"using the first one which may only be a partial match", name))
 	}
 	return idps[0], nil

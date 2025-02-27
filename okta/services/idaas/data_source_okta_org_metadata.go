@@ -16,7 +16,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &logStreamDataSource{}
 )
 
-func NewOrgMetadataDataSource() datasource.DataSource {
+func newOrgMetadataDataSource() datasource.DataSource {
 	return &orgMetadataDataSource{}
 }
 
@@ -116,7 +116,7 @@ func (d *orgMetadataDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	org, _, err := d.OktaSDKClientV3.OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
+	org, _, err := d.OktaIDaaSClient.OktaSDKClientV3().OrgSettingAPI.GetWellknownOrgMetadata(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving org metadata",

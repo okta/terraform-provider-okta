@@ -14,7 +14,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceGroup() *schema.Resource {
+func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
@@ -67,10 +67,10 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, meta inter
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			Logger(meta).Info("delaying group read by ", delay, " seconds")
+			logger(meta).Info("delaying group read by ", delay, " seconds")
 			meta.(*config.Config).TimeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			Logger(meta).Warn("group read delay value ", n, " is not an integer")
+			logger(meta).Warn("group read delay value ", n, " is not an integer")
 		}
 	}
 
@@ -81,7 +81,7 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, meta in
 	var group *sdk.Group
 	groupID, ok := d.GetOk("id")
 	if ok {
-		respGroup, _, err := GetOktaClientFromMetadata(meta).Group.GetGroup(ctx, groupID.(string))
+		respGroup, _, err := getOktaClientFromMetadata(meta).Group.GetGroup(ctx, groupID.(string))
 		if err != nil {
 			return diag.Errorf("failed get group by ID: %v", err)
 		}
@@ -101,13 +101,13 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, meta in
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
 		}
 
-		Logger(meta).Info("looking for data source group", "query", searchParams.String())
-		groups, _, err := GetOktaClientFromMetadata(meta).Group.ListGroups(ctx, searchParams)
+		logger(meta).Info("looking for data source group", "query", searchParams.String())
+		groups, _, err := getOktaClientFromMetadata(meta).Group.ListGroups(ctx, searchParams)
 		if err != nil {
 			return diag.Errorf("failed to query for groups: %v", err)
 		}
 		if len(groups) > 1 {
-			Logger(meta).Warn("data source group query matches", len(groups), "groups")
+			logger(meta).Warn("data source group query matches", len(groups), "groups")
 			for _, g := range groups {
 				// exact match on name
 				if g.Profile.Name == name {
@@ -140,7 +140,7 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, meta in
 			group = groups[0]
 			if group.Profile.Name != name {
 				// keep old behavior that a fuzzy match is acceptable if query only returns one group
-				Logger(meta).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", group.Profile.Name)
+				logger(meta).Warn("group with exact name match was not found: using partial match which contains name as a substring", "name", group.Profile.Name)
 			}
 		}
 	}

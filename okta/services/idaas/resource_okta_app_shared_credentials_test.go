@@ -21,7 +21,7 @@ func TestAccResourceOktaAppSharedCredentials_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -99,7 +99,7 @@ resource "okta_app_shared_credentials" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{

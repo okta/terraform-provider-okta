@@ -19,7 +19,7 @@ func TestAccResourceOktaPolicyMFADefault_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
@@ -75,7 +75,7 @@ resource "okta_policy_mfa_default" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
@@ -111,7 +111,7 @@ func TestAccResourceOktaPolicyMFADefault_issue_2107(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{

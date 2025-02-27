@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -26,10 +25,10 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	name2 := acctest.BuildResourceName(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -77,10 +76,10 @@ func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
 	testUpdate := buildInvalidUpdate(testName)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
 		Steps: []resource.TestStep{
 			{
 				Config: testSetup,
@@ -171,7 +170,7 @@ resource "okta_group_rule" "inval" {
 }
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
 
 	return utils.DoesResourceExist(response, err)

@@ -24,7 +24,7 @@ var translationSmsResource = &schema.Resource{
 	},
 }
 
-func ResourceTemplateSms() *schema.Resource {
+func resourceTemplateSms() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceTemplateSmsCreate,
 		ReadContext:   resourceTemplateSmsRead,
@@ -57,7 +57,7 @@ func ResourceTemplateSms() *schema.Resource {
 
 func resourceTemplateSmsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	temp := buildSmsTemplate(d)
-	response, _, err := GetOktaClientFromMetadata(meta).SmsTemplate.CreateSmsTemplate(ctx, *temp)
+	response, _, err := getOktaClientFromMetadata(meta).SmsTemplate.CreateSmsTemplate(ctx, *temp)
 	if err != nil {
 		return diag.Errorf("failed to create SMS template: %v", err)
 	}
@@ -66,7 +66,7 @@ func resourceTemplateSmsCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceTemplateSmsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	temp, resp, err := GetOktaClientFromMetadata(meta).SmsTemplate.GetSmsTemplate(ctx, d.Id())
+	temp, resp, err := getOktaClientFromMetadata(meta).SmsTemplate.GetSmsTemplate(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get SMS template: %v", err)
 	}
@@ -82,7 +82,7 @@ func resourceTemplateSmsRead(ctx context.Context, d *schema.ResourceData, meta i
 
 func resourceTemplateSmsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	temp := buildSmsTemplate(d)
-	_, _, err := GetOktaClientFromMetadata(meta).SmsTemplate.UpdateSmsTemplate(ctx, d.Id(), *temp)
+	_, _, err := getOktaClientFromMetadata(meta).SmsTemplate.UpdateSmsTemplate(ctx, d.Id(), *temp)
 	if err != nil {
 		return diag.Errorf("failed to update SMS template: %v", err)
 	}
@@ -90,7 +90,7 @@ func resourceTemplateSmsUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceTemplateSmsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, err := GetOktaClientFromMetadata(meta).SmsTemplate.DeleteSmsTemplate(ctx, d.Id())
+	_, err := getOktaClientFromMetadata(meta).SmsTemplate.DeleteSmsTemplate(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete SMS template: %v", err)
 	}

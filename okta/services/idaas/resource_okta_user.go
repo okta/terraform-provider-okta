@@ -54,7 +54,7 @@ var profileKeys = []string{
 	"recovery_answer",
 }
 
-func ResourceUser() *schema.Resource {
+func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserCreate,
 		ReadContext:   resourceUserRead,
@@ -63,7 +63,7 @@ func ResourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				// Supporting id and email based imports
-				user, _, err := GetOktaClientFromMetadata(meta).User.GetUser(ctx, d.Id())
+				user, _, err := getOktaClientFromMetadata(meta).User.GetUser(ctx, d.Id())
 				if err != nil {
 					return nil, err
 				}
@@ -396,7 +396,7 @@ func ResourceUser() *schema.Resource {
 }
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("creating user", "login", d.Get("login").(string))
+	logger(meta).Info("creating user", "login", d.Get("login").(string))
 	profile := populateUserProfile(d)
 	qp := query.NewQueryParams()
 
@@ -432,7 +432,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		Profile:     profile,
 		Credentials: uc,
 	}
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	user, _, err := client.User.CreateUser(ctx, userBody, qp)
 	if err != nil {
 		return diag.Errorf("failed to create user: %v", err)
@@ -450,7 +450,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	expire, ok := d.GetOk("expire_password_on_create")
 	if ok && expire.(bool) {
-		_, _, err = GetOktaClientFromMetadata(meta).User.ExpirePassword(ctx, user.Id)
+		_, _, err = getOktaClientFromMetadata(meta).User.ExpirePassword(ctx, user.Id)
 		if err != nil {
 			return diag.Errorf("failed to expire user's password: %v", err)
 		}
@@ -464,8 +464,8 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 }
 
 func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.ResourceData, meta interface{}, filteredCustomAttributes []string) diag.Diagnostics {
-	Logger(meta).Info("reading user", "id", d.Id())
-	client := GetOktaClientFromMetadata(meta)
+	logger(meta).Info("reading user", "id", d.Id())
+	client := getOktaClientFromMetadata(meta)
 	user, resp, err := client.User.GetUser(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user: %v", err)
@@ -485,7 +485,7 @@ func resourceUserReadFilterCustomAttributes(ctx context.Context, d *schema.Resou
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("updating user", "id", d.Id())
+	logger(meta).Info("updating user", "id", d.Id())
 	status := d.Get("status").(string)
 	statusChange := d.HasChange("status")
 
@@ -501,7 +501,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 	recoveryQuestionChange := d.HasChange("recovery_question")
 	recoveryAnswerChange := d.HasChange("recovery_answer")
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if passwordChange {
 		user, _, err := client.User.GetUser(ctx, d.Id())
 		if err != nil {
@@ -615,8 +615,8 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("deleting user", "id", d.Id())
-	err := EnsureUserDelete(ctx, d.Id(), d.Get("status").(string), GetOktaClientFromMetadata(meta))
+	logger(meta).Info("deleting user", "id", d.Id())
+	err := EnsureUserDelete(ctx, d.Id(), d.Get("status").(string), getOktaClientFromMetadata(meta))
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceThemes() *schema.Resource {
+func dataSourceThemes() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceThemesRead,
 		Schema:      themesDataSourceSchema,
@@ -23,7 +23,7 @@ func dataSourceThemesRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("brand_id required for themes: %v", err)
 	}
 
-	themes, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrandThemes(ctx, brandID.(string)).Execute()
+	themes, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrandThemes(ctx, brandID.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brand themes: %v", err)
 	}

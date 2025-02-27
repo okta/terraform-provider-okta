@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func DataSourceTheme() *schema.Resource {
+func dataSourceTheme() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceThemeRead,
 		Schema: utils.BuildSchema(
@@ -43,7 +43,7 @@ func dataSourceThemeRead(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 	themeID := tid.(string)
 
-	theme, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
+	theme, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrandTheme(ctx, brandID, themeID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}

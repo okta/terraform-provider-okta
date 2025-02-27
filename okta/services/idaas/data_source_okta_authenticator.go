@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func DataSourceAuthenticator() *schema.Resource {
+func dataSourceAuthenticator() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAuthenticatorRead,
 		Schema: map[string]*schema.Schema{
@@ -99,7 +99,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 		err           error
 	)
 	if id != "" {
-		authenticator, _, err = GetOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, id)
+		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, id)
 	} else {
 		authenticator, err = findAuthenticator(ctx, meta, name, key)
 	}
@@ -146,7 +146,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 }
 
 func findAuthenticator(ctx context.Context, meta interface{}, name, key string) (*sdk.Authenticator, error) {
-	authenticators, _, err := GetOktaClientFromMetadata(meta).Authenticator.ListAuthenticators(ctx)
+	authenticators, _, err := getOktaClientFromMetadata(meta).Authenticator.ListAuthenticators(ctx)
 	if err != nil {
 		return nil, err
 	}

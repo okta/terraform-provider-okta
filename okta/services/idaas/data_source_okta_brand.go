@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func DataSourceBrand() *schema.Resource {
+func dataSourceBrand() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBrandRead,
 		Schema: utils.BuildSchema(
@@ -37,8 +37,8 @@ func dataSourceBrandRead(ctx context.Context, d *schema.ResourceData, meta inter
 			return diag.Errorf("failed to get default brand for org: %v", err)
 		}
 	} else {
-		Logger(meta).Info("reading brand by ID", "id", brandID)
-		brand, _, err = GetOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID).Execute()
+		logger(meta).Info("reading brand by ID", "id", brandID)
+		brand, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand: %v", err)
 		}

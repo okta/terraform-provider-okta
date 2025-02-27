@@ -20,13 +20,11 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-// TODO some of these functions can be extracted to a utils or validators package, etc.
-
 // oktaMutexKV is a global MutexKV for use within this plugin
 var oktaMutexKV = mutexkv.NewMutexKV()
 
-func listApps(ctx context.Context, config *config.Config, filters *AppFilters, limit int64) ([]oktav5sdk.ListApplications200ResponseInner, error) {
-	req := config.OktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Limit(int32(limit))
+func listAppsV5(ctx context.Context, config *config.Config, filters *AppFilters, limit int64) ([]oktav5sdk.ListApplications200ResponseInner, error) {
+	req := config.OktaIDaaSClient.OktaSDKClientV5().ApplicationAPI.ListApplications(ctx).Limit(int32(limit))
 	if filters != nil {
 		req = req.Filter(filters.Status)
 		req = req.Q(filters.GetQ())
@@ -46,28 +44,28 @@ func listApps(ctx context.Context, config *config.Config, filters *AppFilters, l
 	return apps, nil
 }
 
-func GetOktaClientFromMetadata(meta interface{}) *sdk.Client {
-	return meta.(*config.Config).OktaSDKClientV2
+func getOktaClientFromMetadata(meta interface{}) *sdk.Client {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV2()
 }
 
-func GetOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
-	return meta.(*config.Config).OktaSDKClientV3
+func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV3()
 }
 
-func GetOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
-	return meta.(*config.Config).OktaSDKClientV5
+func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
 }
 
-func GetAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
-	return meta.(*config.Config).OktaSDKsupplementClient
+func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKSupplementClient()
 }
 
-func Logger(meta interface{}) hclog.Logger {
+func logger(meta interface{}) hclog.Logger {
 	return meta.(*config.Config).Logger
 }
 
-func GetRequestExecutor(m interface{}) *sdk.RequestExecutor {
-	return GetOktaClientFromMetadata(m).GetRequestExecutor()
+func getRequestExecutor(m interface{}) *sdk.RequestExecutor {
+	return getOktaClientFromMetadata(m).GetRequestExecutor()
 }
 
 func fwproviderIsClassicOrg(ctx context.Context, config *config.Config) bool {
@@ -83,171 +81,171 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 
 func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
-		NewAppAccessPolicyAssignmentResource,
-		NewAppOAuthRoleAssignmentResource,
-		NewTrustedServerResource,
-		NewBrandResource,
-		NewLogStreamResource,
-		NewPolicyDeviceAssuranceAndroidResource,
-		NewPolicyDeviceAssuranceChromeOSResource,
-		NewPolicyDeviceAssuranceIOSResource,
-		NewPolicyDeviceAssuranceMacOSResource,
-		NewPolicyDeviceAssuranceWindowsResource,
-		NewCustomizedSigninResource,
-		NewPreviewSigninResource,
-		NewGroupOwnerResource,
-		NewAppSignOnPolicyResource,
-		NewEmailTemplateSettingsResource,
+		newAppAccessPolicyAssignmentResource,
+		newAppOAuthRoleAssignmentResource,
+		newTrustedServerResource,
+		newBrandResource,
+		newLogStreamResource,
+		newPolicyDeviceAssuranceAndroidResource,
+		newPolicyDeviceAssuranceChromeOSResource,
+		newPolicyDeviceAssuranceIOSResource,
+		newPolicyDeviceAssuranceMacOSResource,
+		newPolicyDeviceAssuranceWindowsResource,
+		newCustomizedSigninResource,
+		newPreviewSigninResource,
+		newGroupOwnerResource,
+		newAppSignOnPolicyResource,
+		newEmailTemplateSettingsResource,
 	}
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewOrgMetadataDataSource,
-		NewDefaultSigninPageDataSource,
-		NewLogStreamDataSource,
-		NewAppsDataSource,
-		NewUserTypeDataSource,
-		NewDeviceAssurancePolicyDataSource,
+		newOrgMetadataDataSource,
+		newDefaultSigninPageDataSource,
+		newLogStreamDataSource,
+		newAppsDataSource,
+		newUserTypeDataSource,
+		newDeviceAssurancePolicyDataSource,
 	}
 }
 
 func ProviderResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.OktaIDaaSAdminRoleCustom:               ResourceAdminRoleCustom(),
-		resources.OktaIDaaSAdminRoleCustomAssignments:    ResourceAdminRoleCustomAssignments(),
-		resources.OktaIDaaSAdminRoleTargets:              ResourceAdminRoleTargets(),
-		resources.OktaIDaaSAppAutoLogin:                  ResourceAppAutoLogin(),
-		resources.OktaIDaaSAppBasicAuth:                  ResourceAppBasicAuth(),
-		resources.OktaIDaaSAppBookmark:                   ResourceAppBookmark(),
-		resources.OktaIDaaSAppGroupAssignment:            ResourceAppGroupAssignment(),
-		resources.OktaIDaaSAppGroupAssignments:           ResourceAppGroupAssignments(),
-		resources.OktaIDaaSAppOAuth:                      ResourceAppOAuth(),
-		resources.OktaIDaaSAppOAuthAPIScope:              ResourceAppOAuthAPIScope(),
-		resources.OktaIDaaSAppOAuthPostLogoutRedirectURI: ResourceAppOAuthPostLogoutRedirectURI(),
-		resources.OktaIDaaSAppOAuthRedirectURI:           ResourceAppOAuthRedirectURI(),
-		resources.OktaIDaaSAppSaml:                       ResourceAppSaml(),
-		resources.OktaIDaaSAppSamlAppSettings:            ResourceAppSamlAppSettings(),
-		resources.OktaIDaaSAppSecurePasswordStore:        ResourceAppSecurePasswordStore(),
-		resources.OktaIDaaSAppSharedCredentials:          ResourceAppSharedCredentials(),
-		resources.OktaIDaaSAppSignOnPolicyRule:           ResourceAppSignOnPolicyRule(),
-		resources.OktaIDaaSAppSwa:                        ResourceAppSwa(),
-		resources.OktaIDaaSAppThreeField:                 ResourceAppThreeField(),
-		resources.OktaIDaaSAppUser:                       ResourceAppUser(),
-		resources.OktaIDaaSAppUserBaseSchemaProperty:     ResourceAppUserBaseSchemaProperty(),
-		resources.OktaIDaaSAppUserSchemaProperty:         ResourceAppUserSchemaProperty(),
-		resources.OktaIDaaSAuthenticator:                 ResourceAuthenticator(),
-		resources.OktaIDaaSAuthServer:                    ResourceAuthServer(),
-		resources.OktaIDaaSAuthServerClaim:               ResourceAuthServerClaim(),
-		resources.OktaIDaaSAuthServerClaimDefault:        ResourceAuthServerClaimDefault(),
-		resources.OktaIDaaSAuthServerDefault:             ResourceAuthServerDefault(),
-		resources.OktaIDaaSAuthServerPolicy:              ResourceAuthServerPolicy(),
-		resources.OktaIDaaSAuthServerPolicyRule:          ResourceAuthServerPolicyRule(),
-		resources.OktaIDaaSAuthServerScope:               ResourceAuthServerScope(),
-		resources.OktaIDaaSBehavior:                      ResourceBehavior(),
-		resources.OktaIDaaSCaptcha:                       ResourceCaptcha(),
-		resources.OktaIDaaSCaptchaOrgWideSettings:        ResourceCaptchaOrgWideSettings(),
-		resources.OktaIDaaSDomain:                        ResourceDomain(),
-		resources.OktaIDaaSDomainCertificate:             ResourceDomainCertificate(),
-		resources.OktaIDaaSDomainVerification:            ResourceDomainVerification(),
-		resources.OktaIDaaSEmailCustomization:            ResourceEmailCustomization(),
-		resources.OktaIDaaSEmailDomain:                   ResourceEmailDomain(),
-		resources.OktaIDaaSEmailDomainVerification:       ResourceEmailDomainVerification(),
-		resources.OktaIDaaSEmailSender:                   ResourceEmailSender(),
-		resources.OktaIDaaSEmailSenderVerification:       ResourceEmailSenderVerification(),
-		resources.OktaIDaaSEventHook:                     ResourceEventHook(),
-		resources.OktaIDaaSEventHookVerification:         ResourceEventHookVerification(),
-		resources.OktaIDaaSFactor:                        ResourceFactor(),
-		resources.OktaIDaaSFactorTotp:                    ResourceFactorTOTP(),
-		resources.OktaIDaaSGroup:                         ResourceGroup(),
-		resources.OktaIDaaSGroupMemberships:              ResourceGroupMemberships(),
-		resources.OktaIDaaSGroupRole:                     ResourceGroupRole(),
-		resources.OktaIDaaSGroupRule:                     ResourceGroupRule(),
-		resources.OktaIDaaSGroupSchemaProperty:           ResourceGroupCustomSchemaProperty(),
-		resources.OktaIDaaSIdpOidc:                       ResourceIdpOidc(),
-		resources.OktaIDaaSIdpSaml:                       ResourceIdpSaml(),
-		resources.OktaIDaaSIdpSamlKey:                    ResourceIdpSigningKey(),
-		resources.OktaIDaaSIdpSocial:                     ResourceIdpSocial(),
-		resources.OktaIDaaSInlineHook:                    ResourceInlineHook(),
-		resources.OktaIDaaSLinkDefinition:                ResourceLinkDefinition(),
-		resources.OktaIDaaSLinkValue:                     ResourceLinkValue(),
-		resources.OktaIDaaSNetworkZone:                   ResourceNetworkZone(),
-		resources.OktaIDaaSOrgConfiguration:              ResourceOrgConfiguration(),
-		resources.OktaIDaaSOrgSupport:                    ResourceOrgSupport(),
-		resources.OktaIDaaSPolicyMfa:                     ResourcePolicyMfa(),
-		resources.OktaIDaaSPolicyMfaDefault:              ResourcePolicyMfaDefault(),
-		resources.OktaIDaaSPolicyPassword:                ResourcePolicyPassword(),
-		resources.OktaIDaaSPolicyPasswordDefault:         ResourcePolicyPasswordDefault(),
-		resources.OktaIDaaSPolicyProfileEnrollment:       ResourcePolicyProfileEnrollment(),
-		resources.OktaIDaaSPolicyProfileEnrollmentApps:   ResourcePolicyProfileEnrollmentApps(),
-		resources.OktaIDaaSPolicyRuleIdpDiscovery:        ResourcePolicyRuleIdpDiscovery(),
-		resources.OktaIDaaSPolicyRuleMfa:                 ResourcePolicyMfaRule(),
-		resources.OktaIDaaSPolicyRulePassword:            ResourcePolicyPasswordRule(),
-		resources.OktaIDaaSPolicyRuleProfileEnrollment:   ResourcePolicyProfileEnrollmentRule(),
-		resources.OktaIDaaSPolicyRuleSignOn:              ResourcePolicySignOnRule(),
-		resources.OktaIDaaSPolicySignOn:                  ResourcePolicySignOn(),
-		resources.OktaIDaaSProfileMapping:                ResourceProfileMapping(),
-		resources.OktaIDaaSRateLimiting:                  ResourceRateLimiting(),
-		resources.OktaIDaaSResourceSet:                   ResourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:              ResourceRoleSubscription(),
-		resources.OktaIDaaSSecurityNotificationEmails:    ResourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                   ResourceTemplateSms(),
-		resources.OktaIDaaSTheme:                         ResourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:         ResourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:                 ResourceTrustedOrigin(),
-		resources.OktaIDaaSUser:                          ResourceUser(),
-		resources.OktaIDaaSUserAdminRoles:                ResourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:        ResourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:            ResourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:          ResourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:            ResourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                      ResourceUserType(),
+		resources.OktaIDaaSAdminRoleCustom:               resourceAdminRoleCustom(),
+		resources.OktaIDaaSAdminRoleCustomAssignments:    resourceAdminRoleCustomAssignments(),
+		resources.OktaIDaaSAdminRoleTargets:              resourceAdminRoleTargets(),
+		resources.OktaIDaaSAppAutoLogin:                  resourceAppAutoLogin(),
+		resources.OktaIDaaSAppBasicAuth:                  resourceAppBasicAuth(),
+		resources.OktaIDaaSAppBookmark:                   resourceAppBookmark(),
+		resources.OktaIDaaSAppGroupAssignment:            resourceAppGroupAssignment(),
+		resources.OktaIDaaSAppGroupAssignments:           resourceAppGroupAssignments(),
+		resources.OktaIDaaSAppOAuth:                      resourceAppOAuth(),
+		resources.OktaIDaaSAppOAuthAPIScope:              resourceAppOAuthAPIScope(),
+		resources.OktaIDaaSAppOAuthPostLogoutRedirectURI: resourceAppOAuthPostLogoutRedirectURI(),
+		resources.OktaIDaaSAppOAuthRedirectURI:           resourceAppOAuthRedirectURI(),
+		resources.OktaIDaaSAppSaml:                       resourceAppSaml(),
+		resources.OktaIDaaSAppSamlAppSettings:            resourceAppSamlAppSettings(),
+		resources.OktaIDaaSAppSecurePasswordStore:        resourceAppSecurePasswordStore(),
+		resources.OktaIDaaSAppSharedCredentials:          resourceAppSharedCredentials(),
+		resources.OktaIDaaSAppSignOnPolicyRule:           resourceAppSignOnPolicyRule(),
+		resources.OktaIDaaSAppSwa:                        resourceAppSwa(),
+		resources.OktaIDaaSAppThreeField:                 resourceAppThreeField(),
+		resources.OktaIDaaSAppUser:                       resourceAppUser(),
+		resources.OktaIDaaSAppUserBaseSchemaProperty:     resourceAppUserBaseSchemaProperty(),
+		resources.OktaIDaaSAppUserSchemaProperty:         resourceAppUserSchemaProperty(),
+		resources.OktaIDaaSAuthenticator:                 resourceAuthenticator(),
+		resources.OktaIDaaSAuthServer:                    resourceAuthServer(),
+		resources.OktaIDaaSAuthServerClaim:               resourceAuthServerClaim(),
+		resources.OktaIDaaSAuthServerClaimDefault:        resourceAuthServerClaimDefault(),
+		resources.OktaIDaaSAuthServerDefault:             resourceAuthServerDefault(),
+		resources.OktaIDaaSAuthServerPolicy:              resourceAuthServerPolicy(),
+		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
+		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
+		resources.OktaIDaaSBehavior:                      resourceBehavior(),
+		resources.OktaIDaaSCaptcha:                       resourceCaptcha(),
+		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
+		resources.OktaIDaaSDomain:                        resourceDomain(),
+		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
+		resources.OktaIDaaSDomainVerification:            resourceDomainVerification(),
+		resources.OktaIDaaSEmailCustomization:            resourceEmailCustomization(),
+		resources.OktaIDaaSEmailDomain:                   resourceEmailDomain(),
+		resources.OktaIDaaSEmailDomainVerification:       resourceEmailDomainVerification(),
+		resources.OktaIDaaSEmailSender:                   resourceEmailSender(),
+		resources.OktaIDaaSEmailSenderVerification:       resourceEmailSenderVerification(),
+		resources.OktaIDaaSEventHook:                     resourceEventHook(),
+		resources.OktaIDaaSEventHookVerification:         resourceEventHookVerification(),
+		resources.OktaIDaaSFactor:                        resourceFactor(),
+		resources.OktaIDaaSFactorTotp:                    resourceFactorTOTP(),
+		resources.OktaIDaaSGroup:                         resourceGroup(),
+		resources.OktaIDaaSGroupMemberships:              resourceGroupMemberships(),
+		resources.OktaIDaaSGroupRole:                     resourceGroupRole(),
+		resources.OktaIDaaSGroupRule:                     resourceGroupRule(),
+		resources.OktaIDaaSGroupSchemaProperty:           resourceGroupCustomSchemaProperty(),
+		resources.OktaIDaaSIdpOidc:                       resourceIdpOidc(),
+		resources.OktaIDaaSIdpSaml:                       resourceIdpSaml(),
+		resources.OktaIDaaSIdpSamlKey:                    resourceIdpSigningKey(),
+		resources.OktaIDaaSIdpSocial:                     resourceIdpSocial(),
+		resources.OktaIDaaSInlineHook:                    resourceInlineHook(),
+		resources.OktaIDaaSLinkDefinition:                resourceLinkDefinition(),
+		resources.OktaIDaaSLinkValue:                     resourceLinkValue(),
+		resources.OktaIDaaSNetworkZone:                   resourceNetworkZone(),
+		resources.OktaIDaaSOrgConfiguration:              resourceOrgConfiguration(),
+		resources.OktaIDaaSOrgSupport:                    resourceOrgSupport(),
+		resources.OktaIDaaSPolicyMfa:                     resourcePolicyMfa(),
+		resources.OktaIDaaSPolicyMfaDefault:              resourcePolicyMfaDefault(),
+		resources.OktaIDaaSPolicyPassword:                resourcePolicyPassword(),
+		resources.OktaIDaaSPolicyPasswordDefault:         resourcePolicyPasswordDefault(),
+		resources.OktaIDaaSPolicyProfileEnrollment:       resourcePolicyProfileEnrollment(),
+		resources.OktaIDaaSPolicyProfileEnrollmentApps:   resourcePolicyProfileEnrollmentApps(),
+		resources.OktaIDaaSPolicyRuleIdpDiscovery:        resourcePolicyRuleIdpDiscovery(),
+		resources.OktaIDaaSPolicyRuleMfa:                 resourcePolicyMfaRule(),
+		resources.OktaIDaaSPolicyRulePassword:            resourcePolicyPasswordRule(),
+		resources.OktaIDaaSPolicyRuleProfileEnrollment:   resourcePolicyProfileEnrollmentRule(),
+		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
+		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
+		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
+		resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
+		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
+		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
+		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTemplateSms:                   resourceTemplateSms(),
+		resources.OktaIDaaSTheme:                         resourceTheme(),
+		resources.OktaIDaaSThreatInsightSettings:         resourceThreatInsightSettings(),
+		resources.OktaIDaaSTrustedOrigin:                 resourceTrustedOrigin(),
+		resources.OktaIDaaSUser:                          resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                      resourceUserType(),
 	}
 }
 
 func ProviderDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.OktaIDaaSApp:                      DataSourceApp(),
-		resources.OktaIDaaSAppGroupAssignments:      DataSourceAppGroupAssignments(),
-		resources.OktaIDaaSAppMetadataSaml:          DataSourceAppMetadataSaml(),
-		resources.OktaIDaaSAppOAuth:                 DataSourceAppOauth(),
-		resources.OktaIDaaSAppSaml:                  DataSourceAppSaml(),
-		resources.OktaIDaaSAppSignOnPolicy:          DataSourceAppSignOnPolicy(),
-		resources.OktaIDaaSAppUserAssignments:       DataSourceAppUserAssignments(),
-		resources.OktaIDaaSAuthenticator:            DataSourceAuthenticator(),
-		resources.OktaIDaaSAuthServer:               DataSourceAuthServer(),
-		resources.OktaIDaaSAuthServerClaim:          DataSourceAuthServerClaim(),
-		resources.OktaIDaaSAuthServerClaims:         DataSourceAuthServerClaims(),
-		resources.OktaIDaaSAuthServerPolicy:         DataSourceAuthServerPolicy(),
-		resources.OktaIDaaSAuthServerScopes:         DataSourceAuthServerScopes(),
-		resources.OktaIDaaSBehavior:                 DataSourceBehavior(),
-		resources.OktaIDaaSBehaviors:                DataSourceBehaviors(),
-		resources.OktaIDaaSBrand:                    DataSourceBrand(),
-		resources.OktaIDaaSBrands:                   DataSourceBrands(),
-		resources.OktaIDaaSDomain:                   DataSourceDomain(),
-		resources.OktaIDaaSEmailCustomization:       DataSourceEmailCustomization(),
-		resources.OktaIDaaSEmailCustomizations:      DataSourceEmailCustomizations(),
-		resources.OktaIDaaSEmailTemplate:            DataSourceEmailTemplate(),
-		resources.OktaIDaaSEmailTemplates:           DataSourceEmailTemplates(),
-		resources.OktaIDaaSDefaultPolicy:            DataSourceDefaultPolicy(),
-		resources.OktaIDaaSGroup:                    DataSourceGroup(),
-		resources.OktaIDaaSGroupEveryone:            DataSourceEveryoneGroup(),
-		resources.OktaIDaaSGroupRule:                DataSourceGroupRule(),
-		resources.OktaIDaaSGroups:                   DataSourceGroups(),
-		resources.OktaIDaaSIdpMetadataSaml:          DataSourceIdpMetadataSaml(),
-		resources.OktaIDaaSIdpOidc:                  DataSourceIdpOidc(),
-		resources.OktaIDaaSIdpSaml:                  DataSourceIdpSaml(),
-		resources.OktaIDaaSIdpSocial:                DataSourceIdpSocial(),
-		resources.OktaIDaaSNetworkZone:              DataSourceNetworkZone(),
-		resources.OktaIDaaSPolicy:                   DataSourcePolicy(),
-		resources.OktaIDaaSRoleSubscription:         DataSourceRoleSubscription(),
-		resources.OktaIDaaSTheme:                    DataSourceTheme(),
-		resources.OktaIDaaSThemes:                   DataSourceThemes(),
-		resources.OktaIDaaSTrustedOrigins:           DataSourceTrustedOrigins(),
-		resources.OktaIDaaSUser:                     DataSourceUser(),
-		resources.OktaIDaaSUserProfileMappingSource: DataSourceUserProfileMappingSource(),
-		resources.OktaIDaaSUsers:                    DataSourceUsers(),
-		resources.OktaIDaaSUserSecurityQuestions:    DataSourceUserSecurityQuestions(),
+		resources.OktaIDaaSApp:                      dataSourceApp(),
+		resources.OktaIDaaSAppGroupAssignments:      dataSourceAppGroupAssignments(),
+		resources.OktaIDaaSAppMetadataSaml:          dataSourceAppMetadataSaml(),
+		resources.OktaIDaaSAppOAuth:                 dataSourceAppOauth(),
+		resources.OktaIDaaSAppSaml:                  dataSourceAppSaml(),
+		resources.OktaIDaaSAppSignOnPolicy:          dataSourceAppSignOnPolicy(),
+		resources.OktaIDaaSAppUserAssignments:       dataSourceAppUserAssignments(),
+		resources.OktaIDaaSAuthenticator:            dataSourceAuthenticator(),
+		resources.OktaIDaaSAuthServer:               dataSourceAuthServer(),
+		resources.OktaIDaaSAuthServerClaim:          dataSourceAuthServerClaim(),
+		resources.OktaIDaaSAuthServerClaims:         dataSourceAuthServerClaims(),
+		resources.OktaIDaaSAuthServerPolicy:         dataSourceAuthServerPolicy(),
+		resources.OktaIDaaSAuthServerScopes:         dataSourceAuthServerScopes(),
+		resources.OktaIDaaSBehavior:                 dataSourceBehavior(),
+		resources.OktaIDaaSBehaviors:                dataSourceBehaviors(),
+		resources.OktaIDaaSBrand:                    dataSourceBrand(),
+		resources.OktaIDaaSBrands:                   dataSourceBrands(),
+		resources.OktaIDaaSDomain:                   dataSourceDomain(),
+		resources.OktaIDaaSEmailCustomization:       dataSourceEmailCustomization(),
+		resources.OktaIDaaSEmailCustomizations:      dataSourceEmailCustomizations(),
+		resources.OktaIDaaSEmailTemplate:            dataSourceEmailTemplate(),
+		resources.OktaIDaaSEmailTemplates:           dataSourceEmailTemplates(),
+		resources.OktaIDaaSDefaultPolicy:            dataSourceDefaultPolicy(),
+		resources.OktaIDaaSGroup:                    dataSourceGroup(),
+		resources.OktaIDaaSGroupEveryone:            dataSourceEveryoneGroup(),
+		resources.OktaIDaaSGroupRule:                dataSourceGroupRule(),
+		resources.OktaIDaaSGroups:                   dataSourceGroups(),
+		resources.OktaIDaaSIdpMetadataSaml:          dataSourceIdpMetadataSaml(),
+		resources.OktaIDaaSIdpOidc:                  dataSourceIdpOidc(),
+		resources.OktaIDaaSIdpSaml:                  dataSourceIdpSaml(),
+		resources.OktaIDaaSIdpSocial:                dataSourceIdpSocial(),
+		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
+		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
+		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
+		resources.OktaIDaaSTheme:                    dataSourceTheme(),
+		resources.OktaIDaaSThemes:                   dataSourceThemes(),
+		resources.OktaIDaaSTrustedOrigins:           dataSourceTrustedOrigins(),
+		resources.OktaIDaaSUser:                     dataSourceUser(),
+		resources.OktaIDaaSUserProfileMappingSource: dataSourceUserProfileMappingSource(),
+		resources.OktaIDaaSUsers:                    dataSourceUsers(),
+		resources.OktaIDaaSUserSecurityQuestions:    dataSourceUserSecurityQuestions(),
 	}
 }
 

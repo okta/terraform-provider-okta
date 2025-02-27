@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -19,10 +18,10 @@ func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 	updated := mgr.GetFixtures("updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSTemplateSms, doesSmsTemplateExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSTemplateSms, doesSmsTemplateExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -51,7 +50,7 @@ func TestAccResourceOktaSmsTemplate_crud(t *testing.T) {
 }
 
 func doesSmsTemplateExist(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.SmsTemplate.GetSmsTemplate(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }

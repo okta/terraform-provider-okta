@@ -20,7 +20,7 @@ func TestAccResourceOktaAppAutoLoginApplication_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -80,7 +80,7 @@ resource "okta_app_auto_login" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{

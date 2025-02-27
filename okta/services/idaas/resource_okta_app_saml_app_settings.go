@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppSamlAppSettings() *schema.Resource {
+func resourceAppSamlAppSettings() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSamlSettingsCreate,
 		ReadContext:   resourceAppSamlSettingsRead,
@@ -98,7 +98,7 @@ func updateOrCreateAppSettings(ctx context.Context, d *schema.ResourceData, meta
 	settings := make(sdk.ApplicationSettingsApplication)
 	_ = json.Unmarshal([]byte(d.Get("settings").(string)), &settings)
 	app.Settings.App = &settings
-	_, _, err = GetOktaClientFromMetadata(meta).Application.UpdateApplication(ctx, appID, app)
+	_, _, err = getOktaClientFromMetadata(meta).Application.UpdateApplication(ctx, appID, app)
 	if err != nil {
 		return "", fmt.Errorf("failed to update SAML application's settings: %v", err)
 	}

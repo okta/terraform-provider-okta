@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceCaptchaOrgWideSettings() *schema.Resource {
+func resourceCaptchaOrgWideSettings() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceCaptchaOrgWideSettingsCreate,
 		ReadContext:   resourceCaptchaOrgWideSettingsRead,
@@ -47,7 +47,7 @@ func resourceCaptchaOrgWideSettingsCreate(ctx context.Context, d *schema.Resourc
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptchaOrgWideSettings)
 	}
 
-	captcha, _, err := GetAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to set org-wide CAPTCHA settings: %v", err)
 	}
@@ -62,7 +62,7 @@ func resourceCaptchaOrgWideSettingsRead(ctx context.Context, d *schema.ResourceD
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptchaOrgWideSettings)
 	}
 
-	captcha, _, err := GetAPISupplementFromMetadata(meta).GetOrgWideCaptchaSettings(ctx)
+	captcha, _, err := getAPISupplementFromMetadata(meta).GetOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org-wide CAPTCHA settings: %v", err)
 	}
@@ -81,7 +81,7 @@ func resourceCaptchaOrgWideSettingsUpdate(ctx context.Context, d *schema.Resourc
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptchaOrgWideSettings)
 	}
 
-	captcha, _, err := GetAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
+	captcha, _, err := getAPISupplementFromMetadata(meta).UpdateOrgWideCaptchaSettings(ctx, buildCaptchaOrgWideSettings(d))
 	if err != nil {
 		return diag.Errorf("failed to update org-wide CAPTCHA settings: %v", err)
 	}
@@ -95,7 +95,7 @@ func resourceCaptchaOrgWideSettingsDelete(ctx context.Context, d *schema.Resourc
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptchaOrgWideSettings)
 	}
 
-	_, err := GetAPISupplementFromMetadata(meta).DeleteOrgWideCaptchaSettings(ctx)
+	_, err := getAPISupplementFromMetadata(meta).DeleteOrgWideCaptchaSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to delete org-wide CAPTCHA settings: %v", err)
 	}

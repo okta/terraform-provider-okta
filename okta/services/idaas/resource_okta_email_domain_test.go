@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -19,10 +18,10 @@ func TestAccResourceOktaEmailDomain_crud(t *testing.T) {
 	domainName := fmt.Sprintf("testAcc-%d.example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSEmailDomain, emailDomainExists),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSEmailDomain, emailDomainExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -42,7 +41,7 @@ func TestAccResourceOktaEmailDomain_crud(t *testing.T) {
 }
 
 func emailDomainExists(id string) (bool, error) {
-	client := provider.SdkV3ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV3()
 	emailDomain, resp, err := client.EmailDomainAPI.GetEmailDomain(context.Background(), id).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return false, err

@@ -10,7 +10,7 @@ import (
 )
 
 // resourcePolicyMfaDefault requires Org Feature Flag OKTA_MFA_POLICY
-func ResourcePolicyMfaDefault() *schema.Resource {
+func resourcePolicyMfaDefault() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyMfaDefaultCreateOrUpdate,
 		ReadContext:   resourcePolicyMfaDefaultRead,
@@ -43,7 +43,7 @@ func resourcePolicyMfaDefaultCreateOrUpdate(ctx context.Context, d *schema.Resou
 	}
 	id = policy.Id
 
-	_, _, err = GetAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
+	_, _, err = getAPISupplementFromMetadata(meta).UpdatePolicy(ctx, id, buildDefaultMFAPolicy(d))
 	if err != nil {
 		return diag.Errorf("failed to update default MFA policy: %v", err)
 	}

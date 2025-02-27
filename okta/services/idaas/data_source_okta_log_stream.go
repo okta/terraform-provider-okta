@@ -20,7 +20,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &logStreamDataSource{}
 )
 
-func NewLogStreamDataSource() datasource.DataSource {
+func newLogStreamDataSource() datasource.DataSource {
 	return &logStreamDataSource{}
 }
 
@@ -110,9 +110,9 @@ func (d *logStreamDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	var logStreamResp *okta.ListLogStreams200ResponseInner
 	if data.ID.ValueString() != "" {
-		logStreamResp, _, err = d.OktaSDKClientV3.LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
+		logStreamResp, _, err = d.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
 	} else {
-		logStreamResp, err = findLogStreamByName(ctx, d.OktaSDKClientV3, data.Name.ValueString())
+		logStreamResp, err = findLogStreamByName(ctx, d.OktaIDaaSClient.OktaSDKClientV3(), data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(

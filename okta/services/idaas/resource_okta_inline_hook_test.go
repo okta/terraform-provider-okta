@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -24,10 +23,10 @@ func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 	passwordImport := mgr.GetFixtures("password_import.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSInlineHook, inlineHookExists),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSInlineHook, inlineHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -184,7 +183,7 @@ JSON
 }
 
 func inlineHookExists(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, resp, err := client.InlineHook.GetInlineHook(context.Background(), id)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return false, err

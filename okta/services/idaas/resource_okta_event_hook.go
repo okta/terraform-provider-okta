@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceEventHook() *schema.Resource {
+func resourceEventHook() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEventHookCreate,
 		ReadContext:   resourceEventHookRead,
@@ -74,7 +74,7 @@ func ResourceEventHook() *schema.Resource {
 }
 
 func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	hook := buildEventHook(d)
 	newHook, _, err := client.EventHook.CreateEventHook(ctx, *hook)
 	if err != nil {
@@ -89,7 +89,7 @@ func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	hook, resp, err := GetOktaClientFromMetadata(meta).EventHook.GetEventHook(ctx, d.Id())
+	hook, resp, err := getOktaClientFromMetadata(meta).EventHook.GetEventHook(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get event hook: %v", err)
 	}
@@ -112,7 +112,7 @@ func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	hook := buildEventHook(d)
 	newHook, _, err := client.EventHook.UpdateEventHook(ctx, d.Id(), *hook)
 	if err != nil {
@@ -126,7 +126,7 @@ func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEventHookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	_, _, err := client.EventHook.DeactivateEventHook(ctx, d.Id())
 	if err != nil {

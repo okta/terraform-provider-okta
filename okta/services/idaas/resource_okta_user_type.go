@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceUserType() *schema.Resource {
+func resourceUserType() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserTypeCreate,
 		ReadContext:   resourceUserTypeRead,
@@ -42,7 +42,7 @@ func ResourceUserType() *schema.Resource {
 }
 
 func resourceUserTypeCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	newUserType, _, err := GetOktaClientFromMetadata(meta).UserType.CreateUserType(ctx, buildUserType(d))
+	newUserType, _, err := getOktaClientFromMetadata(meta).UserType.CreateUserType(ctx, buildUserType(d))
 	if err != nil {
 		return diag.Errorf("failed to create user type: %v", err)
 	}
@@ -52,7 +52,7 @@ func resourceUserTypeCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceUserTypeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userType := buildUserType(d)
-	_, _, err := GetOktaClientFromMetadata(meta).UserType.UpdateUserType(ctx, d.Id(), userType)
+	_, _, err := getOktaClientFromMetadata(meta).UserType.UpdateUserType(ctx, d.Id(), userType)
 	if err != nil {
 		return diag.Errorf("failed to update user type: %v", err)
 	}
@@ -60,7 +60,7 @@ func resourceUserTypeUpdate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	userType, resp, err := GetOktaClientFromMetadata(meta).UserType.GetUserType(ctx, d.Id())
+	userType, resp, err := getOktaClientFromMetadata(meta).UserType.GetUserType(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user type: %v", err)
 	}
@@ -75,7 +75,7 @@ func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, err := GetOktaClientFromMetadata(meta).UserType.DeleteUserType(ctx, d.Id())
+	_, err := getOktaClientFromMetadata(meta).UserType.DeleteUserType(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete user type: %v", err)
 	}

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -19,10 +18,10 @@ func TestAccResourceOktaCaptchaOrgWideSettings_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSCaptchaOrgWideSettings)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          acctest.AccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-			CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSCaptchaOrgWideSettings, doesCaptchaOrgWideSettingsExist),
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSCaptchaOrgWideSettings, doesCaptchaOrgWideSettingsExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -48,7 +47,7 @@ func TestAccResourceOktaCaptchaOrgWideSettings_crud(t *testing.T) {
 }
 
 func doesCaptchaOrgWideSettingsExist(string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	settings, _, err := client.GetOrgWideCaptchaSettings(context.Background())
 	if err != nil {
 		return false, err

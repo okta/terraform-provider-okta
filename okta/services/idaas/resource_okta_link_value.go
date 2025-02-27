@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceLinkValue() *schema.Resource {
+func resourceLinkValue() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceLinkValueCreate,
 		ReadContext:   resourceLinkValueRead,
@@ -43,7 +43,7 @@ func ResourceLinkValue() *schema.Resource {
 }
 
 func resourceLinkValueCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	lo, _, err := client.LinkedObject.GetLinkedObjectDefinition(ctx, d.Get("primary_name").(string))
 	if err != nil {
 		return diag.Errorf("failed to get linked object by primary name: %v", err)
@@ -65,7 +65,7 @@ func resourceLinkValueCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceLinkValueRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	lo, resp, err := client.LinkedObject.GetLinkedObjectDefinition(ctx, d.Get("primary_name").(string))
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get linked object by primary name: %v", err)
@@ -100,14 +100,14 @@ func resourceLinkValueUpdate(ctx context.Context, d *schema.ResourceData, meta i
 	usersToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	usersToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 	for _, u := range usersToAdd {
-		_, err := GetOktaClientFromMetadata(meta).User.SetLinkedObjectForUser(ctx, u, d.Get("primary_name").(string), d.Get("primary_user_id").(string))
+		_, err := getOktaClientFromMetadata(meta).User.SetLinkedObjectForUser(ctx, u, d.Get("primary_name").(string), d.Get("primary_user_id").(string))
 		if err != nil {
 			return diag.Errorf("failed to set relationship: associatedUser: %s, primaryName: %s, primaryUser: %s, "+
 				"err: %v", u, d.Get("primary_name").(string), d.Get("primary_user_id").(string), err)
 		}
 	}
 	for _, u := range usersToRemove {
-		_, err := GetOktaClientFromMetadata(meta).User.RemoveLinkedObjectForUser(ctx, u, d.Get("primary_name").(string))
+		_, err := getOktaClientFromMetadata(meta).User.RemoveLinkedObjectForUser(ctx, u, d.Get("primary_name").(string))
 		if err != nil {
 			return diag.Errorf("failed to remove relationship: associatedUser: %s, primaryName: %s, err: %v", u, d.Get("primary_name"), err)
 		}
@@ -118,7 +118,7 @@ func resourceLinkValueUpdate(ctx context.Context, d *schema.ResourceData, meta i
 func resourceLinkValueDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	associatedUsers := utils.ConvertInterfaceToStringSetNullable(d.Get("associated_user_ids"))
 	for _, u := range associatedUsers {
-		resp, err := GetOktaClientFromMetadata(meta).User.RemoveLinkedObjectForUser(ctx, u, d.Get("primary_name").(string))
+		resp, err := getOktaClientFromMetadata(meta).User.RemoveLinkedObjectForUser(ctx, u, d.Get("primary_name").(string))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			continue
 		}

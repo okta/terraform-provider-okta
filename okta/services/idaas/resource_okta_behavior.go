@@ -18,7 +18,7 @@ const (
 	behaviorVelocity          = "VELOCITY"
 )
 
-func ResourceBehavior() *schema.Resource {
+func resourceBehavior() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceBehaviorCreate,
 		ReadContext:   resourceBehaviorRead,
@@ -72,12 +72,12 @@ func ResourceBehavior() *schema.Resource {
 }
 
 func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("creating location behavior", "name", d.Get("name").(string))
+	logger(meta).Info("creating location behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	behavior, _, err := GetAPISupplementFromMetadata(meta).CreateBehavior(ctx, buildBehavior(d))
+	behavior, _, err := getAPISupplementFromMetadata(meta).CreateBehavior(ctx, buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to create location behavior: %v", err)
 	}
@@ -86,8 +86,8 @@ func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("getting behavior", "id", d.Id())
-	behavior, resp, err := GetAPISupplementFromMetadata(meta).GetBehavior(ctx, d.Id())
+	logger(meta).Info("getting behavior", "id", d.Id())
+	behavior, resp, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find behavior: %v", err)
 	}
@@ -103,12 +103,12 @@ func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("updating location behavior", "name", d.Get("name").(string))
+	logger(meta).Info("updating location behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = GetAPISupplementFromMetadata(meta).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
+	_, _, err = getAPISupplementFromMetadata(meta).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
 	if err != nil {
 		return diag.Errorf("failed to update location behavior: %v", err)
 	}
@@ -122,8 +122,8 @@ func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("deleting location behavior", "name", d.Get("name").(string))
-	_, err := GetAPISupplementFromMetadata(meta).DeleteBehavior(ctx, d.Id())
+	logger(meta).Info("deleting location behavior", "name", d.Get("name").(string))
+	_, err := getAPISupplementFromMetadata(meta).DeleteBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete location behavior: %v", err)
 	}
@@ -153,16 +153,16 @@ func buildBehavior(d *schema.ResourceData) sdk.Behavior {
 }
 
 func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetAPISupplementFromMetadata(meta)
+	client := getAPISupplementFromMetadata(meta)
 	if d.Get("status").(string) == StatusActive {
-		Logger(meta).Info("activating behavior", "name", d.Get("name").(string))
+		logger(meta).Info("activating behavior", "name", d.Get("name").(string))
 		_, err := client.ActivateBehavior(ctx, d.Id())
 		if err != nil {
 			return diag.Errorf("failed to activate behavior: %v", err)
 		}
 		return nil
 	}
-	Logger(meta).Info("deactivating behavior", "name", d.Get("name").(string))
+	logger(meta).Info("deactivating behavior", "name", d.Get("name").(string))
 	_, err := client.DeactivateBehavior(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to deactivate behavior: %v", err)

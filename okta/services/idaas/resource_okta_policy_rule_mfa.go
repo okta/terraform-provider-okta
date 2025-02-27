@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyMfaRule() *schema.Resource {
+func resourcePolicyMfaRule() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyMfaRuleCreate,
 		ReadContext:   resourcePolicyMfaRuleRead,

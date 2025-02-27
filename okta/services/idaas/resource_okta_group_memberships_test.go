@@ -19,7 +19,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -40,7 +40,7 @@ func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -71,7 +71,7 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -111,7 +111,7 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -266,7 +266,7 @@ resource "okta_group" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkUserDestroy,
 		Steps: []resource.TestStep{
 			{

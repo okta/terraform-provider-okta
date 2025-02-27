@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceBehavior() *schema.Resource {
+func dataSourceBehavior() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBehaviorRead,
 		Schema: map[string]*schema.Schema{
@@ -52,7 +52,7 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta in
 	var behavior *sdk.Behavior
 	behaviorID, ok := d.GetOk("id")
 	if ok {
-		respBehavior, _, err := GetAPISupplementFromMetadata(meta).GetBehavior(ctx, behaviorID.(string))
+		respBehavior, _, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, behaviorID.(string))
 		if err != nil {
 			return diag.Errorf("failed get behavior by ID: %v", err)
 		}
@@ -60,15 +60,15 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta in
 	} else {
 		name := d.Get("name").(string)
 		searchParams := &query.Params{Q: name, Limit: 1}
-		Logger(meta).Info("looking for behavior", "query", searchParams.String())
-		behaviors, _, err := GetAPISupplementFromMetadata(meta).ListBehaviors(ctx, searchParams)
+		logger(meta).Info("looking for behavior", "query", searchParams.String())
+		behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, searchParams)
 		switch {
 		case err != nil:
 			return diag.Errorf("failed to query for behaviors: %v", err)
 		case len(behaviors) < 1:
 			return diag.Errorf("behavior with name '%s' does not exist", name)
 		case behaviors[0].Name != name:
-			Logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
+			logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
 		}
 		behavior = behaviors[0]
 	}

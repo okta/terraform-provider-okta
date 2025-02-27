@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppSecurePasswordStore() *schema.Resource {
+func resourceAppSecurePasswordStore() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSecurePasswordStoreCreate,
 		ReadContext:   resourceAppSecurePasswordStoreRead,
@@ -108,7 +108,7 @@ func resourceAppSecurePasswordStoreCreate(ctx context.Context, d *schema.Resourc
 	app := buildAppSecurePasswordStore(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := GetOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create secure password store application: %v", err)
 	}
@@ -159,7 +159,7 @@ func resourceAppSecurePasswordStoreUpdate(ctx context.Context, d *schema.Resourc
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSecurePasswordStore(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceEmailCustomization() *schema.Resource {
+func resourceEmailCustomization() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailCustomizationCreate,
 		ReadContext:   resourceEmailCustomizationRead,
@@ -76,7 +76,7 @@ func resourceEmailCustomizationCreate(ctx context.Context, d *schema.ResourceDat
 		etcr.Body = body.(string)
 	}
 
-	client := GetOktaV3ClientFromMetadata(meta)
+	client := getOktaV3ClientFromMetadata(meta)
 
 	customization, _, err := client.CustomizationAPI.CreateEmailCustomization(ctx, brandID.(string), templateName.(string)).Instance(etcr).Execute()
 	if err != nil {
@@ -99,7 +99,7 @@ func resourceEmailCustomizationRead(ctx context.Context, d *schema.ResourceData,
 		return diagErr
 	}
 
-	customization, resp, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
+	customization, resp, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return diag.Errorf("failed to get email customization: %v", err)
 	}
@@ -137,7 +137,7 @@ func resourceEmailCustomizationUpdate(ctx context.Context, d *schema.ResourceDat
 		cr.Body = body.(string)
 	}
 
-	customization, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
+	customization, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ReplaceEmailCustomization(ctx, etcr.brandID, etcr.templateName, d.Id()).Instance(cr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update email customization: %v", err)
 	}
@@ -158,7 +158,7 @@ func resourceEmailCustomizationDelete(ctx context.Context, d *schema.ResourceDat
 		return diagErr
 	}
 
-	client := GetOktaV3ClientFromMetadata(meta)
+	client := getOktaV3ClientFromMetadata(meta)
 	// If this is the last customization template call the delete all endpoint
 	// as the API doesn't allow deleting the last template explicitly should the
 	// template be the default.  "Returns a 409 Conflict if the email

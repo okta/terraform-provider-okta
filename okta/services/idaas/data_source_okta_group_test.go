@@ -19,7 +19,7 @@ func TestAccDataSourceOktaGroup_read(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: groupCreate,
@@ -73,7 +73,7 @@ data "okta_group" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", step1Config, baseConfig)),

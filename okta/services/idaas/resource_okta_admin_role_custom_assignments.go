@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAdminRoleCustomAssignments() *schema.Resource {
+func resourceAdminRoleCustomAssignments() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAdminRoleCustomAssignmentsCreate,
 		ReadContext:   resourceAdminRoleCustomAssignmentsRead,
@@ -51,7 +51,7 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
-	_, err = GetAPISupplementFromMetadata(meta).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
+	_, err = getAPISupplementFromMetadata(meta).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
@@ -60,7 +60,7 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	members, resp, err := listResourceSetBindingMembers(ctx, GetAPISupplementFromMetadata(meta), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+	members, resp, err := listResourceSetBindingMembers(ctx, getAPISupplementFromMetadata(meta), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to list members assigned to the custom role: %v", err)
 	}
@@ -76,7 +76,7 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 	if !d.HasChange("members") {
 		return nil
 	}
-	client := GetAPISupplementFromMetadata(meta)
+	client := getAPISupplementFromMetadata(meta)
 	oldMembers, newMembers := d.GetChange("members")
 	oldSet := oldMembers.(*schema.Set)
 	newSet := newMembers.(*schema.Set)
@@ -94,7 +94,7 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	resp, err := GetAPISupplementFromMetadata(meta).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
+	resp, err := getAPISupplementFromMetadata(meta).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role assignment: %v", err)
 	}

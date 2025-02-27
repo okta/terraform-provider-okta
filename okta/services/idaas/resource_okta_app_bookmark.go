@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppBookmark() *schema.Resource {
+func resourceAppBookmark() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppBookmarkCreate,
 		ReadContext:   resourceAppBookmarkRead,
@@ -54,7 +54,7 @@ other arguments that changed will be applied.`,
 }
 
 func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBookmark(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
@@ -101,7 +101,7 @@ func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppBookmark(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

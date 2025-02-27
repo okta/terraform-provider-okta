@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAuthServer() *schema.Resource {
+func resourceAuthServer() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAuthServerCreate,
 		ReadContext:   resourceAuthServerRead,
@@ -75,7 +75,7 @@ func ResourceAuthServer() *schema.Resource {
 
 func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	authServer := buildAuthServer(d)
-	responseAuthServer, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.CreateAuthorizationServer(ctx, *authServer)
+	responseAuthServer, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.CreateAuthorizationServer(ctx, *authServer)
 	if err != nil {
 		return diag.Errorf("failed to create authorization server: %v", err)
 	}
@@ -91,7 +91,7 @@ func resourceAuthServerCreate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceAuthServerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	authServer, resp, err := GetOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
+	authServer, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authorization server: %v", err)
 	}
@@ -133,7 +133,7 @@ func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, meta 
 		}
 	}
 	authServer := buildAuthServer(d)
-	_, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServer(ctx, d.Id(), *authServer)
+	_, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServer(ctx, d.Id(), *authServer)
 	if err != nil {
 		return diag.Errorf("failed to update authorization server: %v", err)
 	}
@@ -141,7 +141,7 @@ func resourceAuthServerUpdate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if d.Get("status").(string) == StatusActive {
 		_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, d.Id())
 		if err != nil {
@@ -157,7 +157,7 @@ func handleAuthServerLifecycle(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceAuthServerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	resp, err := client.AuthorizationServer.DeactivateAuthorizationServer(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate authorization server: %v", err)

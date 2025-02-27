@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func DataSourceEmailCustomizations() *schema.Resource {
+func dataSourceEmailCustomizations() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEmailCustomizationsRead,
 		Schema: utils.BuildSchema(
@@ -43,7 +43,7 @@ func dataSourceEmailCustomizationsRead(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("template name required for email customizations: %v", err)
 	}
 
-	customizations, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.ListEmailCustomizations(ctx, brandID.(string), templateName.(string)).Execute()
+	customizations, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListEmailCustomizations(ctx, brandID.(string), templateName.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list email customizations: %v", err)
 	}

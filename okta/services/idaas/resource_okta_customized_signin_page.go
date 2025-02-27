@@ -16,7 +16,7 @@ var (
 	_ resource.ResourceWithImportState = &customizedSigninPageResource{}
 )
 
-func NewCustomizedSigninResource() resource.Resource {
+func newCustomizedSigninResource() resource.Resource {
 	return &customizedSigninPageResource{}
 }
 
@@ -52,7 +52,7 @@ func (r *customizedSigninPageResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	customizedSigninPage, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplaceCustomizedSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
+	customizedSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplaceCustomizedSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update customized sign in page",
@@ -84,7 +84,7 @@ func (r *customizedSigninPageResource) Read(ctx context.Context, req resource.Re
 		brandID = state.ID.ValueString()
 	}
 
-	customizedSigninPage, _, err := r.Config.OktaSDKClientV3.CustomizationAPI.GetCustomizedSignInPage(ctx, brandID).Execute()
+	customizedSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetCustomizedSignInPage(ctx, brandID).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving customized signin page",
@@ -109,7 +109,7 @@ func (r *customizedSigninPageResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	_, err := r.OktaSDKClientV3.CustomizationAPI.DeleteCustomizedSignInPage(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.DeleteCustomizedSignInPage(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete customized signin page",
@@ -132,7 +132,7 @@ func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	customizedSigninPage, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplaceCustomizedSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
+	customizedSigninPage, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplaceCustomizedSignInPage(ctx, state.BrandID.ValueString()).SignInPage(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update customized sign in page",

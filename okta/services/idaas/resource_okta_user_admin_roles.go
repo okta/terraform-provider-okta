@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceUserAdminRoles() *schema.Resource {
+func resourceUserAdminRoles() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserAdminRolesCreate,
 		ReadContext:   resourceUserAdminRolesRead,
@@ -50,7 +50,7 @@ func ResourceUserAdminRoles() *schema.Resource {
 func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	roles := utils.ConvertInterfaceToStringSetNullable(d.Get("admin_roles"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	err := assignAdminRolesToUser(ctx, userId, roles, d.Get("disable_notifications").(bool), client)
 	if err != nil {
 		return diag.FromErr(err)
@@ -60,7 +60,7 @@ func resourceUserAdminRolesCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), GetOktaClientFromMetadata(meta))
+	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(meta))
 
 	if err != nil {
 		if err := utils.SuppressErrorOn404(resp, err); err == nil {
@@ -77,7 +77,7 @@ func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, met
 
 func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if !d.HasChange("admin_roles") && d.HasChange("disable_notifications") {
 		roles := utils.ConvertInterfaceToStringSet(d.Get("admin_roles"))
 		// we just need to update an existing role assignment status by passing just the query parameter.
@@ -112,7 +112,7 @@ func resourceUserAdminRolesUpdate(ctx context.Context, d *schema.ResourceData, m
 
 func resourceUserAdminRolesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userID := d.Get("user_id").(string)
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	roles, _, err := listUserOnlyRoles(ctx, client, userID)
 	if err != nil {
 		return diag.Errorf("failed to list user's roles: %v", err)

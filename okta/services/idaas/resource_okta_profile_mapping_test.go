@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -22,10 +21,10 @@ func TestAccResourceOktaProfileMapping_crud(t *testing.T) {
 	preventDelete := mgr.GetFixtures("prevent_delete.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSProfileMapping, doesOktaProfileExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSProfileMapping, doesOktaProfileExist),
 		Steps: []resource.TestStep{
 			{
 				Config: preventDelete,
@@ -100,7 +99,7 @@ func TestAccResourceOktaProfileMapping_existing(t *testing.T) {
 	  
 	`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
@@ -128,7 +127,7 @@ func TestAccResourceOktaProfileMapping_existing(t *testing.T) {
 
 // TODO deprecated endpoint
 func doesOktaProfileExist(profileID string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetEmailTemplate(context.Background(), profileID)
 	return utils.DoesResourceExist(response, err)
 }

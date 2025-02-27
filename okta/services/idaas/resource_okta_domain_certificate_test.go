@@ -58,7 +58,7 @@ resource "okta_domain_certificate" "test" {
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		CheckDestroy:      nil,
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

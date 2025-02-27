@@ -19,81 +19,52 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
-	"github.com/hashicorp/terraform-plugin-mux/tf6to5server"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
+	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
+	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/fwprovider"
-	"github.com/okta/terraform-provider-okta/okta/provider"
+	okta_provider "github.com/okta/terraform-provider-okta/okta/provider"
+	oktaSdk "github.com/okta/terraform-provider-okta/sdk"
 	"gopkg.in/dnaeon/go-vcr.v4/pkg/cassette"
 	"gopkg.in/dnaeon/go-vcr.v4/pkg/recorder"
 )
 
-const TestDomainName = "dne-okta.com"
+const (
+	ResourcePrefixForTest = "testAcc"
+	TestDomainName        = "dne-okta.com"
+)
 
-var ResourceNamePrefixForTest = "testAcc"
+var (
+	// ResourceNamePrefixForTest common resource name/lable used for sweeper
+	// clean up of resources
+	ResourceNamePrefixForTest = "testAcc"
+
+	// NOTE: Our VCR set up is inspired by terraform-provider-google
+	providerConfigsLock = sync.RWMutex{}
+	providerConfigs     map[string]*config.Config
+)
 
 func init() {
 	providerConfigs = make(map[string]*config.Config)
-
-	pluginProvider := provider.Provider()
-
-	// v2 provider - terraform-plugin-sdk
-	ProvidersFactoriesForTestAcc = map[string]func() (*schema.Provider, error){
-		"okta": func() (*schema.Provider, error) {
-			return pluginProvider, nil
-		},
-	}
-
-	// v3 provider - terraform-plugin-framework
-	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
-	frameworkProvider := fwprovider.NewFrameworkProvider("dev")
-	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(frameworkProvider))
-
-	ProtoV5ProviderFactoriesForTestAcc = map[string]func() (tfprotov5.ProviderServer, error){
-		"okta": func() (tfprotov5.ProviderServer, error) {
-			return framework, err
-		},
-	}
-	providers := []func() tfprotov5.ProviderServer{
-		// v2 plugin
-		pluginProvider.GRPCProvider,
-		// v3 plugin
-		providerserver.NewProtocol5(frameworkProvider),
-	}
-
-	// mux'd provider (v2 + v3) - terraform-plugin-mux
-	muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
-	if err != nil {
-		log.Fatal(err)
-	}
-	MergeProvidersFactoriesForTestAcc = map[string]func() (tfprotov5.ProviderServer, error){
-		"okta": func() (tfprotov5.ProviderServer, error) {
-			return muxServer.ProviderServer(), nil
-		},
-	}
 }
-
-var (
-	// NOTE: Our VCR set up is inspired by terraform-provider-google
-	providerConfigsLock                = sync.RWMutex{}
-	providerConfigs                    map[string]*config.Config
-	ProvidersFactoriesForTestAcc       map[string]func() (*schema.Provider, error)
-	ProtoV5ProviderFactoriesForTestAcc map[string]func() (tfprotov5.ProviderServer, error)
-	MergeProvidersFactoriesForTestAcc  map[string]func() (tfprotov5.ProviderServer, error)
-)
 
 // OktaResourceTest is the entry to overriding the Terraform SDKs Acceptance
 // Test framework before the call to resource.Test
 func OktaResourceTest(t *testing.T, c resource.TestCase) {
+	t.Helper()
+
 	// plug in the VCR
 	mgr := newVCRManager(t.Name())
 
-	if !mgr.VCREnabled() {
+	if !mgr.IsVcrEnabled() {
 		// live ACC / non-VCR test
 		resource.Test(t, c)
 		return
@@ -119,9 +90,8 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 			os.Setenv("OKTA_BASE_URL", TestDomainName)
 			os.Setenv("OKTA_API_TOKEN", "token")
 			mgr.SetCurrentCassette(cassette)
-			// FIXME: need to get our VCR lined up correctly tf sdk v2 and tf plugin framework
-			c.ProviderFactories = nil
-			c.ProtoV5ProviderFactories = vcrProviderFactoriesForTest(mgr)
+
+			// we disable check destroy when recording/playing vcr tests
 			c.CheckDestroy = nil
 			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
 
@@ -142,8 +112,8 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 			t.Skipf("%q test is attempting to write %s.yaml cassette, delete it first before attempting new write, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
 			return
 		}
-		c.ProviderFactories = nil
-		c.ProtoV5ProviderFactories = vcrProviderFactoriesForTest(mgr)
+		// we disable check destroy when recording/playing vcr tests
+		c.CheckDestroy = nil
 		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
 		resource.Test(t, c)
 		return
@@ -161,7 +131,7 @@ type vcrManager struct {
 // newVCRManager Returns a vcr manager
 func newVCRManager(testName string) *vcrManager {
 	dir, _ := os.Getwd()
-	vcrFixturesHome := path.Join(dir, "../test/fixtures/vcr")
+	vcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr")
 	cassettesPath := path.Join(vcrFixturesHome, testName)
 	return &vcrManager{
 		Name:            testName,
@@ -183,7 +153,7 @@ func providerConfig(mgr *vcrManager) (*config.Config, bool) {
 // utilizes. Instead, we want to create one dedicated VCR http transport for
 // each test. The dedicated transport holds the API calls made specific to that
 // test.
-func vcrCachedConfigV2(ctx context.Context, d *schema.ResourceData, configureFunc schema.ConfigureContextFunc, mgr *vcrManager) (*config.Config, diag.Diagnostics) {
+func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configureFunc schema_sdk.ConfigureContextFunc, mgr *vcrManager) (*config.Config, diag.Diagnostics) {
 	providerConfigsLock.RLock()
 	v, ok := providerConfig(mgr)
 	providerConfigsLock.RUnlock()
@@ -193,7 +163,6 @@ func vcrCachedConfigV2(ctx context.Context, d *schema.ResourceData, configureFun
 	}
 
 	c, diags := configureFunc(ctx, d)
-
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -201,76 +170,20 @@ func vcrCachedConfigV2(ctx context.Context, d *schema.ResourceData, configureFun
 	cfg := c.(*config.Config)
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
 
-	transport := cfg.OktaSDKClientV3.GetConfig().HTTPClient.Transport
-	rec, err := newVCRRecorder(mgr, transport)
+	idaasTestClient := NewVcrIDaaSClient(d)
+	cfg.SetAPIClient(idaasTestClient)
+
+	rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-
-	// VCR takes over http transport duties
 	rt := http.RoundTripper(rec)
-	cfg.ResetHttpTransport(&rt)
+	idaasTestClient.SetTransport(rt)
 
 	providerConfigsLock.Lock()
 	providerConfigs[mgr.TestAndCassetteNameKey()] = cfg
 	providerConfigsLock.Unlock()
 	return cfg, nil
-}
-
-// vcrProviderFactoriesForTest Returns the overridden provider factories used by
-// the resource test case given the state of the VCR manager.  func
-// vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func()
-// (*schema.Provider, error) {
-func vcrProviderFactoriesForTest(mgr *vcrManager) map[string]func() (tfprotov5.ProviderServer, error) {
-	return map[string]func() (tfprotov5.ProviderServer, error){
-		"okta": func() (tfprotov5.ProviderServer, error) {
-			provider := provider.Provider()
-
-			// v2
-			oldConfigureContextFunc := provider.ConfigureContextFunc
-			provider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-				config, _diag := vcrCachedConfigV2(ctx, d, oldConfigureContextFunc, mgr)
-				if _diag.HasError() {
-					return nil, _diag
-				}
-
-				// this is needed so teardown api calls are recorded by VCR and
-				// we don't run ACC tests in parallel
-				// TODO FIXME
-				/*
-					testSdkV5Client = config.OktaSDKClientV5
-					testSdkV3Client = config.OktaSDKClientV3
-					testSdkV2Client = config.OktaSDKClientV2
-					testSdkSupplementClient = config.OktaSDKsupplementClient
-				*/
-
-				return config, _diag
-			}
-
-			// v3
-			// FIXME: this needs to be cleaned up so vcr and the sdk clients are all set up in one place
-			// FIXME: need to get our VCR lined up correctly tf sdk v2 and tf plugin framework
-			// FIXME: as-is, any tests using a framework provider can't record for VCR
-			//frameworkProvider := fwprovider.NewFrameworkProvider("dev")
-			//testFrameworkProvider := frameworkProvider.(*FrameworkProvider)
-			testFrameworkProvider := fwprovider.NewFrameworkProvider("dev")
-
-			// mux - v2+v3
-			providers := []func() tfprotov5.ProviderServer{
-				// v2 plugin
-				provider.GRPCProvider,
-				// v3 plugin
-				providerserver.NewProtocol5(testFrameworkProvider),
-			}
-
-			muxServer, err := tf5muxserver.NewMuxServer(context.Background(), providers...)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			return muxServer, nil
-		},
-	}
 }
 
 func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder.Recorder, err error) {
@@ -297,7 +210,9 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		// don't record failing test runs
 		if !t.Failed() {
 			// If a test succeeds, write new seed/yaml to files
-			err := config.OktaSDKClientV2.GetConfig().HttpClient.Transport.(*recorder.Recorder).Stop()
+			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
+			rt := rtHelper.Transport()
+			err := rt.(*recorder.Recorder).Stop()
 			if err != nil {
 				t.Error(err)
 			}
@@ -319,16 +234,16 @@ func (m *vcrManager) TestAndCassetteNameKey() string {
 	return fmt.Sprintf("%s-%s", m.Name, m.CurrentCassette)
 }
 
-// VcrEnabled test is considered to be in VCR mode if ENV var OKTA_VCR_TF_ACC
+// IsVcrEnabled test is considered to be in VCR mode if ENV var OKTA_VCR_TF_ACC
 // is not empty. Valid values are "record" for recording VCR cassettes (test
 // runs), and "play" for playing all cassettes of a test.
-func (m *vcrManager) VCREnabled() bool {
-	return m.VCRModeName != ""
+func (m *vcrManager) IsVcrEnabled() bool {
+	return m.IsPlaying() || m.IsRecording()
 }
 
 // ValidMode Is this a valid vcr mode given vcr is enabled?
 func (m *vcrManager) ValidMode() bool {
-	return m.VCREnabled() && (m.VCRModeName == "play" || m.VCRModeName == "record")
+	return m.VCRModeName == "play" || m.VCRModeName == "record"
 }
 
 // HasCassettesToPlay VCR is in play mode and there are cassette files to play.
@@ -415,8 +330,10 @@ func replaceHeaderValues(currentValues []string, oldValue, newValue string) []st
 
 func vcrMatcher(mgr *vcrManager) func(*http.Request, cassette.Request) bool {
 	return func(r *http.Request, i cassette.Request) bool {
-		// Default matcher compares method and URL only
-		if !cassette.DefaultMatcher(r, i) {
+		if r.Method != i.Method {
+			return false
+		}
+		if r.URL.String() != i.URL {
 			return false
 		}
 		// TODO: there might be header information we could inspect to make this more precise
@@ -582,14 +499,6 @@ func accPreCheck() error {
 	return nil
 }
 
-func AccProvidersFactoriesForTest() map[string]func() (*schema.Provider, error) {
-	return ProvidersFactoriesForTestAcc
-}
-
-func AccMergeProvidersFactoriesForTest() map[string]func() (tfprotov5.ProviderServer, error) {
-	return MergeProvidersFactoriesForTestAcc
-}
-
 func BuildResourceName(testID int) string {
 	return ResourceNamePrefixForTest + "_" + strconv.Itoa(testID)
 }
@@ -600,4 +509,152 @@ func BuildResourceNameWithPrefix(prefix string, testID int) string {
 
 func BuildResourceFQN(resourceType string, testID int) string {
 	return resourceType + "." + BuildResourceName(testID)
+}
+
+// ProtoV5ProviderFactoriesForTestAcc is for ProtoV5ProviderFactories argument in acc tests
+func ProtoV5ProviderFactoriesForTestAcc(t *testing.T) map[string]func() (tfprotov5.ProviderServer, error) {
+	return map[string]func() (tfprotov5.ProviderServer, error){
+		"okta": func() (tfprotov5.ProviderServer, error) {
+			provider, err := ProvidersForTest(t.Name())
+			return provider(), err
+		},
+	}
+}
+
+func ProvidersForTest(testName string) (func() tfprotov5.ProviderServer, error) {
+	ctx := context.Background()
+
+	pluginSDKProvider := GetPluginSDKProvider(testName)
+	providers := []func() tfprotov5.ProviderServer{
+		// terraform-plugin-sdk/v2
+		pluginSDKProvider.GRPCProvider,
+		// terraform-plugin-framework/provider
+		providerserver.NewProtocol5(NewFrameworkTestProvider(testName, pluginSDKProvider)),
+	}
+	muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return muxServer.ProviderServer, nil
+}
+
+type frameworkTestProvider struct {
+	fwprovider.FrameworkProvider
+	TestName string
+}
+
+func NewFrameworkTestProvider(testName string, pluginSDKProvider *schema_sdk.Provider) *frameworkTestProvider {
+	return &frameworkTestProvider{
+		FrameworkProvider: fwprovider.FrameworkProvider{
+			PluginSDKProvider: pluginSDKProvider,
+			Version:           "test",
+		},
+		TestName: testName,
+	}
+}
+
+func (p *frameworkTestProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	p.FrameworkProvider.Configure(ctx, req, resp)
+}
+
+func GetPluginSDKProvider(testName string) *schema_sdk.Provider {
+	vcrMgr := newVCRManager(testName)
+	oktaProvider := okta_provider.Provider()
+
+	if vcrMgr.IsVcrEnabled() {
+		oldConfigureContextFunc := oktaProvider.ConfigureContextFunc
+		oktaProvider.ConfigureContextFunc = func(ctx context.Context, d *schema_sdk.ResourceData) (interface{}, diag.Diagnostics) {
+			return vcrCachedConfigV2(ctx, d, oldConfigureContextFunc, vcrMgr)
+		}
+	}
+	return oktaProvider
+}
+
+func SkipVCRTest(t *testing.T) bool {
+	skip := os.Getenv("OKTA_VCR_TF_ACC") != ""
+	if skip {
+		t.Skipf("test %q is not VCR compatible", t.Name())
+	}
+	return skip
+}
+
+// Ensure the implementation satisfies the expected interfaces.
+var (
+	_ api.OktaIDaaSClient = &vcrIDaaSTestClient{}
+	_ HttpClientHelper    = &vcrIDaaSTestClient{}
+)
+
+type HttpClientHelper interface {
+	Transport() http.RoundTripper
+	SetTransport(http.RoundTripper)
+}
+
+type vcrIDaaSTestClient struct {
+	sdkV5Client         *v5SdkOkta.APIClient
+	sdkV3Client         *v4SdkOkta.APIClient
+	sdkV2Client         *oktaSdk.Client
+	sdkSupplementClient *oktaSdk.APISupplement
+	transport           http.RoundTripper
+}
+
+func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
+	c := config.NewConfig(d)
+	c.Backoff = false
+	c.LoadAPIClient()
+
+	// force all the API clients on a new config to use the same round tripper
+	// for VCR recording/playback
+	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
+	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
+	c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient.Transport = tripper
+	re := c.OktaIDaaSClient.OktaSDKClientV2().CloneRequestExecutor()
+	re.SetHTTPTransport(tripper)
+	supClient := &oktaSdk.APISupplement{
+		RequestExecutor: re,
+	}
+
+	client := &vcrIDaaSTestClient{
+		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
+		sdkV3Client:         c.OktaIDaaSClient.OktaSDKClientV3(),
+		sdkV2Client:         c.OktaIDaaSClient.OktaSDKClientV2(),
+		sdkSupplementClient: supClient,
+		transport:           tripper,
+	}
+
+	return client
+}
+
+func (c *vcrIDaaSTestClient) Transport() http.RoundTripper {
+	return c.transport
+}
+
+func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
+	c.transport = rt
+
+	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
+	c.sdkV3Client.GetConfig().HTTPClient.Transport = rt
+	c.sdkV2Client.GetConfig().HttpClient.Transport = rt
+	re := c.sdkV2Client.CloneRequestExecutor()
+	re.SetHTTPTransport(rt)
+	c.sdkSupplementClient = &oktaSdk.APISupplement{
+		RequestExecutor: re,
+	}
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV5() *v5SdkOkta.APIClient {
+	return c.sdkV5Client
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV3() *v4SdkOkta.APIClient {
+	return c.sdkV3Client
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV2() *oktaSdk.Client {
+	return c.sdkV2Client
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
+	return c.sdkSupplementClient
 }

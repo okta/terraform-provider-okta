@@ -22,7 +22,7 @@ var (
 	_ resource.ResourceWithImportState = &groupOwnerResource{}
 )
 
-func NewGroupOwnerResource() resource.Resource {
+func newGroupOwnerResource() resource.Resource {
 	return &groupOwnerResource{}
 }
 
@@ -109,7 +109,7 @@ func (r *groupOwnerResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	createdGroupOwner, _, err := r.OktaSDKClientV5.GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
+	createdGroupOwner, _, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create group owner for group "+state.GroupID.ValueString()+" for group owner user id: "+createReqBody.GetId()+", type: "+createReqBody.GetType(),
@@ -139,7 +139,7 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 	var grpOwner *okta.GroupOwner
 	var err error
 
-	listGroupOwners, _, err := r.Config.OktaSDKClientV5.GroupOwnerAPI.ListGroupOwners(ctx, state.GroupID.ValueString()).Execute()
+	listGroupOwners, _, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.ListGroupOwners(ctx, state.GroupID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving list group owners",
@@ -179,7 +179,7 @@ func (r *groupOwnerResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
-	_, err := r.OktaSDKClientV5.GroupOwnerAPI.DeleteGroupOwner(ctx, state.GroupID.ValueString(), state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.DeleteGroupOwner(ctx, state.GroupID.ValueString(), state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete group owner "+state.ID.ValueString()+" from group",
@@ -205,7 +205,7 @@ func (r *groupOwnerResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	createdGroupOwner, _, err := r.OktaSDKClientV5.GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
+	createdGroupOwner, _, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update/assign group owner",

@@ -13,7 +13,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceAppOauth() *schema.Resource {
+func dataSourceAppOauth() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppOauthRead,
 		Schema: utils.BuildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
@@ -166,13 +166,13 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 	var app *sdk.OpenIdConnectApplication
 	if filters.ID != "" {
-		respApp, _, err := GetOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
 		app = respApp.(*sdk.OpenIdConnectApplication)
 	} else {
-		re := GetOktaClientFromMetadata(meta).GetRequestExecutor()
+		re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.GetQ()}
 		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
 		if err != nil {
@@ -189,7 +189,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 		if filters.Label != "" && appList[0].Label != filters.Label {
 			return diag.Errorf("no OAuth application found with the provided label: %s", filters.Label)
 		}
-		Logger(meta).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
+		logger(meta).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
 		app = appList[0]
 	}
 
@@ -254,7 +254,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 
 // getCurrentlyActiveClientSecret See: https://developer.okta.com/docs/reference/api/apps/#list-client-secrets
 func getCurrentlyActiveClientSecret(ctx context.Context, meta interface{}, appId string) (string, error) {
-	secrets, _, err := GetOktaClientFromMetadata(meta).Application.ListClientSecretsForApplication(ctx, appId)
+	secrets, _, err := getOktaClientFromMetadata(meta).Application.ListClientSecretsForApplication(ctx, appId)
 	if err != nil {
 		return "", err
 	}

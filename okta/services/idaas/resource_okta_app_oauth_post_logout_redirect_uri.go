@@ -5,7 +5,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceAppOAuthPostLogoutRedirectURI() *schema.Resource {
+func resourceAppOAuthPostLogoutRedirectURI() *schema.Resource {
 	return &schema.Resource{
 		DeprecationMessage: "managing the post logout redirect URI should be done directly on an oauth app resource",
 		CreateContext:      resourceAppOAuthRedirectURICreate("okta_app_oauth_post_logout_redirect_uri"),

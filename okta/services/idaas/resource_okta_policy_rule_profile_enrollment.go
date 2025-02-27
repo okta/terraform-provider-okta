@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyProfileEnrollmentRule() *schema.Resource {
+func resourcePolicyProfileEnrollmentRule() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyProfileEnrollmentRuleCreate,
 		ReadContext:   resourcePolicyProfileEnrollmentRuleRead,
@@ -129,14 +129,14 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSPolicyRuleProfileEnrollment)
 	}
 
-	policy, _, err := GetAPISupplementFromMetadata(meta).GetPolicy(ctx, d.Get("policy_id").(string))
+	policy, _, err := getAPISupplementFromMetadata(meta).GetPolicy(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get profile enrollment policy: %v", err)
 	}
 	if policy.Type != sdk.ProfileEnrollmentPolicyType {
 		return diag.Errorf("provided policy is not of type %s", sdk.ProfileEnrollmentPolicyType)
 	}
-	rules, _, err := GetAPISupplementFromMetadata(meta).ListPolicyRules(ctx, d.Get("policy_id").(string))
+	rules, _, err := getAPISupplementFromMetadata(meta).ListPolicyRules(ctx, d.Get("policy_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to get list profile enrollment policy rules: %v", err)
 	}
@@ -147,7 +147,7 @@ func resourcePolicyProfileEnrollmentRuleCreate(ctx context.Context, d *schema.Re
 	if err != nil {
 		return diag.Errorf("failed to prepare update of existing profile enrollment policy rule: %v", err)
 	}
-	rule, _, err := GetAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, *updateRule)
+	rule, _, err := getAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), rules[0].Id, *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update existing profile enrollment policy rule: %v", err)
 	}
@@ -160,7 +160,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSPolicyRuleProfileEnrollment)
 	}
 
-	rule, resp, err := GetAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile enrollment policy rule: %v", err)
 	}
@@ -202,7 +202,7 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 	if err != nil {
 		return diag.Errorf("failed to prepare update profile enrollment policy rule: %v", err)
 	}
-	_, _, err = GetAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), *updateRule)
+	_, _, err = getAPISupplementFromMetadata(meta).UpdatePolicyRule(ctx, d.Get("policy_id").(string), d.Id(), *updateRule)
 	if err != nil {
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}
@@ -221,7 +221,7 @@ func resourcePolicyProfileEnrollmentRuleDelete(ctx context.Context, d *schema.Re
 // buildPolicyRuleProfileEnrollment build profile enrollment policy rule from
 // copy of existing rule
 func buildPolicyRuleProfileEnrollment(ctx context.Context, meta interface{}, d *schema.ResourceData, id string) (*sdk.SdkPolicyRule, error) {
-	rule, resp, err := GetAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), id)
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetPolicyRule(ctx, d.Get("policy_id").(string), id)
 	if err = utils.SuppressErrorOn404(resp, err); err != nil {
 		return nil, err
 	}

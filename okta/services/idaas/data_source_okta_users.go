@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceUsers() *schema.Resource {
+func dataSourceUsers() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUsersRead,
 		Schema: map[string]*schema.Schema{
@@ -80,10 +80,10 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, meta inter
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			Logger(meta).Info("delaying users read by ", delay, " seconds")
+			logger(meta).Info("delaying users read by ", delay, " seconds")
 			meta.(*config.Config).TimeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			Logger(meta).Warn("users read delay value ", n, " is not an integer")
+			logger(meta).Warn("users read delay value ", n, " is not an integer")
 		}
 	}
 
@@ -93,7 +93,7 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, meta inter
 		err   error
 	)
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	if groupId, ok := d.GetOk("group_id"); ok {
 		id = groupId.(string)

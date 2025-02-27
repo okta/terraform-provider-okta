@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func DataSourceEmailTemplate() *schema.Resource {
+func dataSourceEmailTemplate() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEmailTemplateRead,
 		Schema: utils.BuildSchema(
@@ -32,8 +32,8 @@ func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, me
 	var err error
 	brandID, ok := d.GetOk("brand_id")
 	if ok {
-		Logger(meta).Info("reading brand by ID", "id", brandID.(string))
-		brand, _, err = GetOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID.(string)).Execute()
+		logger(meta).Info("reading brand by ID", "id", brandID.(string))
+		brand, _, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetBrand(ctx, brandID.(string)).Execute()
 		if err != nil {
 			return diag.Errorf("failed to get brand for email template: %v", err)
 		}
@@ -46,7 +46,7 @@ func dataSourceEmailTemplateRead(ctx context.Context, d *schema.ResourceData, me
 		return diag.Errorf("name required for email template: %v", err)
 	}
 
-	template, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailTemplate(ctx, brandID.(string), templateName.(string)).Execute()
+	template, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.GetEmailTemplate(ctx, brandID.(string), templateName.(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get email template: %v", err)
 	}

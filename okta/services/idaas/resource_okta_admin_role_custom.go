@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAdminRoleCustom() *schema.Resource {
+func resourceAdminRoleCustom() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAdminRoleCustomCreate,
 		ReadContext:   resourceAdminRoleCustomRead,
@@ -108,7 +108,7 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
-	role, _, err := GetAPISupplementFromMetadata(meta).CreateCustomRole(ctx, *cr)
+	role, _, err := getAPISupplementFromMetadata(meta).CreateCustomRole(ctx, *cr)
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role: %v", err)
 	}
@@ -117,7 +117,7 @@ func resourceAdminRoleCustomCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	role, resp, err := GetAPISupplementFromMetadata(meta).GetCustomRole(ctx, d.Id())
+	role, resp, err := getAPISupplementFromMetadata(meta).GetCustomRole(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find custom admin role: %v", err)
 	}
@@ -131,7 +131,7 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, me
 	}
 	_ = d.Set("label", role.Label)
 	_ = d.Set("description", role.Description)
-	perms, _, err := GetAPISupplementFromMetadata(meta).ListCustomRolePermissions(ctx, d.Id())
+	perms, _, err := getAPISupplementFromMetadata(meta).ListCustomRolePermissions(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to list permissions for custom admin role: %v", err)
 	}
@@ -140,7 +140,7 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetAPISupplementFromMetadata(meta)
+	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		cr, _ := buildCustomAdminRole(d, false)
 		_, _, err := client.UpdateCustomRole(ctx, d.Id(), *cr)
@@ -170,7 +170,7 @@ func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceAdminRoleCustomDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	resp, err := GetAPISupplementFromMetadata(meta).DeleteCustomRole(ctx, d.Id())
+	resp, err := getAPISupplementFromMetadata(meta).DeleteCustomRole(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete admin custom role: %v", err)
 	}

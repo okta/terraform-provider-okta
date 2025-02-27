@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceUserSecurityQuestions() *schema.Resource {
+func dataSourceUserSecurityQuestions() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUserSecurityQuestionsQuestionsRead,
 		Schema: map[string]*schema.Schema{
@@ -37,7 +37,7 @@ func DataSourceUserSecurityQuestions() *schema.Resource {
 }
 
 func dataSourceUserSecurityQuestionsQuestionsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	sq, _, err := GetOktaClientFromMetadata(meta).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
+	sq, _, err := getOktaClientFromMetadata(meta).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to list security questions for '%s' user: %v", d.Get("user_id").(string), err)
 	}

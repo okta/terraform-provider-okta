@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceBehaviors() *schema.Resource {
+func dataSourceBehaviors() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBehaviorsRead,
 		Schema: map[string]*schema.Schema{
@@ -65,7 +65,7 @@ func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, meta i
 	if ok {
 		qp.Q = q.(string)
 	}
-	behaviors, _, err := GetAPISupplementFromMetadata(meta).ListBehaviors(ctx, qp)
+	behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, qp)
 	if err != nil {
 		return diag.Errorf("failed to list behaviors: %v", err)
 	}

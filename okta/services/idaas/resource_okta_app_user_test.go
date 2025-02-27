@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -22,10 +21,10 @@ func TestAccResourceOktaAppUser_crud(t *testing.T) {
 	basicProfile := mgr.GetFixtures("basic_profile.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkAppUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -90,10 +89,10 @@ func TestAccResourceOktaAppUser_retain(t *testing.T) {
 	retainDestroy := mgr.GetFixtures("retain_destroy.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkAppUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: retain,
@@ -126,7 +125,7 @@ func ensureAppUserExists(resourceName string) resource.TestCheckFunc {
 
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 		u, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {
@@ -148,7 +147,7 @@ func checkAppUserDestroy(s *terraform.State) error {
 		appID := rs.Primary.Attributes["app_id"]
 		userID := rs.Primary.Attributes["user_id"]
 
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		_, response, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		exists, err := utils.DoesResourceExist(response, err)
 		if err != nil {
@@ -179,7 +178,7 @@ func ensureAppUserRetained(appName, userName string) resource.TestCheckFunc {
 
 		appID := appRes.Primary.ID
 		userID := userRes.Primary.ID
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 		g, _, err := client.Application.GetApplicationUser(context.Background(), appID, userID, nil)
 		if err != nil {

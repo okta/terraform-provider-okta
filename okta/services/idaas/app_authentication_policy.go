@@ -14,7 +14,7 @@ func createOrUpdateAuthenticationPolicy(ctx context.Context, d *schema.ResourceD
 		return assignDefaultAuthenticationPolicy(ctx, m, appId)
 	}
 	policyId := raw.(string)
-	_, err := GetOktaClientFromMetadata(m).Application.UpdateApplicationPolicy(ctx, appId, policyId)
+	_, err := getOktaClientFromMetadata(m).Application.UpdateApplicationPolicy(ctx, appId, policyId)
 	return err
 }
 
@@ -42,7 +42,7 @@ func assignDefaultAuthenticationPolicy(ctx context.Context, m interface{}, appId
 	if err != nil {
 		return err
 	}
-	client := GetOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 	_, err = client.Application.UpdateApplicationPolicy(ctx, appId, policy.Id)
 	return err
 }

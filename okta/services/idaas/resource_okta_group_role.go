@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceGroupRole() *schema.Resource {
+func resourceGroupRole() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceGroupRoleCreate,
 		ReadContext:   resourceGroupRoleRead,
@@ -114,8 +114,8 @@ func ResourceGroupRole() *schema.Resource {
 func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupID := d.Get("group_id").(string)
 	roleType := d.Get("role_type").(string)
-	client := GetOktaClientFromMetadata(meta)
-	Logger(meta).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
+	client := getOktaClientFromMetadata(meta)
+	logger(meta).Info("assigning role to group", "group_id", groupID, "role_type", roleType)
 	role, _, err := client.Group.AssignRoleToGroup(
 		ctx,
 		groupID,
@@ -130,7 +130,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	groupTargets := utils.ConvertInterfaceToStringSet(d.Get("target_group_list"))
 	if len(groupTargets) > 0 && supportsGroupTargets(roleType) {
-		Logger(meta).Info("scoping admin role assignment to list of groups", "group_id", groupID, "role_id", role.Id, "target_group_list", groupTargets)
+		logger(meta).Info("scoping admin role assignment to list of groups", "group_id", groupID, "role_id", role.Id, "target_group_list", groupTargets)
 		err = addGroupTargetsToRole(ctx, client, groupID, role.Id, groupTargets)
 		if err != nil {
 			return diag.Errorf("unable to add group target to role assignment %s for group %s: %v", role.Id, groupID, err)
@@ -138,7 +138,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	appTargets := utils.ConvertInterfaceToStringSet(d.Get("target_app_list"))
 	if len(appTargets) > 0 && roleType == "APP_ADMIN" {
-		Logger(meta).Info("scoping admin role assignment to list of apps", "group_id", groupID, "role_id", role.Id, "target_app_list", appTargets)
+		logger(meta).Info("scoping admin role assignment to list of apps", "group_id", groupID, "role_id", role.Id, "target_app_list", appTargets)
 		err = addGroupAppTargetsToRole(ctx, client, groupID, role.Id, appTargets)
 		if err != nil {
 			return diag.Errorf("unable to add app targets to role assignment %s for group %s: %v", role.Id, groupID, err)
@@ -163,7 +163,7 @@ func resourceGroupRoleCreate(ctx context.Context, d *schema.ResourceData, meta i
 
 func resourceGroupRoleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupID := d.Get("group_id").(string)
-	role, resp, err := GetOktaClientFromMetadata(meta).Group.GetRole(ctx, groupID, d.Id())
+	role, resp, err := getOktaClientFromMetadata(meta).Group.GetRole(ctx, groupID, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get role '%s' assigned to group '%s': %v", d.Id(), groupID, err)
 	}
@@ -202,7 +202,7 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, meta i
 	groupID := d.Get("group_id").(string)
 	roleID := d.Id()
 	roleType := d.Get("role_type").(string)
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if d.HasChange("disable_notifications") {
 		_, _, err := client.Group.AssignRoleToGroup(ctx, groupID, sdk.AssignRoleRequest{},
 			&query.Params{DisableNotifications: utils.BoolPtr(d.Get("disable_notifications").(bool))})
@@ -248,8 +248,8 @@ func resourceGroupRoleUpdate(ctx context.Context, d *schema.ResourceData, meta i
 func resourceGroupRoleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupID := d.Get("group_id").(string)
 	roleType := d.Get("role_type").(string)
-	Logger(meta).Info("deleting assigned role from group", "group_id", groupID, "role_type", roleType)
-	resp, err := GetOktaClientFromMetadata(meta).Group.RemoveRoleFromGroup(ctx, groupID, d.Id())
+	logger(meta).Info("deleting assigned role from group", "group_id", groupID, "role_type", roleType)
+	resp, err := getOktaClientFromMetadata(meta).Group.RemoveRoleFromGroup(ctx, groupID, d.Id())
 	err = utils.SuppressErrorOn404(resp, err)
 	if err != nil {
 		return diag.Errorf("failed to remove role %s assigned to group %s: %v", roleType, groupID, err)
@@ -259,7 +259,7 @@ func resourceGroupRoleDelete(ctx context.Context, d *schema.ResourceData, meta i
 
 func listGroupTargetsIDs(ctx context.Context, meta interface{}, groupID, roleID string) ([]string, error) {
 	var resIDs []string
-	targets, resp, err := GetOktaClientFromMetadata(meta).Group.ListGroupTargetsForGroupRole(ctx, groupID, roleID, &query.Params{Limit: utils.DefaultPaginationLimit})
+	targets, resp, err := getOktaClientFromMetadata(meta).Group.ListGroupTargetsForGroupRole(ctx, groupID, roleID, &query.Params{Limit: utils.DefaultPaginationLimit})
 	if err != nil {
 		return nil, fmt.Errorf("unable to get admin assignment %s for group %s: %v", roleID, groupID, err)
 	}
@@ -281,7 +281,7 @@ func listGroupTargetsIDs(ctx context.Context, meta interface{}, groupID, roleID 
 
 func listGroupAppsTargets(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]string, error) {
 	var resApps []string
-	apps, resp, err := GetOktaClientFromMetadata(meta).Group.
+	apps, resp, err := getOktaClientFromMetadata(meta).Group.
 		ListApplicationTargetsForApplicationAdministratorRoleForGroup(
 			ctx, d.Get("group_id").(string), d.Id(), &query.Params{Limit: utils.DefaultPaginationLimit, Status: "ACTIVE"})
 	if err != nil {
@@ -291,7 +291,7 @@ func listGroupAppsTargets(ctx context.Context, d *schema.ResourceData, meta inte
 		for _, app := range apps {
 			if app.Id != "" {
 				a := sdk.NewApplication()
-				_, resp, err := GetOktaClientFromMetadata(meta).Application.GetApplication(ctx, app.Id, a, nil)
+				_, resp, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, app.Id, a, nil)
 				if err := utils.SuppressErrorOn404(resp, err); err != nil {
 					return nil, err
 				}
@@ -385,12 +385,12 @@ func findRole(ctx context.Context, d *schema.ResourceData, meta interface{}) (*s
 		return nil, nil
 	}
 	groupID := d.Get("group_id").(string)
-	roles, resp, err := GetOktaClientFromMetadata(meta).Group.ListGroupAssignedRoles(ctx, groupID, nil)
+	roles, resp, err := getOktaClientFromMetadata(meta).Group.ListGroupAssignedRoles(ctx, groupID, nil)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to list roles assigned to group %s: %v", groupID, err)
 	}
 	if len(roles) == 0 {
-		Logger(meta).Error("either group (%s) which had these roles assigned no longer exists or no roles were assigned", groupID)
+		logger(meta).Error("either group (%s) which had these roles assigned no longer exists or no roles were assigned", groupID)
 		return nil, nil
 	}
 	for i := range roles {

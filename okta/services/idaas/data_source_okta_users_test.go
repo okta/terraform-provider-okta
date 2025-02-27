@@ -23,7 +23,7 @@ func TestAccDataSourceOktaUsers_read(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				// Ensure users are created
@@ -63,7 +63,7 @@ func TestAccDataSourceOktaUsers_readWithGroupId(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				// Ensure user and group are created
@@ -96,7 +96,7 @@ func TestAccDataSourceOktaUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				// Ensure user and group are created
@@ -127,7 +127,7 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, false)),
@@ -149,7 +149,7 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, false)),
@@ -171,7 +171,7 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(false, true)),
@@ -193,7 +193,7 @@ func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(testOktaUsersRolesGroupsConfig(true, true)),

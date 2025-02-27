@@ -10,7 +10,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
-func DataSourceAuthServerScopes() *schema.Resource {
+func dataSourceAuthServerScopes() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAuthServerScopesRead,
 		Schema: map[string]*schema.Schema{
@@ -79,7 +79,7 @@ func DataSourceAuthServerScopes() *schema.Resource {
 }
 
 func dataSourceAuthServerScopesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	scopes, _, err := GetOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string)).Execute()
+	scopes, _, err := getOktaV3ClientFromMetadata(meta).AuthorizationServerAPI.ListOAuth2Scopes(ctx, d.Get("auth_server_id").(string)).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list auth server scopes: %v", err)
 	}

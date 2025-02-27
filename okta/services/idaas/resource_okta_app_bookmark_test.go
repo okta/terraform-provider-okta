@@ -20,7 +20,7 @@ func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -63,7 +63,7 @@ resource "okta_app_bookmark" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -105,7 +105,7 @@ resource "okta_app_bookmark" "test" {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
@@ -132,7 +132,7 @@ func TestAccResourceOktaAppBookmarkApplication_authenticationPolicy_OIEonly(t *t
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{

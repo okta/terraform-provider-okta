@@ -21,7 +21,7 @@ var (
 	_ resource.ResourceWithImportState    = &appOAuthRoleAssignmentResource{}
 )
 
-func NewAppOAuthRoleAssignmentResource() resource.Resource {
+func newAppOAuthRoleAssignmentResource() resource.Resource {
 	return &appOAuthRoleAssignmentResource{}
 }
 
@@ -137,7 +137,7 @@ func (r *appOAuthRoleAssignmentResource) Create(ctx context.Context, req resourc
 		Role:        data.Role.ValueStringPointer(),
 	}
 
-	role, _, err := r.Config.OktaSDKsupplementClient.AssignClientRole(ctx, data.ClientID.ValueString(), roleAssignmentRequest)
+	role, _, err := r.OktaIDaaSClient.OktaSDKSupplementClient().AssignClientRole(ctx, data.ClientID.ValueString(), roleAssignmentRequest)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to assign role to client", err.Error())
 		return
@@ -161,7 +161,7 @@ func (r *appOAuthRoleAssignmentResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	role, _, err := r.Config.OktaSDKsupplementClient.GetClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	role, _, err := r.OktaIDaaSClient.OktaSDKSupplementClient().GetClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to read role assignment", err.Error())
 		return
@@ -192,7 +192,7 @@ func (r *appOAuthRoleAssignmentResource) Delete(ctx context.Context, req resourc
 		return
 	}
 
-	_, err := r.Config.OktaSDKsupplementClient.UnassignClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	_, err := r.OktaIDaaSClient.OktaSDKSupplementClient().UnassignClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to delete role assignment", err.Error())
 		return
