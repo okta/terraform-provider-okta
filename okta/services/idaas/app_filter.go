@@ -29,7 +29,7 @@ func (f *AppFilters) String() string {
 	return fmt.Sprintf(`id: "%s", label: "%s", label_prefix: "%s"`, f.ID, f.Label, f.LabelPrefix)
 }
 
-func ListApps(ctx context.Context, client *sdk.Client, filters *AppFilters, limit int64) ([]*sdk.Application, error) {
+func ListAppsV2(ctx context.Context, client *sdk.Client, filters *AppFilters, limit int64) ([]*sdk.Application, error) {
 	params := &query.Params{Limit: limit}
 	if filters != nil {
 		params.Filter = filters.Status

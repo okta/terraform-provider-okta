@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppOAuthRedirectURI() *schema.Resource {
+func resourceAppOAuthRedirectURI() *schema.Resource {
 	return &schema.Resource{
 		DeprecationMessage: "managing the redirect URI should be done directly on an oauth app resource",
 		// NOTE: These CRUD contexts are flexible for use with resources
@@ -125,13 +125,13 @@ func resourceAppOAuthRedirectURIDelete(kind string) func(ctx context.Context, d 
 		switch kind {
 		case "okta_app_oauth_redirect_uri":
 			if !utils.Contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
-				Logger(meta).Info(fmt.Sprintf("application with appID %s does not have redirect URI %s", appID, d.Id()))
+				logger(meta).Info(fmt.Sprintf("application with appID %s does not have redirect URI %s", appID, d.Id()))
 				return utils.ResourceFuncNoOp(ctx, d, meta)
 			}
 			app.Settings.OauthClient.RedirectUris = utils.Remove(app.Settings.OauthClient.RedirectUris, d.Id())
 		case "okta_app_oauth_post_logout_redirect_uri":
 			if !utils.Contains(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id()) {
-				Logger(meta).Info(fmt.Sprintf("application with appID %s does not have post logout redirect URI %s", appID, d.Id()))
+				logger(meta).Info(fmt.Sprintf("application with appID %s does not have post logout redirect URI %s", appID, d.Id()))
 				return utils.ResourceFuncNoOp(ctx, d, meta)
 			}
 			app.Settings.OauthClient.PostLogoutRedirectUris = utils.Remove(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id())
@@ -165,13 +165,13 @@ func appendRedirectURI(ctx context.Context, d *schema.ResourceData, meta interfa
 	switch uriType {
 	case "okta_app_oauth_redirect_uri":
 		if utils.Contains(app.Settings.OauthClient.RedirectUris, d.Id()) {
-			Logger(meta).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
+			logger(meta).Info(fmt.Sprintf("application with appID %s already has redirect URI %s", appID, d.Id()))
 			return nil
 		}
 		app.Settings.OauthClient.RedirectUris = append(app.Settings.OauthClient.RedirectUris, uri)
 	case "okta_app_oauth_post_logout_redirect_uri":
 		if utils.Contains(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id()) {
-			Logger(meta).Info(fmt.Sprintf("application with appID %s already has post logout redirect URI %s", appID, d.Id()))
+			logger(meta).Info(fmt.Sprintf("application with appID %s already has post logout redirect URI %s", appID, d.Id()))
 			return nil
 		}
 		app.Settings.OauthClient.PostLogoutRedirectUris = append(app.Settings.OauthClient.PostLogoutRedirectUris, d.Id())

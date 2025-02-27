@@ -22,7 +22,7 @@ var (
 	_ resource.ResourceWithImportState = &brandResource{}
 )
 
-func NewBrandResource() resource.Resource {
+func newBrandResource() resource.Resource {
 	return &brandResource{}
 }
 
@@ -142,7 +142,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	createdBrand, _, err := r.OktaSDKClientV3.CustomizationAPI.CreateBrand(ctx).CreateBrandRequest(createReqBody).Execute()
+	createdBrand, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.CreateBrand(ctx).CreateBrandRequest(createReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create brand",
@@ -160,7 +160,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	updatedBrand, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplaceBrand(ctx, createdBrand.GetId()).Brand(updateReqBody).Execute()
+	updatedBrand, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplaceBrand(ctx, createdBrand.GetId()).Brand(updateReqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update brand",
@@ -169,7 +169,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	brand, _, err := r.OktaSDKClientV3.CustomizationAPI.GetBrand(ctx, updatedBrand.GetId()).Execute()
+	brand, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetBrand(ctx, updatedBrand.GetId()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read brand",
@@ -199,7 +199,7 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	var err error
 
 	if state.BrandID.ValueString() == "default" {
-		brands, _, err := r.OktaSDKClientV3.CustomizationAPI.ListBrands(ctx).Execute()
+		brands, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ListBrands(ctx).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to get list brand",
@@ -214,7 +214,7 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 			}
 		}
 	} else {
-		brandWithEmbedded, _, err = r.OktaSDKClientV3.CustomizationAPI.GetBrand(ctx, state.ID.ValueString()).Execute()
+		brandWithEmbedded, _, err = r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetBrand(ctx, state.ID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to read brand",
@@ -242,7 +242,7 @@ func (r *brandResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		return
 	}
 
-	_, err := r.OktaSDKClientV3.CustomizationAPI.DeleteBrand(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.DeleteBrand(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete brand",
@@ -263,7 +263,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	var err error
 
 	if state.BrandID.ValueString() == "default" {
-		brands, _, err := r.OktaSDKClientV3.CustomizationAPI.ListBrands(ctx).Execute()
+		brands, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ListBrands(ctx).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to get list brand",
@@ -278,7 +278,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 			}
 		}
 	} else {
-		brandWithEmbedded, _, err = r.OktaSDKClientV3.CustomizationAPI.GetBrand(ctx, state.ID.ValueString()).Execute()
+		brandWithEmbedded, _, err = r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetBrand(ctx, state.ID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to read brand",
@@ -297,7 +297,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	updatedBrand, _, err := r.OktaSDKClientV3.CustomizationAPI.ReplaceBrand(ctx, state.ID.ValueString()).Brand(reqBody).Execute()
+	updatedBrand, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplaceBrand(ctx, state.ID.ValueString()).Brand(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update brand",
@@ -306,7 +306,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	brand, _, err := r.OktaSDKClientV3.CustomizationAPI.GetBrand(ctx, updatedBrand.GetId()).Execute()
+	brand, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetBrand(ctx, updatedBrand.GetId()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read brand",

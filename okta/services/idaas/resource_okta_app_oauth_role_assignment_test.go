@@ -17,7 +17,7 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.GetFixtures("basic.tf", t),
@@ -62,7 +62,7 @@ func TestAccResourceOktaAppOAuthRoleAssignment_custom(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.GetFixtures("custom.tf", t),

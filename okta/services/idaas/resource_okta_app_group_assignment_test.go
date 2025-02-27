@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -23,10 +22,10 @@ func TestAccResourceOktaAppGroupAssignment_crud(t *testing.T) {
 	// TF concurrency will cause this test to flap if the groups and assigned
 	// priorities aren't executed in proper order
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -121,10 +120,10 @@ func TestAccResourceOktaAppGroupAssignment_retain(t *testing.T) {
 	retainAssignmentDestroy := mgr.GetFixtures("retain_assignment_destroy.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: retainAssignment,
@@ -183,10 +182,10 @@ resource "okta_app_group_assignment" "test" {
 }
 `
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -210,7 +209,7 @@ func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc 
 
 		appID := rs.Primary.Attributes["app_id"]
 		groupID := rs.Primary.Attributes["group_id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {
@@ -239,7 +238,7 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 
 		appID := appRes.Primary.ID
 		groupID := groupRes.Primary.ID
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 		g, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 		if err != nil {

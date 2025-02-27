@@ -14,7 +14,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &defaultSigninPageDataSource{}
 )
 
-func NewDefaultSigninPageDataSource() datasource.DataSource {
+func newDefaultSigninPageDataSource() datasource.DataSource {
 	return &defaultSigninPageDataSource{}
 }
 
@@ -57,7 +57,7 @@ func (d *defaultSigninPageDataSource) Read(ctx context.Context, req datasource.R
 		return
 	}
 
-	defaultSigninPage, _, err := d.Config.OktaSDKClientV3.CustomizationAPI.GetDefaultSignInPage(ctx, data.BrandID.ValueString()).Execute()
+	defaultSigninPage, _, err := d.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetDefaultSignInPage(ctx, data.BrandID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving default signin page",

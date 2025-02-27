@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceLinkDefinition() *schema.Resource {
+func resourceLinkDefinition() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceLinkDefinitionCreate,
 		ReadContext:   resourceLinkDefinitionRead,
@@ -83,7 +83,7 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 			Type:        "USER",
 		},
 	}
-	_, _, err := GetOktaClientFromMetadata(meta).LinkedObject.AddLinkedObjectDefinition(ctx, linkedObject)
+	_, _, err := getOktaClientFromMetadata(meta).LinkedObject.AddLinkedObjectDefinition(ctx, linkedObject)
 	if err != nil {
 		return diag.Errorf("failed to create linked object: %v", err)
 	}
@@ -92,7 +92,7 @@ func resourceLinkDefinitionCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceLinkDefinitionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	linkedObject, resp, err := GetOktaClientFromMetadata(meta).LinkedObject.GetLinkedObjectDefinition(ctx, d.Id())
+	linkedObject, resp, err := getOktaClientFromMetadata(meta).LinkedObject.GetLinkedObjectDefinition(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get linked object: %v", err)
 	}
@@ -119,7 +119,7 @@ func resourceLinkDefinitionDelete(ctx context.Context, d *schema.ResourceData, m
 	oktaMutexKV.Lock(resources.OktaIDaaSLinkDefinition)
 	defer oktaMutexKV.Unlock(resources.OktaIDaaSLinkDefinition)
 
-	resp, err := GetOktaClientFromMetadata(meta).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
+	resp, err := getOktaClientFromMetadata(meta).LinkedObject.DeleteLinkedObjectDefinition(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to remove linked object: %v", err)
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceRateLimiting() *schema.Resource {
+func resourceRateLimiting() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceRateLimitingCreate,
 		ReadContext:   resourceRateLimitingRead,
@@ -44,11 +44,11 @@ This resource allows you to configure the client-based rate limit and rate limit
 }
 
 func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
+	_, _, err := getAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
 	if err != nil {
 		return diag.Errorf("failed to set client-based rate limiting: %v", err)
 	}
-	_, _, err = GetAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
+	_, _, err = getAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
 	if err != nil {
 		return diag.Errorf("failed to set rate limiting communications: %v", err)
 	}
@@ -57,13 +57,13 @@ func resourceRateLimitingCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	rl, _, err := GetAPISupplementFromMetadata(meta).GetClientBasedRateLimiting(ctx)
+	rl, _, err := getAPISupplementFromMetadata(meta).GetClientBasedRateLimiting(ctx)
 	if err != nil || rl.GranularModeSettings == nil {
 		return diag.Errorf("failed to get client-based rate limiting: %v", err)
 	}
 	_ = d.Set("login", rl.GranularModeSettings.LoginPage)
 	_ = d.Set("authorize", rl.GranularModeSettings.OAuth2Authorize)
-	comm, _, err := GetAPISupplementFromMetadata(meta).GetRateLimitingCommunications(ctx)
+	comm, _, err := getAPISupplementFromMetadata(meta).GetRateLimitingCommunications(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get rate limiting communications: %v", err)
 	}
@@ -73,11 +73,11 @@ func resourceRateLimitingRead(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceRateLimitingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
+	_, _, err := getAPISupplementFromMetadata(meta).SetClientBasedRateLimiting(ctx, buildRateLimiter(d))
 	if err != nil {
 		return diag.Errorf("failed to set client-based rate limiting: %v", err)
 	}
-	_, _, err = GetAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
+	_, _, err = getAPISupplementFromMetadata(meta).SetRateLimitingCommunications(ctx, buildRateLimitingCommunications(d))
 	if err != nil {
 		return diag.Errorf("failed to set rate limiting communications: %v", err)
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceGroupMemberships() *schema.Resource {
+func resourceGroupMemberships() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceGroupMembershipsCreate,
 		ReadContext:   resourceGroupMembershipsRead,
@@ -78,7 +78,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 		d.Set("group_id", groupId)
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	if len(users) == 0 {
 		d.SetId(groupId)
@@ -114,7 +114,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	groupId := d.Get("group_id").(string)
 	oldUsers := utils.ConvertInterfaceToStringSetNullable(d.Get("users"))
 	trackAllUsers := d.Get("track_all_users").(bool)
@@ -148,7 +148,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
 	users := utils.ConvertInterfaceToStringSetNullable(d.Get("users"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	err := removeGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
@@ -158,7 +158,7 @@ func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData,
 
 func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	oldUsers, newUsers := d.GetChange("users")
 

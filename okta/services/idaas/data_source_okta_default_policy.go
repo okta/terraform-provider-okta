@@ -11,7 +11,7 @@ import (
 )
 
 // data source to retrieve information on a Default Policy
-func DataSourceDefaultPolicy() *schema.Resource {
+func dataSourceDefaultPolicy() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDefaultPolicyRead,
 		Schema: map[string]*schema.Schema{

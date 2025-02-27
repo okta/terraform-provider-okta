@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceDomainVerification() *schema.Resource {
+func resourceDomainVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceDomainVerificationCreate,
 		ReadContext:   utils.ResourceFuncNoOp,
@@ -32,7 +32,7 @@ func ResourceDomainVerification() *schema.Resource {
 func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
-		domain, _, err := GetOktaClientFromMetadata(meta).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
+		domain, _, err := getOktaClientFromMetadata(meta).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
 		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}

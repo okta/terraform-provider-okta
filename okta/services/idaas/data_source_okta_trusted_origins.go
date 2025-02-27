@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceTrustedOrigins() *schema.Resource {
+func dataSourceTrustedOrigins() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceTrustedOriginsRead,
 		Schema: map[string]*schema.Schema{
@@ -66,7 +66,7 @@ func dataSourceTrustedOriginsRead(ctx context.Context, d *schema.ResourceData, m
 	if ok {
 		qp.Filter = filter.(string)
 	}
-	trustedOrigins, err := collectTrustedOrigins(ctx, GetOktaClientFromMetadata(meta), qp)
+	trustedOrigins, err := collectTrustedOrigins(ctx, getOktaClientFromMetadata(meta), qp)
 	if err != nil {
 		return diag.Errorf("failed to trusted origins: %v", err)
 	}

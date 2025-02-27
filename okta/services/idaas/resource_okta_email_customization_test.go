@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -27,10 +26,10 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceEmailCustomizationDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceEmailCustomizationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -128,7 +127,9 @@ func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
 		ID := rs.Primary.ID
 		brandID := rs.Primary.Attributes["brand_id"]
 		templateName := rs.Primary.Attributes["template_name"]
-		client := provider.SdkV3ClientForTest()
+		t := &testing.T{}
+		testClient := IDaaSClientForTest(t)
+		client := testClient.OktaSDKClientV3()
 
 		ctx := context.Background()
 

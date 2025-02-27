@@ -18,7 +18,7 @@ func TestAccResourceOktaPolicySignOn_defaultError(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkPolicyDestroy(resources.OktaIDaaSPolicySignOn),
 		Steps: []resource.TestStep{
 			{
@@ -41,7 +41,7 @@ func TestAccResourceOktaPolicySignOn_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicySignOn),
 		Steps: []resource.TestStep{
 			{

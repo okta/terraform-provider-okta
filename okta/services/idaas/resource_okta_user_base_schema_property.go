@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceUserBaseSchemaProperty() *schema.Resource {
+func resourceUserBaseSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserBaseSchemaCreate,
 		ReadContext:   resourceUserBaseSchemaRead,
@@ -78,11 +78,11 @@ func resourceUserBaseSchemaCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceUserBaseSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	typeSchemaID, err := GetUserTypeSchemaID(ctx, GetOktaClientFromMetadata(meta), d.Get("user_type").(string))
+	typeSchemaID, err := GetUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to get user base schema: %v", err)
 	}
-	us, _, err := GetOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
+	us, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 	if err != nil {
 		return diag.Errorf("failed to get user base schema: %v", err)
 	}
@@ -101,13 +101,13 @@ func updateUserBaseSubschema(ctx context.Context, d *schema.ResourceData, meta i
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	schemaID, err := GetUserTypeSchemaID(ctx, GetOktaClientFromMetadata(meta), d.Get("user_type").(string))
+	schemaID, err := GetUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to create user base schema: %v", err)
 	}
 	base := buildBaseUserSchema(d)
 	url := fmt.Sprintf("/api/v1/meta/schemas/user/%v", schemaID)
-	re := GetOktaClientFromMetadata(meta).GetRequestExecutor()
+	re := getOktaClientFromMetadata(meta).GetRequestExecutor()
 	req, err := re.WithAccept("application/json").WithContentType("application/json").
 		NewRequest("POST", url, base)
 	if err != nil {

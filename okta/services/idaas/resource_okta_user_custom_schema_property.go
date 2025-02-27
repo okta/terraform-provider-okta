@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceUserCustomSchemaProperty() *schema.Resource {
+func resourceUserCustomSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserSchemaCreateOrUpdate,
 		ReadContext:   resourceUserSchemaRead,
@@ -103,7 +103,7 @@ func resourceUserSchemaResourceV0() *schema.Resource {
 }
 
 func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("creating user custom schema property", "name", d.Get("index").(string))
+	logger(meta).Info("creating user custom schema property", "name", d.Get("index").(string))
 	err := validateUserSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -126,12 +126,12 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("reading user custom schema property", "name", d.Get("index").(string))
-	typeSchemaID, err := GetUserTypeSchemaID(ctx, GetOktaClientFromMetadata(meta), d.Get("user_type").(string))
+	logger(meta).Info("reading user custom schema property", "name", d.Get("index").(string))
+	typeSchemaID, err := GetUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), d.Get("user_type").(string))
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema property: %v", err)
 	}
-	s, _, err := GetOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
+	s, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 	if err != nil {
 		return diag.Errorf("failed to get user custom schema property: %v", err)
 	}
@@ -148,7 +148,7 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func alterCustomUserSchema(ctx context.Context, meta interface{}, userType, index string, schema *sdk.UserSchema, isDeleteOperation bool) (*sdk.UserSchemaAttribute, error) {
-	typeSchemaID, err := GetUserTypeSchemaID(ctx, GetOktaClientFromMetadata(meta), userType)
+	typeSchemaID, err := GetUserTypeSchemaID(ctx, getOktaClientFromMetadata(meta), userType)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func alterCustomUserSchema(ctx context.Context, meta interface{}, userType, inde
 		// juggle types on the fly.
 
 		retypeUserSchemaPropertyEnums(schema)
-		updated, resp, err := GetOktaClientFromMetadata(meta).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
+		updated, resp, err := getOktaClientFromMetadata(meta).UserSchema.UpdateUserProfile(ctx, typeSchemaID, *schema)
 		stringifyUserSchemaPropertyEnums(schema)
 		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
@@ -176,7 +176,7 @@ func alterCustomUserSchema(ctx context.Context, meta interface{}, userType, inde
 			}
 			return backoff.Permanent(err)
 		}
-		s, _, err := GetOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
+		s, _, err := getOktaClientFromMetadata(meta).UserSchema.GetUserSchema(ctx, typeSchemaID)
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to get user custom schema property: %v", err))
 		}
@@ -189,7 +189,7 @@ func alterCustomUserSchema(ctx context.Context, meta interface{}, userType, inde
 		return errors.New("failed to apply changes after several retries")
 	}, boc)
 	if err != nil {
-		Logger(meta).Error("failed to apply changes after several retries", err)
+		logger(meta).Error("failed to apply changes after several retries", err)
 	}
 	return schemaAttribute, err
 }

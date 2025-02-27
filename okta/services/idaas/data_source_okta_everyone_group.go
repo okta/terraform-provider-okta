@@ -8,7 +8,7 @@ import (
 )
 
 // data source to retrieve information on the Everyone Group
-func DataSourceEveryoneGroup() *schema.Resource {
+func dataSourceEveryoneGroup() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEveryoneGroupRead,
 		Schema: map[string]*schema.Schema{

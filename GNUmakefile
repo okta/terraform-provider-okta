@@ -3,7 +3,7 @@ UNIT_TESTS?=$$(go list ./... |grep -v 'vendor'|grep -v 'okta.services.idaas')
 ACC_TESTS=./okta/services/idaas
 TEST?=$$(go list ./... |grep -v 'vendor')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
-PKG_NAME=okta
+PKG_NAME=./okta/services/idaas
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 TFPROVIDERLINTX=tfproviderlintx
@@ -61,10 +61,10 @@ build: fmtcheck
 	go install
 
 clean:
-	go clean -cache -testcache ./...
+	go clean -cache -testcache
 
 clean-all:
-	go clean -cache -testcache -modcache ./...
+	go clean -cache -testcache -modcache
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
@@ -117,16 +117,12 @@ test-compile:
 
 lint:
 	@echo "==> Checking source code against linter tfproviderlint ..."
-	@$(TFPROVIDERLINT) \
-		-c 1 \
-		./$(PKG_NAME)
+	@$(TFPROVIDERLINT) -c 1 ./...
 
 lintx:
 	# NOTE tfproviderlintx is very opinionated, don't add it to qc target
 	@echo "==> Checking source code against linter tfproviderlintx ..."
-	@$(TFPROVIDERLINTX) \
-		-c 1 \
-		./$(PKG_NAME)
+	@$(TFPROVIDERLINTX) -c 1 ./...
 
 tools:
 	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0

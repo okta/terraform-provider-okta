@@ -9,7 +9,7 @@ import (
 
 func TestAccResourceOktaPolicyDeviceAssuranceMacOS_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{

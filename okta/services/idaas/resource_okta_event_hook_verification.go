@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceEventHookVerification() *schema.Resource {
+func resourceEventHookVerification() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEventHookVerificationCreate,
 		ReadContext:   utils.ResourceFuncNoOp,
@@ -27,7 +27,7 @@ func ResourceEventHookVerification() *schema.Resource {
 }
 
 func resourceEventHookVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaClientFromMetadata(meta).EventHook.VerifyEventHook(ctx, d.Get("event_hook_id").(string))
+	_, _, err := getOktaClientFromMetadata(meta).EventHook.VerifyEventHook(ctx, d.Get("event_hook_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to verify event hook sender: %v", err)
 	}

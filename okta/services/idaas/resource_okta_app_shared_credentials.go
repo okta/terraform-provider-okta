@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppSharedCredentials() *schema.Resource {
+func resourceAppSharedCredentials() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSharedCredentialsCreate,
 		ReadContext:   resourceAppSharedCredentialsRead,
@@ -89,7 +89,7 @@ func resourceAppSharedCredentialsCreate(ctx context.Context, d *schema.ResourceD
 	app := buildAppSharedCredentials(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := GetOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SWA shared credentials application: %v", err)
 	}
@@ -139,7 +139,7 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSharedCredentials(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

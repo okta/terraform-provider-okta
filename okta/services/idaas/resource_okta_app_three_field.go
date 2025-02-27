@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppThreeField() *schema.Resource {
+func resourceAppThreeField() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppThreeFieldCreate,
 		ReadContext:   resourceAppThreeFieldRead,
@@ -95,7 +95,7 @@ func ResourceAppThreeField() *schema.Resource {
 }
 
 func resourceAppThreeFieldCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppThreeField(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
@@ -149,7 +149,7 @@ func resourceAppThreeFieldUpdate(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppThreeField(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

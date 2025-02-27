@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceIdpOidc() *schema.Resource {
+func resourceIdpOidc() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIdpCreate,
 		ReadContext:   resourceIdpRead,
@@ -137,12 +137,12 @@ func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, meta interfa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	respIdp, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
+	respIdp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create OIDC identity provider: %v", err)
 	}
 	d.SetId(respIdp.Id)
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change OIDC identity provider's status: %v", err)
 	}
@@ -150,7 +150,7 @@ func resourceIdpCreate(ctx context.Context, d *schema.ResourceData, meta interfa
 }
 
 func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	idp, resp, err := GetOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
+	idp, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get OIDC identity provider: %v", err)
 	}
@@ -215,11 +215,11 @@ func resourceIdpUpdate(ctx context.Context, d *schema.ResourceData, meta interfa
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	_, _, err = getOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider: %v", err)
 	}
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to update OIDC identity provider's status: %v", err)
 	}

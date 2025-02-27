@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -22,10 +21,10 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          acctest.AccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-			CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -79,10 +78,10 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          acctest.AccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-			CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
 					Config: mgr.ConfigReplace(config),
@@ -133,10 +132,10 @@ resource "okta_resource_set" "test" {
 }`
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step1Config)),
@@ -199,7 +198,7 @@ func clickOpsAddResourceToResourceSet(resourceSet, resourceName string) resource
 		}
 		resourceSetID := resourceSetRS.Primary.Attributes["id"]
 
-		client := provider.SdkSupplementClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 		patch := sdk.PatchResourceSet{Additions: []string{resourceName}}
 		_, _, err := client.PatchResourceSet(context.Background(), resourceSetID, patch)
 		if err != nil {
@@ -211,7 +210,7 @@ func clickOpsAddResourceToResourceSet(resourceSet, resourceName string) resource
 }
 
 func doesResourceSetExist(id string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetResourceSet(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }

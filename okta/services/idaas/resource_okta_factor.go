@@ -15,7 +15,7 @@ import (
 // terraform state and activates it. Currently the API is in Beta and it only allows lifecycle interactions, and
 // no ability to configure them but the resource was built with future expansion in mind. Also keep in mind this
 // is an account level resource.
-func ResourceFactor() *schema.Resource {
+func resourceFactor() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceFactorPut,
 		ReadContext:   resourceFactorRead,
@@ -43,7 +43,7 @@ func ResourceFactor() *schema.Resource {
 }
 
 func resourceFactorPut(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	factor, _, err := GetAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Get("provider_id").(string))
+	factor, _, err := getAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Get("provider_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
@@ -59,7 +59,7 @@ func resourceFactorPut(ctx context.Context, d *schema.ResourceData, meta interfa
 }
 
 func resourceFactorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	factor, resp, err := GetAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Id())
+	factor, resp, err := getAPISupplementFromMetadata(meta).GetOrgFactor(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to find factor: %v", err)
 	}
@@ -76,7 +76,7 @@ func resourceFactorDelete(ctx context.Context, d *schema.ResourceData, meta inte
 	if !d.Get("active").(bool) {
 		return nil
 	}
-	_, resp, err := GetAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, d.Id())
+	_, resp, err := getAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, d.Id())
 	// http.StatusBadRequest means that factor can not be deactivated
 	if resp != nil && resp.StatusCode == http.StatusBadRequest {
 		return nil
@@ -91,9 +91,9 @@ func activateFactor(ctx context.Context, d *schema.ResourceData, meta interface{
 	var err error
 	id := d.Get("provider_id").(string)
 	if d.Get("active").(bool) {
-		_, _, err = GetAPISupplementFromMetadata(meta).ActivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(meta).ActivateOrgFactor(ctx, id)
 	} else {
-		_, _, err = GetAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, id)
+		_, _, err = getAPISupplementFromMetadata(meta).DeactivateOrgFactor(ctx, id)
 	}
 	return err
 }

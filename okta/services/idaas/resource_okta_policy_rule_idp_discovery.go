@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyRuleIdpDiscovery() *schema.Resource {
+func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyRuleIdpDiscoveryCreate,
 		ReadContext:   resourcePolicyRuleIdpDiscoveryRead,
@@ -90,9 +90,9 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	Logger(meta).Info("creating IdP discovery policy rule", "policy_id", policyID)
+	logger(meta).Info("creating IdP discovery policy rule", "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := GetAPISupplementFromMetadata(meta).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(meta).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to create IDP discovery policy rule: %v", err)
 	}
@@ -109,8 +109,8 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	Logger(meta).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	rule, resp, err := GetAPISupplementFromMetadata(meta).GetIdpDiscoveryRule(ctx, policyID, d.Id())
+	logger(meta).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetIdpDiscoveryRule(ctx, policyID, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get IDP discovery policy rule: %v", err)
 	}
@@ -152,9 +152,9 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	Logger(meta).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	logger(meta).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := GetAPISupplementFromMetadata(meta).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
+	rule, _, err := getAPISupplementFromMetadata(meta).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
 	if err != nil {
 		return diag.Errorf("failed to update IDP discovery policy rule: %v", err)
 	}
@@ -170,8 +170,8 @@ func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.Resourc
 	if policyID == "" {
 		return diag.Errorf("'policy_id' field should be set")
 	}
-	Logger(meta).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	_, err := GetOktaClientFromMetadata(meta).Policy.DeletePolicyRule(ctx, policyID, d.Id())
+	logger(meta).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
+	_, err := getOktaClientFromMetadata(meta).Policy.DeletePolicyRule(ctx, policyID, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete IDP discovery policy rule: %v", err)
 	}
@@ -187,10 +187,10 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
 	}
-	Logger(meta).Info("setting IdP discovery policy rule status", "id", d.Id(),
+	logger(meta).Info("setting IdP discovery policy rule status", "id", d.Id(),
 		"policy_id", policyID, "status", desiredStatus)
 	var err error
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if desiredStatus == StatusInactive {
 		_, err = client.Policy.DeactivatePolicyRule(ctx, policyID, d.Id())
 	} else {

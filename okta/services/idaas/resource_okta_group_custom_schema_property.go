@@ -15,7 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceGroupCustomSchemaProperty() *schema.Resource {
+func resourceGroupCustomSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceGroupSchemaCreateOrUpdate,
 		ReadContext:   resourceGroupSchemaRead,
@@ -73,7 +73,7 @@ Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 // `terraform apply` several times. This simple retry resolves that issue. (If) After this issue will be resolved,
 // this retry logic will be demolished.
 func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("creating group custom schema property", "name", d.Get("index").(string))
+	logger(meta).Info("creating group custom schema property", "name", d.Get("index").(string))
 	err := validateUserSchema(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -96,8 +96,8 @@ func resourceGroupSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceGroupSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("reading group custom schema property", "name", d.Get("index").(string))
-	s, _, err := GetOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
+	logger(meta).Info("reading group custom schema property", "name", d.Get("index").(string))
+	s, _, err := getOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get group custom schema property: %v", err)
 	}
@@ -124,7 +124,7 @@ func alterCustomGroupSchema(ctx context.Context, meta interface{}, index string,
 		// juggle types on the fly.
 
 		retypeGroupSchemaPropertyEnums(schema)
-		updated, resp, err := GetOktaClientFromMetadata(meta).GroupSchema.UpdateGroupSchema(ctx, *schema)
+		updated, resp, err := getOktaClientFromMetadata(meta).GroupSchema.UpdateGroupSchema(ctx, *schema)
 		stringifyGroupSchemaPropertyEnums(schema)
 		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
@@ -139,7 +139,7 @@ func alterCustomGroupSchema(ctx context.Context, meta interface{}, index string,
 			}
 			return backoff.Permanent(err)
 		}
-		s, _, err := GetOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
+		s, _, err := getOktaClientFromMetadata(meta).GroupSchema.GetGroupSchema(ctx)
 		if err != nil {
 			return backoff.Permanent(fmt.Errorf("failed to get group custom schema property: %v", err))
 		}
@@ -152,7 +152,7 @@ func alterCustomGroupSchema(ctx context.Context, meta interface{}, index string,
 		return errors.New("failed to apply changes after several retries")
 	}, boc)
 	if err != nil {
-		Logger(meta).Error("failed to apply changes after several retries", err)
+		logger(meta).Error("failed to apply changes after several retries", err)
 	}
 	return schemaAttribute, err
 }

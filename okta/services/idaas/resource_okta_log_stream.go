@@ -59,7 +59,7 @@ type logStreamSettingsModel struct {
 	Token           types.String `tfsdk:"token"`
 }
 
-func NewLogStreamResource() resource.Resource {
+func newLogStreamResource() resource.Resource {
 	return &logStreamResource{}
 }
 
@@ -191,7 +191,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	logStreamCreateRequest := r.OktaSDKClientV3.LogStreamAPI.CreateLogStream(ctx)
+	logStreamCreateRequest := r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.CreateLogStream(ctx)
 	logStreamCreateRequestBody := buildLogStreamCreateBody(ctx, &state)
 	if logStreamCreateRequestBody == nil {
 		resp.Diagnostics.AddError(
@@ -225,7 +225,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 	planStatus := state.Status.ValueString()
 	if planStatus != logStream.Status {
 		if planStatus == StatusActive {
-			_, _, err = r.OktaSDKClientV3.LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
+			_, _, err = r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to activate log stream",
@@ -236,7 +236,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 			logStream.Status = StatusActive
 		}
 		if planStatus == StatusInactive {
-			_, _, err = r.OktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
+			_, _, err = r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to deactivate log stream",
@@ -262,7 +262,7 @@ func (r *logStreamResource) Read(ctx context.Context, req resource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	logStreamResp, _, err := r.OktaSDKClientV3.LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
+	logStreamResp, _, err := r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.GetLogStream(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to get log stream",
@@ -288,7 +288,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	logStreamReplaceRequest := r.OktaSDKClientV3.LogStreamAPI.ReplaceLogStream(ctx, state.ID.ValueString())
+	logStreamReplaceRequest := r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.ReplaceLogStream(ctx, state.ID.ValueString())
 	logStreamReplaceBody := buildLogStreamReplaceBody(ctx, &state)
 	if logStreamReplaceBody == nil {
 		resp.Diagnostics.AddError(
@@ -322,7 +322,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 	planStatus := state.Status.ValueString()
 	if planStatus != logStream.Status {
 		if planStatus == StatusActive {
-			_, _, err = r.OktaSDKClientV3.LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
+			_, _, err = r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.ActivateLogStream(ctx, logStream.Id).Execute()
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to activate log stream",
@@ -333,7 +333,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 			logStream.Status = StatusActive
 		}
 		if planStatus == StatusInactive {
-			_, _, err = r.OktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
+			_, _, err = r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.DeactivateLogStream(ctx, logStream.Id).Execute()
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to deactivate log stream",
@@ -361,7 +361,7 @@ func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	_, _, err := r.OktaSDKClientV3.LogStreamAPI.DeactivateLogStream(ctx, data.ID.ValueString()).Execute()
+	_, _, err := r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.DeactivateLogStream(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to deactivate log stream",
@@ -369,7 +369,7 @@ func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
-	_, err = r.OktaSDKClientV3.LogStreamAPI.DeleteLogStream(ctx, data.ID.ValueString()).Execute()
+	_, err = r.OktaIDaaSClient.OktaSDKClientV3().LogStreamAPI.DeleteLogStream(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete log stream",

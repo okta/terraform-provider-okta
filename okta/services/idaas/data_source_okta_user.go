@@ -45,7 +45,7 @@ var userSearchSchema = map[string]*schema.Schema{
 	},
 }
 
-func DataSourceUser() *schema.Resource {
+func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUserRead,
 		Schema: buildUserDataSourceSchema(map[string]*schema.Schema{
@@ -94,20 +94,20 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 	if n, ok := d.GetOk("delay_read_seconds"); ok {
 		delay, err := strconv.Atoi(n.(string))
 		if err == nil {
-			Logger(meta).Info("delaying user read by ", delay, " seconds")
+			logger(meta).Info("delaying user read by ", delay, " seconds")
 			meta.(*config.Config).TimeOperations.Sleep(time.Duration(delay) * time.Second)
 		} else {
-			Logger(meta).Warn("user read delay value ", n, " is not an integer")
+			logger(meta).Warn("user read delay value ", n, " is not an integer")
 		}
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	var user *sdk.User
 	var err error
 	userID, ok := d.GetOk("user_id")
 	_, searchCriteriaOk := d.GetOk("search")
 	if ok {
-		Logger(meta).Info("reading user by ID", "id", userID.(string))
+		logger(meta).Info("reading user by ID", "id", userID.(string))
 		user, _, err = client.User.GetUser(ctx, userID.(string))
 		if err != nil {
 			return diag.Errorf("failed to get user: %v", err)
@@ -115,7 +115,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 	} else if searchCriteriaOk {
 		var users []*sdk.User
 		sc := getSearchCriteria(d)
-		Logger(meta).Info("reading user using search", "search", sc)
+		logger(meta).Info("reading user using search", "search", sc)
 		users, _, err = client.User.ListUsers(ctx, &query.Params{Search: sc, Limit: 1})
 		if err != nil {
 			return diag.Errorf("failed to list users: %v", err)

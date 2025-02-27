@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceIdpSaml() *schema.Resource {
+func resourceIdpSaml() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceIdpSamlCreate,
 		ReadContext:   resourceIdpSamlRead,
@@ -125,12 +125,12 @@ func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	respIdp, _, err := GetOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
+	respIdp, _, err := getOktaClientFromMetadata(meta).IdentityProvider.CreateIdentityProvider(ctx, idp)
 	if err != nil {
 		return diag.Errorf("failed to create SAML identity provider: %v", err)
 	}
 	d.SetId(respIdp.Id)
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to change SAML identity provider's status: %v", err)
 	}
@@ -138,7 +138,7 @@ func resourceIdpSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	idp, resp, err := GetOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
+	idp, resp, err := getOktaClientFromMetadata(meta).IdentityProvider.GetIdentityProvider(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get SAML identity provider: %v", err)
 	}
@@ -208,11 +208,11 @@ func resourceIdpSamlUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
+	_, _, err = getOktaClientFromMetadata(meta).IdentityProvider.UpdateIdentityProvider(ctx, d.Id(), idp)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider: %v", err)
 	}
-	err = setIdpStatus(ctx, d, GetOktaClientFromMetadata(meta), idp.Status)
+	err = setIdpStatus(ctx, d, getOktaClientFromMetadata(meta), idp.Status)
 	if err != nil {
 		return diag.Errorf("failed to update SAML identity provider's status: %v", err)
 	}

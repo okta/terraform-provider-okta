@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceAuthServer() *schema.Resource {
+func dataSourceAuthServer() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAuthServerRead,
 		Schema: map[string]*schema.Schema{
@@ -72,7 +72,7 @@ func DataSourceAuthServer() *schema.Resource {
 
 func dataSourceAuthServerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	name := d.Get("name").(string)
-	servers, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServers(ctx, &query.Params{Q: name, Limit: utils.DefaultPaginationLimit})
+	servers, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServers(ctx, &query.Params{Q: name, Limit: utils.DefaultPaginationLimit})
 	if err != nil {
 		return diag.Errorf("failed to find auth server '%s': %v", name, err)
 	}

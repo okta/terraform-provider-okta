@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceBrands() *schema.Resource {
+func dataSourceBrands() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceBrandsRead,
 		Schema:      brandsDataSourceSchema,
@@ -16,7 +16,7 @@ func DataSourceBrands() *schema.Resource {
 }
 
 func dataSourceBrandsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	brands, _, err := GetOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrands(ctx).Execute()
+	brands, _, err := getOktaV3ClientFromMetadata(meta).CustomizationAPI.ListBrands(ctx).Execute()
 	if err != nil {
 		return diag.Errorf("failed to list brands: %v", err)
 	}

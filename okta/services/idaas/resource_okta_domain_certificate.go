@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceDomainCertificate() *schema.Resource {
+func resourceDomainCertificate() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceDomainCertificateCreate,
 		ReadContext:   utils.ResourceFuncNoOp,
@@ -60,7 +60,7 @@ documentation for notes on how to generate a domain certificate with Let's Encry
 
 func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := buildDomainCertificate(d)
-	_, err := GetOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
+	_, err := getOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
 	if err != nil {
 		return diag.Errorf("failed to create domain's certificate: %v", err)
 	}
@@ -70,7 +70,7 @@ func resourceDomainCertificateCreate(ctx context.Context, d *schema.ResourceData
 
 func resourceDomainCertificateUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := buildDomainCertificate(d)
-	_, err := GetOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
+	_, err := getOktaClientFromMetadata(meta).Domain.CreateCertificate(ctx, d.Get("domain_id").(string), c)
 	if err != nil {
 		return diag.Errorf("failed to update domain's certificate: %v", err)
 	}

@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -24,10 +23,10 @@ func TestAccResourceOktaOrgConfiguration_crud(t *testing.T) {
 	companyNameUpdated := fmt.Sprintf("testAcc-%d Hashicorp CI Terraform Provider Okta Updated", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			// We get around the TF testing runtime not having good setup and
 			// teardown by using a step to get the name of the current org,
@@ -87,7 +86,8 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 		setting := sdk.OrgSetting{
 			CompanyName: *name + " ?",
 		}
-		provider.SdkV2ClientForTest().OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
+		client.OrgSetting.PartialUpdateOrgSetting(context.Background(), setting)
 		return nil
 	}
 }
@@ -96,7 +96,7 @@ func teardownResetCompanyName(name *string) resource.TestCheckFunc {
 // back at teardown.
 func setupGetOriginalCompanyName(companyName *string) resource.TestCheckFunc {
 	return func(t *terraform.State) error {
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		if settings, _, err := client.OrgSetting.GetOrgSettings(context.Background()); err == nil {
 			*companyName = settings.CompanyName
 		}

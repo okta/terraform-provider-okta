@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceAppGroupAssignments() *schema.Resource {
+func dataSourceAppGroupAssignments() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppGroupAssignmentsRead,
 		Schema: map[string]*schema.Schema{
@@ -32,7 +32,7 @@ func DataSourceAppGroupAssignments() *schema.Resource {
 }
 
 func dataSourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	id := d.Get("id").(string)
 
 	groupAssignments, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})

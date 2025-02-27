@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -17,10 +16,10 @@ func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSFactorTotp, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSFactorTotp, doesFactorTOTPExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSFactorTotp, doesFactorTOTPExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -38,7 +37,7 @@ func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
 }
 
 func doesFactorTOTPExist(id string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }

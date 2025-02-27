@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceOrgSupport() *schema.Resource {
+func resourceOrgSupport() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceOrgSupportCreate,
 		ReadContext:   resourceOrgSupportRead,
@@ -40,14 +40,14 @@ access will be granted for eight hours. Removing this resource will revoke Okta 
 }
 
 func resourceOrgSupportCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	support, _, err := GetOktaClientFromMetadata(meta).OrgSetting.GrantOktaSupport(ctx)
+	support, _, err := getOktaClientFromMetadata(meta).OrgSetting.GrantOktaSupport(ctx)
 	if err != nil {
 		return diag.Errorf("failed to grant org support: %v", err)
 	}
 	eb, ok := d.GetOk("extend_by")
 	if ok && eb.(int) > 0 {
 		for i := 0; i < eb.(int); i++ {
-			support, _, err = GetOktaClientFromMetadata(meta).OrgSetting.ExtendOktaSupport(ctx)
+			support, _, err = getOktaClientFromMetadata(meta).OrgSetting.ExtendOktaSupport(ctx)
 			if err != nil {
 				return diag.Errorf("failed to extend org support: %v", err)
 			}
@@ -60,7 +60,7 @@ func resourceOrgSupportCreate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceOrgSupportRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	support, _, err := GetOktaClientFromMetadata(meta).OrgSetting.GetOrgOktaSupportSettings(ctx)
+	support, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgOktaSupportSettings(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get org support settings: %v", err)
 	}
@@ -72,7 +72,7 @@ func resourceOrgSupportRead(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceOrgSupportDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetOktaClientFromMetadata(meta).OrgSetting.RevokeOktaSupport(ctx)
+	_, _, err := getOktaClientFromMetadata(meta).OrgSetting.RevokeOktaSupport(ctx)
 	if err != nil {
 		return diag.Errorf("failed to revoke okta support: %v", err)
 	}

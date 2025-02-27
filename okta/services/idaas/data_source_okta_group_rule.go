@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceGroupRule() *schema.Resource {
+func dataSourceGroupRule() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGroupRuleRead,
 		Schema: map[string]*schema.Schema{
@@ -57,7 +57,7 @@ func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta i
 	var rule *sdk.GroupRule
 	ruleID, idOk := d.GetOk("id")
 	if idOk {
-		respRule, _, err := GetOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, ruleID.(string), nil)
+		respRule, _, err := getOktaClientFromMetadata(meta).Group.GetGroupRule(ctx, ruleID.(string), nil)
 		if err != nil {
 			return diag.Errorf("failed get group rule by ID: %v", err)
 		}
@@ -67,7 +67,7 @@ func dataSourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta i
 		if nameOk {
 			name := ruleName.(string)
 			searchParams := &query.Params{Search: name, Limit: 1}
-			rules, _, err := GetOktaClientFromMetadata(meta).Group.ListGroupRules(ctx, searchParams)
+			rules, _, err := getOktaClientFromMetadata(meta).Group.ListGroupRules(ctx, searchParams)
 			switch {
 			case err != nil:
 				return diag.Errorf("failed to get group rule by name: %v", err)

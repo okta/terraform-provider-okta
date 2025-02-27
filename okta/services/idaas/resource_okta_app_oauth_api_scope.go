@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppOAuthAPIScope() *schema.Resource {
+func resourceAppOAuthAPIScope() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthAPIScopeCreate,
 		ReadContext:   resourceAppOAuthAPIScopeRead,
@@ -22,7 +22,7 @@ This resource allows you to grant or revoke API scopes for OAuth2 applications w
 Note: you have to create an application before using this resource.`,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				scopes, _, err := GetOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Id(), nil)
+				scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Id(), nil)
 				if err != nil {
 					return nil, err
 				}
@@ -76,7 +76,7 @@ func resourceAppOAuthAPIScopeCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	scopes, _, err := GetOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+	scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
 	}
@@ -95,7 +95,7 @@ func resourceAppOAuthAPIScopeRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceAppOAuthAPIScopeUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	scopes, _, err := GetOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+	scopes, _, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err != nil {
 		return diag.Errorf("failed to get application scope consent grants: %v", err)
 	}
@@ -163,7 +163,7 @@ func getOAuthApiScopeList(scopeIds []string, issuer string) []*sdk.OAuth2ScopeCo
 // Fetches current granted application scopes and returns a map with names and IDs.
 func getOAuthApiScopeIdMap(ctx context.Context, d *schema.ResourceData, meta interface{}) (map[string]string, error) {
 	result := make(map[string]string)
-	currentScopes, resp, err := GetOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
+	currentScopes, resp, err := getOktaClientFromMetadata(meta).Application.ListScopeConsentGrants(ctx, d.Get("app_id").(string), nil)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get application scope consent grants: %v", err)
 	}
@@ -187,7 +187,7 @@ func setOAuthApiScopes(d *schema.ResourceData, to []*sdk.OAuth2ScopeConsentGrant
 // Grant a list of scopes to an OAuth application. For convenience this function takes a list of OAuth2ScopeConsentGrant structs.
 func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, meta interface{}, scopeGrants []*sdk.OAuth2ScopeConsentGrant) error {
 	for _, scopeGrant := range scopeGrants {
-		_, _, err := GetOktaClientFromMetadata(meta).Application.GrantConsentToScope(ctx, d.Get("app_id").(string), *scopeGrant)
+		_, _, err := getOktaClientFromMetadata(meta).Application.GrantConsentToScope(ctx, d.Get("app_id").(string), *scopeGrant)
 		if err != nil {
 			return fmt.Errorf("failed to grant application api scope: %v", err)
 		}
@@ -198,7 +198,7 @@ func grantOAuthApiScopes(ctx context.Context, d *schema.ResourceData, meta inter
 // Revoke a list of scopes from an OAuth application. The scope ID is needed for a revoke.
 func revokeOAuthApiScope(ctx context.Context, d *schema.ResourceData, meta interface{}, ids []string) error {
 	for _, id := range ids {
-		resp, err := GetOktaClientFromMetadata(meta).Application.RevokeScopeConsentGrant(ctx, d.Get("app_id").(string), id)
+		resp, err := getOktaClientFromMetadata(meta).Application.RevokeScopeConsentGrant(ctx, d.Get("app_id").(string), id)
 		if err := utils.SuppressErrorOn404(resp, err); err != nil {
 			return fmt.Errorf("failed to revoke application api scope: %v", err)
 		}

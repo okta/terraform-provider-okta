@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
@@ -19,10 +18,10 @@ func TestAccResourceOktaAdminRoleTargets_crud(t *testing.T) {
 	resourceAppName := fmt.Sprintf("%s.test_app", resources.OktaIDaaSAdminRoleTargets)
 	resourceGroupName := fmt.Sprintf("%s.test_group", resources.OktaIDaaSAdminRoleTargets)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpOidc, doesTargetExists),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpOidc, doesTargetExists),
 		Steps: []resource.TestStep{
 			{
 				Config: basic,
@@ -59,7 +58,7 @@ func TestAccResourceOktaAdminRoleTargets_crud(t *testing.T) {
 }
 
 func doesTargetExists(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	parts := strings.Split(id, "/")
 	roles, _, err := client.User.ListAssignedRolesForUser(context.Background(), parts[0], nil)
 	if err != nil {

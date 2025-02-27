@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceGroups() *schema.Resource {
+func dataSourceGroups() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGroupsRead,
 		Schema: map[string]*schema.Schema{
@@ -84,7 +84,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 	if ok {
 		qp.Search = search.(string)
 	}
-	groups, err := listGroups(ctx, GetOktaClientFromMetadata(meta), qp)
+	groups, err := listGroups(ctx, getOktaClientFromMetadata(meta), qp)
 	if err != nil {
 		return diag.Errorf("failed to list groups: %v", err)
 	}

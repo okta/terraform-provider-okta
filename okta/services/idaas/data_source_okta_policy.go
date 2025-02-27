@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourcePolicy() *schema.Resource {
+func dataSourcePolicy() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourcePolicyRead,
 		Schema: map[string]*schema.Schema{

@@ -191,12 +191,12 @@ func TestAppUpdateStatus(t *testing.T) {
 
 			var m interface{}
 			c := config.NewConfig(d)
-			err = c.LoadClients()
+			err = c.LoadAPIClient()
 			require.NoError(t, err)
 			m = c
 
 			defer httpmock.DeactivateAndReset()
-			httpmock.ActivateNonDefault(c.OktaSDKClientV2.GetConfig().HttpClient)
+			httpmock.ActivateNonDefault(c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient)
 			httpmock.RegisterResponder("POST", activateURI, httpmock.NewStringResponder(200, ""))
 			httpmock.RegisterResponder("POST", deactivateURI, httpmock.NewStringResponder(200, ""))
 
@@ -352,10 +352,10 @@ resource %q "test" {
 }`
 
 			acctest.OktaResourceTest(t, resource.TestCase{
-				PreCheck:          acctest.AccPreCheck(t),
-				ErrorCheck:        testAccErrorChecks(t),
-				ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-				CheckDestroy:      checkResourceDestroy(tc.resource, createDoesAppExist(tc.appPrototype)),
+				PreCheck:                 acctest.AccPreCheck(t),
+				ErrorCheck:               testAccErrorChecks(t),
+				ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+				CheckDestroy:             checkResourceDestroy(tc.resource, createDoesAppExist(tc.appPrototype)),
 				Steps: []resource.TestStep{
 					{
 						// 1 - create an active app

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicyPasswordRule() *schema.Resource {
+func resourcePolicyPasswordRule() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyPasswordRuleCreate,
 		ReadContext:   resourcePolicyPasswordRuleRead,

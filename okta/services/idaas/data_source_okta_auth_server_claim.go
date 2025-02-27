@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func DataSourceAuthServerClaim() *schema.Resource {
+func dataSourceAuthServerClaim() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAuthServerClaimRead,
 		Schema: map[string]*schema.Schema{
@@ -78,7 +78,7 @@ func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, 
 		claim *sdk.OAuth2Claim
 	)
 	if id != "" {
-		claim, _, err = GetOktaClientFromMetadata(meta).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), id)
+		claim, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.GetOAuth2Claim(ctx, d.Get("auth_server_id").(string), id)
 	} else {
 		claim, err = getAuthServerClaimByName(ctx, meta, d.Get("auth_server_id").(string), name)
 	}
@@ -99,7 +99,7 @@ func dataSourceAuthServerClaimRead(ctx context.Context, d *schema.ResourceData, 
 }
 
 func getAuthServerClaimByName(ctx context.Context, meta interface{}, authServerID, name string) (*sdk.OAuth2Claim, error) {
-	claims, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.ListOAuth2Claims(ctx, authServerID)
+	claims, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListOAuth2Claims(ctx, authServerID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list authorization server claims: %v", err)
 	}

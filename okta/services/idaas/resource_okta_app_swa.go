@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppSwa() *schema.Resource {
+func resourceAppSwa() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSwaCreate,
 		ReadContext:   resourceAppSwaRead,
@@ -77,7 +77,7 @@ other arguments that changed will be applied.`,
 }
 
 func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSwa(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
@@ -128,7 +128,7 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	app := buildAppSwa(d)
 	_, _, err = client.Application.UpdateApplication(ctx, d.Id(), app)
 	if err != nil {

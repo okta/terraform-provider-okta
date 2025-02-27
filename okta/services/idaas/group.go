@@ -11,7 +11,7 @@ import (
 
 func listGroupUsers(ctx context.Context, m interface{}, id string) ([]*sdk.User, error) {
 	var resUsers []*sdk.User
-	users, resp, err := GetOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, &query.Params{Limit: utils.DefaultPaginationLimit})
+	users, resp, err := getOktaClientFromMetadata(m).Group.ListGroupUsers(ctx, id, &query.Params{Limit: utils.DefaultPaginationLimit})
 	if err != nil {
 		return nil, err
 	}

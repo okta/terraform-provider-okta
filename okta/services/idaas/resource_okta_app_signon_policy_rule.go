@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppSignOnPolicyRule() *schema.Resource {
+func resourceAppSignOnPolicyRule() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppSignOnPolicyRuleCreate,
 		ReadContext:   resourceAppSignOnPolicyRuleRead,
@@ -211,14 +211,14 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 
 	}
 
-	rule, _, err := GetAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
 	d.SetId(rule.Id)
 	if status, ok := d.GetOk("status"); ok {
 		if status.(string) == StatusInactive {
-			_, err = GetAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 			if err != nil {
 				return diag.Errorf("failed to deactivate app sign on policy rule: %v", err)
 			}
@@ -232,7 +232,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
 
-	rule, resp, err := GetAPISupplementFromMetadata(meta).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	rule, resp, err := getAPISupplementFromMetadata(meta).GetAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get app sign on policy rule: %v", err)
 	}
@@ -314,16 +314,16 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		// Conditions can't be set on the default/system rule
 		rule.Conditions = nil
 	}
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
 	if err != nil {
 		return diag.Errorf("failed to update app sign on policy rule: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == StatusActive {
-			_, err = GetAPISupplementFromMetadata(meta).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).ActivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		} else {
-			_, err = GetAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+			_, err = getAPISupplementFromMetadata(meta).DeactivateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change app sign on policy rule status: %v", err)
@@ -341,7 +341,7 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 		// You cannot delete a default rule in a policy
 		return nil
 	}
-	_, err := GetAPISupplementFromMetadata(meta).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
+	_, err := getAPISupplementFromMetadata(meta).DeleteAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to delete app sign-on policy rule: %v", err)
 	}

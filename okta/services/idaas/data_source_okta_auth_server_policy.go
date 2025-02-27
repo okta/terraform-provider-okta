@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func DataSourceAuthServerPolicy() *schema.Resource {
+func dataSourceAuthServerPolicy() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAuthServerPolicyRead,
 		Schema: map[string]*schema.Schema{
@@ -44,7 +44,7 @@ func DataSourceAuthServerPolicy() *schema.Resource {
 }
 
 func dataSourceAuthServerPolicyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	policies, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServerPolicies(ctx, d.Get("auth_server_id").(string))
+	policies, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServerPolicies(ctx, d.Get("auth_server_id").(string))
 	if err != nil {
 		return diag.Errorf("failed to list auth server policies: %v", err)
 	}

@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceEmailSender() *schema.Resource {
+func resourceEmailSender() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceEmailSenderCreate,
 		ReadContext:   resourceEmailSenderRead,
@@ -71,7 +71,7 @@ func ResourceEmailSender() *schema.Resource {
 }
 
 func resourceEmailSenderCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	sender, _, err := GetAPISupplementFromMetadata(meta).CreateEmailSender(ctx, buildEmailSender(d))
+	sender, _, err := getAPISupplementFromMetadata(meta).CreateEmailSender(ctx, buildEmailSender(d))
 	if err != nil {
 		return diag.Errorf("failed to create custom email sender: %v", err)
 	}
@@ -80,7 +80,7 @@ func resourceEmailSenderCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEmailSenderRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	sender, resp, err := GetAPISupplementFromMetadata(meta).GetEmailSender(ctx, d.Id())
+	sender, resp, err := getAPISupplementFromMetadata(meta).GetEmailSender(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get custom email sender: %v", err)
 	}
@@ -108,7 +108,7 @@ func resourceEmailSenderRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEmailSenderUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, _, err := GetAPISupplementFromMetadata(meta).UpdateEmailSender(ctx, buildEmailSender(d))
+	_, _, err := getAPISupplementFromMetadata(meta).UpdateEmailSender(ctx, buildEmailSender(d))
 	if err != nil {
 		return diag.Errorf("failed to update custom email sender: %v", err)
 	}
@@ -116,7 +116,7 @@ func resourceEmailSenderUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEmailSenderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	sender, resp, err := GetAPISupplementFromMetadata(meta).GetEmailSender(ctx, d.Id())
+	sender, resp, err := getAPISupplementFromMetadata(meta).GetEmailSender(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get custom email sender: %v", err)
 	}
@@ -124,9 +124,9 @@ func resourceEmailSenderDelete(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 	if sender.Status == "VERIFIED" {
-		resp, err = GetAPISupplementFromMetadata(meta).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
+		resp, err = getAPISupplementFromMetadata(meta).DisableVerifiedEmailSender(ctx, sdk.DisableActiveEmailSender{ActiveID: sender.ID})
 	} else {
-		resp, err = GetAPISupplementFromMetadata(meta).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
+		resp, err = getAPISupplementFromMetadata(meta).DisableUnverifiedEmailSender(ctx, sdk.DisableInactiveEmailSender{
 			PendingID: sender.ID,
 		})
 	}

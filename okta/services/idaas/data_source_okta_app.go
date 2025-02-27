@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func DataSourceApp() *schema.Resource {
+func dataSourceApp() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAppRead,
 		Schema: utils.BuildSchema(skipUsersAndGroupsSchema, map[string]*schema.Schema{
@@ -86,13 +86,13 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	}
 	var app *sdk.Application
 	if filters.ID != "" {
-		respApp, _, err := GetOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
+		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewApplication(), nil)
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
 		app = respApp.(*sdk.Application)
 	} else {
-		appList, err := ListApps(ctx, GetOktaClientFromMetadata(meta), filters, 1)
+		appList, err := ListAppsV2(ctx, getOktaClientFromMetadata(meta), filters, 1)
 		if err != nil {
 			return diag.Errorf("failed to list apps: %v", err)
 		}
@@ -114,7 +114,7 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, meta interfa
 			}
 		} else {
 			if len(appList) > 1 {
-				Logger(meta).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
+				logger(meta).Info("found multiple applications with the criteria supplied, using the first one, sorted by creation date")
 			}
 			app = appList[0]
 		}

@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -24,10 +23,10 @@ func TestAccResourceOktaAppGroupAssignments_crud(t *testing.T) {
 	group3 := fmt.Sprintf("%s.test3", resources.OktaIDaaSGroup)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -150,10 +149,10 @@ resource "okta_app_group_assignments" "test" {
 }`
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				// Vanilla step
@@ -250,7 +249,7 @@ func ensureAppGroupAssignmentsExist(resourceName string, groupsExpected ...strin
 		}
 
 		appID := rs.Primary.Attributes["app_id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 		// Get all the IDs of groups we expect to be assigned
 		expectedGroupIDs := map[string]bool{}
@@ -303,7 +302,7 @@ func clickOpsAssignGroupToApp(appResourceName, groupResourceName string) resourc
 		appID := appRS.Primary.Attributes["id"]
 		groupRS := s.RootModule().Resources[groupResourceName]
 		groupID := groupRS.Primary.Attributes["id"]
-		client := provider.SdkV2ClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 		_, _, err := client.Application.CreateApplicationGroupAssignment(context.Background(), appID, groupID, sdk.ApplicationGroupAssignment{})
 		if err != nil {
 			return fmt.Errorf("API: unable to assign app %q to group %q, err: %+v", appID, groupID, err)
@@ -328,7 +327,7 @@ func clickOpsCheckIfGroupIsAssignedToApp(appResourceName string, groups ...strin
 			appID := appRS.Primary.Attributes["id"]
 			groupRS := s.RootModule().Resources[groupResourceName]
 			groupID := groupRS.Primary.Attributes["id"]
-			client := provider.SdkV2ClientForTest()
+			client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 			_, _, err := client.Application.GetApplicationGroupAssignment(context.Background(), appID, groupID, nil)
 			if err != nil {
 				return fmt.Errorf("API: app %q is not assigned to group %s", appID, groupID)
@@ -352,10 +351,10 @@ func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T)
 	group3 := fmt.Sprintf("%s.test3", resources.OktaIDaaSGroup)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkUserDestroy,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

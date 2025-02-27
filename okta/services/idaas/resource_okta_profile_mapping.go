@@ -18,7 +18,7 @@ const (
 	dontPush = "DONT_PUSH"
 )
 
-func ResourceProfileMapping() *schema.Resource {
+func resourceProfileMapping() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceProfileMappingCreate,
 		ReadContext:   resourceProfileMappingRead,
@@ -113,7 +113,7 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 	if d.Get("delete_when_absent").(bool) {
 		newMapping.Properties = mergeProperties(newMapping.Properties, getDeleteProperties(d, mapping.Properties))
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
+	_, _, err = getOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
 	if err != nil {
 		return diag.Errorf("failed to create profile mapping: %v", err)
 	}
@@ -125,7 +125,7 @@ func resourceProfileMappingCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceProfileMappingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	mapping, resp, err := GetOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
+	mapping, resp, err := getOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -154,7 +154,7 @@ func resourceProfileMappingRead(ctx context.Context, d *schema.ResourceData, met
 func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	sourceID := d.Get("source_id").(string)
 	targetID := d.Get("target_id").(string)
-	mapping, resp, err := GetOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
+	mapping, resp, err := getOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -165,7 +165,7 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 	if d.Get("delete_when_absent").(bool) {
 		newMapping.Properties = mergeProperties(newMapping.Properties, getDeleteProperties(d, mapping.Properties))
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
+	_, _, err = getOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, newMapping)
 	if err != nil {
 		return diag.Errorf("failed to update profile mapping: %v", err)
 	}
@@ -179,7 +179,7 @@ func resourceProfileMappingUpdate(ctx context.Context, d *schema.ResourceData, m
 func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	sourceID := d.Get("source_id").(string)
 	targetID := d.Get("target_id").(string)
-	mapping, resp, err := GetOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
+	mapping, resp, err := getOktaClientFromMetadata(meta).ProfileMapping.GetProfileMapping(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get profile mapping: %v", err)
 	}
@@ -192,7 +192,7 @@ func resourceProfileMappingDelete(ctx context.Context, d *schema.ResourceData, m
 		}
 		mapping.Properties[k] = nil
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, *mapping)
+	_, _, err = getOktaClientFromMetadata(meta).ProfileMapping.UpdateProfileMapping(ctx, mapping.Id, *mapping)
 	if err != nil {
 		return diag.Errorf("failed to delete profile mapping: %v", err)
 	}
@@ -257,7 +257,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, meta interface{},
 	}
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
-		Logger(meta).Warn("setting alway_apply is disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("setting alway_apply is disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -270,7 +270,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, meta interface{},
 	if mapping.Target.Type == "appuser" {
 		appID = mapping.Target.Id
 	}
-	appUserTypes, _, err := GetAPISupplementFromMetadata(meta).GetAppUserTypes(ctx, appID)
+	appUserTypes, _, err := getAPISupplementFromMetadata(meta).GetAppUserTypes(ctx, appID)
 	if err != nil {
 		return fmt.Errorf("failed to list app user types: %v", err)
 	}
@@ -284,7 +284,7 @@ func applyMapping(ctx context.Context, d *schema.ResourceData, meta interface{},
 		target = appUserTypes[0].Id
 	}
 	// FIXME uses internal api
-	_, err = GetAPISupplementFromMetadata(meta).ApplyMappings(ctx, source, target)
+	_, err = getAPISupplementFromMetadata(meta).ApplyMappings(ctx, source, target)
 	if err != nil {
 		return fmt.Errorf("failed to apply mappings for source '%s' and target '%s': %v", source, target, err)
 	}
@@ -302,7 +302,7 @@ func getProfileMappingBySourceID(ctx context.Context, sourceId, targetId string,
 		qp.TargetId = targetId
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	mappings, resp, err := client.ProfileMapping.ListProfileMappings(ctx, &qp)
 	if err != nil {
 		return nil, resp, err

@@ -2,25 +2,18 @@ package fwprovider
 
 import (
 	"context"
-	"fmt"
-	"os"
-	"strconv"
-	"strings"
 
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
@@ -40,8 +33,9 @@ func NewFrameworkProvider(version string) provider.Provider {
 }
 
 type FrameworkProvider struct {
-	config.Config
-	Version string
+	Config            config.Config
+	PluginSDKProvider *schema_sdk.Provider
+	Version           string
 }
 
 type FrameworkProviderData struct {
@@ -211,49 +205,11 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 		return
 	}
 
-	err := handleFrameworkDefaults(ctx, &data)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to load default value to provider", err.Error())
-		return
-	}
-
-	if p.Logger == nil {
-		logLevel := hclog.LevelFromString(os.Getenv("TF_LOG"))
-		p.SetupLogger(logLevel)
-	}
-	p.OrgName = data.OrgName.ValueString()
-	p.AccessToken = data.AccessToken.ValueString()
-	p.ApiToken = data.APIToken.ValueString()
-	p.ClientID = data.ClientID.ValueString()
-	p.PrivateKey = data.PrivateKey.ValueString()
-	p.PrivateKeyId = data.PrivateKeyID.ValueString()
-	p.Domain = data.BaseURL.ValueString()
-	p.MaxAPICapacity = int(data.MaxWaitSeconds.ValueInt64())
-	p.Backoff = data.Backoff.ValueBool()
-	p.MinWait = int(data.MinWaitSeconds.ValueInt64())
-	p.MaxWait = int(data.MaxRetries.ValueInt64())
-	p.RetryCount = int(data.MaxRetries.ValueInt64())
-	p.Parallelism = int(data.Parallelism.ValueInt64())
-	p.LogLevel = int(data.LogLevel.ValueInt64())
-	p.RequestTimeout = int(data.RequestTimeout.ValueInt64())
-	for _, val := range data.Scopes.Elements() {
-		var v types.String
-		tfsdk.ValueAs(ctx, val, &v)
-		p.Scopes = append(p.Scopes, v.ValueString())
-	}
-
-	if !data.HTTPProxy.IsNull() {
-		p.HttpProxy = data.HTTPProxy.ValueString()
-	}
-
-	if err := p.LoadClients(); err != nil {
-		resp.Diagnostics.AddError("failed to load default value to provider", err.Error())
-		return
-	}
-	p.SetTimeOperations(config.NewProductionTimeOperations())
-
-	resp.DataSourceData = &p.Config
-	resp.ResourceData = &p.Config
+	// reuse config from sdk provider
+	meta := p.PluginSDKProvider.Meta().(*config.Config)
+	resp.EphemeralResourceData = meta
+	resp.DataSourceData = meta
+	resp.ResourceData = meta
 }
 
 // DataSources defines the data sources implemented in the provider.
@@ -264,86 +220,4 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
 	return idaas.FWProviderResources()
-}
-
-func handleFrameworkDefaults(ctx context.Context, data *FrameworkProviderData) error {
-	var err error
-	if data.OrgName.IsNull() && os.Getenv("OKTA_ORG_NAME") != "" {
-		data.OrgName = types.StringValue(os.Getenv("OKTA_ORG_NAME"))
-	}
-	if data.AccessToken.IsNull() && os.Getenv("OKTA_ACCESS_TOKEN") != "" {
-		data.AccessToken = types.StringValue(os.Getenv("OKTA_ACCESS_TOKEN"))
-	}
-	if data.APIToken.IsNull() && os.Getenv("OKTA_API_TOKEN") != "" {
-		data.APIToken = types.StringValue(os.Getenv("OKTA_API_TOKEN"))
-	}
-	if data.ClientID.IsNull() && os.Getenv("OKTA_API_CLIENT_ID") != "" {
-		data.ClientID = types.StringValue(os.Getenv("OKTA_API_CLIENT_ID"))
-	}
-	if data.Scopes.IsNull() && os.Getenv("OKTA_API_SCOPES") != "" {
-		v := os.Getenv("OKTA_API_SCOPES")
-		scopes := strings.Split(v, ",")
-		if len(scopes) > 0 {
-			scopesTF := make([]attr.Value, 0)
-			for _, scope := range scopes {
-				scopesTF = append(scopesTF, types.StringValue(scope))
-			}
-			data.Scopes, _ = types.SetValue(types.StringType, scopesTF)
-		}
-	}
-	if data.PrivateKey.IsNull() && os.Getenv("OKTA_API_PRIVATE_KEY") != "" {
-		data.PrivateKey = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY"))
-	}
-	if data.PrivateKeyID.IsNull() && os.Getenv("OKTA_API_PRIVATE_KEY_ID") != "" {
-		data.PrivateKeyID = types.StringValue(os.Getenv("OKTA_API_PRIVATE_KEY_ID"))
-	}
-	if data.BaseURL.IsNull() {
-		if os.Getenv("OKTA_BASE_URL") != "" {
-			data.BaseURL = types.StringValue(os.Getenv("OKTA_BASE_URL"))
-		}
-	}
-	if data.HTTPProxy.IsNull() && os.Getenv("OKTA_HTTP_PROXY") != "" {
-		data.HTTPProxy = types.StringValue(os.Getenv("OKTA_HTTP_PROXY"))
-	}
-	if data.MaxAPICapacity.IsNull() {
-		if os.Getenv("MAX_API_CAPACITY") != "" {
-			mac, err := strconv.ParseInt(os.Getenv("MAX_API_CAPACITY"), 10, 64)
-			if err != nil {
-				return err
-			}
-			data.MaxAPICapacity = types.Int64Value(mac)
-		} else {
-			data.MaxAPICapacity = types.Int64Value(100)
-		}
-	}
-	data.Backoff = types.BoolValue(true)
-	data.MinWaitSeconds = types.Int64Value(30)
-	data.MaxWaitSeconds = types.Int64Value(300)
-	data.MaxRetries = types.Int64Value(5)
-	data.Parallelism = types.Int64Value(1)
-	data.LogLevel = types.Int64Value(int64(hclog.Error))
-	data.RequestTimeout = types.Int64Value(0)
-
-	if os.Getenv("TF_LOG") != "" {
-		data.LogLevel = types.Int64Value(int64(hclog.LevelFromString(os.Getenv("TF_LOG"))))
-	}
-
-	return err
-}
-
-func frameworkResourceOIEOnlyFeatureError(name string) diag.Diagnostics {
-	return frameworkOIEOnlyFeatureError("resources", name)
-}
-
-func frameworkOIEOnlyFeatureError(kind, name string) diag.Diagnostics {
-	url := fmt.Sprintf("https://registry.terraform.io/providers/okta/okta/latest/docs/%s/%s", kind, string(name[5:]))
-	if kind == "resources" {
-		kind = "resource"
-	}
-	if kind == "data-sources" {
-		kind = "datasource"
-	}
-	var diags diag.Diagnostics
-	diags.AddError(fmt.Sprintf("%q is a %s for OIE Orgs only", name, kind), fmt.Sprintf(", see %s", url))
-	return diags
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -23,7 +22,7 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSDomain, domainExists),
 		Steps: []resource.TestStep{
 			{
@@ -52,7 +51,7 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 }
 
 func domainExists(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	domain, resp, err := client.Domain.GetDomain(context.Background(), id)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return false, err

@@ -13,7 +13,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourcePolicyProfileEnrollmentApps() *schema.Resource {
+func resourcePolicyProfileEnrollmentApps() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicyProfileEnrollmentAppsCreate,
 		ReadContext:   resourcePolicyProfileEnrollmentAppsRead,
@@ -60,7 +60,7 @@ func resourcePolicyProfileEnrollmentAppsCreate(ctx context.Context, d *schema.Re
 	}
 	policyID := d.Get("policy_id").(string)
 	apps := utils.ConvertInterfaceToStringSetNullable(d.Get("apps"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	for i := range apps {
 		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], policyID)
@@ -81,7 +81,7 @@ func resourcePolicyProfileEnrollmentAppsRead(ctx context.Context, d *schema.Reso
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	apps, err := listPolicyEnrollmentAppIDs(ctx, GetAPISupplementFromMetadata(meta), d.Id())
+	apps, err := listPolicyEnrollmentAppIDs(ctx, getAPISupplementFromMetadata(meta), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of enrollment policy apps: %v", err)
 	}
@@ -101,7 +101,7 @@ func resourcePolicyProfileEnrollmentAppsUpdate(ctx context.Context, d *schema.Re
 	appsToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 	appsToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	policyID := d.Get("policy_id").(string)
 
 	for i := range appsToAdd {
@@ -130,7 +130,7 @@ func resourcePolicyProfileEnrollmentAppsDelete(ctx context.Context, d *schema.Re
 
 	defaultPolicyID := d.Get("default_policy_id").(string)
 	apps := utils.ConvertInterfaceToStringSetNullable(d.Get("apps"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	for i := range apps {
 		_, err := client.Application.UpdateApplicationPolicy(ctx, apps[i], defaultPolicyID)

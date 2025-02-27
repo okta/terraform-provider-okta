@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
@@ -27,7 +26,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -157,7 +156,7 @@ resource "okta_app_signon_policy_rule" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -219,7 +218,7 @@ resource "okta_app_signon_policy_rule" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		CheckDestroy:             nil,
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(baseConfig),
@@ -239,7 +238,7 @@ resource "okta_app_signon_policy_rule" "test" {
 					}
 
 					policyID := policy.Primary.Attributes["id"]
-					client := provider.SdkV2ClientForTest()
+					client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 
 					rules, _, err := client.Policy.ListPolicyRules(context.Background(), policyID)
 					if err != nil {
@@ -277,7 +276,7 @@ func checkAppSignOnPolicyRuleDestroy(s *terraform.State) error {
 		if rs.Type != resources.OktaIDaaSAppSignOnPolicyRule {
 			continue
 		}
-		client := provider.SdkSupplementClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 		rule, resp, err := client.GetAppSignOnPolicyRule(context.Background(), rs.Primary.Attributes["policy_id"], rs.Primary.ID)
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
@@ -302,7 +301,7 @@ func validateOktaAppSignonPolicyRuleConstraintsAreSet(rule string, expectedConst
 		ruleID := ruleRS.Primary.Attributes["id"]
 		policyID := ruleRS.Primary.Attributes["policy_id"]
 
-		client := provider.SdkSupplementClientForTest()
+		client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 		r, _, err := client.GetAppSignOnPolicyRule(context.Background(), policyID, ruleID)
 		if err != nil {
 			return fmt.Errorf("API: to get policy/rule %q/%q, err: %+v", policyID, ruleID, err)
@@ -350,7 +349,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_default_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -390,7 +389,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_os_expression_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
 		Steps: []resource.TestStep{
 			{

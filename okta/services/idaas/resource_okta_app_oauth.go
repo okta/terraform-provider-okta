@@ -119,7 +119,7 @@ var appRequirementsByType = map[string]*applicationMap{
 	},
 }
 
-func ResourceAppOAuth() *schema.Resource {
+func resourceAppOAuth() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthCreate,
 		ReadContext:   resourceAppOAuthRead,
@@ -446,7 +446,7 @@ var groupsClaimResource = &schema.Resource{
 }
 
 func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
@@ -486,7 +486,7 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
-		Logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -509,14 +509,14 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	} else {
 		gc.ValueType = gct
 	}
-	_, err := GetAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+	_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 	return err
 }
 
 func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
-		Logger(meta).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -528,7 +528,7 @@ func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta
 		gc := &sdk.AppOauthGroupClaim{
 			IssuerMode: d.Get("issuer_mode").(string),
 		}
-		_, err := GetAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+		_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
 		return err
 	}
 	return setAppOauthGroupsClaim(ctx, d, meta)
@@ -578,7 +578,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
-		Logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
 	} else {
 		gc, err := flattenGroupsClaim(ctx, d, meta)
 		if err != nil {
@@ -591,7 +591,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) (*schema.Set, error) {
-	gc, resp, err := GetAPISupplementFromMetadata(meta).GetAppOauthGroupsClaim(ctx, d.Id())
+	gc, resp, err := getAPISupplementFromMetadata(meta).GetAppOauthGroupsClaim(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
 	}
@@ -698,7 +698,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return nil
 	}
 
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
@@ -949,7 +949,7 @@ func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
 	if ok {
 		c := meta.(*config.Config)
 		if c.IsOAuth20Auth() {
-			Logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
+			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
 		} else {
 			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
 			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {

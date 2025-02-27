@@ -14,7 +14,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppUserSchemaProperty() *schema.Resource {
+func resourceAppUserSchemaProperty() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppUserSchemaPropertyCreate,
 		ReadContext:   resourceAppUserSchemaPropertyRead,
@@ -138,7 +138,7 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, meta 
 			}
 			return err
 		}
-		us, resp, err := GetOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+		us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 		if err := utils.SuppressErrorOn404(resp, err); err != nil {
 			return err
 		}
@@ -152,7 +152,7 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	us, resp, err := GetOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
+	us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get application user schema property: %v", err)
 	}
@@ -186,7 +186,7 @@ func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.Resource
 func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := BuildCustomUserSchema(d.Get("index").(string), nil)
 	retypeUserSchemaPropertyEnums(custom)
-	_, _, err := GetOktaClientFromMetadata(meta).UserSchema.
+	_, _, err := getOktaClientFromMetadata(meta).UserSchema.
 		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
 		return diag.Errorf("failed to delete application user schema property: %v", err)
@@ -208,7 +208,7 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	retypeUserSchemaPropertyEnums(custom)
 	boc := utils.NewExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
-		_, _, err := GetOktaClientFromMetadata(meta).UserSchema.
+		_, _, err := getOktaClientFromMetadata(meta).UserSchema.
 			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)

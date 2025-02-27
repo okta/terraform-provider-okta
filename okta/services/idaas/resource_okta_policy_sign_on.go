@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourcePolicySignOn() *schema.Resource {
+func resourcePolicySignOn() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourcePolicySignOnCreate,
 		ReadContext:   resourcePolicySignOnRead,

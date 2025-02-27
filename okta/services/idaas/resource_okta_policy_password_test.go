@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
@@ -22,10 +21,10 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 
 	// NOTE needs the "Security Question" authenticator enabled on the org
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkPolicyDestroy(resources.OktaIDaaSPolicyPassword),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyPassword),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -138,7 +137,7 @@ func checkPolicyDestroy(policyType string) func(*terraform.State) error {
 }
 
 func doesPolicyExistsUpstream(policyID string) (bool, error) {
-	client := provider.SdkSupplementClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	policy, resp, err := client.GetPolicy(context.Background(), policyID)
 	if resp != nil && resp.StatusCode == http.StatusNotFound {
 		return false, nil

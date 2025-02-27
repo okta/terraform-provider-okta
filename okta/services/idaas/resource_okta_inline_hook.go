@@ -22,7 +22,7 @@ var HeaderSchema = &schema.Resource{
 	},
 }
 
-func ResourceInlineHook() *schema.Resource {
+func resourceInlineHook() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceInlineHookCreate,
 		ReadContext:   resourceInlineHookRead,
@@ -93,12 +93,12 @@ func ResourceInlineHook() *schema.Resource {
 
 func resourceInlineHookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	hook := buildInlineHook(d)
-	newHook, _, err := GetOktaClientFromMetadata(meta).InlineHook.CreateInlineHook(ctx, hook)
+	newHook, _, err := getOktaClientFromMetadata(meta).InlineHook.CreateInlineHook(ctx, hook)
 	if err != nil {
 		return diag.Errorf("failed to create inline hook: %v", err)
 	}
 	d.SetId(newHook.Id)
-	err = setInlineHookStatus(ctx, d, GetOktaClientFromMetadata(meta), newHook.Status)
+	err = setInlineHookStatus(ctx, d, getOktaClientFromMetadata(meta), newHook.Status)
 	if err != nil {
 		return diag.Errorf("failed to change inline hook's status: %v", err)
 	}
@@ -106,7 +106,7 @@ func resourceInlineHookCreate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	hook, resp, err := GetOktaClientFromMetadata(meta).InlineHook.GetInlineHook(ctx, d.Id())
+	hook, resp, err := getOktaClientFromMetadata(meta).InlineHook.GetInlineHook(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get inline hook: %v", err)
 	}
@@ -130,7 +130,7 @@ func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceInlineHookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	hook := buildInlineHook(d)
 	newHook, _, err := client.InlineHook.UpdateInlineHook(ctx, d.Id(), hook)
 	if err != nil {
@@ -144,7 +144,7 @@ func resourceInlineHookUpdate(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceInlineHookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	_, resp, err := client.InlineHook.DeactivateInlineHook(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate inline hook: %v", err)

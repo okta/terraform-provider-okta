@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAuthServerDefault() *schema.Resource {
+func resourceAuthServerDefault() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAuthServerDefaultUpdate,
 		ReadContext:   resourceAuthServerDefaultRead,
@@ -79,7 +79,7 @@ func ResourceAuthServerDefault() *schema.Resource {
 }
 
 func resourceAuthServerDefaultRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	authServer, resp, err := GetOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
+	authServer, resp, err := getOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get authorization server: %v", err)
 	}
@@ -112,11 +112,11 @@ func resourceAuthServerDefaultRead(ctx context.Context, d *schema.ResourceData, 
 
 func getDefaultAuthServer(ctx context.Context, meta interface{}, serverID string) (authServer *sdk.AuthorizationServer, err error) {
 	if serverID != "" {
-		authServer, _, err = GetOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, serverID)
+		authServer, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.GetAuthorizationServer(ctx, serverID)
 		return
 	}
 
-	authServers, _, err := GetOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServers(ctx, nil)
+	authServers, _, err := getOktaClientFromMetadata(meta).AuthorizationServer.ListAuthorizationServers(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 			// not have breaking changes to existing configurations we will warn
 			// when we find this situation.
 			if name != "default" {
-				Logger(meta).Warn("\"name\" argument is not \"default\". Allowing this legacy behavior.")
+				logger(meta).Warn("\"name\" argument is not \"default\". Allowing this legacy behavior.")
 			}
 		}
 	}
@@ -156,7 +156,7 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 	id = authServer.Id
 
 	if status, ok := d.GetOk("status"); ok {
-		client := GetOktaClientFromMetadata(meta)
+		client := getOktaClientFromMetadata(meta)
 		if status.(string) == StatusActive && authServer.Status != StatusActive {
 			_, err := client.AuthorizationServer.ActivateAuthorizationServer(ctx, id)
 			if err != nil {
@@ -182,7 +182,7 @@ func resourceAuthServerDefaultUpdate(ctx context.Context, d *schema.ResourceData
 	authServer.Credentials.Signing.RotationMode = d.Get("credentials_rotation_mode").(string)
 	authServer.Description = d.Get("description").(string)
 	authServer.IssuerMode = d.Get("issuer_mode").(string)
-	_, _, err = GetOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServer(ctx, id, *authServer)
+	_, _, err = getOktaClientFromMetadata(meta).AuthorizationServer.UpdateAuthorizationServer(ctx, id, *authServer)
 	if err != nil {
 		return diag.Errorf("failed to update default authorization server: %v", err)
 	}

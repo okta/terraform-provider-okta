@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceUserGroupMemberships() *schema.Resource {
+func resourceUserGroupMemberships() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserGroupMembershipsCreate,
 		ReadContext:   resourceUserGroupMembershipsRead,
@@ -40,7 +40,7 @@ func ResourceUserGroupMemberships() *schema.Resource {
 func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := utils.ConvertInterfaceToStringSetNullable(d.Get("groups"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	err := addUserToGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
@@ -69,7 +69,7 @@ func resourceUserGroupMembershipsCreate(ctx context.Context, d *schema.ResourceD
 func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := utils.ConvertInterfaceToStringSetNullable(d.Get("groups"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.Errorf("unable to complete group check for user: %v", err)
@@ -78,7 +78,7 @@ func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	} else {
 		d.SetId("")
-		Logger(meta).Info("user (%s) did not have expected group memberships or did not exist", userId)
+		logger(meta).Info("user (%s) did not have expected group memberships or did not exist", userId)
 		return nil
 	}
 }
@@ -86,7 +86,7 @@ func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceDat
 func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
 	groups := utils.ConvertInterfaceToStringSetNullable(d.Get("groups"))
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	err := removeUserFromGroups(ctx, client, userId, groups)
 	if err != nil {
 		return diag.FromErr(err)
@@ -96,7 +96,7 @@ func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceD
 
 func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	userId := d.Get("user_id").(string)
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 
 	old, new := d.GetChange("groups")
 	oldSet := old.(*schema.Set)

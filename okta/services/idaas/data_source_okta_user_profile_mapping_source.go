@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func DataSourceUserProfileMappingSource() *schema.Resource {
+func dataSourceUserProfileMappingSource() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUserProfileMappingSourceRead,
 		Schema: map[string]*schema.Schema{
@@ -34,7 +34,7 @@ func DataSourceUserProfileMappingSource() *schema.Resource {
 }
 
 func dataSourceUserProfileMappingSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	mappings, resp, err := GetOktaClientFromMetadata(meta).ProfileMapping.ListProfileMappings(ctx, &query.Params{Limit: utils.DefaultPaginationLimit})
+	mappings, resp, err := getOktaClientFromMetadata(meta).ProfileMapping.ListProfileMappings(ctx, &query.Params{Limit: utils.DefaultPaginationLimit})
 	if err != nil {
 		return diag.Errorf("failed to list mappings: %v", err)
 	}

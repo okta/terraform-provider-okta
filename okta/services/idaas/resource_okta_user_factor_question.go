@@ -12,7 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceUserFactorQuestion() *schema.Resource {
+func resourceUserFactorQuestion() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceUserFactorQuestionCreate,
 		ReadContext:   resourceUserFactorQuestionRead,
@@ -58,7 +58,7 @@ func resourceUserFactorQuestionCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 	sq := buildUserFactorQuestion(d)
-	_, _, err = GetOktaClientFromMetadata(meta).UserFactor.EnrollFactor(ctx, d.Get("user_id").(string), sq, nil)
+	_, _, err = getOktaClientFromMetadata(meta).UserFactor.EnrollFactor(ctx, d.Get("user_id").(string), sq, nil)
 
 	if err != nil {
 		return diag.Errorf("failed to enroll user question factor: %v", err)
@@ -69,7 +69,7 @@ func resourceUserFactorQuestionCreate(ctx context.Context, d *schema.ResourceDat
 
 func resourceUserFactorQuestionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var uf sdk.SecurityQuestionUserFactor
-	_, resp, err := GetOktaClientFromMetadata(meta).UserFactor.GetFactor(ctx, d.Get("user_id").(string), d.Id(), &uf)
+	_, resp, err := getOktaClientFromMetadata(meta).UserFactor.GetFactor(ctx, d.Get("user_id").(string), d.Id(), &uf)
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get user question factor: %v", err)
 	}
@@ -95,7 +95,7 @@ func resourceUserFactorQuestionUpdate(ctx context.Context, d *schema.ResourceDat
 			Question: d.Get("key").(string),
 		},
 	}
-	_, err = GetAPISupplementFromMetadata(meta).UpdateUserFactor(ctx, d.Get("user_id").(string), d.Id(), sq)
+	_, err = getAPISupplementFromMetadata(meta).UpdateUserFactor(ctx, d.Get("user_id").(string), d.Id(), sq)
 	if err != nil {
 		return diag.Errorf("failed to update user question factor: %v", err)
 	}
@@ -103,7 +103,7 @@ func resourceUserFactorQuestionUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceUserFactorQuestionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	resp, err := GetOktaClientFromMetadata(meta).UserFactor.DeleteFactor(ctx, d.Get("user_id").(string), d.Id())
+	resp, err := getOktaClientFromMetadata(meta).UserFactor.DeleteFactor(ctx, d.Get("user_id").(string), d.Id())
 	if err != nil {
 		// disabled factor can not be removed
 		if resp != nil && resp.StatusCode == http.StatusBadRequest {
@@ -126,7 +126,7 @@ func buildUserFactorQuestion(d *schema.ResourceData) *sdk.SecurityQuestionUserFa
 }
 
 func validateQuestionKey(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
-	sq, _, err := GetOktaClientFromMetadata(meta).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
+	sq, _, err := getOktaClientFromMetadata(meta).UserFactor.ListSupportedSecurityQuestions(ctx, d.Get("user_id").(string))
 	if err != nil {
 		return fmt.Errorf("failed to list security question keys: %v", err)
 	}

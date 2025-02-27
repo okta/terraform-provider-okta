@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -21,10 +20,10 @@ func TestAccResourceOktaUserFactorQuestion_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserFactorQuestion)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
-			PreCheck:          acctest.AccPreCheck(t),
-			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-			CheckDestroy:      checkUserFactorDestroy(t.Name(), resources.OktaIDaaSUserFactorQuestion),
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkUserFactorDestroy(t.Name(), resources.OktaIDaaSUserFactorQuestion),
 			Steps: []resource.TestStep{
 				{
 					Config: config,
@@ -68,7 +67,7 @@ func checkUserFactorDestroy(testName, factorType string) func(*terraform.State) 
 
 func doesUserFactorExistsUpstream(userId, factorId string) (bool, error) {
 	var uf *sdk.SecurityQuestionUserFactor
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, resp, err := client.UserFactor.GetFactor(context.Background(), userId, factorId, uf)
 	return utils.DoesResourceExist(resp, err)
 }

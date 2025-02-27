@@ -13,7 +13,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAuthenticator() *schema.Resource {
+func resourceAuthenticator() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAuthenticatorCreate,
 		ReadContext:   resourceAuthenticatorRead,
@@ -195,7 +195,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 		qp := &query.Params{
 			Activate: utils.BoolPtr(activate),
 		}
-		authenticator, _, err = GetOktaClientFromMetadata(meta).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
+		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -205,7 +205,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 			if err != nil {
 				return diag.FromErr(err)
 			}
-			_, err = GetOktaClientFromMetadata(meta).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
+			_, err = getOktaClientFromMetadata(meta).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
 			if err != nil {
 				return diag.FromErr(err)
 			}
@@ -220,9 +220,9 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 	if ok && authenticator.Status != status.(string) {
 		var err error
 		if status.(string) == StatusInactive {
-			authenticator, _, err = GetOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		} else {
-			authenticator, _, err = GetOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -238,7 +238,7 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	authenticator, _, err := GetOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, d.Id())
+	authenticator, _, err := getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
@@ -260,16 +260,16 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
-	_, _, err = GetOktaClientFromMetadata(meta).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
+	_, _, err = getOktaClientFromMetadata(meta).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == StatusActive {
-			_, _, err = GetOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
 		} else {
-			_, _, err = GetOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			_, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -286,9 +286,9 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	_, _, err := GetOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+	_, _, err := getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
 	if err != nil {
-		Logger(meta).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
+		logger(meta).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
 	}
 
 	return nil

@@ -16,7 +16,7 @@ func TestAccResourceOktaGroupOwner_crud(t *testing.T) {
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
 			CheckDestroy:             nil,
-			ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
 					Config: config,

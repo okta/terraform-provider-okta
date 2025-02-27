@@ -41,11 +41,7 @@ func TestConfigLoadAndValidate(t *testing.T) {
 		}
 		config.Logger = hclog.New(hclog.DefaultOptions)
 
-		err := config.LoadClients()
-		if err == nil {
-			err = config.VerifyCredentials(context.TODO())
-		}
-
+		err := config.VerifyCredentials(context.TODO())
 		if test.expectError && err == nil {
 			t.Errorf("test %q: expected error but received none", test.name)
 		}

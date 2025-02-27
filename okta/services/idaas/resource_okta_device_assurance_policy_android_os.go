@@ -25,7 +25,7 @@ var (
 	_ resource.ResourceWithImportState = &policyDeviceAssuranceAndroidResource{}
 )
 
-func NewPolicyDeviceAssuranceAndroidResource() resource.Resource {
+func newPolicyDeviceAssuranceAndroidResource() resource.Resource {
 	return &policyDeviceAssuranceAndroidResource{}
 }
 
@@ -178,7 +178,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaSDKClientV3.DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -205,7 +205,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaSDKClientV3.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -232,7 +232,7 @@ func (r *policyDeviceAssuranceAndroidResource) Delete(ctx context.Context, req r
 		return
 	}
 
-	_, err := r.OktaSDKClientV3.DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -258,7 +258,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaSDKClientV3.DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",

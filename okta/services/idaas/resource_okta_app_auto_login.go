@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceAppAutoLogin() *schema.Resource {
+func resourceAppAutoLogin() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppAutoLoginCreate,
 		ReadContext:   resourceAppAutoLoginRead,
@@ -84,7 +84,7 @@ func resourceAppAutoLoginCreate(ctx context.Context, d *schema.ResourceData, met
 	app := buildAppAutoLogin(d)
 	activate := d.Get("status").(string) == StatusActive
 	params := &query.Params{Activate: &activate}
-	_, _, err := GetOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create auto login application: %v", err)
 	}

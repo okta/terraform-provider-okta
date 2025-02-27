@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
-	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -23,7 +22,7 @@ func TestAccResourceOktaGroup_crud(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.AccMergeProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
@@ -50,10 +49,10 @@ func TestAccResourceOktaGroup_customschema(t *testing.T) {
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,
@@ -81,7 +80,7 @@ func TestAccResourceOktaGroup_customschema(t *testing.T) {
 }
 
 func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
-	if provider.SkipVCRTest(t) {
+	if acctest.SkipVCRTest(t) {
 		return
 	}
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroup)
@@ -91,9 +90,9 @@ func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
 	removal := mgr.GetFixtures("okta_group_custom_removal.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: base,
@@ -128,7 +127,7 @@ func TestAccResourceOktaGroup_customschema_null(t *testing.T) {
 }
 
 func doesGroupExist(id string) (bool, error) {
-	client := provider.SdkV2ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.Group.GetGroup(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }

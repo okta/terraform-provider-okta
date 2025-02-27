@@ -20,7 +20,7 @@ func TestAccResourceOktaAuthServerPolicyRule_create(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:          acctest.AccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
@@ -78,7 +78,7 @@ resource "okta_auth_server_policy" "test" {
 		t, resource.TestCase{
 			PreCheck:          acctest.AccPreCheck(t),
 			ErrorCheck:        testAccErrorChecks(t),
-			ProviderFactories: acctest.AccProvidersFactoriesForTest(),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
 			Steps: []resource.TestStep{
 				{

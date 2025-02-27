@@ -99,7 +99,7 @@ func buildRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema
 }
 
 func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicyRule, ruleType string) error {
-	Logger(m).Info("creating policy rule", "name", d.Get("name").(string))
+	logger(m).Info("creating policy rule", "name", d.Get("name").(string))
 	err := ensureNotDefaultRule(d)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	var rule *sdk.SdkPolicyRule
 	boc := utils.NewExponentialBackOffWithContext(ctx, backoff.DefaultMaxElapsedTime)
 	err = backoff.Retry(func() error {
-		ruleObj, resp, err := GetAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
+		ruleObj, resp, err := getAPISupplementFromMetadata(m).CreatePolicyRule(ctx, policyID, template)
 		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
@@ -129,7 +129,7 @@ func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	}
 	status := d.Get("status").(string)
 	if status == StatusInactive {
-		_, err = GetOktaClientFromMetadata(m).Policy.DeactivatePolicyRule(ctx, policyID, rule.Id)
+		_, err = getOktaClientFromMetadata(m).Policy.DeactivatePolicyRule(ctx, policyID, rule.Id)
 		if err != nil {
 			return fmt.Errorf("failed to deactivate policy rule on creation: %v", err)
 		}
@@ -166,7 +166,7 @@ func buildPolicyNetworkCondition(d *schema.ResourceData) *sdk.PolicyNetworkCondi
 }
 
 func getPolicyRule(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.SdkPolicyRule, error) {
-	client := GetAPISupplementFromMetadata(m)
+	client := getAPISupplementFromMetadata(m)
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return nil, fmt.Errorf("'policy_id' field should be set")
@@ -227,7 +227,7 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.SdkPolicyRule) error
 }
 
 func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicyRule) error {
-	Logger(m).Info("updating policy rule", "name", d.Get("name").(string))
+	logger(m).Info("updating policy rule", "name", d.Get("name").(string))
 	if err := ensureNotDefaultRule(d); err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
 	}
-	rule, _, err := GetAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
+	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
 	if err != nil {
 		return err
 	}
@@ -248,7 +248,7 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 
 // activate or deactivate a policy rule according to the terraform schema status field
 func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	client := GetOktaClientFromMetadata(m).Policy
+	client := getOktaClientFromMetadata(m).Policy
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
@@ -269,7 +269,7 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, checkIsSystemPolicy bool) error {
-	Logger(m).Info("deleting policy rule", "name", d.Get("name").(string))
+	logger(m).Info("deleting policy rule", "name", d.Get("name").(string))
 	if err := ensureNotDefaultRule(d); err != nil {
 		return err
 	}
@@ -283,7 +283,7 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 	shouldRemove := true
 	if checkIsSystemPolicy {
 		if rule.System != nil && *rule.System {
-			Logger(m).Info(fmt.Sprintf("Policy Rule '%s' is a System Policy, cannot delete from Okta", d.Get("name").(string)))
+			logger(m).Info(fmt.Sprintf("Policy Rule '%s' is a System Policy, cannot delete from Okta", d.Get("name").(string)))
 			shouldRemove = false
 		}
 	}
@@ -292,7 +292,7 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 		if policyID == "" {
 			return fmt.Errorf("'policy_id' field should be set")
 		}
-		_, err = GetOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
+		_, err = getOktaClientFromMetadata(m).Policy.DeletePolicyRule(ctx, policyID, d.Id())
 		if err != nil {
 			return err
 		}

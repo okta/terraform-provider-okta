@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
-func ResourceDomain() *schema.Resource {
+func resourceDomain() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceDomainCreate,
 		ReadContext:   resourceDomainRead,
@@ -83,17 +83,17 @@ func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, meta inte
 	if err != nil {
 		return diag.Errorf("failed to build domain: %v", err)
 	}
-	domain, _, err := GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.CreateCustomDomain(ctx).Domain(domainRequest).Execute()
+	domain, _, err := getOktaV3ClientFromMetadata(meta).CustomDomainAPI.CreateCustomDomain(ctx).Domain(domainRequest).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create domain: %v", err)
 	}
 	d.SetId(domain.GetId())
 	if brandId, ok := d.GetOk("brand_id"); ok {
-		_, _, err = GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: brandId.(string)}).Execute()
+		_, _, err = getOktaV3ClientFromMetadata(meta).CustomDomainAPI.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: brandId.(string)}).Execute()
 		if err != nil {
 			return diag.Errorf("failed to update domain: %v", err)
 		}
-		_, err = GetOktaV3ClientFromMetadata(meta).CustomizationAPI.DeleteBrand(ctx, domain.GetBrandId()).Execute()
+		_, err = getOktaV3ClientFromMetadata(meta).CustomizationAPI.DeleteBrand(ctx, domain.GetBrandId()).Execute()
 		if err != nil {
 			return diag.Errorf("failed to delete brand: %v", err)
 		}
@@ -102,7 +102,7 @@ func resourceDomainCreate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceDomainRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	domain, resp, err := GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.GetCustomDomain(ctx, d.Id()).Execute()
+	domain, resp, err := getOktaV3ClientFromMetadata(meta).CustomDomainAPI.GetCustomDomain(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V3(resp, err); err != nil {
 		return diag.Errorf("failed to get domain: %v", err)
 	}
@@ -145,8 +145,8 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceDomainDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	Logger(meta).Info("deleting domain", "id", d.Id())
-	_, err := GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.DeleteCustomDomain(ctx, d.Id()).Execute()
+	logger(meta).Info("deleting domain", "id", d.Id())
+	_, err := getOktaV3ClientFromMetadata(meta).CustomDomainAPI.DeleteCustomDomain(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete domain: %v", err)
 	}
@@ -158,7 +158,7 @@ func resourceDomainUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: d.Get("brand_id").(string)}).Execute()
+	_, _, err = getOktaV3ClientFromMetadata(meta).CustomDomainAPI.ReplaceCustomDomain(ctx, d.Id()).UpdateDomain(okta.UpdateDomain{BrandId: d.Get("brand_id").(string)}).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update domain: %v", err)
 	}
@@ -169,7 +169,7 @@ func validateDomain(ctx context.Context, d *schema.ResourceData, meta interface{
 	if validationStatus == "IN_PROGRESS" || validationStatus == "VERIFIED" || validationStatus == "COMPLETED" {
 		return nil, nil
 	}
-	domain, _, err := GetOktaV3ClientFromMetadata(meta).CustomDomainAPI.VerifyDomain(ctx, d.Id()).Execute()
+	domain, _, err := getOktaV3ClientFromMetadata(meta).CustomDomainAPI.VerifyDomain(ctx, d.Id()).Execute()
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify domain: %v", err)
 	}

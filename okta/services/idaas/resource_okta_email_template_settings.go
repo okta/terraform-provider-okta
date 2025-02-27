@@ -21,7 +21,7 @@ var (
 	_ resource.ResourceWithImportState = &emailTemplateSettingsResource{}
 )
 
-func NewEmailTemplateSettingsResource() resource.Resource {
+func newEmailTemplateSettingsResource() resource.Resource {
 	return &emailTemplateSettingsResource{}
 }
 
@@ -104,7 +104,7 @@ func (r *emailTemplateSettingsResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	emailSettings, _, err := r.OktaSDKClientV3.CustomizationAPI.GetEmailSettings(ctx, state.BrandID.ValueString(), state.TemplateName.ValueString()).Execute()
+	emailSettings, _, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.GetEmailSettings(ctx, state.BrandID.ValueString(), state.TemplateName.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read email template settings",
@@ -166,7 +166,7 @@ func (r *emailTemplateSettingsResource) ImportState(ctx context.Context, req res
 
 func (r *emailTemplateSettingsResource) put(ctx context.Context, plan emailTemplateSettingsResourceModel) error {
 	emailSettings := buildEmailSettings(plan)
-	_, err := r.OktaSDKClientV3.CustomizationAPI.ReplaceEmailSettings(ctx, plan.BrandID.ValueString(), plan.TemplateName.ValueString()).EmailSettings(emailSettings).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV3().CustomizationAPI.ReplaceEmailSettings(ctx, plan.BrandID.ValueString(), plan.TemplateName.ValueString()).EmailSettings(emailSettings).Execute()
 	return err
 }
 

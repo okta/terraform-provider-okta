@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceSecurityNotificationEmails() *schema.Resource {
+func resourceSecurityNotificationEmails() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceSecurityNotificationEmailsCreate,
 		ReadContext:   resourceSecurityNotificationEmailsRead,
@@ -57,8 +57,8 @@ func ResourceSecurityNotificationEmails() *schema.Resource {
 
 func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*config.Config)
-	client := c.OktaSDKClientV2.GetConfig().HttpClient
-	emails, err := GetAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.OrgName, c.Domain, c.ApiToken, client)
+	client := c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient
+	emails, err := getAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.OrgName, c.Domain, c.ApiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
 	}
@@ -73,8 +73,8 @@ func resourceSecurityNotificationEmailsCreate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*config.Config)
-	client := c.OktaSDKClientV2.GetConfig().HttpClient
-	emails, err := GetAPISupplementFromMetadata(meta).GetSecurityNotificationEmails(ctx, c.OrgName, c.Domain, c.ApiToken, client)
+	client := c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient
+	emails, err := getAPISupplementFromMetadata(meta).GetSecurityNotificationEmails(ctx, c.OrgName, c.Domain, c.ApiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to get security notification emails: %v", err)
 	}
@@ -89,8 +89,8 @@ func resourceSecurityNotificationEmailsRead(ctx context.Context, d *schema.Resou
 
 func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*config.Config)
-	client := c.OktaSDKClientV2.GetConfig().HttpClient
-	_, err := GetAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.OrgName, c.Domain, c.ApiToken, client)
+	client := c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient
+	_, err := getAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, buildSecurityNotificationEmails(d), c.OrgName, c.Domain, c.ApiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to update security notification emails: %v", err)
 	}
@@ -99,7 +99,7 @@ func resourceSecurityNotificationEmailsUpdate(ctx context.Context, d *schema.Res
 
 func resourceSecurityNotificationEmailsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*config.Config)
-	client := c.OktaSDKClientV2.GetConfig().HttpClient
+	client := c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient
 	emails := sdk.SecurityNotificationEmails{
 		SendEmailForNewDeviceEnabled:        true,
 		SendEmailForFactorEnrollmentEnabled: true,
@@ -107,7 +107,7 @@ func resourceSecurityNotificationEmailsDelete(ctx context.Context, d *schema.Res
 		SendEmailForPasswordChangedEnabled:  true,
 		ReportSuspiciousActivityEnabled:     true,
 	}
-	_, err := GetAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, emails, c.OrgName, c.Domain, c.ApiToken, client)
+	_, err := getAPISupplementFromMetadata(meta).UpdateSecurityNotificationEmails(ctx, emails, c.OrgName, c.Domain, c.ApiToken, client)
 	if err != nil {
 		return diag.Errorf("failed to set default security notification emails: %v", err)
 	}

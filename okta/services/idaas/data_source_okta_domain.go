@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func DataSourceDomain() *schema.Resource {
+func dataSourceDomain() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceDomainRead,
 		Schema: map[string]*schema.Schema{
@@ -85,7 +85,7 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 	did, _ := d.GetOk("domain_id_or_name")
 	domainID := did.(string)
 
-	domains, _, err := GetOktaClientFromMetadata(meta).Domain.ListDomains(ctx)
+	domains, _, err := getOktaClientFromMetadata(meta).Domain.ListDomains(ctx)
 	if err != nil {
 		return diag.Errorf("failed to get domains: %v", err)
 	}

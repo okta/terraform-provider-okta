@@ -10,12 +10,12 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppGroupAssignment() *schema.Resource {
+func resourceAppGroupAssignment() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppGroupAssignmentCreate,
 		ReadContext:   resourceAppGroupAssignmentRead,
@@ -30,7 +30,7 @@ func ResourceAppGroupAssignment() *schema.Resource {
 				_ = d.Set("app_id", parts[0])
 				_ = d.Set("group_id", parts[1])
 				_ = d.Set("retain_assignment", false)
-				assignment, _, err := GetOktaClientFromMetadata(meta).Application.
+				assignment, _, err := getOktaClientFromMetadata(meta).Application.
 					GetApplicationGroupAssignment(ctx, parts[0], parts[1], nil)
 				if err != nil {
 					return nil, err
@@ -86,8 +86,8 @@ func ResourceAppGroupAssignment() *schema.Resource {
 }
 
 func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	ctx = context.WithValue(ctx, config.RetryOnStatusCodes, []int{http.StatusInternalServerError})
-	assignment, _, err := GetOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusInternalServerError})
+	assignment, _, err := getOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -102,7 +102,7 @@ func resourceAppGroupAssignmentCreate(ctx context.Context, d *schema.ResourceDat
 
 func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// Create actually does a PUT
-	_, _, err := GetOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
+	_, _, err := getOktaClientFromMetadata(meta).Application.CreateApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -115,7 +115,7 @@ func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	g, resp, err := GetOktaClientFromMetadata(meta).Application.GetApplicationGroupAssignment(
+	g, resp, err := getOktaClientFromMetadata(meta).Application.GetApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
@@ -146,7 +146,7 @@ func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
 
-	_, err := GetOktaClientFromMetadata(meta).Application.DeleteApplicationGroupAssignment(
+	_, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),

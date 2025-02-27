@@ -11,7 +11,7 @@ import (
 
 const Saml2Idp = "SAML2"
 
-func DataSourceIdpSaml() *schema.Resource {
+func dataSourceIdpSaml() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceIdpSamlRead,
 		Schema: map[string]*schema.Schema{

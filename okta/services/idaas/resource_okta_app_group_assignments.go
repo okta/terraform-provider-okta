@@ -11,7 +11,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func ResourceAppGroupAssignments() *schema.Resource {
+func resourceAppGroupAssignments() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppGroupAssignmentsCreate,
 		ReadContext:   resourceAppGroupAssignmentsRead,
@@ -72,7 +72,7 @@ func ResourceAppGroupAssignments() *schema.Resource {
 }
 
 func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	assignments := tfGroupsToGroupAssignments(d)
 
 	// run through all groups in the set and create an assignment
@@ -94,7 +94,7 @@ func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	// remember, current group assignments is an API call and are all groups
 	// assigned to the app, even those initiated outside the provider, for
 	// instance those assignments from "click ops"
@@ -131,7 +131,7 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	appID := d.Get("app_id").(string)
 	toAssign, toRemove, err := splitAssignmentsTargets(d)
 	if err != nil {
@@ -159,7 +159,7 @@ func resourceAppGroupAssignmentsUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppGroupAssignmentsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetOktaClientFromMetadata(meta)
+	client := getOktaClientFromMetadata(meta)
 	for _, rawGroup := range d.Get("group").([]interface{}) {
 		group := rawGroup.(map[string]interface{})
 		resp, err := client.Application.DeleteApplicationGroupAssignment(

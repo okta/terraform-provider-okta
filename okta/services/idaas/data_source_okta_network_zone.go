@@ -9,7 +9,7 @@ import (
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
-func DataSourceNetworkZone() *schema.Resource {
+func dataSourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceNetworkZoneRead,
 		Schema: map[string]*schema.Schema{
@@ -103,7 +103,7 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta
 		zone *v5okta.ListNetworkZones200ResponseInner
 	)
 	if id != "" {
-		zone, _, err = GetOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
+		zone, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
 	} else {
 		zone, err = findNetworkZoneByName(ctx, meta, name)
 	}
@@ -124,7 +124,7 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (*v5okta.ListNetworkZones200ResponseInner, error) {
-	client := GetOktaV5ClientFromMetadata(meta)
+	client := getOktaV5ClientFromMetadata(meta)
 	zones, resp, err := client.NetworkZoneAPI.ListNetworkZones(ctx).Execute()
 	if err != nil {
 		return nil, err

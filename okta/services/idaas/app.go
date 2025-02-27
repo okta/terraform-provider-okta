@@ -285,14 +285,14 @@ func fetchApp(ctx context.Context, d *schema.ResourceData, m interface{}, app sd
 }
 
 func fetchAppByID(ctx context.Context, id string, m interface{}, app sdk.App) error {
-	_, resp, err := GetOktaClientFromMetadata(m).Application.GetApplication(ctx, id, app, nil)
+	_, resp, err := getOktaClientFromMetadata(m).Application.GetApplication(ctx, id, app, nil)
 	// We don't want to consider a 404 an error in some cases and thus the delineation.
 	// Check if app's ID is set to ensure that app exists
 	return utils.SuppressErrorOn404(resp, err)
 }
 
 func updateAppByID(ctx context.Context, id string, m interface{}, app sdk.App) error {
-	_, resp, err := GetOktaClientFromMetadata(m).Application.UpdateApplication(ctx, id, app)
+	_, resp, err := getOktaClientFromMetadata(m).Application.UpdateApplication(ctx, id, app)
 	// We don't want to consider a 404 an error in some cases and thus the delineation
 	return utils.SuppressErrorOn404(resp, err)
 }
@@ -318,7 +318,7 @@ func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, a
 	if !ok {
 		return nil
 	}
-	_, err := GetOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
+	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
 	return err
 }
 
@@ -407,7 +407,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 }
 
 func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{}) error {
-	client := GetOktaClientFromMetadata(m)
+	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == StatusActive {
 		_, err := client.Application.DeactivateApplication(ctx, d.Id())
 		if err != nil {
@@ -433,7 +433,7 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 // will be set, please consult the documentation (https://developer.okta.com/docs/reference/api/apps/#list-key-credentials-for-application)
 // for more information.
 func fetchAppKeys(ctx context.Context, m interface{}, appID string) ([]*sdk.JsonWebKey, error) {
-	keys, _, err := GetOktaClientFromMetadata(m).Application.ListApplicationKeys(ctx, appID)
+	keys, _, err := getOktaClientFromMetadata(m).Application.ListApplicationKeys(ctx, appID)
 	if err != nil {
 		return nil, err
 	}
@@ -474,12 +474,12 @@ func AppUpdateStatus(ctx context.Context, d *schema.ResourceData, m interface{})
 	inactive := (status == StatusInactive)
 
 	if inactive && statusChanged {
-		client := GetOktaClientFromMetadata(m)
+		client := getOktaClientFromMetadata(m)
 		err = utils.ResponseErr(client.Application.DeactivateApplication(ctx, d.Id()))
 	}
 
 	if active && statusChanged {
-		client := GetOktaClientFromMetadata(m)
+		client := getOktaClientFromMetadata(m)
 		err = utils.ResponseErr(client.Application.ActivateApplication(ctx, d.Id()))
 	}
 

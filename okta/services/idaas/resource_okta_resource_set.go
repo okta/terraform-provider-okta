@@ -13,7 +13,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-func ResourceResourceSet() *schema.Resource {
+func resourceResourceSet() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceResourceSetCreate,
 		ReadContext:   resourceResourceSetRead,
@@ -57,7 +57,7 @@ func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
-	rs, _, err := GetAPISupplementFromMetadata(meta).CreateResourceSet(ctx, *set)
+	rs, _, err := getAPISupplementFromMetadata(meta).CreateResourceSet(ctx, *set)
 	if err != nil {
 		return diag.Errorf("failed to create resource set: %v", err)
 	}
@@ -66,7 +66,7 @@ func resourceResourceSetCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	rs, resp, err := GetAPISupplementFromMetadata(meta).GetResourceSet(ctx, d.Id())
+	rs, resp, err := getAPISupplementFromMetadata(meta).GetResourceSet(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get resource set: %v", err)
 	}
@@ -76,7 +76,7 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	_ = d.Set("label", rs.Label)
 	_ = d.Set("description", rs.Description)
-	resources, err := listResourceSetResources(ctx, GetAPISupplementFromMetadata(meta), d.Id())
+	resources, err := listResourceSetResources(ctx, getAPISupplementFromMetadata(meta), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
@@ -85,7 +85,7 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := GetAPISupplementFromMetadata(meta)
+	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		set, _ := buildResourceSet(d, false)
 		_, _, err := client.UpdateResourceSet(ctx, d.Id(), *set)
@@ -113,7 +113,7 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	resp, err := GetAPISupplementFromMetadata(meta).DeleteResourceSet(ctx, d.Id())
+	resp, err := getAPISupplementFromMetadata(meta).DeleteResourceSet(ctx, d.Id())
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete resource set: %v", err)
 	}
