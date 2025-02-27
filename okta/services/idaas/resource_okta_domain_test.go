@@ -16,8 +16,7 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSDomain)
-	domainName := "testacc.example.edu"
-	updateDomainName := "testacctest.example.edu"
+	domainName := fmt.Sprintf("testacc-%d.example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -26,8 +25,7 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSDomain, domainExists),
 		Steps: []resource.TestStep{
 			{
-				ExpectNonEmptyPlan: true,
-				Config:             config,
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, domainExists),
 					resource.TestCheckResourceAttr(resourceName, "name", domainName),
@@ -37,12 +35,11 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 				),
 			},
 			{
-				ExpectNonEmptyPlan: true,
-				Config:             updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, domainExists),
-					resource.TestCheckResourceAttr(resourceName, "name", updateDomainName),
-					resource.TestCheckResourceAttr(resourceName, "certificate_source_type", "OKTA_MANAGED"),
+					resource.TestCheckResourceAttr(resourceName, "name", domainName),
+					resource.TestCheckResourceAttr(resourceName, "certificate_source_type", "MANUAL"),
 					resource.TestCheckResourceAttr(resourceName, "dns_records.#", "2"),
 				),
 			},

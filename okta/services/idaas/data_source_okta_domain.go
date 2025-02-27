@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -97,6 +98,10 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 			break
 		}
 		if _domain.Domain == domainID {
+			domain = _domain
+			break
+		}
+		if strings.EqualFold(_domain.Domain, domainID) {
 			domain = _domain
 			break
 		}
