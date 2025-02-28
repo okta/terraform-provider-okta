@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -110,8 +111,12 @@ func resourceFactorTOTPRead(ctx context.Context, d *schema.ResourceData, meta in
 func resourceFactorTOTPDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
 
-	_, err := getAPISupplementFromMetadata(meta).DeleteHotpFactorProfile(ctx, d.Id())
+	resp, err := getAPISupplementFromMetadata(meta).DeleteHotpFactorProfile(ctx, d.Id())
 	if err != nil {
+		if resp.StatusCode == http.StatusNotImplemented {
+			logger(meta).Warn("Okta API declares deletion of totp factors as not implemented")
+			return nil
+		}
 		return diag.Errorf("failed to delete TOTP factor: %v", err)
 	}
 	return nil

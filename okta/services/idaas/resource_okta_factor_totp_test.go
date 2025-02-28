@@ -1,14 +1,12 @@
 package idaas_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
@@ -19,7 +17,8 @@ func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSFactorTotp, doesFactorTOTPExist),
+		// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
+		// CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSFactorTotp, doesFactorTOTPExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -36,8 +35,8 @@ func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
 	})
 }
 
-func doesFactorTOTPExist(id string) (bool, error) {
-	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
-	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
-	return utils.DoesResourceExist(response, err)
-}
+// func doesFactorTOTPExist(id string) (bool, error) {
+// 	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
+// 	_, response, err := client.GetHotpFactorProfile(context.Background(), id)
+// 	return utils.DoesResourceExist(response, err)
+// }
