@@ -10,11 +10,9 @@ import (
 )
 
 func TestAccDataSourceOktaUserType_read(t *testing.T) {
-	resourceName := fmt.Sprintf("data.%s.test", resources.OktaIDaaSUserType)
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUserType, t.Name())
-	createUserType := mgr.GetFixtures("okta_user_type.tf", t)
-	readNameConfig := mgr.GetFixtures("read_name.tf", t)
-	readIdConfig := mgr.GetFixtures("read_id.tf", t)
+	config := mgr.GetFixtures("datasource.tf", t)
+	resourceUserTypeName := acctest.BuildResourceName(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -22,21 +20,17 @@ func TestAccDataSourceOktaUserType_read(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
-				Config: createUserType,
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("okta_user_type.test", "id"),
-				),
-			},
-			{
-				Config: readNameConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-				),
-			},
-			{
-				Config: readIdConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(fmt.Sprintf("data.%s.test2", resources.OktaIDaaSUserType), "name"),
+
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-id", "name", resourceUserTypeName),
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-id", "display_name", fmt.Sprintf("%s Name", resourceUserTypeName)),
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-id", "description", fmt.Sprintf("%s Description", resourceUserTypeName)),
+
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-name", "name", resourceUserTypeName),
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-name", "display_name", fmt.Sprintf("%s Name", resourceUserTypeName)),
+					resource.TestCheckResourceAttr("data.okta_user_type.test-find-by-name", "description", fmt.Sprintf("%s Description", resourceUserTypeName)),
 				),
 			},
 		},
