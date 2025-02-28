@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
@@ -30,9 +31,18 @@ func TestAccDataSourceOktaOrgMetadata_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "pipeline"),
 					resource.TestCheckResourceAttrSet(resourceName, "settings.analytics_collection_enabled"),
 					resource.TestCheckResourceAttr(resourceName, "domains.organization", fmt.Sprintf("https://%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))),
-					resource.TestCheckResourceAttr(resourceName, "domains.alternate", customURI),
+					checkResourceIfEnabled(resourceName, "domains.alternate", customURI, customDomain != ""),
 				),
 			},
 		},
 	})
+}
+
+func checkResourceIfEnabled(resourceName, field, value string, check bool) resource.TestCheckFunc {
+	if check {
+		return resource.TestCheckResourceAttr(resourceName, field, value)
+	}
+	return func(s *terraform.State) error {
+		return nil
+	}
 }
