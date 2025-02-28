@@ -22,10 +22,10 @@ func TestAccResourceOktaAppSaml_conditionalRequire(t *testing.T) {
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -41,10 +41,10 @@ func TestAccResourceOktaAppSaml_invalidURL(t *testing.T) {
 	config := buildTestSamlConfigMissingFields(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -63,10 +63,10 @@ func TestAccResourceOktaAppSaml_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: allFields,
@@ -162,10 +162,10 @@ func TestAccResourceOktaAppSaml_preconfigured(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               wsFedAutoSSOErrorCheck(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: preconfigured,
@@ -241,10 +241,10 @@ func TestAccResourceOktaAppSaml_inlineHook(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -273,10 +273,10 @@ func TestAccResourceOktaAppSaml_federationBroker(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -345,10 +345,10 @@ resource "okta_app_saml" "test" {
 }
 `
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -371,10 +371,10 @@ func TestAccResourceOktaAppSaml_certdiff(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -470,10 +470,10 @@ resource "okta_app_saml" "test" {
 
 `
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -515,10 +515,10 @@ resource "okta_app_saml" "test" {
 	acsEndpoints3 := "\"https://okta.com\",\"https://middle.example.com\",\"https://example.com\""
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(fmt.Sprintf(config, acsEndpoints1)),
@@ -552,4 +552,15 @@ resource "okta_app_saml" "test" {
 			},
 		},
 	})
+}
+
+func wsFedAutoSSOErrorCheck(t *testing.T) resource.ErrorCheckFunc {
+	return func(err error) error {
+		skip, _ := regexp.MatchString("In order to continue using WS-FED Auto for SSO", err.Error())
+		if skip {
+			t.Skipf("must grant admin consent for WS-FED o365 app: %+v", err)
+			return nil
+		}
+		return err
+	}
 }
