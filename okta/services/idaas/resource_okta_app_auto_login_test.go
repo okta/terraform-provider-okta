@@ -2,6 +2,7 @@ package idaas_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -18,10 +19,10 @@ func TestAccResourceOktaAppAutoLoginApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppAutoLogin)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               autoLoginAppErrorCheck(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -78,10 +79,10 @@ resource "okta_app_auto_login" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppAutoLogin, createDoesAppExist(sdk.NewAutoLoginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -94,4 +95,15 @@ resource "okta_app_auto_login" "test" {
 			},
 		},
 	})
+}
+
+func autoLoginAppErrorCheck(t *testing.T) resource.ErrorCheckFunc {
+	return func(err error) error {
+		skip, _ := regexp.MatchString("This operation on app metadata is not yet supported", err.Error())
+		if skip {
+			t.Skipf("resource okta_app_auto_login not available on this test org: %+v", err)
+			return nil
+		}
+		return err
+	}
 }
