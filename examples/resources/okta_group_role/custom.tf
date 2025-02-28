@@ -1,3 +1,7 @@
+variable "hostname" {
+  type = string
+}
+
 resource "okta_group" "test" {
   name        = "testAcc_replace_with_uuid"
   description = "testing"
@@ -7,7 +11,7 @@ resource "okta_resource_set" "test" {
   label       = "test"
   description = "testing, testing"
   resources = [
-    format("%s/api/v1/users", "https://tien-oie-2023-26-26.oktapreview.com"),
+    format("https://%s/api/v1/users", var.hostname)
   ]
 }
 
