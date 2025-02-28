@@ -21,8 +21,8 @@ func TestAccDataSourceOktaUsers_read(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	dataSource := mgr.GetFixtures("datasource.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -61,8 +61,8 @@ func TestAccDataSourceOktaUsers_readWithGroupId(t *testing.T) {
 	config := mgr.GetFixtures("group.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -94,8 +94,8 @@ func TestAccDataSourceOktaUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	config := mgr.GetFixtures("group_with_groups.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -121,12 +121,15 @@ func TestAccDataSourceOktaUsers_readWithGroupIdIncludingGroups(t *testing.T) {
 	})
 }
 
-// TestAccDataSourceOktaUsers_IncludeNone pertains to https://github.com/okta/terraform-provider-okta/pull/1137 and https://github.com/okta/terraform-provider-okta/issues/1014
+// TestAccDataSourceOktaUsers_IncludeNone pertains to
+// https://github.com/okta/terraform-provider-okta/pull/1137 and
+// https://github.com/okta/terraform-provider-okta/issues/1014 The test can flap
+// when all the tests are run in harness but rarely fails running individually.
 func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -147,8 +150,8 @@ func TestAccDataSourceOktaUsers_IncludeNone(t *testing.T) {
 func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -169,8 +172,8 @@ func TestAccDataSourceOktaUsers_IncludeGroups(t *testing.T) {
 func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -191,8 +194,8 @@ func TestAccDataSourceOktaUsers_IncludeRoles(t *testing.T) {
 func TestAccDataSourceOktaUsers_IncludeAll(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
