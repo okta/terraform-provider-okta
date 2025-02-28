@@ -267,6 +267,9 @@ func TestAppUpdateStatus_all_apps(t *testing.T) {
 			appPrototype: sdk.NewBookmarkApplication(),
 		},
 		{
+			// FIXME: this one can be flappy, could be eventual consistency issue on service side. Happens about 1 in 4 times.
+			// FAIL: TestAppUpdateStatus_all_apps/update_oauth_app
+			// Step 4/7 error: Check failed: Check 3/3 error: okta_app_oauth.test: Attribute 'logo_uri' expected "https://example.com/logo-2.png", got "https://example.com/logo-1.png"
 			name:         "update oauth app",
 			resource:     resources.OktaIDaaSAppOAuth,
 			attrName:     "logo_uri",
