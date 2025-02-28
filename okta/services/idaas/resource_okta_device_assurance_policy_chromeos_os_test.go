@@ -1,6 +1,7 @@
 package idaas_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -8,21 +9,23 @@ import (
 )
 
 func TestAccResourceOktaPolicyDeviceAssuranceChromeOS_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", "okta_policy_device_assurance_chromeos", t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
-				Config: `resource okta_policy_device_assurance_chromeos test{
-					name = "z"
-				  }`,
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_chromeos test{
+					name = "z-testAcc-replace_with_uuid"
+					tpsp_allow_screen_lock = true
+				  }`),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "name", "z"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "name", fmt.Sprintf("z-testAcc-%d", mgr.Seed)),
 				),
 			},
 			{
-				Config: `resource okta_policy_device_assurance_chromeos test{
-					name = "test"
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_chromeos test{
+					name = "testAcc-replace_with_uuid"
 					tpsp_allow_screen_lock = true
 					tpsp_browser_version = "15393.27.0"
 					tpsp_builtin_dns_client_enabled = true
@@ -37,9 +40,9 @@ func TestAccResourceOktaPolicyDeviceAssuranceChromeOS_crud(t *testing.T) {
 					tpsp_safe_browsing_protection_level = "ENHANCED_PROTECTION"
 					tpsp_screen_lock_secured = true
 					tpsp_site_isolation_enabled = true
-				  }`,
+				  }`),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "name", "test"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "tpsp_allow_screen_lock", "true"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "tpsp_browser_version", "15393.27.0"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "tpsp_builtin_dns_client_enabled", "true"),

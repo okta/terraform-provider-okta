@@ -1,5 +1,5 @@
 resource "okta_policy_device_assurance_windows" "test" {
-  name                                      = "test"
+  name                                      = "testAcc-replace_with_uuid"
   os_version                                = "12.4.6"
   disk_encryption_type                      = toset(["ALL_INTERNAL_VOLUMES"])
   secure_hardware_present                   = true

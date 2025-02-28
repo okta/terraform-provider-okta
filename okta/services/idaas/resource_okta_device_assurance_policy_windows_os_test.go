@@ -1,6 +1,7 @@
 package idaas_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -8,20 +9,21 @@ import (
 )
 
 func TestAccResourceOktaPolicyDeviceAssuranceWindows_crud(t *testing.T) {
+	mgr := newFixtureManager("resources", "okta_policy_device_assurance_android", t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
-				Config: `resource okta_policy_device_assurance_windows test{
-					name = "test"
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_windows test{
+					name = "testAcc-replace_with_uuid"
 					os_version = "12.4.5"
 					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])
 					secure_hardware_present = true
 					screenlock_type = toset(["BIOMETRIC"])
-				  }`,
+				  }`),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "name", "test"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "os_version", "12.4.5"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "disk_encryption_type.#", "1"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "secure_hardware_present", "true"),
@@ -30,8 +32,8 @@ func TestAccResourceOktaPolicyDeviceAssuranceWindows_crud(t *testing.T) {
 				),
 			},
 			{
-				Config: `resource okta_policy_device_assurance_windows test{
-					name = "test"
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_windows test{
+					name = "testAcc-replace_with_uuid"
 					os_version = "12.4.6"
 					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])
 					secure_hardware_present = true
@@ -56,9 +58,9 @@ func TestAccResourceOktaPolicyDeviceAssuranceWindows_crud(t *testing.T) {
 					tpsp_third_party_blocking_enabled = true
 					tpsp_windows_machine_domain = "testMachineDomain"
 					tpsp_windows_user_domain = "testUserDomain"
-				  }`,
+				  }`),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "name", "test"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "os_version", "12.4.6"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "disk_encryption_type.#", "1"),
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_windows.test", "secure_hardware_present", "true"),
