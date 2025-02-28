@@ -2,7 +2,10 @@ package idaas
 
 import (
 	"context"
+	"net/http"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -75,7 +78,22 @@ func resourceUserTypeRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, err := getOktaClientFromMetadata(meta).UserType.DeleteUserType(ctx, d.Id())
+	// deleting a user type quickly (like in an acceptance test, not typical of
+	// "real" usage) can result in a 500 from Okta service. This is an eventual
+	// consistency issue on its part and will resolve in under 30 seconds run
+	// delete in a backoff.
+	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
+	err := backoff.Retry(func() error {
+		resp, err := getOktaClientFromMetadata(meta).UserType.DeleteUserType(ctx, d.Id())
+		if err != nil {
+			if resp.StatusCode == http.StatusInternalServerError {
+				return err
+			}
+			return backoff.Permanent(err)
+		}
+		return nil
+	}, boc)
+
 	if err != nil {
 		return diag.Errorf("failed to delete user type: %v", err)
 	}
