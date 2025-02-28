@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccResourceOktaCaptchaOrgWideSettings_crud(t *testing.T) {
+
 	mgr := newFixtureManager("resources", resources.OktaIDaaSCaptchaOrgWideSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
@@ -39,7 +40,7 @@ func TestAccResourceOktaCaptchaOrgWideSettings_crud(t *testing.T) {
 					Config: empty,
 					Check: resource.ComposeTestCheckFunc(
 						resource.TestCheckResourceAttr(resourceName, "enabled_for.#", "0"),
-						resource.TestCheckResourceAttr(resourceName, "(resources.OktaIDaaSCaptcha)_id", ""),
+						resource.TestCheckResourceAttr(resourceName, "captcha_id", ""),
 					),
 				},
 			},
