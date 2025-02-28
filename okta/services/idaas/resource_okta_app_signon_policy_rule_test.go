@@ -17,6 +17,8 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
+// TestAccResourceOktaAppSignOnPolicyRule_crud can flap when all the tests are
+// run in the harness but rarely fails running individually.
 func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
