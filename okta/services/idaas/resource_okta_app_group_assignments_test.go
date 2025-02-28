@@ -67,6 +67,8 @@ func TestAccResourceOktaAppGroupAssignments_crud(t *testing.T) {
 // remove group assignments from an app if they were made outside of the
 // resource. The correct behavior is to surface drift detection if a group is
 // assigned to an app outside of this resource.
+// NOTE: This test can flap around eventual consistency issues and will
+// typically pass when run singly.
 func TestAccResourceOktaAppGroupAssignments_1088_unplanned_changes(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppGroupAssignments, t.Name())
 	assignments1 := fmt.Sprintf("%s.test", resources.OktaIDaaSAppGroupAssignments)
