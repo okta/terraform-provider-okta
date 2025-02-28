@@ -48,7 +48,7 @@ func init() {
 // It also delineates between acceptance tests and unit tests
 func TestMain(m *testing.M) {
 	// TF_VAR_hostname allows the real hostname to be scripted into the config tests
-	// see examples/okta_resource_set/basic.tf
+	// see examples/resources/okta_resource_set/basic.tf
 	os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
 
 	// NOTE: Acceptance test sweepers are necessary to prevent dangling
