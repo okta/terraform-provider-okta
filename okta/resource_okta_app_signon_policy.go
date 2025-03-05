@@ -74,7 +74,7 @@ default/system access policy.`,
 				Required:    true,
 			},
 			"catch_all": schema.BoolAttribute{
-				Description: "Default rules of the policy set to `DENY` or not. If `false`, it is set to `DENY`. **WARNING** setting this attribute to false change the OKTA default behavior. Use at your own risk. This is only apply during creation, so import or update will not work",
+				Description: "If false, the default rule of the policy is set access to `DENY`. Otherwise default behavior of the default rule is to leave access at `ALLOW`.  **WARNING** setting this attribute to false changes policy rule's default behavior. Use at your own risk. This is only applied during creation and does not affect import or update.",
 				Optional:    true,
 				Computed:    true,
 				Default:     booldefault.StaticBool(true),
