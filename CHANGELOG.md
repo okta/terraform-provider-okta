@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.14.1 (Mar 03, 2025)
+
+### BUG FIXES
+
+* Fix `default_rule_id` argument error in `okta_app_signon_policy` introduced in v4.13.0 / v4.13.1 [#2240](https://github.com/okta/terraform-provider-okta/pull/2240). Thanks, [@monde](https://github.com/monde)!
+
 ## 4.14.0 (Feb 11, 2025)
 
 ### IMPROVEMENTS
