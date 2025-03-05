@@ -98,7 +98,7 @@ resource "okta_app_signon_policy_rule" "some_rule" {
 
 ### Read-Only
 
-- `default_rule_id` (String) Default rules id of the policy
+- `default_rule_id` (String) Default rule (system=true) id of the policy
 - `id` (String) Policy id
 
 ## Import
