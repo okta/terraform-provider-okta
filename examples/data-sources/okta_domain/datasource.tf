@@ -13,3 +13,19 @@ data "okta_domain" "by-name" {
     okta_domain.test
   ]
 }
+
+resource "okta_domain" "test-downcase" {
+  name = "downcase-testacc-replace_with_uuid.example.com"
+}
+
+data "okta_domain" "by-id-downcase" {
+  domain_id_or_name = okta_domain.test-downcase.id
+}
+
+data "okta_domain" "by-name-downcase" {
+  domain_id_or_name = "downcase-testacc-replace_with_uuid.example.com"
+
+  depends_on = [
+    okta_domain.test-downcase
+  ]
+}
