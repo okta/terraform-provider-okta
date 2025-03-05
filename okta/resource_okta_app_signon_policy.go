@@ -231,6 +231,10 @@ func (r *appSignOnPolicyResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	for _, a := range apps {
+		if a.GetActualInstance() == nil {
+			// nil bumper
+			continue
+		}
 		app := a.GetActualInstance().(OktaApp)
 		accessPolicy := app.GetLinks().AccessPolicy.GetHref()
 		// ignore apps that don't have an access policy, typically Classic org apps.
