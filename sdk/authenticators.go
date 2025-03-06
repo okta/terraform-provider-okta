@@ -14,6 +14,7 @@ var AuthenticatorProviders = []string{
 	PhoneNumberFactor,
 	RsaTokenFactor,
 	SecurityQuestionFactor,
+	SmartCardIdpFactor,
 	WebauthnFactor,
 	YubikeyTokenFactor,
 }
