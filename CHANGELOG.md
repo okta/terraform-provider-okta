@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.15.0 (Mar 06, 2025)
+
+### IMPROVEMENTS
+
+* Add `channel_json` argument to `okta_inline_hook` resource allowing direct configuration of a hook [#2241](https://github.com/okta/terraform-provider-okta/pull/2241). Thanks, [@monde](https://github.com/monde)!
+
+
 ## 4.14.1 (Mar 03, 2025)
 
 ### BUG FIXES
