@@ -1,4 +1,4 @@
-![Build Status](https://github.com/okta/terraform-provider-okta/actions/workflows/release.yml/releasae?refresh=1)
+![Build Status](https://github.com/okta/terraform-provider-okta/actions/workflows/release.yml/badge.svg)
 <br/><br/>
 
 <a href="https://terraform.io">
