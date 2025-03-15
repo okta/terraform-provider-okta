@@ -6,6 +6,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
@@ -20,8 +23,8 @@ resource "okta_app_signon_policy_rule" "test" {
   depends_on = [okta_app_signon_policy.test]
 }`)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:                 testAccPreCheck(t),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSAppSignOnPolicy),
@@ -89,8 +92,8 @@ resource "okta_app_signon_policy_rule" "test" {
 // TestAccResourceOktaAppSignOnPolicy_default_policy_rule_can_be_set_to_deny
 // tests to see if catch_all = false results in a default policy rule of DENY
 func TestAccResourceOktaAppSignOnPolicy_default_policy_rule_can_be_set_to_deny(t *testing.T) {
-	resourceName := fmt.Sprintf("%v.test", appSignOnPolicy)
-	mgr := newFixtureManager("resources", appSignOnPolicy, t.Name())
+	resourceName := fmt.Sprintf("%v.test", resources.OktaIDaaSAppSignOnPolicy)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicy, t.Name())
 	config := `
 resource "okta_app_signon_policy" "test" {
   name        = "testAcc_Test_App_replace_with_uuid"
@@ -106,17 +109,17 @@ resource "okta_app_signon_policy" "test" {
 resource "okta_app_signon_policy_rule" "test" {
   depends_on = [okta_app_signon_policy.test]
 }`
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:                 testAccPreCheck(t),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
-		CheckDestroy:             checkPolicyDestroy(appSignOnPolicy),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSAppSignOnPolicy),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
-					resource.TestCheckResourceAttr("okta_app_signon_policy.test", "name", buildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
+					resource.TestCheckResourceAttr("okta_app_signon_policy.test", "name", acctest.BuildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr("okta_app_signon_policy.test", "description", "App Sign-On Policy with Default Rule DENY"),
 					resource.TestCheckResourceAttr("okta_app_signon_policy.test", "catch_all", "false"),
 					resource.TestCheckResourceAttrSet("okta_app_signon_policy.test", "default_rule_id"),

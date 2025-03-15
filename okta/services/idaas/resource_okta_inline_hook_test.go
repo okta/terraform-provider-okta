@@ -108,7 +108,7 @@ func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 
 func TestAccResourceOktaInlineHook_com_okta_saml_tokens_transform(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
-	mgr := newFixtureManager("resources", inlineHook, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSInlineHook, t.Name())
 
 	name1 := "One"
 	name2 := "Two"
@@ -146,18 +146,18 @@ JSON
 }
 	`
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(inlineHook, inlineHookExists),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSInlineHook, inlineHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(fmt.Sprintf(config, name1)),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_One"),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)+"_One"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
@@ -169,8 +169,8 @@ JSON
 				Config: mgr.ConfigReplace(fmt.Sprintf(config, name2)),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_Two"),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)+"_Two"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),

@@ -97,7 +97,7 @@ func resourceInlineHook() *schema.Resource {
 				Optional:         true,
 				Description:      "true channel object for the inline hook API contract",
 				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
+				StateFunc:        utils.NormalizeDataJSON,
 				DiffSuppressFunc: noChangeInObjectFromUnmarshaledChannelJSON,
 				ConflictsWith:    []string{"channel", "auth"},
 			},
@@ -151,7 +151,7 @@ func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta in
 		}
 		_ = d.Set("channel_json", string(channelJson))
 	} else {
-		err = setNonPrimitives(d, map[string]interface{}{
+		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"channel": flattenInlineHookChannel(hook.Channel),
 			"headers": flattenInlineHookHeaders(hook.Channel),
 			"auth":    flattenInlineHookAuth(d, hook.Channel),

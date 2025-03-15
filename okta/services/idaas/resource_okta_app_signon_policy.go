@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -146,7 +147,7 @@ func (r *appSignOnPolicyResource) Create(ctx context.Context, req resource.Creat
 		}
 		defaultRule.AccessPolicyRule.Actions.AppSignOn.SetAccess("DENY")
 
-		_, _, err = r.oktaSDKClientV5.PolicyAPI.ReplacePolicyRule(ctx, state.ID.ValueString(), state.DefaultRuleID.ValueString()).PolicyRule(*defaultRule).Execute()
+		_, _, err = r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.ReplacePolicyRule(ctx, state.ID.ValueString(), state.DefaultRuleID.ValueString()).PolicyRule(*defaultRule).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to update access policy default rule to DENY",
@@ -328,7 +329,7 @@ func (r *appSignOnPolicyResource) mapAccessPolicyToState(ctx context.Context, da
 // findDefaultPolicyRuleResponse find the default policy rule from the list and return
 // it. Default rule is the first to be marked system.
 func (r *appSignOnPolicyResource) findDefaultPolicyRuleResponse(ctx context.Context, accessPolicyId string) (*okta.ListPolicyRules200ResponseInner, error) {
-	rules, _, err := r.oktaSDKClientV5.PolicyAPI.ListPolicyRules(ctx, accessPolicyId).Execute()
+	rules, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.ListPolicyRules(ctx, accessPolicyId).Execute()
 	if err != nil {
 		return nil, err
 	}
@@ -343,4 +344,39 @@ func (r *appSignOnPolicyResource) findDefaultPolicyRuleResponse(ctx context.Cont
 		}
 	}
 	return nil, errors.New("policy does not have a default (system) access policy rule")
+}
+
+func frameworkFindDefaultAccessPolicy(ctx context.Context, config *config.Config) (okta.ListPolicies200ResponseInner, error) {
+	if fwproviderIsClassicOrg(ctx, config) {
+		return okta.ListPolicies200ResponseInner{}, nil
+	}
+	policies, err := framworkFindSystemPolicyByType(ctx, config, "ACCESS_POLICY")
+	if err != nil {
+		return okta.ListPolicies200ResponseInner{}, fmt.Errorf("error finding default ACCESS_POLICY %+v", err)
+	}
+	if len(policies) != 1 {
+		return okta.ListPolicies200ResponseInner{}, errors.New("cannot find default ACCESS_POLICY policy")
+	}
+	return policies[0], nil
+}
+
+type OktaPolicy interface {
+	GetId() string
+	GetSystem() bool
+}
+
+func framworkFindSystemPolicyByType(ctx context.Context, config *config.Config, _type string) ([]okta.ListPolicies200ResponseInner, error) {
+	res := []okta.ListPolicies200ResponseInner{}
+	policies, _, err := config.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.ListPolicies(ctx).Type_(_type).Execute()
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range policies {
+		policy := p.GetActualInstance().(OktaPolicy)
+		if policy.GetSystem() {
+			res = append(res, p)
+		}
+	}
+
+	return res, nil
 }
