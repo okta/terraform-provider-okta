@@ -16,10 +16,10 @@ func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 	config := testOktaPolicyRuleSignOnDefaultErrors(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -42,10 +42,10 @@ func TestAccResourceOktaPolicyRuleSignon_crud(t *testing.T) {
 	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
 	// Not sure about correct settings for this to pass.
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -134,10 +134,10 @@ func TestAccResourceOktaPolicyRuleSignon_multiple(t *testing.T) {
 	// NOTE can/will fail with "conditions: Invalid condition type specified: riskScore."
 	// Not sure about correct settings for this to pass.
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

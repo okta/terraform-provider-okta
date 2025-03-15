@@ -18,10 +18,10 @@ func TestAccResourceOktaAppBasicAuthApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBasicAuth)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -64,10 +64,10 @@ resource "okta_app_basic_auth" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBasicAuth, createDoesAppExist(sdk.NewBasicAuthApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

@@ -32,7 +32,7 @@ func resourceGroup() *schema.Resource {
 					return nil, errors.New("invalid format used for import ID, format must be 'group_id' or 'group_id/skip_users'")
 				}
 				d.SetId(importID[0])
-				//lintignore:R001
+				// lintignore:R001
 				_ = d.Set(importID[1], true)
 				return []*schema.ResourceData{d}, nil
 			},

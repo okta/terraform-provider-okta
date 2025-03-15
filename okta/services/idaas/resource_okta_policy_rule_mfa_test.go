@@ -19,10 +19,10 @@ func TestAccResourceOktaMfaPolicyRule_crud(t *testing.T) {
 	// NOTE can/will fail with "conditions: Invalid condition type specified: app."
 	// Not sure about correct settings for this to pass.
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRuleMfa),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleMfa),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

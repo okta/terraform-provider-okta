@@ -208,7 +208,6 @@ The only difference is that these fields are immutable and can not be managed: '
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
-
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))

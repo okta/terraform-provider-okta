@@ -14,8 +14,8 @@ func TestAccDataSourceOktaAppMetadataSaml_read(t *testing.T) {
 	resourceName := "data.okta_app_metadata_saml.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

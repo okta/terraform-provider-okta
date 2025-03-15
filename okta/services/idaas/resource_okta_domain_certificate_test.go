@@ -55,9 +55,9 @@ resource "okta_domain_certificate" "test" {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSDomainCertificate)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

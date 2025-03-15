@@ -46,7 +46,7 @@ func TestAccResourceOktaLogStream_crud(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					//lintignore:R018
+					// lintignore:R018
 					time.Sleep(2 * time.Second) // wait a bit for Okta to catchup between active->inactive->deleted status
 				},
 				Config: updatedConfig,

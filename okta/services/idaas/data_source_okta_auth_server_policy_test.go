@@ -14,8 +14,8 @@ func TestAccDataSourceOktaAuthServerPolicy_read(t *testing.T) {
 	config := mgr.GetFixtures("datasource.tf", t)
 	createServerWithPolicy := buildTestAuthServerWithPolicy(mgr.Seed)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

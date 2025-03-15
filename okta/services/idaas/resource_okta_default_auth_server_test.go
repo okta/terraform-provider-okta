@@ -16,10 +16,10 @@ func TestAccResourceOktaAuthServerDefault_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -63,10 +63,10 @@ func TestAccResourceOktaAuthServerDefault_legacy_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated_legacy.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

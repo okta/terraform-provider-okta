@@ -17,10 +17,10 @@ func TestAccResourceOktaUserAdminRoles_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserAdminRoles)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,

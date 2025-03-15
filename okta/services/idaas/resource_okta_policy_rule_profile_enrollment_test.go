@@ -43,10 +43,10 @@ resource "okta_group" "test" {
 `
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkRuleDestroy(resources.OktaIDaaSPolicyRuleProfileEnrollment),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleProfileEnrollment),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -127,10 +127,10 @@ resource "okta_policy_rule_profile_enrollment" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

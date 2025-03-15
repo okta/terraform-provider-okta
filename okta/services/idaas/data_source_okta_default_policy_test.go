@@ -16,8 +16,8 @@ func TestAccDataSourceOktaDefaultPolicy_readPasswordPolicy(t *testing.T) {
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.PasswordPolicyType)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -35,8 +35,8 @@ func TestAccDataSourceOktaDefaultPolicy_readIdpPolicy(t *testing.T) {
 	config := testAccDataSourceDefaultPolicy(mgr.Seed, sdk.IdpDiscoveryType)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

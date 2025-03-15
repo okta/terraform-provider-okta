@@ -15,8 +15,8 @@ func TestAccDataSourceOktaGroupRule_read(t *testing.T) {
 	step2config := fmt.Sprintf("%s%s", groupAndRule, groupRuleDataSources)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

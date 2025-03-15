@@ -19,10 +19,10 @@ func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpOidc)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -98,10 +98,10 @@ resource "okta_idp_oidc" "test" {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpOidc)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -168,10 +168,10 @@ resource "okta_idp_oidc" "test" {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpOidc)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config1),
@@ -213,5 +213,4 @@ resource "okta_idp_oidc" "test" {
 			},
 		},
 	})
-
 }

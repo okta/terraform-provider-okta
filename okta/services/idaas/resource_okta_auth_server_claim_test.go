@@ -17,10 +17,10 @@ func TestAccResourceOktaAuthServerClaim_create(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -53,10 +53,10 @@ func TestAccResourceOktaAuthServerClaim_groupType(t *testing.T) {
 	config := mgr.GetFixtures("basic_group.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -19,10 +19,10 @@ func TestAccResourceOktaAppThreeFieldApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppThreeField)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppThreeField, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppThreeField, createDoesAppExist(sdk.NewSwaThreeFieldApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

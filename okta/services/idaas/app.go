@@ -170,7 +170,7 @@ func appImporter(_ context.Context, d *schema.ResourceData, m interface{}) ([]*s
 	}
 	d.SetId(importID[0])
 	for _, v := range importID[1:] {
-		//lintignore:R001
+		// lintignore:R001
 		_ = d.Set(v, true)
 	}
 	return []*schema.ResourceData{d}, nil

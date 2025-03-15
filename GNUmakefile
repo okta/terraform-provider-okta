@@ -86,7 +86,7 @@ smoke-test-play-vcr-acc:
 test-record-vcr-acc:
 	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
 
-qc: vet staticcheck lint
+qc: fmtcheck vet staticcheck lint
 
 vet:
 	@echo "==> Checking source code against go vet"

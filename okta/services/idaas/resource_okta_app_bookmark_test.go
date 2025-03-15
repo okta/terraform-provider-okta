@@ -18,10 +18,10 @@ func TestAccResourceOktaAppBookmarkApplication_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBookmark)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -61,10 +61,10 @@ resource "okta_app_bookmark" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -103,10 +103,10 @@ resource "okta_app_bookmark" "test" {
   authentication_policy = okta_app_signon_policy.test.id
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -130,10 +130,10 @@ func TestAccResourceOktaAppBookmarkApplication_authenticationPolicy_OIEonly(t *t
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBookmark)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

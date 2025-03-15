@@ -15,10 +15,10 @@ func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

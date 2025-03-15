@@ -198,7 +198,7 @@ func CreateCustomNestedResourceImporter(fields []string, errMessage string) *sch
 						value = parts[i]
 					}
 				}
-				//lintignore:R001
+				// lintignore:R001
 				_ = d.Set(field, value)
 			}
 
@@ -432,7 +432,7 @@ func AppendUnique(arr []string, el string) []string {
 func SetNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {
 		if v != nil {
-			//lintignore:R001
+			// lintignore:R001
 			if err := d.Set(k, v); err != nil {
 				return fmt.Errorf("error setting %s for resource %s: %s", k, d.Id(), err)
 			}
@@ -623,7 +623,7 @@ func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 	return reflect.DeepEqual(oldObj, newObj)
 }
 
-func Intersection(old []string, new []string) (intersection []string, exclusiveOld []string, exclusiveNew []string) {
+func Intersection(old, new []string) (intersection, exclusiveOld, exclusiveNew []string) {
 	intersection = make([]string, 0)
 	exclusiveOld = make([]string, 0)
 	exclusiveNew = make([]string, 0)

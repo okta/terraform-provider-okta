@@ -16,8 +16,8 @@ func TestAccDataSourceOktaAuthenticator_read(t *testing.T) {
 	resourceName1 := fmt.Sprintf("data.%s.test_1", resources.OktaIDaaSAuthenticator) // okta verify
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

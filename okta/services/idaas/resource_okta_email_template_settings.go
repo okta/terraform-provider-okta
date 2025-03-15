@@ -170,7 +170,7 @@ func (r *emailTemplateSettingsResource) put(ctx context.Context, plan emailTempl
 	return err
 }
 
-func formatId(brandID string, templateName string) string {
+func formatId(brandID, templateName string) string {
 	return fmt.Sprintf("%s/%s", brandID, templateName)
 }
 

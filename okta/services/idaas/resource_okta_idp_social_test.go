@@ -18,10 +18,10 @@ func TestAccResourceOktaIdpSocial_crud(t *testing.T) {
 	googleName := fmt.Sprintf("%s.google", resources.OktaIDaaSIdpSocial)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpSocial, createDoesIdpExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpSocial, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

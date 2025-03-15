@@ -20,10 +20,10 @@ func TestAccResourceOktaTheme_existing_update(t *testing.T) {
 
 	// okta_theme is read and update only, so set up the test by importing the theme first
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				// this is set up only for import state test, ignore check as import.tf is for testing

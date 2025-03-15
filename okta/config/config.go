@@ -274,7 +274,7 @@ func (o *ProductionTimeOperations) DoNotRetry(err error) bool {
 
 // Sleep facade to actual time.Sleep in production
 func (o *ProductionTimeOperations) Sleep(d time.Duration) {
-	//lintignore:R018
+	// lintignore:R018
 	time.Sleep(d)
 }
 
@@ -293,7 +293,7 @@ func (o *TestTimeOperations) DoNotRetry(err error) bool {
 // Sleep no sleeping when test is in VCR play mode
 func (o *TestTimeOperations) Sleep(d time.Duration) {
 	if os.Getenv("OKTA_VCR_TF_ACC") != "play" {
-		//lintignore:R018
+		// lintignore:R018
 		time.Sleep(d)
 	}
 }

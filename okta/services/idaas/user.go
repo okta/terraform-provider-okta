@@ -351,7 +351,6 @@ func getGroupsForUser(ctx context.Context, id string, c *sdk.Client) ([]string, 
 		}
 
 		response, err = response.Next(ctx, &groups)
-
 		if err != nil {
 			return nil, fmt.Errorf("failed to list user groups: %v", err)
 		}

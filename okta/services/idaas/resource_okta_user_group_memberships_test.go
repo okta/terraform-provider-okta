@@ -15,10 +15,10 @@ func TestAccResourceOktaUserGroupMemberships_crud(t *testing.T) {
 	remove := mgr.GetFixtures("basic_removal.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,

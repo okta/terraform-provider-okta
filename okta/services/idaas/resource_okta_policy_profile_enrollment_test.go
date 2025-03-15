@@ -16,10 +16,10 @@ func TestAccResourceOktaPolicyProfileEnrollment_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyProfileEnrollment)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkPolicyDestroy(resources.OktaIDaaSPolicyProfileEnrollment),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyProfileEnrollment),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

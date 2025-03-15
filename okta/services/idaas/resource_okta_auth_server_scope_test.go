@@ -21,10 +21,10 @@ func TestAccResourceOktaAuthServerScope_crud(t *testing.T) {
 	importConfig := mgr.GetFixtures("import.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAuthServer, authServerExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

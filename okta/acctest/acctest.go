@@ -89,7 +89,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 		// FIXME most of the skips we get are from the "classic-00" cassettes,
 		// not the "oie-00" so reverse order the cassettes
 		cassettes := mgr.Cassettes()
-		//for _, cassette := range cassettes {
+		// for _, cassette := range cassettes {
 		for i := len(cassettes) - 1; i >= 0; i-- {
 			cassette := cassettes[i]
 			// need to artificially set expected OKTA env vars if VCR is playing
@@ -552,7 +552,6 @@ func ProvidersForTest(testName string) (func() tfprotov5.ProviderServer, error) 
 		providerserver.NewProtocol5(NewFrameworkTestProvider(testName, pluginSDKProvider)),
 	}
 	muxServer, err := tf5muxserver.NewMuxServer(ctx, providers...)
-
 	if err != nil {
 		return nil, err
 	}

@@ -813,7 +813,7 @@ func resourceDataForTest(t *testing.T, s map[string]*schema_sdk.Schema) *schema_
 
 	if len(configValues) > 0 {
 		for k, v := range configValues {
-			//lintignore:R001
+			// lintignore:R001
 			_ = d.Set(k, v)
 		}
 	}

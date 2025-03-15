@@ -17,10 +17,10 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	remove := mgr.GetFixtures("basic_removal.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: start,
@@ -38,10 +38,10 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 // TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
 func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: `
@@ -69,10 +69,10 @@ resource "okta_group_memberships" "test" {
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -109,10 +109,10 @@ func TestAccResourceOktaGroupMemberships_ClassicBehavior(t *testing.T) {
 // https://github.com/okta/terraform-provider-okta/issues/1155
 func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				// Before the apply the state will be:
@@ -264,10 +264,10 @@ resource "okta_group" "test" {
 	config = mgr.ConfigReplace(config)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkUserDestroy,
+		CheckDestroy:             checkUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

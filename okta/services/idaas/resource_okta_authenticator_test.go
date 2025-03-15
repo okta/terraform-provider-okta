@@ -29,10 +29,10 @@ func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.otp", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -55,10 +55,10 @@ func TestAccResourceOktaAuthenticator_crud(t *testing.T) {
 	configUpdated := mgr.GetFixtures("security_question_updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -118,10 +118,10 @@ resource "okta_authenticator" "google_otp" {
 	resourceName := fmt.Sprintf("%s.google_otp", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -163,10 +163,10 @@ resource "okta_authenticator" "test" {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

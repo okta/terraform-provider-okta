@@ -21,10 +21,10 @@ func TestAccResourceOktaGroupRole_admin_crud(t *testing.T) {
 	// NOTE this test doesn't always pass
 	// "The role specified is already assigned to the user."
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -68,10 +68,10 @@ func TestAccResourceOktaGroupRole_custom_crud(t *testing.T) {
 	config := mgr.GetFixtures("custom.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

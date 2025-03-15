@@ -16,10 +16,10 @@ func TestAccResourceOktaPolicyProfileEnrollmentApps_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyProfileEnrollmentApps)
 	resourceName2 := fmt.Sprintf("%s.test_2", resources.OktaIDaaSPolicyProfileEnrollmentApps)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      nil,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

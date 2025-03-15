@@ -19,10 +19,10 @@ func TestAccResourceOktaAppSharedCredentials_crud(t *testing.T) {
 	// NOTE: will fail unless self service apps and allow swa feature flags are
 	// enabled
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -97,10 +97,10 @@ resource "okta_app_shared_credentials" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSharedCredentials, createDoesAppExist(sdk.NewBrowserPluginApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

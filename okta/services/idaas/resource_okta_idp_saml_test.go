@@ -154,10 +154,10 @@ resource "okta_idp_saml" "test" {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSIdpSaml, createDoesIdpExist),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpSaml, createDoesIdpExist),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

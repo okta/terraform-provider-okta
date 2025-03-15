@@ -379,7 +379,7 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
-			//lintignore:S018
+			// lintignore:S018
 			"groups_claim": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,

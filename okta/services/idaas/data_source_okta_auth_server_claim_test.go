@@ -15,8 +15,8 @@ func TestAccDataSourceOktaAuthServerClaim_read(t *testing.T) {
 	createUser := mgr.GetFixtures("datasource_create_auth_server.tf", t)
 	resourceName := fmt.Sprintf("data.%s.test", resources.OktaIDaaSAuthServerClaim)
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

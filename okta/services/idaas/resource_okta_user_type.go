@@ -93,7 +93,6 @@ func resourceUserTypeDelete(ctx context.Context, d *schema.ResourceData, meta in
 		}
 		return nil
 	}, boc)
-
 	if err != nil {
 		return diag.Errorf("failed to delete user type: %v", err)
 	}

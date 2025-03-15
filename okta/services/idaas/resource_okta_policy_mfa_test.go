@@ -151,7 +151,7 @@ resource "okta_policy_mfa" "test" {
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy"),
 					resource.TestCheckResourceAttr(resourceName, "okta_otp.enroll", "OPTIONAL"),
 					// phone authentictor needs to be enabled on this org to make this acc test pass all the time
-					//resource.TestCheckResourceAttr(resourceName, "phone_number.enroll", "OPTIONAL"),
+					// resource.TestCheckResourceAttr(resourceName, "phone_number.enroll", "OPTIONAL"),
 					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "okta_email.enroll", "OPTIONAL"),
 				),

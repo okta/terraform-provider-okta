@@ -18,8 +18,8 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 	// NOTE: eliminated previous flapping issues when delay_read_seconds was added to okta_user
 	// TF_ACC=1 go test -tags unit -mod=readonly -test.v -run ^TestAccOktaDataSourceUser_read$
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -60,8 +60,8 @@ func TestAccDataSourceOktaUser_read(t *testing.T) {
 func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -80,8 +80,8 @@ func TestAccDataSourceOktaUser_SkipAdminRoles(t *testing.T) {
 func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -100,8 +100,8 @@ func TestAccDataSourceOktaUser_SkipGroups(t *testing.T) {
 func TestAccDataSourceOktaUser_SkipGroupsSkipRoles(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUser, t.Name())
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
@@ -122,8 +122,8 @@ func TestAccDataSourceOktaUser_NoSkips(t *testing.T) {
 	allAdminRolesRegexp, _ := regexp.Compile("APP_ADMIN, SUPER_ADMIN")
 	allGroupMembershipsRegexp, _ := regexp.Compile("00g[a-z,A-Z,0-9]{17}, 00g[a-z,A-Z,0-9]{17}")
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

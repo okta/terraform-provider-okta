@@ -18,10 +18,10 @@ func TestAccResourceOktaAppSecurePasswordStoreApplication_credsSchemes(t *testin
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSecurePasswordStore)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -67,10 +67,10 @@ resource "okta_app_secure_password_store" "test" {
   }
 }`
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:          acctest.AccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:      checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSecurePasswordStore, createDoesAppExist(sdk.NewSecurePasswordStoreApplication())),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),

@@ -59,7 +59,6 @@ func resourceUserFactorQuestionCreate(ctx context.Context, d *schema.ResourceDat
 	}
 	sq := buildUserFactorQuestion(d)
 	_, _, err = getOktaClientFromMetadata(meta).UserFactor.EnrollFactor(ctx, d.Get("user_id").(string), sq, nil)
-
 	if err != nil {
 		return diag.Errorf("failed to enroll user question factor: %v", err)
 	}
