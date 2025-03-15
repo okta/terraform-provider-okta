@@ -1,0 +1,701 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 935
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"name":"testAcc-2676099928","osVersion":{"minimum":"12.4.6"},"platform":"WINDOWS","screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"secureHardwarePresent":true,"thirdPartySignalProviders":{"dtc":{"browserVersion":{"minimum":"15393.27.0"},"builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"crowdStrikeAgentId":"testAgentId","crowdStrikeCustomerId":"testCustomerId","deviceEnrollmentDomain":"testDomain","diskEncrypted":true,"keyTrustLevel":"CHROME_BROWSER_HW_KEY","osFirewall":true,"osVersion":{"minimum":"10.0.19041"},"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","screenLockSecured":true,"secureBootEnabled":true,"siteIsolationEnabled":true,"thirdPartyBlockingEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain"}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 537.477083ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 441.011917ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 409.823875ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"name":"Device Assurance Android","platform":"ANDROID","id":"dae9i0jh1gDrpv7fk1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2023-08-15T16:40:19.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-15T16:40:19.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9i0jh1gDrpv7fk1d7","resourceDisplayName":{"value":"Device Assurance Android","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9i0jh1gDrpv7fk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"fdsfds","platform":"ANDROID","id":"dae9culvkbbp6YxOi1d7","osVersion":{"minimum":"12"},"jailbreak":false,"displayRemediationMode":"HIDE","createdDate":"2023-08-07T22:12:24.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-07T22:13:59.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9culvkbbp6YxOi1d7","resourceDisplayName":{"value":"fdsfds","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9culvkbbp6YxOi1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"test","platform":"ANDROID","id":"daek8yhib6yTJB6nG1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-02-06T22:09:38.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-06T22:09:38.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daek8yhib6yTJB6nG1d7","resourceDisplayName":{"value":"test","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daek8yhib6yTJB6nG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-4953752743971008777","platform":"WINDOWS","id":"daeknw4c69OolpeLk1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-02-28T01:12:03.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-28T01:12:06.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daeknw4c69OolpeLk1d7","resourceDisplayName":{"value":"testAcc-4953752743971008777","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daeknw4c69OolpeLk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 231.595083ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"name":"Device Assurance Android","platform":"ANDROID","id":"dae9i0jh1gDrpv7fk1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2023-08-15T16:40:19.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-15T16:40:19.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9i0jh1gDrpv7fk1d7","resourceDisplayName":{"value":"Device Assurance Android","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9i0jh1gDrpv7fk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"fdsfds","platform":"ANDROID","id":"dae9culvkbbp6YxOi1d7","osVersion":{"minimum":"12"},"jailbreak":false,"displayRemediationMode":"HIDE","createdDate":"2023-08-07T22:12:24.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-07T22:13:59.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9culvkbbp6YxOi1d7","resourceDisplayName":{"value":"fdsfds","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9culvkbbp6YxOi1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"test","platform":"ANDROID","id":"daek8yhib6yTJB6nG1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-02-06T22:09:38.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-06T22:09:38.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daek8yhib6yTJB6nG1d7","resourceDisplayName":{"value":"test","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daek8yhib6yTJB6nG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-4953752743971008777","platform":"WINDOWS","id":"daeknw4c69OolpeLk1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-02-28T01:12:03.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-28T01:12:06.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daeknw4c69OolpeLk1d7","resourceDisplayName":{"value":"testAcc-4953752743971008777","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daeknw4c69OolpeLk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 232.494041ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"name":"Device Assurance Android","platform":"ANDROID","id":"dae9i0jh1gDrpv7fk1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2023-08-15T16:40:19.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-15T16:40:19.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9i0jh1gDrpv7fk1d7","resourceDisplayName":{"value":"Device Assurance Android","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9i0jh1gDrpv7fk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"fdsfds","platform":"ANDROID","id":"dae9culvkbbp6YxOi1d7","osVersion":{"minimum":"12"},"jailbreak":false,"displayRemediationMode":"HIDE","createdDate":"2023-08-07T22:12:24.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-07T22:13:59.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9culvkbbp6YxOi1d7","resourceDisplayName":{"value":"fdsfds","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9culvkbbp6YxOi1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"test","platform":"ANDROID","id":"daek8yhib6yTJB6nG1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-02-06T22:09:38.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-06T22:09:38.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daek8yhib6yTJB6nG1d7","resourceDisplayName":{"value":"test","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daek8yhib6yTJB6nG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-4953752743971008777","platform":"WINDOWS","id":"daeknw4c69OolpeLk1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-02-28T01:12:03.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-28T01:12:06.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daeknw4c69OolpeLk1d7","resourceDisplayName":{"value":"testAcc-4953752743971008777","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daeknw4c69OolpeLk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 204.858292ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 254.08525ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"name":"Device Assurance Android","platform":"ANDROID","id":"dae9i0jh1gDrpv7fk1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2023-08-15T16:40:19.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-15T16:40:19.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9i0jh1gDrpv7fk1d7","resourceDisplayName":{"value":"Device Assurance Android","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9i0jh1gDrpv7fk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"fdsfds","platform":"ANDROID","id":"dae9culvkbbp6YxOi1d7","osVersion":{"minimum":"12"},"jailbreak":false,"displayRemediationMode":"HIDE","createdDate":"2023-08-07T22:12:24.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-07T22:13:59.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9culvkbbp6YxOi1d7","resourceDisplayName":{"value":"fdsfds","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9culvkbbp6YxOi1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"test","platform":"ANDROID","id":"daek8yhib6yTJB6nG1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-02-06T22:09:38.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-06T22:09:38.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daek8yhib6yTJB6nG1d7","resourceDisplayName":{"value":"test","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daek8yhib6yTJB6nG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-4953752743971008777","platform":"WINDOWS","id":"daeknw4c69OolpeLk1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-02-28T01:12:03.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-28T01:12:06.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daeknw4c69OolpeLk1d7","resourceDisplayName":{"value":"testAcc-4953752743971008777","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daeknw4c69OolpeLk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 206.164708ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"name":"Device Assurance Android","platform":"ANDROID","id":"dae9i0jh1gDrpv7fk1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2023-08-15T16:40:19.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-15T16:40:19.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9i0jh1gDrpv7fk1d7","resourceDisplayName":{"value":"Device Assurance Android","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9i0jh1gDrpv7fk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"fdsfds","platform":"ANDROID","id":"dae9culvkbbp6YxOi1d7","osVersion":{"minimum":"12"},"jailbreak":false,"displayRemediationMode":"HIDE","createdDate":"2023-08-07T22:12:24.000Z","createdBy":"00u7aso1e82l0fVlZ1d7","lastUpdate":"2023-08-07T22:13:59.000Z","lastUpdatedBy":"00u7aso1e82l0fVlZ1d7","resourceId":"dae9culvkbbp6YxOi1d7","resourceDisplayName":{"value":"fdsfds","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/dae9culvkbbp6YxOi1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"test","platform":"ANDROID","id":"daek8yhib6yTJB6nG1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-02-06T22:09:38.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-06T22:09:38.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daek8yhib6yTJB6nG1d7","resourceDisplayName":{"value":"test","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daek8yhib6yTJB6nG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"name":"testAcc-4953752743971008777","platform":"WINDOWS","id":"daeknw4c69OolpeLk1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-02-28T01:12:03.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-02-28T01:12:06.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daeknw4c69OolpeLk1d7","resourceDisplayName":{"value":"testAcc-4953752743971008777","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daeknw4c69OolpeLk1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 211.883875ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 238.757042ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 221.895041ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 201.189541ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 230.614709ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 230.423334ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 518.456375ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-2676099928","platform":"WINDOWS","id":"daekwqrn3cGw2gvDC1d7","osVersion":{"minimum":"12.4.6"},"secureHardwarePresent":true,"diskEncryptionType":{"include":["ALL_INTERNAL_VOLUMES"]},"screenLockType":{"include":["BIOMETRIC","PASSCODE"]},"thirdPartySignalProviders":{"dtc":{"osVersion":{"minimum":"10.0.19041"},"diskEncrypted":true,"osFirewall":true,"screenLockSecured":true,"browserVersion":{"minimum":"15393.27.0"},"deviceEnrollmentDomain":"testDomain","builtInDnsClientEnabled":true,"chromeRemoteDesktopAppBlocked":true,"safeBrowsingProtectionLevel":"ENHANCED_PROTECTION","siteIsolationEnabled":true,"passwordProtectionWarningTrigger":"PASSWORD_PROTECTION_OFF","realtimeUrlCheckMode":true,"secureBootEnabled":true,"windowsMachineDomain":"testMachineDomain","windowsUserDomain":"testUserDomain","thirdPartyBlockingEnabled":true,"crowdStrikeCustomerId":"testCustomerId","crowdStrikeAgentId":"testAgentId","keyTrustLevel":"CHROME_BROWSER_HW_KEY"}},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:23:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:23:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwqrn3cGw2gvDC1d7","resourceDisplayName":{"value":"testAcc-2676099928","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:23:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.301833ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwqrn3cGw2gvDC1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 13 Mar 2025 23:23:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 269.428916ms

@@ -1,0 +1,47 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1103
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_477959725","name":"office365","settings":{"app":{"domain":"okta.com","domains":[],"msftTenant":"okta","requireAdminConsent":false,"windowsTransportEnabled":false,"wsFedConfigureType":"AUTO"},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"allowMultipleAcsEndpoints":false,"assertionSigned":false,"attributeStatements":[],"audienceOverride":"","defaultRelayState":"","destinationOverride":"","honorForceAuthn":false,"recipientOverride":"","responseSigned":false,"samlSignedRequestEnabled":false,"slo":{"enabled":false},"ssoAcsUrlOverride":""}},"signOnMode":"SAML_1_1","visibility":{"appLinks":{"calendar":false,"crm":false,"delve":false,"excel":false,"forms":false,"login":true,"mail":false,"newsfeed":false,"onedrive":false,"people":false,"planner":false,"powerbi":false,"powerpoint":false,"sites":false,"sway":false,"tasks":false,"teams":false,"word":false,"yammer":false},"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: settings","errorLink":"E0000001","errorId":"oaeQJGrGxGOQRq8mmBEtlqWgQ","errorCauses":[{"errorSummary":"In order to continue using WS-FED Auto for SSO, you must grant admin consent."}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:26:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 400 Bad Request
+        code: 400
+        duration: 916.385416ms
