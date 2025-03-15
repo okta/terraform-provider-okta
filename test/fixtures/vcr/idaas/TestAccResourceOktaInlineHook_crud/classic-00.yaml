@@ -1,0 +1,1446 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 278
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"123"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_893678766","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.1"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuj02atap4FsA1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 415.712459ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 266
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"secret"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"twillio","status":"ACTIVE","type":"com.okta.telephony.provider","version":"1.0.0"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qfBWp0v4H1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 595.019708ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuj02atap4FsA1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 261.082ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qfBWp0v4H1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 218.516625ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuj02atap4FsA1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 222.604916ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qfBWp0v4H1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 591.815667ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qfBWp0v4H1d7","status":"ACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 240.315459ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuj02atap4FsA1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:20.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 241.372583ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuj02atap4FsA1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:23.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 248.646541ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qfBWp0v4H1d7","status":"INACTIVE","name":"twillio","type":"com.okta.telephony.provider","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-14T03:16:20.000Z","lastUpdated":"2025-03-14T03:16:23.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 448.815916ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuj02atap4FsA1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 03:16:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 217.91ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qfBWp0v4H1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 03:16:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 231.915916ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 264
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_893678766","status":"INACTIVE","type":"com.okta.import.transform","version":"1.0.2"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:24.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 422.767958ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:24.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 227.33525ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:24.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 213.208333ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:24.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 384.963625ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[{"key":"x-stuff-and-such","value":"yea boi"}],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:24.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 202.706375ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 205
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_893678766","status":"ACTIVE","type":"com.okta.import.transform","version":"1.0.2"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:25.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 229.028958ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 246.543875ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 377.165292ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 198.369791ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 399.23125ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwut0l7k4FCYKv1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.import.transform","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:24.000Z","lastUpdated":"2025-03-14T03:16:28.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 406.304375ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwut0l7k4FCYKv1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 03:16:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 212.929166ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 210
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_893678766","status":"ACTIVE","type":"com.okta.user.pre-registration","version":"1.0.2"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuax57J4UMEAs1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:29.000Z","lastUpdated":"2025-03-14T03:16:29.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 413.4235ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuax57J4UMEAs1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:29.000Z","lastUpdated":"2025-03-14T03:16:29.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 403.275416ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuax57J4UMEAs1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:29.000Z","lastUpdated":"2025-03-14T03:16:29.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 238.970333ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuax57J4UMEAs1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:29.000Z","lastUpdated":"2025-03-14T03:16:29.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 197.526459ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwuax57J4UMEAs1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.user.pre-registration","version":"1.0.2","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:29.000Z","lastUpdated":"2025-03-14T03:16:30.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 239.165042ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwuax57J4UMEAs1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 03:16:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 224.022417ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 220
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"channel":{"config":{"method":"POST","uri":"https://example.com/test1"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_893678766","status":"ACTIVE","type":"com.okta.user.credential.password.import","version":"1.0.0"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qgu3uWYek1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:31.000Z","lastUpdated":"2025-03-14T03:16:31.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 232.563ms
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qgu3uWYek1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:31.000Z","lastUpdated":"2025-03-14T03:16:31.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 220.696625ms
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qgu3uWYek1d7","status":"ACTIVE","name":"testAcc_893678766","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:31.000Z","lastUpdated":"2025-03-14T03:16:31.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 200.087583ms
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"calkwux1qgu3uWYek1d7","status":"INACTIVE","name":"testAcc_893678766","type":"com.okta.user.credential.password.import","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test1","headers":[],"method":"POST","authScheme":null}},"created":"2025-03-14T03:16:31.000Z","lastUpdated":"2025-03-14T03:16:32.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:16:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 210.07675ms
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/calkwux1qgu3uWYek1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 03:16:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 239.971083ms

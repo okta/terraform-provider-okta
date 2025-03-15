@@ -1,0 +1,2258 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 279.074083ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 203.76425ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 245.090417ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 244.748ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 189
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Hi $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eClick this link to reset your password: $$resetPasswordLink","isDefault":true,"language":"en","subject":"Account password reset"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 238.084792ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 229
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Hola $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eHaga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","isDefault":false,"language":"es","subject":"Restablecimiento de contraseña de cuenta"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 226.402041ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:12 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 226.496459ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:13 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.389042ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:13 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 211.529417ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:13 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 231.706666ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 236.50675ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 234.040167ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:14 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 213.090417ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:14 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 259.233417ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:14 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 211.711375ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 246.992625ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 418.495708ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 232.1985ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 207.957667ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:12.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:16 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 251.214ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 232
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Qué tal $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eHaga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","isDefault":true,"language":"es","subject":"Restablecimiento de contraseña de cuenta"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 245.679ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 175
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Hello $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eClick this link to reset your password: $$resetPasswordLink","language":"en","subject":"Account password reset"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 233.814542ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 219.7025ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 223.83525ms
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 218.287708ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 236.992334ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 248.784625ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 219.57025ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:18 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 213.71925ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:18 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 205.149083ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 216.527666ms
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 202.052583ms
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 206.514834ms
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 218.002916ms
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 207.835375ms
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hello $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Qué tal $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:16.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:20 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 212.140375ms
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 189
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Hi $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eClick this link to reset your password: $$resetPasswordLink","isDefault":true,"language":"en","subject":"Account password reset"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 208.452834ms
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 211
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"body":"Hola $$user.firstName,\u003cbr/\u003e\u003cbr/\u003eHaga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","language":"es","subject":"Restablecimiento de contraseña de cuenta"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 240.975125ms
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:21 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 207.653542ms
+    - id: 39
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:21 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 246.087958ms
+    - id: 40
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:21 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 203.942083ms
+    - id: 41
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 225.328ms
+    - id: 42
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:21 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 231.55625ms
+    - id: 43
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 227.965334ms
+    - id: 44
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:22 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 323.507208ms
+    - id: 45
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:22 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 383.217291ms
+    - id: 46
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"bnd5qwjvgpotf2LV51d7","name":"New Brand","removePoweredByOkta":true,"customPrivacyPolicyUrl":"https://example.com/privacy-policy-updated","agreeToCustomPrivacyPolicy":true,"isDefault":true,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd5qwjvgpotf2LV51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxei82hKlkxret1d7","name":"testacc-1169019695.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxei82hKlkxret1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"bndkxeef9tHsGn98t1d7","name":"testacc-3243021488.example.com","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":"0oa5qwjvixUgETvka1d7","appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:23 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 388.769ms
+    - id: 47
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:23 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 237.2285ms
+    - id: 48
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 245.309ms
+    - id: 49
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}},{"subject":"Restablecimiento de contraseña de cuenta","body":"Hola $$user.firstName,<br/><br/>Haga clic en este enlace para restablecer tu contraseña: $$resetPasswordLink","id":"oelkxec2bg3l20qxn1d7","language":"es","isDefault":false,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 219.039166ms
+    - id: 50
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec2bg3l20qxn1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 17:51:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 229.267584ms
+    - id: 51
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"subject":"Account password reset","body":"Hi $$user.firstName,<br/><br/>Click this link to reset your password: $$resetPasswordLink","id":"oelkxec0uz1CSyLHz1d7","language":"en","isDefault":true,"created":"2025-03-14T17:51:12.000Z","lastUpdated":"2025-03-14T17:51:20.000Z","_links":{"preview":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7/preview","hints":{"allow":["GET"]}},"template":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword","hints":{"allow":["GET"]}},"settings":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/settings","hints":{"allow":["GET","PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations/oelkxec0uz1CSyLHz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"test":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/test","hints":{"allow":["POST"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 17:51:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations?limit=10>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 221.19925ms
+    - id: 52
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndkxeef9tHsGn98t1d7/templates/email/ForgotPassword/customizations
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 14 Mar 2025 17:51:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 226.101333ms
