@@ -155,7 +155,7 @@ resource "okta_resource_set" "test" {
 					// outside of Terraform.  In this case doing so with a
 					// direct API call via the test harness which is equivalent
 					// to "Click Ops"
-					clickOpsAddResourceToResourceSet(resources.OktaIDaaSResourceSet, fmt.Sprintf("https://%s/api/v1/apps", os.Getenv("TF_VAR_hostname"))),
+					clickOpsAddResourceToResourceSet(resources.OktaIDaaSResourceSet+".test", fmt.Sprintf("https://%s/api/v1/apps", os.Getenv("TF_VAR_hostname"))),
 
 					// NOTE: after these checks run the terraform test runner
 					// will do a refresh and catch that apps resource has been

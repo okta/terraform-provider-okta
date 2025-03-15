@@ -48,12 +48,16 @@ var (
 	ResourceNamePrefixForTest = "testAcc"
 
 	// NOTE: Our VCR set up is inspired by terraform-provider-google
+
 	providerConfigsLock = sync.RWMutex{}
 	providerConfigs     map[string]*config.Config
+	vcrMgrsLock         = sync.RWMutex{}
+	vcrMgrs             map[string]*vcrManager
 )
 
 func init() {
 	providerConfigs = make(map[string]*config.Config)
+	vcrMgrs = make(map[string]*vcrManager)
 }
 
 // OktaResourceTest is the entry to overriding the Terraform SDKs Acceptance
@@ -62,7 +66,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 	t.Helper()
 
 	// plug in the VCR
-	mgr := newVCRManager(t.Name())
+	mgr := currentVCRManager(t.Name())
 
 	if !mgr.IsVcrEnabled() {
 		// live ACC / non-VCR test
@@ -89,6 +93,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 			os.Setenv("OKTA_ORG_NAME", cassette)
 			os.Setenv("OKTA_BASE_URL", TestDomainName)
 			os.Setenv("OKTA_API_TOKEN", "token")
+			os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", cassette, TestDomainName))
 			mgr.SetCurrentCassette(cassette)
 
 			// we disable check destroy when recording/playing vcr tests
@@ -97,6 +102,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 			// FIXME: Once we get fully mux'd ACC tests recording with VCR
 			// revisit if we can call ParallelTest when playing.
+			// FIXME: if we get a skip from one cassette the next will not run
 			resource.Test(t, c)
 		}
 		return
@@ -131,7 +137,7 @@ type vcrManager struct {
 // newVCRManager Returns a vcr manager
 func newVCRManager(testName string) *vcrManager {
 	dir, _ := os.Getwd()
-	vcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr")
+	vcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/idaas")
 	cassettesPath := path.Join(vcrFixturesHome, testName)
 	return &vcrManager{
 		Name:            testName,
@@ -190,7 +196,7 @@ func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder
 	// Defines how VCR will match requests to responses.
 
 	vcrOpts := []recorder.Option{
-		recorder.WithMatcher(vcrMatcher(mgr)),
+		recorder.WithMatcher(vcrMatcher()),
 		recorder.WithHook(vcrHook(mgr), recorder.AfterCaptureHook),
 		recorder.WithMode(mgr.VCRMode()),
 		recorder.WithSkipRequestLatency(true),
@@ -213,6 +219,7 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
 			rt := rtHelper.Transport()
 			err := rt.(*recorder.Recorder).Stop()
+			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
 			if err != nil {
 				t.Error(err)
 			}
@@ -328,7 +335,7 @@ func replaceHeaderValues(currentValues []string, oldValue, newValue string) []st
 	return result
 }
 
-func vcrMatcher(mgr *vcrManager) func(*http.Request, cassette.Request) bool {
+func vcrMatcher() func(*http.Request, cassette.Request) bool {
 	return func(r *http.Request, i cassette.Request) bool {
 		if r.Method != i.Method {
 			return false
@@ -457,6 +464,11 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		// %s/example/test/
 		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgName, vcrOrgName)
 
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgHostname, vcrHostname)
+
 		// %s/example-admin/test-admin/
 		i.Response.Body = strings.ReplaceAll(i.Response.Body, adminOrgName, vcrAdminOrgName)
 		// %s/example/test/
@@ -560,7 +572,7 @@ func (p *frameworkTestProvider) Configure(ctx context.Context, req provider.Conf
 }
 
 func GetPluginSDKProvider(testName string) *schema_sdk.Provider {
-	vcrMgr := newVCRManager(testName)
+	vcrMgr := currentVCRManager(testName)
 	oktaProvider := okta_provider.Provider()
 
 	if vcrMgr.IsVcrEnabled() {
@@ -657,4 +669,18 @@ func (c *vcrIDaaSTestClient) OktaSDKClientV2() *oktaSdk.Client {
 
 func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
+}
+
+func currentVCRManager(name string) *vcrManager {
+	mgr, ok := vcrMgrs[name]
+	if ok {
+		return mgr
+	}
+
+	vcrMgrsLock.RLock()
+	mgr = newVCRManager(name)
+	vcrMgrs[name] = mgr
+	vcrMgrsLock.RUnlock()
+
+	return mgr
 }

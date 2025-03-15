@@ -40,6 +40,13 @@ func init() {
 		TimeFormat: "2006/01/02 03:04:05",
 	})
 
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		os.Setenv("OKTA_API_TOKEN", "token")
+		os.Setenv("OKTA_BASE_URL", "dne-okta.com")
+		if os.Getenv("OKTA_VCR_CASSETTE") != "" {
+			os.Setenv("OKTA_ORG_NAME", os.Getenv("OKTA_VCR_CASSETTE"))
+		}
+	}
 	t := &testing.T{}
 	iDaaSAPIClientForTestUtil = IDaaSClientForTest(t)
 }
@@ -49,7 +56,9 @@ func init() {
 func TestMain(m *testing.M) {
 	// TF_VAR_hostname allows the real hostname to be scripted into the config tests
 	// see examples/resources/okta_resource_set/basic.tf
-	os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
+	if os.Getenv("TF_VAR_hostname") == "" {
+		os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
+	}
 
 	// NOTE: Acceptance test sweepers are necessary to prevent dangling
 	// resources.
@@ -81,6 +90,7 @@ func TestMain(m *testing.M) {
 		setupSweeper(resources.OktaIDaaSUser, sweepUsers)
 		setupSweeper(resources.OktaIDaaSUserSchemaProperty, sweepUserCustomSchema)
 		setupSweeper(resources.OktaIDaaSUserType, sweepUserTypes)
+		setupSweeper(resources.OktaIDaaSBrand, sweepBrands)
 	}
 
 	resource.TestMain(m)
@@ -255,6 +265,9 @@ func TestRunForcedSweeper(t *testing.T) {
 	sweepPoliciesPassword(testClient)
 	sweepPoliciesProfileEnrollment(testClient)
 	sweepPoliciesSignOn(testClient)
+
+	// brands
+	sweepBrands(testClient)
 }
 
 // Sets up sweeper to clean up dangling resources
@@ -449,6 +462,28 @@ func sweepInlineHooks(client api.OktaIDaaSClient) error {
 			errorList = append(errorList, err)
 		}
 		logSweptResource("inline hook", hook.Id, hook.Name)
+	}
+	return condenseError(errorList)
+}
+
+func sweepBrands(client api.OktaIDaaSClient) error {
+	var errorList []error
+	ctx := context.Background()
+	brands, _, err := client.OktaSDKClientV3().CustomizationAPI.ListBrands(ctx).Execute()
+	if err != nil {
+		return err
+	}
+
+	for _, b := range brands {
+		test := fmt.Sprintf("%s-", strings.ToLower(acctest.ResourceNamePrefixForTest))
+		if !strings.Contains(*b.Name, test) {
+			continue
+		}
+		if _, err := client.OktaSDKClientV3().CustomizationAPI.DeleteBrand(ctx, *b.Id).Execute(); err != nil {
+			errorList = append(errorList, err)
+			continue
+		}
+		logSweptResource("brand", *b.Id, *b.Name)
 	}
 	return condenseError(errorList)
 }
@@ -778,6 +813,7 @@ func resourceDataForTest(t *testing.T, s map[string]*schema_sdk.Schema) *schema_
 
 	if len(configValues) > 0 {
 		for k, v := range configValues {
+			//lintignore:R001
 			_ = d.Set(k, v)
 		}
 	}

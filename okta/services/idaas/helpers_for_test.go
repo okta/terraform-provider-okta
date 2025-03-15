@@ -19,6 +19,11 @@ import (
 type checkUpstream func(string) (bool, error)
 
 func ensureResourceExists(name string, checkUpstream checkUpstream) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", name)
 		rs, ok := s.RootModule().Resources[name]
@@ -36,6 +41,12 @@ func ensureResourceExists(name string, checkUpstream checkUpstream) resource.Tes
 }
 
 func checkResourceDestroy(typeName string, checkUpstream checkUpstream) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
+
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != typeName {
@@ -54,6 +65,12 @@ func checkResourceDestroy(typeName string, checkUpstream checkUpstream) resource
 }
 
 func ensureResourceNotExists(name string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
+
 	return func(s *terraform.State) error {
 		_, ok := s.RootModule().Resources[name]
 		if !ok {

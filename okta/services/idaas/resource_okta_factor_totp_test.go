@@ -19,6 +19,7 @@ func TestAccResourceOktaFactorTOTP_crud(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		// NOTE: The publicly documented DELETE /api/v1/org/factors/hotp/profiles/{id} appears to only 501 at the present time.
 		// CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSFactorTotp, doesFactorTOTPExist),
+		CheckDestroy: nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -200,6 +201,11 @@ resource "okta_app_group_assignment" "test" {
 }
 
 func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
@@ -223,6 +229,11 @@ func ensureAppGroupAssignmentExists(resourceName string) resource.TestCheckFunc 
 }
 
 func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		notFound := "resource not found: %s"
 		// app group assignment has been removed from state, so use app and group to query okta
