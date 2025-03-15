@@ -86,8 +86,12 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 			return
 		}
 
+		// FIXME most of the skips we get are from the "classic-00" cassettes,
+		// not the "oie-00" so reverse order the cassettes
 		cassettes := mgr.Cassettes()
-		for _, cassette := range cassettes {
+		//for _, cassette := range cassettes {
+		for i := len(cassettes) - 1; i >= 0; i-- {
+			cassette := cassettes[i]
 			// need to artificially set expected OKTA env vars if VCR is playing
 			// VCR re-writes the name [cassette].dne-okta.com
 			os.Setenv("OKTA_ORG_NAME", cassette)
@@ -102,8 +106,12 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 			// FIXME: Once we get fully mux'd ACC tests recording with VCR
 			// revisit if we can call ParallelTest when playing.
-			// FIXME: if we get a skip from one cassette the next will not run
+
+			// FIXME: if we get a skip from one cassette the next will not run.
+			// Capturing the resource.Test result in a go routine does not give
+			// a means of capturing and rerunning the test.
 			resource.Test(t, c)
+
 		}
 		return
 	}
