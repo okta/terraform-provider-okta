@@ -1,7 +1,9 @@
 SWEEP?=global
+UNIT_TESTS?=$$(go list ./... |grep -v 'vendor'|grep -v 'okta.services.idaas')
+ACC_TESTS=./okta/services/idaas
 TEST?=$$(go list ./... |grep -v 'vendor')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
-PKG_NAME=okta
+PKG_NAME=./okta/services/idaas
 GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 TFPROVIDERLINTX=tfproviderlintx
@@ -59,32 +61,32 @@ build: fmtcheck
 	go install
 
 clean:
-	go clean -cache -testcache ./...
+	go clean -cache -testcache
 
 clean-all:
-	go clean -cache -testcache -modcache ./...
+	go clean -cache -testcache -modcache
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
 	go test $(TEST) -sweep=$(SWEEP) $(SWEEPARGS)
 
 test:
-	echo $(TEST) | \
+	echo $(UNIT_TESTS) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
 testacc:
-	TF_ACC=1 go test $(TEST) $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	TF_ACC=1 go test $(ACC_TESTS) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(PKG_NAME)
 
 smoke-test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ ./$(PKG_NAME)
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ $(ACC_TESTS)
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
 
-qc: vet staticcheck lint
+qc: fmtcheck vet staticcheck lint
 
 vet:
 	@echo "==> Checking source code against go vet"
@@ -115,16 +117,12 @@ test-compile:
 
 lint:
 	@echo "==> Checking source code against linter tfproviderlint ..."
-	@$(TFPROVIDERLINT) \
-		-c 1 \
-		./$(PKG_NAME)
+	@$(TFPROVIDERLINT) -c 1 ./...
 
 lintx:
 	# NOTE tfproviderlintx is very opinionated, don't add it to qc target
 	@echo "==> Checking source code against linter tfproviderlintx ..."
-	@$(TFPROVIDERLINTX) \
-		-c 1 \
-		./$(PKG_NAME)
+	@$(TFPROVIDERLINTX) -c 1 ./...
 
 tools:
 	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0

@@ -3,7 +3,7 @@ resource "okta_brand" "example" {
 }
 
 resource "okta_domain" "test" {
-  name                    = "testAccTest.example.edu"
+  name                    = "testAcc-replace_with_uuid.example.com"
   brand_id                = resource.okta_brand.example.id
-  certificate_source_type = "OKTA_MANAGED"
+  certificate_source_type = "MANUAL"
 }
