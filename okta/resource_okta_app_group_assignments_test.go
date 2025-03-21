@@ -376,14 +376,29 @@ func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T)
 func TestAccResourceOktaAppBGroupAssignments_timeouts(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
 	mgr := newFixtureManager("resources", appGroupAssignments, t.Name())
+	bookmarkApp := fmt.Sprintf("%s.test", appBookmark)
+	groupA := fmt.Sprintf("%s.a", group)
+	groupB := fmt.Sprintf("%s.b", group)
 	config := `
+resource "okta_app_bookmark" "test" {
+	label = "testAcc_replace_with_uuid"
+	url   = "https://test.com"
+}
+resource "okta_group" "a" {
+	name        = "testAcc-group-a_replace_with_uuid"
+	description = "Group A"
+}
+resource "okta_group" "b" {
+	name        = "testAcc-group-b_replace_with_uuid"
+	description = "Group B"
+}
 resource "okta_app_group_assignments" "test" {
-  app_id = "0oany0cacpPLPWlVS5d7"
+  app_id = okta_app_bookmark.test.id
   group {
-    id = "00gnw3cf7lRkREauo5d7"
+    id = okta_group.a.id
   }
   group {
-    id = "00gnw3dcfxhz5rrqR5d7"
+    id = okta_group.b.id
   }
   timeouts {
     create = "60m"
@@ -400,11 +415,11 @@ resource "okta_app_group_assignments" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					//ensur/eResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
-					//resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
+
+					clickOpsCheckIfGroupIsAssignedToApp(bookmarkApp, groupA, groupB),
 				),
 			},
 		},
