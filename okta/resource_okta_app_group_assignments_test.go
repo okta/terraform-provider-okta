@@ -372,3 +372,41 @@ func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T)
 		},
 	})
 }
+
+func TestAccResourceOktaAppBGroupAssignments_timeouts(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
+	mgr := newFixtureManager("resources", appGroupAssignments, t.Name())
+	config := `
+resource "okta_app_group_assignments" "test" {
+  app_id = "0oany0cacpPLPWlVS5d7"
+  group {
+    id = "00gnw3cf7lRkREauo5d7"
+  }
+  group {
+    id = "00gnw3dcfxhz5rrqR5d7"
+  }
+  timeouts {
+    create = "60m"
+    read = "2h"
+    update = "30m"
+  }
+}`
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appGroupAssignments, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					//ensur/eResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					//resource.TestCheckResourceAttr(resourceName, "label", buildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
+				),
+			},
+		},
+	})
+}
