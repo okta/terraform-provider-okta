@@ -368,7 +368,7 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 	if err != nil {
 		return nil, "", nil, err
 	}
-	
+
 	tokenRequest.Header.Add("Accept", "application/json")
 	tokenRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	tokenRequest.Header.Add("User-Agent", NewUserAgent(&config{}).String())
@@ -412,7 +412,7 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 	return accessToken, "", nil, nil
 }
 
-func getAccessTokenForDpopPrivateKey(tokenRequest *http.Request, httpClient *http.Client, orgURL, nonce string, maxRetries int32, maxBackoff int64, clientAssertion string, scopes string, clientID string, signer jose.Signer) (*RequestAccessToken, string, *rsa.PrivateKey, error) {
+func getAccessTokenForDpopPrivateKey(tokenRequest *http.Request, httpClient *http.Client, orgURL, nonce string, maxRetries int32, maxBackoff int64, clientAssertion, scopes, clientID string, signer jose.Signer) (*RequestAccessToken, string, *rsa.PrivateKey, error) {
 	privateKey, err := generatePrivateKey(2048)
 	if err != nil {
 		return nil, "", nil, err
