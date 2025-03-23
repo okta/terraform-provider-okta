@@ -38,6 +38,16 @@ resource "okta_app_group_assignments" "example" {
 ### Optional
 
 - `group` (Block List) A group to assign to this application (see [below for nested schema](#nestedblock--group))
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
+
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `read` (String)
+- `update` (String)
 
 ### Read-Only
 
