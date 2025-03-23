@@ -373,7 +373,7 @@ func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T)
 	})
 }
 
-func TestAccResourceOktaAppBGroupAssignments_timeouts(t *testing.T) {
+func TestAccResourceOktaAppGroupAssignments_1832_timeouts(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", appGroupAssignments)
 	mgr := newFixtureManager("resources", appGroupAssignments, t.Name())
 	bookmarkApp := fmt.Sprintf("%s.test", appBookmark)
