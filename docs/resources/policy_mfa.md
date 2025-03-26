@@ -109,6 +109,7 @@ resource "okta_policy_mfa" "oie_example" {
 - `priority` (Number) Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
 - `rsa_token` (Map of String)
 - `security_question` (Map of String)
+- `smart_card_idp` (Map of String)
 - `status` (String) Policy Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
 - `symantec_vip` (Map of String)
 - `webauthn` (Map of String)
