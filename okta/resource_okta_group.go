@@ -42,6 +42,7 @@ func resourceGroup() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The name of the Okta Group.",
+				ValidateDiagFunc: strMaxLength(255),
 			},
 			"description": {
 				Type:        schema.TypeString,
