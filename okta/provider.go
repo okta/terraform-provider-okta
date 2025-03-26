@@ -332,7 +332,6 @@ func Provider() *schema.Provider {
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			app:                      dataSourceApp(),
-			appGroupAssignments:      dataSourceAppGroupAssignments(),
 			appMetadataSaml:          dataSourceAppMetadataSaml(),
 			appOAuth:                 dataSourceAppOauth(),
 			appSaml:                  dataSourceAppSaml(),
