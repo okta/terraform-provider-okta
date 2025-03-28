@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,6 +31,7 @@ type appSignOnPolicyResourceModel struct {
 	Description   types.String `tfsdk:"description"`
 	CatchAll      types.Bool   `tfsdk:"catch_all"`
 	DefaultRuleID types.String `tfsdk:"default_rule_id"`
+	Priority      types.Int32  `tfsdk:"priority"`
 }
 
 func (r *appSignOnPolicyResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -85,6 +87,12 @@ default/system access policy.`,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
+			},
+			"priority": schema.Int32Attribute{
+				Description: "Priority of the policy",
+				Optional:    true,
+				Computed:    true,
+				Default:     int32default.StaticInt32(1),
 			},
 		},
 	}
@@ -287,6 +295,7 @@ func buildV5AccessPolicy(model appSignOnPolicyResourceModel) okta.ListPolicies20
 	accessPolicy.SetType("ACCESS_POLICY")
 	accessPolicy.SetName(model.Name.ValueString())
 	accessPolicy.SetDescription(model.Description.ValueString())
+	accessPolicy.SetPriority(model.Priority.ValueInt32())
 	return okta.ListPolicies200ResponseInner{AccessPolicy: accessPolicy}
 }
 
@@ -299,6 +308,7 @@ func (r *appSignOnPolicyResource) mapAccessPolicyToState(ctx context.Context, da
 	state.ID = types.StringPointerValue(data.AccessPolicy.Id)
 	state.Name = types.StringPointerValue(data.AccessPolicy.Name)
 	state.Description = types.StringPointerValue(data.AccessPolicy.Description)
+	state.Priority = types.Int32PointerValue(data.AccessPolicy.Priority)
 
 	defaultRule, err := r.findDefaultPolicyRuleResponse(ctx, state.ID.ValueString())
 	if err != nil {
