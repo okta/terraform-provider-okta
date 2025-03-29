@@ -43,6 +43,8 @@ resource "okta_app_signon_policy_rule" "test" {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "description", "The updated app signon policy used by our test app."),
 					resource.TestCheckResourceAttrSet(resourceName, "default_rule_id"),
+					resource.TestCheckResourceAttr(resourceName, "catch_all", "true"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "1"),
 				),
 			},
 			{
