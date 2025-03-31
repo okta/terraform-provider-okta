@@ -11,6 +11,8 @@ import (
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
+const defaultEnhancedDynamicZone = "DefaultEnhancedDynamicZone"
+
 func resourceNetworkZone() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceNetworkZoneCreate,
@@ -136,6 +138,12 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	err = updateDefaultEnhancedDynamicZone(d, meta)
+	if err != nil {
+		return diag.Errorf("failed to update network zone: %v", err)
+	}
+
 	payload, err := buildNetworkZone(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -290,6 +298,21 @@ func validateNetworkZone(d *schema.ResourceData) error {
 	proxies, ok := d.GetOk("proxies")
 	if d.Get("usage").(string) != "POLICY" && ok && proxies.(*schema.Set).Len() != 0 {
 		return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
+	}
+	return nil
+}
+
+func updateDefaultEnhancedDynamicZone(d *schema.ResourceData, meta interface{}) error {
+	status, ok := d.GetOk("status")
+	if d.Get("name").(string) == defaultEnhancedDynamicZone && ok {
+		switch status.(string) {
+		case "ACTIVE":
+			_, _, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(context.Background(), d.Id()).Execute()
+			return err
+		case "INACTIVE":
+			_, _, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(context.Background(), d.Id()).Execute()
+			return err
+		}
 	}
 	return nil
 }
