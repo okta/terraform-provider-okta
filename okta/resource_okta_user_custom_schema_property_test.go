@@ -815,6 +815,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	mgr := newFixtureManager("resources", userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
+	emptyEnumConfig := mgr.GetFixtures("enum_empty_string.tf", t)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -896,31 +897,7 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(`
-			resource "okta_user_schema_property" "test" {
-			   index       = "testAcc_replace_with_empty_enum"
-			   title       = "terraform acceptance test"
-			   type        = "string"
-			   description = "testing"
-			   master      = "PROFILE_MASTER"
-			   enum       = ["", "one", "two", "three"]
-			   one_of {
-				 const = ""
-    			 title = "(none)"
- 			   }
-  			   one_of {
-    			 const = "one"
-    			 title = "string One"
- 			   }
-			   one_of {
-    			 const = "two"
-    			 title = "string Two"
-			   }
-  			   one_of {
-    			 const = "three"
-    			 title = "string Three"
-			   }
-			}`),
+				Config: emptyEnumConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", ""),
