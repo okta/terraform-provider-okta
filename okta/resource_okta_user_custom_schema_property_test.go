@@ -824,25 +824,25 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(`
 			resource "okta_user_schema_property" "test" {
-			 index       = "testAcc_replace_with_uuid"
-			 title       = "terraform acceptance test"
-			 description = "testing"
-			 master      = "OKTA"
-			 scope       = "SELF"
-			 type  = "string"
-			 enum  = ["one", "two", "three"]
-			 one_of {
-			   title = "string One"
-			   const = "one"
-			 }
-			 one_of {
-			   title = "string Two"
-			   const = "two"
-			 }
-			 one_of {
-			   title = "string Three"
-			   const = "three"
-			 }
+			  index       = "testAcc_replace_with_uuid"
+			  title       = "terraform acceptance test"
+			  description = "testing"
+			  master      = "OKTA"
+			  scope       = "SELF"
+			  type  = "string"
+			  enum  = ["one", "two", "three"]
+			  one_of {
+			    title = "string One"
+			    const = "one"
+			  }
+			  one_of {
+			    title = "string Two"
+			    const = "two"
+			  }
+			  one_of {
+			    title = "string Three"
+			    const = "three"
+			  }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -861,25 +861,25 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(`
 			resource "okta_user_schema_property" "test" {
-			 index       = "testAcc_replace_with_uuid"
-			 title       = "terraform acceptance test"
-			 description = "testing"
-			 master      = "OKTA"
-			 scope       = "SELF"
-			 type  = "string"
-			 enum  = ["ONE", "TWO", "THREE"]
-			 one_of {
-			   title = "STRING ONE"
-			   const = "ONE"
-			 }
-			 one_of {
-			   title = "STRING TWO"
-			   const = "TWO"
-			 }
-			 one_of {
-			   title = "STRING THREE"
-			   const = "THREE"
-			 }
+			  index       = "testAcc_replace_with_uuid"
+			  title       = "terraform acceptance test"
+			  description = "testing"
+			  master      = "OKTA"
+			  scope       = "SELF"
+			  type  = "string"
+			  enum  = ["ONE", "TWO", "THREE"]
+			  one_of {
+			    title = "STRING ONE"
+			    const = "ONE"
+			  }
+			  one_of {
+			    title = "STRING TWO"
+			    const = "TWO"
+			  }
+			  one_of {
+			    title = "STRING THREE"
+			    const = "THREE"
+			  }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -898,28 +898,28 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(`
 			resource "okta_user_schema_property" "test" {
-			  index       = "testAcc_replace_with_empty_enum"
-			  title       = "terraform acceptance test"
-			  type        = "string"
-			  description = "testing"
-			  master      = "PROFILE_MASTER"
-			  enum       = ["", "one", "two", "three"]
-			  one_of {
-				const = ""
-    			title = "(none)"
- 			  }
-  			  one_of {
-    			const = "one"
-    			title = "string One"
- 			  }
-			  one_of {
-    			const = "two"
-    			title = "string Two"
-			  }
-  			  one_of {
-    			const = "three"
-    			title = "string Three"
-			  }
+			   index       = "testAcc_replace_with_empty_enum"
+			   title       = "terraform acceptance test"
+			   type        = "string"
+			   description = "testing"
+			   master      = "PROFILE_MASTER"
+			   enum       = ["", "one", "two", "three"]
+			   one_of {
+				 const = ""
+    			 title = "(none)"
+ 			   }
+  			   one_of {
+    			 const = "one"
+    			 title = "string One"
+ 			   }
+			   one_of {
+    			 const = "two"
+    			 title = "string Two"
+			   }
+  			   one_of {
+    			 const = "three"
+    			 title = "string Three"
+			   }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
