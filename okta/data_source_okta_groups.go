@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -35,21 +36,11 @@ func dataSourceGroups() *schema.Resource {
 				ConflictsWith: []string{"search"},
 			},
 			"limit": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "The maximum number of groups returned by the Okta API, between 1 and 10000.",
-				Default:     defaultPaginationLimit,
-				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
-					value, ok := v.(int)
-					if !ok {
-						errors = append(errors, fmt.Errorf("expected %s to be an int", k))
-						return
-					}
-					if value < 1 || value > 10000 {
-						errors = append(errors, fmt.Errorf("limit must be between 1 and 10000"))
-					}
-					return
-				},
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Description:  "The maximum number of groups returned by the Okta API, between 1 and 10000.",
+				Default:      defaultPaginationLimit,
+				ValidateFunc: validation.IntBetween(1, 10000),
 			},
 			"groups": {
 				Type:     schema.TypeList,
@@ -112,10 +103,10 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		apiRequest = apiRequest.Limit(int32(limit.(int)))
 	}
 
-	if query, ok := d.GetOk("q"); ok {
+	if q, ok := d.GetOk("q"); ok {
 		qp.Limit = 10000 // keeping this here to avoid potentially changing datasource ID generation behavior
-		apiRequest = apiRequest.Q(query.(string))
-		qp.Q = query.(string)
+		apiRequest = apiRequest.Q(q.(string))
+		qp.Q = q.(string)
 	}
 
 	if search, ok := d.GetOk("search"); ok {
@@ -123,7 +114,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		qp.Search = search.(string)
 	}
 
-	groups, resp, err := apiRequest.Execute()
+	okta_groups, resp, err := apiRequest.Execute()
 	if err != nil {
 		d.SetId("")
 		return diag.Errorf("failed to list groups: %v", err)
@@ -140,7 +131,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		if err != nil {
 			return diag.Errorf("failed to get next page of groups: %v", err)
 		}
-		groups = append(groups, moreGroups...)
+		okta_groups = append(okta_groups, moreGroups...)
 
 	}
 
@@ -149,16 +140,16 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 	d.SetId(dataSourceId)
 
 	// convert the groups to a list of maps
-	arr := make([]map[string]interface{}, len(groups))
-	for i := range groups {
+	arr := make([]map[string]interface{}, len(okta_groups))
+	for i := range okta_groups {
 		arr[i] = map[string]interface{}{}
 
-		arr[i]["id"] = groups[i].Id
-		arr[i]["name"] = groups[i].Profile.Name
-		arr[i]["type"] = groups[i].Type
-		arr[i]["description"] = groups[i].Profile.Description
+		arr[i]["id"] = okta_groups[i].Id
+		arr[i]["name"] = okta_groups[i].Profile.Name
+		arr[i]["type"] = okta_groups[i].Type
+		arr[i]["description"] = okta_groups[i].Profile.Description
 
-		additionalProperties := groups[i].AdditionalProperties
+		additionalProperties := okta_groups[i].AdditionalProperties
 		src, ok := additionalProperties["source"].(map[string]interface{})
 		if ok && src["id"] != nil {
 			arr[i]["source"] = src["id"].(string)
