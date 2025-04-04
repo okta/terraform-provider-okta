@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
@@ -64,9 +65,10 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "Type of the Network Zone - can be `IP`, `DYNAMIC` or `DYNAMIC_V2` only",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Network Status - can either be `ACTIVE` or `INACTIVE` only",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Network Status - can either be `ACTIVE` or `INACTIVE` only",
+				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 			},
 			"usage": {
 				Type:        schema.TypeString,

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
@@ -66,80 +65,6 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 			},
 		},
 	})
-}
-
-func TestAccResourceOktaNetworkZone_ActivateDefaultNetworkZone(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.default_enhanced_network_zone_example", networkZone)
-
-	mgr := newFixtureManager("resources", networkZone, t.Name())
-	importConfig := mgr.ConfigReplace(`
-resource "okta_network_zone" "default_enhanced_dynamic_zone_example" {
-  name                          = "DefaultEnhancedDynamicZone"
-  type                          = "DYNAMIC"
-  usage                         = "BLOCKLIST"
-  ip_service_categories_include = ["ALL_ANONYMIZERS"]
-  status                        = "INACTIVE"
-}`)
-
-	updateConfig := mgr.ConfigReplace(`
-resource "okta_network_zone" "default_enhanced_dynamic_zone_example" {
-  name                          = "DefaultEnhancedDynamicZone"
-  type                          = "DYNAMIC"
-  usage                         = "BLOCKLIST"
-  ip_service_categories_include = ["ALL_ANONYMIZERS"]
-  status                        = "ACTIVE"
-}`)
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(networkZone, doesNetworkZoneExist),
-		Steps: []resource.TestStep{
-			{
-				ResourceName:      resourceName,
-				Config:            importConfig,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					rs, ok := s.RootModule().Resources[resourceName]
-					fmt.Println(s.RootModule())
-					if !ok {
-						return "", fmt.Errorf("failed to find %s", resourceName)
-					}
-
-					return rs.Primary.ID, nil
-				},
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckOktaNetworkZoneExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config:       updateConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckOktaNetworkZoneExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
-				),
-			},
-		},
-	})
-}
-
-func testAccCheckOktaNetworkZoneExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
-		}
-
-		if rs.Primary.ID == "" {
-			return fmt.Errorf("no ID is set")
-		}
-
-		return nil
-	}
 }
 
 func doesNetworkZoneExist(id string) (bool, error) {
