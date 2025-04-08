@@ -42,26 +42,6 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 	return resUsers, nil
 }
 
-func listGroups(ctx context.Context, client *sdk.Client, qp *query.Params) ([]*sdk.Group, error) {
-	groups, resp, err := client.Group.ListGroups(ctx, qp)
-	if err != nil {
-		return nil, err
-	}
-	for {
-		if resp.HasNextPage() {
-			var nextGroups []*sdk.Group
-			resp, err = resp.Next(ctx, &nextGroups)
-			if err != nil {
-				return nil, err
-			}
-			groups = append(groups, nextGroups...)
-		} else {
-			break
-		}
-	}
-	return groups, nil
-}
-
 // Group Primary Key Operations (Use when # groups < # users in operations)
 func addGroupMembers(ctx context.Context, client *sdk.Client, groupId string, users []string) error {
 	for _, user := range users {
