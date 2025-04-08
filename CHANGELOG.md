@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.16.0 (Apr 08, 2025)
+
+### IMPROVEMENTS
+
+* Add `timeout` argument to `okta_app_group_assignments` resource allowing custom timeouts [#1832](https://github.com/okta/terraform-provider-okta/pull/2255). Thanks, [@aditya-okta](https://github.com/aditya-okta)!
+* Improve resource `okta_app_user_schema_property` docs to include `array_enum` and `array_one_of` arguments[#1747](https://github.com/okta/terraform-provider-okta/issues/1747). Thanks, [@aditya-okta](https://github.com/aditya-okta)!
+* Added functionality to `activate` or `deactivate` `DefaultEnhancedNetworkZone`[#2252](https://github.com/okta/terraform-provider-okta/issues/2252). Thanks, [@pranav-okta](https://github.com/pranav-okta)!
+* Added `priority` argument to `app_signon_policy` resource allowing custom ordering[#2246,#2160](https://github.com/okta/terraform-provider-okta/issues/2246,https://github.com/okta/terraform-provider-okta/issues/2160). Thanks, [@pranav-okta](https://github.com/pranav-okta)!
+* Improve resource `policy_rule_signon` docs for argument `mfa_lifetime`[#2052](https://github.com/okta/terraform-provider-okta/issues/2052). Thanks, [@pranav-okta](https://github.com/pranav-okta)!
+
+### BUG FIXES
+
+* Fix issue for resource `okta_user_schema_property` when `enum` argument includes `empty string`[#1840](https://github.com/okta/terraform-provider-okta/issues/1840). Thanks, [@aditya-okta](https://github.com/aditya-okta)!
+
 ## 4.15.0 (Mar 06, 2025)
 
 ### IMPROVEMENTS
