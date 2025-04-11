@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -18,6 +19,15 @@ const (
 	saml11          = "1.1"
 	saml20          = "2.0"
 )
+
+type ACSEndpoint struct {
+	URL   string `json:"url"`
+	Index int    `json:"index"`
+}
+
+type ACSEndpoints struct {
+	ACSEndpoints []ACSEndpoint `json:"acs_endpoints"`
+}
 
 var (
 	// Fields required if preconfigured_app is not provided
@@ -312,17 +322,18 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Description: "Saml Inline Hook setting",
 			},
 			"acs_endpoints": {
-				Type:        schema.TypeList,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				Description: "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
+				Type:          schema.TypeList,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				Optional:      true,
+				Description:   "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
+				ConflictsWith: []string{"acs_endpoints_json"},
 			},
 			"acs_endpoints_json": {
 				Type:             schema.TypeString,
 				Optional:         true,
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
-				ConflictsWith:    []string{"acs_end"},
+				ConflictsWith:    []string{"acs_endpoints"},
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
@@ -432,7 +443,7 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	app, err := buildSamlApp(d)
+	app, err := buildSamlApp(d, meta)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
@@ -529,19 +540,39 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	// acsEndpoints
-	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 {
-		acsEndponts := make([]string, len(app.Settings.SignOn.AcsEndpoints))
-		for _, ae := range app.Settings.SignOn.AcsEndpoints {
-			acsEndponts[ae.Index] = ae.Url
-		}
-		_ = d.Set("acs_endpoints", acsEndponts)
-	}
+	err = setACSEndpoints(app, d)
 
+	// acsEndpointsJson
+	if err != nil {
+		var acsEndpointsJson ACSEndpoints
+		if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 {
+			acsEndpointsJson.ACSEndpoints = make([]ACSEndpoint, len(app.Settings.SignOn.AcsEndpoints))
+			for i, ae := range app.Settings.SignOn.AcsEndpoints {
+				acsEndpointsJson.ACSEndpoints[i].Index = int(ae.Index)
+				acsEndpointsJson.ACSEndpoints[i].URL = ae.Url
+			}
+			_ = d.Set("acs_endpoints_json", acsEndpointsJson)
+		}
+	}
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)
 	} else {
 		_ = d.Set("saml_version", saml20)
+	}
+	return nil
+}
+
+func setACSEndpoints(app *sdk.SamlApplication, d *schema.ResourceData) error {
+	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 {
+		acsEndponts := make([]string, len(app.Settings.SignOn.AcsEndpoints))
+		for _, ae := range app.Settings.SignOn.AcsEndpoints {
+			if int(ae.Index) > len(acsEndponts) {
+				return fmt.Errorf("index more than the length")
+			}
+			acsEndponts[ae.Index] = ae.Url
+		}
+		_ = d.Set("acs_endpoints", acsEndponts)
 	}
 	return nil
 }
@@ -561,7 +592,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	client := getOktaClientFromMetadata(meta)
-	app, err := buildSamlApp(d)
+	app, err := buildSamlApp(d, meta)
 	if err != nil {
 		return diag.Errorf("failed to build SAML application: %v", err)
 	}
@@ -598,7 +629,7 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
+func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
 	app := sdk.NewSamlApplication()
 	app.SignOnMode = samlVersions[d.Get("saml_version").(string)]
@@ -675,8 +706,39 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
 	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
 
-	// If there are acs endpoints, implies this flag should be true.
+	for i := 0; i < len(acsEndpoints); i++ {
+		logger(meta).Info("acsEndpoints =", "", acsEndpoints[i])
+	}
+
 	allowMultipleAcsEndpoints := false
+	if acsEndpoints == nil || len(acsEndpoints) == 0 {
+		var endpoints ACSEndpoints
+		err := json.Unmarshal([]byte(d.Get("acs_endpoints_json").(string)), &endpoints)
+		if err != nil {
+			return nil, err
+		}
+
+		//logger(meta).Info("data Map", "map=", dataMap)
+		for i := 0; i < len(endpoints.ACSEndpoints); i++ {
+			logger(meta).Info("data Map", "map=", endpoints.ACSEndpoints[i].URL, " ", endpoints.ACSEndpoints[i].Index)
+		}
+		if len(endpoints.ACSEndpoints) > 0 {
+			acsEndpointsObj := make([]*sdk.AcsEndpoint, len(endpoints.ACSEndpoints))
+			idx := 0
+			for i := range endpoints.ACSEndpoints {
+				acsEndpointsObj[idx] = &sdk.AcsEndpoint{
+					IndexPtr: int64Ptr(endpoints.ACSEndpoints[i].Index),
+					Url:      endpoints.ACSEndpoints[i].URL,
+				}
+				idx++
+			}
+			allowMultipleAcsEndpoints = true
+			app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
+		}
+	}
+
+	// If there are acs endpoints, implies this flag should be true.
+	//To change here for acs_endpoints_json
 	if len(acsEndpoints) > 0 {
 		acsEndpointsObj := make([]*sdk.AcsEndpoint, len(acsEndpoints))
 		for i := range acsEndpoints {
@@ -746,7 +808,7 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, meta inte
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 		client := getOktaClientFromMetadata(meta)
-		app, err := buildSamlApp(d)
+		app, err := buildSamlApp(d, meta)
 		if err != nil {
 			return err
 		}
