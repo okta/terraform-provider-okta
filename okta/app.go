@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sort"
 	"strings"
 	"time"
 
@@ -363,17 +364,80 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
 	_ = d.Set("saml_signed_request_enabled", signOn.SamlSignedRequestEnabled)
 	if signOn.AllowMultipleAcsEndpoints != nil {
+		//if *signOn.AllowMultipleAcsEndpoints {
+		//	acsEndpointsObj := signOn.AcsEndpoints
+		//	if len(acsEndpointsObj) > 0 {
+		//		acsEndpoints := make([]string, len(acsEndpointsObj))
+		//		for i := range acsEndpointsObj {
+		//			acsEndpoints[i] = acsEndpointsObj[i].Url
+		//		}
+		//		_ = d.Set("acs_endpoints", acsEndpoints)
+		//	}
+		//} else {
+		//	_ = d.Set("acs_endpoints", nil)
+		//}
+
+		//acsEndpointsJsonObj := signOn.AcsEndpointsJson
+		//if len(acsEndpointsJsonObj) > 0 {
+		//	acsEndpointsJson := make(map[string]interface{})
+		//	for i := range acsEndpointsJsonObj {
+		//		acsEndpointsJson[acsEndpointsJsonObj[i].Url] = &acsEndpointsJsonObj[i].IndexPtr
+		//	}
+		//	_ = d.Set("acs_endpoints_json", acsEndpointsJson)
+		//} else {
+		//	_ = d.Set("acs_endpoints_json", nil)
+		//}
 		if *signOn.AllowMultipleAcsEndpoints {
 			acsEndpointsObj := signOn.AcsEndpoints
 			if len(acsEndpointsObj) > 0 {
-				acsEndpoints := make([]string, len(acsEndpointsObj))
+				indexSequential := true
 				for i := range acsEndpointsObj {
-					acsEndpoints[i] = acsEndpointsObj[i].Url
+					if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
+						indexSequential = false
+						break
+					}
 				}
-				_ = d.Set("acs_endpoints", acsEndpoints)
+
+				if indexSequential {
+					acsEndpoints := make([]string, len(acsEndpointsObj))
+					for i := range acsEndpointsObj {
+						acsEndpoints[i] = acsEndpointsObj[i].Url
+					}
+					_ = d.Set("acs_endpoints", acsEndpoints)
+					_ = d.Set("acs_endpoints_json", nil)
+				} else {
+					//acsEndpointsJson := make([]map[string]interface{}, 0, len(acsEndpointsObj))
+					//for _, endpoint := range acsEndpointsObj {
+					//	acsEndpointsJson = append(acsEndpointsJson, map[string]interface{}{
+					//		"url":   endpoint.Url,
+					//		"index": *endpoint.IndexPtr,
+					//	})
+					//}
+					//jsonBytes, _ := json.Marshal(acsEndpointsJson)
+					//_ = d.Set("acs_endpoints_json", string(jsonBytes))
+					acsList := make([]map[string]interface{}, 0, len(acsEndpointsObj))
+					for _, endpoint := range acsEndpointsObj {
+						acsList = append(acsList, map[string]interface{}{
+							"url":   endpoint.Url,
+							"index": *endpoint.IndexPtr,
+						})
+						logger(meta).Info("index on line 424 = ", "index", *endpoint.IndexPtr)
+					}
+
+					sort.Slice(acsList, func(i, j int) bool {
+						return acsList[i]["index"].(int64) < acsList[j]["index"].(int64)
+					})
+
+					fullJson := map[string]interface{}{
+						"acs_endpoints_index": acsList,
+					}
+					//jsonBytes, _ := json.Marshal(fullJson)
+					b, _ := json.Marshal(fullJson)
+					_ = d.Set("acs_endpoints_json", string(b))
+					logger(meta).Info("acs_endpoints_json = ", "acs_endpoints_json", string(b))
+					_ = d.Set("acs_endpoints", nil)
+				}
 			}
-		} else {
-			_ = d.Set("acs_endpoints", nil)
 		}
 	}
 
