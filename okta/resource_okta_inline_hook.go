@@ -2,6 +2,8 @@ package okta
 
 import (
 	"context"
+	"encoding/json"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,6 +59,7 @@ func resourceInlineHook() *schema.Resource {
 				Elem:        headerSchema,
 				Description: "Map of headers to send along in inline hook request.",
 			},
+			// channel and auth presumed to work together
 			"auth": {
 				Type:     schema.TypeMap,
 				Optional: true,
@@ -69,10 +72,11 @@ func resourceInlineHook() *schema.Resource {
 					}
 					return false
 				},
+				ConflictsWith: []string{"channel_json"},
 			},
 			"channel": {
 				Type:     schema.TypeMap,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -85,6 +89,16 @@ func resourceInlineHook() *schema.Resource {
 					}
 					return false
 				},
+				ConflictsWith: []string{"channel_json"},
+			},
+			"channel_json": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "true channel object for the inline hook API contract",
+				ValidateDiagFunc: stringIsJSON,
+				StateFunc:        normalizeDataJSON,
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledChannelJSON,
+				ConflictsWith:    []string{"channel", "auth"},
 			},
 		},
 	}
@@ -117,11 +131,31 @@ func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta in
 	_ = d.Set("status", hook.Status)
 	_ = d.Set("type", hook.Type)
 	_ = d.Set("version", hook.Version)
-	err = setNonPrimitives(d, map[string]interface{}{
-		"channel": flattenInlineHookChannel(hook.Channel),
-		"headers": flattenInlineHookHeaders(hook.Channel),
-		"auth":    flattenInlineHookAuth(d, hook.Channel),
-	})
+
+	if oldChannelJson, ok := d.GetOk("channel_json"); ok {
+		// NOTE: Okta responses don't include config.clientSecret so copy the
+		// secret over if it exists the existing channel json
+		var oldChannel sdk.InlineHookChannel
+		if err = json.Unmarshal([]byte(oldChannelJson.(string)), &oldChannel); err == nil {
+			if oldChannel.Config != nil && oldChannel.Config.ClientSecret != "" {
+				if hook.Channel != nil && hook.Channel.Config != nil {
+					hook.Channel.Config.ClientSecret = oldChannel.Config.ClientSecret
+				}
+			}
+		}
+
+		channelJson, err := json.Marshal(hook.Channel)
+		if err != nil {
+			return diag.Errorf("error marshaling channel json: %v", err)
+		}
+		_ = d.Set("channel_json", string(channelJson))
+	} else {
+		err = setNonPrimitives(d, map[string]interface{}{
+			"channel": flattenInlineHookChannel(hook.Channel),
+			"headers": flattenInlineHookHeaders(hook.Channel),
+			"auth":    flattenInlineHookAuth(d, hook.Channel),
+		})
+	}
 	if err != nil {
 		return diag.Errorf("failed to set inline hook properties: %v", err)
 	}
@@ -156,13 +190,20 @@ func resourceInlineHookDelete(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func buildInlineHook(d *schema.ResourceData) sdk.InlineHook {
-	return sdk.InlineHook{
+	inlineHook := sdk.InlineHook{
 		Name:    d.Get("name").(string),
 		Status:  d.Get("status").(string),
 		Type:    d.Get("type").(string),
 		Version: d.Get("version").(string),
-		Channel: buildInlineChannel(d),
 	}
+	if channelJson, ok := d.GetOk("channel_json"); ok {
+		var channel sdk.InlineHookChannel
+		_ = json.Unmarshal([]byte(channelJson.(string)), &channel)
+		inlineHook.Channel = &channel
+	} else {
+		inlineHook.Channel = buildInlineChannel(d)
+	}
+	return inlineHook
 }
 
 func buildInlineChannel(d *schema.ResourceData) *sdk.InlineHookChannel {
@@ -259,4 +300,38 @@ func setInlineHookStatus(ctx context.Context, d *schema.ResourceData, client *sd
 		_, _, err = client.InlineHook.ActivateInlineHook(ctx, d.Id())
 	}
 	return err
+}
+
+// noChangeInObjectFromUnmarshaledChannelJSON is a DiffSuppressFunc returns and
+// true if old and new JSONs are equivalent object representations ...  It is
+// true, there is no change!  Edge chase if newJSON is blank, will also return
+// true which cover the new resource case.  Okta does not return
+// config.clientSecret in the response so ignore that value.
+func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	if newJSON == "" {
+		return true
+	}
+	var oldObj map[string]any
+	var newObj map[string]any
+	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
+		return false
+	}
+
+	configField := "config"
+	clientSecretField := "clientSecret"
+	if config, ok := oldObj[configField]; ok {
+		if _config, ok := config.(map[string]any); ok {
+			delete(_config, clientSecretField)
+		}
+	}
+	if config, ok := newObj[configField]; ok {
+		if _config, ok := config.(map[string]any); ok {
+			delete(_config, clientSecretField)
+		}
+	}
+
+	return reflect.DeepEqual(oldObj, newObj)
 }

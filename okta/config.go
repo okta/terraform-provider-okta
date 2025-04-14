@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	OktaTerraformProviderVersion   = "4.14.0"
+	OktaTerraformProviderVersion   = "4.16.0"
 	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 )
 
@@ -58,7 +58,7 @@ type (
 		maxWait                 int
 		logLevel                int
 		requestTimeout          int
-		maxAPICapacity          int // experimental
+		maxAPICapacity          int
 		oktaSDKClientV2         *sdk.Client
 		oktaSDKClientV3         *okta.APIClient
 		oktaSDKClientV5         *v5okta.APIClient
