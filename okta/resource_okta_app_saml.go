@@ -5,9 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
-	"sort"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -333,7 +330,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			},
 			"acs_endpoints_json": {
 				Type:             schema.TypeString,
-				DiffSuppressFunc: suppressEquivalentJSON2,
+				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        normalizeDataJSON,
 				Optional:         true,
@@ -448,13 +445,12 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	app, err := buildSamlApp(d, meta)
+	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
 	}
 	activate := d.Get("status").(string) == statusActive
 	params := &query.Params{Activate: &activate}
-	//logger(meta).Info("request body", "body = ", len(app.Settings.SignOn.AcsEndpointsJson))
 	_, _, err = getOktaClientFromMetadata(meta).Application.CreateApplication(ctx, app, params)
 	if err != nil {
 		return diag.Errorf("failed to create SAML application: %v", err)
@@ -555,7 +551,6 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 }
 
 func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	logger(meta).Info("Updating SAML application")
 	err := validateAppSaml(d)
 	if err != nil {
 		return diag.FromErr(err)
@@ -570,7 +565,7 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	client := getOktaClientFromMetadata(meta)
-	app, err := buildSamlApp(d, meta)
+	app, err := buildSamlApp(d)
 	if err != nil {
 		return diag.Errorf("failed to build SAML application: %v", err)
 	}
@@ -607,9 +602,8 @@ func resourceAppSamlDelete(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplication, error) {
+func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	// Abstracts away name and SignOnMode which are constant for this app type.
-	logger(meta).Info("building SAML application")
 	app := sdk.NewSamlApplication()
 	app.SignOnMode = samlVersions[d.Get("saml_version").(string)]
 	app.Label = d.Get("label").(string)
@@ -684,25 +678,12 @@ func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplicatio
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
 	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
-
-	for i := 0; i < len(acsEndpoints); i++ {
-		logger(meta).Info("acsEndpoints =", "", acsEndpoints[i])
-	}
-
-	acsEndpointsJson, _ := d.GetOk("acs_endpoints_json")
-	logger(meta).Info("acs endpoints json =", "acs endpoints json", acsEndpointsJson)
-
 	allowMultipleAcsEndpoints := false
 	if len(acsEndpoints) == 0 {
 		var endpoints ACSEndpoints
 		if acsEndpointsJson, ok := d.GetOk("acs_endpoints_json"); ok {
 			_ = json.Unmarshal([]byte(acsEndpointsJson.(string)), &endpoints)
 		}
-
-		for i := 0; i < len(endpoints.ACSEndpoints); i++ {
-			logger(meta).Info("data Map", "map=", endpoints.ACSEndpoints[i].URL, " ", endpoints.ACSEndpoints[i].Index)
-		}
-
 		if len(endpoints.ACSEndpoints) > 0 {
 			acsEndpointsObj := make([]*sdk.AcsEndpoint, len(endpoints.ACSEndpoints))
 			for i := range endpoints.ACSEndpoints {
@@ -710,7 +691,6 @@ func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplicatio
 					IndexPtr: int64Ptr(endpoints.ACSEndpoints[i].Index),
 					Url:      endpoints.ACSEndpoints[i].URL,
 				}
-				logger(meta).Info("acsEndpointsObj ", "i =", i, "url = ", acsEndpointsObj[i].Url, "index = ", *acsEndpointsObj[i].IndexPtr)
 			}
 			allowMultipleAcsEndpoints = true
 			app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
@@ -726,7 +706,6 @@ func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplicatio
 		allowMultipleAcsEndpoints = true
 		app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
 	}
-
 	app.Settings.SignOn.AllowMultipleAcsEndpoints = &allowMultipleAcsEndpoints
 
 	statements := d.Get("attribute_statements").([]interface{})
@@ -785,7 +764,7 @@ func tryCreateCertificate(ctx context.Context, d *schema.ResourceData, meta inte
 		// Set ID and the read done at the end of update and create will do the GET on metadata
 		_ = d.Set("key_id", key.Kid)
 		client := getOktaClientFromMetadata(meta)
-		app, err := buildSamlApp(d, meta)
+		app, err := buildSamlApp(d)
 		if err != nil {
 			return err
 		}
@@ -817,41 +796,4 @@ func validateAppSaml(d *schema.ResourceData) error {
 		}
 	}
 	return nil
-}
-
-type ACSEndpointsWrapper struct {
-	ACSEndpointsIndex []map[string]interface{} `json:"acs_endpoints_index"`
-}
-
-func suppressEquivalentJSON2(k, old, new string, d *schema.ResourceData) bool {
-	type Endpoint struct {
-		URL   string `json:"url"`
-		Index int    `json:"index"`
-	}
-	type Wrapped struct {
-		Endpoints []Endpoint `json:"acs_endpoints_index"`
-	}
-	old = strings.TrimSpace(old)
-	new = strings.TrimSpace(new)
-
-	var oldWrapped, newWrapped Wrapped
-	if err := json.Unmarshal([]byte(old), &oldWrapped); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(new), &newWrapped); err != nil {
-		return false
-	}
-
-	// Sort to prevent order-based diffs
-	sort.Slice(oldWrapped.Endpoints, func(i, j int) bool {
-		return oldWrapped.Endpoints[i].Index < oldWrapped.Endpoints[j].Index
-	})
-	sort.Slice(newWrapped.Endpoints, func(i, j int) bool {
-		return newWrapped.Endpoints[i].Index < newWrapped.Endpoints[j].Index
-	})
-
-	fmt.Printf("oldWrapped = %v\n", oldWrapped)
-	fmt.Printf("newWrapped = %v\n", newWrapped)
-
-	return reflect.DeepEqual(oldWrapped, newWrapped)
 }

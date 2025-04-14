@@ -364,29 +364,6 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
 	_ = d.Set("saml_signed_request_enabled", signOn.SamlSignedRequestEnabled)
 	if signOn.AllowMultipleAcsEndpoints != nil {
-		//if *signOn.AllowMultipleAcsEndpoints {
-		//	acsEndpointsObj := signOn.AcsEndpoints
-		//	if len(acsEndpointsObj) > 0 {
-		//		acsEndpoints := make([]string, len(acsEndpointsObj))
-		//		for i := range acsEndpointsObj {
-		//			acsEndpoints[i] = acsEndpointsObj[i].Url
-		//		}
-		//		_ = d.Set("acs_endpoints", acsEndpoints)
-		//	}
-		//} else {
-		//	_ = d.Set("acs_endpoints", nil)
-		//}
-
-		//acsEndpointsJsonObj := signOn.AcsEndpointsJson
-		//if len(acsEndpointsJsonObj) > 0 {
-		//	acsEndpointsJson := make(map[string]interface{})
-		//	for i := range acsEndpointsJsonObj {
-		//		acsEndpointsJson[acsEndpointsJsonObj[i].Url] = &acsEndpointsJsonObj[i].IndexPtr
-		//	}
-		//	_ = d.Set("acs_endpoints_json", acsEndpointsJson)
-		//} else {
-		//	_ = d.Set("acs_endpoints_json", nil)
-		//}
 		if *signOn.AllowMultipleAcsEndpoints {
 			acsEndpointsObj := signOn.AcsEndpoints
 			if len(acsEndpointsObj) > 0 {
@@ -403,18 +380,9 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 					for i := range acsEndpointsObj {
 						acsEndpoints[i] = acsEndpointsObj[i].Url
 					}
-					_ = d.Set("acs_endpoints", acsEndpoints)
+					_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
 					_ = d.Set("acs_endpoints_json", nil)
 				} else {
-					//acsEndpointsJson := make([]map[string]interface{}, 0, len(acsEndpointsObj))
-					//for _, endpoint := range acsEndpointsObj {
-					//	acsEndpointsJson = append(acsEndpointsJson, map[string]interface{}{
-					//		"url":   endpoint.Url,
-					//		"index": *endpoint.IndexPtr,
-					//	})
-					//}
-					//jsonBytes, _ := json.Marshal(acsEndpointsJson)
-					//_ = d.Set("acs_endpoints_json", string(jsonBytes))
 					acsList := make([]map[string]interface{}, 0, len(acsEndpointsObj))
 					for _, endpoint := range acsEndpointsObj {
 						acsList = append(acsList, map[string]interface{}{
