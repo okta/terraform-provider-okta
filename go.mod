@@ -6,8 +6,10 @@ toolchain go1.24.7
 
 require (
 	github.com/BurntSushi/toml v1.6.0
+	github.com/alecthomas/participle/v2 v2.1.4
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/cenkalti/backoff/v4 v4.3.0
+	github.com/cenkalti/backoff/v5 v5.0.3
 	github.com/crewjam/saml v0.5.1
 	github.com/go-jose/go-jose/v4 v4.1.3
 	github.com/google/uuid v1.6.0
@@ -49,7 +51,6 @@ require (
 	github.com/beevik/etree v1.6.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.9.1 // indirect
-	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
