@@ -330,7 +330,6 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Optional:      true,
 				Description:   "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
 				ConflictsWith: []string{"acs_endpoints_json"},
-				Computed:      true,
 			},
 			"acs_endpoints_json": {
 				Type:             schema.TypeString,
