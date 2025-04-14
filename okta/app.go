@@ -421,7 +421,6 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 							"url":   endpoint.Url,
 							"index": *endpoint.IndexPtr,
 						})
-						logger(meta).Info("index on line 424 = ", "index", *endpoint.IndexPtr)
 					}
 
 					sort.Slice(acsList, func(i, j int) bool {
@@ -434,7 +433,6 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 					//jsonBytes, _ := json.Marshal(fullJson)
 					b, _ := json.Marshal(fullJson)
 					_ = d.Set("acs_endpoints_json", string(b))
-					logger(meta).Info("acs_endpoints_json = ", "acs_endpoints_json", string(b))
 					_ = d.Set("acs_endpoints", nil)
 				}
 			}

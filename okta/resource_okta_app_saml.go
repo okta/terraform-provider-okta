@@ -690,11 +690,11 @@ func buildSamlApp(d *schema.ResourceData, meta interface{}) (*sdk.SamlApplicatio
 		logger(meta).Info("acsEndpoints =", "", acsEndpoints[i])
 	}
 
-	acsEndpointsJson, ok := d.GetOk("acs_endpoints_json")
+	acsEndpointsJson, _ := d.GetOk("acs_endpoints_json")
 	logger(meta).Info("acs endpoints json =", "acs endpoints json", acsEndpointsJson)
 
 	allowMultipleAcsEndpoints := false
-	if acsEndpoints == nil || len(acsEndpoints) == 0 {
+	if len(acsEndpoints) == 0 {
 		var endpoints ACSEndpoints
 		if acsEndpointsJson, ok := d.GetOk("acs_endpoints_json"); ok {
 			_ = json.Unmarshal([]byte(acsEndpointsJson.(string)), &endpoints)
@@ -855,14 +855,4 @@ func suppressEquivalentJSON2(k, old, new string, d *schema.ResourceData) bool {
 	fmt.Printf("newWrapped = %v\n", newWrapped)
 
 	return reflect.DeepEqual(oldWrapped, newWrapped)
-}
-
-func normalizeDataJSON2(val interface{}) string {
-	raw := val.(string)
-	var obj interface{}
-	if err := json.Unmarshal([]byte(raw), &obj); err != nil {
-		return raw
-	}
-	normalized, _ := json.Marshal(obj)
-	return string(normalized)
 }
