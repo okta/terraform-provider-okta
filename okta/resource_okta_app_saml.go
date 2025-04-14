@@ -541,6 +541,15 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.Errorf("failed to set Application Credential Key Values: %v", err)
 	}
 
+	// acsEndpoints
+	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 && isACSEndpointSequential(app.Settings.SignOn.AcsEndpoints) {
+		acsEndponts := make([]string, len(app.Settings.SignOn.AcsEndpoints))
+		for _, ae := range app.Settings.SignOn.AcsEndpoints {
+			acsEndponts[ae.Index] = ae.Url
+		}
+		_ = d.Set("acs_endpoints", acsEndponts)
+	}
+
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	if app.SignOnMode == "SAML_1_1" {
 		_ = d.Set("saml_version", saml11)

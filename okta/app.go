@@ -367,20 +367,13 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 		if *signOn.AllowMultipleAcsEndpoints {
 			acsEndpointsObj := signOn.AcsEndpoints
 			if len(acsEndpointsObj) > 0 {
-				indexSequential := true
-				for i := range acsEndpointsObj {
-					if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
-						indexSequential = false
-						break
-					}
-				}
-
+				indexSequential := isACSEndpointSequential(acsEndpointsObj)
 				if indexSequential {
 					acsEndpoints := make([]string, len(acsEndpointsObj))
 					for i := range acsEndpointsObj {
 						acsEndpoints[i] = acsEndpointsObj[i].Url
 					}
-					_ = d.Set("acs_endpoints", convertStringSliceToSetNullable(acsEndpoints))
+					_ = d.Set("acs_endpoints", acsEndpoints)
 					_ = d.Set("acs_endpoints_json", nil)
 				} else {
 					acsList := make([]map[string]interface{}, 0, len(acsEndpointsObj))
@@ -398,7 +391,6 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 					fullJson := map[string]interface{}{
 						"acs_endpoints_index": acsList,
 					}
-					//jsonBytes, _ := json.Marshal(fullJson)
 					b, _ := json.Marshal(fullJson)
 					_ = d.Set("acs_endpoints_json", string(b))
 					_ = d.Set("acs_endpoints", nil)
@@ -433,6 +425,17 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 	return setNonPrimitives(d, map[string]interface{}{
 		"attribute_statements": arr,
 	})
+}
+
+func isACSEndpointSequential(acsEndpointsObj []*sdk.AcsEndpoint) bool {
+	indexSequential := true
+	for i := range acsEndpointsObj {
+		if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
+			indexSequential = false
+			break
+		}
+	}
+	return indexSequential
 }
 
 func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{}) error {
