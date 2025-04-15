@@ -2,7 +2,6 @@ package okta
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -326,16 +325,25 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				Optional:      true,
 				Description:   "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
-				ConflictsWith: []string{"acs_endpoints_json"},
+				ConflictsWith: []string{"acs_endpoints_custom_index"},
 			},
-			"acs_endpoints_json": {
-				Type:             schema.TypeString,
-				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
-				ValidateDiagFunc: stringIsJSON,
-				StateFunc:        normalizeDataJSON,
-				Optional:         true,
-				ConflictsWith:    []string{"acs_endpoints"},
-				Description:      "A JSON of ACS endpoints along with the index inside an array called acs_endpoints_index",
+			"acs_endpoints_custom_index": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"acs_endpoints"},
+				Description:   "ACS endpoints along with custom indexing, as a set of maps with `url` and `index` keys.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"url": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"index": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
+				},
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
@@ -689,20 +697,24 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
 	allowMultipleAcsEndpoints := false
 	if len(acsEndpoints) == 0 {
-		var endpoints ACSEndpoints
-		if acsEndpointsJson, ok := d.GetOk("acs_endpoints_json"); ok {
-			_ = json.Unmarshal([]byte(acsEndpointsJson.(string)), &endpoints)
-		}
-		if len(endpoints.ACSEndpoints) > 0 {
-			acsEndpointsObj := make([]*sdk.AcsEndpoint, len(endpoints.ACSEndpoints))
-			for i := range endpoints.ACSEndpoints {
-				acsEndpointsObj[i] = &sdk.AcsEndpoint{
-					IndexPtr: int64Ptr(endpoints.ACSEndpoints[i].Index),
-					Url:      endpoints.ACSEndpoints[i].URL,
+		if v, ok := d.GetOk("acs_endpoints_custom_index"); ok {
+			set := v.(*schema.Set)
+			rawList := set.List()
+
+			if len(rawList) > 0 {
+				acsEndpointsObj := make([]*sdk.AcsEndpoint, len(rawList))
+
+				for i, raw := range rawList {
+					data := raw.(map[string]interface{})
+					acsEndpointsObj[i] = &sdk.AcsEndpoint{
+						IndexPtr: int64Ptr(data["index"].(int)),
+						Url:      data["url"].(string),
+					}
 				}
+
+				allowMultipleAcsEndpoints = true
+				app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
 			}
-			allowMultipleAcsEndpoints = true
-			app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
 		}
 	} else if len(acsEndpoints) > 0 {
 		acsEndpointsObj := make([]*sdk.AcsEndpoint, len(acsEndpoints))

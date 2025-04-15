@@ -374,7 +374,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 						acsEndpoints[i] = acsEndpointsObj[i].Url
 					}
 					_ = d.Set("acs_endpoints", acsEndpoints)
-					_ = d.Set("acs_endpoints_json", nil)
+					_ = d.Set("acs_endpoints_custom_index", nil)
 				} else {
 					acsList := make([]map[string]interface{}, 0, len(acsEndpointsObj))
 					for _, endpoint := range acsEndpointsObj {
@@ -387,15 +387,11 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 					sort.Slice(acsList, func(i, j int) bool {
 						return acsList[i]["index"].(int64) < acsList[j]["index"].(int64)
 					})
-
-					fullJson := map[string]interface{}{
-						"acs_endpoints_index": acsList,
-					}
-					b, _ := json.Marshal(fullJson)
-					_ = d.Set("acs_endpoints_json", string(b))
+					_ = d.Set("acs_endpoints_custom_index", acsList)
 					_ = d.Set("acs_endpoints", nil)
 				}
 			}
+
 		}
 	}
 
