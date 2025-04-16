@@ -414,3 +414,27 @@ func TestAccResourceOktaAppSignOnPolicyRule_os_expression_crud(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appSignOnPolicyRule)
+	mgr := newFixtureManager("resources", appSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("auth_chain_method.tf", t)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:                 testAccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test2"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "chains.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "chains.0", "{\"authenticationMethods\":[{\"key\":\"okta_password\",\"method\":\"password\"}],\"next\":[{\"authenticationMethods\":[{\"key\":\"okta_email\",\"method\":\"email\"}]}]}"),
+				),
+			},
+		},
+	})
+}
