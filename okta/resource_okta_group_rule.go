@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -13,6 +14,8 @@ import (
 )
 
 const statusInvalid = "INVALID"
+const maxRetries = 3
+const retryDelay = 60 * time.Second
 
 func resourceGroupRule() *schema.Resource {
 	return &schema.Resource{
@@ -77,13 +80,29 @@ func statusIsInvalidDiffFn(status string) bool {
 }
 
 func resourceGroupRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// Using the existing retryOnStatusCodes context value for INTERNAL SERVER ERROR
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusInternalServerError})
 	groupRule := buildGroupRule(d)
-	responseGroupRule, _, err := getOktaClientFromMetadata(meta).Group.CreateGroupRule(ctx, *groupRule)
+	client := getOktaClientFromMetadata(meta)
+
+	var responseGroupRule *sdk.GroupRule
+	var sdkResp *sdk.Response
+	var err error
+
+	// Retry loop for CreateGroupRule in case of HTTP 423 responses
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		responseGroupRule, sdkResp, err = client.Group.CreateGroupRule(ctx, *groupRule)
+		if err != nil && sdkResp != nil && sdkResp.StatusCode == http.StatusLocked {
+			time.Sleep(retryDelay)
+			continue
+		}
+		break
+	}
 	if err != nil {
 		return diag.Errorf("failed to create group rule: %v", err)
 	}
 	d.SetId(responseGroupRule.Id)
+	// Retry lifecycle operations as needed (e.g. activation or deactivation)
 	if err := handleGroupRuleLifecycle(ctx, d, meta); err != nil {
 		return diag.Errorf("failed to change group rule status: %v", err)
 	}
@@ -123,34 +142,58 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta int
 
 func resourceGroupRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	desiredStatus := d.Get("status").(string)
+	client := getOktaClientFromMetadata(meta)
 	// Only inactive rules can be changed, thus we should handle this first
 	if d.HasChange("status") {
-		err := handleGroupRuleLifecycle(ctx, d, meta)
-		if err != nil {
+		if err := handleGroupRuleLifecycle(ctx, d, meta); err != nil {
 			return diag.Errorf("failed to change group rule status: %v", err)
 		}
 		_ = d.Set("status", desiredStatus)
 	}
-	// invalid group rules can not be updated
+	// If any properties (other than status) have changed and the desired status is not INVALID,
+	// we need to update the rule. We must deactivate first if the rule is active.
 	if hasGroupRuleChange(d) && desiredStatus != statusInvalid {
-		client := getOktaClientFromMetadata(meta)
 		rule := buildGroupRule(d)
+		// If rule is active, deactivate before updating
 		if desiredStatus == statusActive {
-			// Only inactive rules can be changed, thus we should deactivate the rule in case it was "ACTIVE"
-			_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
-			if err != nil {
-				return diag.Errorf("failed to deactivate group rule: %v", err)
+			for attempt := 0; attempt < maxRetries; attempt++ {
+				_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
+				if err != nil && strings.Contains(err.Error(), "423") {
+					time.Sleep(retryDelay)
+					continue
+				}
+				if err != nil {
+					return diag.Errorf("failed to deactivate group rule: %v", err)
+				}
+				break
 			}
 		}
-		_, _, err := client.Group.UpdateGroupRule(ctx, d.Id(), *rule)
+		// Retry loop for UpdateGroupRule
+		var sdkResp *sdk.Response
+		var err error
+		for attempt := 0; attempt < maxRetries; attempt++ {
+			_, sdkResp, err = client.Group.UpdateGroupRule(ctx, d.Id(), *rule)
+			if err != nil && sdkResp != nil && sdkResp.StatusCode == http.StatusLocked {
+				time.Sleep(retryDelay)
+				continue
+			}
+			break
+		}
 		if err != nil {
 			return diag.Errorf("failed to update group rule: %v", err)
 		}
 		if desiredStatus == statusActive {
 			// We should reactivate the rule in case it was deactivated.
-			_, err := client.Group.ActivateGroupRule(ctx, d.Id())
-			if err != nil {
-				return diag.Errorf("failed to activate group rule: %v", err)
+			for attempt := 0; attempt < maxRetries; attempt++ {
+				_, err := client.Group.ActivateGroupRule(ctx, d.Id())
+				if err != nil && strings.Contains(err.Error(), "423") {
+					time.Sleep(retryDelay)
+					continue
+				}
+				if err != nil {
+					return diag.Errorf("failed to activate group rule: %v", err)
+				}
+				break
 			}
 		}
 	}
@@ -168,15 +211,36 @@ func hasGroupRuleChange(d *schema.ResourceData) bool {
 
 func resourceGroupRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(meta)
+	// If the rule is active, attempt to deactivate it first.
 	if d.Get("status").(string) == statusActive {
-		_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
-		// suppress error for INACTIVE group rules
-		if err != nil && !strings.Contains(err.Error(), "Cannot activate or deactivate a Group Rule with the status INVALID") {
-			return diag.Errorf("failed to deactivate group rule before removing: %v", err)
+		for attempt := 0; attempt < maxRetries; attempt++ {
+			_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
+			// If error is due to a 423 response, retry.
+			if err != nil && strings.Contains(err.Error(), "423") {
+				time.Sleep(retryDelay)
+				continue
+			}
+			// suppress error for INACTIVE group rules
+			if err != nil && strings.Contains(err.Error(), "Cannot activate or deactivate a Group Rule with the status INVALID") {
+				err = nil
+			}
+			if err != nil {
+				return diag.Errorf("failed to deactivate group rule before removing: %v", err)
+			}
+			break
 		}
 	}
 	remove := d.Get("remove_assigned_users").(bool)
-	_, err := client.Group.DeleteGroupRule(ctx, d.Id(), &query.Params{RemoveUsers: &remove})
+	var err error
+	// Retry loop for DeleteGroupRule
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		_, err = client.Group.DeleteGroupRule(ctx, d.Id(), &query.Params{RemoveUsers: &remove})
+		if err != nil && strings.Contains(err.Error(), "423") {
+			time.Sleep(retryDelay)
+			continue
+		}
+		break
+	}
 	if err != nil {
 		return diag.Errorf("failed to delete group rule: %v", err)
 	}
@@ -209,11 +273,24 @@ func buildGroupRule(d *schema.ResourceData) *sdk.GroupRule {
 func handleGroupRuleLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	client := getOktaClientFromMetadata(meta)
 	if d.Get("status").(string) == statusActive {
-		_, err := client.Group.ActivateGroupRule(ctx, d.Id())
-		return err
+		for attempt := 0; attempt < maxRetries; attempt++ {
+			_, err := client.Group.ActivateGroupRule(ctx, d.Id())
+			if err != nil && strings.Contains(err.Error(), "423") {
+				time.Sleep(retryDelay)
+				continue
+			}
+			return err
+		}
 	} else if d.Get("status").(string) == statusInvalid {
 		return nil
 	}
-	_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
-	return err
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		_, err := client.Group.DeactivateGroupRule(ctx, d.Id())
+		if err != nil && strings.Contains(err.Error(), "423") {
+			time.Sleep(retryDelay)
+			continue
+		}
+		return err
+	}
+	return nil
 }
