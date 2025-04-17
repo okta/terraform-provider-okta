@@ -35,6 +35,19 @@ func intAtMost(max int) schema.SchemaValidateDiagFunc {
 	}
 }
 
+func strMaxLength(max int) schema.SchemaValidateDiagFunc {
+	return func(i interface{}, k cty.Path) diag.Diagnostics {
+		v, ok := i.(string)
+		if !ok {
+			return diag.Errorf("expected type of %s to be string", k)
+		}
+		if len(v) > max {
+			return diag.Errorf("%s cannot be longer than %d characters", k, max)
+		}
+		return nil
+	}
+}
+
 func logoFileIsValid() schema.SchemaValidateDiagFunc {
 	return func(i interface{}, k cty.Path) diag.Diagnostics {
 		v, ok := i.(string)
