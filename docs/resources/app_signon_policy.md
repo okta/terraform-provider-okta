@@ -94,11 +94,12 @@ resource "okta_app_signon_policy_rule" "some_rule" {
 
 ### Optional
 
-- `catch_all` (Boolean) Default rules of the policy set to `DENY` or not. If `false`, it is set to `DENY`. **WARNING** setting this attribute to false change the OKTA default behavior. Use at your own risk. This is only apply during creation, so import or update will not work
+- `catch_all` (Boolean, default true, creation-only argument) If false, the default rule of the policy is set access to `DENY`. Otherwise default behavior of the default rule is to leave access at `ALLOW`.  **WARNING** setting this attribute to false changes policy rule's default behavior. Use at your own risk. This is only applied during creation and does not affect import or update.
+- `priority` (Default 1) Specifies the order in which this policy is evaluated in relation to the other policies.
 
 ### Read-Only
 
-- `default_rule_id` (String) Default rules id of the policy
+- `default_rule_id` (String) Default rule (system=true) id of the policy
 - `id` (String) Policy id
 
 ## Import

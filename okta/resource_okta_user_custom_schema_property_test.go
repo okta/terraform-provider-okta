@@ -815,6 +815,7 @@ func TestAccResourceOktaUserSchema_array_enum_string(t *testing.T) {
 func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	mgr := newFixtureManager("resources", userSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", userSchemaProperty)
+	emptyEnumConfig := mgr.GetFixtures("enum_empty_string.tf", t)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
@@ -893,6 +894,22 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "one_of.1.const", "TWO"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.2.title", "STRING THREE"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.2.const", "THREE"),
+				),
+			},
+			{
+				Config: emptyEnumConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "enum.0", ""),
+					resource.TestCheckResourceAttr(resourceName, "enum.1", "one"),
+					resource.TestCheckResourceAttr(resourceName, "enum.2", "two"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.0.title", "(none)"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.0.const", ""),
+					resource.TestCheckResourceAttr(resourceName, "one_of.1.title", "string One"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.1.const", "one"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.2.title", "string Two"),
+					resource.TestCheckResourceAttr(resourceName, "one_of.2.const", "two"),
 				),
 			},
 		},

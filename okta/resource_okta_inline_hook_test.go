@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -95,6 +96,82 @@ func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test1"),
 					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaInlineHook_com_okta_saml_tokens_transform(t *testing.T) {
+	resourceName := "okta_inline_hook.test"
+	mgr := newFixtureManager("resources", inlineHook, t.Name())
+
+	name1 := "One"
+	name2 := "Two"
+	config := `
+resource "okta_inline_hook" "test" {
+  name    = "testAcc_replace_with_uuid_%s"
+  type     = "com.okta.saml.tokens.transform"
+  version  = "1.0.2"
+  status   = "ACTIVE"
+  channel_json = <<JSON
+{
+        "type": "OAUTH",
+        "version": "1.0.0",
+        "config": {
+            "headers": [
+                {
+                    "key": "Field 1",
+                    "value": "Value 1"
+                },
+                {
+                    "key": "Field 2",
+                    "value": "Value 2"
+                }
+            ],
+            "method": "POST",
+            "authType": "client_secret_post",
+            "uri": "https://example.com/service",
+            "clientId": "abc123",
+            "clientSecret": "def456",
+            "tokenUrl": "https://example.com/token",
+            "scope": "api"
+        }
+}
+JSON
+}
+	`
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(inlineHook, inlineHookExists),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, name1)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_One"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckNoResourceAttr(resourceName, "channel"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, name2)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)+"_Two"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckNoResourceAttr(resourceName, "channel"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
 				),
 			},
 		},

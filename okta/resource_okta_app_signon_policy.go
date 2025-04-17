@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"errors"
 	"path"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -9,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -29,6 +31,7 @@ type appSignOnPolicyResourceModel struct {
 	Description   types.String `tfsdk:"description"`
 	CatchAll      types.Bool   `tfsdk:"catch_all"`
 	DefaultRuleID types.String `tfsdk:"default_rule_id"`
+	Priority      types.Int32  `tfsdk:"priority"`
 }
 
 func (r *appSignOnPolicyResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -73,17 +76,23 @@ default/system access policy.`,
 				Required:    true,
 			},
 			"catch_all": schema.BoolAttribute{
-				Description: "Default rules of the policy set to `DENY` or not. If `false`, it is set to `DENY`. **WARNING** setting this attribute to false change the OKTA default behavior. Use at your own risk. This is only apply during creation, so import or update will not work",
+				Description: "If false, the default rule of the policy is set access to `DENY`. Otherwise default behavior of the default rule is to leave access at `ALLOW`.  **WARNING** setting this attribute to false changes policy rule's default behavior. Use at your own risk. This is only applied during creation and does not affect import or update.",
 				Optional:    true,
 				Computed:    true,
 				Default:     booldefault.StaticBool(true),
 			},
 			"default_rule_id": schema.StringAttribute{
-				Description: "Default rules id of the policy",
+				Description: "Default rule (system=true) id of the policy",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
+			},
+			"priority": schema.Int32Attribute{
+				Description: "Priority of the policy",
+				Optional:    true,
+				Computed:    true,
+				Default:     int32default.StaticInt32(1),
 			},
 		},
 	}
@@ -113,43 +122,28 @@ func (r *appSignOnPolicyResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	resp.Diagnostics.Append(mapAccessPolicyToState(accessPolicy, &state)...)
+	resp.Diagnostics.Append(r.mapAccessPolicyToState(ctx, accessPolicy, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	rules, _, err := r.oktaSDKClientV5.PolicyAPI.ListPolicyRules(ctx, accessPolicy.AccessPolicy.GetId()).Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to get default access policy rule",
-			err.Error(),
-		)
-		return
-	}
-	if len(rules) != 1 {
-		resp.Diagnostics.AddError(
-			"find more than one default access policy rule",
-			"",
-		)
-		return
-	}
-	if rules[0].AccessPolicyRule == nil {
-		resp.Diagnostics.AddError(
-			"failed to find default access policy rule",
-			"",
-		)
-		return
-	}
-	defaultRuleID := rules[0].AccessPolicyRule.GetId()
-	state.DefaultRuleID = types.StringValue(defaultRuleID)
-
 	if !state.CatchAll.ValueBool() {
-		if actions, ok := rules[0].AccessPolicyRule.GetActionsOk(); ok {
+		defaultRule, err := r.findDefaultPolicyRuleResponse(ctx, state.ID.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"failed to find default policy rule",
+				err.Error(),
+			)
+			return
+		}
+		if actions, ok := defaultRule.AccessPolicyRule.GetActionsOk(); ok {
 			if _, ok := actions.GetAppSignOnOk(); ok {
-				rules[0].AccessPolicyRule.Actions.AppSignOn.SetAccess("DENY")
+				defaultRule.AccessPolicyRule.Actions.AppSignOn.SetAccess("DENY")
 			}
 		}
-		_, _, err = r.oktaSDKClientV5.PolicyAPI.ReplacePolicyRule(ctx, accessPolicy.AccessPolicy.GetId(), defaultRuleID).PolicyRule(rules[0]).Execute()
+		defaultRule.AccessPolicyRule.Actions.AppSignOn.SetAccess("DENY")
+
+		_, _, err = r.oktaSDKClientV5.PolicyAPI.ReplacePolicyRule(ctx, state.ID.ValueString(), state.DefaultRuleID.ValueString()).PolicyRule(*defaultRule).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to update access policy default rule to DENY",
@@ -185,7 +179,7 @@ func (r *appSignOnPolicyResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	resp.Diagnostics.Append(mapAccessPolicyToState(accessPolicy, &state)...)
+	resp.Diagnostics.Append(r.mapAccessPolicyToState(ctx, accessPolicy, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -231,6 +225,10 @@ func (r *appSignOnPolicyResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	for _, a := range apps {
+		if a.GetActualInstance() == nil {
+			// nil bumper
+			continue
+		}
 		app := a.GetActualInstance().(OktaApp)
 		accessPolicy := app.GetLinks().AccessPolicy.GetHref()
 		// ignore apps that don't have an access policy, typically Classic org apps.
@@ -277,7 +275,7 @@ func (r *appSignOnPolicyResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	resp.Diagnostics.Append(mapAccessPolicyToState(accessPolicy, &state)...)
+	resp.Diagnostics.Append(r.mapAccessPolicyToState(ctx, accessPolicy, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -297,10 +295,11 @@ func buildV5AccessPolicy(model appSignOnPolicyResourceModel) okta.ListPolicies20
 	accessPolicy.SetType("ACCESS_POLICY")
 	accessPolicy.SetName(model.Name.ValueString())
 	accessPolicy.SetDescription(model.Description.ValueString())
+	accessPolicy.SetPriority(model.Priority.ValueInt32())
 	return okta.ListPolicies200ResponseInner{AccessPolicy: accessPolicy}
 }
 
-func mapAccessPolicyToState(data *okta.ListPolicies200ResponseInner, state *appSignOnPolicyResourceModel) diag.Diagnostics {
+func (r *appSignOnPolicyResource) mapAccessPolicyToState(ctx context.Context, data *okta.ListPolicies200ResponseInner, state *appSignOnPolicyResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if data.AccessPolicy == nil {
 		diags.AddError("Empty response", "Access policy")
@@ -309,7 +308,38 @@ func mapAccessPolicyToState(data *okta.ListPolicies200ResponseInner, state *appS
 	state.ID = types.StringPointerValue(data.AccessPolicy.Id)
 	state.Name = types.StringPointerValue(data.AccessPolicy.Name)
 	state.Description = types.StringPointerValue(data.AccessPolicy.Description)
+	state.Priority = types.Int32PointerValue(data.AccessPolicy.Priority)
+
+	defaultRule, err := r.findDefaultPolicyRuleResponse(ctx, state.ID.ValueString())
+	if err != nil {
+		diags.AddError(
+			"failed to get default access policy rule",
+			err.Error(),
+		)
+		return diags
+	}
+	defaultRuleID := defaultRule.AccessPolicyRule.GetId()
+	state.DefaultRuleID = types.StringValue(defaultRuleID)
+
 	return diags
 }
 
-// TODU double check crud and rerun the test
+// findDefaultPolicyRuleResponse find the default policy rule from the list and return
+// it. Default rule is the first to be marked system.
+func (r *appSignOnPolicyResource) findDefaultPolicyRuleResponse(ctx context.Context, accessPolicyId string) (*okta.ListPolicyRules200ResponseInner, error) {
+	rules, _, err := r.oktaSDKClientV5.PolicyAPI.ListPolicyRules(ctx, accessPolicyId).Execute()
+	if err != nil {
+		return nil, err
+	}
+	for _, rule := range rules {
+		if rule.AccessPolicyRule == nil {
+			continue
+		}
+		if system, ok := rule.AccessPolicyRule.GetSystemOk(); ok {
+			if *system {
+				return &rule, nil
+			}
+		}
+	}
+	return nil, errors.New("policy does not have a default (system) access policy rule")
+}
