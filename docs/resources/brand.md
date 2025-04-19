@@ -35,7 +35,7 @@ resource "okta_brand" "example" {
 - `default_app_app_link_name` (String) Default app app link name
 - `default_app_classic_application_uri` (String) Default app classic application uri
 - `locale` (String) The language specified as an IETF BCP 47 language tag
-- `remove_powered_by_okta` (Boolean) Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard
+- `remove_powered_by_okta` (Boolean) Removes "Powered by Okta" from the Okta-hosted sign-in page and "© 2021 Okta, Inc." from the Okta End-User Dashboard. Default is `false`.
 
 ### Read-Only
 
