@@ -1,10 +1,10 @@
 resource "okta_app_saml" "test" {
-  acs_endpoints_custom_index {
+  acs_endpoints_indices {
     url   = "https://example2.com"
     index = 102
   }
 
-  acs_endpoints_custom_index {
+  acs_endpoints_indices {
     url   = "https://example.com"
     index = 205
   }

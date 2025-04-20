@@ -24,10 +24,6 @@ type ACSEndpoint struct {
 	Index int    `json:"index"`
 }
 
-type ACSEndpoints struct {
-	ACSEndpoints []ACSEndpoint `json:"acs_endpoints_index"`
-}
-
 var (
 	// Fields required if preconfigured_app is not provided
 	customAppSamlRequiredFields = []string{
@@ -325,13 +321,13 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				Optional:      true,
 				Description:   "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
-				ConflictsWith: []string{"acs_endpoints_custom_index"},
+				ConflictsWith: []string{"acs_endpoints_indices"},
 			},
-			"acs_endpoints_custom_index": {
+			"acs_endpoints_indices": {
 				Type:          schema.TypeSet,
 				Optional:      true,
 				ConflictsWith: []string{"acs_endpoints"},
-				Description:   "ACS endpoints along with custom indexing, as a set of maps with `url` and `index` keys.",
+				Description:   "ACS endpoints with indices, as a set of maps with `url` and `index` keys.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {
@@ -697,7 +693,7 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
 	allowMultipleAcsEndpoints := false
 	if len(acsEndpoints) == 0 {
-		if v, ok := d.GetOk("acs_endpoints_custom_index"); ok {
+		if v, ok := d.GetOk("acs_endpoints_indices"); ok {
 			set := v.(*schema.Set)
 			rawList := set.List()
 
