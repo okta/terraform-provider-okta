@@ -19,6 +19,11 @@ const (
 	saml20          = "2.0"
 )
 
+type ACSEndpoint struct {
+	URL   string `json:"url"`
+	Index int    `json:"index"`
+}
+
 var (
 	// Fields required if preconfigured_app is not provided
 	customAppSamlRequiredFields = []string{
@@ -312,10 +317,29 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Description: "Saml Inline Hook setting",
 			},
 			"acs_endpoints": {
-				Type:        schema.TypeList,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Optional:    true,
-				Description: "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
+				Type:          schema.TypeList,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				Optional:      true,
+				Description:   "An array of ACS endpoints. You can configure a maximum of 100 endpoints.",
+				ConflictsWith: []string{"acs_endpoints_indices"},
+			},
+			"acs_endpoints_indices": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"acs_endpoints"},
+				Description:   "ACS endpoints with indices, as a set of maps with `url` and `index` keys.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"url": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"index": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
+				},
 			},
 			"attribute_statements": {
 				Type:     schema.TypeList,
@@ -522,7 +546,7 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	// acsEndpoints
-	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 {
+	if app.Settings.SignOn != nil && len(app.Settings.SignOn.AcsEndpoints) > 0 && isACSEndpointSequential(app.Settings.SignOn.AcsEndpoints) {
 		acsEndponts := make([]string, len(app.Settings.SignOn.AcsEndpoints))
 		for _, ae := range app.Settings.SignOn.AcsEndpoints {
 			acsEndponts[ae.Index] = ae.Url
@@ -667,10 +691,28 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 
 	// Assumes that sso url is already part of the acs endpoints as part of the desired state.
 	acsEndpoints := convertInterfaceToStringArr(d.Get("acs_endpoints"))
-
-	// If there are acs endpoints, implies this flag should be true.
 	allowMultipleAcsEndpoints := false
-	if len(acsEndpoints) > 0 {
+	if len(acsEndpoints) == 0 {
+		if v, ok := d.GetOk("acs_endpoints_indices"); ok {
+			set := v.(*schema.Set)
+			rawList := set.List()
+
+			if len(rawList) > 0 {
+				acsEndpointsObj := make([]*sdk.AcsEndpoint, len(rawList))
+
+				for i, raw := range rawList {
+					data := raw.(map[string]interface{})
+					acsEndpointsObj[i] = &sdk.AcsEndpoint{
+						IndexPtr: int64Ptr(data["index"].(int)),
+						Url:      data["url"].(string),
+					}
+				}
+
+				allowMultipleAcsEndpoints = true
+				app.Settings.SignOn.AcsEndpoints = acsEndpointsObj
+			}
+		}
+	} else if len(acsEndpoints) > 0 {
 		acsEndpointsObj := make([]*sdk.AcsEndpoint, len(acsEndpoints))
 		for i := range acsEndpoints {
 			acsEndpointsObj[i] = &sdk.AcsEndpoint{

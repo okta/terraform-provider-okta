@@ -550,3 +550,26 @@ resource "okta_app_saml" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSaml_Issue2171AcsEndpointsWithIndex(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", appSaml)
+	mgr := newFixtureManager("resources", appSaml, t.Name())
+	baseConfig := mgr.GetFixtures("resource_acs_endpoints_indices.tf", t)
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(appSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: baseConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.0.url", "https://example2.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.0.index", "102"),
+				),
+			},
+		},
+	})
+}
