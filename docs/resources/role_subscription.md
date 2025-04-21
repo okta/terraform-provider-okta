@@ -37,7 +37,6 @@ resource "okta_role_subscription" "test" {
 	- 'LDAP_AGENT' - Disconnects and reconnects: LDAP agent.
 	- 'AD_AGENT' - Disconnects and reconnects: AD agent.
 	- 'OKTA_ANNOUNCEMENT' - Okta release notes and announcements.
-	- 'OKTA_ISSUE' - Trust incidents and updates.
 	- 'OKTA_UPDATE' - Scheduled system updates.
 	- 'IWA_AGENT' - Disconnects and reconnects: IWA agent.
 	- 'USER_DEPROVISION' - User deprovisions.
