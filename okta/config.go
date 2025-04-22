@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	OktaTerraformProviderVersion   = "4.16.0"
+	OktaTerraformProviderVersion   = "4.17.0"
 	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 )
 

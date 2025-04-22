@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.17.0 (Apr 22, 2025)
+
+### IMPROVEMENTS
+
+* Improve `limit` implementation for `data_okta_groups` [#2281](https://github.com/okta/terraform-provider-okta/pull/2281). Thanks [exitcode0](https://github.com/exitcode0) and [duytiennguyen-okta](https://github.com/duytiennguyen-okta).
+* Add schema validators for name length to resources `okta_group` and `okta_group_rule` [#2219](https://github.com/okta/terraform-provider-okta/pull/2219). Thanks [exitcode0](https://github.com/exitcode0).
+* Add support for type **AUTH_METHOD_CHAIN** for resource `okta_app_signon_policy_rule` [#2282](https://github.com/okta/terraform-provider-okta/pull/2282). Thanks [duytiennguyen-okta](https://github.com/duytiennguyen-okta).
+* Add schema validators for app notes `admin_note` and `enduser_note` [#2218](https://github.com/okta/terraform-provider-okta/pull/2218). Thanks [exitcode0](https://github.com/exitcode0).
+* Add `acs_endpoints_indices` to pass custom index along with `acs_endpoints` for resource `okta_app_saml` [#2273](https://github.com/okta/terraform-provider-okta/pull/2273). Thanks [aditya-okta](https://github.com/aditya-okta).
+ 
+### OTHERS
+
+* Bump github.com/jarcoal/httpmock from 1.3.1 to 1.4.0 [#2269](https://github.com/okta/terraform-provider-okta/pull/2269)
+* Bump github.com/crewjam/saml from 0.4.14 to 0.5.1 [#2278](https://github.com/okta/terraform-provider-okta/pull/2278)
+* Bump github.com/lestrrat-go/jwx from 1.2.29 to 1.2.31 [#2279](https://github.com/okta/terraform-provider-okta/pull/2279)
+* Bump golang.org/x/net from 0.36.0 to 0.38.0 [#2283](https://github.com/okta/terraform-provider-okta/pull/2283)
+
 ## 4.16.0 (Apr 08, 2025)
 
 ### IMPROVEMENTS
