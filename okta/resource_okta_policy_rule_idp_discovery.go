@@ -139,6 +139,10 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
+	if len(rule.Actions.IDP.Providers) > 0 {
+		_ = d.Set("idp_id", rule.Actions.IDP.Providers[0].ID)
+		_ = d.Set("idp_type", rule.Actions.IDP.Providers[0].Type)
+	}
 	return nil
 }
 
