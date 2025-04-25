@@ -42,10 +42,20 @@ The 'resources' field supports the following:
 				Description: "A description of the Resource Set",
 			},
 			"resources": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{"resources_orn"},
+				ExactlyOneOf:  []string{"resources", "resources_orn"},
+				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
+			},
+			"resources_orn": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{"resources"},
+				ExactlyOneOf:  []string{"resources", "resources_orn"},
+				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
 			},
 		},
 	}
@@ -79,34 +89,68 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
-	_ = d.Set("resources", flattenResourceSetResources(resources))
+	logger(meta).Info("Got resource set", "links", flattenResourceSetResourcesLinks(resources))
+	logger(meta).Info("Got resource set", "orn", flattenResourceSetResourcesORN(resources))
+	if _, ok := d.GetOk("resources"); ok {
+		_ = d.Set("resources", flattenResourceSetResourcesLinks(resources))
+	} else if _, ok := d.GetOk("resources_orn"); ok {
+		_ = d.Set("resources_orn", flattenResourceSetResourcesORN(resources))
+	}
 	return nil
 }
+
+//how do i know what value to compare against, since i will get both orn and rest api url, but how do i know whether to compare url or the orns with the .tf config file
 
 func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		set, _ := buildResourceSet(d, false)
+		logger(meta).Info("Updating resource set", "resources", set)
 		_, _, err := client.UpdateResourceSet(ctx, d.Id(), *set)
 		if err != nil {
 			return diag.Errorf("failed to update resource set: %v", err)
 		}
 	}
-	if !d.HasChange("resources") {
+	if !d.HasChange("resources") && !d.HasChange("resources_orn") {
 		return nil
 	}
-	oldResources, newResources := d.GetChange("resources")
-	oldSet := oldResources.(*schema.Set)
-	newSet := newResources.(*schema.Set)
-	resourcesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	resourcesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-	err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
-	if err != nil {
-		return diag.FromErr(err)
+
+	logger(meta).Info("Updating resource set", "Has change", d.HasChange("resources"))
+	if d.HasChange("resources") {
+		oldResources, newResources := d.GetChange("resources")
+		oldSet := oldResources.(*schema.Set)
+		newSet := newResources.(*schema.Set)
+		resourcesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+		resourcesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+
+		logger(meta).Info("Updating resource set", "resourcesToAdd", resourcesToAdd, "resourcesToRemove", resourcesToRemove)
+		err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
-	err = removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
-	if err != nil {
-		return diag.FromErr(err)
+	//return nil
+
+	if d.HasChange("resources_orn") {
+		oldResourcesOrn, newResourcesOrn := d.GetChange("resources_orn")
+		oldSetOrn := oldResourcesOrn.(*schema.Set)
+		newSetOrn := newResourcesOrn.(*schema.Set)
+		ornResourcesToAdd := convertInterfaceArrToStringArr(newSetOrn.Difference(oldSetOrn).List())
+		ornResourcesToRemove := convertInterfaceArrToStringArr(oldSetOrn.Difference(newSetOrn).List())
+
+		logger(meta).Info("Updating resource set", "resourcesToAdd", ornResourcesToAdd, "resourcesToRemove", ornResourcesToRemove)
+		err := addResourcesToResourceSet(ctx, client, d.Id(), ornResourcesToAdd)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = removeResourcesFromResourceSet(ctx, client, d.Id(), ornResourcesToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	return nil
 }
@@ -125,7 +169,14 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 		Description: d.Get("description").(string),
 	}
 	if isNew {
-		rs.Resources = convertInterfaceToStringSetNullable(d.Get("resources"))
+		resourceLinks := convertInterfaceToStringSetNullable(d.Get("resources"))
+		resourceOrns := convertInterfaceToStringSetNullable(d.Get("resources_orn"))
+
+		var resource []string
+		resource = append(resource, resourceLinks...)
+		resource = append(resource, resourceOrns...)
+
+		rs.Resources = resource
 		if len(rs.Resources) == 0 {
 			return nil, errors.New("at least one resource must be specified when creating resource set")
 		}
@@ -135,7 +186,7 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 	return rs, nil
 }
 
-func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.Set {
+func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
 		if res.Links != nil {
@@ -149,6 +200,22 @@ func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.S
 					}
 				}
 			}
+			fmt.Println("flattenResourceSetResourcesLinks", urlStr)
+			arr = append(arr, urlStr)
+		}
+	}
+	return schema.NewSet(schema.HashString, arr)
+}
+
+func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schema.Set {
+	var arr []interface{}
+	for _, res := range resources {
+		fmt.Println("Mapping resource set resources to ORN", "additional properties", res.Orn)
+		if res.Orn != "" {
+			orns := res.Orn
+			var urlStr string
+			urlStr = orns
+			fmt.Println("flattenResourceSetResourcesLinks orn", urlStr)
 			arr = append(arr, urlStr)
 		}
 	}
@@ -193,6 +260,7 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 		return nil
 	}
 	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: links})
+	fmt.Println("AddResourceSetResources", resourceSetID, links)
 	if err != nil {
 		return fmt.Errorf("failed to add resources to the resource set: %v", err)
 	}
