@@ -157,7 +157,7 @@ resource "okta_resource_set" "test" {
 					// NOTE: after these checks run the terraform test runner
 					// will do a refresh and catch that apps resource has been
 					// added to the resource set outside of the terraform config
-					// and emit a non-empty plan:
+					// and emit a non-empty plan
 				),
 
 				// side effect of the TF test runner is expecting a non-empty
@@ -215,8 +215,8 @@ resource "okta_resource_set" "test" {
 				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step1Config)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "resources_orn.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_id"))),
-					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_id"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_orgId"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_orgId"))),
 				),
 			},
 		},

@@ -47,7 +47,7 @@ The 'resources' field supports the following:
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				ConflictsWith: []string{"resources_orn"},
 				ExactlyOneOf:  []string{"resources", "resources_orn"},
-				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
+				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set. Only one of 'resources' or 'resources_orn' can be specified.",
 			},
 			"resources_orn": {
 				Type:          schema.TypeSet,
@@ -55,7 +55,7 @@ The 'resources' field supports the following:
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				ConflictsWith: []string{"resources"},
 				ExactlyOneOf:  []string{"resources", "resources_orn"},
-				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
+				Description:   "The orn(Okta Resource Name) that reference the resources to be included in the new Resource Set. At least one orn must be specified when creating resource set. Only one of 'resources' or 'resources_orn' can be specified.",
 			},
 		},
 	}
@@ -103,7 +103,6 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 	client := getAPISupplementFromMetadata(meta)
 	if d.HasChanges("label", "description") {
 		set, _ := buildResourceSet(d, false)
-		logger(meta).Info("Updating resource set", "resources", set)
 		_, _, err := client.UpdateResourceSet(ctx, d.Id(), *set)
 		if err != nil {
 			return diag.Errorf("failed to update resource set: %v", err)
@@ -113,15 +112,12 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	logger(meta).Info("Updating resource set", "Has change", d.HasChange("resources"))
 	if d.HasChange("resources") {
 		oldResources, newResources := d.GetChange("resources")
 		oldSet := oldResources.(*schema.Set)
 		newSet := newResources.(*schema.Set)
 		resourcesToAdd := convertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 		resourcesToRemove := convertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-
-		logger(meta).Info("Updating resource set", "resourcesToAdd", resourcesToAdd, "resourcesToRemove", resourcesToRemove)
 		err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
 		if err != nil {
 			return diag.FromErr(err)
@@ -131,7 +127,6 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 			return diag.FromErr(err)
 		}
 	}
-	//return nil
 
 	if d.HasChange("resources_orn") {
 		oldResourcesOrn, newResourcesOrn := d.GetChange("resources_orn")
@@ -140,7 +135,6 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		ornResourcesToAdd := convertInterfaceArrToStringArr(newSetOrn.Difference(oldSetOrn).List())
 		ornResourcesToRemove := convertInterfaceArrToStringArr(oldSetOrn.Difference(newSetOrn).List())
 
-		logger(meta).Info("Updating resource set", "resourcesToAdd", ornResourcesToAdd, "resourcesToRemove", ornResourcesToRemove)
 		err := addResourcesToResourceSet(ctx, client, d.Id(), ornResourcesToAdd)
 		if err != nil {
 			return diag.FromErr(err)
@@ -198,7 +192,6 @@ func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *sch
 					}
 				}
 			}
-			fmt.Println("flattenResourceSetResourcesLinks", urlStr)
 			arr = append(arr, urlStr)
 		}
 	}
@@ -254,7 +247,6 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 		return nil
 	}
 	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: links})
-	fmt.Println("AddResourceSetResources", resourceSetID, links)
 	if err != nil {
 		return fmt.Errorf("failed to add resources to the resource set: %v", err)
 	}
