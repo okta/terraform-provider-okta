@@ -157,7 +157,7 @@ resource "okta_resource_set" "test" {
 					// NOTE: after these checks run the terraform test runner
 					// will do a refresh and catch that apps resource has been
 					// added to the resource set outside of the terraform config
-					// and emit a non-empty plan
+					// and emit a non-empty plan:
 				),
 
 				// side effect of the TF test runner is expecting a non-empty
@@ -180,6 +180,43 @@ resource "okta_resource_set" "test" {
 					resource.TestCheckResourceAttr(resourceSet, "resources.#", "2"),
 					resource.TestCheckResourceAttr(resourceSet, "resources.0", fmt.Sprintf("https://%s/api/v1/groups", os.Getenv("TF_VAR_hostname"))),
 					resource.TestCheckResourceAttr(resourceSet, "resources.1", fmt.Sprintf("https://%s/api/v1/users", os.Getenv("TF_VAR_hostname"))),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaResourceSet_Issue_1991_orn_handling(t *testing.T) {
+	mgr := newFixtureManager("resources", resourceSet, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resourceSet)
+
+	baseConfig := `
+variable "id" {
+  type = string
+}
+`
+	step1Config := `
+resource "okta_resource_set" "test" {
+  label       = "testAcc_replace_1991"
+  description = "testing, testing"
+  resources_orn = [
+    "orn:okta:directory:${var.id}:users",
+    "orn:okta:directory:${var.id}:groups"
+  ]
+}`
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		CheckDestroy:      nil,
+		ProviderFactories: testAccProvidersFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step1Config)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_id"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_id"))),
 				),
 			},
 		},

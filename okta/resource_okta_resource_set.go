@@ -89,8 +89,6 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
-	logger(meta).Info("Got resource set", "links", flattenResourceSetResourcesLinks(resources))
-	logger(meta).Info("Got resource set", "orn", flattenResourceSetResourcesORN(resources))
 	if _, ok := d.GetOk("resources"); ok {
 		_ = d.Set("resources", flattenResourceSetResourcesLinks(resources))
 	} else if _, ok := d.GetOk("resources_orn"); ok {
@@ -210,12 +208,8 @@ func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *sch
 func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
-		fmt.Println("Mapping resource set resources to ORN", "additional properties", res.Orn)
 		if res.Orn != "" {
-			orns := res.Orn
-			var urlStr string
-			urlStr = orns
-			fmt.Println("flattenResourceSetResourcesLinks orn", urlStr)
+			urlStr := res.Orn
 			arr = append(arr, urlStr)
 		}
 	}
