@@ -215,8 +215,8 @@ resource "okta_resource_set" "test" {
 				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step1Config)),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "resources_orn.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_orgId"))),
-					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_orgId"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_orgID"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_orgID"))),
 				),
 			},
 		},
