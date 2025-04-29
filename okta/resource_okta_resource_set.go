@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -235,7 +234,6 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 	if len(links) == 0 {
 		return nil
 	}
-	//_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: links})
 	var encodedLinks []string
 	for _, link := range links {
 		encodedLinks = append(encodedLinks, encodeResourceSetResourceLink(link))
@@ -254,7 +252,11 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	}
 	var escapedUrls []string
 	for _, u := range urls {
-		escapedUrls = append(escapedUrls, escapeResourceSetResourceLink(u))
+		u1, err := escapeResourceSetResourceLink(u)
+		if err != nil {
+			return fmt.Errorf("failed to escape resource set resource link: %v", err)
+		}
+		escapedUrls = append(escapedUrls, u1)
 	}
 
 	for _, res := range resources {
@@ -279,9 +281,39 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 }
 
 func encodeResourceSetResourceLink(link string) string {
-	return strings.Replace(link, "\"", "%22", -1)
+	parsedBaseUrl, err := url.Parse(link)
+	if err != nil {
+		return ""
+	}
+
+	filter := parsedBaseUrl.Query().Get("filter")
+	q := parsedBaseUrl.Query()
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	parsedBaseUrl.RawQuery = q.Encode()
+	return parsedBaseUrl.String()
 }
 
-func escapeResourceSetResourceLink(link string) string {
-	return strings.Replace(link, "%22", "\"", -1)
+func escapeResourceSetResourceLink(link string) (string, error) {
+	// Parse the URL first
+	u, err := url.Parse(link)
+	if err != nil {
+		return link, fmt.Errorf("error parsing URL %s: %v", link, err)
+	}
+
+	// Escape query parameters using url.QueryEscape for each query parameter
+	q := u.Query()
+
+	// Escape each value in the query parameters
+	for key, values := range q {
+		for i, v := range values {
+			// URL escape the value
+			q[key][i] = url.QueryEscape(v)
+		}
+	}
+
+	// Rebuild the URL with the modified query parameters
+	u.RawQuery = q.Encode()
+	return u.String(), nil
 }
