@@ -56,6 +56,11 @@ func resourceIdpSaml() *schema.Resource {
 				Default:     "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
 				Description: "The name identifier format to use. By default `urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified`.",
 			},
+			"honor_persistent_name_id": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Determines if the IdP should persist account linking when the incoming assertion NameID format is urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+			},
 			"subject_format": {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -168,6 +173,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
 	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
 	_ = d.Set("name_format", idp.Protocol.Settings.NameFormat)
+	_ = d.Set("honor_persistent_name_id", idp.Protocol.Settings.HonorPersistentNameId)
 	syncIdpSamlAlgo(d, idp.Protocol.Algorithms)
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
@@ -265,7 +271,8 @@ func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				},
 			},
 			Settings: &sdk.ProtocolSettings{
-				NameFormat: d.Get("name_format").(string),
+				NameFormat:            d.Get("name_format").(string),
+				HonorPersistentNameId: d.Get("honor_persistent_name_id").(bool),
 			},
 		},
 	}
