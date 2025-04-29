@@ -23,6 +23,7 @@ func NewAppsDataSource() datasource.DataSource { return &AppsDataSource{} }
 type AppsDataSource struct{ config *Config }
 
 type AppsDataSourceModel struct {
+	Q                 types.String   `tfsdk:"q"`
 	ActiveOnly        types.Bool     `tfsdk:"active_only"`
 	Label             types.String   `tfsdk:"label"`
 	LabelPrefix       types.String   `tfsdk:"label_prefix"`
@@ -76,6 +77,11 @@ func (d *AppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 func (d *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"q": schema.StringAttribute{
+				Optional:    true,
+				Validators:  []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label_prefix"))},
+				Description: "Searches for applications whose name or label properties that starts with this value.",
+			},
 			"active_only": schema.BoolAttribute{
 				Optional:    true,
 				Description: "Search only active applications.",
@@ -151,8 +157,9 @@ func (d *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	}
 	filterValue := strings.Join(filters, " AND ")
 
+	q := state.Q.ValueString()
 	// Read the list of applications from Okta.
-	apiRequest := d.config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue).Limit(int32(defaultPaginationLimit))
+	apiRequest := d.config.oktaSDKClientV5.ApplicationAPI.ListApplications(ctx).Filter(filterValue).Q(q).Limit(int32(defaultPaginationLimit))
 	applicationList, apiResp, err := apiRequest.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Read Okta Apps", fmt.Sprintf("Error retrieving apps: %s", err.Error()))
