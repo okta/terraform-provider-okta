@@ -92,9 +92,10 @@ func (d *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: "Searches for applications whose label or name property matches this value exactly.",
 			},
 			"label_prefix": schema.StringAttribute{
-				Optional:    true,
-				Validators:  []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label"))},
-				Description: "Searches for applications whose label or name property begins with this value.",
+				Optional:           true,
+				Validators:         []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label"))},
+				Description:        "Searches for applications whose label or name property begins with this value.",
+				DeprecationMessage: "Use `q` instead. This attribute will be removed in a future version.",
 			},
 			"include_non_deleted": schema.BoolAttribute{
 				Optional:    true,
