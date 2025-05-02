@@ -114,6 +114,7 @@ const (
 	rateLimiting                  = "okta_rate_limiting"
 	resourceSet                   = "okta_resource_set"
 	realm                         = "okta_realm"
+	realmAssignment               = "okta_realm_assignment"
 	roleSubscription              = "okta_role_subscription"
 	securityNotificationEmails    = "okta_security_notification_emails"
 	templateSms                   = "okta_template_sms"
