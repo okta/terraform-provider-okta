@@ -96,7 +96,7 @@ func TestMain(m *testing.M) {
 	// TF_VAR_hostname allows the real hostname to be scripted into the config tests
 	// see examples/okta_resource_set/basic.tf
 	os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
-
+	os.Setenv("TF_VAR_orgID", os.Getenv("OKTA_ORG_ID"))
 	// NOTE: Acceptance test sweepers are necessary to prevent dangling
 	// resources.
 	// NOTE: Don't run sweepers if we are playing back VCR as nothing should be
