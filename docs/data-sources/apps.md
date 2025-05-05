@@ -17,8 +17,9 @@ description: |-
 
 - `active_only` (Boolean) Search only active applications.
 - `include_non_deleted` (Boolean) Specifies whether to include non-active, but not deleted apps in the results.
+- `q` (String) Searches for apps with name or label properties that starts with the `q` value.
 - `label` (String) Searches for applications whose label or name property matches this value exactly.
-- `label_prefix` (String) Searches for applications whose label or name property begins with this value.
+- `label_prefix` (String) Searches for applications whose label or name property begins with this value. **Warning:** This might not work as intended and will be removed in the future release. Use `q` instead.
 - `use_optimization` (Boolean) Specifies whether to use query optimization. If you specify `useOptimization=true` in the request query, the response contains a subset of app instance properties.
 
 ### Read-Only
