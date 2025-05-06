@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.18.0 (May 06, 2025)
+
+### IMPROVEMENTS
+
+* Add `honor_persistent_name_id` to `okta_idp_saml` [#2289](https://github.com/okta/terraform-provider-okta/pull/2289) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Add `smart_card_idp` to `okta_policy_mfa` [#2294](https://github.com/okta/terraform-provider-okta/pull/2294) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Add `jwt-bearer` for native apps to `okta_app_oauth` [#2248](https://github.com/okta/terraform-provider-okta/pull/2248) by [dnychennnn](https://github.com/dnychennnn)
+
+### BUG FIXES
+
+* Fix missing `idp_id` and `idp_type` when importing `policy_rule_idp_discovery` [#2284](https://github.com/okta/terraform-provider-okta/pull/2284) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Add `honor_persistent_name_id` to `okta_idp_saml` [#2289](https://github.com/okta/terraform-provider-okta/pull/2289) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Add `resources_orn` to `okta_resource_set` for managing ORN resources [#2291](https://github.com/okta/terraform-provider-okta/pull/2291) by [aditya-okta](https://github.com/aditya-okta)
+* Add `q` search attribute to `data_source_okta_apps` [#2292](https://github.com/okta/terraform-provider-okta/pull/2292) by [pranav-okta](https://github.com/pranav-okta)
+
+### OTHERS
+
+* Add the docs for `custom_profile_attributes` to `okta_user` [#2288](https://github.com/okta/terraform-provider-okta/pull/2288) by [pranav-okta](https://github.com/pranav-okta)
+
 ## 4.17.0 (Apr 22, 2025)
 
 ### IMPROVEMENTS
