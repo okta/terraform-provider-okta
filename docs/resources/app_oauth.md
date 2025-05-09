@@ -105,6 +105,7 @@ resource "okta_app_oauth" "example" {
 - `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token
 - `refresh_token_rotation` (String) *Early Access Property* Refresh token rotation behavior, required with grant types refresh_token
 - `response_types` (Set of String) List of OAuth 2.0 response type strings. Valid values are any combination of: `code`, `token`, and `id_token`.
+- `skip_groups_claim` (Boolean) Skip reading groups claim configuration during read operations, this can improve performance for large numbers of applications. When enabled, the groups_claim computed attribute will be omitted from state. Default is `false`.
 - `status` (String) Status of application. By default, it is `ACTIVE`
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.
