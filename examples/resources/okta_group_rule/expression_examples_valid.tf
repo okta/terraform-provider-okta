@@ -13,6 +13,7 @@ locals {
     "isMemberOfGroupNameStartsWith(\"IT-\")",
     "hasWorkdayUser()", # hasWorkdayUser has no required args
     # "Arrays.contains(user.string_attr, user.email)", # only valid if a custom schema attr has been created
+    "   user   \n   .   \n   firstName   ==   \"John\"   ", # OEL ignores additional whitespace
   ]
 }
 
