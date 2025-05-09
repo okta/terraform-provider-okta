@@ -296,7 +296,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"authn_context_class_ref": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
+				Description: "Identifies the SAML authentication context class for the assertion's authentication statement",
 			},
 			"features": {
 				Type:        schema.TypeSet,
