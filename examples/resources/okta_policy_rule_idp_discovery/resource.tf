@@ -7,13 +7,16 @@ data "okta_policy" "idp_discovery_policy" {
 resource "okta_policy_rule_idp_discovery" "example" {
   policy_id                 = data.okta_policy.idp_discovery_policy.id
   name                      = "example"
-  idp_id                    = "<idp id>"
-  idp_type                  = "OIDC"
   network_connection        = "ANYWHERE"
   priority                  = 1
   status                    = "ACTIVE"
   user_identifier_type      = "ATTRIBUTE"
   user_identifier_attribute = "company"
+
+  idp_providers {
+    id   = "<idp id>"
+    type = "OIDC"
+  }
 
   app_exclude {
     id   = "<app id>"
