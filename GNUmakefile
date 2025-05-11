@@ -19,6 +19,7 @@ TESTARGS?=-test.v
 DEFAULT_SMOKE_TESTS?=\
   TestAccDataSourceOktaAppSaml_read \
   TestAccDataSourceOktaApp_read \
+  TestAccDataSourceOktaApps_read \
   TestAccDataSourceOktaGroup_read \
   TestAccDataSourceOktaGroups_read \
   TestAccDataSourceOktaPolicy_read \
