@@ -2,8 +2,6 @@ package okta
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v4/okta"
@@ -80,8 +78,6 @@ func resourceEmailSmtpRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	properties := emailSmtp.AdditionalProperties
 
-	logger(meta).Info("emailSmtp found", "configs", *emailSmtp)
-
 	_ = d.Set("host", properties["host"].(string))
 	_ = d.Set("alias", properties["alias"].(string))
 	_ = d.Set("enabled", properties["enabled"].(bool))
@@ -91,9 +87,7 @@ func resourceEmailSmtpRead(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceEmailSmtpUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	logger(meta).Info("resourceEmailSmtpUpdate", "server id", d.Id(), "SERVER ALIAS", d.Get("alias"), "SERVER HOST", d.Get("host"), "SERVER PORT", d.Get("port"))
 	req := buildEmailServerRequest(d)
-	logger(meta).Info("resourceEmailSmtpUpdate", "update Request Body", "alias", *req.Alias, "port", req.Port)
 	_, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.UpdateEmailServer(ctx, d.Id()).EmailServerRequest(req).Execute()
 	if err != nil {
 		return nil
@@ -102,7 +96,6 @@ func resourceEmailSmtpUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEmailSmtpDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	logger(meta).Info("resourceEmailSmtpDelete", "server configs", d.Id())
 	_, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.DeleteEmailServer(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email domain: %v", err)
@@ -121,22 +114,6 @@ func buildEmailSmtp(d *schema.ResourceData) okta.EmailServerPost {
 	}
 }
 
-func interfaceToStringPointer(value interface{}) *string {
-	if str, ok := value.(string); ok {
-		return &str
-	}
-	return nil
-}
-
-func interfaceToInt32Pointer(value interface{}) *int32 {
-	fmt.Println("port number", value)
-	if i, ok := value.(int); ok {
-		x := int32(i)
-		return &x
-	}
-	return nil
-}
-
 func buildEmailServerRequest(d *schema.ResourceData) okta.EmailServerRequest {
 	return okta.EmailServerRequest{
 		Alias:    interfaceToStringPointer(d.Get("alias")),
@@ -146,4 +123,19 @@ func buildEmailServerRequest(d *schema.ResourceData) okta.EmailServerRequest {
 		Password: interfaceToStringPointer(d.Get("password")),
 		Enabled:  boolPtr(d.Get("enabled").(bool)),
 	}
+}
+
+func interfaceToStringPointer(value interface{}) *string {
+	if str, ok := value.(string); ok {
+		return &str
+	}
+	return nil
+}
+
+func interfaceToInt32Pointer(value interface{}) *int32 {
+	if i, ok := value.(int); ok {
+		x := int32(i)
+		return &x
+	}
+	return nil
 }
