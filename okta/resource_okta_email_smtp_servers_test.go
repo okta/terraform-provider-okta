@@ -14,13 +14,15 @@ func TestAccResourceOktaSmtpServer_crud(t *testing.T) {
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),
 		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "host"),
+					resource.TestCheckResourceAttr(resourceName, "host", "192.168.2.0"),
 					resource.TestCheckResourceAttr(resourceName, "port", "8086"),
 					resource.TestCheckResourceAttr(resourceName, "username", "test_user"),
+					resource.TestCheckResourceAttr(resourceName, "alias", "CustomisedServer"),
 				),
 			},
 		},

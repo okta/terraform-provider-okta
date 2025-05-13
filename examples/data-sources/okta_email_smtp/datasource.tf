@@ -1,4 +1,4 @@
-resource "okta_email_smtp" "smtp_server2" {
+resource "okta_email_smtp" "smtp_server" {
   port     = 587
   host     = "smtp.example.com"
   username = "abcd"
@@ -7,5 +7,5 @@ resource "okta_email_smtp" "smtp_server2" {
 }
 
 data "okta_email_smtp" "test" {
-  id = okta_email_smtp.smtp_server2.id
+  id = okta_email_smtp.smtp_server.id
 }
