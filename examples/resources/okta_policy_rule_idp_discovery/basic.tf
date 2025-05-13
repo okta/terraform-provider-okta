@@ -7,8 +7,12 @@ resource "okta_policy_rule_idp_discovery" "test" {
   policy_id            = data.okta_policy.test.id
   priority             = 1
   name                 = "testAcc_replace_with_uuid"
-  idp_type             = "SAML2"
-  idp_id               = okta_idp_saml.test.id
+
+  idp_providers {
+    type = "SAML2"
+    id   = okta_idp_saml.test.id
+  }
+
   user_identifier_type = "ATTRIBUTE"
 
   // Don't have a company schema in this account, just chosing something always there

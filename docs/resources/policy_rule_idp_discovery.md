@@ -29,8 +29,10 @@ data "okta_policy" "idp_discovery_policy" {
 resource "okta_policy_rule_idp_discovery" "example" {
   policy_id                 = data.okta_policy.idp_discovery_policy.id
   name                      = "example"
-  idp_id                    = "<idp id>"
-  idp_type                  = "OIDC"
+  idp_providers {
+    id   = "<idp id>
+    type = "OIDC"
+  }
   network_connection        = "ANYWHERE"
   priority                  = 1
   status                    = "ACTIVE"
@@ -83,8 +85,7 @@ resource "okta_policy_rule_idp_discovery" "example" {
 - 'id' - (Optional) Use if 'type' is 'APP' to indicate the application id to include.
 - 'name' - (Optional) Use if the 'type' is 'APP_TYPE' to indicate the type of application(s) to include in instances where an entire group (i.e. 'yahoo_mail') of applications should be included.
 - 'type' - (Required) One of: 'APP', 'APP_TYPE' (see [below for nested schema](#nestedblock--app_include))
-- `idp_id` (String) The identifier for the Idp the rule should route to if all conditions are met.
-- `idp_type` (String) Type of Idp. One of: `SAML2`, `IWA`, `AgentlessDSSO`, `X509`, `FACEBOOK`, `GOOGLE`, `LINKEDIN`, `MICROSOFT`, `OIDC`. Default: `OKTA`
+- `idp_providers` (Block Set) Providers in discovery. See `idp_providers` for details. (see [below for nested schema](#nestedblock--idp_providers))
 - `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`, `ON_NETWORK`, or `OFF_NETWORK`. Default: `ANYWHERE`
 - `network_excludes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to exclude.
 - `network_includes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to include.
@@ -136,6 +137,14 @@ Read-Only:
 
 - `id` (String) The ID of this resource.
 
+<a id="nestedblock--idp_providers"></a>
+### Nested Schema for `idp_providers`
+
+Optional:
+
+- `type` (String)
+
+- `id` (String)
 
 <a id="nestedblock--platform_include"></a>
 ### Nested Schema for `platform_include`
