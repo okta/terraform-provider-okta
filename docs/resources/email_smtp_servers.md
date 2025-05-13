@@ -12,11 +12,11 @@ Create and configure SMTP email server configuration for your org.
 
 ```terraform
 resource "okta_email_smtp" "example" {
-  alias= "CustomServer"
-  host="192.168.160.1"
-  port= 8086
-  username= "abcd"
-  enabled= false
+  alias = "CustomServer"
+  host = "192.168.160.1"
+  port = 8086
+  username = "abcd"
+  enabled = false
   password = "pwd"
 }
 ```

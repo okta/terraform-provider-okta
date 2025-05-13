@@ -7,9 +7,9 @@ import (
 )
 
 func TestAccResourceOktaSmtpServer_crud(t *testing.T) {
-	mgr := newFixtureManager("resources", emailSmtp, t.Name())
+	mgr := newFixtureManager("resources", emailSMTPServer, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", emailSmtp)
+	resourceName := fmt.Sprintf("%s.test", emailSMTPServer)
 	oktaResourceTest(t, resource.TestCase{
 		PreCheck:          testAccPreCheck(t),
 		ErrorCheck:        testAccErrorChecks(t),

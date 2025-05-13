@@ -6,7 +6,7 @@ import (
 )
 
 func TestAccDataSourceOktaEmailSmtpServers_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", emailSmtp, t.Name())
+	mgr := newFixtureManager("data-sources", emailSMTPServer, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -17,11 +17,11 @@ func TestAccDataSourceOktaEmailSmtpServers_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_email_smtp.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_email_smtp.test", "host", "smtp.example.com"),
-					resource.TestCheckResourceAttr("data.okta_email_smtp.test", "alias", "server4"),
-					resource.TestCheckResourceAttr("data.okta_email_smtp.test", "username", "abcd"),
-					resource.TestCheckResourceAttr("data.okta_email_smtp.test", "port", "587"),
+					resource.TestCheckResourceAttrSet("data.okta_email_smtp_server.test", "id"),
+					resource.TestCheckResourceAttr("data.okta_email_smtp_server.test", "host", "smtp.example.com"),
+					resource.TestCheckResourceAttr("data.okta_email_smtp_server.test", "alias", "server4"),
+					resource.TestCheckResourceAttr("data.okta_email_smtp_server.test", "username", "abcd"),
+					resource.TestCheckResourceAttr("data.okta_email_smtp_server.test", "port", "587"),
 				),
 			},
 		},

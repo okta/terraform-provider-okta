@@ -7,12 +7,12 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 )
 
-func resourceEmailSmtp() *schema.Resource {
+func resourceEmailSMTP() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceEmailSmtpCreate,
-		ReadContext:   resourceEmailSmtpRead,
-		UpdateContext: resourceEmailSmtpUpdate,
-		DeleteContext: resourceEmailSmtpDelete,
+		CreateContext: resourceEmailSMTPCreate,
+		ReadContext:   resourceEmailSMTPRead,
+		UpdateContext: resourceEmailSMTPUpdate,
+		DeleteContext: resourceEmailSMTPDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -53,16 +53,16 @@ func resourceEmailSmtp() *schema.Resource {
 	}
 }
 
-func resourceEmailSmtpCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtpResp, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSmtp(d)).Execute()
+func resourceEmailSMTPCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	emailSmtpResp, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSMTP(d)).Execute()
 	if err != nil {
 		return nil
 	}
 	d.SetId(*emailSmtpResp.Id)
-	return resourceEmailSmtpRead(ctx, d, meta)
+	return resourceEmailSMTPRead(ctx, d, meta)
 }
 
-func resourceEmailSmtpRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEmailSMTPRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	emailSmtp, resp, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, d.Id()).Execute()
 	if err := v3suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
@@ -73,7 +73,7 @@ func resourceEmailSmtpRead(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	if emailSmtp == nil {
-		return diag.Errorf("emailSmtp is nil but no 404 returned")
+		return diag.Errorf("emailSMTPServer is nil but no 404 returned")
 	}
 
 	properties := emailSmtp.AdditionalProperties
@@ -86,16 +86,16 @@ func resourceEmailSmtpRead(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceEmailSmtpUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEmailSMTPUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	req := buildEmailServerRequest(d)
 	_, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.UpdateEmailServer(ctx, d.Id()).EmailServerRequest(req).Execute()
 	if err != nil {
 		return nil
 	}
-	return resourceEmailSmtpRead(ctx, d, meta)
+	return resourceEmailSMTPRead(ctx, d, meta)
 }
 
-func resourceEmailSmtpDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEmailSMTPDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	_, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.DeleteEmailServer(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email domain: %v", err)
@@ -103,7 +103,7 @@ func resourceEmailSmtpDelete(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func buildEmailSmtp(d *schema.ResourceData) okta.EmailServerPost {
+func buildEmailSMTP(d *schema.ResourceData) okta.EmailServerPost {
 	return okta.EmailServerPost{
 		Alias:    d.Get("alias").(string),
 		Host:     d.Get("host").(string),
