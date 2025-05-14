@@ -355,7 +355,7 @@ func Provider() *schema.Provider {
 			emailCustomizations:      dataSourceEmailCustomizations(),
 			emailTemplate:            dataSourceEmailTemplate(),
 			emailTemplates:           dataSourceEmailTemplates(),
-			emailSMTPServer:          dataSourceEmailSmtpServers(),
+			emailSMTPServer:          dataSourceEmailSMTPServers(),
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),

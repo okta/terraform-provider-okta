@@ -35,7 +35,7 @@ resource "okta_email_smtp" "example" {
 
 ### Optional
 
-- `enabled` (Boolean) If true, routes all email traffic through your SMTP server.Defaults to false
+- `enabled` (Boolean) If true, routes all email traffic through your SMTP server.Default: `false`
 
 ### Read-Only
 

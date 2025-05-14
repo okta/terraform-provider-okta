@@ -2,11 +2,12 @@ package okta
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceOktaSmtpServer_crud(t *testing.T) {
+func TestAccResourceOktaSMTPServer_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", emailSMTPServer, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", emailSMTPServer)

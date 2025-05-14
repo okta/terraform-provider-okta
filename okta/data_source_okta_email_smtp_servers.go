@@ -6,9 +6,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceEmailSmtpServers() *schema.Resource {
+func dataSourceEmailSMTPServers() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceEmailSmtpServersRead,
+		ReadContext: dataSourceEmailSMTPServersRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:        schema.TypeString,
@@ -45,14 +45,14 @@ func dataSourceEmailSmtpServers() *schema.Resource {
 	}
 }
 
-func dataSourceEmailSmtpServersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtpServerId, ok := d.GetOk("id")
+func dataSourceEmailSMTPServersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	emailSMTPServerId, ok := d.GetOk("id")
 	if !ok {
 		return diag.Errorf("id required for email smtp servers")
 	}
-	emailSmtpServers, _, _ := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, emailSmtpServerId.(string)).Execute()
-	properties := emailSmtpServers.AdditionalProperties
-	d.SetId(emailSmtpServerId.(string))
+	emailSMTPServers, _, _ := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, emailSMTPServerId.(string)).Execute()
+	properties := emailSMTPServers.AdditionalProperties
+	d.SetId(emailSMTPServerId.(string))
 	_ = d.Set("host", properties["host"].(string))
 	_ = d.Set("alias", properties["alias"].(string))
 	_ = d.Set("enabled", properties["enabled"].(bool))
