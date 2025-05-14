@@ -73,6 +73,7 @@ const (
 	emailCustomizations           = "okta_email_customizations"
 	emailTemplate                 = "okta_email_template"
 	emailTemplates                = "okta_email_templates"
+	emailSMTPServer               = "okta_email_smtp_server"
 	eventHook                     = "okta_event_hook"
 	eventHookVerification         = "okta_event_hook_verification"
 	factor                        = "okta_factor"
@@ -281,6 +282,7 @@ func Provider() *schema.Provider {
 			emailDomain:                   resourceEmailDomain(),
 			emailDomainVerification:       resourceEmailDomainVerification(),
 			emailSender:                   resourceEmailSender(),
+			emailSMTPServer:               resourceEmailSMTP(),
 			emailSenderVerification:       resourceEmailSenderVerification(),
 			eventHook:                     resourceEventHook(),
 			eventHookVerification:         resourceEventHookVerification(),
@@ -353,6 +355,7 @@ func Provider() *schema.Provider {
 			emailCustomizations:      dataSourceEmailCustomizations(),
 			emailTemplate:            dataSourceEmailTemplate(),
 			emailTemplates:           dataSourceEmailTemplates(),
+			emailSMTPServer:          dataSourceEmailSMTPServers(),
 			defaultPolicy:            dataSourceDefaultPolicy(),
 			group:                    dataSourceGroup(),
 			groupEveryone:            dataSourceEveryoneGroup(),
