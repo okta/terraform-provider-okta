@@ -54,16 +54,16 @@ func resourceEmailSMTP() *schema.Resource {
 }
 
 func resourceEmailSMTPCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtpResp, _, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSMTP(d)).Execute()
+	emailSMTPResp, _, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSMTP(d)).Execute()
 	if err != nil {
 		return nil
 	}
-	d.SetId(*emailSmtpResp.Id)
+	d.SetId(*emailSMTPResp.Id)
 	return resourceEmailSMTPRead(ctx, d, meta)
 }
 
 func resourceEmailSMTPRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtp, resp, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, d.Id()).Execute()
+	emailSMTP, resp, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, d.Id()).Execute()
 	if err := v5suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
@@ -72,11 +72,11 @@ func resourceEmailSMTPRead(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
-	if emailSmtp == nil {
+	if emailSMTP == nil {
 		return diag.Errorf("emailSMTPServer is nil but no 404 returned")
 	}
 
-	properties := emailSmtp.AdditionalProperties
+	properties := emailSMTP.AdditionalProperties
 
 	_ = d.Set("host", properties["host"].(string))
 	_ = d.Set("alias", properties["alias"].(string))
