@@ -12,9 +12,9 @@ Get existing SMTP email server configuration.
 
 ```terraform
 resource "okta_email_smtp" "smtp_server2" {
-  alias = "CustomServer"
-  host = "192.168.160.1"
-  port = 8086
+  alias    = "CustomServer"
+  host     = "192.168.160.1"
+  port     = 8086
   username = "aUser"
   password = "abcd"
 }
