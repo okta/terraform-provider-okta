@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-sdk-golang/v4/okta"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 func resourceEmailSMTP() *schema.Resource {
@@ -54,7 +54,7 @@ func resourceEmailSMTP() *schema.Resource {
 }
 
 func resourceEmailSMTPCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtpResp, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSMTP(d)).Execute()
+	emailSmtpResp, _, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.CreateEmailServer(ctx).EmailServerPost(buildEmailSMTP(d)).Execute()
 	if err != nil {
 		return nil
 	}
@@ -63,8 +63,8 @@ func resourceEmailSMTPCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEmailSMTPRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	emailSmtp, resp, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, d.Id()).Execute()
-	if err := v3suppressErrorOn404(resp, err); err != nil {
+	emailSmtp, resp, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, d.Id()).Execute()
+	if err := v5suppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get email domain: %v", err)
 	}
 	if resp == nil || resp.StatusCode == 404 {
@@ -88,7 +88,7 @@ func resourceEmailSMTPRead(ctx context.Context, d *schema.ResourceData, meta int
 
 func resourceEmailSMTPUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	req := buildEmailServerRequest(d)
-	_, _, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.UpdateEmailServer(ctx, d.Id()).EmailServerRequest(req).Execute()
+	_, _, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.UpdateEmailServer(ctx, d.Id()).EmailServerRequest(req).Execute()
 	if err != nil {
 		return nil
 	}
@@ -96,15 +96,15 @@ func resourceEmailSMTPUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEmailSMTPDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, err := getOktaV3ClientFromMetadata(meta).EmailServerAPI.DeleteEmailServer(ctx, d.Id()).Execute()
+	_, err := getOktaV5ClientFromMetadata(meta).EmailServerAPI.DeleteEmailServer(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete email domain: %v", err)
 	}
 	return nil
 }
 
-func buildEmailSMTP(d *schema.ResourceData) okta.EmailServerPost {
-	return okta.EmailServerPost{
+func buildEmailSMTP(d *schema.ResourceData) v5okta.EmailServerPost {
+	return v5okta.EmailServerPost{
 		Alias:    d.Get("alias").(string),
 		Host:     d.Get("host").(string),
 		Port:     int32(d.Get("port").(int)),
@@ -114,8 +114,8 @@ func buildEmailSMTP(d *schema.ResourceData) okta.EmailServerPost {
 	}
 }
 
-func buildEmailServerRequest(d *schema.ResourceData) okta.EmailServerRequest {
-	return okta.EmailServerRequest{
+func buildEmailServerRequest(d *schema.ResourceData) v5okta.EmailServerRequest {
+	return v5okta.EmailServerRequest{
 		Alias:    interfaceToStringPointer(d.Get("alias")),
 		Host:     interfaceToStringPointer(d.Get("host")),
 		Port:     interfaceToInt32Pointer(d.Get("port")),
