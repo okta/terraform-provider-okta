@@ -48,7 +48,7 @@ func dataSourceEmailSMTPServers() *schema.Resource {
 func dataSourceEmailSMTPServersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	emailSMTPServerId, ok := d.GetOk("id")
 	if !ok {
-		return diag.Errorf("id required for email smtp servers")
+		return diag.Errorf("id required for email SMTP servers")
 	}
 	emailSMTPServers, _, _ := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, emailSMTPServerId.(string)).Execute()
 	properties := emailSMTPServers.AdditionalProperties
