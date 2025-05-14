@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAccDataSourceOktaEmailSmtpServers_read(t *testing.T) {
+func TestAccDataSourceOktaEmailSMTPServers_read(t *testing.T) {
 	mgr := newFixtureManager("data-sources", emailSMTPServer, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
