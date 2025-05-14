@@ -13,27 +13,27 @@ func dataSourceEmailSMTPServers() *schema.Resource {
 			"id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The ID of the SMTP server",
+				Description: "The ID of the SMTP server.",
 			},
 			"username": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Name of the SMTP server",
+				Description: "Name of the SMTP server.",
 			},
 			"host": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "SMTP server host name",
+				Description: "SMTP server host name.",
 			},
 			"port": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "SMTP server port number",
+				Description: "SMTP server port number.",
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Description: "Whether the SMTP server requires a secure connection",
+				Description: "Whether the SMTP server requires a secure connection.",
 			},
 			"alias": {
 				Type:        schema.TypeString,
