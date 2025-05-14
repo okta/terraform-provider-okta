@@ -50,7 +50,7 @@ func dataSourceEmailSMTPServersRead(ctx context.Context, d *schema.ResourceData,
 	if !ok {
 		return diag.Errorf("id required for email SMTP servers")
 	}
-	emailSMTPServers, _, _ := getOktaV3ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, emailSMTPServerId.(string)).Execute()
+	emailSMTPServers, _, _ := getOktaV5ClientFromMetadata(meta).EmailServerAPI.GetEmailServer(ctx, emailSMTPServerId.(string)).Execute()
 	properties := emailSMTPServers.AdditionalProperties
 	d.SetId(emailSMTPServerId.(string))
 	_ = d.Set("host", properties["host"].(string))
