@@ -72,17 +72,20 @@ test:
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
+# Base acceptance test configuration
+ACC_TEST_BASE=TF_ACC=1 go test -tags unit -mod=readonly -timeout 120m $(TESTARGS) $(TEST_FILTER)
+
 testacc:
-	TF_ACC=1 go test $(TEST) $(TESTARGS) $(TEST_FILTER) -timeout 120m
+	$(ACC_TEST_BASE) $(TEST)
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
+	OKTA_BASE_URL=dne-okta.com OKTA_VCR_TF_ACC=play $(ACC_TEST_BASE) ./$(PKG_NAME)
 
 smoke-test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ ./$(PKG_NAME)
+	OKTA_BASE_URL=dne-okta.com OKTA_VCR_TF_ACC=play $(ACC_TEST_BASE) -run ^$(smoke_tests)$$ ./$(PKG_NAME)
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./$(PKG_NAME)
+	OKTA_VCR_TF_ACC=record $(ACC_TEST_BASE) ./$(PKG_NAME)
 
 qc: vet staticcheck lint
 
