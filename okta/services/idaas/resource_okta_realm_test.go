@@ -1,4 +1,4 @@
-package okta
+package idaas_test
 
 import (
 	"context"
@@ -6,20 +6,22 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/resources"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 func TestAccResourceOktaRealm_crud(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.example", realm)
-	mgr := newFixtureManager("resources", realm, t.Name())
+	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSRealm)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSRealm, t.Name())
 	config := mgr.GetFixtures("okta_realm.tf", t)
 	updatedConfig := mgr.GetFixtures("okta_realm_updated.tf", t)
-	buildResourceName(mgr.Seed)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:                 testAccPreCheck(t),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
-		CheckDestroy:             checkResourceDestroy(realm, doesRealmExist),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSRealm, doesRealmExist),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -40,7 +42,7 @@ func TestAccResourceOktaRealm_crud(t *testing.T) {
 }
 
 func doesRealmExist(id string) (bool, error) {
-	client := sdkV5ClientForTest()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV5()
 	_, response, err := client.RealmAPI.GetRealm(context.Background(), id).Execute()
-	return doesResourceExistV5(response, err)
+	return utils.DoesResourceExistV5(response, err)
 }

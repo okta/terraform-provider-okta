@@ -1,21 +1,23 @@
-package okta
+package idaas_test
 
 import (
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func TestAccDataSourceOktaRealm_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", realm, t.Name())
+	mgr := newFixtureManager("data-sources", resources.OktaIDaaSRealm, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	configInvalid := mgr.GetFixtures("datasource_not_found.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:                 testAccPreCheck(t),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

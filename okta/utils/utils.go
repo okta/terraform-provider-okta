@@ -333,7 +333,7 @@ func DoesResourceExistV3(response *okta.APIResponse, err error) (bool, error) {
 	return true, nil
 }
 
-func doesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) {
+func DoesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) {
 	if response == nil {
 		return false, err
 	}
@@ -342,13 +342,13 @@ func doesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) 
 		return false, nil
 	}
 	if err != nil {
-		return false, v5responseErr(response, err)
+		return false, ResponseErr_V5(response, err)
 	}
 
 	defer response.Body.Close()
 	b, err := io.ReadAll(response.Body)
 	if err != nil {
-		return false, v5responseErr(response, err)
+		return false, ResponseErr_V5(response, err)
 	}
 	// some of the API response can be 200 and return an empty object or list meaning nothing was found
 	body := string(b)

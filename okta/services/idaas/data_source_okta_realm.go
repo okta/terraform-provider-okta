@@ -1,4 +1,4 @@
-package okta
+package idaas
 
 import (
 	"context"
@@ -14,13 +14,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/okta/okta-sdk-golang/v5/okta"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 type realmDataSource struct {
-	config *Config
+	config *config.Config
 }
 
-func NewRealmDataSource() datasource.DataSource {
+func newRealmDataSource() datasource.DataSource {
 	return &realmDataSource{}
 }
 
@@ -77,7 +78,7 @@ func (r *realmDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	var selectedRealm *okta.Realm
 	if state.ID.ValueString() != "" {
-		realm, response, err := r.config.oktaSDKClientV5.RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
+		realm, response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
 		if err != nil {
 			body, ioErr := io.ReadAll(response.Body)
 			defer response.Body.Close()
@@ -93,7 +94,7 @@ func (r *realmDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		searchString := fmt.Sprintf(`profile.name eq "%s"`, state.Name.ValueString())
 
 		err := retry.RetryContext(ctx, 3*time.Second, func() *retry.RetryError {
-			realms, response, err := r.config.oktaSDKClientV5.RealmAPI.ListRealms(ctx).Search(searchString).Execute()
+			realms, response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.ListRealms(ctx).Search(searchString).Execute()
 			if err != nil {
 				body, ioErr := io.ReadAll(response.Body)
 				defer response.Body.Close()
