@@ -193,7 +193,7 @@ func createCustomNestedResourceImporter(fields []string, errMessage string) *sch
 						value = parts[i]
 					}
 				}
-				//lintignore:R001
+				// lintignore:R001
 				_ = d.Set(field, value)
 			}
 
@@ -318,6 +318,32 @@ func doesResourceExistV3(response *okta.APIResponse, err error) (bool, error) {
 	b, err := io.ReadAll(response.Body)
 	if err != nil {
 		return false, responseErrV3(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func doesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, v5responseErr(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, v5responseErr(response, err)
 	}
 	// some of the API response can be 200 and return an empty object or list meaning nothing was found
 	body := string(b)
@@ -453,7 +479,7 @@ func appendUnique(arr []string, el string) []string {
 func setNonPrimitives(d *schema.ResourceData, valueMap map[string]interface{}) error {
 	for k, v := range valueMap {
 		if v != nil {
-			//lintignore:R001
+			// lintignore:R001
 			if err := d.Set(k, v); err != nil {
 				return fmt.Errorf("error setting %s for resource %s: %s", k, d.Id(), err)
 			}
