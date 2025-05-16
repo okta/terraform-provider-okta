@@ -2,11 +2,11 @@ name: Remove Label on Issue Comment
 
 permissions:
   issues: write
-  
+
 on:
   issue_comment:
     types: [created]
-    
+
 jobs:
   issue_commented:
     name: Issue comment
@@ -21,15 +21,15 @@ jobs:
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            
+
             const { data: labels } = await github.rest.issues.listLabelsOnIssue({
               owner: owner,
               repo: repo,
               issue_number: issueNumber
             });
-            
+
             const labelNames = labels.map(label => label.name);
-            
+
             if (labelNames.includes(labelToRemove)) {
               await github.rest.issues.removeLabel({
                 issue_number: issueNumber,
