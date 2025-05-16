@@ -1,4 +1,4 @@
-package okta
+package idaas
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 type realmModel struct {
@@ -26,10 +27,10 @@ type realmModel struct {
 }
 
 type realmResource struct {
-	config *Config
+	config *config.Config
 }
 
-func NewRealmResource() resource.Resource {
+func newRealmResource() resource.Resource {
 	return &realmResource{}
 }
 
@@ -86,7 +87,7 @@ func (r *realmResource) Create(ctx context.Context, req resource.CreateRequest, 
 	profile.RealmType = state.RealmType.ValueStringPointer()
 	createRealmRequest.Profile = profile
 
-	responseRealm, response, err := r.config.oktaSDKClientV5.RealmAPI.CreateRealm(ctx).Body(*createRealmRequest).Execute()
+	responseRealm, response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.CreateRealm(ctx).Body(*createRealmRequest).Execute()
 	if err != nil {
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
@@ -116,7 +117,7 @@ func (r *realmResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	realm, response, err := r.config.oktaSDKClientV5.RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
+	realm, response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
@@ -156,7 +157,7 @@ func (r *realmResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	profile.RealmType = state.RealmType.ValueStringPointer()
 	updateRealmRequest.Profile = profile
 
-	realm, response, err := r.config.oktaSDKClientV5.RealmAPI.ReplaceRealm(ctx, state.ID.ValueString()).Body(*updateRealmRequest).Execute()
+	realm, response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.ReplaceRealm(ctx, state.ID.ValueString()).Body(*updateRealmRequest).Execute()
 	if err != nil {
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
@@ -186,7 +187,7 @@ func (r *realmResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		return
 	}
 
-	response, err := r.config.oktaSDKClientV5.RealmAPI.DeleteRealm(ctx, state.ID.ValueString()).Execute()
+	response, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.DeleteRealm(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
