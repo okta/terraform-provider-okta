@@ -23,16 +23,27 @@ This resource allows you to create and configure an IdP Discovery Policy Rule.
 you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
 request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		Schema: buildBaseRuleSchema(map[string]*schema.Schema{
-			"idp_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The identifier for the Idp the rule should route to if all conditions are met.",
-			},
-			"idp_type": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "OKTA",
-				Description: "Type of Idp. One of: `SAML2`, `IWA`, `AgentlessDSSO`, `X509`, `FACEBOOK`, `GOOGLE`, `LINKEDIN`, `MICROSOFT`, `OIDC`. Default: `OKTA`",
+			"idp_providers": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The identifier for the Idp the rule should route to if all conditions are met.",
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "OKTA",
+							Description: "Type of IdP. One of: `AMAZON`, `APPLE`, `DISCORD`, `FACEBOOK`, `GITHUB`, `GITLAB`, " +
+								"`GOOGLE`, `IDV_CLEAR`, `IDV_INCODE`, `IDV_PERSONA`, `LINKEDIN`, `LOGINGOV`, `LOGINGOV_SANDBOX`, " +
+								"`MICROSOFT`, `OIDC`, `PAYPAL`, `PAYPAL_SANDBOX`, `SALESFORCE`, `SAML2`, `SPOTIFY`, `X509`, `XERO`, " +
+								"`YAHOO`, `YAHOOJP`, Default: `OKTA`",
+						},
+					},
+				},
 			},
 			"app_include": {
 				Type:     schema.TypeSet,
@@ -140,8 +151,10 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
 	if len(rule.Actions.IDP.Providers) > 0 {
-		_ = d.Set("idp_id", rule.Actions.IDP.Providers[0].ID)
-		_ = d.Set("idp_type", rule.Actions.IDP.Providers[0].Type)
+		for i := range len(rule.Actions.IDP.Providers) {
+			_ = d.Set("id", rule.Actions.IDP.Providers[i].ID)
+			_ = d.Set("type", rule.Actions.IDP.Providers[i].Type)
+		}
 	}
 	return nil
 }
@@ -204,15 +217,23 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 
 // Build Policy Sign On Rule from resource data
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
+	var providers []*sdk.IdpDiscoveryRuleProvider
+	if v, ok := d.GetOk("idp_providers"); ok {
+		providerList := v.([]any)
+		for _, provider := range providerList {
+			if value, ok := provider.(map[string]any); ok {
+				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
+					ID:   getMapString(value, "id"),
+					Type: getMapString(value, "type"),
+				})
+			}
+		}
+	}
+
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
 			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: []*sdk.IdpDiscoveryRuleProvider{
-					{
-						Type: d.Get("idp_type").(string),
-						ID:   d.Get("idp_id").(string),
-					},
-				},
+				Providers: providers,
 			},
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{
