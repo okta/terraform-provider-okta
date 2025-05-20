@@ -4,8 +4,9 @@
 
 ### IMPROVEMENTS
 
-* Add new resource and data_source `okta_email_smtp_server` to manage external email provider [#2306](https://github.com/okta/terraform-provider-okta/pull/2206). Thanks [aditya-okta](https://github.com/aditya-okta)
-* Qdd support for credentials on resource `okta_app_basic_auth` [#2309](https://github.com/okta/terraform-provider-okta/pull/2309). Thanks [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Add new resource and data_source `okta_email_smtp_server` to manage external email provider [#2306](https://github.com/okta/terraform-provider-okta/pull/2206) by [aditya-okta](https://github.com/aditya-okta)
+* Add support for credentials on resource `okta_app_basic_auth` [#2309](https://github.com/okta/terraform-provider-okta/pull/2309) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Allow array of `idp_providers` in `okta_policy_rule_idp_discovery` [#2301](https://github.com/okta/terraform-provider-okta/pull/2301) by [pranav-okta](https://github.com/pranav-okta)
 
 ## 4.18.0 (May 06, 2025)
 
