@@ -114,6 +114,7 @@ const (
 	profileMapping                = "okta_profile_mapping"
 	rateLimiting                  = "okta_rate_limiting"
 	resourceSet                   = "okta_resource_set"
+	realm                         = "okta_realm"
 	roleSubscription              = "okta_role_subscription"
 	securityNotificationEmails    = "okta_security_notification_emails"
 	templateSms                   = "okta_template_sms"
