@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.19.0 (May 20, 2025)
+
+### IMPROVEMENTS
+
+* Add new resource and data_source `okta_email_smtp_server` to manage external email provider [#2306](https://github.com/okta/terraform-provider-okta/pull/2206). Thanks [aditya-okta](https://github.com/aditya-okta)
+* Qdd support for credentials on resource `okta_app_basic_auth` [#2309](https://github.com/okta/terraform-provider-okta/pull/2309). Thanks [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+
 ## 4.18.0 (May 06, 2025)
 
 ### IMPROVEMENTS
