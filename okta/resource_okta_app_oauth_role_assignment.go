@@ -2,6 +2,7 @@ package okta
 
 import (
 	"context"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -158,7 +159,12 @@ func (r *appOAuthRoleAssignmentResource) Read(ctx context.Context, req resource.
 		return
 	}
 
-	role, _, err := r.Config.oktaSDKsupplementClient.GetClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	role, sdkResp, err := r.Config.oktaSDKsupplementClient.GetClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	if sdkResp != nil && sdkResp.StatusCode == http.StatusNotFound {
+		data.ID = types.StringValue("")
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		return
+	}
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to read role assignment", err.Error())
 		return
@@ -189,7 +195,10 @@ func (r *appOAuthRoleAssignmentResource) Delete(ctx context.Context, req resourc
 		return
 	}
 
-	_, err := r.Config.oktaSDKsupplementClient.UnassignClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	sdkResp, err := r.Config.oktaSDKsupplementClient.UnassignClientRole(ctx, data.ClientID.ValueString(), data.ID.ValueString())
+	if sdkResp != nil && sdkResp.StatusCode == http.StatusNotFound {
+		return
+	}
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to delete role assignment", err.Error())
 		return
