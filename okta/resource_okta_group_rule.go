@@ -2,12 +2,15 @@ package okta
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-okta/okta/expression"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
@@ -30,10 +33,16 @@ Terraform Provider will act in a force/replace manner and call the API to delete
 the underlying rule resource and create a new rule resource.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:             schema.TypeString,
-				Required:         true,
-				Description:      "The name of the Group Rule (min character 1; max characters 50).",
-				ValidateDiagFunc: strMaxLength(50), // ideas.okta.com/app/#/case/204022
+				Type:     schema.TypeString,
+				Required: true,
+				ValidateDiagFunc: func(v interface{}, p cty.Path) diag.Diagnostics {
+					name := v.(string)
+					if len(name) < 1 || len(name) > 50 { // ideas.okta.com/app/#/case/204022
+						return diag.Errorf("name must be between 1 and 50 characters")
+					}
+					return nil
+				},
+				Description: "The name of the Group Rule (min character 1; max characters 50).",
 			},
 			"group_assignments": {
 				Type:     schema.TypeSet,
@@ -52,9 +61,15 @@ the underlying rule resource and create a new rule resource.`,
 			"expression_value": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The expression value.",
+				Description: "The expression value. See https://developer.okta.com/reference/okta_expression_language",
 			},
 			"status": statusSchema,
+			"expression_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether to warn when we suspect the Okta Expression Language syntax of the rule is invalid. Defaults to 'false'.",
+			},
 			"remove_assigned_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -79,6 +94,16 @@ func statusIsInvalidDiffFn(status string) bool {
 
 func resourceGroupRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	ctx = context.WithValue(ctx, retryOnStatusCodes, []int{http.StatusInternalServerError})
+
+	// groupAssignments := d.Get("group_assignments").(*schema.Set)
+	// if groupAssignments.Len() < 1 {
+	// 	return diag.Diagnostics{diag.Diagnostic{
+	// 		Severity: diag.Error,
+	// 		Summary:  "No group assignments",
+	// 		Detail:   "group_assignments must contain at least one group",
+	// 	}}
+	// }
+
 	groupRule := buildGroupRule(d)
 	responseGroupRule, _, err := getOktaClientFromMetadata(meta).Group.CreateGroupRule(ctx, *groupRule)
 	if err != nil {
@@ -103,7 +128,7 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	_ = d.Set("name", g.Name)
 	_ = d.Set("status", g.Status)
-	// Just for the sake of safety, should never be nil
+	// Just for the sake of safety, Conditions should never be nil
 	if g.Conditions != nil {
 		if g.Conditions.Expression != nil {
 			_ = d.Set("expression_type", g.Conditions.Expression.Type)
@@ -119,6 +144,39 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.Errorf("failed to set group rule properties: %v", err)
 	}
+
+	diags := diag.Diagnostics{}
+
+	// groupAssignments := d.Get("group_assignments").(*schema.Set)
+	// if groupAssignments.Len() < 1 {
+	// 	diags = append(diags, diag.Diagnostic{
+	// 		Severity: diag.Error,
+	// 		Summary:  "No group assignments",
+	// 		Detail:   "group_assignments must contain at least one group",
+	// 	})
+	// }
+
+	if d.Get("expression_validation").(bool) {
+		if err := expression.ParseExpression(d.Get("expression_value").(string)); err != nil {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Possible Invalid Expression",
+				Detail:   fmt.Sprintf("possible invalid expression:\n\n%v\n\nExpression validation is experimental; this warning may be a false-positive and will not block terraform apply.", err),
+			})
+		}
+	}
+	// usersExcluded := d.Get("users_excluded").(*schema.Set)
+	// if usersExcluded.Len() > 100 {
+	// 	diags = append(diags, diag.Diagnostic{
+	// 		Severity: diag.Error,
+	// 		Summary:  "Too many users excluded",
+	// 		Detail:   "users_excluded cannot contain more than 100 users",
+	// 	})
+	// }
+	if len(diags) > 0 {
+		return diags
+	}
+
 	return nil
 }
 
