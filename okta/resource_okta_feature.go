@@ -50,11 +50,11 @@ func (r *featuresResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 		Description: "Manages feature",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The ID of the resource. This ID is simply the feature.",
+				Description: "The ID of the feature.",
 				Computed:    true,
-				// PlanModifiers: []planmodifier.String{
-				// 	stringplanmodifier.UseStateForUnknown(),
-				// },
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"feature_id": schema.StringAttribute{
 				Description: "Okta API for feature only reads and updates therefore the okta_feature resource needs to act as a quasi data source. Do this by setting feature_id",
@@ -80,7 +80,7 @@ func (r *featuresResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "The feature status",
+				Description: "The feature status.",
 				Computed:    true,
 			},
 			"type": schema.StringAttribute{
