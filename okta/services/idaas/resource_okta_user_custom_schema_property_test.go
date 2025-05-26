@@ -569,9 +569,6 @@ func TestAccResourceOktaUserSchema_enum_integer(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
-	t.Skip("TODO deal with apparent monolith bug")
-	// TODO deal with apparent monolith bug:
-	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
 	mgr := newFixtureManager("resources", resources.OktaIDaaSUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserSchemaProperty)
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -589,26 +586,26 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 			  description = "testing"
 			  master      = "OKTA"
 			  scope       = "SELF"
-			  array_type  = "boolean"
+			  array_type  = "string"
 			  array_enum  = ["true", "false"]
 			  array_one_of {
-			    title = "boolean True"
+			    title = "boolean true"
 			    const = "true"
 			  }
 			  array_one_of {
-			    title = "boolean False"
+			    title = "boolean false"
 			    const = "false"
 			  }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
-					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "false"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.title", "boolean True"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.title", "boolean true"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.const", "true"),
-					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.title", "boolean False"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.title", "boolean false"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.const", "false"),
 				),
 			},
@@ -621,7 +618,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 			  description = "testing"
 			  master      = "OKTA"
 			  scope       = "SELF"
-			  array_type  = "boolean"
+			  array_type  = "string"
 			  array_enum  = ["false", "true"]
 			  array_one_of {
 			    title = "boolean FALSE"
@@ -634,7 +631,7 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 			}`),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
-					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "false"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "true"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "2"),
@@ -649,9 +646,6 @@ func TestAccResourceOktaUserSchema_array_enum_boolean(t *testing.T) {
 }
 
 func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
-	t.Skip("TODO deal with apparent monolith bug")
-	// TODO deal with apparent monolith bug:
-	// "the API returned an error: Array specified in enum field must match const values specified in oneOf field."
 	mgr := newFixtureManager("resources", resources.OktaIDaaSUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserSchemaProperty)
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -665,7 +659,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			resource "okta_user_schema_property" "test" {
 			  index       = "testAcc_replace_with_uuid"
 			  title       = "terraform acceptance test"
-			  type        = "boolean"
+			  type        = "string"
 			  description = "testing"
 			  master      = "OKTA"
 			  scope       = "SELF"
@@ -680,7 +674,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			  }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "false"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "2"),
@@ -695,7 +689,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			resource "okta_user_schema_property" "test" {
 			  index       = "testAcc_replace_with_uuid"
 			  title       = "terraform acceptance test"
-			  type        = "boolean"
+			  type        = "string"
 			  description = "testing"
 			  master      = "OKTA"
 			  scope       = "SELF"
@@ -710,7 +704,7 @@ func TestAccResourceOktaUserSchema_enum_boolean(t *testing.T) {
 			  }
 			}`),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "false"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "true"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "2"),
