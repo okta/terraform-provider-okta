@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -24,15 +25,19 @@ import (
 func main() {
 	var debug bool
 
+	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
+	flag.Parse()
+
+	primary := provider.Provider()
 	// TODO: Uses v5 protocol for now, however lets swap to v6 when a drop of support for TF versions prior to 1.0 can be made
-	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(fwprovider.NewFrameworkProvider(version.OktaTerraformProviderVersion)))
+	framework, err := tf6to5server.DowngradeServer(context.Background(), providerserver.NewProtocol6(fwprovider.NewFrameworkProvider(version.OktaTerraformProviderVersion, primary)))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	providers := []func() tfprotov5.ProviderServer{
 		// v2 plugin
-		provider.Provider().GRPCProvider,
+		primary.GRPCProvider,
 		// v3 plugin
 		func() tfprotov5.ProviderServer {
 			return framework

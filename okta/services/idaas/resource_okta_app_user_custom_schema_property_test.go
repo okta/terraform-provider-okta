@@ -344,11 +344,11 @@ resource "okta_app_user_schema_property" "test" {
   	array_enum =  ["true", "false"]
   	array_one_of {
     	const = "true"
-    	title = "Boolean true"
+    	title = "boolean True"
   	}
   	array_one_of {
     	const = "false"
-    	title = "Boolean false"
+    	title = "boolean False"
   	}
 }
 `
@@ -367,9 +367,9 @@ resource "okta_app_user_schema_property" "test" {
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "false"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.title", "Boolean true"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.title", "boolean True"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.0.const", "true"),
-					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.title", "Boolean false"),
+					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.title", "boolean False"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.1.const", "false"),
 				),
 			},
@@ -381,34 +381,34 @@ func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
 	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
+	resource "okta_app_oauth" "test" {
+		label          = "testAcc_replace_with_uuid"
+		type           = "native"
+		grant_types    = ["authorization_code"]
+		redirect_uris  = ["http://d.com/"]
+		response_types = ["code"]
+		}
 	
-resource "okta_app_user_schema_property" "test" {
-  app_id      = okta_app_oauth.test.id
-  index       = "testAcc_replace_with_uuid"
-  title       = "terraform acceptance test"
-  type        = "string"
-  description = "testing"
-  required    = false
-  permissions = "READ_ONLY"
-  master      = "PROFILE_MASTER"
-  enum  		= ["true", "false"]
-  one_of {
-    title = "boolean True"
-    const = "true"
-  }
-  one_of {
-    title = "boolean False"
-    const = "false"
-  }
-}
-`
+	resource "okta_app_user_schema_property" "test" {
+		app_id      = okta_app_oauth.test.id
+		index       = "testAcc_replace_with_uuid"
+		title       = "terraform acceptance test"
+		type        = "string"
+		description = "testing"
+		required    = false
+		permissions = "READ_ONLY"
+		master      = "PROFILE_MASTER"
+		enum  		= ["true", "false"]
+		one_of {
+	  		title = "boolean True"
+	  		const = "true"
+		}
+		one_of {
+	  		title = "boolean False"
+	  		const = "false"
+		}
+	}
+	`
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),

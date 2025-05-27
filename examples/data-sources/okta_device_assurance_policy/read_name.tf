@@ -21,7 +21,6 @@ resource "okta_policy_device_assurance_windows" "test" {
   tpsp_screen_lock_secured                  = true
   tpsp_secure_boot_enabled                  = true
   tpsp_site_isolation_enabled               = true
-  tpsp_third_party_blocking_enabled         = true
   tpsp_windows_machine_domain               = "testMachineDomain"
   tpsp_windows_user_domain                  = "testUserDomain"
 }
