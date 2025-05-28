@@ -34,4 +34,9 @@ resource "okta_app_group_assignments" "test" {
     id       = okta_group.test3.id
     priority = 3
   }
+  timeouts {
+    create = "60m"
+    read = "2h"
+    update = "30m"
+  }
 }

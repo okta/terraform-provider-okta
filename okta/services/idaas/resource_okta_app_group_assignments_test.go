@@ -376,3 +376,25 @@ func TestAccResourceOktaAppGroupAssignments_2068_empty_assignments(t *testing.T)
 		},
 	})
 }
+
+func TestAccResourceOktaAppGroupAssignments_1832_timeouts(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppGroupAssignments)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppGroupAssignments, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppGroupAssignments, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
+					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
+				),
+			},
+		},
+	})
+}

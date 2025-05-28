@@ -33,6 +33,15 @@ resource "okta_app_user_schema_property" "example" {
   description = "My custom property name"
   master      = "OKTA"
   scope       = "SELF"
+  array_enum =  ["1", "2"]	
+  array_one_of {
+    const = "1"
+    title = "one"
+  }
+  array_one_of {
+    const = "2"
+    title = "two"
+  }	
 }
 ```
 
