@@ -341,14 +341,14 @@ resource "okta_app_user_schema_property" "test" {
 	permissions = "READ_ONLY"
 	master      = "PROFILE_MASTER"
 	array_type  = "string"
-	array_enum =  ["true", "false"]
-  	array_one_of {
-    	const = "true"
-    	title = "boolean True"
+	array_enum  = ["true", "false"]
+	array_one_of {
+	  const = "true"
+	  title = "boolean True"
 	}
 	array_one_of {
-		const = "false"
-		title = "boolean False"
+	  const = "false"
+	  title = "boolean False"
 	}
 }
 `
@@ -400,12 +400,12 @@ resource "okta_app_user_schema_property" "test" {
 	master      = "PROFILE_MASTER"
 	enum  		= ["true", "false"]
 	one_of {
-		title = "boolean True"
-		const = "true"
+	  title = "boolean True"
+	  const = "true"
 	}
 	one_of {
-		title = "boolean False"
-		const = "false"
+	  title = "boolean False"
+	  const = "false"
 	}
 }
 `
