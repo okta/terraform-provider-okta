@@ -340,16 +340,16 @@ resource "okta_app_user_schema_property" "test" {
 	required    = false
 	permissions = "READ_ONLY"
 	master      = "PROFILE_MASTER"
-  	array_type  = "string"
-  	array_enum =  ["true", "false"]
+	array_type  = "string"
+	array_enum =  ["true", "false"]
   	array_one_of {
     	const = "true"
     	title = "boolean True"
-  	}
-  	array_one_of {
-    	const = "false"
-    	title = "boolean False"
-  	}
+	}
+	array_one_of {
+		const = "false"
+		title = "boolean False"
+	}
 }
 `
 	acctest.OktaResourceTest(t, resource.TestCase{
