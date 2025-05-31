@@ -382,9 +382,8 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*sdk.UserSchemaAttr
 	if max, ok := d.GetOk("max_length"); ok {
 		attribute.MaxLengthPtr = utils.Int64Ptr(max.(int))
 	}
-	if rawEnum, ok := d.GetOk("enum"); ok {
-		attribute.Enum = rawEnum.([]interface{})
-	}
+	rawEnum := d.Get("enum")
+	attribute.Enum, _ = utils.BuildEnum(rawEnum.([]interface{}), d.Get("type").(string))
 	return attribute, nil
 }
 

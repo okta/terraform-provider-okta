@@ -1,6 +1,6 @@
 package version
 
 var (
-	OktaTerraformProviderVersion   = "4.14.0"
+	OktaTerraformProviderVersion   = "4.16.0"
 	OktaTerraformProviderUserAgent = "okta-terraform/" + OktaTerraformProviderVersion
 )
