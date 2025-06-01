@@ -1,11 +1,5 @@
 package resources
 
-// NOTE: !!!IMPORTANT!!! In the next major version of the okta terraform
-// provider that includes all of okta services, the original resources will be
-// renamed from okta_xxx to okta_idaas_xxx. For example okta_app becomes
-// okta_idaas_app. This will allow for additional products/services like
-// Identity Governance to be namespaced as okta_ig_xxx and bringing in the
-// existing Advanced Server Access as okta_asa_xxx.
 const (
 	OktaIDaaSAdminRoleCustom               = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments    = "okta_admin_role_custom_assignments"
