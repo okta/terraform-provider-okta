@@ -320,7 +320,6 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_array_enum_boolean(t *testing.T) {
-	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_array_enum_boolean has passed in the past")
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
 	config := `
@@ -341,15 +340,15 @@ resource "okta_app_user_schema_property" "test" {
 	required    = false
 	permissions = "READ_ONLY"
 	master      = "PROFILE_MASTER"
-	array_type  = "boolean"
+	array_type  = "string"
 	array_enum  = ["true", "false"]
 	array_one_of {
-	  title = "boolean True"
 	  const = "true"
+	  title = "boolean True"
 	}
 	array_one_of {
-	  title = "boolean False"
 	  const = "false"
+	  title = "boolean False"
 	}
 }
 `
@@ -364,7 +363,7 @@ resource "okta_app_user_schema_property" "test" {
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
-					resource.TestCheckResourceAttr(resourceName, "array_type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.1", "false"),
 					resource.TestCheckResourceAttr(resourceName, "array_one_of.#", "2"),
@@ -379,7 +378,6 @@ resource "okta_app_user_schema_property" "test" {
 }
 
 func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
-	t.Skip("The test is failing due to core issue. Similar test TestAccResourceOktaGroupSchema_enum_boolean has passed in the past")
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
 	config := `
@@ -395,7 +393,7 @@ resource "okta_app_user_schema_property" "test" {
 	app_id      = okta_app_oauth.test.id
 	index       = "testAcc_replace_with_uuid"
 	title       = "terraform acceptance test"
-	type        = "boolean"
+	type        = "string"
 	description = "testing"
 	required    = false
 	permissions = "READ_ONLY"
@@ -421,7 +419,7 @@ resource "okta_app_user_schema_property" "test" {
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "type", "boolean"),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "false"),
 					resource.TestCheckResourceAttr(resourceName, "one_of.#", "2"),
