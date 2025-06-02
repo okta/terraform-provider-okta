@@ -33,6 +33,15 @@ resource "okta_app_user_schema_property" "example" {
   description = "My custom property name"
   master      = "OKTA"
   scope       = "SELF"
+  array_enum =  ["1", "2"]	
+  array_one_of {
+    const = "1"
+    title = "one"
+  }
+  array_one_of {
+    const = "2"
+    title = "two"
+  }	
 }
 ```
 
@@ -52,7 +61,7 @@ resource "okta_app_user_schema_property" "example" {
 - `array_one_of` (Block List) Display name and value an enum array can be set to.
 	- 'const' - (Required) value mapping to member of 'enum'.
 	- 'title' - (Required) display name for the enum value. (see [below for nested schema](#nestedblock--array_one_of))
-- `array_type` (String) The type of the array elements if `type` is set to `array`
+- `array_type` (String) The type of the array elements if `type` is set to `array`. Set it to `string` when array enum type is `boolean`.
 - `description` (String) The description of the user schema property.
 - `enum` (List of String) Array of values a primitive property can be set to. See `array_enum` for arrays.
 - `external_name` (String) External name of the user schema property.

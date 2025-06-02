@@ -25,10 +25,11 @@ var (
 
 // NewFrameworkProvider is a helper function to simplify provider server and
 // testing implementation.
-func NewFrameworkProvider(version string) provider.Provider {
+func NewFrameworkProvider(version string, primary *schema_sdk.Provider) provider.Provider {
 	return &FrameworkProvider{
-		Config:  config.Config{},
-		Version: version,
+		Config:            config.Config{},
+		PluginSDKProvider: primary,
+		Version:           version,
 	}
 }
 

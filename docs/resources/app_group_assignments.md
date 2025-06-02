@@ -7,8 +7,8 @@ description: |-
 
 # Resource: okta_app_group_assignments
 
-Assigns groups to an application. This resource allows you to create multiple App Group assignments. 
-		
+Assigns groups to an application. This resource allows you to create multiple App Group assignments.
+
 **Important**: Do not use in conjunction with for_each
 
 ## Example Usage
@@ -38,12 +38,22 @@ resource "okta_app_group_assignments" "example" {
 ### Optional
 
 - `group` (Block List) A group to assign to this application (see [below for nested schema](#nestedblock--group))
+- `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--group"></a>
+<a id="nestedblock--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String)
+- `read` (String)
+- `update` (String)
+
 ### Nested Schema for `group`
 
 Required:
