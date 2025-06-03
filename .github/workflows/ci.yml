@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [ master ]
+    branches: [ feature/add-check-for-branch-name ]
   pull_request:
-    branches: [ master ]
+    branches: [ feature/add-check-for-branch-name ]
 jobs:
   build:
     runs-on: ubuntu-latest
