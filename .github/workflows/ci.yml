@@ -19,6 +19,9 @@ jobs:
       - name: Setup Go Tools
         run: make tools
 
+      - name: Check branch Name
+        run: make check-branch-name
+
       - name: Check Formatting
         run: make fmtcheck
 

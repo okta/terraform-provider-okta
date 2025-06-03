@@ -86,6 +86,21 @@ smoke-test-play-vcr-acc:
 test-record-vcr-acc:
 	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
 
+# Get the current branch name
+CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+
+# Define a target to check the branch name
+check-branch-name:
+	@echo "Checking branch name: $(CURRENT_BRANCH)"
+	@if echo "$(CURRENT_BRANCH)" | grep -Eq "^fix/" || echo "$(CURRENT_BRANCH)" | grep -Eq "^feature/" || echo "$(CURRENT_BRANCH)" | grep -Eq "^release/"; then \
+		echo "Branch name is valid."; \
+	else \
+		echo "ERROR: Branch name must start with 'fix/' or 'feature/'."; \
+		echo "Current branch: $(CURRENT_BRANCH)"; \
+		exit 1; \
+	fi
+
+
 qc: fmtcheck vet staticcheck lint
 
 vet:
@@ -150,4 +165,4 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck test-compile website website-test
+.PHONY: build test testacc vet fmt fmtcheck check-branch-name errcheck test-compile website website-test
