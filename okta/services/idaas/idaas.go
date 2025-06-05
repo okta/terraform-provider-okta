@@ -156,6 +156,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
 		newAdminRoleCustomDataSource,
+		NewOAuthAuthorizationServerDataSource,
 	}
 }
 
