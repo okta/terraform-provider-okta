@@ -13,9 +13,9 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", t)
 	deactivatedConfig := mgr.GetFixtures("basic_deactivated.tf", t)
 
-	mgr2 := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
-	appIncludeConfig := mgr2.GetFixtures("app_include.tf", t)
-	appExcludeConfig := mgr2.GetFixtures("app_exclude_platform.tf", t)
+	//mgr2 := newFixtureManager("resources", policyRuleIdpDiscovery, t.Name())
+	appIncludeConfig := mgr.GetFixtures("app_include.tf", t)
+	appExcludeConfig := mgr.GetFixtures("app_exclude_platform.tf", t)
 	resourceName := fmt.Sprintf("%s.test", policyRuleIdpDiscovery)
 
 	oktaResourceTest(t, resource.TestCase{
@@ -49,8 +49,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
-					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "ATTRIBUTE"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
 					//resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},

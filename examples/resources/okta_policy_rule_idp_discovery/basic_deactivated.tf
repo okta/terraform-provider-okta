@@ -3,20 +3,39 @@ data "okta_policy" "test" {
   type = "IDP_DISCOVERY"
 }
 
+# resource "okta_policy_rule_idp_discovery" "test" {
+#   status               = "INACTIVE"
+#   policy_id            = data.okta_policy.test.id
+#   priority             = 1
+#   name                 = "testAcc_replace_with_uuid"
+#   user_identifier_type = "IDENTIFIER"
+#
+#   user_identifier_patterns {
+#     match_type = "SUFFIX"
+#     value      = "gmail.com"
+#   }
+#
+#   user_identifier_patterns {
+#     match_type = "SUFFIX"
+#     value      = "articulate.com"
+#   }
+# }
+
 resource "okta_policy_rule_idp_discovery" "test" {
+  policy_id = data.okta_policy.test.id
+  priority  = 1
   status               = "INACTIVE"
-  policy_id            = data.okta_policy.test.id
-  priority             = 1
-  name                 = "testAcc_replace_with_uuid"
+  name      = "testAcc_replace_with_uuid"
   user_identifier_type = "IDENTIFIER"
-
-  user_identifier_patterns {
-    match_type = "SUFFIX"
-    value      = "gmail.com"
-  }
-
-  user_identifier_patterns {
-    match_type = "SUFFIX"
-    value      = "articulate.com"
+    user_identifier_patterns {
+      match_type = "SUFFIX"
+      value      = "articulate.com"
+    }
+    user_identifier_patterns {
+      match_type = "SUFFIX"
+      value      = "gmail.com"
+    }
+  idp_providers {
+    type = "OKTA"
   }
 }
