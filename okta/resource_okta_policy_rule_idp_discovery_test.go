@@ -51,7 +51,7 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
 					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
-					//resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},
 			{

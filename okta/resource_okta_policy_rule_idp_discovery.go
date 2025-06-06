@@ -24,8 +24,9 @@ you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
 request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		Schema: buildBaseRuleSchema(map[string]*schema.Schema{
 			"idp_providers": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -36,7 +37,6 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "OKTA",
 							Description: "Type of IdP. One of: `AMAZON`, `APPLE`, `DISCORD`, `FACEBOOK`, `GITHUB`, `GITLAB`, " +
 								"`GOOGLE`, `IDV_CLEAR`, `IDV_INCODE`, `IDV_PERSONA`, `LINKEDIN`, `LOGINGOV`, `LOGINGOV_SANDBOX`, " +
 								"`MICROSOFT`, `OIDC`, `PAYPAL`, `PAYPAL_SANDBOX`, `SALESFORCE`, `SAML2`, `SPOTIFY`, `X509`, `XERO`, " +
@@ -151,22 +151,34 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
 
-	if len(rule.Actions.IDP.Providers) > 0 {
-		d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
-	}
+	d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
+
 	return nil
 }
 
-func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) interface{} {
+func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) []interface{} {
 	var flattened []interface{}
-	for _, v := range providers {
-		flattened = append(flattened, map[string]interface{}{
-			"id":   v.ID,
-			"type": v.Type,
-		})
+	for _, p := range providers {
+		provider := make(map[string]interface{})
+
+		// Default type to OKTA if missing
+		if p.Type == "" {
+			provider["type"] = "OKTA"
+		} else {
+			provider["type"] = p.Type
+		}
+
+		// Include ID only if not empty
+		if p.ID != "" {
+			provider["id"] = p.ID
+		} else {
+			// Optional: explicitly set nil to ensure Terraform understands it should remove `id`
+			provider["id"] = nil
+		}
+
+		flattened = append(flattened, provider)
 	}
 	return flattened
-
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -229,8 +241,7 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 	var providers []*sdk.IdpDiscoveryRuleProvider
 	if v, ok := d.GetOk("idp_providers"); ok {
-		//providerList := v.([]any)
-		providerList := v.(*schema.Set).List()
+		providerList := v.([]interface{})
 		for _, provider := range providerList {
 			if value, ok := provider.(map[string]any); ok {
 				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
@@ -239,6 +250,10 @@ func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 				})
 			}
 		}
+	} else {
+		providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
+			Type: "OKTA",
+		})
 	}
 
 	rule := &sdk.IdpDiscoveryRule{
