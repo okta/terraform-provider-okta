@@ -150,13 +150,25 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
+	//fmt.Println("IDP discovery len =  ", len(rule.Actions.IDP.Providers))
+
 	if len(rule.Actions.IDP.Providers) > 0 {
-		for i := range len(rule.Actions.IDP.Providers) {
-			_ = d.Set("id", rule.Actions.IDP.Providers[i].ID)
-			_ = d.Set("type", rule.Actions.IDP.Providers[i].Type)
-		}
+		d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
 	}
 	return nil
+}
+
+func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) interface{} {
+	var flattened []interface{}
+	for _, v := range providers {
+		flattened = append(flattened, map[string]interface{}{
+			"id":   v.ID,
+			"type": v.Type,
+		})
+	}
+	fmt.Println(flattened)
+	return flattened
+
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -219,7 +231,8 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
 	var providers []*sdk.IdpDiscoveryRuleProvider
 	if v, ok := d.GetOk("idp_providers"); ok {
-		providerList := v.([]any)
+		//providerList := v.([]any)
+		providerList := v.(*schema.Set).List()
 		for _, provider := range providerList {
 			if value, ok := provider.(map[string]any); ok {
 				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{

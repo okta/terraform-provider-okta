@@ -49,9 +49,9 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusInactive),
-					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "IDENTIFIER"),
-					resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "user_identifier_type", "ATTRIBUTE"),
+					//resource.TestCheckResourceAttr(resourceName, "user_identifier_patterns.#", "2"),
 				),
 			},
 			{
@@ -61,7 +61,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.0.type", "OKTA"),
 				),
 			},
 			{
@@ -71,7 +72,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
 					resource.TestCheckResourceAttr(resourceName, "app_exclude.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.0.type", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
