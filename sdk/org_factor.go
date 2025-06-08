@@ -37,6 +37,7 @@ const (
 	SymantecVipFactor      = "symantec_vip"
 	WebauthnFactor         = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
 	YubikeyTokenFactor     = "yubikey_token"
+	SmartCardIdpFactor     = "smart_card_idp"
 )
 
 // List of factors that are applicable to Okta Classic Engine

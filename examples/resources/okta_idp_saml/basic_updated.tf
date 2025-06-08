@@ -30,4 +30,5 @@ resource "okta_idp_saml" "test" {
   request_signature_scope  = "REQUEST"
   max_clock_skew           = 60
   name_format              = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+  honor_persistent_name_id = false
 }
