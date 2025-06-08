@@ -157,7 +157,7 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 }
 
 func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) []interface{} {
-	var flattened []interface{}
+	var flattenedIdpProviders []interface{}
 	for _, p := range providers {
 		provider := make(map[string]interface{})
 
@@ -176,9 +176,9 @@ func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider)
 			provider["id"] = nil
 		}
 
-		flattened = append(flattened, provider)
+		flattenedIdpProviders = append(flattenedIdpProviders, provider)
 	}
-	return flattened
+	return flattenedIdpProviders
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
