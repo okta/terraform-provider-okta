@@ -15,11 +15,6 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.7  # ✅ pin to <= 1.5.x to avoid GetResourceIdentitySchemas issue
-
       - name: Run VCR tests
         run: make test-play-vcr-acc
 
