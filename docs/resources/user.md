@@ -71,7 +71,7 @@ resource "okta_user" "test2" {
 - `city` (String) User city
 - `cost_center` (String) User cost center
 - `country_code` (String) User country code
-- `custom_profile_attributes` (String) JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows.
+- `custom_profile_attributes` (String) JSON formatted custom attributes for a user. It must be JSON due to various types Okta allows. You must first add the custom property to the user profile schema before you reference it. You can use the Profile Editor in the Admin Console or the [Schemas](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UISchema/#tag/UISchema) API to manage schema extensions.
 - `custom_profile_attributes_to_ignore` (Set of String) List of custom_profile_attribute keys that should be excluded from being managed by Terraform. This is useful in situations where specific custom fields may contain sensitive information and should be managed outside of Terraform.
 - `department` (String) User department
 - `display_name` (String) User display name, suitable to show end users
