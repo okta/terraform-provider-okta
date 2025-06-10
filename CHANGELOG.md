@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.20.0 (June 10, 2025)
+
+### BUG FIXES
+
+* Fix issue of resource `okta_policy_rule_idp_discovery` failing to get created [#2340](https://github.com/okta/terraform-provider-okta/pull/2340) by [aditya-okta](https://github.com/aditya-okta)
+
+### IMPROVEMENTS
+
+* Bump github.com/cenkalti/backoff/v4 from 4.2.1 to 4.3.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-framework  from 1.14.1 to 1.15.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-go  from 0.27.0 to 0.28.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-mux  from 0.19.0 to 0.20.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump gopkg.in/dnaeon/go-vcr.v3  from v3.1.2 to v3.2.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+
 ## 4.19.0 (May 20, 2025)
 
 ### IMPROVEMENTS
