@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sort"
 	"strings"
 	"time"
 
@@ -53,14 +54,16 @@ var (
 			Description: "URL of the application's logo",
 		},
 		"admin_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for admins.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Application notes for admins.",
+			ValidateDiagFunc: utils.StrMaxLength(250),
 		},
 		"enduser_note": {
-			Type:        schema.TypeString,
-			Optional:    true,
-			Description: "Application notes for end users.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			Description:      "Application notes for end users.",
+			ValidateDiagFunc: utils.StrMaxLength(250),
 		},
 		"app_links_json": {
 			Type:             schema.TypeString,
@@ -367,14 +370,30 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 		if *signOn.AllowMultipleAcsEndpoints {
 			acsEndpointsObj := signOn.AcsEndpoints
 			if len(acsEndpointsObj) > 0 {
-				acsEndpoints := make([]string, len(acsEndpointsObj))
-				for i := range acsEndpointsObj {
-					acsEndpoints[i] = acsEndpointsObj[i].Url
+				indexSequential := isACSEndpointSequential(acsEndpointsObj)
+				if indexSequential {
+					acsEndpoints := make([]string, len(acsEndpointsObj))
+					for i := range acsEndpointsObj {
+						acsEndpoints[i] = acsEndpointsObj[i].Url
+					}
+					_ = d.Set("acs_endpoints", acsEndpoints)
+					_ = d.Set("acs_endpoints_indices", nil)
+				} else {
+					acsList := make([]map[string]interface{}, 0, len(acsEndpointsObj))
+					for _, endpoint := range acsEndpointsObj {
+						acsList = append(acsList, map[string]interface{}{
+							"url":   endpoint.Url,
+							"index": *endpoint.IndexPtr,
+						})
+					}
+
+					sort.Slice(acsList, func(i, j int) bool {
+						return acsList[i]["index"].(int64) < acsList[j]["index"].(int64)
+					})
+					_ = d.Set("acs_endpoints_indices", acsList)
+					_ = d.Set("acs_endpoints", nil)
 				}
-				_ = d.Set("acs_endpoints", acsEndpoints)
 			}
-		} else {
-			_ = d.Set("acs_endpoints", nil)
 		}
 	}
 
@@ -484,4 +503,15 @@ func AppUpdateStatus(ctx context.Context, d *schema.ResourceData, m interface{})
 	}
 
 	return otherChanges, err
+}
+
+func isACSEndpointSequential(acsEndpointsObj []*sdk.AcsEndpoint) bool {
+	indexSequential := true
+	for i := range acsEndpointsObj {
+		if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
+			indexSequential = false
+			break
+		}
+	}
+	return indexSequential
 }

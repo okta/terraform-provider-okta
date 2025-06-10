@@ -564,3 +564,26 @@ func wsFedAutoSSOErrorCheck(t *testing.T) resource.ErrorCheckFunc {
 		return err
 	}
 }
+
+func TestAccResourceOktaAppSaml_Issue2171AcsEndpointsWithIndex(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSaml, t.Name())
+	baseConfig := mgr.GetFixtures("resource_acs_endpoints_indices.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: baseConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.0.url", "https://example2.com"),
+					resource.TestCheckResourceAttr(resourceName, "acs_endpoints_indices.0.index", "102"),
+				),
+			},
+		},
+	})
+}
