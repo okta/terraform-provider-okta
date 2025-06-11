@@ -27,7 +27,7 @@ func TestAccDataSourceOktaGroups_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_groups.okta_groups", "id"),
-					resource.TestCheckResourceAttr("data.okta_groups.okta_groups", "groups.#", "2"),
+					resource.TestCheckResourceAttr("data.okta_groups.okta_groups", "groups.#", "3"),
 					// the example enumeration doesn't match anything so as a string the output will be a blank string
 					resource.TestCheckResourceAttrSet("data.okta_groups.built_in_groups", "id"),
 					resource.TestCheckResourceAttr("data.okta_groups.built_in_groups", "groups.#", "2"),
