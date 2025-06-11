@@ -201,9 +201,32 @@ The only difference is that these fields are immutable and can not be managed: '
 				Computed:    true,
 				Description: "The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH",
 			},
+			"chains": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: stringIsJSON,
+					StateFunc:        utils.NormalizeDataJSON,
+					DiffSuppressFunc: utils.NoChangeInObjectFromUnmarshaledJSON,
+				},
+				Optional:    true,
+				Description: "Use with verification method = `AUTH_METHOD_CHAIN` only",
+			},
 		},
 	}
 }
+
+//url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
+//req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+//if err != nil {
+//return nil, nil, err
+//}
+//var appSignOnPolicyRule *AccessPolicyRule
+//resp, err := m.RequestExecutor.Do(ctx, req, &appSignOnPolicyRule)
+//if err != nil {
+//return nil, resp, err
+//}
+//return appSignOnPolicyRule, resp, nil
 
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if providerIsClassicOrg(ctx, meta) {
@@ -211,6 +234,7 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	//getOktaV5ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, d.Get("policy_id").(string)).PolicyRule()
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -249,15 +273,31 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("access", rule.Actions.AppSignOn.Access)
 		if rule.Actions.AppSignOn.VerificationMethod != nil {
 			_ = d.Set("type", rule.Actions.AppSignOn.VerificationMethod.Type)
-			_ = d.Set("factor_mode", rule.Actions.AppSignOn.VerificationMethod.FactorMode)
+			if rule.Actions.AppSignOn.VerificationMethod.FactorMode != "" {
+				_ = d.Set("factor_mode", rule.Actions.AppSignOn.VerificationMethod.FactorMode)
+			} else {
+				_ = d.Set("factor_mode", "2FA")
+			}
 			_ = d.Set("re_authentication_frequency", rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn)
-			_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
-			arr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Constraints))
+			if rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod != "" {
+				_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
+			} else {
+				_ = d.Set("inactivity_period", "PT1H")
+			}
+			constraintArr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Constraints))
 			for i := range rule.Actions.AppSignOn.VerificationMethod.Constraints {
 				b, _ := json.Marshal(rule.Actions.AppSignOn.VerificationMethod.Constraints[i])
-				arr[i] = string(b)
+				constraintArr[i] = string(b)
 			}
-			_ = d.Set("constraints", arr)
+			_ = d.Set("constraints", constraintArr)
+			if len(rule.Actions.AppSignOn.VerificationMethod.Chains) != 0 {
+				chainArr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Chains))
+				for i := range rule.Actions.AppSignOn.VerificationMethod.Chains {
+					b, _ := json.Marshal(rule.Actions.AppSignOn.VerificationMethod.Chains[i])
+					chainArr[i] = string(b)
+				}
+				_ = d.Set("chains", chainArr)
+			}
 		}
 	}
 	if rule.Conditions != nil {
@@ -385,6 +425,17 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
+	var chains []*sdk.AccessPolicyChains
+	vc, ok := d.GetOk("chains")
+	if ok {
+		valueList := vc.([]interface{})
+		for _, item := range valueList {
+			var chain sdk.AccessPolicyChains
+			_ = json.Unmarshal([]byte(item.(string)), &chain)
+			chains = append(chains, &chain)
+		}
+	}
+	rule.Actions.AppSignOn.VerificationMethod.Chains = chains
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		Platform: &sdk.PlatformPolicyRuleCondition{
