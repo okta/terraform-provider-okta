@@ -216,12 +216,25 @@ The only difference is that these fields are immutable and can not be managed: '
 	}
 }
 
+//url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
+//req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodPost, url, body)
+//if err != nil {
+//return nil, nil, err
+//}
+//var appSignOnPolicyRule *AccessPolicyRule
+//resp, err := m.RequestExecutor.Do(ctx, req, &appSignOnPolicyRule)
+//if err != nil {
+//return nil, resp, err
+//}
+//return appSignOnPolicyRule, resp, nil
+
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	//getOktaV5ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, d.Get("policy_id").(string)).PolicyRule()
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -260,9 +273,17 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 		_ = d.Set("access", rule.Actions.AppSignOn.Access)
 		if rule.Actions.AppSignOn.VerificationMethod != nil {
 			_ = d.Set("type", rule.Actions.AppSignOn.VerificationMethod.Type)
-			_ = d.Set("factor_mode", rule.Actions.AppSignOn.VerificationMethod.FactorMode)
+			if rule.Actions.AppSignOn.VerificationMethod.FactorMode != "" {
+				_ = d.Set("factor_mode", rule.Actions.AppSignOn.VerificationMethod.FactorMode)
+			} else {
+				_ = d.Set("factor_mode", "2FA")
+			}
 			_ = d.Set("re_authentication_frequency", rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn)
-			_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
+			if rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod != "" {
+				_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
+			} else {
+				_ = d.Set("inactivity_period", "PT1H")
+			}
 			constraintArr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Constraints))
 			for i := range rule.Actions.AppSignOn.VerificationMethod.Constraints {
 				b, _ := json.Marshal(rule.Actions.AppSignOn.VerificationMethod.Constraints[i])
