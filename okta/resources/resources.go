@@ -57,6 +57,7 @@ const (
 	OktaIDaaSEmailCustomizations           = "okta_email_customizations"
 	OktaIDaaSEmailTemplate                 = "okta_email_template"
 	OktaIDaaSEmailTemplates                = "okta_email_templates"
+	OktaIDaaSEmailSMTPServer               = "okta_email_smtp_server"
 	OktaIDaaSEventHook                     = "okta_event_hook"
 	OktaIDaaSEventHookVerification         = "okta_event_hook_verification"
 	OktaIDaaSFactor                        = "okta_factor"

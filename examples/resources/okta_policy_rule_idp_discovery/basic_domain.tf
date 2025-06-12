@@ -7,7 +7,11 @@ resource "okta_policy_rule_idp_discovery" "test" {
   policy_id            = data.okta_policy.test.id
   priority             = 1
   name                 = "testAcc_replace_with_uuid"
-  idp_type             = "OKTA"
+
+  idp_providers {
+    type = "OKTA"
+  }
+
   user_identifier_type = "IDENTIFIER"
 
   user_identifier_patterns {

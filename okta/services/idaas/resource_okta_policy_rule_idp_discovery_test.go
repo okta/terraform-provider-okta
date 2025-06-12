@@ -2,12 +2,12 @@ package idaas_test
 
 import (
 	"fmt"
-	"testing"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
@@ -15,10 +15,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_domain.tf", t)
 	deactivatedConfig := mgr.GetFixtures("basic_deactivated.tf", t)
-
-	mgr2 := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleIdpDiscovery, t.Name())
-	appIncludeConfig := mgr2.GetFixtures("app_include.tf", t)
-	appExcludeConfig := mgr2.GetFixtures("app_exclude_platform.tf", t)
+	appIncludeConfig := mgr.GetFixtures("app_include.tf", t)
+	appExcludeConfig := mgr.GetFixtures("app_exclude_platform.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleIdpDiscovery)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -64,7 +62,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "app_include.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.0.type", "OKTA"),
 				),
 			},
 			{
@@ -74,7 +73,8 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "app_exclude.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_type", "OKTA"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.0.type", "OKTA"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
