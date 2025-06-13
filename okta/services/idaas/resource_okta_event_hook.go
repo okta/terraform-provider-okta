@@ -5,8 +5,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func resourceEventHook() *schema.Resource {
@@ -74,14 +74,14 @@ func resourceEventHook() *schema.Resource {
 }
 
 func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV5ClientFromMetadata(meta)
 	hook := buildEventHook(d)
-	newHook, _, err := client.EventHook.CreateEventHook(ctx, *hook)
+	newHook, _, err := client.EventHookAPI.CreateEventHook(ctx).EventHook(*hook).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create event hook: %v", err)
 	}
-	d.SetId(newHook.Id)
-	err = setEventHookStatus(ctx, d, client, newHook.Status)
+	d.SetId(newHook.GetId())
+	err = setEventHookStatus(ctx, d, client, newHook.GetStatus())
 	if err != nil {
 		return diag.Errorf("failed to set event hook status: %v", err)
 	}
@@ -89,36 +89,58 @@ func resourceEventHookCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEventHookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	hook, resp, err := getOktaClientFromMetadata(meta).EventHook.GetEventHook(ctx, d.Id())
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	client := getOktaV5ClientFromMetadata(meta)
+	hook, resp, err := client.EventHookAPI.GetEventHook(ctx, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return diag.Errorf("failed to get event hook: %v", err)
 	}
 	if hook == nil {
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("name", hook.Name)
-	_ = d.Set("status", hook.Status)
-	_ = d.Set("events", EventSet(hook.Events))
-	err = utils.SetNonPrimitives(d, map[string]interface{}{
-		"channel": flattenEventHookChannel(hook.Channel),
-		"headers": flattenEventHookHeaders(hook.Channel),
-		"auth":    flattenEventHookAuth(d, hook.Channel),
-	})
-	if err != nil {
-		return diag.Errorf("failed to set event hook properties: %v", err)
+	_ = d.Set("name", hook.GetName())
+	_ = d.Set("status", hook.GetStatus())
+	events := hook.GetEvents()
+	_ = d.Set("events", schema.NewSet(schema.HashString, utils.ConvertStringSliceToInterfaceSlice(events.Items)))
+
+	channel := hook.GetChannel()
+	config := channel.GetConfig()
+	channelMap := map[string]interface{}{
+		"type":    channel.GetType(),
+		"version": channel.GetVersion(),
+		"uri":     config.GetUri(),
 	}
+	_ = d.Set("channel", channelMap)
+
+	if channel.GetConfig().AuthScheme != nil {
+		auth := map[string]interface{}{
+			"key":   channel.GetConfig().AuthScheme.GetKey(),
+			"type":  channel.GetConfig().AuthScheme.GetType(),
+			"value": d.Get("auth").(map[string]interface{})["value"],
+		}
+		_ = d.Set("auth", auth)
+	}
+
+	headers := make([]interface{}, len(channel.GetConfig().Headers))
+	for i, header := range channel.GetConfig().Headers {
+		headers[i] = map[string]interface{}{
+			"key":   header.GetKey(),
+			"value": header.GetValue(),
+		}
+	}
+	_ = d.Set("headers", schema.NewSet(schema.HashResource(HeaderSchema), headers))
+
 	return nil
 }
 
 func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV5ClientFromMetadata(meta)
 	hook := buildEventHook(d)
-	newHook, _, err := client.EventHook.UpdateEventHook(ctx, d.Id(), *hook)
+	newHook, _, err := client.EventHookAPI.ReplaceEventHook(ctx, d.Id()).EventHook(*hook).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update auth event hook: %v", err)
 	}
-	err = setEventHookStatus(ctx, d, client, newHook.Status)
+	err = setEventHookStatus(ctx, d, client, newHook.GetStatus())
 	if err != nil {
 		return diag.Errorf("failed to set event hook status: %v", err)
 	}
@@ -126,121 +148,96 @@ func resourceEventHookUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEventHookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV5ClientFromMetadata(meta)
 
-	_, _, err := client.EventHook.DeactivateEventHook(ctx, d.Id())
+	_, _, err := client.EventHookAPI.DeactivateEventHook(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to deactivate event hook: %v", err)
 	}
-	_, err = client.EventHook.DeleteEventHook(ctx, d.Id())
+	_, err = client.EventHookAPI.DeleteEventHook(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to delete event hook: %v", err)
 	}
 	return nil
 }
 
-func buildEventHook(d *schema.ResourceData) *sdk.EventHook {
+func buildEventHook(d *schema.ResourceData) *okta.EventHook {
 	eventSet := d.Get("events").(*schema.Set).List()
 	events := make([]string, len(eventSet))
 	for i, v := range eventSet {
 		events[i] = v.(string)
 	}
-	return &sdk.EventHook{
-		Name:    d.Get("name").(string),
-		Status:  d.Get("status").(string),
-		Events:  &sdk.EventSubscriptions{Type: "EVENT_TYPE", Items: events},
-		Channel: buildEventChannel(d),
-	}
-}
 
-func buildEventChannel(d *schema.ResourceData) *sdk.EventHookChannel {
-	var headerList []*sdk.EventHookChannelConfigHeader
+	rawChannel := d.Get("channel").(map[string]interface{})
+	if _, ok := rawChannel["type"]; !ok {
+		rawChannel["type"] = "HTTP"
+	}
+
+	var headerList []okta.EventHookChannelConfigHeader
 	if raw, ok := d.GetOk("headers"); ok {
 		for _, header := range raw.(*schema.Set).List() {
 			h, ok := header.(map[string]interface{})
 			if ok {
-				headerList = append(headerList, &sdk.EventHookChannelConfigHeader{Key: h["key"].(string), Value: h["value"].(string)})
+				headerObj := okta.EventHookChannelConfigHeader{}
+				headerObj.SetKey(h["key"].(string))
+				headerObj.SetValue(h["value"].(string))
+				headerList = append(headerList, headerObj)
 			}
 		}
 	}
-	var auth *sdk.EventHookChannelConfigAuthScheme
+
+	var auth *okta.EventHookChannelConfigAuthScheme
 	if rawAuth, ok := d.GetOk("auth"); ok {
 		a := rawAuth.(map[string]interface{})
-		_, ok := a["type"]
-		if !ok {
-			a["type"] = "HEADER"
+		authType := "HEADER"
+		if t, ok := a["type"]; ok {
+			authType = t.(string)
 		}
-		auth = &sdk.EventHookChannelConfigAuthScheme{
-			Key:   a["key"].(string),
-			Type:  a["type"].(string),
-			Value: a["value"].(string),
-		}
+		auth = &okta.EventHookChannelConfigAuthScheme{}
+		auth.SetKey(a["key"].(string))
+		auth.SetType(authType)
+		auth.SetValue(a["value"].(string))
 	}
-	rawChannel := d.Get("channel").(map[string]interface{})
-	_, ok := rawChannel["type"]
-	if !ok {
-		rawChannel["type"] = "HTTP"
+
+	config := &okta.EventHookChannelConfig{}
+	config.SetUri(rawChannel["uri"].(string))
+	if auth != nil {
+		config.SetAuthScheme(*auth)
 	}
-	return &sdk.EventHookChannel{
-		Config: &sdk.EventHookChannelConfig{
-			Uri:        rawChannel["uri"].(string),
-			AuthScheme: auth,
-			Headers:    headerList,
-		},
-		Type:    rawChannel["type"].(string),
-		Version: rawChannel["version"].(string),
+	if len(headerList) > 0 {
+		config.SetHeaders(headerList)
 	}
+
+	channel := &okta.EventHookChannel{}
+	channel.SetConfig(*config)
+	channel.SetType(rawChannel["type"].(string))
+	channel.SetVersion(rawChannel["version"].(string))
+
+	eventSubs := &okta.EventSubscriptions{}
+	eventSubs.SetItems(events)
+	eventSubs.SetType("EVENT_TYPE")
+
+	hook := &okta.EventHook{}
+	hook.SetChannel(*channel)
+	hook.SetEvents(*eventSubs)
+	hook.SetName(d.Get("name").(string))
+	if status, ok := d.GetOk("status"); ok {
+		hook.SetStatus(status.(string))
+	}
+
+	return hook
 }
 
-func flattenEventHookAuth(d *schema.ResourceData, c *sdk.EventHookChannel) map[string]interface{} {
-	auth := map[string]interface{}{}
-	if c.Config.AuthScheme != nil {
-		auth = map[string]interface{}{
-			"key":   c.Config.AuthScheme.Key,
-			"type":  c.Config.AuthScheme.Type,
-			"value": d.Get("auth").(map[string]interface{})["value"],
-		}
-	}
-	return auth
-}
-
-func flattenEventHookChannel(c *sdk.EventHookChannel) map[string]interface{} {
-	return map[string]interface{}{
-		"type":    c.Type,
-		"version": c.Version,
-		"uri":     c.Config.Uri,
-	}
-}
-
-func flattenEventHookHeaders(c *sdk.EventHookChannel) *schema.Set {
-	headers := make([]interface{}, len(c.Config.Headers))
-	for i, header := range c.Config.Headers {
-		headers[i] = map[string]interface{}{
-			"key":   header.Key,
-			"value": header.Value,
-		}
-	}
-	return schema.NewSet(schema.HashResource(HeaderSchema), headers)
-}
-
-func EventSet(e *sdk.EventSubscriptions) *schema.Set {
-	events := make([]interface{}, len(e.Items))
-	for i, event := range e.Items {
-		events[i] = event
-	}
-	return schema.NewSet(schema.HashString, events)
-}
-
-func setEventHookStatus(ctx context.Context, d *schema.ResourceData, client *sdk.Client, status string) error {
+func setEventHookStatus(ctx context.Context, d *schema.ResourceData, client *okta.APIClient, status string) error {
 	desiredStatus := d.Get("status").(string)
 	if status == desiredStatus {
 		return nil
 	}
 	var err error
 	if desiredStatus == StatusInactive {
-		_, _, err = client.EventHook.DeactivateEventHook(ctx, d.Id())
+		_, _, err = client.EventHookAPI.DeactivateEventHook(ctx, d.Id()).Execute()
 	} else {
-		_, _, err = client.EventHook.ActivateEventHook(ctx, d.Id())
+		_, _, err = client.EventHookAPI.ActivateEventHook(ctx, d.Id()).Execute()
 	}
 	return err
 }
