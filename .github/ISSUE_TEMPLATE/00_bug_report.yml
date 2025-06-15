@@ -1,14 +1,17 @@
-name: Report a Bug
-description: Choose this option to let us know about an unexpected error, a crash, or otherwise incorrect behavior.
-labels:
-  - bug
+name: "Bug"
+labels: ["bug"]
+description: "For when something is there, but doesn't work how it should."
 body:
-  - type: markdown
+  - type: textarea
+    id: community-note
     attributes:
+      label: Community Note
+      description: Please keep this note for the community
       value: |
-        ## Thank you for raising a bug report!
-
-        Before submitting a bug report, we ask that you first [search existing issues and pull requests](https://github.com/hashicorp/terraform-provider-aws/issues?q=label%3Abug) to see if someone else may have experienced the same issue or may have already submitted a fix for it. This helps to keep all relevant information in one place, including any potential workarounds.
+        * Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to the original issue to help the community and maintainers prioritize this request.
+        * Please do not leave _+1_ or _me too_ comments, they generate extra noise for issue followers and do not help prioritize the request.
+        * If you are interested in working on this issue or have submitted a pull request, please leave a comment.
+                Before submitting a bug report, we ask that you first [search existing issues and pull requests](https://github.com/hashicorp/terraform-provider-aws/issues?q=label%3Abug) to see if someone else may have experienced the same issue or may have already submitted a fix for it. This helps to keep all relevant information in one place, including any potential workarounds.
 
         ### A Note on Terraform Core Issues
 
@@ -19,19 +22,29 @@ body:
         * [Provisioner](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax) issues
         * [Registry](https://registry.terraform.io/) issues
         * Issues that span resources across multiple providers
-
-  - type: textarea
-    id: tf_version
-    attributes:
-      label: Terraform and OKTA Provider Version
-      description: |
-        Please run `terraform --version` to collect the Terraform and OKTA Provider versions and paste the result below. If multiple versions have been tested, feel free to add that additional information here as well.
-      placeholder: |
-        ...output of `terraform --version`...
-      render: console
     validations:
       required: true
+  - type: textarea
+    id: terraform-version
+    attributes:
+      label: Terraform Version & Okta Provider Version(s)
+      description: |
+        Please run [`terraform --version`](https://developer.hashicorp.com/terraform/cli/commands/version) to show the Terraform core version and provider version(s) and paste the output here.
+        If you are not running the latest version of Terraform or the provider, please upgrade because your issue may have already been fixed.
+      value: |
+        Terraform vX.X.X
+        on <architecture>
+        + provider registry.terraform.io/providers/okta/okta/ vX.X.X
 
+    validations:
+      required: true
+  - type: textarea
+    id: affected-resources
+    attributes:
+      label: Affected Resource(s)
+      description: Please list the affected resources and data sources. Use `okta_*` if all resources or data sources are affected.
+    validations:
+      required: true
   - type: dropdown
     id: can_be_done_in_admin_ui
     attributes:
@@ -59,148 +72,53 @@ body:
       multiple: false
     validations:
       required: true
-
   - type: textarea
-    id: affected_resource
+    id: terraform-configuration
     attributes:
-      label: Affected Resource(s) or Data Source(s)
+      label: Terraform Configuration
       description: |
-        If applicable, please list the affected resource(s) and/or data source(s).
-      placeholder: |
-        * `okta_example_resource`
-        * `okta_example_data_source`
-    validations:
-      required: false
+        Copy-paste your Terraform configurations here as [markdown code blocks](https://help.github.com/articles/basic-writing-and-formatting-syntax/#quoting-code).
 
+        For large Terraform configs, please use a service like Dropbox and share a link to the ZIP file. For security, you can also encrypt the files using our GPG public key: https://www.hashicorp.com/security
+
+        If reproducing the bug involves modifying the config file (that is, apply a config, change a value, apply the config again, see the bug), then please include both:
+
+        * the version of the config before the change, and
+        * the version of the config after the change.
+      value: |
+        ```tf
+        ```
   - type: textarea
-    id: expected_behavior
+    id: debug-output
+    attributes:
+      label: Debug Output
+      description: |
+        Please provide a link to a GitHub Gist containing your complete [debug output](https://www.terraform.io/docs/internals/debugging.html). Please **don't** paste the debug output in the issue; just paste a link to the Gist.
+  - type: textarea
+    id: expected-behavior
     attributes:
       label: Expected Behavior
-      description: |
-        Use this section to describe what behavior should have happened that isn't currently. Note that there is a section later in the template for providing a sample configuration, so a short description is all that's necessary here.
-    validations:
-      required: true
-
+      description: What should have happened?
   - type: textarea
-    id: actual_behavior
+    id: actual-behavior
     attributes:
       label: Actual Behavior
-      description: |
-        Use this section to describe how the the provider is currently behaving and how it differs from the behavior outlined in the Expected Behavior section.
-    validations:
-      required: true
-
+      description: What actually happened?
   - type: textarea
-    id: log_snippet
+    id: steps-to-reproduce
     attributes:
-      label: Relevant Error/Panic Output
-      description: |
-        If applicable, provide a snippet of output logging that contains the error or panic. Note that there is a section later in the template for providing more complete debug output, so a small snippet is all that's necessary here.
-
-        For convenience, we pre-populate this section with a [code fence](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) to help with formatting in the resulting issue. Placing the log output between the sets of backticks (\```) will result in a well-formatted issue.
-      value: |
-        ```console
-
-        ```
-    validations:
-      required: false
-
-  - type: markdown
-    attributes:
-      value: |
-        ## Providing Configurations and Logging
-
-        When providing a reproduction configuration and/or debug logging, please paste, upload, or link to a file or [public Gist](https://docs.github.com/en/get-started/writing-on-github/editing-and-sharing-content-with-gists/creating-gists) containing the relevant information. Files under 25MB may be [attached directly](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files) in the relevant field. Files larger than this should be uploaded to a file hosting service and a link shared. For your security you can also encrypt the files using our [GPG public key](https://keybase.io/hashicorp).
-
-        Configurations should be get applied with minimal modifications, and should not rely on external modules. This helps maintainers and contributors efficiently reproduce issues and implement acceptance tests to prevent future regressions.
-
-        > [!WARNING]
-        > Bug reports without a functional and standalone sample configuration may be closed without further investigation.
-
+      label: Steps to reproduce
+      description: Please list the steps required to reproduce the issue.
+      value: 1. `terraform apply`
   - type: textarea
-    id: tf_config
+    id: important-factoids
     attributes:
-      label: Sample Terraform Configuration
+      label: Important Factoids
       description: |
-        Please provide a sample Terraform configuration that can be used to reproduce the issue.
-
-        For convenience, we pre-populate this section such that configurations pasted between the backticks (\```) will be contained within a disclosure triangle and have syntax highlighting as appropriate for HCL in the resulting issue. Where appropriate, feel free to delete this.
-      value: |
-        <details>
-        <summary>Click to expand configuration</summary>
-
-        ```hcl
-
-        ```
-        </details>
-    validations:
-      required: true
-
+        Is there anything atypical about your accounts that we should know? For example: authenticating as a user instead of a service account?
   - type: textarea
-    id: reproduction_steps
+    id: references
     attributes:
-      label: Steps to Reproduce
+      label: References
       description: |
-        Please list the steps necessary to reproduce the issue.
-      placeholder: |
-        1. Apply the configuration
-        2. Make a change
-        3. etc.
-    validations:
-      required: true
-
-  - type: textarea
-    id: extended_logs
-    attributes:
-      label: Debug Logging
-      description: |
-        If possible, please provide log output captured while reproducing the issue with [debug logging enabled](https://developer.hashicorp.com/terraform/internals/debugging). If a panic is produced, that information should be included.
-
-        For convenience, we pre-populate this section such that logs pasted between the backticks (\```) will be contained within a disclosure triangle and have syntax highlighting associated with console output in the resulting issue.
-      value: |
-        <details>
-        <summary>Click to expand log output</summary>
-
-        ```console
-
-        ```
-        </details>
-    validations:
-      required: false
-
-  - type: textarea
-    id: genai_llm
-    attributes:
-      label: GenAI / LLM Assisted Development
-      description: |
-        If you used a generative AI / LLM tool to assist in the development of your config, please let us know which tool you used here.
-      value: n/a
-    validations:
-      required: false
-
-  - type: textarea
-    attributes:
-      label: Important Facts and References
-      description: |
-        If there is any additional information that might be relevant, provide those details here. This might include information such as, but not limited to:
-
-        * [References to other GitHub issues](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#referencing-issues-and-pull-requests)
-        * Links to external references such as other vendor documentation, third party articles, etc.
-    validations:
-      required: false
-
-  - type: dropdown
-    id: will_contribute
-    attributes:
-      label: Would you like to implement a fix?
-      description: |
-        Indicate to the maintainers and community as to whether you plan to implement a fix for this (you can update this later if you change your mind). This helps prevent duplication of effort, as many of our contributors look for recently filed issues as a source for their next contribution.
-
-        If this would be your first contribution, refer to the [contributor guide](https://hashicorp.github.io/terraform-provider-aws/) for tips on getting started.
-      options:
-        - "No"
-        - "Yes"
-      multiple: false
-      default: 0
-    validations:
-      required: false
+        Are there any other GitHub issues (open or closed) or pull requests that should be [linked](https://help.github.com/articles/basic-writing-and-formatting-syntax/#referencing-issues-and-pull-requests) here? Vendor documentation?
