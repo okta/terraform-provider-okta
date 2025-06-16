@@ -43,10 +43,20 @@ The 'resources' field supports the following:
 				Description: "A description of the Resource Set",
 			},
 			"resources": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set.",
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{"resources_orn"},
+				ExactlyOneOf:  []string{"resources", "resources_orn"},
+				Description:   "The endpoints that reference the resources to be included in the new Resource Set. At least one endpoint must be specified when creating resource set. Only one of 'resources' or 'resources_orn' can be specified.",
+			},
+			"resources_orn": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{"resources"},
+				ExactlyOneOf:  []string{"resources", "resources_orn"},
+				Description:   "The orn(Okta Resource Name) that reference the resources to be included in the new Resource Set. At least one orn must be specified when creating resource set. Only one of 'resources' or 'resources_orn' can be specified.",
 			},
 		},
 	}
@@ -80,7 +90,11 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
 	}
-	_ = d.Set("resources", flattenResourceSetResources(resources))
+	if _, ok := d.GetOk("resources"); ok {
+		_ = d.Set("resources", flattenResourceSetResourcesLinks(resources))
+	} else if _, ok := d.GetOk("resources_orn"); ok {
+		_ = d.Set("resources_orn", flattenResourceSetResourcesORN(resources))
+	}
 	return nil
 }
 
@@ -93,21 +107,41 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 			return diag.Errorf("failed to update resource set: %v", err)
 		}
 	}
-	if !d.HasChange("resources") {
+	if !d.HasChange("resources") && !d.HasChange("resources_orn") {
 		return nil
 	}
-	oldResources, newResources := d.GetChange("resources")
-	oldSet := oldResources.(*schema.Set)
-	newSet := newResources.(*schema.Set)
-	resourcesToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	resourcesToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-	err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
-	if err != nil {
-		return diag.FromErr(err)
+
+	if d.HasChange("resources") {
+		oldResources, newResources := d.GetChange("resources")
+		oldSet := oldResources.(*schema.Set)
+		newSet := newResources.(*schema.Set)
+		resourcesToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
+		resourcesToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+		err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
-	err = removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
-	if err != nil {
-		return diag.FromErr(err)
+
+	if d.HasChange("resources_orn") {
+		oldResourcesOrn, newResourcesOrn := d.GetChange("resources_orn")
+		oldSetOrn := oldResourcesOrn.(*schema.Set)
+		newSetOrn := newResourcesOrn.(*schema.Set)
+		ornResourcesToAdd := utils.ConvertInterfaceArrToStringArr(newSetOrn.Difference(oldSetOrn).List())
+		ornResourcesToRemove := utils.ConvertInterfaceArrToStringArr(oldSetOrn.Difference(newSetOrn).List())
+
+		err := addResourcesToResourceSet(ctx, client, d.Id(), ornResourcesToAdd)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		err = removeResourcesFromResourceSet(ctx, client, d.Id(), ornResourcesToRemove)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	return nil
 }
@@ -126,7 +160,14 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 		Description: d.Get("description").(string),
 	}
 	if isNew {
-		rs.Resources = utils.ConvertInterfaceToStringSetNullable(d.Get("resources"))
+		resourceLinks := utils.ConvertInterfaceToStringSetNullable(d.Get("resources"))
+		resourceOrns := utils.ConvertInterfaceToStringSetNullable(d.Get("resources_orn"))
+
+		var resource []string
+		resource = append(resource, resourceLinks...)
+		resource = append(resource, resourceOrns...)
+
+		rs.Resources = resource
 		if len(rs.Resources) == 0 {
 			return nil, errors.New("at least one resource must be specified when creating resource set")
 		}
@@ -136,20 +177,21 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 	return rs, nil
 }
 
-func flattenResourceSetResources(resources []*sdk.ResourceSetResource) *schema.Set {
+func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
 		if res.Links != nil {
-			links := res.Links.(map[string]interface{})
-			var urlStr string
-			if selfURL, ok := links["self"]; ok {
-				if _, ok := selfURL.(map[string]interface{}); ok {
-					for _, link := range selfURL.(map[string]interface{}) {
-						urlStr = link.(string)
-						break
-					}
-				}
-			}
+			arr = append(arr, encodeResourceSetResourceLink(utils.LinksValue(res.Links, "self", "href")))
+		}
+	}
+	return schema.NewSet(schema.HashString, arr)
+}
+
+func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schema.Set {
+	var arr []interface{}
+	for _, res := range resources {
+		if res.Orn != "" {
+			urlStr := res.Orn
 			arr = append(arr, urlStr)
 		}
 	}
@@ -193,7 +235,11 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 	if len(links) == 0 {
 		return nil
 	}
-	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: links})
+	var encodedLinks []string
+	for _, link := range links {
+		encodedLinks = append(encodedLinks, encodeResourceSetResourceLink(link))
+	}
+	_, err := client.AddResourceSetResources(ctx, resourceSetID, sdk.AddResourceSetResourcesRequest{Additions: encodedLinks})
 	if err != nil {
 		return fmt.Errorf("failed to add resources to the resource set: %v", err)
 	}
@@ -205,19 +251,27 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	if err != nil {
 		return fmt.Errorf("failed to get list of resource set resources: %v", err)
 	}
+	var escapedUrls []string
+	for _, u := range urls {
+		u1, err := escapeResourceSetResourceLink(u)
+		if err != nil {
+			return fmt.Errorf("failed to escape resource set resource link: %v", err)
+		}
+		escapedUrls = append(escapedUrls, u1)
+	}
+
 	for _, res := range resources {
-		if res.Links == nil {
-			continue
+		orn := res.Orn
+		toDelete := false
+
+		if res.Links != nil {
+			url := utils.LinksValue(res.Links, "self", "href")
+			toDelete = utils.Contains(escapedUrls, url)
 		}
-		links := res.Links.(map[string]interface{})
-		var url string
-		for _, v := range links {
-			for _, link := range v.(map[string]interface{}) {
-				url = link.(string)
-				break
-			}
-		}
-		if utils.Contains(urls, url) {
+
+		toDelete = toDelete || utils.Contains(escapedUrls, orn)
+
+		if toDelete {
 			_, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
 			if err != nil {
 				return fmt.Errorf("failed to remove %s resource from the resource set: %v", res.Id, err)
@@ -225,4 +279,42 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 		}
 	}
 	return nil
+}
+
+func encodeResourceSetResourceLink(link string) string {
+	parsedBaseUrl, err := url.Parse(link)
+	if err != nil {
+		return ""
+	}
+
+	filter := parsedBaseUrl.Query().Get("filter")
+	q := parsedBaseUrl.Query()
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	parsedBaseUrl.RawQuery = q.Encode()
+	return parsedBaseUrl.String()
+}
+
+func escapeResourceSetResourceLink(link string) (string, error) {
+	// Parse the URL first
+	u, err := url.Parse(link)
+	if err != nil {
+		return link, fmt.Errorf("error parsing URL %s: %v", link, err)
+	}
+
+	// Escape query parameters using url.QueryEscape for each query parameter
+	q := u.Query()
+
+	// Escape each value in the query parameters
+	for key, values := range q {
+		for i, v := range values {
+			// URL escape the value
+			q[key][i] = url.QueryEscape(v)
+		}
+	}
+
+	// Rebuild the URL with the modified query parameters
+	u.RawQuery = q.Encode()
+	return u.String(), nil
 }

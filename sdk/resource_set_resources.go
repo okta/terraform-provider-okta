@@ -24,6 +24,7 @@ type ResourceSetResource struct {
 	Created     time.Time   `json:"created"`
 	LastUpdated time.Time   `json:"lastUpdated"`
 	Links       interface{} `json:"_links"`
+	Orn         string      `json:"orn"`
 }
 
 // ListResourceSetResources lists the resources that make up a Resource Set

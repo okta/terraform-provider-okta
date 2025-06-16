@@ -33,6 +33,7 @@ const (
 	clientCredentials = "client_credentials"
 	tokenExchange     = "urn:ietf:params:oauth:grant-type:token-exchange"
 	saml2Bearer       = "urn:ietf:params:oauth:grant-type:saml2-bearer"
+	jwtBearer         = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 	deviceCode        = "urn:ietf:params:oauth:grant-type:device_code"
 	oob               = "urn:okta:params:oauth:grant-type:oob"
 	otp               = "urn:okta:params:oauth:grant-type:otp"
@@ -76,6 +77,7 @@ var appRequirementsByType = map[string]*applicationMap{
 			refreshToken,
 			password,
 			saml2Bearer,
+			jwtBearer,
 			tokenExchange,
 			deviceCode,
 			interactionCode,

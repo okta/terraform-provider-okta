@@ -150,11 +150,19 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		arr[i]["type"] = okta_groups[i].Type
 		arr[i]["description"] = okta_groups[i].Profile.Description
 
-		// Use Profile.AdditionalProperties for custom profile attributes
-		customProfileMap := okta_groups[i].Profile.AdditionalProperties
-		customProfile, err := json.Marshal(customProfileMap)
+		additionalProperties := okta_groups[i].AdditionalProperties
+		src, ok := additionalProperties["source"].(map[string]interface{})
+		if ok && src["id"] != nil {
+			arr[i]["source"] = src["id"].(string)
+		}
+
+		// OktaV5 doesn't remove "source" from additionalProperties,
+		// so we do it manually to ensure backwards compatibility with prior OktaV2 implementation
+		delete(additionalProperties, "source")
+
+		customProfile, err := json.Marshal(additionalProperties)
 		if err != nil {
-			return diag.Errorf("failed to read custom profile attributes from group ID: %s", *okta_groups[i].Id)
+			return diag.Errorf("failed to read custom profile attributes from group: %s", additionalProperties)
 		}
 		arr[i]["custom_profile_attributes"] = string(customProfile)
 

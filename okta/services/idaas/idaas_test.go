@@ -59,6 +59,7 @@ func TestMain(m *testing.M) {
 	if os.Getenv("TF_VAR_hostname") == "" {
 		os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
 	}
+	os.Setenv("TF_VAR_orgID", os.Getenv("OKTA_ORG_ID"))
 
 	// NOTE: Acceptance test sweepers are necessary to prevent dangling
 	// resources.

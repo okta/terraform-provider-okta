@@ -32,9 +32,10 @@ Terraform Provider will act in a force/replace manner and call the API to delete
 the underlying rule resource and create a new rule resource.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The name of the Group Rule (min character 1; max characters 50).",
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "The name of the Group Rule (min character 1; max characters 50).",
+				ValidateDiagFunc: utils.StrMaxLength(50), // ideas.okta.com/app/#/case/204022
 			},
 			"group_assignments": {
 				Type:     schema.TypeSet,

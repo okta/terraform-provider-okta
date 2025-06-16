@@ -31,6 +31,7 @@ type appsDataSource struct {
 }
 
 type AppsDataSourceModel struct {
+	Q                 types.String   `tfsdk:"q"`
 	ActiveOnly        types.Bool     `tfsdk:"active_only"`
 	Label             types.String   `tfsdk:"label"`
 	LabelPrefix       types.String   `tfsdk:"label_prefix"`
@@ -84,6 +85,11 @@ func (d *appsDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 func (d *appsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"q": schema.StringAttribute{
+				Optional:    true,
+				Validators:  []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label_prefix"))},
+				Description: "Searches for applications whose name or label properties that starts with this value.",
+			},
 			"active_only": schema.BoolAttribute{
 				Optional:    true,
 				Description: "Search only active applications.",
@@ -94,9 +100,10 @@ func (d *appsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: "Searches for applications whose label or name property matches this value exactly.",
 			},
 			"label_prefix": schema.StringAttribute{
-				Optional:    true,
-				Validators:  []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label"))},
-				Description: "Searches for applications whose label or name property begins with this value.",
+				Optional:           true,
+				Validators:         []validator.String{stringvalidator.ConflictsWith(path.MatchRoot("label"))},
+				Description:        "Searches for applications whose label or name property begins with this value.",
+				DeprecationMessage: "Use `q` instead. This attribute will be removed in a future version.",
 			},
 			"include_non_deleted": schema.BoolAttribute{
 				Optional:    true,
@@ -159,8 +166,9 @@ func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	}
 	filterValue := strings.Join(filters, " AND ")
 
+	q := state.Q.ValueString()
 	// Read the list of applications from Okta.
-	apiRequest := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationAPI.ListApplications(ctx).Filter(filterValue).Limit(int32(utils.DefaultPaginationLimit))
+	apiRequest := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationAPI.ListApplications(ctx).Filter(filterValue).Q(q).Limit(int32(utils.DefaultPaginationLimit))
 	applicationList, apiResp, err := apiRequest.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to Read Okta Apps", fmt.Sprintf("Error retrieving apps: %s", err.Error()))
