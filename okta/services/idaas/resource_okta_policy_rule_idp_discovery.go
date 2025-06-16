@@ -3,10 +3,10 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
@@ -24,16 +24,27 @@ This resource allows you to create and configure an IdP Discovery Policy Rule.
 you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
 request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		Schema: buildBaseRuleSchema(map[string]*schema.Schema{
-			"idp_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The identifier for the Idp the rule should route to if all conditions are met.",
-			},
-			"idp_type": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "OKTA",
-				Description: "Type of Idp. One of: `SAML2`, `IWA`, `AgentlessDSSO`, `X509`, `FACEBOOK`, `GOOGLE`, `LINKEDIN`, `MICROSOFT`, `OIDC`. Default: `OKTA`",
+			"idp_providers": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "The identifier for the Idp the rule should route to if all conditions are met.",
+						},
+						"type": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: "Type of IdP. One of: `AMAZON`, `APPLE`, `DISCORD`, `FACEBOOK`, `GITHUB`, `GITLAB`, " +
+								"`GOOGLE`, `IDV_CLEAR`, `IDV_INCODE`, `IDV_PERSONA`, `LINKEDIN`, `LOGINGOV`, `LOGINGOV_SANDBOX`, " +
+								"`MICROSOFT`, `OIDC`, `PAYPAL`, `PAYPAL_SANDBOX`, `SALESFORCE`, `SAML2`, `SPOTIFY`, `X509`, `XERO`, " +
+								"`YAHOO`, `YAHOOJP`, Default: `OKTA`",
+						},
+					},
+				},
 			},
 			"app_include": {
 				Type:     schema.TypeSet,
@@ -140,11 +151,33 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
-	if len(rule.Actions.IDP.Providers) > 0 {
-		_ = d.Set("idp_id", rule.Actions.IDP.Providers[0].ID)
-		_ = d.Set("idp_type", rule.Actions.IDP.Providers[0].Type)
-	}
+	d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
 	return nil
+}
+
+func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) []interface{} {
+	var flattenedIdpProviders []interface{}
+	for _, p := range providers {
+		provider := make(map[string]interface{})
+
+		// Default type to OKTA if missing
+		if p.Type == "" {
+			provider["type"] = "OKTA"
+		} else {
+			provider["type"] = p.Type
+		}
+
+		// Include ID only if not empty
+		if p.ID != "" {
+			provider["id"] = p.ID
+		} else {
+			// Optional: explicitly set nil to ensure Terraform understands it should remove `id`
+			provider["id"] = nil
+		}
+
+		flattenedIdpProviders = append(flattenedIdpProviders, provider)
+	}
+	return flattenedIdpProviders
 }
 
 func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -205,15 +238,27 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 
 // Build Policy Sign On Rule from resource data
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
+	var providers []*sdk.IdpDiscoveryRuleProvider
+	if v, ok := d.GetOk("idp_providers"); ok {
+		providerList := v.([]interface{})
+		for _, provider := range providerList {
+			if value, ok := provider.(map[string]any); ok {
+				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
+					ID:   utils.GetMapString(value, "id"),
+					Type: utils.GetMapString(value, "type"),
+				})
+			}
+		}
+	} else {
+		providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
+			Type: "OKTA",
+		})
+	}
+
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
 			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: []*sdk.IdpDiscoveryRuleProvider{
-					{
-						Type: d.Get("idp_type").(string),
-						ID:   d.Get("idp_id").(string),
-					},
-				},
+				Providers: providers,
 			},
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{

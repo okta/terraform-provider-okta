@@ -1,5 +1,26 @@
 # Changelog
 
+## 4.20.0 (June 10, 2025)
+
+### BUG FIXES
+
+* Fix issue of resource `okta_policy_rule_idp_discovery` failing to get created [#2340](https://github.com/okta/terraform-provider-okta/pull/2340) by [aditya-okta](https://github.com/aditya-okta)
+
+### IMPROVEMENTS
+
+* Bump github.com/cenkalti/backoff/v4 from 4.2.1 to 4.3.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-framework  from 1.14.1 to 1.15.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-go  from 0.27.0 to 0.28.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-mux  from 0.19.0 to 0.20.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump gopkg.in/dnaeon/go-vcr.v3  from v3.1.2 to v3.2.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+
+## 4.19.0 (May 20, 2025)
+
+### IMPROVEMENTS
+
+* Add new resource and data_source `okta_email_smtp_server` to manage external email provider [#2306](https://github.com/okta/terraform-provider-okta/pull/2206) by [aditya-okta](https://github.com/aditya-okta)
+* Add support for credentials on resource `okta_app_basic_auth` [#2309](https://github.com/okta/terraform-provider-okta/pull/2309) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta)
+* Allow array of `idp_providers` in `okta_policy_rule_idp_discovery` [#2301](https://github.com/okta/terraform-provider-okta/pull/2301) by [pranav-okta](https://github.com/pranav-okta)
 
 ## 4.18.0 (May 06, 2025)
 
