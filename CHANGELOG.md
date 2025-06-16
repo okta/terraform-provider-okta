@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.0 (June 17, 2025)
+
+### IMPROVEMENTS
+
+* Code refactor of the Okta Terraform Provider to allow for future growth
+* Fix minor errors found while tuning up the test suite
+* Full acceptance test harness run to gate releases
+
 ## 4.20.0 (June 10, 2025)
 
 ### BUG FIXES
