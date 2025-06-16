@@ -1,0 +1,17 @@
+name: "Pull Request Reviewer"
+on:
+  pull_request_target:
+    types: [opened, ready_for_review, reopened]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  add-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          configuration-path: ".github/reviewer-lottery.yml"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
