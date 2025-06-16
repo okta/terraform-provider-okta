@@ -189,6 +189,43 @@ resource "okta_resource_set" "test" {
 	})
 }
 
+func TestAccResourceOktaResourceSet_Issue_1991_orn_handling(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
+
+	baseConfig := `
+variable "id" {
+  type = string
+}
+`
+	step1Config := `
+resource "okta_resource_set" "test" {
+  label       = "testAcc_replace_1991"
+  description = "testing, testing"
+  resources_orn = [
+    "orn:okta:directory:${var.id}:users",
+    "orn:okta:directory:${var.id}:groups"
+  ]
+}`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, step1Config)),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_orgID"))),
+					resource.TestCheckResourceAttr(resourceName, "resources_orn.1", fmt.Sprintf("orn:okta:directory:%s:users", os.Getenv("TF_VAR_orgID"))),
+				),
+			},
+		},
+	})
+}
+
 func clickOpsAddResourceToResourceSet(resourceSet, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource set not found: %s", resources.OktaIDaaSResourceSet)
