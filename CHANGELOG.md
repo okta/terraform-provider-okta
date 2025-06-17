@@ -5,9 +5,19 @@
 
 ### IMPROVEMENTS
 
-* Code refactor of the Okta Terraform Provider to allow for future growth
-* Fix minor errors found while tuning up the test suite
-* Full acceptance test harness run to gate releases
+* Code refactor of the Okta Terraform Provider [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
+* Fix minor errors found while tuning up the test suite [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
+* Full acceptance test harness run to gate releases [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta) 
+* Newer Issue Templates [#2354](https://github.com/okta/terraform-provider-okta/pull/2354) by [aditya-okta](https://github.com/aditya-okta) 
+* Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* github.com/cloudflare/circl from v1.6.0 to v1.6.1 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump github.com/zclconf/go-cty from v1.16.2 to v1.16.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/crypto from v0.38.0 to v0.39.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/mod from v0.24.0 to v0.25.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/mod from v0.39.0 to v0.40.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/text from v0.25.0 to v0.26.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/tools from v0.22.0 to v0.33.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 
 ## 4.20.0 (June 10, 2025)
 
