@@ -425,6 +425,17 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 	})
 }
 
+func isACSEndpointSequential(acsEndpointsObj []*sdk.AcsEndpoint) bool {
+	indexSequential := true
+	for i := range acsEndpointsObj {
+		if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
+			indexSequential = false
+			break
+		}
+	}
+	return indexSequential
+}
+
 func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == StatusActive {
@@ -503,15 +514,4 @@ func AppUpdateStatus(ctx context.Context, d *schema.ResourceData, m interface{})
 	}
 
 	return otherChanges, err
-}
-
-func isACSEndpointSequential(acsEndpointsObj []*sdk.AcsEndpoint) bool {
-	indexSequential := true
-	for i := range acsEndpointsObj {
-		if acsEndpointsObj[i].IndexPtr == nil || *acsEndpointsObj[i].IndexPtr != int64(i) {
-			indexSequential = false
-			break
-		}
-	}
-	return indexSequential
 }

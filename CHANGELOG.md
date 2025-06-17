@@ -1,5 +1,6 @@
 # Changelog
 
+
 ## 5.0.0 (June 17, 2025)
 
 ### IMPROVEMENTS
@@ -66,7 +67,6 @@
 * Bump github.com/crewjam/saml from 0.4.14 to 0.5.1 [#2278](https://github.com/okta/terraform-provider-okta/pull/2278)
 * Bump github.com/lestrrat-go/jwx from 1.2.29 to 1.2.31 [#2279](https://github.com/okta/terraform-provider-okta/pull/2279)
 * Bump golang.org/x/net from 0.36.0 to 0.38.0 [#2283](https://github.com/okta/terraform-provider-okta/pull/2283)
-
 
 ## 4.16.0 (Apr 08, 2025)
 
