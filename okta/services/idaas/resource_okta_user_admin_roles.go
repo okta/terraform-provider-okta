@@ -63,7 +63,7 @@ func resourceUserAdminRolesRead(ctx context.Context, d *schema.ResourceData, met
 	adminRoles, resp, err := getAdminRoles(ctx, d.Id(), getOktaClientFromMetadata(meta))
 	if err != nil {
 		if err := utils.SuppressErrorOn404(resp, err); err == nil {
-			// The targetd_user or their roles have been deleted since our last Terraform run.
+			// The target_user or their roles have been deleted since our last Terraform run.
 			d.SetId("")
 			return nil
 		}

@@ -180,7 +180,7 @@ func resourceOrgSettingsRead(ctx context.Context, d *schema.ResourceData, meta i
 
 func resourceOrgSettingsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// We are doing a full update so read in existing values before updating not
-	// managed in the provider so we don't null them inadvertantly.
+	// managed in the provider so we don't null them inadvertently.
 	// See the difference between POST (partial) PUT (full) updates
 	// https://developer.okta.com/docs/reference/api/org/#update-org-settings
 	settings, _, err := getOktaClientFromMetadata(meta).OrgSetting.GetOrgSettings(ctx)

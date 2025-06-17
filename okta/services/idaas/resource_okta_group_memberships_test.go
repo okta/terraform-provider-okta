@@ -128,14 +128,14 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 				//   with Group A.
 				// Upon the next plan:
 				//   The state of okta_group_memberships.test_a_direct
-				//   will appear to have drifted (expect non empty plan) from having
-				//   only two users to five users becuase
+				//   will appear to have drifted (expect non-empty plan) from having
+				//   only two users to five users because
 				//   okta_group_rule.group_b_to_a_rule will have run and
-				//   associated the three users from Group B to aslo be in
+				//   associated the three users from Group B to also be in
 				//   Group A.
 
 				// ExpectNonEmptyPlan: true,
-				// Even with a read delay of 5 seconds it can take awhile for group rules to fire in turn causing this test to fail.
+				// Even with a read delay of 5 seconds it can take a while for group rules to fire in turn causing this test to fail.
 
 				Config: testOktaGroupMembershipsConfig(true),
 				Check: resource.ComposeTestCheckFunc(
@@ -148,7 +148,7 @@ func TestAccResourceOktaGroupMemberships_TrackAllUsersBehavior(t *testing.T) {
 
 // testOktaGroupMembershipsConfig Creat a config that has 5 users all assigned
 // to the same group. Two users are assigned by okta_group_memberships and three
-// are assigned explicitely. trackAllUsers is a flag to add `track_all_users =
+// are assigned explicitly. trackAllUsers is a flag to add `track_all_users =
 // true` to the okta_group_memberships resource.
 func testOktaGroupMembershipsConfig(trackAllUsers bool) string {
 	prepend := `

@@ -152,7 +152,7 @@ func testOktaUserBaseSchemasExists(resourceName string) resource.TestCheckFunc {
 // create and update for the `okta_user_base_schema_property` resource. The Okta
 // management API ignores parallel calls to `POST
 // /api/v1/meta/schemas/user/{userId}` and our fix is to use a calling mutex in
-// the resource to impose the equivelent of `terraform -parallelism=1`
+// the resource to impose the equivalent of `terraform -parallelism=1`
 func TestAccResourceOktaUserBaseSchema_login_multiple_properties_crud(t *testing.T) {
 	if acctest.SkipVCRTest(t) {
 		return

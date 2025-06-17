@@ -47,7 +47,7 @@ func doesLinkDefinitionExist(id string) (bool, error) {
 // and delete for the `okta_link_definition` resource. The Okta management API
 // ignores parallel calls to `POST /api/v1/meta/schemas/user/linkedObjects` and
 // `DELETE /api/v1/meta/schemas/user/linkedObjects` and our fix is to use a
-// calling mutex in the resource to impose the equivelent of `terraform
+// calling mutex in the resource to impose the equivalent of `terraform
 // -parallelism=1`
 func TestAccResourceOktaLinkDefinition_parallel_api_calls(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSLinkDefinition, t.Name())

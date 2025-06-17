@@ -27,7 +27,7 @@ func resourceGroupCustomSchemaProperty() *schema.Resource {
 		Description: `Creates a Group Schema property.
 This resource allows you to create and configure a custom group schema property.
 **IMPORTANT:** With 'enum', list its values as strings even though the 'type'
-may be something other than string. This is a limitation of the schema defintion
+may be something other than string. This is a limitation of the schema definition
 in the Terraform Plugin SDK runtime and we juggle the type correctly when making
 Okta API calls. Same holds for the 'const' value of 'one_of' as well as the
 'array_*' variation of 'enum' and 'one_of'.`,

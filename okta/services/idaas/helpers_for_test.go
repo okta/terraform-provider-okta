@@ -203,7 +203,7 @@ func orgAdminOnlyTest(t *testing.T) bool {
 	return allow
 }
 
-// testAttributeJSON Deep equal of the JSON at named resource attribute witht he
+// testAttributeJSON Deep equal of the JSON at named resource attribute with he
 // expected JSON
 func testAttributeJSON(name, attribute, expectedJSON string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {

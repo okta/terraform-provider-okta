@@ -132,9 +132,9 @@ resource "okta_app_signon_policy_rule" "test" {
 				ResourceName: "okta_app_signon_policy_rule.test",
 				ImportState:  true,
 
-				// fyi, import state id func equivelent to
+				// fyi, import state id func equivalent to
 				// terraform import okta_app_signon_policy_rule.test [policy id]/[policy rule id]
-				// and is dirived directly off the attributes on okta_app_signon_policy.test
+				// and is derived directly off the attributes on okta_app_signon_policy.test
 				ImportStateIdFunc: func(s *terraform.State) (string, error) {
 					rs, ok := s.RootModule().Resources["okta_app_signon_policy.test"]
 					if !ok {

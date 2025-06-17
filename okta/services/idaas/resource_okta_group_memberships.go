@@ -136,7 +136,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 	// Legacy behavior is just to check if any users have left the group.
 	changed, newUserIDs, err := checkIfUsersHaveBeenRemoved(ctx, client, groupId, &oldUsers)
 	if err != nil {
-		return diag.Errorf("An error occured checking user ids for group %q, error: %+v", groupId, err)
+		return diag.Errorf("An error occurred checking user ids for group %q, error: %+v", groupId, err)
 	}
 	if changed {
 		// The user list has changed, set the new user ids to the users value.

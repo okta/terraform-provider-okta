@@ -166,7 +166,7 @@ func getSearchCriteria(d *schema.ResourceData) string {
 			continue
 		}
 
-		// Need to set up the filter clause to allow comparions that do not
+		// Need to set up the filter clause to allow comparisons that do not
 		// accept a right hand argument and those that do.
 		// profile.email pr
 		filterList[i] = fmt.Sprintf(`%s %s`, fmap["name"], fmap["comparison"])

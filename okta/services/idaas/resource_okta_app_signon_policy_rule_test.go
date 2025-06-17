@@ -111,7 +111,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 
 // TestAccResourceOktaAppSignOnPolicyRule_Issue_1242_possession_constraint
 // https://github.com/okta/terraform-provider-okta/issues/1242
-// Operator had a typo in the constraint, posession and not possession. We'll
+// Operator had a typo in the constraint, possession and not possession. We'll
 // still keep this ACC.
 func TestAccResourceOktaAppSignOnPolicyRule_Issue_1242_possession_constraint(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())

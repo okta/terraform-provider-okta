@@ -27,8 +27,8 @@ func dataSourceApp() *schema.Resource {
 				Description: `The label of the app to retrieve, conflicts with
 				label_prefix and id. Label uses the ?q=<label> query parameter exposed by
 				Okta's List Apps API. The API will search both name and label using that
-				query. Therefore similarily named and labeled apps may be returned in the query
-				and have the unitended result of associating the wrong app with this data
+				query. Therefore similarly named and labeled apps may be returned in the query
+				and have the unintended result of associating the wrong app with this data
 				source. See:
 				https://developer.okta.com/docs/reference/api/apps/#list-applications`,
 			},
