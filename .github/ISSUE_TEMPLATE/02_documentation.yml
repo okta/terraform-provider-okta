@@ -31,6 +31,16 @@ body:
       required: true
 
   - type: textarea
+    id: customer_info
+    attributes:
+      label: Customer Information
+      description: |
+        Please provide your organization name, and whether you are a paid customer or using the free developer edition.
+      value: |
+        Organization Name: <your-org-name>
+        Paid Customer: <yes/no>     
+
+  - type: textarea
     id: references
     attributes:
       label: References

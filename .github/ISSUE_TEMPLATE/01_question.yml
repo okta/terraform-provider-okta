@@ -11,7 +11,7 @@ body:
 
         * [Terraform community resources](https://www.terraform.io/docs/extend/community/index.html)
         * [HashiCorp support](https://support.hashicorp.com) (Terraform Enterprise customers)
-        * [OKTA support](https://support.okta.com/) for paid customers, else users can use the [Okta Community](https://devforum.okta.com/) for questions and support requests.
+        * [Okta support](https://support.okta.com/) for paid customers, else users can use the [Okta Community](https://devforum.okta.com/) for questions and support requests.
   - type: textarea
     id: question
     attributes:
@@ -19,3 +19,13 @@ body:
       value: Please use the resources listed above instead of submitting a question with this form.
     validations:
       required: true
+
+  - type: textarea
+    id: customer_info
+    attributes:
+      label: Customer Information
+      description: |
+        Please provide your organization name, and whether you are a paid customer or using the free developer edition.
+      value: |
+        Organization Name: <your-org-name>
+        Paid Customer: <yes/no>

@@ -15,6 +15,7 @@ body:
         * [OKTA support]() Customers can ask to reach out to Okta Developer Support Engineer/Customer Success Engineer to expedite investigation and resolution of this issue.
     validations:
       required: true
+
   - type: textarea
     id: description
     attributes:
@@ -22,15 +23,27 @@ body:
       description: Please leave a helpful description of the feature request here. Including use cases and why it would help you is a great way to convince maintainers to spend time on it.
     validations:
       required: true
+
   - type: textarea
     id: affected-resources
     attributes:
       label: New or Affected Resource(s)
-      description: Please list the new or affected resources and data sources. Use google_* if all resources or data sources are affected.
+      description: Please list the new or affected resources and data sources. Use okta_* if all resources or data sources are affected.
       value: |
         * okta_XXXXX
     validations:
       required: true
+
+  - type: textarea
+    id: customer_info
+    attributes:
+      label: Customer Information
+      description: |
+        Please provide your organization name, and whether you are a paid customer or using the free developer edition.
+      value: |
+        Organization Name: <your-org-name>
+        Paid Customer: <yes/no>
+
   - type: textarea
     id: terraform-configuration
     attributes:

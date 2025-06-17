@@ -72,6 +72,17 @@ body:
       multiple: false
     validations:
       required: true
+
+  - type: textarea
+    id: customer_info
+    attributes:
+      label: Customer Information
+      description: |
+        Please provide your organization name, and whether you are a paid customer or using the free developer edition.
+      value: |
+        Organization Name: <your-org-name>
+        Paid Customer: <yes/no>
+
   - type: textarea
     id: terraform-configuration
     attributes:
@@ -94,28 +105,33 @@ body:
       label: Debug Output
       description: |
         Please provide a link to a GitHub Gist containing your complete [debug output](https://www.terraform.io/docs/internals/debugging.html). Please **don't** paste the debug output in the issue; just paste a link to the Gist.
+
   - type: textarea
     id: expected-behavior
     attributes:
       label: Expected Behavior
       description: What should have happened?
+
   - type: textarea
     id: actual-behavior
     attributes:
       label: Actual Behavior
       description: What actually happened?
+
   - type: textarea
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
       description: Please list the steps required to reproduce the issue.
       value: 1. `terraform apply`
+
   - type: textarea
     id: important-factoids
     attributes:
       label: Important Factoids
       description: |
         Is there anything atypical about your accounts that we should know? For example: authenticating as a user instead of a service account?
+
   - type: textarea
     id: references
     attributes:
