@@ -1,3 +1,11 @@
+variable "hostname" {
+  type = string
+}
+
+locals {
+  org_url = "https://${var.hostname}"
+}
+
 resource "okta_app_oauth" "test_app" {
   label          = "testAcc_replace_with_uuid"
   type           = "web"
@@ -8,6 +16,6 @@ resource "okta_app_oauth" "test_app" {
 
 resource "okta_app_oauth_api_scope" "test_app_scopes" {
   app_id = okta_app_oauth.test_app.id
-  issuer = "https://your.okta.org"
+  issuer = local.org_url
   scopes = ["okta.users.read"]
 }

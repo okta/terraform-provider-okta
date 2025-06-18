@@ -1,5 +1,5 @@
 resource "okta_policy_device_assurance_windows" "test" {
-  name                                      = "test"
+  name                                      = "testAcc-replace_with_uuid"
   os_version                                = "12.4.6"
   disk_encryption_type                      = toset(["ALL_INTERNAL_VOLUMES"])
   secure_hardware_present                   = true
@@ -21,7 +21,6 @@ resource "okta_policy_device_assurance_windows" "test" {
   tpsp_screen_lock_secured                  = true
   tpsp_secure_boot_enabled                  = true
   tpsp_site_isolation_enabled               = true
-  tpsp_third_party_blocking_enabled         = true
   tpsp_windows_machine_domain               = "testMachineDomain"
   tpsp_windows_user_domain                  = "testUserDomain"
 }

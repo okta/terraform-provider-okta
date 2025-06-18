@@ -1,0 +1,494 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 159
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"audiences":["whatever.rise.zone"],"credentials":{"signing":{"rotationMode":"AUTO"}},"description":"test","issuerMode":"ORG_URL","name":"testAcc_3529734638"}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: false
+        body: '{"id":"auskwqm6poTYbjCwq1d7","name":"testAcc_3529734638","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2025-03-13T23:22:54.000Z","lastUpdated":"2025-03-13T23:22:54.000Z","credentials":{"signing":{"kid":"ERUfmRhUfPhxHfCW4N1jaV6QULuf0WLaJOdHXtXe2fs","rotationMode":"AUTO","lastRotated":"2025-03-13T23:22:54.000Z","nextRotation":"2025-06-11T23:22:54.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 525.799333ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"auskwqm6poTYbjCwq1d7","name":"testAcc_3529734638","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2025-03-13T23:22:54.000Z","lastUpdated":"2025-03-13T23:22:54.000Z","credentials":{"signing":{"kid":"ERUfmRhUfPhxHfCW4N1jaV6QULuf0WLaJOdHXtXe2fs","rotationMode":"AUTO","lastRotated":"2025-03-13T23:22:54.000Z","nextRotation":"2025-06-11T23:22:54.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 240.617208ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"auskwqm6poTYbjCwq1d7","name":"testAcc_3529734638","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2025-03-13T23:22:54.000Z","lastUpdated":"2025-03-13T23:22:54.000Z","credentials":{"signing":{"kid":"ERUfmRhUfPhxHfCW4N1jaV6QULuf0WLaJOdHXtXe2fs","rotationMode":"AUTO","lastRotated":"2025-03-13T23:22:54.000Z","nextRotation":"2025-06-11T23:22:54.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 218.916625ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"auskwqm6poTYbjCwq1d7","name":"testAcc_3529734638","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2025-03-13T23:22:54.000Z","lastUpdated":"2025-03-13T23:22:54.000Z","credentials":{"signing":{"kid":"ERUfmRhUfPhxHfCW4N1jaV6QULuf0WLaJOdHXtXe2fs","rotationMode":"AUTO","lastRotated":"2025-03-13T23:22:54.000Z","nextRotation":"2025-06-11T23:22:54.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 486.808375ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oclkwqm6qfP3Jmteb1d7","name":"middle_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qfP3Jmteb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qxi1ETAFD1d7","name":"zoneinfo","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qxi1ETAFD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qvC4JhcmW1d7","name":"website","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qvC4JhcmW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qteRArYPI1d7","name":"updated_at","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qteRArYPI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qreTKBgBW1d7","name":"profile","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qreTKBgBW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qp0Yc4bAd1d7","name":"preferred_username","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qp0Yc4bAd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qnGjCoN8i1d7","name":"picture","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qnGjCoN8i1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qltnB8MVW1d7","name":"phone_number","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["phone"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qltnB8MVW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qjDCcBp8F1d7","name":"nickname","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qjDCcBp8F1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qhzPItc7C1d7","name":"name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qhzPItc7C1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pxueVtnaj1d7","name":"sub","status":"ACTIVE","claimType":"RESOURCE","valueType":"EXPRESSION","value":"(appuser != null) ? appuser.userName : app.clientId","conditions":{"scopes":[]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pxueVtnaj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qd6dqXRxG1d7","name":"locale","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qd6dqXRxG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qbhntvrc31d7","name":"given_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qbhntvrc31d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q95oIkpih1d7","name":"gender","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q95oIkpih1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q7ffhVum11d7","name":"family_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q7ffhVum11d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q5XFi83Kc1d7","name":"email_verified","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q5XFi83Kc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q3LQL8qA01d7","name":"email","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q3LQL8qA01d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q1JSbCee51d7","name":"birthdate","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q1JSbCee51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pzRmn2jTn1d7","name":"address","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["address"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pzRmn2jTn1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 663.139875ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oclkwqm6qfP3Jmteb1d7","name":"middle_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qfP3Jmteb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qxi1ETAFD1d7","name":"zoneinfo","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qxi1ETAFD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qvC4JhcmW1d7","name":"website","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qvC4JhcmW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qteRArYPI1d7","name":"updated_at","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qteRArYPI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qreTKBgBW1d7","name":"profile","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qreTKBgBW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qp0Yc4bAd1d7","name":"preferred_username","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qp0Yc4bAd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qnGjCoN8i1d7","name":"picture","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qnGjCoN8i1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qltnB8MVW1d7","name":"phone_number","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["phone"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qltnB8MVW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qjDCcBp8F1d7","name":"nickname","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qjDCcBp8F1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qhzPItc7C1d7","name":"name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qhzPItc7C1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pxueVtnaj1d7","name":"sub","status":"ACTIVE","claimType":"RESOURCE","valueType":"EXPRESSION","value":"(appuser != null) ? appuser.userName : app.clientId","conditions":{"scopes":[]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pxueVtnaj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qd6dqXRxG1d7","name":"locale","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qd6dqXRxG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qbhntvrc31d7","name":"given_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qbhntvrc31d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q95oIkpih1d7","name":"gender","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q95oIkpih1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q7ffhVum11d7","name":"family_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q7ffhVum11d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q5XFi83Kc1d7","name":"email_verified","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q5XFi83Kc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q3LQL8qA01d7","name":"email","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q3LQL8qA01d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q1JSbCee51d7","name":"birthdate","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q1JSbCee51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pzRmn2jTn1d7","name":"address","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["address"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pzRmn2jTn1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 319.285166ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oclkwqm6qfP3Jmteb1d7","name":"middle_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qfP3Jmteb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qxi1ETAFD1d7","name":"zoneinfo","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qxi1ETAFD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qvC4JhcmW1d7","name":"website","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qvC4JhcmW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qteRArYPI1d7","name":"updated_at","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qteRArYPI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qreTKBgBW1d7","name":"profile","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qreTKBgBW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qp0Yc4bAd1d7","name":"preferred_username","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qp0Yc4bAd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qnGjCoN8i1d7","name":"picture","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qnGjCoN8i1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qltnB8MVW1d7","name":"phone_number","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["phone"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qltnB8MVW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qjDCcBp8F1d7","name":"nickname","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qjDCcBp8F1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qhzPItc7C1d7","name":"name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qhzPItc7C1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pxueVtnaj1d7","name":"sub","status":"ACTIVE","claimType":"RESOURCE","valueType":"EXPRESSION","value":"(appuser != null) ? appuser.userName : app.clientId","conditions":{"scopes":[]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pxueVtnaj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qd6dqXRxG1d7","name":"locale","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qd6dqXRxG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qbhntvrc31d7","name":"given_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qbhntvrc31d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q95oIkpih1d7","name":"gender","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q95oIkpih1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q7ffhVum11d7","name":"family_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q7ffhVum11d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q5XFi83Kc1d7","name":"email_verified","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q5XFi83Kc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q3LQL8qA01d7","name":"email","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q3LQL8qA01d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q1JSbCee51d7","name":"birthdate","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q1JSbCee51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pzRmn2jTn1d7","name":"address","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["address"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pzRmn2jTn1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 504.408083ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"auskwqm6poTYbjCwq1d7","name":"testAcc_3529734638","description":"test","audiences":["whatever.rise.zone"],"issuer":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7","issuerMode":"ORG_URL","status":"ACTIVE","created":"2025-03-13T23:22:54.000Z","lastUpdated":"2025-03-13T23:22:54.000Z","credentials":{"signing":{"kid":"ERUfmRhUfPhxHfCW4N1jaV6QULuf0WLaJOdHXtXe2fs","rotationMode":"AUTO","lastRotated":"2025-03-13T23:22:54.000Z","nextRotation":"2025-06-11T23:22:54.000Z"}},"default":false,"_links":{"rotateKey":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/lifecycle/keyRotate","hints":{"allow":["POST"]}},"metadata":[{"name":"oauth-authorization-server","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/oauth-authorization-server","hints":{"allow":["GET"]}},{"name":"openid-configuration","href":"https://oie-00.dne-okta.com/oauth2/auskwqm6poTYbjCwq1d7/.well-known/openid-configuration","hints":{"allow":["GET"]}}],"keys":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/credentials/keys","hints":{"allow":["GET"]}},"claims":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims","hints":{"allow":["GET","POST"]}},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/policies","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7","hints":{"allow":["GET","DELETE","PUT"]}},"scopes":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/scopes","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 428.342ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oclkwqm6qfP3Jmteb1d7","name":"middle_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qfP3Jmteb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qxi1ETAFD1d7","name":"zoneinfo","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qxi1ETAFD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qvC4JhcmW1d7","name":"website","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qvC4JhcmW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qteRArYPI1d7","name":"updated_at","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qteRArYPI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qreTKBgBW1d7","name":"profile","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qreTKBgBW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qp0Yc4bAd1d7","name":"preferred_username","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qp0Yc4bAd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qnGjCoN8i1d7","name":"picture","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qnGjCoN8i1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qltnB8MVW1d7","name":"phone_number","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["phone"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qltnB8MVW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qjDCcBp8F1d7","name":"nickname","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qjDCcBp8F1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qhzPItc7C1d7","name":"name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qhzPItc7C1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pxueVtnaj1d7","name":"sub","status":"ACTIVE","claimType":"RESOURCE","valueType":"EXPRESSION","value":"(appuser != null) ? appuser.userName : app.clientId","conditions":{"scopes":[]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pxueVtnaj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qd6dqXRxG1d7","name":"locale","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qd6dqXRxG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qbhntvrc31d7","name":"given_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qbhntvrc31d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q95oIkpih1d7","name":"gender","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q95oIkpih1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q7ffhVum11d7","name":"family_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q7ffhVum11d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q5XFi83Kc1d7","name":"email_verified","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q5XFi83Kc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q3LQL8qA01d7","name":"email","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q3LQL8qA01d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q1JSbCee51d7","name":"birthdate","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q1JSbCee51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pzRmn2jTn1d7","name":"address","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["address"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pzRmn2jTn1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 445.638459ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"oclkwqm6qfP3Jmteb1d7","name":"middle_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qfP3Jmteb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qxi1ETAFD1d7","name":"zoneinfo","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qxi1ETAFD1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qvC4JhcmW1d7","name":"website","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qvC4JhcmW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qteRArYPI1d7","name":"updated_at","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qteRArYPI1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qreTKBgBW1d7","name":"profile","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qreTKBgBW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qp0Yc4bAd1d7","name":"preferred_username","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qp0Yc4bAd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qnGjCoN8i1d7","name":"picture","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qnGjCoN8i1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qltnB8MVW1d7","name":"phone_number","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["phone"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qltnB8MVW1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qjDCcBp8F1d7","name":"nickname","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qjDCcBp8F1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qhzPItc7C1d7","name":"name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qhzPItc7C1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pxueVtnaj1d7","name":"sub","status":"ACTIVE","claimType":"RESOURCE","valueType":"EXPRESSION","value":"(appuser != null) ? appuser.userName : app.clientId","conditions":{"scopes":[]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pxueVtnaj1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qd6dqXRxG1d7","name":"locale","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qd6dqXRxG1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6qbhntvrc31d7","name":"given_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6qbhntvrc31d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q95oIkpih1d7","name":"gender","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q95oIkpih1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q7ffhVum11d7","name":"family_name","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q7ffhVum11d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q5XFi83Kc1d7","name":"email_verified","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q5XFi83Kc1d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q3LQL8qA01d7","name":"email","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["email"]},"system":true,"alwaysIncludeInToken":true,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q3LQL8qA01d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6q1JSbCee51d7","name":"birthdate","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["profile"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6q1JSbCee51d7","hints":{"allow":["GET","PUT","DELETE"]}}}},{"id":"oclkwqm6pzRmn2jTn1d7","name":"address","status":"ACTIVE","claimType":"IDENTITY","valueType":"SYSTEM","conditions":{"scopes":["address"]},"system":true,"alwaysIncludeInToken":false,"apiResourceId":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/claims/oclkwqm6pzRmn2jTn1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:22:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 435.957375ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 13 Mar 2025 23:23:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 338.426542ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqm6poTYbjCwq1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 13 Mar 2025 23:23:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 292.65575ms
