@@ -10,7 +10,7 @@
 * Full acceptance test harness run to gate releases [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta) 
 * New Issue Templates [#2354](https://github.com/okta/terraform-provider-okta/pull/2354) by [aditya-okta](https://github.com/aditya-okta) 
 * Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
-* github.com/cloudflare/circl from v1.6.0 to v1.6.1 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump github.com/cloudflare/circl from v1.6.0 to v1.6.1 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 * Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 * Bump github.com/zclconf/go-cty from v1.16.2 to v1.16.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 * Bump golang.org/x/crypto from v0.38.0 to v0.39.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
