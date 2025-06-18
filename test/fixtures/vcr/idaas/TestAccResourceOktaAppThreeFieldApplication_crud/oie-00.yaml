@@ -1,0 +1,543 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 596
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"password":{},"revealPassword":false,"scheme":"EDIT_USERNAME_AND_PASSWORD","userName":""},"accessibility":{"selfService":false},"label":"testAcc_3742969689","name":"template_swa3field","settings":{"app":{"buttonSelector":"btn","extraFieldSelector":"third","extraFieldValue":"third","passwordSelector":"pass","targetURL":"http://example.com","userNameSelector":"user"},"notes":{"admin":null,"enduser":null}},"signOnMode":"BROWSER_PLUGIN","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"ACTIVE","lastUpdated":"2025-03-13T23:31:21.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"third","extraFieldValue":"third","redirectUrl":null,"userNameSelector":"user","passwordSelector":"pass","buttonSelector":"btn","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 941.43425ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"ACTIVE","lastUpdated":"2025-03-13T23:31:21.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"third","extraFieldValue":"third","redirectUrl":null,"userNameSelector":"user","passwordSelector":"pass","buttonSelector":"btn","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 305.205084ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"ACTIVE","lastUpdated":"2025-03-13T23:31:21.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"third","extraFieldValue":"third","redirectUrl":null,"userNameSelector":"user","passwordSelector":"pass","buttonSelector":"btn","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 459.597916ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"ACTIVE","lastUpdated":"2025-03-13T23:31:21.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"third","extraFieldValue":"third","redirectUrl":null,"userNameSelector":"user","passwordSelector":"pass","buttonSelector":"btn","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 315.149167ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 254.945542ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 621
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"password":{},"revealPassword":false,"scheme":"EDIT_USERNAME_AND_PASSWORD","userName":""},"accessibility":{"selfService":false},"label":"testAcc_3742969689","name":"template_swa3field","settings":{"app":{"buttonSelector":"btn1","extraFieldSelector":"mfa","extraFieldValue":"mfa","passwordSelector":"pass1","targetURL":"http://example.com","userNameSelector":"user1"},"notes":{"admin":null,"enduser":null}},"signOnMode":"BROWSER_PLUGIN","visibility":{"appLinks":{"login":true},"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:24.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 489.536666ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:24.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 340.239167ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:24.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 234.810292ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:24.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"EDIT_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 316.846125ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 683
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"password":{"value":"PA11LVFDaNdulkNsKLeb"},"revealPassword":false,"scheme":"SHARED_USERNAME_AND_PASSWORD","userName":"testAcc_3742969689@example.com"},"accessibility":{"selfService":false},"label":"testAcc_3742969689","name":"template_swa3field","settings":{"app":{"buttonSelector":"btn1","extraFieldSelector":"mfa","extraFieldValue":"mfa","passwordSelector":"pass1","targetURL":"http://example.com","userNameSelector":"user1"},"notes":{"admin":null,"enduser":null}},"signOnMode":"BROWSER_PLUGIN","visibility":{"appLinks":{"login":true},"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:26.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"SHARED_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"userName":"testAcc_3742969689@example.com","password":{},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 566.102208ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:26.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"SHARED_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"userName":"testAcc_3742969689@example.com","password":{},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 268.036708ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oakwqvtwxzJcClLX1d7","orn":"orn:oktapreview:idp:00o5qwjvg8hg7YpT81d7:apps:template_swa3field:0oakwqvtwxzJcClLX1d7","name":"template_swa3field","label":"testAcc_3742969689","status":"INACTIVE","lastUpdated":"2025-03-13T23:31:26.000Z","created":"2025-03-13T23:31:21.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BROWSER_PLUGIN","credentials":{"scheme":"SHARED_USERNAME_AND_PASSWORD","userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"userName":"testAcc_3742969689@example.com","password":{},"revealPassword":false,"signing":{}},"settings":{"app":{"loginUrlRegex":null,"extraFieldSelector":"mfa","extraFieldValue":"mfa","redirectUrl":null,"userNameSelector":"user1","passwordSelector":"pass1","buttonSelector":"btn1","targetURL":"http://example.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://oie-00.dne-okta.com/home/template_swa3field/0oakwqvtwxzJcClLX1d7/3287","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlxUHivL8a1d7"},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/lifecycle/activate"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/groups"},"logo":[{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfs1gamrvc68DV8vJ1d8","type":"image/png"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rst5qwjvlvS3G1WOU1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7/users"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:31:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 205.754375ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oakwqvtwxzJcClLX1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 13 Mar 2025 23:31:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 821.430875ms

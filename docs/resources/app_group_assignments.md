@@ -7,8 +7,8 @@ description: |-
 
 # Resource: okta_app_group_assignments
 
-Assigns groups to an application. This resource allows you to create multiple App Group assignments. 
-		
+Assigns groups to an application. This resource allows you to create multiple App Group assignments.
+
 **Important**: Do not use in conjunction with for_each
 
 ## Example Usage
