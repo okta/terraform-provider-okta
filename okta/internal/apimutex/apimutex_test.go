@@ -14,7 +14,7 @@ func TestHasCapacity(t *testing.T) {
 	}
 
 	endPoint := "/api/v1/users"
-	reset := (time.Now().Unix() + int64(60))
+	reset := time.Now().Unix() + int64(60)
 	// endpoint, limit, remaining, reset
 	amu.Update(http.MethodGet, endPoint, 90, 46, reset)
 	if !amu.HasCapacity(http.MethodGet, endPoint) {
@@ -54,7 +54,7 @@ func TestUpdate(t *testing.T) {
 	}
 
 	limit := 500
-	reset := (time.Now().Unix() + int64(60))
+	reset := time.Now().Unix() + int64(60)
 	for _, tc := range tests {
 		// here, we are testing that regardless of threading parallelism the api
 		// mutex will have the highest remaining value set for any given class
@@ -66,13 +66,11 @@ func TestUpdate(t *testing.T) {
 		for _, remaining := range tc.remaining {
 			go func(remaining int) {
 				sleep := time.Duration(rand.Intn(100))
-				// lintignore:R018
 				time.Sleep(sleep * time.Millisecond)
 
 				amu.Update(tc.method, tc.endPoint, limit, remaining, reset)
 			}(remaining)
 		}
-		// lintignore:R018
 		time.Sleep(300 * time.Millisecond)
 
 		minRemaining := minRemaining(tc.remaining)

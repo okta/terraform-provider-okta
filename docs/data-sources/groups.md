@@ -21,7 +21,7 @@ data "okta_groups" "example" {
 
 ### Optional
 
-`limit` (Number) The maximum number of groups returned by the Okta API, between 1 and 10000.
+- `limit` (Number) The maximum number of groups returned by the Okta API, between 1 and 10000.
 - `q` (String) Searches the name property of groups for matching value
 - `search` (String) Searches for groups with a supported filtering expression for all attributes except for '_embedded', '_links', and 'objectClass'
 - `type` (String) Type of the group. When specified in the terraform resource, will act as a filter when searching for the groups

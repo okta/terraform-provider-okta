@@ -11,7 +11,7 @@ body:
         * Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to the original issue to help the community and maintainers prioritize this request.
         * Please do not leave _+1_ or _me too_ comments, they generate extra noise for issue followers and do not help prioritize the request.
         * If you are interested in working on this issue or have submitted a pull request, please leave a comment.
-                Before submitting a bug report, we ask that you first [search existing issues and pull requests](https://github.com/hashicorp/terraform-provider-aws/issues?q=label%3Abug) to see if someone else may have experienced the same issue or may have already submitted a fix for it. This helps to keep all relevant information in one place, including any potential workarounds.
+                Before submitting a bug report, we ask that you first [search existing issues](https://github.com/okta/terraform-provider-okta/issues) and [pull requests](https://github.com/okta/terraform-provider-okta/pulls) to see if someone else may have experienced the same issue or may have already submitted a fix for it. This helps to keep all relevant information in one place, including any potential workarounds.
 
         ### A Note on Terraform Core Issues
 
@@ -105,18 +105,25 @@ body:
       label: Debug Output
       description: |
         Please provide a link to a GitHub Gist containing your complete [debug output](https://www.terraform.io/docs/internals/debugging.html). Please **don't** paste the debug output in the issue; just paste a link to the Gist.
+        Use TF_LOG=DEBUG terraform apply to generate debug logs.
+    validations:
+      required: true
 
   - type: textarea
     id: expected-behavior
     attributes:
       label: Expected Behavior
       description: What should have happened?
+    validations:
+      required: true
 
   - type: textarea
     id: actual-behavior
     attributes:
       label: Actual Behavior
       description: What actually happened?
+    validations:
+      required: true
 
   - type: textarea
     id: steps-to-reproduce
@@ -124,6 +131,8 @@ body:
       label: Steps to reproduce
       description: Please list the steps required to reproduce the issue.
       value: 1. `terraform apply`
+    validations:
+      required: true
 
   - type: textarea
     id: important-factoids
