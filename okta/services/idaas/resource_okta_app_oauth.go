@@ -408,6 +408,12 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "URL reference to JWKS",
 			},
+			"disable_auth_policy": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Disable adding authorization policy for SERVICE applications. WARNING: This is a temporary field since we will be removing the ability to toggle auth policy in the future. This is only for SERVICE applications, other application types will always have an auth policy attached to them.",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -478,9 +484,11 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+	if !(d.Get("disable_auth_policy").(bool) && d.Get("type").(string) == "service") {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
@@ -747,9 +755,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+	if !(d.Get("disable_auth_policy").(bool) && d.Get("type").(string) == "service") {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }

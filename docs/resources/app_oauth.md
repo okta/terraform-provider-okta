@@ -114,6 +114,7 @@ resource "okta_app_oauth" "example" {
 - `user_name_template_suffix` (String) Username template suffix
 - `user_name_template_type` (String) Username template type. Default: `BUILT_IN`
 - `wildcard_redirect` (String) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris
+- `disable_auth_policy` (Boolean) Disable attaching any authentication policy to the application. To be used only with applications of type SERVICE.
 
 ### Read-Only
 
