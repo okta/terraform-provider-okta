@@ -412,7 +412,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: "Disable adding authorization policy for SERVICE applications. WARNING: This is a temporary field since we will be removing the ability to toggle auth policy in the future. This is only for SERVICE applications, other application types will always have an auth policy attached to them.",
+				Description: "Disable adding authorization policy for SERVICE applications. WARNING: This is a temporary field. The ability to toggle the authorization policy will be removed in a future release. This field applies only to SERVICE applications, authorization policies will always be attached to other application types.",
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
