@@ -1,14 +1,16 @@
 # Changelog
 
-
-## 5.0.0 (June 18, 2025)
+## 5.0.0 (June 24, 2025)
 
 ### IMPROVEMENTS
 
+* Update okta_app_signon_policy_rule resource docs to include `chains` attribute by [#2362](https://github.com/okta/terraform-provider-okta/pull/2362) by [aditya-okta](https://github.com/aditya-okta)
 * Code refactor of the Okta Terraform Provider [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
 * Fix minor errors found while tuning up the test suite [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
 * Full acceptance test harness run to gate releases [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta) 
 * New Issue Templates [#2354](https://github.com/okta/terraform-provider-okta/pull/2354) by [aditya-okta](https://github.com/aditya-okta) 
+* Bump goreleaser/goreleaser-action from 6.2.1 to 6.3.0 [#2354](https://github.com/okta/terraform-provider-okta/pull/2364)
+* Bump github.com/hashicorp/go-retryablehttp from 0.7.7 to 0.7.8 [#2365](https://github.com/okta/terraform-provider-okta/pull/2365)
 * Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 * Bump github.com/cloudflare/circl from v1.6.0 to v1.6.1 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
 * Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
