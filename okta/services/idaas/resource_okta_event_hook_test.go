@@ -14,7 +14,6 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func TestAccResourceOktaEventHook_crud(t *testing.T) {
@@ -49,10 +48,7 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						idaas.EventSet(&sdk.EventSubscriptions{
-							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
-							Type:  "EVENT_TYPE",
-						}),
+						utils.ConvertStringSliceToSet([]string{"user.lifecycle.create", "user.lifecycle.delete.initiated"}),
 					),
 				),
 			},
@@ -78,10 +74,10 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(v5okta.NewEventSubscriptions([]string{
-								"user.lifecycle.create",
-								"user.lifecycle.delete.initiated",
-								"user.account.update_profile",
+						idaas.EventSet(v5okta.NewEventSubscriptions([]string{
+							"user.lifecycle.create",
+							"user.lifecycle.delete.initiated",
+							"user.account.update_profile",
 						}, "EVENT_TYPE")),
 					),
 				),
@@ -100,10 +96,7 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						idaas.EventSet(&sdk.EventSubscriptions{
-							Items: []string{"user.lifecycle.create", "user.lifecycle.delete.initiated"},
-							Type:  "EVENT_TYPE",
-						}),
+						utils.ConvertStringSliceToSet([]string{"user.lifecycle.create", "user.lifecycle.delete.initiated"}),
 					),
 				),
 			},
@@ -113,22 +106,22 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 
 func TestAccResourceOktaEventHook_withFilter(t *testing.T) {
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager("resources", eventHook, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSEventHook, t.Name())
 	config := mgr.GetFixtures("basic_with_filter.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_with_filter_updated.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(eventHook, eventHookExists),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSEventHook, eventHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
@@ -142,7 +135,7 @@ func TestAccResourceOktaEventHook_withFilter(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(v5okta.NewEventSubscriptions([]string{"group.user_membership.add"}, "EVENT_TYPE")),
+						idaas.EventSet(v5okta.NewEventSubscriptions([]string{"group.user_membership.add"}, "EVENT_TYPE")),
 					),
 				),
 			},
@@ -150,8 +143,8 @@ func TestAccResourceOktaEventHook_withFilter(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test-updated"),
@@ -169,7 +162,7 @@ func TestAccResourceOktaEventHook_withFilter(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(v5okta.NewEventSubscriptions([]string{"group.user_membership.add", "user.lifecycle.create"}, "EVENT_TYPE")),
+						idaas.EventSet(v5okta.NewEventSubscriptions([]string{"group.user_membership.add", "user.lifecycle.create"}, "EVENT_TYPE")),
 					),
 				),
 			},
@@ -179,22 +172,22 @@ func TestAccResourceOktaEventHook_withFilter(t *testing.T) {
 
 func TestAccResourceOktaEventHook_withNewFilter(t *testing.T) {
 	resourceName := "okta_event_hook.test"
-	mgr := newFixtureManager("resources", eventHook, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSEventHook, t.Name())
 	config := mgr.GetFixtures("basic_with_new_filter.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_with_new_filter_updated.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		ProviderFactories: testAccProvidersFactories,
-		CheckDestroy:      checkResourceDestroy(eventHook, eventHookExists),
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSEventHook, eventHookExists),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
@@ -208,7 +201,7 @@ func TestAccResourceOktaEventHook_withNewFilter(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(v5okta.NewEventSubscriptions([]string{"user.lifecycle.create"}, "EVENT_TYPE")),
+						idaas.EventSet(v5okta.NewEventSubscriptions([]string{"user.lifecycle.create"}, "EVENT_TYPE")),
 					),
 				),
 			},
@@ -216,8 +209,8 @@ func TestAccResourceOktaEventHook_withNewFilter(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, eventHookExists),
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "channel.type", "HTTP"),
 					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
 					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test-updated"),
@@ -235,7 +228,7 @@ func TestAccResourceOktaEventHook_withNewFilter(t *testing.T) {
 					testCheckResourceSetAttr(
 						resourceName,
 						"events",
-						eventSet(v5okta.NewEventSubscriptions([]string{"user.lifecycle.create", "user.lifecycle.delete.initiated"}, "EVENT_TYPE")),
+						idaas.EventSet(v5okta.NewEventSubscriptions([]string{"user.lifecycle.create", "user.lifecycle.delete.initiated"}, "EVENT_TYPE")),
 					),
 				),
 			},
