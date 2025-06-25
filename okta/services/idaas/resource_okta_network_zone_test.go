@@ -70,6 +70,102 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaNetworkZone_ipNormalization(t *testing.T) {
+	mgr := newFixtureManager("resources", networkZone, t.Name())
+	config := mgr.GetFixtures("ip_normalization.tf", t)
+	updatedConfig := mgr.GetFixtures("ip_normalization_updated.tf", t)
+
+	// Define resource names following the convention from the original test
+	singleIPResourceName := fmt.Sprintf("%s.ip_network_zone_single", networkZone)
+	cidrResourceName := fmt.Sprintf("%s.ip_network_zone_cidr", networkZone)
+	rangeResourceName := fmt.Sprintf("%s.ip_network_zone_range", networkZone)
+	changingSingleResourceName := fmt.Sprintf("%s.ip_network_zone_changing_single", networkZone)
+	changingCIDRResourceName := fmt.Sprintf("%s.ip_network_zone_changing_cidr", networkZone)
+	changingRangeResourceName := fmt.Sprintf("%s.ip_network_zone_changing_range", networkZone)
+	mixedResourceName := fmt.Sprintf("%s.ip_network_zone_mixed", networkZone)
+	unchangedSingleResourceName := fmt.Sprintf("%s.ip_network_zone_unchanged_single", networkZone)
+	unchangedCIDRResourceName := fmt.Sprintf("%s.ip_network_zone_unchanged_cidr", networkZone)
+	unchangedRangeResourceName := fmt.Sprintf("%s.ip_network_zone_unchanged_range", networkZone)
+
+	oktaResourceTest(t, resource.TestCase{
+		PreCheck:          testAccPreCheck(t),
+		ErrorCheck:        testAccErrorChecks(t),
+		ProviderFactories: testAccProvidersFactories,
+		CheckDestroy:      checkResourceDestroy(networkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					// Check equivalent notation resources
+					resource.TestCheckResourceAttr(singleIPResourceName, "name", buildResourceName(mgr.Seed)+" Single"),
+					resource.TestCheckResourceAttr(singleIPResourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(singleIPResourceName, "gateways.#", "1"),
+
+					resource.TestCheckResourceAttr(cidrResourceName, "name", buildResourceName(mgr.Seed)+" CIDR"),
+					resource.TestCheckResourceAttr(cidrResourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(cidrResourceName, "gateways.#", "1"),
+
+					resource.TestCheckResourceAttr(rangeResourceName, "name", buildResourceName(mgr.Seed)+" Range"),
+					resource.TestCheckResourceAttr(rangeResourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(rangeResourceName, "gateways.#", "1"),
+
+					// Check changing resources
+					resource.TestCheckResourceAttr(changingSingleResourceName, "name", buildResourceName(mgr.Seed)+" Changing Single"),
+					resource.TestCheckResourceAttr(changingSingleResourceName, "gateways.#", "1"),
+
+					resource.TestCheckResourceAttr(changingCIDRResourceName, "name", buildResourceName(mgr.Seed)+" Changing CIDR"),
+					resource.TestCheckResourceAttr(changingCIDRResourceName, "gateways.#", "1"),
+
+					resource.TestCheckResourceAttr(changingRangeResourceName, "name", buildResourceName(mgr.Seed)+" Changing Range"),
+					resource.TestCheckResourceAttr(changingRangeResourceName, "gateways.#", "1"),
+
+					// Check mixed notation resource
+					resource.TestCheckResourceAttr(mixedResourceName, "name", buildResourceName(mgr.Seed)+" Mixed"),
+					resource.TestCheckResourceAttr(mixedResourceName, "gateways.#", "3"),
+
+					// Check unchanged resources
+					resource.TestCheckResourceAttr(unchangedSingleResourceName, "name", buildResourceName(mgr.Seed)+" Unchanged Single"),
+					resource.TestCheckResourceAttr(unchangedSingleResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedSingleResourceName, "gateways.0", "192.168.2.1"),
+
+					resource.TestCheckResourceAttr(unchangedCIDRResourceName, "name", buildResourceName(mgr.Seed)+" Unchanged CIDR"),
+					resource.TestCheckResourceAttr(unchangedCIDRResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedCIDRResourceName, "gateways.0", "10.1.0.0/24"),
+
+					resource.TestCheckResourceAttr(unchangedRangeResourceName, "name", buildResourceName(mgr.Seed)+" Unchanged Range"),
+					resource.TestCheckResourceAttr(unchangedRangeResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedRangeResourceName, "gateways.0", "172.17.0.1-172.17.0.10"),
+				),
+			},
+			{
+				Config:             updatedConfig,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true, // We expect changes for the non-equivalent updates
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					// Verify unchanged resources maintain their original values
+					resource.TestCheckResourceAttr(unchangedSingleResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedSingleResourceName, "gateways.0", "192.168.2.1"),
+					resource.TestCheckResourceAttr(unchangedCIDRResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedCIDRResourceName, "gateways.0", "10.1.0.0/24"),
+					resource.TestCheckResourceAttr(unchangedRangeResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(unchangedRangeResourceName, "gateways.0", "172.17.0.1-172.17.0.10"),
+
+					// Verify changing resources have new values
+					resource.TestCheckResourceAttr(changingSingleResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(changingSingleResourceName, "gateways.0", "192.168.1.2"),
+					resource.TestCheckResourceAttr(changingCIDRResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(changingCIDRResourceName, "gateways.0", "10.0.0.0/16"),
+					resource.TestCheckResourceAttr(changingRangeResourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(changingRangeResourceName, "gateways.0", "172.16.0.1-172.16.0.20"),
+				),
+			},
+		},
+	})
+}
+
 func doesNetworkZoneExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
