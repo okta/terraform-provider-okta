@@ -1,0 +1,149 @@
+name: "Bug"
+labels: ["bug"]
+description: "For when something is there, but doesn't work how it should."
+body:
+  - type: textarea
+    id: community-note
+    attributes:
+      label: Community Note
+      description: Please keep this note for the community
+      value: |
+        * Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to the original issue to help the community and maintainers prioritize this request.
+        * Please do not leave _+1_ or _me too_ comments, they generate extra noise for issue followers and do not help prioritize the request.
+        * If you are interested in working on this issue or have submitted a pull request, please leave a comment.
+                Before submitting a bug report, we ask that you first [search existing issues](https://github.com/okta/terraform-provider-okta/issues) and [pull requests](https://github.com/okta/terraform-provider-okta/pulls) to see if someone else may have experienced the same issue or may have already submitted a fix for it. This helps to keep all relevant information in one place, including any potential workarounds.
+
+        ### A Note on Terraform Core Issues
+
+        We also ask that you consider whether your issue may be related to Terraform Core. If you are running into one of the following scenarios, we recommend [opening an issue](https://github.com/hashicorp/terraform/issues/new/choose) in the Terraform Core repository instead:
+
+        * [Configuration Language](https://developer.hashicorp.com/terraform/language) or resource ordering issues
+        * [State](https://developer.hashicorp.com/terraform/language/state) and [State Backend](https://developer.hashicorp.com/terraform/language/backend) issues
+        * [Provisioner](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax) issues
+        * [Registry](https://registry.terraform.io/) issues
+        * Issues that span resources across multiple providers
+    validations:
+      required: true
+  - type: textarea
+    id: terraform-version
+    attributes:
+      label: Terraform Version & Okta Provider Version(s)
+      description: |
+        Please run [`terraform --version`](https://developer.hashicorp.com/terraform/cli/commands/version) to show the Terraform core version and provider version(s) and paste the output here.
+        If you are not running the latest version of Terraform or the provider, please upgrade because your issue may have already been fixed.
+      value: |
+        Terraform vX.X.X
+        on <architecture>
+        + provider registry.terraform.io/providers/okta/okta/ vX.X.X
+
+    validations:
+      required: true
+  - type: textarea
+    id: affected-resources
+    attributes:
+      label: Affected Resource(s)
+      description: Please list the affected resources and data sources. Use `okta_*` if all resources or data sources are affected.
+    validations:
+      required: true
+  - type: dropdown
+    id: can_be_done_in_admin_ui
+    attributes:
+      label: Can this be done in the Admin UI?
+      description: |
+        Indicate to the maintainers and community as to whether this issue can be accomplished in the Okta Admin UI. This helps us understand whether this is a limitation of the provider or a limitation of the Okta API.
+      options:
+        - "No"
+        - "Yes"
+        - "Unsure"
+      multiple: false
+    validations:
+      required: true
+
+  - type: dropdown
+    id: can_be_done_in_api_call
+    attributes:
+      label: Can this be done in the actual API call?
+      description: |
+        Indicate to the maintainers and community as to whether this issue can be accomplished in the Okta API. This helps us understand whether this is a limitation of the provider or a limitation of the Okta API.
+      options:
+        - "No"
+        - "Yes"
+        - "Unsure"
+      multiple: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: customer_info
+    attributes:
+      label: Customer Information
+      description: |
+        Please provide your organization name, and whether you are a paid customer or using the free developer edition.
+      value: |
+        Organization Name: <your-org-name>
+        Paid Customer: <yes/no>
+
+  - type: textarea
+    id: terraform-configuration
+    attributes:
+      label: Terraform Configuration
+      description: |
+        Copy-paste your Terraform configurations here as [markdown code blocks](https://help.github.com/articles/basic-writing-and-formatting-syntax/#quoting-code).
+
+        For large Terraform configs, please use a service like Dropbox and share a link to the ZIP file. For security, you can also encrypt the files using our GPG public key: https://www.hashicorp.com/security
+
+        If reproducing the bug involves modifying the config file (that is, apply a config, change a value, apply the config again, see the bug), then please include both:
+
+        * the version of the config before the change, and
+        * the version of the config after the change.
+      value: |
+        ```tf
+        ```
+  - type: textarea
+    id: debug-output
+    attributes:
+      label: Debug Output
+      description: |
+        Please provide a link to a GitHub Gist containing your complete [debug output](https://www.terraform.io/docs/internals/debugging.html). Please **don't** paste the debug output in the issue; just paste a link to the Gist.
+        Use TF_LOG=DEBUG terraform apply to generate debug logs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Please list the steps required to reproduce the issue.
+      value: 1. `terraform apply`
+    validations:
+      required: true
+
+  - type: textarea
+    id: important-factoids
+    attributes:
+      label: Important Factoids
+      description: |
+        Is there anything atypical about your accounts that we should know? For example: authenticating as a user instead of a service account?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: |
+        Are there any other GitHub issues (open or closed) or pull requests that should be [linked](https://help.github.com/articles/basic-writing-and-formatting-syntax/#referencing-issues-and-pull-requests) here? Vendor documentation?

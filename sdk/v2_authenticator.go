@@ -114,7 +114,7 @@ func (m *AuthenticatorResource) CreateAuthenticator(ctx context.Context, body Au
 	return authenticator, resp, nil
 }
 
-func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string)(*Response, error){
+func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/authenticators/%v/methods/otp", authenticatorId)
 
 	rq := m.client.CloneRequestExecutor()

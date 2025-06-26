@@ -1,5 +1,40 @@
 # Changelog
 
+## 5.0.0 (June 24, 2025)
+
+### IMPROVEMENTS
+
+* Update okta_app_signon_policy_rule resource docs to include `chains` attribute by [#2362](https://github.com/okta/terraform-provider-okta/pull/2362) by [aditya-okta](https://github.com/aditya-okta)
+* Code refactor of the Okta Terraform Provider [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
+* Fix minor errors found while tuning up the test suite [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta)
+* Full acceptance test harness run to gate releases [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [Mike](https://github.com/monde), [aditya-okta](https://github.com/aditya-okta) 
+* New Issue Templates [#2354](https://github.com/okta/terraform-provider-okta/pull/2354) by [aditya-okta](https://github.com/aditya-okta) 
+* Bump goreleaser/goreleaser-action from 6.2.1 to 6.3.0 [#2354](https://github.com/okta/terraform-provider-okta/pull/2364)
+* Bump github.com/hashicorp/go-retryablehttp from 0.7.7 to 0.7.8 [#2365](https://github.com/okta/terraform-provider-okta/pull/2365)
+* Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump github.com/cloudflare/circl from v1.6.0 to v1.6.1 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump gopkg.in/dnaeon/go-vcr from v3.2.0 to v4.0.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump github.com/zclconf/go-cty from v1.16.2 to v1.16.3 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/crypto from v0.38.0 to v0.39.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/mod from v0.24.0 to v0.25.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/mod from v0.39.0 to v0.40.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/text from v0.25.0 to v0.26.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+* Bump golang.org/x/tools from v0.22.0 to v0.33.0 [#2238](https://github.com/okta/terraform-provider-okta/pull/2238) by [aditya-okta](https://github.com/aditya-okta)
+
+## 4.20.0 (June 10, 2025)
+
+### BUG FIXES
+
+* Fix issue of resource `okta_policy_rule_idp_discovery` failing to get created [#2340](https://github.com/okta/terraform-provider-okta/pull/2340) by [aditya-okta](https://github.com/aditya-okta)
+
+### IMPROVEMENTS
+
+* Bump github.com/cenkalti/backoff/v4 from 4.2.1 to 4.3.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-framework  from 1.14.1 to 1.15.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-go  from 0.27.0 to 0.28.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump github.com/hashicorp/terraform-plugin-mux  from 0.19.0 to 0.20.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+* Bump gopkg.in/dnaeon/go-vcr.v3  from v3.1.2 to v3.2.0 [#2340](https://github.com/okta/terraform-provider-okta/pull/2340)
+
 ## 4.19.0 (May 20, 2025)
 
 ### IMPROVEMENTS
@@ -27,6 +62,7 @@
 
 * Add the docs for `custom_profile_attributes` to `okta_user` [#2288](https://github.com/okta/terraform-provider-okta/pull/2288) by [pranav-okta](https://github.com/pranav-okta)
 
+
 ## 4.17.0 (Apr 22, 2025)
 
 ### IMPROVEMENTS
@@ -36,7 +72,7 @@
 * Add support for type **AUTH_METHOD_CHAIN** for resource `okta_app_signon_policy_rule` [#2282](https://github.com/okta/terraform-provider-okta/pull/2282). Thanks [duytiennguyen-okta](https://github.com/duytiennguyen-okta).
 * Add schema validators for app notes `admin_note` and `enduser_note` [#2218](https://github.com/okta/terraform-provider-okta/pull/2218). Thanks [exitcode0](https://github.com/exitcode0).
 * Add `acs_endpoints_indices` to pass custom index along with `acs_endpoints` for resource `okta_app_saml` [#2273](https://github.com/okta/terraform-provider-okta/pull/2273). Thanks [aditya-okta](https://github.com/aditya-okta).
- 
+
 ### OTHERS
 
 * Bump github.com/jarcoal/httpmock from 1.3.1 to 1.4.0 [#2269](https://github.com/okta/terraform-provider-okta/pull/2269)

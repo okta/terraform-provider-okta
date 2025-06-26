@@ -2,7 +2,7 @@ resource "okta_app_basic_auth" "test" {
   label                          = "testAcc_replace_with_uuid"
   url                            = "https://example.com/login.html"
   auth_url                       = "https://example.org/auth.html"
-  logo                           = "../examples/resources/okta_app_basic_auth/terraform_icon.png"
+  logo                           = "../../../examples/resources/okta_app_basic_auth/terraform_icon.png"
   reveal_password                = false
   credentials_scheme             = "SHARED_USERNAME_AND_PASSWORD"
   shared_username                = "sharedusername"
