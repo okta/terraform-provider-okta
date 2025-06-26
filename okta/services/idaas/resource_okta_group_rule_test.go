@@ -12,16 +12,17 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 func doesGroupRuleExist(id string) (bool, error) {
-	client := sdkV2ClientForTest()
+	client := IDaaSClientForTest(&testing.T{}).OktaSDKClientV2()
 
 	var exists bool
 	var lastErr error
 	err := retry.RetryContext(context.Background(), time.Minute, func() *retry.RetryError {
 		_, response, err := client.Group.GetGroupRule(context.Background(), id, nil)
-		existsCheck, checkErr := doesResourceExist(response, err)
+		existsCheck, checkErr := utils.DoesResourceExist(response, err)
 		if checkErr != nil {
 			// If the error is a 404 (not found), that's success for destroy check
 			if response != nil && response.StatusCode == 404 {
@@ -50,17 +51,15 @@ func doesGroupRuleExist(id string) (bool, error) {
 
 func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
-	mgr := newFixtureManager("resources", groupRule, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
 
-	name := buildResourceName(mgr.Seed)
-	name2 := buildResourceName(mgr.Seed)
+	name := acctest.BuildResourceName(mgr.Seed)
+	name2 := acctest.BuildResourceName(mgr.Seed)
 
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
-	name := acctest.BuildResourceName(mgr.Seed)
 	groupUpdate := mgr.GetFixtures("basic_group_update.tf", t)
 	deactivated := mgr.GetFixtures("basic_deactivated.tf", t)
-	name2 := acctest.BuildResourceName(mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -215,21 +214,21 @@ resource "okta_group_rule" "inval" {
 }
 
 func TestAccResourceOktaGroupRule_complex(t *testing.T) {
-	mgr := newFixtureManager("resources", groupRule, t.Name())
-	resourceName := fmt.Sprintf("%s.test", groupRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
 	config := mgr.GetFixtures("complex.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
-		ProviderFactories: testAccProvidersFactories,
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "expression_value",
 						"(user.firstName == \"John\" AND user.lastName == \"Doe\") OR user.email == \"john@example.com\""),
 				),
@@ -239,20 +238,20 @@ func TestAccResourceOktaGroupRule_complex(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupRule_directoryFunctions(t *testing.T) {
-	mgr := newFixtureManager("resources", groupRule, t.Name())
-	resourceName := fmt.Sprintf("%s.test", groupRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
 	config := mgr.GetFixtures("directory_functions.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
-		ProviderFactories: testAccProvidersFactories,
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "expression_value",
 						"hasDirectoryUser() AND findDirectoryUser().managerUpn == \"manager@example.com\""),
 				),
@@ -262,15 +261,15 @@ func TestAccResourceOktaGroupRule_directoryFunctions(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupRule_validConditions(t *testing.T) {
-	mgr := newFixtureManager("resources", groupRule, t.Name())
-	// resourceName := fmt.Sprintf("%s.valid_expression_examples", groupRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
+	// resourceName := fmt.Sprintf("%s.valid_expression_examples", resources.OktaIDaaSGroupRule)
 	validConfig := mgr.GetFixtures("expression_examples_valid.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
-		ProviderFactories: testAccProvidersFactories,
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: validConfig,
@@ -283,19 +282,19 @@ func TestAccResourceOktaGroupRule_validConditions(t *testing.T) {
 // This is difficult to do with a Okta dev instance due to the lower rate limits
 //
 // func TestAccResourceOktaGroupRule_423response(t *testing.T) {
-// 	mgr := newFixtureManager("resources", groupRule, t.Name())
-// 	// resourceName := fmt.Sprintf("%s.valid_expression_examples", groupRule)
+// 	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
+// 	// resourceName := fmt.Sprintf("%s.valid_expression_examples", resources.OktaIDaaSGroupRule)
 
 // 	// configuration containing many valid rules
 // 	testStep1 := mgr.GetFixtures("test_423response_step1.tf", t)
 // 	testStep2 := mgr.GetFixtures("test_423response_step2.tf", t)
 // 	testStep3 := mgr.GetFixtures("test_423response_step3.tf", t)
 
-// 	oktaResourceTest(t, resource.TestCase{
-// 		PreCheck:          testAccPreCheck(t),
-// 		ErrorCheck:        testAccErrorChecks(t),
-// 		CheckDestroy:      nil,
-// 		ProviderFactories: testAccProvidersFactories,
+// 	acctest.OktaResourceTest(t, resource.TestCase{
+// 		PreCheck:                 acctest.AccPreCheck(t),
+// 		ErrorCheck:               testAccErrorChecks(t),
+// 		CheckDestroy:             nil,
+// 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 // 		Steps: []resource.TestStep{
 // 			{Config: testStep1},
 // 			{Config: testStep2},
@@ -305,16 +304,16 @@ func TestAccResourceOktaGroupRule_validConditions(t *testing.T) {
 // }
 
 func TestAccResourceOktaGroupRule_invalidSyntax(t *testing.T) {
-	mgr := newFixtureManager("resources", groupRule, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
 	config := mgr.GetFixtures("invalid_syntax.tf", t)
 	operatorConfig := mgr.GetFixtures("invalid_syntax_operator.tf", t)
 	trailingConfig := mgr.GetFixtures("invalid_syntax_trailing.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      checkResourceDestroy(groupRule, doesGroupRuleExist),
-		ProviderFactories: testAccProvidersFactories,
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config:      config,
@@ -333,21 +332,21 @@ func TestAccResourceOktaGroupRule_invalidSyntax(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupRule_stringFunction(t *testing.T) {
-	mgr := newFixtureManager("resources", groupRule, t.Name())
-	resourceName := fmt.Sprintf("%s.test", groupRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupRule, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
 	config := mgr.GetFixtures("string_function.tf", t)
 
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:          testAccPreCheck(t),
-		ErrorCheck:        testAccErrorChecks(t),
-		CheckDestroy:      nil,
-		ProviderFactories: testAccProvidersFactories,
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", buildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "expression_value",
 						"String.stringContains(user.email, \"@example.com\")"),
 				),
