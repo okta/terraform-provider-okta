@@ -18,30 +18,6 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 
-	TestAccResourceSetBasic := `
-	variable "hostname" { type = string }
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_with_uuid"
-		description = "testing, testing"
-		resources = [
-			"https://${var.hostname}/api/v1/users",
-			"https://${var.hostname}/api/v1/apps",
-			"https://${var.hostname}/api/v1/groups"
-		]
-	}
-	`
-	TestAccResourceSetUpdated := `
-	variable "hostname" { type = string }
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_with_uuid updated"
-		description = "testing, testing updated"
-		resources = [
-			"https://${var.hostname}/api/v1/users",
-			"https://${var.hostname}/api/v1/apps",
-		]
-	}
-	`
-
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
@@ -50,7 +26,7 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
-					Config: mgr.ConfigReplace(TestAccResourceSetBasic),
+					Config: mgr.GetFixtures("test_basic.tf", t),
 					Check: resource.ComposeTestCheckFunc(
 						resource.TestCheckResourceAttr(stateAddress, "label", acctest.BuildResourceName(mgr.Seed)),
 						resource.TestCheckResourceAttr(stateAddress, "description", "testing, testing"),
@@ -58,7 +34,7 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 					),
 				},
 				{
-					Config: mgr.ConfigReplace(TestAccResourceSetUpdated),
+					Config: mgr.GetFixtures("test_basic_updated.tf", t),
 					Check: resource.ComposeTestCheckFunc(
 						resource.TestCheckResourceAttr(stateAddress, "label", fmt.Sprintf("%s updated", acctest.BuildResourceName(mgr.Seed))),
 						resource.TestCheckResourceAttr(stateAddress, "description", "testing, testing updated"),
@@ -83,19 +59,6 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 
-	step1Config := `
-	variable "hostname" { type = string }
-	resource "okta_group" "test" {
-		count = 101
-		name = "testAcc_${count.index}"
-	}
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_with_uuid"
-		description = "testAcc_replace_with_uuid"
-		resources = [ for g in okta_group.test[*] : "https://${var.hostname}/api/v1/groups/${g.id}" ]
-	}
-	`
-
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
@@ -104,7 +67,7 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSResourceSet, doesResourceSetExist),
 			Steps: []resource.TestStep{
 				{
-					Config: mgr.ConfigReplace(step1Config),
+					Config: mgr.GetFixtures("test_pagination.tf", t),
 					Check: resource.ComposeTestCheckFunc(
 						resource.TestCheckResourceAttr(stateAddress, "resources.#", "101"),
 					),
@@ -117,31 +80,6 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 
-	step1Config := `
-	variable "hostname" { type = string }
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_with_uuid"
-		description = "testing, testing"
-		resources = [
-			"https://${var.hostname}/api/v1/users",
-			"https://${var.hostname}/api/v1/groups",
-		]
-	}
-  	`
-
-	step2Config := `
-	variable "hostname" { type = string }
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_with_uuid"
-		description = "testing, testing"
-		resources = [
-			"https://${var.hostname}/api/v1/users",
-			"https://${var.hostname}/api/v1/groups",
-			"https://${var.hostname}/api/v1/apps",
-		]
-	}
-	`
-
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -149,7 +87,7 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(step1Config),
+				Config: mgr.GetFixtures("test_drift_detection.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(stateAddress, "resources.#", "2"),
 					resource.TestCheckResourceAttr(stateAddress, "resources.0", fmt.Sprintf("https://%s/api/v1/groups", os.Getenv("TF_VAR_hostname"))),
@@ -157,7 +95,7 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(step1Config),
+				Config: mgr.GetFixtures("test_drift_detection.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(stateAddress, "resources.#", "2"),
 					resource.TestCheckResourceAttr(stateAddress, "resources.0", fmt.Sprintf("https://%s/api/v1/groups", os.Getenv("TF_VAR_hostname"))),
@@ -171,7 +109,7 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 			},
 			{
-				Config: mgr.ConfigReplace(step2Config),
+				Config: mgr.GetFixtures("test_drift_detection_updated.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(stateAddress, "resources.#", "3"),
 					resource.TestCheckResourceAttr(stateAddress, "resources.0", fmt.Sprintf("https://%s/api/v1/apps", os.Getenv("TF_VAR_hostname"))),
@@ -180,7 +118,7 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(step1Config),
+				Config: mgr.GetFixtures("test_drift_detection.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(stateAddress, "resources.#", "2"),
 					resource.TestCheckResourceAttr(stateAddress, "resources.0", fmt.Sprintf("https://%s/api/v1/groups", os.Getenv("TF_VAR_hostname"))),
@@ -195,25 +133,14 @@ func TestAccResourceOktaResourceSet_Issue_1991_orn_handling(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
 
-	step1Config := `
-	variable "id" { type = string }
-	resource "okta_resource_set" "test" {
-		label       = "testAcc_replace_1991"
-		description = "testing, testing"
-		resources_orn = [
-			"orn:okta:directory:${var.id}:users",
-			"orn:okta:directory:${var.id}:groups"
-		]
-	}`
-
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:              testAccErrorChecks(t),
-		CheckDestroy:            nil,
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(step1Config),
+				Config: mgr.GetFixtures("test_orn_handling.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(stateAddress, "resources_orn.#", "2"),
 					resource.TestCheckResourceAttr(stateAddress, "resources_orn.0", fmt.Sprintf("orn:okta:directory:%s:groups", os.Getenv("TF_VAR_orgID"))),

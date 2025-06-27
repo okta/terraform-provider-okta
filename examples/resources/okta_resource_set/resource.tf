@@ -1,44 +1,17 @@
-locals {
-  org_url = "https://mycompany.okta.com"
-}
-
-resource "okta_resource_set" "test" {
-  label       = "UsersAppsAndGroups"
-  description = "All the users, app and groups"
-  resources = [
-    format("%s/api/v1/users", local.org_url),
-    format("%s/api/v1/apps", local.org_url),
-    format("%s/api/v1/groups", local.org_url)
-  ]
-}
-
-data "okta_org_metadata" "_" {}
-locals {
-  org_url = try(
-    data.okta_org_metadata._.alternate,
-    data.okta_org_metadata._.organization
-  )
-}
+# Create a resource set to manage collections of Okta resources
 resource "okta_resource_set" "example" {
-  label       = "UsersAppsAndGroups"
-  description = "All the users, app and groups"
+  label       = "My Resource Set"
+  description = "Resource set for managing API endpoints"
+  
+  # Use URL-based resources
   resources = [
-    "${local.org_url}/api/v1/users",
-    "${local.org_url}/api/v1/apps",
-    "${local.org_url}/api/v1/groups"
+    "https://your-domain.okta.com/api/v1/users",
+    "https://your-domain.okta.com/api/v1/groups"
   ]
-}
-
-### To Provide permissions to specific Groups
-
-locals {
-  org_url = "https://mycompany.okta.com"
-}
-resource "okta_resource_set" "test" {
-  label       = "Specific Groups"
-  description = "Only Specific Group"
-  resources = [
-    format("%s/api/v1/groups/groupid1", local.org_url),
-    format("%s/api/v1/groups/groupid2", local.org_url)
-  ]
+  
+  # Alternatively, use ORN-based resources
+  # resources_orn = [
+  #   "orn:okta:directory:123:users",
+  #   "orn:okta:directory:123:groups"
+  # ]
 }
