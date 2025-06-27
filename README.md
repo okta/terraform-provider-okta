@@ -132,3 +132,4 @@ Issues on GitHub are intended to be related to the bugs or feature requests with
 See [Plugin SDK Community](https://www.terraform.io/community)
 and [Discuss forum](https://discuss.hashicorp.com/c/terraform-providers/31/none) for a list of community resources to
 ask questions about Terraform.
+
