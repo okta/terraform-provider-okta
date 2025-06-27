@@ -108,7 +108,7 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 	if !d.HasChange("resources") && !d.HasChange("resources_orn") {
-		return nil
+		return resourceResourceSetRead(ctx, d, meta)
 	}
 
 	if d.HasChange("resources") {
@@ -117,13 +117,19 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		newSet := newResources.(*schema.Set)
 		resourcesToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
 		resourcesToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
-		err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
-		if err != nil {
-			return diag.FromErr(err)
+		
+		if len(resourcesToAdd) > 0 {
+			err := addResourcesToResourceSet(ctx, client, d.Id(), resourcesToAdd)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
-		err = removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
-		if err != nil {
-			return diag.FromErr(err)
+		
+		if len(resourcesToRemove) > 0 {
+			err := removeResourcesFromResourceSet(ctx, client, d.Id(), resourcesToRemove)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	}
 
@@ -134,16 +140,22 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		ornResourcesToAdd := utils.ConvertInterfaceArrToStringArr(newSetOrn.Difference(oldSetOrn).List())
 		ornResourcesToRemove := utils.ConvertInterfaceArrToStringArr(oldSetOrn.Difference(newSetOrn).List())
 
-		err := addResourcesToResourceSet(ctx, client, d.Id(), ornResourcesToAdd)
-		if err != nil {
-			return diag.FromErr(err)
+		if len(ornResourcesToAdd) > 0 {
+			err := addResourcesToResourceSet(ctx, client, d.Id(), ornResourcesToAdd)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
-		err = removeResourcesFromResourceSet(ctx, client, d.Id(), ornResourcesToRemove)
-		if err != nil {
-			return diag.FromErr(err)
+		
+		if len(ornResourcesToRemove) > 0 {
+			err := removeResourcesFromResourceSet(ctx, client, d.Id(), ornResourcesToRemove)
+			if err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	}
-	return nil
+
+	return resourceResourceSetRead(ctx, d, meta)
 }
 
 func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -181,7 +193,9 @@ func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *sch
 	var arr []interface{}
 	for _, res := range resources {
 		if res.Links != nil {
-			arr = append(arr, encodeResourceSetResourceLink(utils.LinksValue(res.Links, "self", "href")))
+			if href := utils.LinksValue(res.Links, "self", "href"); href != "" {
+				arr = append(arr, encodeResourceSetResourceLink(href))
+			}
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
@@ -191,8 +205,7 @@ func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schem
 	var arr []interface{}
 	for _, res := range resources {
 		if res.Orn != "" {
-			urlStr := res.Orn
-			arr = append(arr, urlStr)
+			arr = append(arr, res.Orn)
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
@@ -205,29 +218,27 @@ func listResourceSetResources(ctx context.Context, client *sdk.APISupplement, id
 		return nil, err
 	}
 	resResources = append(resResources, resources.Resources...)
+	
+	// Handle pagination
 	for {
-		// NOTE: The resources endpoint /api/v1/iam/resource-sets/%s/resources
-		// is not returning pagination in the headers. Make use of the _links
-		// object in the response body. Convert implemenation style back to
-		// resp.HasNextPage() if/when that endpoint starts to have pagination
-		// information in its headers and/or when this code is supported by
-		// okta-sdk-golang instead of the local SDK.
-		if nextURL := utils.LinksValue(resources.Links, "next", "href"); nextURL != "" {
-			u, err := url.Parse(nextURL)
-			if err != nil {
-				break
-			}
-			// "links": { "next": { "href": "https://host/api/v1/iam/resource-sets/{id}/resources?after={afterId}&limit=100" } }
-			after := u.Query().Get("after")
-			resources, _, err = client.ListResourceSetResources(ctx, id, &query.Params{After: after, Limit: utils.DefaultPaginationLimit})
-			if err != nil {
-				return nil, err
-			}
-			resResources = append(resResources, resources.Resources...)
-		} else {
+		nextURL := utils.LinksValue(resources.Links, "next", "href")
+		if nextURL == "" {
 			break
 		}
+		
+		u, err := url.Parse(nextURL)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse next URL: %v", err)
+		}
+		
+		after := u.Query().Get("after")
+		resources, _, err = client.ListResourceSetResources(ctx, id, &query.Params{After: after, Limit: utils.DefaultPaginationLimit})
+		if err != nil {
+			return nil, err
+		}
+		resResources = append(resResources, resources.Resources...)
 	}
+	
 	return resResources, nil
 }
 
@@ -247,10 +258,15 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 }
 
 func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISupplement, resourceSetID string, urls []string) error {
+	if len(urls) == 0 {
+		return nil
+	}
+
 	resources, err := listResourceSetResources(ctx, client, resourceSetID)
 	if err != nil {
 		return fmt.Errorf("failed to get list of resource set resources: %v", err)
 	}
+
 	var escapedUrls []string
 	for _, u := range urls {
 		u1, err := escapeResourceSetResourceLink(u)
@@ -261,19 +277,31 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	}
 
 	for _, res := range resources {
-		orn := res.Orn
-		toDelete := false
-
-		if res.Links != nil {
-			url := utils.LinksValue(res.Links, "self", "href")
-			toDelete = utils.Contains(escapedUrls, url)
+		if res == nil {
+			continue
 		}
 
-		toDelete = toDelete || utils.Contains(escapedUrls, orn)
+		toDelete := false
+
+		// Check URL match
+		if res.Links != nil {
+			if href := utils.LinksValue(res.Links, "self", "href"); href != "" {
+				toDelete = utils.Contains(escapedUrls, href)
+			}
+		}
+
+		// Check ORN match
+		if !toDelete && res.Orn != "" {
+			toDelete = utils.Contains(escapedUrls, res.Orn)
+		}
 
 		if toDelete {
-			_, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
+			resp, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
 			if err != nil {
+				// If we get a 404, the resource is already gone - continue
+				if utils.SuppressErrorOn404(resp, err) == nil {
+					continue
+				}
 				return fmt.Errorf("failed to remove %s resource from the resource set: %v", res.Id, err)
 			}
 		}
@@ -305,11 +333,8 @@ func escapeResourceSetResourceLink(link string) (string, error) {
 
 	// Escape query parameters using url.QueryEscape for each query parameter
 	q := u.Query()
-
-	// Escape each value in the query parameters
 	for key, values := range q {
 		for i, v := range values {
-			// URL escape the value
 			q[key][i] = url.QueryEscape(v)
 		}
 	}
