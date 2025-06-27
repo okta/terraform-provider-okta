@@ -43,6 +43,7 @@ func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_algorithm", "HS256"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
+					resource.TestCheckResourceAttr(resourceName, "filter", "abc"),
 				),
 			},
 			{
@@ -64,6 +65,7 @@ func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_algorithm", "HS256"),
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
+					resource.TestCheckResourceAttr(resourceName, "filter", "xyz"),
 				),
 			},
 		},
