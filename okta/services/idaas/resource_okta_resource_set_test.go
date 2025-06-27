@@ -49,14 +49,11 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 
 // TestAccResourceOktaResourceSet_Issue1097_Pagination tests the fix for
 // https://github.com/okta/terraform-provider-okta/issues/1097
-// where pagination would fail with more than 100 resources.
+// where pagination would fail with more than 200 resources.
 //
-// Originally tested with 201 resources, but reduced to 101 as we only need
-// to verify pagination works beyond the first page (100 items). This reduces
-// test execution time while still validating the pagination functionality.
-//
-// The issue manifested as:
-// - Resources beyond the first 100 would be lost
+// Uses 201 resources to specifically test handling across Okta's 200-item
+// page boundary. The issue manifested as:
+// - Resources beyond the first 200 would be lost
 // - State refresh would fail to capture all resources
 // - Plan would show phantom changes
 func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
@@ -77,7 +74,7 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 				{
 					Config: mgr.GetFixtures("test_pagination.tf", t),
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(stateAddress, "resources.#", "101"),
+						resource.TestCheckResourceAttr(stateAddress, "resources.#", "201"),
 					),
 				},
 			},

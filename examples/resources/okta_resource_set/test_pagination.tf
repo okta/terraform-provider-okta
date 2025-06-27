@@ -1,7 +1,7 @@
 variable "hostname" { type = string }
 
 resource "okta_group" "test" {
-  count = 101
+  count = 201  # Test pagination across 200-item boundary
   name  = "testAcc_${count.index}"
 }
 
