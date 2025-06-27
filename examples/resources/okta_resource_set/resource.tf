@@ -1,17 +1,31 @@
-# Create a resource set to manage collections of Okta resources
+# Example 1: Basic resource set with direct URLs
 resource "okta_resource_set" "example" {
-  label       = "My Resource Set"
+  label       = "Basic Resource Set"
   description = "Resource set for managing API endpoints"
-  
-  # Use URL-based resources
   resources = [
     "https://your-domain.okta.com/api/v1/users",
     "https://your-domain.okta.com/api/v1/groups"
   ]
-  
-  # Alternatively, use ORN-based resources
-  # resources_orn = [
-  #   "orn:okta:directory:123:users",
-  #   "orn:okta:directory:123:groups"
-  # ]
+}
+
+# Example 2: Using org metadata to get the correct domain
+data "okta_org_metadata" "org" {}
+
+resource "okta_resource_set" "dynamic" {
+  label       = "Dynamic Resource Set"
+  description = "Resource set using org metadata"
+  resources = [
+    "${data.okta_org_metadata.org.organization}/api/v1/users",
+    "${data.okta_org_metadata.org.organization}/api/v1/groups"
+  ]
+}
+
+# Example 3: Specific group access using ORN format
+resource "okta_resource_set" "specific_groups" {
+  label       = "Specific Groups"
+  description = "Access to specific groups only"
+  resources_orn = [
+    "orn:okta:directory:${data.okta_org_metadata.org.id}:group:groupid1",
+    "orn:okta:directory:${data.okta_org_metadata.org.id}:group:groupid2"
+  ]
 }

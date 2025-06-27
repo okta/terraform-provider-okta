@@ -14,6 +14,8 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// TestAccResourceOktaResourceSet_crud tests basic CRUD operations for the resource set.
+// This ensures create, read, update, and delete operations work as expected.
 func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
@@ -45,13 +47,19 @@ func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 		})
 }
 
+// TestAccResourceOktaResourceSet_Issue1097_Pagination tests the fix for
+// https://github.com/okta/terraform-provider-okta/issues/1097
+// where pagination would fail with more than 100 resources.
+//
+// Originally tested with 201 resources, but reduced to 101 as we only need
+// to verify pagination works beyond the first page (100 items). This reduces
+// test execution time while still validating the pagination functionality.
+//
+// The issue manifested as:
+// - Resources beyond the first 100 would be lost
+// - State refresh would fail to capture all resources
+// - Plan would show phantom changes
 func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
-	// TestAccResourceOktaResourceSet_Issue1097_Pagination deals with resolving a
-	// pagination bug with more than 100 resources in the set
-	// https://github.com/okta/terraform-provider-okta/issues/1097
-	//
-	// OKTA_ALLOW_LONG_RUNNING_ACC_TEST=true TF_ACC=1 \
-	// go test -tags unit -mod=readonly -test.v -run ^TestAccResourceOktaResourceSet_Issue1097_Pagination$ ./okta 2>&1
 	if !allowLongRunningACCTest(t) {
 		t.SkipNow()
 	}
@@ -76,6 +84,15 @@ func TestAccResourceOktaResourceSet_Issue1097_Pagination(t *testing.T) {
 		})
 }
 
+// TestAccResourceOktaResourceSet_Issue_1735_drift_detection verifies that
+// the resource properly detects and handles changes made outside of Terraform.
+// https://github.com/okta/terraform-provider-okta/issues/1735
+//
+// This test simulates a scenario where:
+// 1. Resources are created via Terraform
+// 2. Additional resources are added outside of Terraform ("click ops")
+// 3. Terraform detects these changes and handles them appropriately
+// 4. Changes can be reconciled back to the desired state
 func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
@@ -101,12 +118,12 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 					resource.TestCheckResourceAttr(stateAddress, "resources.0", fmt.Sprintf("https://%s/api/v1/groups", os.Getenv("TF_VAR_hostname"))),
 					resource.TestCheckResourceAttr(stateAddress, "resources.1", fmt.Sprintf("https://%s/api/v1/users", os.Getenv("TF_VAR_hostname"))),
 					// This mimics adding the apps resource to the resource set
-					// outside of Terraform.  In this case doing so with a
-					// direct API call via the test harness which is equivalent
-					// to "Click Ops"
+					// outside of Terraform (e.g., via UI or API directly).
+					// This simulates "click ops" or manual changes that Terraform
+					// needs to detect and handle.
 					clickOpsAddResourceToResourceSet(stateAddress, fmt.Sprintf("https://%s/api/v1/apps", os.Getenv("TF_VAR_hostname"))),
 				),
-				ExpectNonEmptyPlan: true,
+				ExpectNonEmptyPlan: true, // Plan will show difference due to external modification
 			},
 			{
 				Config: mgr.GetFixtures("test_drift_detection_updated.tf", t),
@@ -129,6 +146,10 @@ func TestAccResourceOktaResourceSet_Issue_1735_drift_detection(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaResourceSet_Issue_1991_orn_handling verifies support for
+// Okta Resource Names (ORNs) in resource sets. This ensures compatibility with
+// Okta's newer ORN-based resource addressing scheme.
+// https://github.com/okta/terraform-provider-okta/issues/1991
 func TestAccResourceOktaResourceSet_Issue_1991_orn_handling(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	stateAddress := fmt.Sprintf("%s.test", resources.OktaIDaaSResourceSet)
@@ -151,6 +172,9 @@ func TestAccResourceOktaResourceSet_Issue_1991_orn_handling(t *testing.T) {
 	})
 }
 
+// clickOpsAddResourceToResourceSet simulates adding a resource to a resource set
+// outside of Terraform (e.g., through the Okta UI or direct API calls).
+// This helper is used to test drift detection and state reconciliation.
 func clickOpsAddResourceToResourceSet(resourceSet, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource set not found: %s", resources.OktaIDaaSResourceSet)
@@ -171,6 +195,8 @@ func clickOpsAddResourceToResourceSet(resourceSet, resourceName string) resource
 	}
 }
 
+// doesResourceSetExist verifies whether a resource set exists in Okta.
+// Used by the test framework to validate resource creation/deletion.
 func doesResourceSetExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetResourceSet(context.Background(), id)
