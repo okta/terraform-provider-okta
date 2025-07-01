@@ -235,6 +235,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSGroup:                    dataSourceGroup(),
 		resources.OktaIDaaSGroupEveryone:            dataSourceEveryoneGroup(),
 		resources.OktaIDaaSGroupRule:                dataSourceGroupRule(),
+		resources.OktaIDaaSGroupRules:               dataSourceGroupRules(),
 		resources.OktaIDaaSGroups:                   dataSourceGroups(),
 		resources.OktaIDaaSIdpMetadataSaml:          dataSourceIdpMetadataSaml(),
 		resources.OktaIDaaSIdpOidc:                  dataSourceIdpOidc(),
