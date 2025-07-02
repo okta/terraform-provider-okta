@@ -401,7 +401,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
-				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
+				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application. We will be stop attaching authentication_policy for applications of type SERVICE in the upcoming release`,
 			},
 			"jwks_uri": {
 				Type:        schema.TypeString,
