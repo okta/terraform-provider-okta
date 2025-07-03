@@ -333,6 +333,32 @@ func DoesResourceExistV3(response *okta.APIResponse, err error) (bool, error) {
 	return true, nil
 }
 
+func DoesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, ResponseErr_V5(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, ResponseErr_V5(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func SuppressErrorOn404(resp *sdk.Response, err error) error {
