@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+
 	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
