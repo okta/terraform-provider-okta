@@ -147,6 +147,12 @@ other arguments that changed will be applied.`,
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: BuildAppSchema(map[string]*schema.Schema{
+			"skip_groups_claim": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip reading groups claim configuration during read operations, this can improve performance for large numbers of applications but will make the groups_claim attribute unavailable.",
+			},
 			"type": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -579,14 +585,17 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	c := meta.(*config.Config)
-	if c.IsOAuth20Auth() {
-		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
-	} else {
-		gc, err := flattenGroupsClaim(ctx, d, meta)
-		if err != nil {
-			return diag.FromErr(err)
+	skipGroupsClaim := d.Get("skip_groups_claim").(bool)
+	if !skipGroupsClaim {
+		if c.IsOAuth20Auth() {
+			logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+		} else {
+			gc, err := flattenGroupsClaim(ctx, d, meta)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+			_ = d.Set("groups_claim", gc)
 		}
-		_ = d.Set("groups_claim", gc)
 	}
 
 	return setOAuthClientSettings(d, app.Settings.OauthClient)
