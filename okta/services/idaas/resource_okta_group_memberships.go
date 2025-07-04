@@ -300,7 +300,7 @@ func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupI
 	return true, &newUsers, nil
 }
 
-func checkIfGroupHasUsers(ctx context.Context, client *sdk.Client, groupId string, users []string) (bool, error) {
+func checkIfGroupHasUsers(ctx context.Context, client *sdk.Client, groupId string, _ []string) (bool, error) {
 	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
