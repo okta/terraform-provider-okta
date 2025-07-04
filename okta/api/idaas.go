@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"errors"
+	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -38,6 +39,10 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV3() *okta.APIClient
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
+
+	OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient
+	OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient
+	OktaIGSDKClientV2() *sdk.Client
 }
 
 type OktaIDaaSConfig struct {
@@ -64,6 +69,18 @@ type iDaaSAPIClient struct {
 	oktaSDKClientV3         *okta.APIClient
 	oktaSDKClientV2         *sdk.Client
 	oktaSDKSupplementClient *sdk.APISupplement
+}
+
+func (c *iDaaSAPIClient) OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient {
+	return c.OktaIGSDKClientV3()
+}
+
+func (c *iDaaSAPIClient) OktaIGSDKClientV2() *sdk.Client {
+	return c.OktaIGSDKClientV2()
+}
+
+func (c *iDaaSAPIClient) OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient {
+	return c.OktaIGSDKClientV5()
 }
 
 func (c *iDaaSAPIClient) OktaSDKClientV5() *v5okta.APIClient {
@@ -116,6 +133,15 @@ func NewOktaIDaaSAPIClient(c *OktaIDaaSConfig) (client OktaIDaaSClient, err erro
 }
 
 func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
+	err, config, apiClient, err2 := GetClientConfig(c, err)
+	if err2 != nil {
+		return apiClient, err2
+	}
+	client = v5okta.NewAPIClient(config)
+	return client, nil
+}
+
+func GetClientConfig(c *OktaIDaaSConfig, err error) (error, *v5okta.Configuration, *v5okta.APIClient, error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
@@ -153,7 +179,7 @@ func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
 		c.Logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.MaxAPICapacity)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.Logger)
 	}
@@ -167,7 +193,7 @@ func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
 	}
 	_, err = url.Parse(orgUrl)
 	if err != nil {
-		return nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+		return nil, nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
 	setters := []v5okta.ConfigSetter{
@@ -183,7 +209,7 @@ func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
 	if c.HttpProxy != "" {
 		_url, err := url.Parse(c.HttpProxy)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		host := v5okta.WithProxyHost(_url.Hostname())
 		setters = append(setters, host)
@@ -194,7 +220,7 @@ func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
 		}
 		iPort, err := strconv.Atoi(sPort)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		port := v5okta.WithProxyPort(int32(iPort))
 		setters = append(setters, port)
@@ -226,10 +252,9 @@ func oktaV5SDKClient(c *OktaIDaaSConfig) (client *v5okta.APIClient, err error) {
 
 	config, err := v5okta.NewConfiguration(setters...)
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
-	client = v5okta.NewAPIClient(config)
-	return client, nil
+	return err, config, nil, nil
 }
 
 func oktaV3SDKClient(c *OktaIDaaSConfig) (client *okta.APIClient, err error) {

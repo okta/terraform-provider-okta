@@ -220,5 +220,11 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	return idaas.FWProviderResources()
+	var resources []func() resource.Resource
+
+	// Append resources from various modules
+	resources = append(resources, idaas.FWProviderResources()...)
+	resources = append(resources, governance.FWProviderResources()...)
+
+	return resources
 }

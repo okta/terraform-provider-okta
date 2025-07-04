@@ -59,7 +59,7 @@ func main() {
 	}
 
 	err = tf5server.Serve(
-		"okta/okta",
+		"okta/unifiedOkta",
 		muxServer.ProviderServer,
 		serveOpts...,
 	)
