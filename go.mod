@@ -4,6 +4,8 @@ go 1.23.7
 
 replace example.com/aditya-okta/okta-ig-sdk-golang => /Users/aditya.anand/GolandProjects/okta-ig-sdk-golang
 
+replace example.com/aditya-okta/okta-ig-sdk-golang => /Users/aditya.anand/GolandProjects/okta-ig-sdk-golang
+
 require (
 	example.com/aditya-okta/okta-ig-sdk-golang v0.0.0-UNPUBLISHED
 	github.com/BurntSushi/toml v1.5.0

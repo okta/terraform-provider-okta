@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -10,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-hclog"
@@ -70,6 +71,18 @@ type iDaaSAPIClient struct {
 	oktaSDKSupplementClient *sdk.APISupplement
 }
 
+func (c *iDaaSAPIClient) OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient {
+	return c.OktaIGSDKClientV3()
+}
+
+func (c *iDaaSAPIClient) OktaIGSDKClientV2() *sdk.Client {
+	return c.OktaIGSDKClientV2()
+}
+
+func (c *iDaaSAPIClient) OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient {
+	return c.OktaIGSDKClientV5()
+}
+
 func (c *iDaaSAPIClient) OktaSDKClientV5() *v5okta.APIClient {
 	return c.oktaSDKClientV5
 }
@@ -124,8 +137,7 @@ func oktaV5SDKClient(c *OktaAPIConfig) (client *v5okta.APIClient, err error) {
 	if err2 != nil {
 		return apiClient, err2
 	}
-	client = v5okta.NewAPIClient(config)
-	return client, nil
+	return err, config, nil, nil
 }
 
 func oktaV3SDKClient(c *OktaAPIConfig) (client *okta.APIClient, err error) {
