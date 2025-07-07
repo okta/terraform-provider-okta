@@ -14,6 +14,9 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// TODO: V6 BREAKING CHANGE - These tests will need to be updated when okta_resource_set is split
+// into okta_resource_set and okta_resource_set_resource in V6.
+// We will need to ensure that the tests are updated to test both okta_resource_set and okta_resource_set_resources
 func TestAccResourceOktaResourceSet_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSResourceSet, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
