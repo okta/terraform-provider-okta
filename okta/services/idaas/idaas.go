@@ -97,6 +97,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
 		newFeaturesResource,
+		newEventHookResource,
 	}
 }
 
@@ -156,7 +157,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSEmailSender:                   resourceEmailSender(),
 		resources.OktaIDaaSEmailSenderVerification:       resourceEmailSenderVerification(),
 		resources.OktaIDaaSEmailSMTPServer:               resourceEmailSMTP(),
-		resources.OktaIDaaSEventHook:                     resourceEventHook(),
 		resources.OktaIDaaSEventHookVerification:         resourceEventHookVerification(),
 		resources.OktaIDaaSFactor:                        resourceFactor(),
 		resources.OktaIDaaSFactorTotp:                    resourceFactorTOTP(),
