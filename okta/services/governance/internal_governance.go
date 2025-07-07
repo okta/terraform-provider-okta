@@ -3,10 +3,11 @@ package governance
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/sdk"
-	"log"
 
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/go-cty/cty"

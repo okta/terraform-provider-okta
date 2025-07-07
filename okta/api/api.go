@@ -1,10 +1,16 @@
 package api
 
-<<<<<<< HEAD
 import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
@@ -14,12 +20,6 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/okta/version"
 	"github.com/okta/terraform-provider-okta/sdk"
-	"net/http"
-	"net/url"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuration, *v5okta.APIClient, error) {
@@ -174,9 +174,4 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return false, nil
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
-=======
-type Client struct {
-	OktaIDaaSClient      OktaIDaaSClient
-	OktaGovernanceClient OktaGovernanceClient
->>>>>>> cf4c362a (refactored code for governance client)
 }

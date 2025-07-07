@@ -182,7 +182,7 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	campaign, _, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
+	campaign, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Campaign",
@@ -211,7 +211,7 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	// Read API call logic
-	getCampaignResponse, _, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.String()).Execute()
+	getCampaignResponse, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.String()).Execute()
 	if err != nil {
 		return
 	}
@@ -289,7 +289,7 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Delete API call logic
-	_, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.String()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.String()).Execute()
 	if err != nil {
 		return
 	}
