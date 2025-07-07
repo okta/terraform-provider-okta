@@ -13,6 +13,11 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
+// TODO: V6 BREAKING CHANGE - In V6, this resource will be split into:
+// 1. okta_resource_set - Manages basic resource set metadata (label, description) only
+// 2. okta_resource_set_resource - Manages individual resources with native IDs
+// This change will align with Terraform best practices of one resource per API endpoint
+
 func resourceResourceSet() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceResourceSetCreate,
@@ -42,6 +47,8 @@ The 'resources' field supports the following:
 				Required:    true,
 				Description: "A description of the Resource Set",
 			},
+			// TODO: V6 BREAKING CHANGE - These fields will be moved to okta_resource_set_resource resource
+			// and will use native resource IDs instead of extracted links
 			"resources": {
 				Type:          schema.TypeSet,
 				Optional:      true,
@@ -86,6 +93,9 @@ func resourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	_ = d.Set("label", rs.Label)
 	_ = d.Set("description", rs.Description)
+
+	// TODO: V6 BREAKING CHANGE - This API call and resource processing will be moved to
+	// okta_resource_set_resource resource in V6
 	resources, err := listResourceSetResources(ctx, getAPISupplementFromMetadata(meta), d.Id())
 	if err != nil {
 		return diag.Errorf("failed to get list of resource set resources: %v", err)
@@ -111,6 +121,8 @@ func resourceResourceSetUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
+	// TODO: V6 BREAKING CHANGE - This resource management logic will be moved to
+	// okta_resource_set_resource resource in V6
 	if d.HasChange("resources") {
 		oldResources, newResources := d.GetChange("resources")
 		oldSet := oldResources.(*schema.Set)
@@ -154,6 +166,8 @@ func resourceResourceSetDelete(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be simplified to only handle basic metadata
+// Resource management will be moved to okta_resource_set_resource resource
 func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, error) {
 	rs := &sdk.ResourceSet{
 		Label:       d.Get("label").(string),
@@ -177,6 +191,8 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 	return rs, nil
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
@@ -187,6 +203,8 @@ func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *sch
 	return schema.NewSet(schema.HashString, arr)
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
@@ -198,6 +216,8 @@ func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schem
 	return schema.NewSet(schema.HashString, arr)
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func listResourceSetResources(ctx context.Context, client *sdk.APISupplement, id string) ([]*sdk.ResourceSetResource, error) {
 	var resResources []*sdk.ResourceSetResource
 	resources, _, err := client.ListResourceSetResources(ctx, id, &query.Params{Limit: utils.DefaultPaginationLimit})
@@ -231,6 +251,8 @@ func listResourceSetResources(ctx context.Context, client *sdk.APISupplement, id
 	return resResources, nil
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, resourceSetID string, links []string) error {
 	if len(links) == 0 {
 		return nil
@@ -246,6 +268,8 @@ func addResourcesToResourceSet(ctx context.Context, client *sdk.APISupplement, r
 	return nil
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISupplement, resourceSetID string, urls []string) error {
 	resources, err := listResourceSetResources(ctx, client, resourceSetID)
 	if err != nil {
@@ -281,6 +305,8 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	return nil
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func encodeResourceSetResourceLink(link string) string {
 	parsedBaseUrl, err := url.Parse(link)
 	if err != nil {
@@ -296,6 +322,8 @@ func encodeResourceSetResourceLink(link string) string {
 	return parsedBaseUrl.String()
 }
 
+// TODO: V6 BREAKING CHANGE - This function will be moved to okta_resource_set_resource resource
+// and will use native IDs instead of extracted links
 func escapeResourceSetResourceLink(link string) (string, error) {
 	// Parse the URL first
 	u, err := url.Parse(link)
