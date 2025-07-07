@@ -1,5 +1,6 @@
 package api
 
+<<<<<<< HEAD
 import (
 	"context"
 	"errors"
@@ -173,4 +174,9 @@ func checkRetry(ctx context.Context, resp *http.Response, err error) (bool, erro
 		return false, nil
 	}
 	return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
+=======
+type Client struct {
+	OktaIDaaSClient      OktaIDaaSClient
+	OktaGovernanceClient OktaGovernanceClient
+>>>>>>> cf4c362a (refactored code for governance client)
 }

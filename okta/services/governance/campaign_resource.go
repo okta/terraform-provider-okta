@@ -1,9 +1,12 @@
-package provider
+package governance
 
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,7 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.Resource = &campaignResource{}
+var (
+	_ resource.Resource                = &campaignResource{}
+	_ resource.ResourceWithConfigure   = &campaignResource{}
+	_ resource.ResourceWithImportState = &campaignResource{}
+)
 
 func newCampaignResource() resource.Resource {
 	return &campaignResource{}
@@ -19,6 +26,14 @@ func newCampaignResource() resource.Resource {
 
 type campaignResource struct {
 	*config.Config
+}
+
+func (r *campaignResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+}
+
+func (r *campaignResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(request, response)
 }
 
 type campaignResourceModel struct {
@@ -77,42 +92,38 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"remediation_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"access_approved": schema.StringAttribute{
-							Required:    true,
-							Description: "Specifies the action by default if the reviewer approves access. NO_ACTION indicates there is no remediation action and the user retains access.",
-						},
-						"access_revoked": schema.StringAttribute{
-							Required:    true,
-							Description: "Specifies the action if the reviewer revokes access. NO_ACTION indicates the user retains the same access. DENY indicates the user will have their access revoked as long as they are not assigned to a group through Group Rules.",
-						},
-						"no_response": schema.StringAttribute{
-							Required: true,
-						},
+			"remediation_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"access_approved": schema.StringAttribute{
+						Required:    true,
+						Description: "Specifies the action by default if the reviewer approves access. NO_ACTION indicates there is no remediation action and the user retains access.",
+					},
+					"access_revoked": schema.StringAttribute{
+						Required:    true,
+						Description: "Specifies the action if the reviewer revokes access. NO_ACTION indicates the user retains the same access. DENY indicates the user will have their access revoked as long as they are not assigned to a group through Group Rules.",
+					},
+					"no_response": schema.StringAttribute{
+						Required: true,
 					},
 				},
 				Description: "Specify the action to be taken after a reviewer makes a decision to APPROVE or REVOKE the access, or if the campaign was CLOSED and there was no response from the reviewer.",
 			},
 
-			"resource_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Required: true,
-						},
+			"resource_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Required: true,
 					},
-					Blocks: map[string]schema.Block{
-						"target_resources": schema.ListNestedBlock{
-							NestedObject: schema.NestedBlockObject{
-								Attributes: map[string]schema.Attribute{
-									"resource_id": schema.StringAttribute{
-										Required: true,
-									},
-									"resource_type": schema.StringAttribute{
-										Required: true,
-									},
+				},
+				Blocks: map[string]schema.Block{
+					"target_resources": schema.ListNestedBlock{
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"resource_id": schema.StringAttribute{
+									Required: true,
+								},
+								"resource_type": schema.StringAttribute{
+									Required: true,
 								},
 							},
 						},
@@ -120,43 +131,39 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				},
 			},
 
-			"reviewer_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Required: true,
-						},
-						"reviewer_group_id": schema.StringAttribute{
-							Optional: true,
-						},
-						"reviewer_id": schema.StringAttribute{
-							Optional: true,
-						},
-						"reviewer_scope_expression": schema.StringAttribute{
-							Optional: true,
-						},
-						"fallback_reviewer_id": schema.StringAttribute{
-							Optional: true,
-						},
+			"reviewer_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Required: true,
+					},
+					"reviewer_group_id": schema.StringAttribute{
+						Optional: true,
+					},
+					"reviewer_id": schema.StringAttribute{
+						Optional: true,
+					},
+					"reviewer_scope_expression": schema.StringAttribute{
+						Optional: true,
+					},
+					"fallback_reviewer_id": schema.StringAttribute{
+						Optional: true,
 					},
 				},
 			},
 
-			"schedule_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"start_date": schema.StringAttribute{
-							Required: true,
-						},
-						"duration_in_days": schema.Int32Attribute{
-							Required: true,
-						},
-						"time_zone": schema.StringAttribute{
-							Required: true,
-						},
-						"type": schema.StringAttribute{
-							Required: true,
-						},
+			"schedule_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"start_date": schema.StringAttribute{
+						Required: true,
+					},
+					"duration_in_days": schema.Int32Attribute{
+						Required: true,
+					},
+					"time_zone": schema.StringAttribute{
+						Required: true,
+					},
+					"type": schema.StringAttribute{
+						Required: true,
 					},
 				},
 			},
@@ -175,10 +182,16 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// Create API call logic
-	r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
+	campaign, _, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error creating Campaign",
+			"Could not create Campaign, unexpected error: "+err.Error(),
+		)
+		return
+	}
 	// Example data value setting
-	data.Id = types.StringValue("example-id")
+	data.Id = types.StringValue(campaign.Id)
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -189,15 +202,64 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	// Read API call logic
+	getCampaignResponse, _, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.String()).Execute()
+	if err != nil {
+		return
+	}
+
+	applyCampaignsToState(ctx, getCampaignResponse, &data, resp.Diagnostics)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.CampaignFull, c *campaignResourceModel, diagnostics diag.Diagnostics) {
+
+	c.Id = types.StringValue(resp.Id)
+	c.Name = types.StringValue(resp.Name)
+
+	c.RemediationSettings.AccessApproved = types.StringValue(string(resp.RemediationSettings.AccessApproved))
+	c.RemediationSettings.AccessRevoked = types.StringValue(string(resp.RemediationSettings.AccessRevoked))
+	c.RemediationSettings.NoResponse = types.StringValue(string(resp.RemediationSettings.NoResponse))
+
+	c.ResourceSettings.Type = types.StringValue(string(resp.ResourceSettings.Type))
+	if len(resp.ResourceSettings.TargetResources) > 0 {
+		c.ResourceSettings.TargetResources = []campaignTargetResourceModel{
+			{
+				ResourceId:   types.StringValue(resp.ResourceSettings.TargetResources[0].ResourceId),
+				ResourceType: types.StringValue(string(*resp.ResourceSettings.TargetResources[0].ResourceType)),
+			},
+		}
+	}
+
+	c.ReviewerSettings.Type = types.StringValue(string(resp.ReviewerSettings.Type))
+	if resp.ReviewerSettings.ReviewerGroupId != nil {
+		c.ReviewerSettings.ReviewerGroupId = types.StringValue(*resp.ReviewerSettings.ReviewerGroupId)
+	}
+	if resp.ReviewerSettings.ReviewerId != nil {
+		c.ReviewerSettings.ReviewerId = types.StringValue(*resp.ReviewerSettings.ReviewerId)
+	}
+	if resp.ReviewerSettings.ReviewerScopeExpression != nil {
+		c.ReviewerSettings.ReviewerScopeExpression = types.StringValue(*resp.ReviewerSettings.ReviewerScopeExpression)
+	}
+	if resp.ReviewerSettings.FallBackReviewerId != nil {
+		c.ReviewerSettings.FallbackReviewerId = types.StringValue(*resp.ReviewerSettings.FallBackReviewerId)
+	}
+
+	c.ScheduleSettings.StartDate = types.StringValue(resp.ScheduleSettings.StartDate.Format(time.RFC3339))
+	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.DurationInDays))
+	c.ScheduleSettings.TimeZone = types.StringValue(resp.ScheduleSettings.TimeZone)
+	c.ScheduleSettings.Type = types.StringValue(string(resp.ScheduleSettings.Type))
+
 }
 
 func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -227,53 +289,70 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Delete API call logic
+	_, err := r.OktaIDaaSClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.String()).Execute()
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutable {
+	log.Println("Inside buildCampaign")
 
-	rt := oktaInternalGovernance.RESOURCETYPE_GROUP
-	//reviewerGroupID := d.Get("reviewer_settings.0.reviewer_group_id").(string)
-	reviewerGroupID := d.ReviewerSettings.ReviewerId.String()
-	//reviewerId := d.Get("reviewer_settings.0.reviewer_id").(string)
-	reviewerId := d.ReviewerSettings.ReviewerId.String()
-
-	//reviewerScopeExpression := d.Get("reviewer_settings.0.reviewer_scope_expression").(string)
-	reviewerScopeExpression := d.ReviewerSettings.ReviewerScopeExpression.String()
-
-	//str := d.Get("schedule_settings.0.start_date").(string)
-	startDate := d.ScheduleSettings.StartDate.String()
+	// Parse and validate start date
+	startDate := d.ScheduleSettings.StartDate.ValueString()
 	parsedStartDate, err := time.Parse(time.RFC3339, startDate)
 	if err != nil {
+		log.Printf("invalid start_date format: %v", err)
 		return oktaInternalGovernance.CampaignMutable{}
 	}
 
+	// Convert target resources
+	var targetResources []oktaInternalGovernance.TargetResourcesRequestInner
+	for _, tr := range d.ResourceSettings.TargetResources {
+		rt := oktaInternalGovernance.ResourceType(tr.ResourceType.ValueString())
+
+		targetResources = append(targetResources, oktaInternalGovernance.TargetResourcesRequestInner{
+			ResourceId:   tr.ResourceId.ValueString(),
+			ResourceType: &rt,
+		})
+	}
+
+	// Build and return CampaignMutable
 	return oktaInternalGovernance.CampaignMutable{
-		Name: d.Name.String(),
+		Name: d.Name.ValueString(),
+
 		RemediationSettings: oktaInternalGovernance.RemediationSettings{
-			AccessApproved: oktaInternalGovernance.ApprovedRemediationAction(d.RemediationSettings.AccessApproved.String()),
-			AccessRevoked:  oktaInternalGovernance.RevokedRemediationAction(d.RemediationSettings.AccessRevoked.String()),
-			NoResponse:     oktaInternalGovernance.NoResponseRemediationAction(d.RemediationSettings.NoResponse.String()),
+			AccessApproved: oktaInternalGovernance.ApprovedRemediationAction(d.RemediationSettings.AccessApproved.ValueString()),
+			AccessRevoked:  oktaInternalGovernance.RevokedRemediationAction(d.RemediationSettings.AccessRevoked.ValueString()),
+			NoResponse:     oktaInternalGovernance.NoResponseRemediationAction(d.RemediationSettings.NoResponse.ValueString()),
 		},
+
 		ResourceSettings: oktaInternalGovernance.ResourceSettingsMutable{
-			Type: oktaInternalGovernance.CampaignResourceType(d.ResourceSettings.Type.String()),
-			TargetResources: []oktaInternalGovernance.TargetResourcesRequestInner{
-				{
-					ResourceId:   d.ResourceSettings.TargetResources[0].ResourceId.String(),
-					ResourceType: &rt,
-				},
-			},
+			Type:            oktaInternalGovernance.CampaignResourceType(d.ResourceSettings.Type.ValueString()),
+			TargetResources: targetResources,
 		},
+
 		ReviewerSettings: oktaInternalGovernance.ReviewerSettingsMutable{
-			Type:                    oktaInternalGovernance.CampaignReviewerType(d.ReviewerSettings.Type.String()),
-			ReviewerGroupId:         &reviewerGroupID,
-			ReviewerId:              &reviewerId,
-			ReviewerScopeExpression: &reviewerScopeExpression,
+			Type:                    oktaInternalGovernance.CampaignReviewerType(d.ReviewerSettings.Type.ValueString()),
+			ReviewerGroupId:         ptrString(d.ReviewerSettings.ReviewerGroupId.ValueString()),
+			ReviewerId:              ptrString(d.ReviewerSettings.ReviewerId.ValueString()),
+			ReviewerScopeExpression: ptrString(d.ReviewerSettings.ReviewerScopeExpression.ValueString()),
 		},
+
 		ScheduleSettings: oktaInternalGovernance.ScheduleSettingsMutable{
 			StartDate:      parsedStartDate,
 			DurationInDays: float32(d.ScheduleSettings.DurationInDays.ValueInt32()),
-			TimeZone:       d.ScheduleSettings.TimeZone.String(),
-			Type:           oktaInternalGovernance.ScheduleType(d.ScheduleSettings.Type.String()),
+			TimeZone:       d.ScheduleSettings.TimeZone.ValueString(),
+			Type:           oktaInternalGovernance.ScheduleType(d.ScheduleSettings.Type.ValueString()),
 		},
 	}
+}
+
+func ptrString(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
 }

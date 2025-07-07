@@ -71,16 +71,16 @@ type iDaaSAPIClient struct {
 	oktaSDKSupplementClient *sdk.APISupplement
 }
 
-func (c *iDaaSAPIClient) OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient {
-	return c.OktaIGSDKClientV3()
-}
-
-func (c *iDaaSAPIClient) OktaIGSDKClientV2() *sdk.Client {
-	return c.OktaIGSDKClientV2()
-}
+//func (c *iDaaSAPIClient) OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient {
+//	return c.OktaIGSDKClientV3()
+//}
+//
+//func (c *iDaaSAPIClient) OktaIGSDKClientV2() *sdk.Client {
+//	return c.OktaIGSDKClientV2()
+//}
 
 func (c *iDaaSAPIClient) OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient {
-	return c.OktaIGSDKClientV5()
+	return c.oktaIGSDKClientV5
 }
 
 func (c *iDaaSAPIClient) OktaSDKClientV5() *v5okta.APIClient {
@@ -116,6 +116,11 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 		return
 	}
 
+	v5IGClient, err := oktaV5IGSDKClient(c)
+	if err != nil {
+		return
+	}
+
 	re := v2Client.CloneRequestExecutor()
 	re.SetHTTPTransport(v3Client.GetConfig().HTTPClient.Transport)
 	supClient := &sdk.APISupplement{
@@ -123,9 +128,11 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 	}
 
 	client = &iDaaSAPIClient{
-		oktaSDKClientV5:         v5Client,
-		oktaSDKClientV3:         v3Client,
-		oktaSDKClientV2:         v2Client,
+		oktaSDKClientV5:   v5Client,
+		oktaSDKClientV3:   v3Client,
+		oktaSDKClientV2:   v2Client,
+		oktaIGSDKClientV5: v5IGClient,
+
 		oktaSDKSupplementClient: supClient,
 	}
 
