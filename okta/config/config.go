@@ -18,29 +18,30 @@ import (
 type (
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		AccessToken      string
-		ApiToken         string
-		Backoff          bool
-		ClassicOrg       bool
-		ClientID         string
-		Domain           string
-		HttpProxy        string
-		HttpTransport    http.RoundTripper
-		LogLevel         int
-		Logger           hclog.Logger
-		MaxAPICapacity   int
-		MaxWait          int
-		MinWait          int
-		OktaIDaaSClient  api.OktaIDaaSClient
-		OrgName          string
-		Parallelism      int
-		PrivateKey       string
-		PrivateKeyId     string
-		QueriedWellKnown bool
-		RequestTimeout   int
-		RetryCount       int
-		Scopes           []string
-		TimeOperations   TimeOperations
+		AccessToken          string
+		ApiToken             string
+		Backoff              bool
+		ClassicOrg           bool
+		ClientID             string
+		Domain               string
+		HttpProxy            string
+		HttpTransport        http.RoundTripper
+		LogLevel             int
+		Logger               hclog.Logger
+		MaxAPICapacity       int
+		MaxWait              int
+		MinWait              int
+		OktaIDaaSClient      api.OktaIDaaSClient
+		OktaGovernanceClient api.OktaGovernanceClient
+		OrgName              string
+		Parallelism          int
+		PrivateKey           string
+		PrivateKeyId         string
+		QueriedWellKnown     bool
+		RequestTimeout       int
+		RetryCount           int
+		Scopes               []string
+		TimeOperations       TimeOperations
 	}
 )
 

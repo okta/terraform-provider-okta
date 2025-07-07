@@ -2,7 +2,6 @@ package fwprovider
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -15,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/services/governance"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
@@ -225,6 +225,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	// Append resources from various modules
 	resources = append(resources, idaas.FWProviderResources()...)
 	resources = append(resources, governance.FWProviderResources()...)
+	resources = append(resources)
 
 	return resources
 }

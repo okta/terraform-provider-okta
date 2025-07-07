@@ -3,7 +3,6 @@ package idaas
 import (
 	"context"
 	"fmt"
-
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
