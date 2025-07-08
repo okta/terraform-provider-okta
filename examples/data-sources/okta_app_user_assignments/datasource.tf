@@ -24,3 +24,24 @@ data "okta_app_user_assignments" "test" {
   depends_on = [okta_app_user.test]
   id         = okta_app_oauth.test.id
 }
+
+# Outputs to demonstrate the enhanced data source
+output "user_count" {
+  description = "Number of users assigned to the app"
+  value       = length(data.okta_app_user_assignments.test.users)
+}
+
+output "user_details" {
+  description = "Detailed information about assigned users"
+  value       = data.okta_app_user_assignments.test.users
+}
+
+output "first_user_status" {
+  description = "Status of the first assigned user"
+  value       = length(data.okta_app_user_assignments.test.users) > 0 ? data.okta_app_user_assignments.test.users[0].status : null
+}
+
+output "first_user_scope" {
+  description = "Scope of the first assigned user (USER or GROUP)"
+  value       = length(data.okta_app_user_assignments.test.users) > 0 ? data.okta_app_user_assignments.test.users[0].scope : null
+}
