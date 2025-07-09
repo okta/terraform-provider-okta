@@ -107,6 +107,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAppsDataSource,
 		newUserTypeDataSource,
 		newDeviceAssurancePolicyDataSource,
+		NewOAuthAuthorizationServerDataSource,
 	}
 }
 
