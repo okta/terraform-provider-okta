@@ -67,7 +67,9 @@ func FWProviderResources() []func() resource.Resource {
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		newCampaignDataSource,
+	}
 }
 
 func ProviderResources() map[string]*schema.Resource {
