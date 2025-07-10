@@ -3,8 +3,10 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"log"
 	"time"
@@ -39,6 +41,7 @@ func (r *campaignResource) Configure(ctx context.Context, request resource.Confi
 type campaignResourceModel struct {
 	Id                  types.String                     `tfsdk:"id"`
 	Name                types.String                     `tfsdk:"name"`
+	LaunchCampaign      types.Bool                       `tfsdk:"launch_campaign"`
 	RemediationSettings campaignRemediationSettingsModel `tfsdk:"remediation_settings"`
 	ResourceSettings    campaignResourceSettingsModel    `tfsdk:"resource_settings"`
 	ReviewerSettings    campaignReviewerSettingsModel    `tfsdk:"reviewer_settings"`
@@ -89,6 +92,12 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the campaign. Maintain some uniqueness when naming the campaign as it helps to identify and filter for campaigns when needed.",
+			},
+			"launch_campaign": schema.BoolAttribute{
+				Optional:    true,
+				Description: "Launch the campaign after creation. Defaults to false.",
+				Computed:    true,
+				Default:     booldefault.StaticBool(false),
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -192,6 +201,16 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 	}
 	// Example data value setting
 	data.Id = types.StringValue(campaign.Id)
+	if data.LaunchCampaign.ValueBool() {
+		_, err = r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.LaunchCampaign(ctx, campaign.Id).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error launching Campaign",
+				"Could not launch Campaign after creation, unexpected error: "+err.Error(),
+			)
+			return
+		}
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -211,7 +230,7 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	// Read API call logic
-	getCampaignResponse, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.String()).Execute()
+	getCampaignResponse, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}
@@ -255,7 +274,12 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 		c.ReviewerSettings.FallbackReviewerId = types.StringValue(*resp.ReviewerSettings.FallBackReviewerId)
 	}
 
-	c.ScheduleSettings.StartDate = types.StringValue(resp.ScheduleSettings.StartDate.Format(time.RFC3339))
+	fmt.Println("Time read from API:", resp.ScheduleSettings.StartDate)
+	t, err := time.Parse(time.RFC3339, resp.ScheduleSettings.StartDate.String())
+	if err != nil {
+		return
+	}
+	c.ScheduleSettings.StartDate = types.StringValue(t.UTC().Format("2006-01-02T15:04:05.000Z"))
 	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.DurationInDays))
 	c.ScheduleSettings.TimeZone = types.StringValue(resp.ScheduleSettings.TimeZone)
 	c.ScheduleSettings.Type = types.StringValue(string(resp.ScheduleSettings.Type))
@@ -264,18 +288,41 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 
 func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data campaignResourceModel
+	var state campaignResourceModel
 
-	// Read Terraform plan data into the model
+	// Load both planned and current state
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Update API call logic
+	// Check if only 'launch_campaign' changed
+	if !data.LaunchCampaign.Equal(state.LaunchCampaign) && isOnlyLaunchChanged(data, state) {
+		// Call the create API again with updated launch flag
+		log.Println("launch_campaign updated — calling CreateCampaign API again")
+		data.Id = types.StringValue(state.Id.ValueString())
+		if data.LaunchCampaign.ValueBool() {
+			_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.LaunchCampaign(ctx, state.Id.ValueString()).Execute()
+			if err != nil {
+				resp.Diagnostics.AddError(
+					"Error launching Campaign",
+					"Could not launch Campaign after creation, unexpected error: "+err.Error(),
+				)
+				return
+			}
 
-	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+			state.LaunchCampaign = data.LaunchCampaign
+			resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+		}
+		return
+	}
+
+	resp.Diagnostics.AddError(
+		"Update Not Supported",
+		"No other fields other than launch_campaign and end_campaign are updatable for this resource. Terraform will retain the existing state.",
+	)
 }
 
 func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -288,8 +335,9 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
+	fmt.Println("Deleting Campaign with ID:", data.Id.ValueString())
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.String()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}
@@ -298,9 +346,6 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutable {
-	log.Println("Inside buildCampaign")
-
-	// Parse and validate start date
 	startDate := d.ScheduleSettings.StartDate.ValueString()
 	parsedStartDate, err := time.Parse(time.RFC3339, startDate)
 	if err != nil {
@@ -355,4 +400,46 @@ func ptrString(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func isOnlyLaunchChanged(plan, state campaignResourceModel) bool {
+	return plan.Name.Equal(state.Name) &&
+		equalRemediation(plan.RemediationSettings, state.RemediationSettings) &&
+		equalResourceSettings(plan.ResourceSettings, state.ResourceSettings) &&
+		equalReviewerSettings(plan.ReviewerSettings, state.ReviewerSettings) &&
+		equalScheduleSettings(plan.ScheduleSettings, state.ScheduleSettings)
+}
+
+func equalScheduleSettings(planSchedule, stateSchedule campaignScheduleSettingsModel) bool {
+	return planSchedule.Type.Equal(stateSchedule.Type) &&
+		planSchedule.TimeZone.Equal(stateSchedule.TimeZone) &&
+		planSchedule.DurationInDays.Equal(stateSchedule.DurationInDays) &&
+		planSchedule.StartDate.Equal(stateSchedule.StartDate)
+}
+
+func equalReviewerSettings(planReviewer, stateReviewer campaignReviewerSettingsModel) bool {
+	return planReviewer.Type.Equal(stateReviewer.Type) &&
+		planReviewer.ReviewerGroupId.Equal(stateReviewer.ReviewerGroupId) &&
+		planReviewer.ReviewerId.Equal(stateReviewer.ReviewerId) &&
+		planReviewer.ReviewerScopeExpression.Equal(stateReviewer.ReviewerScopeExpression) &&
+		planReviewer.FallbackReviewerId.Equal(stateReviewer.FallbackReviewerId)
+}
+
+func equalResourceSettings(planResource, stateResource campaignResourceSettingsModel) bool {
+	if len(planResource.TargetResources) == len(stateResource.TargetResources) {
+		for i := 0; i < len(planResource.TargetResources); i++ {
+			if !(planResource.TargetResources[i].ResourceId.Equal(stateResource.TargetResources[i].ResourceId) &&
+				planResource.TargetResources[i].ResourceType.Equal(stateResource.TargetResources[i].ResourceType)) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+func equalRemediation(a, b campaignRemediationSettingsModel) bool {
+	return a.AccessApproved.Equal(b.AccessApproved) &&
+		a.AccessRevoked.Equal(b.AccessRevoked) &&
+		a.NoResponse.Equal(b.NoResponse)
 }
