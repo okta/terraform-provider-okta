@@ -30,7 +30,7 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 					ensureResourceExists(resourceName, domainExists),
 					resource.TestCheckResourceAttr(resourceName, "name", domainName),
 					resource.TestCheckResourceAttr(resourceName, "certificate_source_type", "MANUAL"),
-					resource.TestCheckResourceAttr(resourceName, "validation_status", "FAILED_TO_VERIFY"),
+					resource.TestCheckResourceAttr(resourceName, "validation_status", "NOT_STARTED"),
 					resource.TestCheckResourceAttr(resourceName, "dns_records.#", "2"),
 				),
 			},
