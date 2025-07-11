@@ -715,14 +715,16 @@ func LinksValue(links interface{}, keys ...string) string {
 	return LinksValue(l[keys[0]], keys[1:]...)
 }
 
+// StrMaxLength updated implementation to count runes instead of bytes (https://github.com/okta/terraform-provider-okta/issues/2396)
 func StrMaxLength(max int) schema.SchemaValidateDiagFunc {
 	return func(i interface{}, k cty.Path) diag.Diagnostics {
 		v, ok := i.(string)
 		if !ok {
 			return diag.Errorf("expected type of %s to be string", k)
 		}
-		if len(v) > max {
-			return diag.Errorf("%s cannot be longer than %d characters", k, max)
+		runes := []rune(v)
+		if len(runes) > max {
+			return diag.Errorf("%s cannot be longer than %d runes", k, max)
 		}
 		return nil
 	}
