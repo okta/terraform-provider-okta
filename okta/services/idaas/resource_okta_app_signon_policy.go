@@ -319,7 +319,11 @@ func (r *appSignOnPolicyResource) mapAccessPolicyToState(ctx context.Context, da
 	}
 	state.ID = types.StringPointerValue(data.AccessPolicy.Id)
 	state.Name = types.StringPointerValue(data.AccessPolicy.Name)
-	state.Description = types.StringPointerValue(data.AccessPolicy.Description)
+	desc := ""
+	if data.AccessPolicy.Description != nil {
+		desc = *data.AccessPolicy.Description
+	}
+	state.Description = types.StringValue(desc)
 	state.Priority = types.Int32PointerValue(data.AccessPolicy.Priority)
 
 	defaultRule, err := r.findDefaultPolicyRuleResponse(ctx, state.ID.ValueString())
