@@ -240,6 +240,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSIdpSocial:                dataSourceIdpSocial(),
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
+		resources.OktaIDaaSResourceSet:              dataSourceResourceSet(),
 		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),
