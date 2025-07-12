@@ -197,3 +197,28 @@ func TestAccResourceOktaGroupRule_statusIsInvalidDiffFn(t *testing.T) {
 		})
 	}
 }
+
+func TestAccResourceOktaGroupRule_nameLengthVerification_Issue2396(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
+	mgr := newFixtureManager("resources", "okta_group_rule", t.Name())
+	config := mgr.GetFixtures("basic_group_rule_name_length_verify.tf", t)
+	failConfig := mgr.GetFixtures("basic_group_rule_name_length_fail.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "[xx]ZZZ_ああああ_yyyyyyあいうw1w1えおかきくけ1"),
+				),
+			},
+			{
+				Config:      failConfig,
+				ExpectError: regexp.MustCompile(`\[\{\{\} name\}\] cannot be longer than 50 runes`),
+			},
+		},
+	})
+}
