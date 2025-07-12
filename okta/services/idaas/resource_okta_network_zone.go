@@ -427,24 +427,41 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 }
 
 // updateNetworkZoneWithExemptList makes a custom HTTP request to update a network zone
-// with the useAsExemptList=true query parameter
+// with the useAsExemptList field included in the JSON body
 func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zoneID string, payload v5okta.ListNetworkZones200ResponseInner) error {
 	// Get the configuration from meta
 	config := meta.(*Config)
 	
-	// Build the URL with the useAsExemptList query parameter
-	baseURL := strings.TrimSuffix(config.Domain, "/")
+	// Build the URL (no query parameter needed)
+	// The config.Domain is just the base domain like "okta.com", 
+	// but we need the full org URL like "https://trial-7001215.okta.com"
+	baseURL := fmt.Sprintf("https://%s.%s", config.OrgName, strings.TrimSuffix(config.Domain, "/"))
 	endpoint := fmt.Sprintf("/api/v1/zones/%s", zoneID)
+	fullURL := baseURL + endpoint
 	
-	// Convert payload to JSON
+	// Convert SDK payload to map for manipulation
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("failed to marshal payload: %v", err)
 	}
 	
+	// Parse JSON into a map so we can add the useAsExemptList field
+	var payloadMap map[string]interface{}
+	if err := json.Unmarshal(jsonData, &payloadMap); err != nil {
+		return fmt.Errorf("failed to unmarshal payload: %v", err)
+	}
+	
+	// Add the useAsExemptList field to the JSON payload
+	payloadMap["useAsExemptList"] = true
+	
+	// Re-marshal with the added field
+	finalJsonData, err := json.Marshal(payloadMap)
+	if err != nil {
+		return fmt.Errorf("failed to marshal final payload: %v", err)
+	}
+	
 	// Create the HTTP request
-	fullURL := baseURL + endpoint + "?useAsExemptList=true"
-	req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(finalJsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %v", err)
 	}
