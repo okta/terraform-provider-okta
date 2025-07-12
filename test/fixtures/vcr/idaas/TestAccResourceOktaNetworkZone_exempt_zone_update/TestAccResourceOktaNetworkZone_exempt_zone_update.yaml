@@ -1,0 +1,577 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 142
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        body: |
+            {"gateways":[{"type":"CIDR","value":"10.70.0.0/24"}],"name":"testAcc_1240938852 Network Zone","status":"ACTIVE","type":"IP","usage":"POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:45.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 852.633292ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:45.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 669.883208ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:45.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:46 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 662.859375ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:45.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:47 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 678.803042ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 189
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        body: |
+            {"gateways":[{"type":"CIDR","value":"10.80.0.0/24"},{"type":"CIDR","value":"10.70.0.0/24"}],"name":"testAcc_1240938852 Network Zone Updated","status":"ACTIVE","type":"IP","usage":"POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone Updated","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:45.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.80.0.0/24"},{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:48 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 665.384791ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone Updated","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:48.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.80.0.0/24"},{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:49 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 665.666875ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone Updated","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:48.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.80.0.0/24"},{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:49 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 691.249583ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 Network Zone Updated","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:48.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.80.0.0/24"},{"type":"CIDR","value":"10.70.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:50 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 656.284542ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 147
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        body: |
+            {"gateways":[{"type":"CIDR","value":"10.90.0.0/24"}],"name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","type":"IP","usage":"POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:48.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:51 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 659.836959ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:51.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:52 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 655.954416ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:51.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 652.039542ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:51.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 664.61775ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 187
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        body: |
+            {"gateways":[{"type":"CIDR","value":"10.90.0.0/24"},{"type":"CIDR","value":"10.100.0.0/24"}],"name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","type":"IP","usage":"POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:51.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"},{"type":"CIDR","value":"10.100.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 669.749625ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:54.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"},{"type":"CIDR","value":"10.100.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 668.726625ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"ACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:54.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"},{"type":"CIDR","value":"10.100.0.0/24"}],"proxies":null,"_links":{"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 660.119667ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzot5u0qgyYkQz3Tg697","name":"testAcc_1240938852 With Exempt False","status":"INACTIVE","usage":"POLICY","created":"2025-07-12T16:53:45.000Z","lastUpdated":"2025-07-12T16:53:57.000Z","system":false,"gateways":[{"type":"CIDR","value":"10.90.0.0/24"},{"type":"CIDR","value":"10.100.0.0/24"}],"proxies":null,"_links":{"activate":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://TestAccResourceOktaNetworkZone_exempt_zone_update/api/v1/zones/nzot5u0qgyYkQz3Tg697","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 12 Jul 2025 16:53:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 662.941875ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://TestAccResourceOktaNetworkZone_exempt_zone_update.dne-okta.com/api/v1/zones/nzot5u0qgyYkQz3Tg697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Sat, 12 Jul 2025 16:53:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 683.198042ms
