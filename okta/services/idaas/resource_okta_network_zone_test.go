@@ -87,14 +87,14 @@ func findDefaultExemptIpZoneID() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to list network zones: %v", err)
 	}
-	
+
 	// Look for the DefaultExemptIpZone by name
 	for _, zone := range zones {
 		if zone.Name == "DefaultExemptIpZone" && zone.Type == "IP" {
 			return zone.Id, nil
 		}
 	}
-	
+
 	return "", fmt.Errorf("DefaultExemptIpZone not found in the organization")
 }
 
@@ -302,7 +302,7 @@ func TestAccResourceOktaNetworkZone_default_exempt_import_update(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
 	resourceName := fmt.Sprintf("%s.default_exempt", resources.OktaIDaaSNetworkZone)
 	dataSourceName := fmt.Sprintf("data.%s.default_exempt", resources.OktaIDaaSNetworkZone)
-	
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.AccPreCheck(t)
@@ -325,7 +325,7 @@ func TestAccResourceOktaNetworkZone_default_exempt_import_update(t *testing.T) {
 			{
 				// Step 2: Setup for import - this will have a non-empty plan
 				ExpectNonEmptyPlan: true,
-				Config: testOktaNetworkZoneConfig_defaultExemptImport(mgr.Seed),
+				Config:             testOktaNetworkZoneConfig_defaultExemptImport(mgr.Seed),
 			},
 			{
 				// Step 3: Import the existing DefaultExemptIpZone using discovered ID
@@ -373,7 +373,7 @@ func testAccPreCheckDefaultExemptZone(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error listing network zones during precheck: %v", err)
 	}
-	
+
 	found := false
 	for _, zone := range zones {
 		if ipZone, ok := zone.GetActualInstance().(*v5okta.IPNetworkZone); ok {
@@ -383,7 +383,7 @@ func testAccPreCheckDefaultExemptZone(t *testing.T) {
 			}
 		}
 	}
-	
+
 	if !found {
 		t.Skip("DefaultExemptIpZone not found in this org, skipping test")
 	}
@@ -446,7 +446,7 @@ resource "okta_network_zone" "default_exempt" {
 func TestAccResourceOktaNetworkZone_default_exempt_data_source(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
 	dataSourceName := fmt.Sprintf("data.%s.default_exempt", resources.OktaIDaaSNetworkZone)
-	
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.AccPreCheck(t)

@@ -180,6 +180,17 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// Check if this is a system network zone (DefaultExemptIpZone, LegacyIpZone, BlockedIpZone)
+	// System zones cannot be deactivated or deleted
+	if d.Get("name").(string) == "DefaultExemptIpZone" || 
+	   d.Get("name").(string) == "LegacyIpZone" || 
+	   d.Get("name").(string) == "BlockedIpZone" {
+		// Skip deactivation and deletion for system zones
+		// Just remove from Terraform state
+		d.SetId("")
+		return nil
+	}
+
 	_, resp, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate network zone: %v", err)
