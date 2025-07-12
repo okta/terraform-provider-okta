@@ -1,22 +1,23 @@
-package okta
+package idaas_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func TestAccResourceOktaFeatures_crud(t *testing.T) {
-	_resource := "okta_feature"
-	mgr := newFixtureManager("resources", _resource, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaIDaaSFeature, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
-	resourceName := fmt.Sprintf("%s.test", _resource)
-	oktaResourceTest(t, resource.TestCase{
-		PreCheck:                 testAccPreCheck(t),
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSFeature)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: testAccMergeProvidersFactories,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{

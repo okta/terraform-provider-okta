@@ -1,4 +1,4 @@
-package okta
+package idaas
 
 import (
 	"context"
@@ -13,14 +13,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-func NewFeaturesDataSource() datasource.DataSource {
+func newFeaturesDataSource() datasource.DataSource {
 	return &FeaturesDataSource{}
 }
 
 type FeaturesDataSource struct {
-	config *Config
+	*config.Config
 }
 
 type FeaturesDataSourceModel struct {
@@ -98,13 +99,13 @@ func (d *FeaturesDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 }
 
 func (d *FeaturesDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	d.config = dataSourceConfiguration(req, resp)
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *FeaturesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state FeaturesDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
-	featureList, _, err := d.config.oktaSDKClientV5.FeatureAPI.ListFeatures(ctx).Execute()
+	featureList, _, err := d.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.ListFeatures(ctx).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to list Okta Features", fmt.Sprintf("Error retrieving features: %s", err.Error()))
 		return

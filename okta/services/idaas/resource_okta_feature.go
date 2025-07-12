@@ -1,4 +1,4 @@
-package okta
+package idaas
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/okta/okta-sdk-golang/v5/okta"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
@@ -21,12 +22,12 @@ var (
 	_ resource.ResourceWithImportState = &featuresResource{}
 )
 
-func NewFeaturesResource() resource.Resource {
+func newFeaturesResource() resource.Resource {
 	return &featuresResource{}
 }
 
 type featuresResource struct {
-	*Config
+	*config.Config
 }
 
 type featureResourceModel struct {
@@ -110,7 +111,7 @@ func (r *featuresResource) Create(ctx context.Context, req resource.CreateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	feature, _, err := r.oktaSDKClientV5.FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
+	feature, _, err := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to get feature", err.Error())
 		return
@@ -125,7 +126,7 @@ func (r *featuresResource) Create(ctx context.Context, req resource.CreateReques
 			lifecycle = "ENABLE"
 		}
 	}
-	apiReq := r.oktaSDKClientV5.FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), lifecycle)
+	apiReq := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), lifecycle)
 	if !state.Mode.IsNull() && state.Mode.ValueBool() {
 		apiReq = apiReq.Mode("force")
 	}
@@ -153,7 +154,7 @@ func (r *featuresResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	feature, _, err := r.oktaSDKClientV5.FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
+	feature, _, err := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to get feature", err.Error())
 		return
@@ -175,7 +176,7 @@ func (r *featuresResource) Update(ctx context.Context, req resource.UpdateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	feature, _, err := r.oktaSDKClientV5.FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
+	feature, _, err := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.GetFeature(ctx, state.FeatureID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to get feature", err.Error())
 		return
@@ -190,7 +191,7 @@ func (r *featuresResource) Update(ctx context.Context, req resource.UpdateReques
 			lifecycle = "ENABLE"
 		}
 	}
-	apiReq := r.oktaSDKClientV5.FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), lifecycle)
+	apiReq := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), lifecycle)
 	if !state.Mode.IsNull() && state.Mode.ValueBool() {
 		apiReq = apiReq.Mode("force")
 	}
@@ -219,7 +220,7 @@ func (r *featuresResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	_, _, err := r.oktaSDKClientV5.FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), "DISABLE").Mode("force").Execute()
+	_, _, err := r.OktaIDaaSClient.OktaSDKClientV5().FeatureAPI.UpdateFeatureLifecycle(ctx, state.FeatureID.ValueString(), "DISABLE").Mode("force").Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to disabled feature", err.Error())
 		return
