@@ -1,15 +1,20 @@
 package idaas
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
+	. "github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
@@ -95,6 +100,12 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "List of ip service excluded. Use with type `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"use_as_exempt_list": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: "Indicates that this network zone is used as an exempt list. Only applicable to IP zones. This parameter is required when updating the DefaultExemptIpZone to allow IPs through the blocklist.",
+			},
 		},
 	}
 }
@@ -151,9 +162,19 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
-	if err != nil {
-		return diag.Errorf("failed to update network zone: %v", err)
+	// Check if this is an exempt zone update
+	if useAsExemptList, ok := d.GetOk("use_as_exempt_list"); ok && useAsExemptList.(bool) {
+		// For exempt zones, we need to add the useAsExemptList=true query parameter
+		// Since the SDK doesn't directly support this, we'll construct the request manually
+		err = updateNetworkZoneWithExemptList(ctx, meta, d.Id(), payload)
+		if err != nil {
+			return diag.Errorf("failed to update exempt network zone: %v", err)
+		}
+	} else {
+		_, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+		if err != nil {
+			return diag.Errorf("failed to update network zone: %v", err)
+		}
 	}
 	return resourceNetworkZoneRead(ctx, d, meta)
 }
@@ -302,6 +323,14 @@ func validateNetworkZone(d *schema.ResourceData) error {
 	if d.Get("usage").(string) != "POLICY" && ok && proxies.(*schema.Set).Len() != 0 {
 		return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
 	}
+	
+	// Validate that use_as_exempt_list is only used with IP zones
+	if useAsExemptList, ok := d.GetOk("use_as_exempt_list"); ok && useAsExemptList.(bool) {
+		if d.Get("type").(string) != "IP" {
+			return fmt.Errorf(`use_as_exempt_list can only be set to true for IP zones`)
+		}
+	}
+	
 	return nil
 }
 
@@ -395,4 +424,50 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 		})
 	}
 	return err
+}
+
+// updateNetworkZoneWithExemptList makes a custom HTTP request to update a network zone
+// with the useAsExemptList=true query parameter
+func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zoneID string, payload v5okta.ListNetworkZones200ResponseInner) error {
+	// Get the configuration from meta
+	config := meta.(*Config)
+	
+	// Build the URL with the useAsExemptList query parameter
+	baseURL := strings.TrimSuffix(config.Domain, "/")
+	endpoint := fmt.Sprintf("/api/v1/zones/%s", zoneID)
+	
+	// Convert payload to JSON
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %v", err)
+	}
+	
+	// Create the HTTP request
+	fullURL := baseURL + endpoint + "?useAsExemptList=true"
+	req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %v", err)
+	}
+	
+	// Set required headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "SSWS "+config.ApiToken)
+	req.Header.Set("User-Agent", "terraform-provider-okta")
+	
+	// Make the request
+	httpClient := &http.Client{}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to make request: %v", err)
+	}
+	defer resp.Body.Close()
+	
+	// Check response status
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+	}
+	
+	return nil
 }

@@ -75,3 +75,40 @@ func doesNetworkZoneExist(id string) (bool, error) {
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
 	return utils.DoesResourceExist(response, err)
 }
+
+func TestAccResourceOktaNetworkZone_exempt_zone(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	resourceName := fmt.Sprintf("%s.exempt_zone_example", resources.OktaIDaaSNetworkZone)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSNetworkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				Config: testOktaNetworkZoneConfig_exempt(mgr.Seed),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d Exempt Zone", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_exempt_list", "true"),
+				),
+			},
+		},
+	})
+}
+
+func testOktaNetworkZoneConfig_exempt(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_network_zone" "exempt_zone_example" {
+  name               = "testAcc_%d Exempt Zone"
+  type               = "IP"
+  gateways           = ["1.2.3.4/32"]
+  usage              = "POLICY"
+  use_as_exempt_list = true
+}
+`, rInt)
+}
