@@ -408,6 +408,12 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "URL reference to JWKS",
 			},
+			"disable_auth_policy": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Disable adding authorization policy for SERVICE applications. WARNING: This is a temporary field. The ability to toggle the authorization policy will be removed in a future release. This field applies only to SERVICE applications, authorization policies will always be attached to other application types.",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -478,9 +484,11 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+	if !(d.Get("disable_auth_policy").(bool) && d.Get("type").(string) == "service") {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
@@ -747,9 +755,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+	if !(d.Get("disable_auth_policy").(bool) && d.Get("type").(string) == "service") {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
