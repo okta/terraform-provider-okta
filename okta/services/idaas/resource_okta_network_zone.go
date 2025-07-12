@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
-	. "github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
@@ -323,14 +323,14 @@ func validateNetworkZone(d *schema.ResourceData) error {
 	if d.Get("usage").(string) != "POLICY" && ok && proxies.(*schema.Set).Len() != 0 {
 		return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
 	}
-	
+
 	// Validate that use_as_exempt_list is only used with IP zones
 	if useAsExemptList, ok := d.GetOk("use_as_exempt_list"); ok && useAsExemptList.(bool) {
 		if d.Get("type").(string) != "IP" {
 			return fmt.Errorf(`use_as_exempt_list can only be set to true for IP zones`)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -430,48 +430,48 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 // with the useAsExemptList field included in the JSON body
 func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zoneID string, payload v5okta.ListNetworkZones200ResponseInner) error {
 	// Get the configuration from meta
-	config := meta.(*Config)
-	
+	cfg := meta.(*config.Config)
+
 	// Build the URL (no query parameter needed)
-	// The config.Domain is just the base domain like "okta.com", 
+	// The cfg.Domain is just the base domain like "okta.com",
 	// but we need the full org URL like "https://trial-7001215.okta.com"
-	baseURL := fmt.Sprintf("https://%s.%s", config.OrgName, strings.TrimSuffix(config.Domain, "/"))
+	baseURL := fmt.Sprintf("https://%s.%s", cfg.OrgName, strings.TrimSuffix(cfg.Domain, "/"))
 	endpoint := fmt.Sprintf("/api/v1/zones/%s", zoneID)
 	fullURL := baseURL + endpoint
-	
+
 	// Convert SDK payload to map for manipulation
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("failed to marshal payload: %v", err)
 	}
-	
+
 	// Parse JSON into a map so we can add the useAsExemptList field
 	var payloadMap map[string]interface{}
 	if err := json.Unmarshal(jsonData, &payloadMap); err != nil {
 		return fmt.Errorf("failed to unmarshal payload: %v", err)
 	}
-	
+
 	// Add the useAsExemptList field to the JSON payload
 	payloadMap["useAsExemptList"] = true
-	
+
 	// Re-marshal with the added field
 	finalJsonData, err := json.Marshal(payloadMap)
 	if err != nil {
 		return fmt.Errorf("failed to marshal final payload: %v", err)
 	}
-	
+
 	// Create the HTTP request
 	req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(finalJsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %v", err)
 	}
-	
+
 	// Set required headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", "SSWS "+config.ApiToken)
+	req.Header.Set("Authorization", "SSWS "+cfg.ApiToken)
 	req.Header.Set("User-Agent", "terraform-provider-okta")
-	
+
 	// Make the request
 	httpClient := &http.Client{}
 	resp, err := httpClient.Do(req)
@@ -479,12 +479,12 @@ func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zone
 		return fmt.Errorf("failed to make request: %v", err)
 	}
 	defer resp.Body.Close()
-	
+
 	// Check response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
 	}
-	
+
 	return nil
 }
