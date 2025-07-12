@@ -3,6 +3,7 @@ package idaas_test
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -108,6 +109,102 @@ resource "okta_network_zone" "exempt_zone_example" {
   type               = "IP"
   gateways           = ["1.2.3.4/32"]
   usage              = "POLICY"
+  status             = "ACTIVE"
+  use_as_exempt_list = true
+}
+`, rInt)
+}
+
+// TestAccResourceOktaNetworkZone_exempt_zone_update - Test update operations for exempt zones
+// This test specifically validates the use_as_exempt_list functionality with updates
+func TestAccResourceOktaNetworkZone_exempt_zone_update(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	resourceName := fmt.Sprintf("%s.exempt_zone_update_example", resources.OktaIDaaSNetworkZone)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSNetworkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				Config: testOktaNetworkZoneConfig_exemptUpdate1(mgr.Seed),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d Exempt Zone Update", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "gateways.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_exempt_list", "true"),
+				),
+			},
+			{
+				Config: testOktaNetworkZoneConfig_exemptUpdate2(mgr.Seed),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc_%d Exempt Zone Update", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"), // Updated to 2 gateways
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_exempt_list", "true"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaNetworkZone_exempt_validation - Test validation logic
+func TestAccResourceOktaNetworkZone_exempt_validation(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSNetworkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				Config:      testOktaNetworkZoneConfig_exemptValidationFail(mgr.Seed),
+				ExpectError: regexp.MustCompile("use_as_exempt_list can only be set to true for IP zones"),
+			},
+		},
+	})
+}
+
+func testOktaNetworkZoneConfig_exemptUpdate1(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_network_zone" "exempt_zone_update_example" {
+  name               = "testAcc_%d Exempt Zone Update"
+  type               = "IP"
+  gateways           = ["10.1.0.0/24"]
+  usage              = "POLICY"
+  status             = "ACTIVE"
+  use_as_exempt_list = true
+}
+`, rInt)
+}
+
+func testOktaNetworkZoneConfig_exemptUpdate2(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_network_zone" "exempt_zone_update_example" {
+  name               = "testAcc_%d Exempt Zone Update"
+  type               = "IP"
+  gateways           = ["10.1.0.0/24", "192.168.100.0/24"]
+  usage              = "POLICY"
+  status             = "ACTIVE"
+  use_as_exempt_list = true
+}
+`, rInt)
+}
+
+func testOktaNetworkZoneConfig_exemptValidationFail(rInt int) string {
+	return fmt.Sprintf(`
+resource "okta_network_zone" "exempt_zone_validation_fail" {
+  name               = "testAcc_%d Exempt Validation Fail"
+  type               = "DYNAMIC"
+  dynamic_locations  = ["US", "CA"]
+  usage              = "POLICY"
+  status             = "ACTIVE"
   use_as_exempt_list = true
 }
 `, rInt)
