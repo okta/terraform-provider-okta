@@ -275,3 +275,27 @@ data "okta_app_signon_policy" "testB" {
 		},
 	})
 }
+
+func TestAccAppSignOnPolicy_Issue2349_empty_desc(t *testing.T) {
+	//Issue2349_empty_desc.tf
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicy, t.Name())
+	config := mgr.GetFixtures("Issue2349_empty_desc.tf", t)
+	resourceName := fmt.Sprintf("%v.test", resources.OktaIDaaSAppSignOnPolicy)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSAppSignOnPolicy),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceNameWithPrefix("testAcc_Test_App", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "description", ""),
+					resource.TestCheckResourceAttrSet(resourceName, "default_rule_id"),
+				),
+			},
+		},
+	})
+}
