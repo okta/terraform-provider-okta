@@ -80,24 +80,6 @@ func doesNetworkZoneExist(id string) (bool, error) {
 	return utils.DoesResourceExist(response, err)
 }
 
-// findDefaultExemptIpZoneID searches for the DefaultExemptIpZone in the organization
-func findDefaultExemptIpZoneID() (string, error) {
-	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
-	zones, _, err := client.NetworkZone.ListNetworkZones(context.Background(), nil)
-	if err != nil {
-		return "", fmt.Errorf("failed to list network zones: %v", err)
-	}
-
-	// Look for the DefaultExemptIpZone by name
-	for _, zone := range zones {
-		if zone.Name == "DefaultExemptIpZone" && zone.Type == "IP" {
-			return zone.Id, nil
-		}
-	}
-
-	return "", fmt.Errorf("DefaultExemptIpZone not found in the organization")
-}
-
 func TestAccResourceOktaNetworkZone_exempt_zone(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
 	resourceName := fmt.Sprintf("%s.exempt_zone_example", resources.OktaIDaaSNetworkZone)

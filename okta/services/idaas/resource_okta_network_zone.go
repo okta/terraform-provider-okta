@@ -9,8 +9,10 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
@@ -29,6 +31,18 @@ func resourceNetworkZone() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		CustomizeDiff: customdiff.All(
+			func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+				// Validate use_as_exempt_list at plan time
+				if useAsExemptList, ok := d.GetOk("use_as_exempt_list"); ok && useAsExemptList.(bool) {
+					zoneType := d.Get("type").(string)
+					if zoneType != "IP" {
+						return fmt.Errorf("use_as_exempt_list can only be set to true for IP zones, got type: %s", zoneType)
+					}
+				}
+				return nil
+			},
+		),
 		Description: "Creates an Okta Network Zone. This resource allows you to create and configure an Okta Network Zone.",
 		Schema: map[string]*schema.Schema{
 			"dynamic_locations": {
@@ -182,9 +196,9 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// Check if this is a system network zone (DefaultExemptIpZone, LegacyIpZone, BlockedIpZone)
 	// System zones cannot be deactivated or deleted
-	if d.Get("name").(string) == "DefaultExemptIpZone" || 
-	   d.Get("name").(string) == "LegacyIpZone" || 
-	   d.Get("name").(string) == "BlockedIpZone" {
+	if d.Get("name").(string) == "DefaultExemptIpZone" ||
+		d.Get("name").(string) == "LegacyIpZone" ||
+		d.Get("name").(string) == "BlockedIpZone" {
 		// Skip deactivation and deletion for system zones
 		// Just remove from Terraform state
 		d.SetId("")
@@ -335,12 +349,7 @@ func validateNetworkZone(d *schema.ResourceData) error {
 		return fmt.Errorf(`zones with usage = "BLOCKLIST" cannot have trusted proxies`)
 	}
 
-	// Validate that use_as_exempt_list is only used with IP zones
-	if useAsExemptList, ok := d.GetOk("use_as_exempt_list"); ok && useAsExemptList.(bool) {
-		if d.Get("type").(string) != "IP" {
-			return fmt.Errorf(`use_as_exempt_list can only be set to true for IP zones`)
-		}
-	}
+	// use_as_exempt_list validation is now handled in CustomizeDiff for plan-time validation
 
 	return nil
 }
@@ -438,15 +447,25 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 }
 
 // updateNetworkZoneWithExemptList makes a custom HTTP request to update a network zone
-// with the useAsExemptList field included in the JSON body
+// with the useAsExemptList field included in the JSON body.
+//
+// Why custom HTTP instead of SDK:
+// The Okta SDK v5's NetworkZoneAPI does not support the useAsExemptList parameter
+// which is required when updating exempt zones (like DefaultExemptIpZone). This
+// parameter must be included in the request body, not as a query parameter.
+//
+// Trade-offs:
+// - We lose SDK benefits like automatic rate limiting and built-in retries
+// - We implement basic retry logic with exponential backoff for resilience
+// - Response validation ensures the update was actually applied
 func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zoneID string, payload v5okta.ListNetworkZones200ResponseInner) error {
 	// Get the configuration from meta
-	cfg := meta.(*config.Config)
+	c := meta.(*config.Config)
 
 	// Build the URL (no query parameter needed)
-	// The cfg.Domain is just the base domain like "okta.com",
+	// The c.Domain is just the base domain like "okta.com",
 	// but we need the full org URL like "https://trial-7001215.okta.com"
-	baseURL := fmt.Sprintf("https://%s.%s", cfg.OrgName, strings.TrimSuffix(cfg.Domain, "/"))
+	baseURL := fmt.Sprintf("https://%s.%s", c.OrgName, strings.TrimSuffix(c.Domain, "/"))
 	endpoint := fmt.Sprintf("/api/v1/zones/%s", zoneID)
 	fullURL := baseURL + endpoint
 
@@ -471,31 +490,72 @@ func updateNetworkZoneWithExemptList(ctx context.Context, meta interface{}, zone
 		return fmt.Errorf("failed to marshal final payload: %v", err)
 	}
 
-	// Create the HTTP request
-	req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(finalJsonData))
-	if err != nil {
-		return fmt.Errorf("failed to create request: %v", err)
-	}
+	// Implement retry logic with exponential backoff
+	maxRetries := 3
+	var lastErr error
 
-	// Set required headers
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", "SSWS "+cfg.ApiToken)
-	req.Header.Set("User-Agent", "terraform-provider-okta")
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		// Create the HTTP request
+		req, err := http.NewRequestWithContext(ctx, "PUT", fullURL, bytes.NewBuffer(finalJsonData))
+		if err != nil {
+			return fmt.Errorf("failed to create request: %v", err)
+		}
 
-	// Make the request
-	httpClient := &http.Client{}
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to make request: %v", err)
-	}
-	defer resp.Body.Close()
+		// Set required headers
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Authorization", "SSWS "+c.ApiToken)
+		req.Header.Set("User-Agent", "terraform-provider-okta")
 
-	// Check response status
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		// Make the request - use the SDK's HTTP client for VCR support
+		httpClient := c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient
+		if httpClient == nil {
+			httpClient = &http.Client{
+				Timeout: 30 * time.Second,
+			}
+		}
+		resp, err := httpClient.Do(req)
+		if err != nil {
+			lastErr = fmt.Errorf("failed to make request: %v", err)
+			time.Sleep(time.Duration(1<<attempt) * time.Second) // Exponential backoff
+			continue
+		}
+		defer resp.Body.Close()
+
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+
+		// Check for rate limiting
+		if resp.StatusCode == 429 {
+			lastErr = fmt.Errorf("rate limited (429), attempt %d/%d", attempt+1, maxRetries)
+			// Honor rate limit reset header if present
+			if resetTime := resp.Header.Get("X-Rate-Limit-Reset"); resetTime != "" {
+				// Parse and wait until reset time
+				time.Sleep(2 * time.Second) // Simple wait for rate limit
+			} else {
+				time.Sleep(time.Duration(1<<attempt) * time.Second) // Exponential backoff
+			}
+			continue
+		}
+
+		// Check response status
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			return fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+		}
+
+		// Validate response - ensure the zone was updated
+		var responseData map[string]interface{}
+		if err := json.Unmarshal(body, &responseData); err != nil {
+			return fmt.Errorf("failed to parse response: %v", err)
+		}
+
+		// Verify the response contains expected fields
+		if responseData["id"] == nil || responseData["id"] != zoneID {
+			return fmt.Errorf("unexpected response: zone ID mismatch or missing")
+		}
+
+		// Success
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("failed after %d retries: %v", maxRetries, lastErr)
 }

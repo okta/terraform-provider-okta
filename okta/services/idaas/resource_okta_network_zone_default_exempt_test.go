@@ -19,7 +19,7 @@ import (
 // deactivated or deleted. This test handles those expected errors.
 func TestAccResourceOktaNetworkZoneDefaultExempt_VCR(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
+		PreCheck: acctest.AccPreCheck(t),
 		ErrorCheck: func(err error) error {
 			if err != nil {
 				// Ignore deactivate and delete errors for system resources
