@@ -146,11 +146,12 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 	if sortBy, ok := d.GetOk("sort_by"); ok {
 		apiRequest = apiRequest.SortBy(sortBy.(string))
 		qp.SortBy = sortBy.(string)
-	}
 
-	if sortOrder, ok := d.GetOk("sort_order"); ok {
-		apiRequest = apiRequest.SortOrder(sortOrder.(string))
-		qp.SortOrder = sortOrder.(string)
+		// Only add sortOrder if sortBy is specified, since the API ignores sortOrder if sortBy is not present
+		if sortOrder, ok := d.GetOk("sort_order"); ok {
+			apiRequest = apiRequest.SortOrder(sortOrder.(string))
+			qp.SortOrder = sortOrder.(string)
+		}
 	}
 
 	okta_groups, resp, err := apiRequest.Execute()
