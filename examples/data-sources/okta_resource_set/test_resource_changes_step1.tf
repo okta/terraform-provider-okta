@@ -1,3 +1,7 @@
+variable "hostname" {
+  type = string
+}
+
 resource "okta_resource_set" "test" {
   label       = "testAcc_replace_with_uuid"
   description = "A test resource set for initial resource change test"
