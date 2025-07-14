@@ -319,6 +319,7 @@ func (r *appSignOnPolicyResource) mapAccessPolicyToState(ctx context.Context, da
 	}
 	state.ID = types.StringPointerValue(data.AccessPolicy.Id)
 	state.Name = types.StringPointerValue(data.AccessPolicy.Name)
+	// See https://github.com/okta/terraform-provider-okta/issues/2349
 	desc := ""
 	if data.AccessPolicy.Description != nil {
 		desc = *data.AccessPolicy.Description
