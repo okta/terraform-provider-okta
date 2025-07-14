@@ -296,7 +296,12 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 		toDelete = toDelete || utils.Contains(escapedUrls, orn)
 
 		if toDelete {
-			_, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
+			resp, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
+			// Suppress 404 errors when the resource no longer exists (e.g., underlying app/group was deleted)
+			if err != nil && resp != nil && resp.StatusCode == 404 {
+				// Resource not found - likely already deleted, continue
+				continue
+			}
 			if err != nil {
 				return fmt.Errorf("failed to remove %s resource from the resource set: %v", res.Id, err)
 			}

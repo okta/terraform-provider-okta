@@ -288,5 +288,54 @@ func (manager *fixtureManager) GetFixtures(fixtureName string, t *testing.T) str
 }
 
 func (manager *fixtureManager) ConfigReplace(tfConfig string) string {
-	return strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", manager.Seed))
+	// Replace UUID patterns
+	tfConfig = strings.ReplaceAll(tfConfig, uuidPattern, fmt.Sprintf("%d", manager.Seed))
+
+	// If we're in VCR mode, also replace Terraform variables with VCR values
+	if os.Getenv("OKTA_VCR_TF_ACC") != "" {
+		// Automatically set the correct hostname based on VCR mode
+		var vcrHostname string
+		if os.Getenv("OKTA_VCR_TF_ACC") == "record" {
+			// When recording, use the real Okta domain from environment
+			vcrHostname = os.Getenv("TF_VAR_hostname")
+			if vcrHostname == "" {
+				// Fallback: try multiple sources for the real domain
+				// Priority: TF_VAR_* (Terraform variables) > OKTA_* (provider config)
+				orgName := os.Getenv("TF_VAR_OKTA_ORG_NAME")
+				baseURL := os.Getenv("TF_VAR_OKTA_BASE_URL")
+				if orgName == "" || baseURL == "" {
+					// Fall back to provider configuration variables
+					orgName = os.Getenv("OKTA_ORG_NAME")
+					baseURL = os.Getenv("OKTA_BASE_URL")
+				}
+				if orgName != "" && baseURL != "" {
+					vcrHostname = fmt.Sprintf("%s.%s", orgName, baseURL)
+				}
+			}
+		} else if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+			// When playing back, use the VCR cassette domain
+			cassette := os.Getenv("OKTA_VCR_CASSETTE")
+			if cassette != "" {
+				vcrHostname = fmt.Sprintf("%s.dne-okta.com", cassette)
+			}
+		}
+
+		if vcrHostname != "" {
+			// Replace the Terraform variable reference
+			tfConfig = strings.ReplaceAll(tfConfig, "${var.hostname}", vcrHostname)
+
+			// Also replace any hardcoded domain references that might be in the fixtures
+			// This handles cases where domains might be hardcoded instead of using variables
+			orgName := os.Getenv("OKTA_ORG_NAME")
+			baseURL := os.Getenv("OKTA_BASE_URL")
+			if orgName != "" && baseURL != "" {
+				realHostname := fmt.Sprintf("%s.%s", orgName, baseURL)
+				if realHostname != vcrHostname {
+					tfConfig = strings.ReplaceAll(tfConfig, realHostname, vcrHostname)
+				}
+			}
+		}
+	}
+
+	return tfConfig
 }
