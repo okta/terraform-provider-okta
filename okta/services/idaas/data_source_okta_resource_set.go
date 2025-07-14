@@ -5,14 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 )
-
-// TODO: BREAKING CHANGE - In a future major release, this datasource will be split into:
-// 1. okta_resource_set - Returns basic metadata (id, label, description, timestamps)
-// 2. okta_resource_set_resources - Returns resources with native IDs instead of extracted links
-// This change will align with Terraform best practices of one resource per API endpoint
-// and use native IDs instead of brittle link extraction.
 
 func dataSourceResourceSet() *schema.Resource {
 	return &schema.Resource{
@@ -21,7 +14,7 @@ func dataSourceResourceSet() *schema.Resource {
 			"id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The ID of the resource set to retrieve",
+				Description: "The ID or label of the resource set to retrieve",
 			},
 			"label": {
 				Type:        schema.TypeString,
@@ -33,32 +26,28 @@ func dataSourceResourceSet() *schema.Resource {
 				Computed:    true,
 				Description: "A description of the Resource Set",
 			},
-			// TODO: BREAKING CHANGE - These fields will be moved to okta_resource_set_resources datasource
-			// and will use native resource IDs instead of extracted links
-			"resources": {
-				Type:        schema.TypeSet,
+			"created": {
+				Type:        schema.TypeString,
 				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The endpoints that reference the resources included in the Resource Set",
+				Description: "Timestamp when the resource set was created",
 			},
-			"resources_orn": {
-				Type:        schema.TypeSet,
+			"last_updated": {
+				Type:        schema.TypeString,
 				Computed:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The orn(Okta Resource Name) that reference the resources included in the Resource Set",
+				Description: "Timestamp when the resource set was last updated",
 			},
 		},
-		Description: "Get a resource set by ID. This data source allows you to retrieve the details of a resource set including its resources, which can be used in lifecycle preconditions to prevent users from being granted admin over themselves.",
+		Description: "Get a resource set by ID or label. This data source retrieves basic metadata about a resource set including its label, description, and timestamps.",
 	}
 }
 
 func dataSourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getAPISupplementFromMetadata(meta)
+	client := getOktaV5ClientFromMetadata(meta).ResourceSetAPI
 	resourceSetID := d.Get("id").(string)
 
 	// Get the resource set metadata
-	rs, resp, err := client.GetResourceSet(ctx, resourceSetID)
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	rs, _, err := client.GetResourceSet(ctx, resourceSetID).Execute()
+	if err != nil {
 		return diag.Errorf("failed to get resource set with ID '%s', error: %v", resourceSetID, err)
 	}
 	if rs == nil {
@@ -66,29 +55,15 @@ func dataSourceResourceSetRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	// Set the ID and basic fields
-	d.SetId(rs.Id)
-	_ = d.Set("label", rs.Label)
-	_ = d.Set("description", rs.Description)
+	d.SetId(rs.GetId())
+	_ = d.Set("label", rs.GetLabel())
+	_ = d.Set("description", rs.GetDescription())
 
-	// TODO: BREAKING CHANGE - This API call and resource processing will be moved to
-	// okta_resource_set_resources datasource in a future major release
-	// Get the resources in the resource set using the shared utility function
-	resources, err := listResourceSetResources(ctx, client, resourceSetID)
-	if err != nil {
-		return diag.Errorf("failed to get list of resource set resources for resource set ID '%s', error: %v", resourceSetID, err)
+	if rs.HasCreated() {
+		_ = d.Set("created", rs.GetCreated().Format("2006-01-02T15:04:05.000Z"))
 	}
-
-	// TODO: BREAKING CHANGE - This brittle link extraction will be replaced with native IDs
-	// Use the shared utility functions to process resources consistently with the resource
-	linksSet := flattenResourceSetResourcesLinks(resources)
-	ornsSet := flattenResourceSetResourcesORN(resources)
-
-	// Set the appropriate fields based on what we found
-	if linksSet.Len() > 0 {
-		_ = d.Set("resources", linksSet)
-	}
-	if ornsSet.Len() > 0 {
-		_ = d.Set("resources_orn", ornsSet)
+	if rs.HasLastUpdated() {
+		_ = d.Set("last_updated", rs.GetLastUpdated().Format("2006-01-02T15:04:05.000Z"))
 	}
 
 	return nil

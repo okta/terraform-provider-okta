@@ -8,6 +8,5 @@ resource "okta_resource_set" "test" {
   resources   = ["https://${var.hostname}/api/v1/users"]
 }
 
-data "okta_resource_set" "test" {
-  id = okta_resource_set.test.id
+data "okta_resource_sets" "test" {
 }

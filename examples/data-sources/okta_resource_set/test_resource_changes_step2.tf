@@ -1,3 +1,7 @@
+variable "hostname" {
+  type = string
+}
+
 resource "okta_group" "test_group" {
   name        = "testAcc_replace_with_uuid_group_updated"
   description = "Test group for updated resource change test"

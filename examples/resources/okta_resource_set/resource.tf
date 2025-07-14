@@ -1,5 +1,5 @@
 locals {
-  org_url = "https://mycompany.okta.com"
+  org_url = "https://${var.hostname}"
 }
 
 resource "okta_resource_set" "test" {
@@ -32,7 +32,7 @@ resource "okta_resource_set" "example" {
 ### To Provide permissions to specific Groups
 
 locals {
-  org_url = "https://mycompany.okta.com"
+  org_url = "https://${var.hostname}"
 }
 resource "okta_resource_set" "test" {
   label       = "Specific Groups"

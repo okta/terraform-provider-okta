@@ -1,0 +1,573 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 156
+        host: oie-00.dne-okta.com
+        body: |
+            {"label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","resources":["https://oie-00.dne-okta.com/api/v1/users"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:57:59 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 951.563167ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:57:59 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 664.903708ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"resources":[{"id":"iret7cy7ihkphkBFX697","orn":"orn:okta:directory:00osd501x0KyUtOul697:users","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/users"},"resource":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources/iret7cy7ihkphkBFX697"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/users"}}}],"_links":{"resource-set":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:00 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 649.948416ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 158
+        host: oie-00.dne-okta.com
+        body: |
+            {"label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","resources":["https://oie-00.dne-okta.com/api/v1/groups"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:01 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 664.138292ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:01 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 680.724791ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"resources":[{"id":"iret7cyh3udGvg6PY697","orn":"orn:okta:directory:00osd501x0KyUtOul697:groups","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"groups":{"href":"https://oie-00.dne-okta.com/api/v1/groups"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/groups"},"resource":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources/iret7cyh3udGvg6PY697"}}}],"_links":{"resource-set":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:02 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 691.571417ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets"}},"resource-sets":[{"id":"iamt779bxjw6r0SKV697","label":"testAcc_5462964145546479313","description":"A test resource set for datasource testing","created":"2025-07-14T12:39:47.000Z","lastUpdated":"2025-07-14T12:39:47.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/resources"}}},{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}},{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}},{"id":"WORKFLOWS_IAM_POLICY","label":"Workflows Resource Set","description":"A resource set managed by Workflows Administrator","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/resources"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:03 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 667.72325ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets"}},"resource-sets":[{"id":"iamt779bxjw6r0SKV697","label":"testAcc_5462964145546479313","description":"A test resource set for datasource testing","created":"2025-07-14T12:39:47.000Z","lastUpdated":"2025-07-14T12:39:47.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/resources"}}},{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}},{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}},{"id":"WORKFLOWS_IAM_POLICY","label":"Workflows Resource Set","description":"A resource set managed by Workflows Administrator","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/resources"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:04 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 644.318416ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:04 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 668.80725ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"resources":[{"id":"iret7cy7ihkphkBFX697","orn":"orn:okta:directory:00osd501x0KyUtOul697:users","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/users"},"resource":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources/iret7cy7ihkphkBFX697"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/users"}}}],"_links":{"resource-set":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:05 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 711.500458ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:06 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 655.939584ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"resources":[{"id":"iret7cyh3udGvg6PY697","orn":"orn:okta:directory:00osd501x0KyUtOul697:groups","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"groups":{"href":"https://oie-00.dne-okta.com/api/v1/groups"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/groups"},"resource":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources/iret7cyh3udGvg6PY697"}}}],"_links":{"resource-set":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:06 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 665.354666ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets"}},"resource-sets":[{"id":"iamt779bxjw6r0SKV697","label":"testAcc_5462964145546479313","description":"A test resource set for datasource testing","created":"2025-07-14T12:39:47.000Z","lastUpdated":"2025-07-14T12:39:47.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/resources"}}},{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}},{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}},{"id":"WORKFLOWS_IAM_POLICY","label":"Workflows Resource Set","description":"A resource set managed by Workflows Administrator","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/resources"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:07 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 647.035083ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets"}},"resource-sets":[{"id":"iamt779bxjw6r0SKV697","label":"testAcc_5462964145546479313","description":"A test resource set for datasource testing","created":"2025-07-14T12:39:47.000Z","lastUpdated":"2025-07-14T12:39:47.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt779bxjw6r0SKV697/resources"}}},{"id":"iamt7cy7igYooQPz9697","label":"testAcc_2456896608_1","description":"First test resource set for datasource testing","created":"2025-07-14T14:57:59.000Z","lastUpdated":"2025-07-14T14:57:59.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697/resources"}}},{"id":"iamt7cyh3tnyJgp29697","label":"testAcc_2456896608_2","description":"Second test resource set for datasource testing","created":"2025-07-14T14:58:01.000Z","lastUpdated":"2025-07-14T14:58:01.000Z","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697/resources"}}},{"id":"WORKFLOWS_IAM_POLICY","label":"Workflows Resource Set","description":"A resource set managed by Workflows Administrator","_links":{"bindings":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/bindings"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY"},"resources":{"href":"https://oie-00.dne-okta.com/api/v1/iam/resource-sets/WORKFLOWS_IAM_POLICY/resources"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 14 Jul 2025 14:58:08 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/iam/resource-sets>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 654.701ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cyh3tnyJgp29697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 14 Jul 2025 14:58:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 675.641584ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/resource-sets/iamt7cy7igYooQPz9697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 14 Jul 2025 14:58:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 673.932917ms
