@@ -47,7 +47,6 @@ func dataSourceGroups() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Description:  "Specifies field to sort by. Can be any single property (for search queries only). Common values include 'created', 'lastUpdated', 'lastMembershipUpdated', 'id', 'name'.",
-				ValidateFunc: validation.StringInSlice([]string{"created", "lastUpdated", "lastMembershipUpdated", "id", "name"}, false),
 			},
 			"sort_order": {
 				Type:         schema.TypeString,
