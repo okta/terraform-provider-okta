@@ -9,7 +9,7 @@ resource "okta_group" "test_2" {
 }
 
 data "okta_groups" "okta_groups" {
-  q = "testAcc_"
+  q = "testAcc_replace_with_uuid"
 }
 
 data "okta_groups" "app_groups" {
