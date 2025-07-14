@@ -98,6 +98,8 @@ const (
 	OktaIDaaSProfileMapping                = "okta_profile_mapping"
 	OktaIDaaSRateLimiting                  = "okta_rate_limiting"
 	OktaIDaaSResourceSet                   = "okta_resource_set"
+	OktaIDaaSResourceSets                  = "okta_resource_sets"
+	OktaIDaaSResourceSetResources          = "okta_resource_set_resources"
 	OktaIDaaSRoleSubscription              = "okta_role_subscription"
 	OktaIDaaSSecurityNotificationEmails    = "okta_security_notification_emails"
 	OktaIDaaSTemplateSms                   = "okta_template_sms"
