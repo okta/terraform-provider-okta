@@ -2,6 +2,8 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"reflect"
 	"strings"
@@ -471,6 +473,59 @@ func TestLinksValue(t *testing.T) {
 			require.NoError(t, err)
 			result := LinksValue(_links.Links, test.keys...)
 			require.Equal(t, test.expected, result)
+		})
+	}
+}
+
+func TestStrMaxLength(t *testing.T) {
+	tests := []struct {
+		name        string
+		input       interface{}
+		max         int
+		expectError bool
+	}{
+		{
+			name:        "valid ascii under max",
+			input:       "hello world",
+			max:         50,
+			expectError: false,
+		},
+		{
+			name:        "valid multibyte under max",
+			input:       "こんにちは世界", // 7 runes
+			max:         50,
+			expectError: false,
+		},
+		{
+			name:        "ascii over max",
+			input:       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+			max:         50, // 52 runes
+			expectError: true,
+		},
+		{
+			name:        "multibyte over max",
+			input:       "あいうえおかきくけこさしすせそたちつてと", // 20 runes
+			max:         10,
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			validator := StrMaxLength(tt.max)
+			path := cty.Path{cty.GetAttrStep{Name: "name"}}
+			diags := validator(tt.input, path)
+
+			gotError := false
+			for _, d := range diags {
+				if d.Severity == diag.Error {
+					gotError = true
+					break
+				}
+			}
+			if gotError != tt.expectError {
+				t.Errorf("expected error: %v, got: %v, input: %#v", tt.expectError, gotError, tt.input)
+			}
 		})
 	}
 }
