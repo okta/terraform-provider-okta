@@ -49,4 +49,4 @@ resource "okta_admin_role_custom_assignments" "example" {
     }
   }
 }
-*/ 
+*/
