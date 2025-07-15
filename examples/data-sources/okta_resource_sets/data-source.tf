@@ -22,4 +22,4 @@ output "resource_sets" {
 data "okta_resource_sets" "filtered" {
   label_prefix = "prod-"
 }
-*/ 
+*/

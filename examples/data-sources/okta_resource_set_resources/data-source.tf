@@ -28,4 +28,4 @@ resource "okta_resource_set" "example" {
 data "okta_resource_set_resources" "example" {
   resource_set_id = okta_resource_set.example.id
 }
-*/ 
+*/
