@@ -13,4 +13,4 @@ resource "okta_resource_set" "test" {
 
 data "okta_resource_set_resources" "test" {
   resource_set_id = okta_resource_set.test.id
-} 
+}
