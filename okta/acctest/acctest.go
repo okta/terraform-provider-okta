@@ -231,16 +231,6 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 			if err != nil {
 				t.Error(err)
 			}
-
-			// Post-process the cassette file to rewrite domains
-			if vcr.VCRModeName == "record" {
-				err = rewriteDomainsInCassette(vcr)
-				if err != nil {
-					t.Errorf("Failed to rewrite domains in cassette: %v", err)
-				} else {
-					fmt.Printf("=== VCR REWROTE DOMAINS IN CASSETTE %s.yaml\n", vcr.CassettePath())
-				}
-			}
 		}
 		// Clean up test config
 		providerConfigsLock.Lock()
@@ -420,8 +410,6 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		adminOrgName := fmt.Sprintf("%s-admin", os.Getenv("OKTA_ORG_NAME"))
 		// example
 		orgName := os.Getenv("OKTA_ORG_NAME")
-		// base URL (e.g., okta.com)
-		baseURL := os.Getenv("OKTA_BASE_URL")
 
 		// re-write the Authorization header
 		authHeader := "Authorization"
@@ -463,126 +451,48 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		m := regexp.MustCompile("client_assertion=[^&]+")
 		i.Request.URL = m.ReplaceAllString(i.Request.URL, "client_assertion=abc123")
 
-		// During recording, do NOT rewrite domains to avoid affecting the live test run
-		// Domain rewriting will be done in post-processing after the cassette is written
-		if mgr.VCRModeName == "record" {
-			// Do not rewrite domains during recording - this prevents the mismatch issue
-			// Only scrub secrets and clean up headers as needed
-			return nil
-		} else {
-			// During playback, rewrite everything as usual
-			// Replace domains in order of specificity (most specific first)
+		// replace admin based hostname before regular variations
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.Host = strings.ReplaceAll(i.Request.Host, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.Host = strings.ReplaceAll(i.Request.Host, orgHostname, vcrHostname)
 
-			// Replace admin hostnames first
-			i.Request.Host = strings.ReplaceAll(i.Request.Host, orgAdminHostname, vcrAdminHostname)
-			i.Request.URL = strings.ReplaceAll(i.Request.URL, orgAdminHostname, vcrAdminHostname)
-			i.Request.Body = strings.ReplaceAll(i.Request.Body, orgAdminHostname, vcrAdminHostname)
-			i.Response.Body = strings.ReplaceAll(i.Response.Body, orgAdminHostname, vcrAdminHostname)
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.URL = strings.ReplaceAll(i.Request.URL, orgHostname, vcrHostname)
 
-			// Replace regular hostnames
-			i.Request.Host = strings.ReplaceAll(i.Request.Host, orgHostname, vcrHostname)
-			i.Request.URL = strings.ReplaceAll(i.Request.URL, orgHostname, vcrHostname)
-			i.Request.Body = strings.ReplaceAll(i.Request.Body, orgHostname, vcrHostname)
-			i.Response.Body = strings.ReplaceAll(i.Response.Body, orgHostname, vcrHostname)
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgHostname, vcrHostname)
 
-			// Replace org names (less specific)
-			i.Request.Body = strings.ReplaceAll(i.Request.Body, adminOrgName, vcrAdminOrgName)
-			i.Request.Body = strings.ReplaceAll(i.Request.Body, orgName, vcrOrgName)
-			i.Response.Body = strings.ReplaceAll(i.Response.Body, adminOrgName, vcrAdminOrgName)
-			i.Response.Body = strings.ReplaceAll(i.Response.Body, orgName, vcrOrgName)
+		// %s/example-admin/test-admin/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, adminOrgName, vcrAdminOrgName)
+		// %s/example/test/
+		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgName, vcrOrgName)
 
-			// Replace base URL if present
-			if baseURL != "" {
-				// Use regex to match the base URL only when it's part of a domain pattern
-				baseURLPattern := regexp.MustCompile(fmt.Sprintf(`(https?://[^/]*\.)%s([^/]*)`, regexp.QuoteMeta(baseURL)))
-				i.Request.URL = baseURLPattern.ReplaceAllString(i.Request.URL, fmt.Sprintf("$1%s$2", TestDomainName))
-				i.Request.Body = baseURLPattern.ReplaceAllString(i.Request.Body, fmt.Sprintf("$1%s$2", TestDomainName))
-				i.Response.Body = baseURLPattern.ReplaceAllString(i.Response.Body, fmt.Sprintf("$1%s$2", TestDomainName))
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgHostname, vcrHostname)
 
-				// Also replace standalone base URL references
-				standaloneBaseURL := fmt.Sprintf("https://%s", baseURL)
-				standaloneVCRBaseURL := fmt.Sprintf("https://%s", TestDomainName)
-				i.Request.URL = strings.ReplaceAll(i.Request.URL, standaloneBaseURL, standaloneVCRBaseURL)
-				i.Request.Body = strings.ReplaceAll(i.Request.Body, standaloneBaseURL, standaloneVCRBaseURL)
-				i.Response.Body = strings.ReplaceAll(i.Response.Body, standaloneBaseURL, standaloneVCRBaseURL)
-			}
+		// %s/example-admin/test-admin/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, adminOrgName, vcrAdminOrgName)
+		// %s/example/test/
+		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgName, vcrOrgName)
 
-			// Handle Link headers
-			if linkHeaders, ok := i.Response.Headers["Link"]; ok {
-				newLinkHeaders := make([]string, 0, len(linkHeaders))
-				for _, link := range linkHeaders {
-					// Replace admin hostnames first
-					link = strings.ReplaceAll(link, orgAdminHostname, vcrAdminHostname)
-					// Replace regular hostnames
-					link = strings.ReplaceAll(link, orgHostname, vcrHostname)
-					// Replace base URL if present
-					if baseURL != "" {
-						link = strings.ReplaceAll(link, baseURL, TestDomainName)
-					}
-					newLinkHeaders = append(newLinkHeaders, link)
-				}
-				i.Response.Headers.Del("Link")
-				for _, val := range newLinkHeaders {
-					i.Response.Headers.Add("Link", val)
-				}
-			}
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		headerLinks := replaceHeaderValues(i.Response.Headers["Link"], orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		headerLinks = replaceHeaderValues(headerLinks, orgHostname, vcrHostname)
+		i.Response.Headers.Del("Link")
+		for _, val := range headerLinks {
+			i.Response.Headers.Add("Link", val)
 		}
 
 		return nil
 	}
-}
-
-// rewriteDomainsInCassette rewrites real Okta domains to fake VCR domains in the cassette file
-func rewriteDomainsInCassette(vcr *vcrManager) error {
-	cassettePath := vcr.CassettePath() + ".yaml"
-
-	// Read the cassette file
-	content, err := os.ReadFile(cassettePath)
-	if err != nil {
-		return fmt.Errorf("failed to read cassette file %s: %w", cassettePath, err)
-	}
-
-	// Get the real Okta domain from environment
-	orgName := os.Getenv("OKTA_ORG_NAME")
-	baseURL := os.Getenv("OKTA_BASE_URL")
-	if orgName == "" || baseURL == "" {
-		return fmt.Errorf("OKTA_ORG_NAME or OKTA_BASE_URL not set")
-	}
-
-	// Construct the real domain patterns
-	realOrgHostname := fmt.Sprintf("%s.%s", orgName, baseURL)
-	realAdminHostname := fmt.Sprintf("%s-admin.%s", orgName, baseURL)
-
-	// Construct the fake VCR domain patterns
-	vcrOrgHostname := fmt.Sprintf("%s.%s", vcr.CurrentCassette, TestDomainName)
-	vcrAdminHostname := fmt.Sprintf("%s-admin.%s", vcr.CurrentCassette, TestDomainName)
-
-	// Replace real domains with fake domains in the cassette content
-	contentStr := string(content)
-
-	// Replace full hostnames first (most specific)
-	contentStr = strings.ReplaceAll(contentStr, realAdminHostname, vcrAdminHostname)
-	contentStr = strings.ReplaceAll(contentStr, realOrgHostname, vcrOrgHostname)
-
-	// Replace org names (less specific, but still needed)
-	contentStr = strings.ReplaceAll(contentStr, fmt.Sprintf("%s-admin", orgName), fmt.Sprintf("%s-admin", vcr.CurrentCassette))
-	contentStr = strings.ReplaceAll(contentStr, orgName, vcr.CurrentCassette)
-
-	// Replace base URL only in specific contexts where it's part of a domain
-	// Use regex to match the base URL only when it's preceded by a dot (.) or at the start of a URL
-	baseURLPattern := regexp.MustCompile(fmt.Sprintf(`(https?://[^/]*\.)%s([^/]*)`, regexp.QuoteMeta(baseURL)))
-	contentStr = baseURLPattern.ReplaceAllString(contentStr, fmt.Sprintf("$1%s$2", TestDomainName))
-
-	// Also replace standalone base URL references (like in organization links)
-	contentStr = strings.ReplaceAll(contentStr, fmt.Sprintf("https://%s", baseURL), fmt.Sprintf("https://%s", TestDomainName))
-
-	// Write the modified content back to the cassette file
-	err = os.WriteFile(cassettePath, []byte(contentStr), 0644)
-	if err != nil {
-		return fmt.Errorf("failed to write cassette file %s: %w", cassettePath, err)
-	}
-
-	return nil
 }
 
 func AccPreCheck(t *testing.T) func() {
