@@ -401,7 +401,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
-				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application. We will be stop attaching authentication_policy for applications of type SERVICE in the upcoming release`,
+				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application. Now onwards, there is no need to attach authentication_policy for applications of type SERVICE`,
 			},
 			"jwks_uri": {
 				Type:        schema.TypeString,
@@ -478,9 +478,11 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+	if d.Get("type") != "service" {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
