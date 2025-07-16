@@ -12,7 +12,7 @@
 ### IMPROVEMENTS
 
 * Stop adding authentication policy for `SERVICE` apps for resource `okta_app_oauth`[#2403](https://github.com/okta/terraform-provider-okta/pull/2403) by [aditya-okta](https://github.com/aditya-okta).
-* Bump github.com/hashicorp/terraform-plugin-docs from 0.21.0 to 0.22.0 [#2388](https://github.com/okta/terraform-provider-okta/pull/2388)
+* Bump github.com/hashicorp/terraform-plugin-docs from 0.21.0 to 0.22.0 [#2388](https://github.com/okta/terraform-provider-okta/pull/2388).
 
 ## 5.1.0 (July 3, 2025)
 
