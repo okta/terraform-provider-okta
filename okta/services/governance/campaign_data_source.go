@@ -2,7 +2,9 @@ package governance
 
 import (
 	"context"
+	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
@@ -36,117 +38,11 @@ type campaignDataSourceModel struct {
 	Description          types.String                      `tfsdk:"description"`
 	RecurringCampaignId  types.String                      `tfsdk:"recurring_campaign_id"`
 	RemediationSettings  *campaignRemediationSettingsModel `tfsdk:"remediation_settings"`
-	AutoRemediation      *autoRemediationSettingsModel     `tfsdk:"auto_remediation_settings"`
 	ResourceSettings     *resourceSettingsModel            `tfsdk:"resource_settings"`
 	ReviewerSettings     *reviewerSettingsModel            `tfsdk:"reviewer_settings"`
 	ScheduleSettings     *scheduleSettingsModel            `tfsdk:"schedule_settings"`
 	NotificationSettings *notificationSettingsModel        `tfsdk:"notification_settings"`
 	PrincipalScope       *principalScopeSettingsModel      `tfsdk:"principal_scope_settings"`
-}
-
-type autoRemediationSettingsModel struct {
-	IncludeAllIndirectAssignments types.Bool                    `tfsdk:"include_all_indirect_assignments"`
-	IncludeOnly                   []campaignTargetResourceModel `tfsdk:"include_only"`
-}
-
-type resourceSettingsModel struct {
-	Type                               types.String                  `tfsdk:"type"`
-	IncludeAdminRoles                  types.Bool                    `tfsdk:"includeAdminRoles"`
-	IncludeEntitlements                types.Bool                    `tfsdk:"includeEntitlements"`
-	IndividuallyAssignedAppsOnly       types.Bool                    `tfsdk:"individuallyAssignedAppsOnly"`
-	IndividuallyAssignedGroupsOnly     types.Bool                    `tfsdk:"individuallyAssignedGroupsOnly"`
-	OnlyIncludeOutOfPolicyEntitlements types.Bool                    `tfsdk:"onlyIncludeOutOfPolicyEntitlements"`
-	ExcludedResources                  []campaignTargetResourceModel `tfsdk:"excluded_resources"`
-	TargetResources                    []targetResourceModel         `tfsdk:"target_resources"`
-}
-
-type targetResourceModel struct {
-	ResourceId                       types.String             `tfsdk:"resource_id"`
-	IncludeAllEntitlementsAndBundles types.Bool               `tfsdk:"includeAllEntitlementsAndBundles"`
-	ResourceType                     types.String             `tfsdk:"resource_type"`
-	EntitlementBundles               []entitlementBundleModel `tfsdk:"entitlement_bundles"`
-	Entitlements                     []entitlementModel       `tfsdk:"entitlements"`
-}
-
-type entitlementBundleModel struct {
-	Id types.String `tfsdk:"id"`
-}
-
-type entitlementModel struct {
-	Id               types.String            `tfsdk:"id"`
-	IncludeAllValues types.Bool              `tfsdk:"include_all_values"`
-	Values           []entitlementValueModel `tfsdk:"values"`
-}
-
-type entitlementValueModel struct {
-	Id types.String `tfsdk:"id"`
-}
-
-type reviewerSettingsModel struct {
-	Type                    types.String         `tfsdk:"type"`
-	BulkDecisionDisabled    types.Bool           `tfsdk:"bulk_decision_disabled"`
-	FallbackReviewerId      types.String         `tfsdk:"fallback_reviewer_id"`
-	JustificationRequired   types.Bool           `tfsdk:"justification_required"`
-	ReassignmentDisabled    types.Bool           `tfsdk:"reassignment_disabled"`
-	ReviewerGroupId         types.String         `tfsdk:"reviewer_group_id"`
-	ReviewerId              types.String         `tfsdk:"reviewer_id"`
-	ReviewerScopeExpression types.String         `tfsdk:"reviewer_scope_expression"`
-	SelfReviewDisabled      types.Bool           `tfsdk:"self_review_disabled"`
-	ReviewerLevels          []reviewerLevelModel `tfsdk:"reviewer_levels"`
-}
-
-type reviewerLevelModel struct {
-	Type                    types.String       `tfsdk:"type"`
-	FallBackReviewerId      types.String       `tfsdk:"fallBackReviewerId"`
-	ReviewerGroupId         types.String       `tfsdk:"reviewerGroupId"`
-	ReviewerId              types.String       `tfsdk:"reviewerId"`
-	ReviewerScopeExpression types.String       `tfsdk:"reviewerScopeExpression"`
-	SelfReviewDisabled      types.Bool         `tfsdk:"selfReviewDisabled"`
-	StartReview             []startReviewModel `tfsdk:"start_review"`
-}
-
-type startReviewModel struct {
-	OnDay types.Int64  `tfsdk:"on_day"`
-	When  types.String `tfsdk:"when"`
-}
-
-type scheduleSettingsModel struct {
-	DurationInDays types.Int64       `tfsdk:"duration_in_days"`
-	EndDate        types.String      `tfsdk:"end_date"`
-	StartDate      types.String      `tfsdk:"start_date"`
-	TimeZone       types.String      `tfsdk:"time_zone"`
-	Type           types.String      `tfsdk:"type"`
-	Recurrence     []recurrenceModel `tfsdk:"recurrence"`
-}
-
-type recurrenceModel struct {
-	Interval     types.String `tfsdk:"interval"`
-	Ends         types.String `tfsdk:"ends"`
-	RepeatOnType types.String `tfsdk:"repeat_on_type"`
-}
-
-type notificationSettingsModel struct {
-	NotifyReviewerAtCampaignEnd                types.Bool `tfsdk:"notifyReviewerAtCampaignEnd"`
-	NotifyReviewerDuringMidpointOfReview       types.Bool `tfsdk:"notifyReviewerDuringMidpointOfReview"`
-	NotifyReviewerWhenOverdue                  types.Bool `tfsdk:"notifyReviewerWhenOverdue"`
-	NotifyReviewerWhenReviewAssigned           types.Bool `tfsdk:"notifyReviewerWhenReviewAssigned"`
-	NotifyReviewPeriodEnd                      types.Bool `tfsdk:"notifyReviewPeriodEnd"`
-	RemindersReviewerBeforeCampaignCloseInSecs types.List `tfsdk:"remindersReviewerBeforeCampaignCloseInSecs"`
-}
-
-type principalScopeSettingsModel struct {
-	Type                             types.String              `tfsdk:"type"`
-	ExcludedUserIds                  types.String              `tfsdk:"excluded_user_ids"`
-	GroupIds                         types.List                `tfsdk:"group_ids"`
-	IncludeOnlyActiveUsers           types.Bool                `tfsdk:"include_only_active_users"`
-	OnlyIncludeUsersWithSODConflicts types.Bool                `tfsdk:"only_include_users_with_sod_conflicts"`
-	UserIds                          types.List                `tfsdk:"user_ids"`
-	UserScopeExpression              types.String              `tfsdk:"user_scope_expression"`
-	PredefinedInactiveUsersScope     []inactiveUsersScopeModel `tfsdk:"predefined_inactive_users_scope"`
-}
-
-type inactiveUsersScopeModel struct {
-	InactiveDays types.Int64 `tfsdk:"inactive_days"`
 }
 
 func (d *campaignDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -162,6 +58,7 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
+				Optional: true,
 			},
 			"created": schema.StringAttribute{
 				Computed: true,
@@ -195,6 +92,7 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 		},
 		Blocks: map[string]schema.Block{
 			"remediation_settings": schema.SingleNestedBlock{
+				Description: "Specify the action to be taken after a reviewer makes a decision to APPROVE or REVOKE the access, or if the campaign was CLOSED and there was no response from the reviewer.",
 				Attributes: map[string]schema.Attribute{
 					"access_approved": schema.StringAttribute{
 						Computed:    true,
@@ -208,24 +106,25 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Computed: true,
 					},
 				},
-				Description: "Specify the action to be taken after a reviewer makes a decision to APPROVE or REVOKE the access, or if the campaign was CLOSED and there was no response from the reviewer.",
-			},
-			"auto_remediation_settings": schema.SingleNestedBlock{
-				Attributes: map[string]schema.Attribute{
-					"include_all_indirect_assignments": schema.BoolAttribute{
-						Computed: true,
-						Optional: true,
-					},
-				},
 				Blocks: map[string]schema.Block{
-					"include_only": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"resource_id": schema.StringAttribute{
-									Required: true,
-								},
-								"resource_type": schema.StringAttribute{
-									Required: true,
+					"auto_remediation_settings": schema.SingleNestedBlock{
+						Attributes: map[string]schema.Attribute{
+							"include_all_indirect_assignments": schema.BoolAttribute{
+								Computed: true,
+								Optional: true,
+							},
+						},
+						Blocks: map[string]schema.Block{
+							"include_only": schema.ListNestedBlock{
+								NestedObject: schema.NestedBlockObject{
+									Attributes: map[string]schema.Attribute{
+										"resource_id": schema.StringAttribute{
+											Required: true,
+										},
+										"resource_type": schema.StringAttribute{
+											Required: true,
+										},
+									},
 								},
 							},
 						},
@@ -237,23 +136,23 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					"type": schema.StringAttribute{
 						Computed: true,
 					},
-					"includeAdminRoles": schema.BoolAttribute{
+					"include_admin_roles": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 					},
-					"includeEntitlements": schema.BoolAttribute{
+					"include_entitlements": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 					},
-					"individuallyAssignedAppsOnly": schema.BoolAttribute{
+					"individually_assigned_apps_only": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 					},
-					"individuallyAssignedGroupsOnly": schema.BoolAttribute{
+					"individually_assigned_groups_only": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 					},
-					"onlyIncludeOutOfPolicyEntitlements": schema.BoolAttribute{
+					"only_include_out_of_policy_entitlements": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 					},
@@ -263,7 +162,6 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
-									Required: true,
 									Computed: true,
 								},
 								"resource_type": schema.StringAttribute{
@@ -278,7 +176,7 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 								"resource_id": schema.StringAttribute{
 									Required: true,
 								},
-								"includeAllEntitlementsAndBundles": schema.BoolAttribute{
+								"include_all_entitlements_and_bundles": schema.BoolAttribute{
 									Computed: true,
 								},
 								"resource_type": schema.StringAttribute{
@@ -360,19 +258,19 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 								"type": schema.StringAttribute{
 									Computed: true,
 								},
-								"fallBackReviewerId": schema.StringAttribute{
+								"fallback_reviewer_id": schema.StringAttribute{
 									Computed: true,
 								},
-								"reviewerGroupId": schema.StringAttribute{
+								"reviewer_group_id": schema.StringAttribute{
 									Computed: true,
 								},
-								"reviewerId": schema.StringAttribute{
+								"reviewer_id": schema.StringAttribute{
 									Computed: true,
 								},
-								"reviewerScopeExpression": schema.StringAttribute{
+								"reviewer_scope_expression": schema.StringAttribute{
 									Computed: true,
 								},
-								"selfReviewDisabled": schema.BoolAttribute{
+								"self_review_disabled": schema.BoolAttribute{
 									Computed: true,
 								},
 							},
@@ -432,23 +330,24 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"notification_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
-					"notifyReviewerAtCampaignEnd": schema.BoolAttribute{
+					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
 						Computed: true,
 					},
-					"notifyReviewerDuringMidpointOfReview": schema.BoolAttribute{
+					"notify_reviewer_during_midpoint_of_review": schema.BoolAttribute{
 						Computed: true,
 					},
-					"notifyReviewerWhenOverdue": schema.BoolAttribute{
+					"notify_reviewer_when_overdue": schema.BoolAttribute{
 						Computed: true,
 					},
-					"notifyReviewerWhenReviewAssigned": schema.BoolAttribute{
+					"notify_reviewer_when_review_assigned": schema.BoolAttribute{
 						Computed: true,
 					},
-					"notifyReviewPeriodEnd": schema.BoolAttribute{
+					"notify_review_period_end": schema.BoolAttribute{
 						Computed: true,
 					},
-					"remindersReviewerBeforeCampaignCloseInSecs": schema.ListAttribute{
-						Computed: true,
+					"reminders_reviewer_before_campaign_close_in_secs": schema.ListAttribute{
+						Computed:    true,
+						ElementType: types.Int64Type,
 					},
 				},
 			},
@@ -457,11 +356,13 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 					"type": schema.StringAttribute{
 						Computed: true,
 					},
-					"excluded_user_ids": schema.StringAttribute{
-						Computed: true,
+					"excluded_user_ids": schema.ListAttribute{
+						Computed:    true,
+						ElementType: types.StringType,
 					},
 					"group_ids": schema.ListAttribute{
-						Computed: true,
+						Computed:    true,
+						ElementType: types.StringType,
 					},
 					"include_only_active_users": schema.BoolAttribute{
 						Computed: true,
@@ -470,7 +371,8 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Computed: true,
 					},
 					"user_ids": schema.ListAttribute{
-						Computed: true,
+						Computed:    true,
+						ElementType: types.StringType,
 					},
 					"user_scope_expression": schema.StringAttribute{
 						Computed: true,
@@ -493,6 +395,8 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 }
 
 func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+
+	fmt.Println("INSIDE READ FOR CAMPAIGNS")
 	var data campaignDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -513,87 +417,310 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	data.Name = types.StringValue(campaign.Name)
 	data.Status = types.StringValue(string(campaign.Status))
 	data.Description = types.StringValue(*campaign.Description)
-	//data.CampaignType = campaign.CampaignType
+	data.CampaignType = types.StringValue(string(*campaign.CampaignType))
 	data.Created = types.StringValue(campaign.Created.Format(time.RFC3339))
 	data.CreatedBy = types.StringValue(campaign.CreatedBy)
 	data.LastUpdated = types.StringValue(campaign.LastUpdated.Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(campaign.LastUpdatedBy)
-	data.RecurringCampaignId = types.StringValue(*campaign.RecurringCampaignId.Get())
-
-	//if rs := campaign.RemediationSettings; rs != nil {
-	data.RemediationSettings = &campaignRemediationSettingsModel{
-		AccessApproved: types.StringValue(string(campaign.RemediationSettings.AccessApproved)),
-		AccessRevoked:  types.StringValue(string(campaign.RemediationSettings.AccessRevoked)),
-		NoResponse:     types.StringValue(string(campaign.RemediationSettings.NoResponse)),
+	if campaign.RecurringCampaignId.Get() != nil {
+		data.RecurringCampaignId = types.StringValue(*campaign.RecurringCampaignId.Get())
+	} else {
+		data.RecurringCampaignId = types.StringNull()
 	}
-	//}
 
-	//todo handle RemediationSettings
-	//if ars := campaign.RemediationSettings; ars != nil {
-	//	includeOnly := make([]campaignTargetResourceModel, len(ars.Inc))
-	//	for i, r := range ars.IncludeOnly {
-	//		includeOnly[i] = campaignTargetResourceModel{
-	//			ResourceId:   types.StringValue(r.),
-	//			ResourceType: types.StringValue(string(r.ResourceType)),
-	//		}
-	//	}
-	//	data.AutoRemediation = &autoRemediationSettingsModel{
-	//		IncludeAllIndirectAssignments: types.BoolValue(ars.IncludeAllIndirectAssignments),
-	//		IncludeOnly:                   includeOnly,
-	//	}
-	//}
+	if campaign.RemediationSettings.AccessApproved != "" ||
+		campaign.RemediationSettings.AccessRevoked != "" ||
+		campaign.RemediationSettings.NoResponse != "" {
 
-	//if rs := campaign.ResourceSettings; rs != nil {
-	excluded := make([]campaignTargetResourceModel, len(campaign.ResourceSettings.ExcludedResources))
+		if campaign.RemediationSettings.AutoRemediationSettings != nil {
+			data.RemediationSettings.AutoRemediationSettings = &autoRemediationSettingsModel{
+				IncludeAllIndirectAssignments: types.BoolValue(
+					derefBool(campaign.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments),
+				),
+			}
+		}
+		data.RemediationSettings = &campaignRemediationSettingsModel{
+			AccessApproved: stringOrNull(string(campaign.RemediationSettings.AccessApproved)),
+			AccessRevoked:  stringOrNull(string(campaign.RemediationSettings.AccessRevoked)),
+			NoResponse:     stringOrNull(string(campaign.RemediationSettings.NoResponse)),
+		}
+	} else {
+		data.RemediationSettings = nil // required to avoid "null to non-nullable" error
+	}
+
+	excluded := make([]targetResourceModel, len(campaign.ResourceSettings.ExcludedResources))
 	for i, ex := range campaign.ResourceSettings.ExcludedResources {
-		excluded[i] = campaignTargetResourceModel{
-			ResourceId: types.StringValue(*ex.ResourceId),
-			//todo handle ResourceType
-			//ResourceType: ex.ResourceType,
-		}
-		//}
-
-		targets := make([]targetResourceModel, len(campaign.ResourceSettings.TargetResources))
-		for i, tr := range campaign.ResourceSettings.TargetResources {
-			entitlements := make([]entitlementModel, len(tr.Entitlements))
-			for j, ent := range tr.Entitlements {
-				values := make([]entitlementValueModel, len(ent.Values))
-				for k, v := range ent.Values {
-					values[k] = entitlementValueModel{Id: types.StringValue(v.Id)}
-				}
-				entitlements[j] = entitlementModel{
-					Id:               types.StringValue(ent.Id),
-					IncludeAllValues: types.BoolValue(*ent.IncludeAllValues),
-					Values:           values,
-				}
-			}
-			bundles := make([]entitlementBundleModel, len(tr.EntitlementBundles))
-			for j, b := range tr.EntitlementBundles {
-				bundles[j] = entitlementBundleModel{Id: types.StringValue(b.Id)}
-			}
-			targets[i] = targetResourceModel{
-				ResourceId:                       types.StringValue(tr.ResourceId),
-				IncludeAllEntitlementsAndBundles: types.BoolValue(*tr.IncludeAllEntitlementsAndBundles),
-				//todo handle ResourceType
-				//ResourceType:                     types.StringValue(string(tr.ResourceType)),
-				EntitlementBundles: bundles,
-				Entitlements:       entitlements,
-			}
-		}
-		data.ResourceSettings = &resourceSettingsModel{
-			Type:                               types.StringValue(string(campaign.ResourceSettings.Type)),
-			IncludeAdminRoles:                  types.BoolValue(*campaign.ResourceSettings.IncludeAdminRoles),
-			IncludeEntitlements:                types.BoolValue(*campaign.ResourceSettings.IncludeEntitlements),
-			IndividuallyAssignedAppsOnly:       types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedAppsOnly),
-			IndividuallyAssignedGroupsOnly:     types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedGroupsOnly),
-			OnlyIncludeOutOfPolicyEntitlements: types.BoolValue(*campaign.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements),
-			ExcludedResources:                  excluded,
-			TargetResources:                    targets,
+		excluded[i] = targetResourceModel{
+			ResourceId:   types.StringValue(*ex.ResourceId),
+			ResourceType: types.StringValue(string(*ex.ResourceType)),
 		}
 	}
 
-	// Similarly map other nested blocks: ReviewerSettings, ScheduleSettings, NotificationSettings, PrincipalScope...
-	// (To be added depending on your API structure)
+	targets := make([]targetResourceModel, len(campaign.ResourceSettings.TargetResources))
+	for i, tr := range campaign.ResourceSettings.TargetResources {
+		entitlements := make([]entitlementModel, len(tr.Entitlements))
+		for j, ent := range tr.Entitlements {
+			values := make([]entitlementValueModel, len(ent.Values))
+			for k, v := range ent.Values {
+				values[k] = entitlementValueModel{Id: types.StringValue(v.Id)}
+			}
+			entitlements[j] = entitlementModel{
+				Id:               types.StringValue(ent.Id),
+				IncludeAllValues: types.BoolValue(*ent.IncludeAllValues),
+				Values:           values,
+			}
+		}
+		bundles := make([]entitlementBundleModel, len(tr.EntitlementBundles))
+		for j, b := range tr.EntitlementBundles {
+			bundles[j] = entitlementBundleModel{Id: types.StringValue(b.Id)}
+		}
+		targets[i] = targetResourceModel{
+			ResourceId:                       types.StringValue(tr.ResourceId),
+			IncludeAllEntitlementsAndBundles: types.BoolValue(*tr.IncludeAllEntitlementsAndBundles),
+			ResourceType:                     types.StringValue(string(*tr.ResourceType)),
+			EntitlementBundles:               bundles,
+			Entitlements:                     entitlements,
+		}
+	}
+	data.ResourceSettings = &resourceSettingsModel{
+		Type:                               types.StringValue(string(campaign.ResourceSettings.Type)),
+		IncludeAdminRoles:                  types.BoolValue(*campaign.ResourceSettings.IncludeAdminRoles),
+		IncludeEntitlements:                types.BoolValue(*campaign.ResourceSettings.IncludeEntitlements),
+		IndividuallyAssignedAppsOnly:       types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedAppsOnly),
+		IndividuallyAssignedGroupsOnly:     types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedGroupsOnly),
+		OnlyIncludeOutOfPolicyEntitlements: types.BoolValue(*campaign.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements),
+		ExcludedResources:                  excluded,
+		TargetResources:                    targets,
+	}
+	data.ReviewerSettings = d.createSettingModelDS(campaign)
+
+	var endDate types.String
+	if campaign.ScheduleSettings.EndDate != nil {
+		endDate = types.StringValue(campaign.ScheduleSettings.EndDate.Format(time.RFC3339))
+	}
+	var recurrence []recurrenceModel
+	if campaign.ScheduleSettings.Recurrence != nil {
+		recurrenceList := make([]recurrenceModel, 1)
+		recurrenceList[0] = recurrenceModel{
+			Interval:     types.StringValue(campaign.ScheduleSettings.Recurrence.Interval),
+			Ends:         types.StringValue(campaign.ScheduleSettings.Recurrence.Ends.Format(time.RFC3339)),
+			RepeatOnType: types.StringValue(string(*campaign.ScheduleSettings.Recurrence.RepeatOnType)),
+		}
+		recurrence = recurrenceList
+	} else {
+		recurrence = nil
+	}
+	data.ScheduleSettings = &scheduleSettingsModel{
+		DurationInDays: types.Int32Value(int32(campaign.ScheduleSettings.DurationInDays)),
+		EndDate:        endDate,
+		StartDate:      types.StringValue(campaign.ScheduleSettings.StartDate.Format(time.RFC3339)),
+		TimeZone:       types.StringValue(campaign.ScheduleSettings.TimeZone),
+		Type:           types.StringValue(string(campaign.ScheduleSettings.Type)),
+		Recurrence:     recurrence,
+	}
+
+	var remindersReviewerBeforeCampaignCloseInSecs types.List
+	if campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil {
+		intValues := make([]attr.Value, 0, len(campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
+		for _, v := range campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
+			intValues = append(intValues, types.Int64Value(int64(v)))
+		}
+		remindersReviewerBeforeCampaignCloseInSecs = types.ListValueMust(
+			types.Int32Type,
+			intValues,
+		)
+	} else {
+		remindersReviewerBeforeCampaignCloseInSecs = types.ListNull(types.Int32Type)
+	}
+	data.NotificationSettings = &notificationSettingsModel{
+		NotifyReviewerAtCampaignEnd:                types.BoolValue(*campaign.NotificationSettings.NotifyReviewerAtCampaignEnd),
+		NotifyReviewerDuringMidpointOfReview:       types.BoolValue(*campaign.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get()),
+		NotifyReviewerWhenOverdue:                  types.BoolValue(*campaign.NotificationSettings.NotifyReviewerWhenOverdue.Get()),
+		NotifyReviewerWhenReviewAssigned:           types.BoolValue(*campaign.NotificationSettings.NotifyReviewerWhenReviewAssigned),
+		NotifyReviewPeriodEnd:                      types.BoolValue(*campaign.NotificationSettings.NotifyReviewPeriodEnd.Get()),
+		RemindersReviewerBeforeCampaignCloseInSecs: remindersReviewerBeforeCampaignCloseInSecs,
+	}
+
+	var excludedUsersIds types.List
+	if len(campaign.PrincipalScopeSettings.ExcludedUserIds) > 0 {
+		excluded := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.ExcludedUserIds))
+		for _, id := range campaign.PrincipalScopeSettings.ExcludedUserIds {
+			excluded = append(excluded, types.StringValue(id))
+		}
+		excludedUsersIds = types.ListValueMust(types.StringType, excluded)
+	} else {
+		excludedUsersIds = types.ListNull(types.StringType)
+	}
+
+	var userIdList types.List
+	if len(campaign.PrincipalScopeSettings.UserIds) > 0 {
+		userIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.UserIds))
+		for _, id := range campaign.PrincipalScopeSettings.UserIds {
+			userIds = append(userIds, types.StringValue(id))
+		}
+		userIdList = types.ListValueMust(types.StringType, userIds)
+	} else {
+		userIdList = types.ListNull(types.StringType)
+	}
+
+	var groupIdList types.List
+	if len(campaign.PrincipalScopeSettings.GroupIds) > 0 {
+		groupIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GroupIds))
+		for _, id := range campaign.PrincipalScopeSettings.GroupIds {
+			groupIds = append(groupIds, types.StringValue(id))
+		}
+		groupIdList = types.ListValueMust(types.StringType, groupIds)
+	} else {
+		groupIdList = types.ListNull(types.StringType)
+	}
+
+	var inactiveUsersScope []inactiveUsersScopeModel
+	if campaign.PrincipalScopeSettings.PredefinedInactiveUsersScope != nil {
+		inactiveUsersScope = []inactiveUsersScopeModel{
+			{
+				InactiveDays: types.Int32Value(*campaign.PrincipalScopeSettings.PredefinedInactiveUsersScope.InactiveDays),
+			},
+		}
+	}
+
+	var includeOnlyActiveUsers types.Bool
+	if campaign.PrincipalScopeSettings.IncludeOnlyActiveUsers != nil {
+		includeOnlyActiveUsers = types.BoolValue(*campaign.PrincipalScopeSettings.IncludeOnlyActiveUsers)
+	} else {
+		includeOnlyActiveUsers = types.BoolNull()
+	}
+
+	var onlyIncludeUsersWithSODConflicts types.Bool
+	if campaign.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts != nil {
+		onlyIncludeUsersWithSODConflicts = types.BoolValue(*campaign.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts)
+	} else {
+		onlyIncludeUsersWithSODConflicts = types.BoolNull()
+	}
+
+	var userScopeExpression types.String
+	if campaign.PrincipalScopeSettings.UserScopeExpression != nil {
+		userScopeExpression = types.StringValue(*campaign.PrincipalScopeSettings.UserScopeExpression)
+	} else {
+		userScopeExpression = types.StringNull()
+	}
+
+	data.PrincipalScope = &principalScopeSettingsModel{
+		Type:                             types.StringValue(string(campaign.PrincipalScopeSettings.Type)),
+		ExcludedUserIds:                  excludedUsersIds,
+		GroupIds:                         groupIdList,
+		IncludeOnlyActiveUsers:           includeOnlyActiveUsers,
+		OnlyIncludeUsersWithSODConflicts: onlyIncludeUsersWithSODConflicts,
+		UserIds:                          userIdList,
+		UserScopeExpression:              userScopeExpression,
+		PredefinedInactiveUsersScope:     inactiveUsersScope,
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (d *campaignDataSource) createSettingModelDS(campaign *oktaInternalGovernance.CampaignFull) *reviewerSettingsModel {
+	var (
+		bulkDecisionDisabled    types.Bool
+		fallbackReviewerId      types.String
+		justificationRequired   types.Bool
+		reassignmentDisabled    types.Bool
+		reviewerGroupId         types.String
+		reviewerID              types.String
+		reviewerScopeExpression types.String
+		selfReviewDisabled      types.Bool
+	)
+
+	if campaign.ReviewerSettings.BulkDecisionDisabled != nil {
+		bulkDecisionDisabled = types.BoolValue(*campaign.ReviewerSettings.BulkDecisionDisabled)
+	} else {
+		bulkDecisionDisabled = types.BoolNull()
+	}
+
+	if campaign.ReviewerSettings.FallBackReviewerId != nil {
+		fallbackReviewerId = types.StringValue(*campaign.ReviewerSettings.FallBackReviewerId)
+	} else {
+		fallbackReviewerId = types.StringNull()
+	}
+
+	if campaign.ReviewerSettings.JustificationRequired != nil {
+		justificationRequired = types.BoolValue(*campaign.ReviewerSettings.JustificationRequired)
+	} else {
+		justificationRequired = types.BoolNull()
+	}
+
+	if campaign.ReviewerSettings.ReassignmentDisabled != nil {
+		reassignmentDisabled = types.BoolValue(*campaign.ReviewerSettings.ReassignmentDisabled)
+	} else {
+		reassignmentDisabled = types.BoolNull()
+	}
+
+	if campaign.ReviewerSettings.ReviewerGroupId != nil {
+		reviewerGroupId = types.StringValue(*campaign.ReviewerSettings.ReviewerGroupId)
+	} else {
+		reviewerGroupId = types.StringNull()
+	}
+
+	if campaign.ReviewerSettings.ReviewerId != nil {
+		reviewerID = types.StringValue(*campaign.ReviewerSettings.ReviewerId)
+	} else {
+		reviewerID = types.StringNull()
+	}
+
+	if campaign.ReviewerSettings.ReviewerScopeExpression != nil {
+		reviewerScopeExpression = types.StringValue(*campaign.ReviewerSettings.ReviewerScopeExpression)
+	} else {
+		reviewerScopeExpression = types.StringNull()
+	}
+
+	if campaign.ReviewerSettings.SelfReviewDisabled != nil {
+		selfReviewDisabled = types.BoolValue(*campaign.ReviewerSettings.SelfReviewDisabled)
+	} else {
+		selfReviewDisabled = types.BoolNull()
+	}
+
+	reviewerLevels := make([]reviewerLevelModel, len(campaign.ReviewerSettings.ReviewerLevels))
+	if campaign.ReviewerSettings.ReviewerLevels != nil {
+		for _, level := range campaign.ReviewerSettings.ReviewerLevels {
+			reviewerLevel := reviewerLevelModel{
+				Type:                    types.StringValue(string(level.Type)),
+				FallBackReviewerId:      types.StringValue(*level.FallBackReviewerId),
+				ReviewerGroupId:         types.StringValue(*level.ReviewerGroupId),
+				ReviewerId:              types.StringValue(*level.ReviewerId),
+				ReviewerScopeExpression: types.StringValue(*level.ReviewerScopeExpression),
+				SelfReviewDisabled:      types.BoolValue(*level.SelfReviewDisabled),
+			}
+			startReviews := make([]startReviewModel, 1)
+			startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
+			startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+
+			reviewerLevels = append(reviewerLevels, reviewerLevel)
+		}
+	}
+
+	return &reviewerSettingsModel{
+		Type:                    types.StringValue(string(campaign.ReviewerSettings.Type)),
+		BulkDecisionDisabled:    bulkDecisionDisabled,
+		FallbackReviewerId:      fallbackReviewerId,
+		JustificationRequired:   justificationRequired,
+		ReassignmentDisabled:    reassignmentDisabled,
+		ReviewerGroupId:         reviewerGroupId,
+		ReviewerId:              reviewerID,
+		ReviewerScopeExpression: reviewerScopeExpression,
+		SelfReviewDisabled:      selfReviewDisabled,
+		ReviewerLevels:          reviewerLevels,
+	}
+}
+
+func stringOrNull(s string) types.String {
+	if s == "" {
+		return types.StringNull()
+	}
+	return types.StringValue(s)
+}
+
+func derefBool(b *bool) bool {
+	if b != nil {
+		return *b
+	}
+	return false
 }
