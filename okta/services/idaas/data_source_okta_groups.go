@@ -43,6 +43,18 @@ func dataSourceGroups() *schema.Resource {
 				Default:      utils.DefaultPaginationLimit,
 				ValidateFunc: validation.IntBetween(1, 10000),
 			},
+			"sort_by": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Specifies field to sort by. Can be any single property (for search queries only). Common values include 'created', 'lastUpdated', 'lastMembershipUpdated', 'id', 'name'.",
+			},
+			"sort_order": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Specifies sort order: 'asc' or 'desc'. This parameter is ignored if 'sort_by' is not present.",
+				Default:      "asc",
+				ValidateFunc: validation.StringInSlice([]string{"asc", "desc"}, false),
+			},
 			"groups": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -72,6 +84,21 @@ func dataSourceGroups() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "The ID of the application the Group is sourced/imported from (only present for groups of type APP_GROUP).",
+						},
+						"created": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Timestamp when the group was created.",
+						},
+						"last_updated": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Timestamp when the group was last updated.",
+						},
+						"last_membership_updated": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Timestamp when the group membership was last updated.",
 						},
 						"custom_profile_attributes": {
 							Type:        schema.TypeString,
@@ -115,6 +142,17 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		qp.Search = search.(string)
 	}
 
+	if sortBy, ok := d.GetOk("sort_by"); ok {
+		apiRequest = apiRequest.SortBy(sortBy.(string))
+		qp.SortBy = sortBy.(string)
+
+		// Only add sortOrder if sortBy is specified, since the API ignores sortOrder if sortBy is not present
+		if sortOrder, ok := d.GetOk("sort_order"); ok {
+			apiRequest = apiRequest.SortOrder(sortOrder.(string))
+			qp.SortOrder = sortOrder.(string)
+		}
+	}
+
 	okta_groups, resp, err := apiRequest.Execute()
 	if err != nil {
 		d.SetId("")
@@ -149,6 +187,17 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		arr[i]["name"] = okta_groups[i].Profile.Name
 		arr[i]["type"] = okta_groups[i].Type
 		arr[i]["description"] = okta_groups[i].Profile.Description
+
+		// Add timestamp fields
+		if okta_groups[i].Created != nil {
+			arr[i]["created"] = okta_groups[i].Created.Format("2006-01-02T15:04:05.000Z")
+		}
+		if okta_groups[i].LastUpdated != nil {
+			arr[i]["last_updated"] = okta_groups[i].LastUpdated.Format("2006-01-02T15:04:05.000Z")
+		}
+		if okta_groups[i].LastMembershipUpdated != nil {
+			arr[i]["last_membership_updated"] = okta_groups[i].LastMembershipUpdated.Format("2006-01-02T15:04:05.000Z")
+		}
 
 		// Use Profile.AdditionalProperties for custom profile attributes
 		customProfileMap := okta_groups[i].Profile.AdditionalProperties
