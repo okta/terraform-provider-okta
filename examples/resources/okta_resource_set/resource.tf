@@ -1,44 +1,31 @@
-locals {
-  org_url = "https://mycompany.okta.com"
-}
-
-resource "okta_resource_set" "test" {
-  label       = "UsersAppsAndGroups"
-  description = "All the users, app and groups"
-  resources = [
-    format("%s/api/v1/users", local.org_url),
-    format("%s/api/v1/apps", local.org_url),
-    format("%s/api/v1/groups", local.org_url)
-  ]
-}
-
-data "okta_org_metadata" "_" {}
-locals {
-  org_url = try(
-    data.okta_org_metadata._.alternate,
-    data.okta_org_metadata._.organization
-  )
-}
+# Example 1: Basic resource set with direct URLs
 resource "okta_resource_set" "example" {
-  label       = "UsersAppsAndGroups"
-  description = "All the users, app and groups"
+  label       = "Basic Resource Set"
+  description = "Resource set for managing API endpoints"
   resources = [
-    "${local.org_url}/api/v1/users",
-    "${local.org_url}/api/v1/apps",
-    "${local.org_url}/api/v1/groups"
+    "https://your-domain.okta.com/api/v1/users",
+    "https://your-domain.okta.com/api/v1/groups"
   ]
 }
 
-### To Provide permissions to specific Groups
+# Example 2: Using org metadata to get the correct domain
+data "okta_org_metadata" "org" {}
 
-locals {
-  org_url = "https://mycompany.okta.com"
-}
-resource "okta_resource_set" "test" {
-  label       = "Specific Groups"
-  description = "Only Specific Group"
+resource "okta_resource_set" "dynamic" {
+  label       = "Dynamic Resource Set"
+  description = "Resource set using org metadata"
   resources = [
-    format("%s/api/v1/groups/groupid1", local.org_url),
-    format("%s/api/v1/groups/groupid2", local.org_url)
+    "${data.okta_org_metadata.org.organization}/api/v1/users",
+    "${data.okta_org_metadata.org.organization}/api/v1/groups"
+  ]
+}
+
+# Example 3: Specific group access using ORN format
+resource "okta_resource_set" "specific_groups" {
+  label       = "Specific Groups"
+  description = "Access to specific groups only"
+  resources_orn = [
+    "orn:okta:directory:${data.okta_org_metadata.org.id}:group:groupid1",
+    "orn:okta:directory:${data.okta_org_metadata.org.id}:group:groupid2"
   ]
 }
