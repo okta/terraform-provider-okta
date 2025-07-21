@@ -1,5 +1,28 @@
 # Changelog
 
+## 5.2.0 (July 16, 2025)
+
+### BUG FIXES
+
+* Support for toggling self-service Early Access (EA) and Beta features in your org [#2232](https://github.com/okta/terraform-provider-okta/pull/2322) by [duytiennguyen-okta](https://github.com/duytiennguyen-okta) and [aditya-okta](https://github.com/aditya-okta).
+* Remove verifying domain from `resource_okta_domain`[#2397](https://github.com/okta/terraform-provider-okta/pull/2397) by [pranav-okta](https://github.com/pranav-okta).
+* Fix implementation of function StrMaxLength to counts bytes instead of characters[#2398](https://github.com/okta/terraform-provider-okta/pull/2398) by [aditya-okta](https://github.com/aditya-okta).
+
+### IMPROVEMENTS
+
+* Stop adding authentication policy for `SERVICE` apps for resource `okta_app_oauth`[#2403](https://github.com/okta/terraform-provider-okta/pull/2403) by [aditya-okta](https://github.com/aditya-okta).
+
+## 5.1.0 (July 3, 2025)
+
+### BUG FIXES
+
+* Fix regression in `data_source_okta_groups` for not handling custom_profile_attributes[#2328](https://github.com/okta/terraform-provider-okta/pull/2328) by [exitcode0](https://github.com/exitcode0).
+
+### IMPROVEMENTS
+
+* Add warning to stop adding authentication policy for `SERVICE` apps for resource `okta_app_oauth`[#2376](https://github.com/okta/terraform-provider-okta/pull/2376) by [aditya-okta](https://github.com/aditya-okta). 
+* Bump gopkg.in/dnaeon/go-vcr.v4 from 4.0.3 to 4.0.4 [#2372](https://github.com/okta/terraform-provider-okta/pull/2372)
+
 ## 5.0.0 (June 24, 2025)
 
 ### IMPROVEMENTS

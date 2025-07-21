@@ -128,6 +128,11 @@ func resourceIdpOidc() *schema.Resource {
 				Description: "Specifies whether to digitally sign an AuthnRequest messages to the IdP. Defaults to `REQUEST`. It can be `REQUEST` or `NONE`.",
 				Default:     "REQUEST",
 			},
+			"filter": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional regular expression pattern used to filter untrusted IdP usernames.",
+			},
 		}),
 	}
 }
@@ -169,6 +174,7 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
 	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
 	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+	_ = d.Set("filter", idp.Policy.Subject.Filter)
 	_ = d.Set("issuer_url", idp.Protocol.Issuer.Url)
 	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
@@ -253,6 +259,7 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				UserNameTemplate: &sdk.PolicyUserNameTemplate{
 					Template: d.Get("username_template").(string),
 				},
+				Filter: d.Get("filter").(string),
 			},
 		},
 		Protocol: &sdk.Protocol{

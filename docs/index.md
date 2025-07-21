@@ -15,6 +15,9 @@ Use the navigation to the left to read about the available resources and data so
 In case the provider configuration is still using old `"oktadeveloper/okta"` source, please change it to `"okta/okta"` and run
 `terraform state replace-provider oktadeveloper/okta okta/okta`. Okta no longer supports `"oktadeveloper/okta"`.
 
+### WARNING
+We're working on releasing of the okta-terraform-provider v6.0.0, which will introduce support for managing a broader range of Okta resources beyond just management-related ones. Following that, we'd be deprecating the v5 versions of the okta-terraform-provider.
+
 ## Example Usage
 
 Terraform 0.14 and later:
@@ -24,7 +27,7 @@ terraform {
   required_providers {
     okta = {
       source = "okta/okta"
-      version = "~> 5.0.0"
+      version = "~> 5.2.0"
     }
   }
 }

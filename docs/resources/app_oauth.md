@@ -71,7 +71,7 @@ resource "okta_app_oauth" "example" {
 - `admin_note` (String) Application notes for admins.
 - `app_links_json` (String) Displays specific appLinks for the app. The value for each application link should be boolean.
 - `app_settings_json` (String) Application settings in JSON format
-- `authentication_policy` (String) The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.
+- `authentication_policy` (String) The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application. From now on, there is no need to attach authentication_policy for applications of type `SERVICE` in the upcoming release.
 - `auto_key_rotation` (Boolean) Requested key rotation mode. If
 				auto_key_rotation isn't specified, the client automatically opts in for Okta's
 				key rotation. You can update this property via the API or via the administrator
