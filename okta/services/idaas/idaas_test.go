@@ -59,6 +59,14 @@ func TestMain(m *testing.M) {
 	if os.Getenv("TF_VAR_hostname") == "" {
 		os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
 	}
+	// TF_VAR_org_name and TF_VAR_base_url allow org_name and base_url to be scripted into config tests
+	// see examples/data-sources/okta_oauth_authorization_server/datasource.tf
+	if os.Getenv("TF_VAR_org_name") == "" {
+		os.Setenv("TF_VAR_org_name", os.Getenv("OKTA_ORG_NAME"))
+	}
+	if os.Getenv("TF_VAR_base_url") == "" {
+		os.Setenv("TF_VAR_base_url", os.Getenv("OKTA_BASE_URL"))
+	}
 	os.Setenv("TF_VAR_orgID", os.Getenv("OKTA_ORG_ID"))
 
 	// NOTE: Acceptance test sweepers are necessary to prevent dangling

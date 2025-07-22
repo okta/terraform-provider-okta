@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -96,7 +97,7 @@ func (d *OAuthAuthorizationServerDataSource) Schema(_ context.Context, _ datasou
 			},
 			"base_url": schema.StringAttribute{
 				Description: "The base URL of the Okta org",
-				Required:    false,
+				Optional:    true,
 			},
 			"issuer": schema.StringAttribute{
 				Computed:    true,
@@ -221,24 +222,28 @@ func (d *OAuthAuthorizationServerDataSource) Configure(_ context.Context, req da
 func (d *OAuthAuthorizationServerDataSource) Read(ctx context.Context, readReq datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state OAuthAuthorizationServerModel
 
-	// Get the base URL from either the SDK client or manual config
+	// Get the base URL from either the data source config or provider config
 	var baseURL string
-	if d.OktaIDaaSClient != nil && d.OktaIDaaSClient.OktaSDKClientV5() != nil && d.OktaIDaaSClient.OktaSDKClientV5().GetConfig().Host != "" {
-		baseURL = d.OktaIDaaSClient.OktaSDKClientV5().GetConfig().Host
-	} else {
-		// Try to get base URL from manual config
-		var config OAuthAuthorizationServerModel
-		diags := readReq.Config.Get(ctx, &config)
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
+	var diags diag.Diagnostics
 
-		if config.BaseURL.IsNull() || config.BaseURL.IsUnknown() {
-			resp.Diagnostics.AddError("Missing base URL", "Either the provider's base URL or the data source's base_url attribute must be set")
+	// First, try to get base URL from data source config
+	var dataSourceConfig OAuthAuthorizationServerModel
+	diags = readReq.Config.Get(ctx, &dataSourceConfig)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if !dataSourceConfig.BaseURL.IsNull() && !dataSourceConfig.BaseURL.IsUnknown() {
+		// Use the provided base_url from the data source
+		baseURL = dataSourceConfig.BaseURL.ValueString()
+	} else {
+		// Use the provider's configured base URL
+		if d.OrgName == "" || d.Domain == "" {
+			resp.Diagnostics.AddError("Missing base URL", "Either the provider's org_name and base_url must be configured, or the data source's base_url attribute must be set")
 			return
 		}
-		baseURL = config.BaseURL.ValueString()
+		baseURL = fmt.Sprintf("https://%s.%s", d.OrgName, d.Domain)
 	}
 
 	// Create a new HTTP request
@@ -296,6 +301,6 @@ func (d *OAuthAuthorizationServerDataSource) Read(ctx context.Context, readReq d
 	state.DpopSigningAlgValuesSupported = utils.ConvertStringSlice(metadata.DpopSigningAlgValuesSupported)
 
 	// Set state
-	diags := resp.State.Set(ctx, &state)
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
