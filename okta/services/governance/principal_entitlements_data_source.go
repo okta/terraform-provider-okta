@@ -2,22 +2,64 @@ package governance
 
 import (
 	"context"
+	"fmt"
+	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = (*principalEntitlementsDataSource)(nil)
+var _ datasource.DataSource = &principalEntitlementsDataSource{}
 
-func NewPrincipalEntitlementsDataSource() datasource.DataSource {
+func newPrincipalEntitlementsDataSource() datasource.DataSource {
 	return &principalEntitlementsDataSource{}
 }
 
-type principalEntitlementsDataSource struct{}
+func (d *principalEntitlementsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
+}
+
+type principalEntitlementsDataSource struct {
+	*config.Config
+}
 
 type principalEntitlementsDataSourceModel struct {
-	Id types.String `tfsdk:"id"`
+	Parent          *parentModel                          `tfsdk:"parent"`           // Optional block input
+	TargetPrincipal *principalModel                       `tfsdk:"target_principal"` // Optional block input
+	Data            []principalEntitlementDataSourceModel `tfsdk:"data"`
+}
+
+type principalModel struct {
+	ExternalId types.String `tfsdk:"external_id"`
+	Type       types.String `tfsdk:"type"`
+}
+
+type parentModel struct {
+	ExternalId types.String `tfsdk:"external_id"`
+	Type       types.String `tfsdk:"type"`
+}
+
+type ValueModel struct {
+	Id            types.String `tfsdk:"id"`
+	ExternalValue types.String `tfsdk:"external_value"`
+	Name          types.String `tfsdk:"name"`
+	Description   types.String `tfsdk:"description"`
+}
+
+type principalEntitlementDataSourceModel struct {
+	Id                 types.String    `tfsdk:"id"`
+	Name               types.String    `tfsdk:"name"`
+	ExternalValue      types.String    `tfsdk:"external_value"`
+	Description        types.String    `tfsdk:"description"`
+	MultiValue         types.Bool      `tfsdk:"multi_value"`
+	Required           types.Bool      `tfsdk:"required"`
+	DataType           types.String    `tfsdk:"data_type"`
+	TargetPrincipalOrn types.String    `tfsdk:"target_principal_orn"`
+	TargetPrincipal    *principalModel `tfsdk:"target_principal"`
+	ParentResourceOrn  types.String    `tfsdk:"parent_resource_orn"`
+	Parent             *parentModel    `tfsdk:"parent"`
+	Values             []ValueModel    `tfsdk:"values"`
 }
 
 func (d *principalEntitlementsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -26,9 +68,103 @@ func (d *principalEntitlementsDataSource) Metadata(ctx context.Context, req data
 
 func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
+		Blocks: map[string]schema.Block{
+			"target_principal": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"external_id": schema.StringAttribute{
+						Optional: true,
+						//Computed: true,
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
+						//Computed: true,
+					},
+				},
+			},
+			"parent": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"external_id": schema.StringAttribute{
+						Optional: true,
+						//Computed: true,
+					},
+					"type": schema.StringAttribute{
+						//Computed: true,
+						Optional: true,
+					},
+				},
+			},
+			"data": schema.ListNestedBlock{
+				NestedObject: schema.NestedBlockObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"name": schema.StringAttribute{
+							Computed: true,
+						},
+						"external_value": schema.StringAttribute{
+							Computed: true,
+						},
+						"description": schema.StringAttribute{
+							Computed: true,
+						},
+						"multi_value": schema.BoolAttribute{
+							Computed: true,
+						},
+						"required": schema.BoolAttribute{
+							Computed: true,
+						},
+						"data_type": schema.StringAttribute{
+							Computed: true,
+						},
+						"target_principal_orn": schema.StringAttribute{
+							Computed: true,
+						},
+						"parent_resource_orn": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+					Blocks: map[string]schema.Block{
+						"target_principal": schema.SingleNestedBlock{
+							Attributes: map[string]schema.Attribute{
+								"external_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+						"parent": schema.SingleNestedBlock{
+							Attributes: map[string]schema.Attribute{
+								"external_id": schema.StringAttribute{
+									Computed: true,
+								},
+								"type": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+						"values": schema.ListNestedBlock{
+							NestedObject: schema.NestedBlockObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Computed: true,
+									},
+									"external_value": schema.StringAttribute{
+										Computed: true,
+									},
+									"name": schema.StringAttribute{
+										Computed: true,
+									},
+									"description": schema.StringAttribute{
+										Computed: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -45,10 +181,72 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 	}
 
 	// Read API call logic
+	//fmt.Println("Making call")
+	fmt.Println("Filter used:", prepareFilter(data))
+	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
+	if err != nil {
+		return
+	}
+	var entitlements []principalEntitlementDataSourceModel
+	for _, item := range principalEntitlementsResp.Data {
+		entitlement := principalEntitlementDataSourceModel{
+			Id:                 types.StringPointerValue(item.Id),
+			Name:               types.StringPointerValue(item.Name),
+			ExternalValue:      types.StringPointerValue(item.ExternalValue),
+			Description:        types.StringPointerValue(item.Description),
+			MultiValue:         types.BoolPointerValue(item.MultiValue),
+			Required:           types.BoolPointerValue(item.Required),
+			DataType:           types.StringValue(string(*item.DataType)),
+			TargetPrincipalOrn: types.StringPointerValue(item.TargetPrincipalOrn),
+			ParentResourceOrn:  types.StringPointerValue(item.ParentResourceOrn),
+		}
 
-	// Example data value setting
-	data.Id = types.StringValue("example-id")
+		if item.TargetPrincipal != nil {
+			entitlement.TargetPrincipal = &principalModel{
+				ExternalId: types.StringValue(item.TargetPrincipal.ExternalId),
+				Type:       types.StringValue(string(item.TargetPrincipal.Type)),
+			}
+		}
+
+		if item.Parent != nil {
+			entitlement.Parent = &parentModel{
+				ExternalId: types.StringValue(item.Parent.ExternalId),
+				Type:       types.StringValue(string(item.Parent.Type)),
+			}
+		}
+
+		for _, v := range item.Values {
+			val := ValueModel{
+				Id:            types.StringPointerValue(v.Id),
+				ExternalValue: types.StringPointerValue(v.ExternalValue),
+				Name:          types.StringPointerValue(v.Name),
+				Description:   types.StringPointerValue(v.Description),
+			}
+			entitlement.Values = append(entitlement.Values, val)
+		}
+
+		entitlements = append(entitlements, entitlement)
+	}
+
+	// Set data in model
+	data.Data = entitlements
+	// Save data into state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func prepareFilter(d principalEntitlementsDataSourceModel) string {
+	parentExternalId := d.Parent.ExternalId.ValueString()
+	parentType := d.Parent.Type.ValueString()
+	targetPrincipalExternalId := d.TargetPrincipal.ExternalId.ValueString()
+	targetPrincipalType := d.TargetPrincipal.Type.ValueString()
+	return fmt.Sprintf(
+		`parent.externalId eq "%s" AND parent.type eq "%s" AND targetPrincipal.externalId eq "%s" AND targetPrincipal.type eq "%s"`,
+		parentExternalId, // or extract from parent_resource_orn
+		parentType,
+		targetPrincipalExternalId, // or extract externalId from ORN
+		targetPrincipalType,
+	)
 }

@@ -448,12 +448,18 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 		data.RemediationSettings = nil // required to avoid "null to non-nullable" error
 	}
 
-	excluded := make([]targetResourceModel, len(campaign.ResourceSettings.ExcludedResources))
-	for i, ex := range campaign.ResourceSettings.ExcludedResources {
-		excluded[i] = targetResourceModel{
-			ResourceId:   types.StringValue(*ex.ResourceId),
-			ResourceType: types.StringValue(string(*ex.ResourceType)),
+	excluded := make([]excludedResourceModel, len(campaign.ResourceSettings.ExcludedResources))
+
+	for _, ex := range campaign.ResourceSettings.ExcludedResources {
+		excludedRes := excludedResourceModel{
+			ResourceId: types.StringValue(*ex.ResourceId),
 		}
+		if ex.ResourceType != nil {
+			excludedRes.ResourceType = types.StringValue(string(*ex.ResourceType))
+		} else {
+			excludedRes.ResourceType = types.StringNull()
+		}
+		excluded = append(excluded, excludedRes)
 	}
 
 	targets := make([]targetResourceModel, len(campaign.ResourceSettings.TargetResources))
@@ -482,6 +488,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 			Entitlements:                     entitlements,
 		}
 	}
+
 	data.ResourceSettings = &resourceSettingsModel{
 		Type:                               types.StringValue(string(campaign.ResourceSettings.Type)),
 		IncludeAdminRoles:                  types.BoolValue(*campaign.ResourceSettings.IncludeAdminRoles),

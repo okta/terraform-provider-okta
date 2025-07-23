@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -96,14 +97,19 @@ type entitlementModel struct {
 }
 
 type resourceSettingsModel struct {
-	Type                               types.String          `tfsdk:"type"`
-	IncludeAdminRoles                  types.Bool            `tfsdk:"include_admin_roles"`
-	IncludeEntitlements                types.Bool            `tfsdk:"include_entitlements"`
-	IndividuallyAssignedAppsOnly       types.Bool            `tfsdk:"individually_assigned_apps_only"`
-	IndividuallyAssignedGroupsOnly     types.Bool            `tfsdk:"individually_assigned_groups_only"`
-	OnlyIncludeOutOfPolicyEntitlements types.Bool            `tfsdk:"only_include_out_of_policy_entitlements"`
-	ExcludedResources                  []targetResourceModel `tfsdk:"excluded_resources"`
-	TargetResources                    []targetResourceModel `tfsdk:"target_resources"`
+	Type                               types.String            `tfsdk:"type"`
+	IncludeAdminRoles                  types.Bool              `tfsdk:"include_admin_roles"`
+	IncludeEntitlements                types.Bool              `tfsdk:"include_entitlements"`
+	IndividuallyAssignedAppsOnly       types.Bool              `tfsdk:"individually_assigned_apps_only"`
+	IndividuallyAssignedGroupsOnly     types.Bool              `tfsdk:"individually_assigned_groups_only"`
+	OnlyIncludeOutOfPolicyEntitlements types.Bool              `tfsdk:"only_include_out_of_policy_entitlements"`
+	ExcludedResources                  []excludedResourceModel `tfsdk:"excluded_resources"`
+	TargetResources                    []targetResourceModel   `tfsdk:"target_resources"`
+}
+
+type excludedResourceModel struct {
+	ResourceId   types.String `tfsdk:"resource_id"`
+	ResourceType types.String `tfsdk:"resource_type"`
 }
 
 type targetResourceModel struct {
@@ -112,6 +118,11 @@ type targetResourceModel struct {
 	ResourceType                     types.String             `tfsdk:"resource_type"`
 	EntitlementBundles               []entitlementBundleModel `tfsdk:"entitlement_bundles"`
 	Entitlements                     []entitlementModel       `tfsdk:"entitlements"`
+}
+
+type excludedResourceMode struct {
+	ResourceId   types.String `tfsdk:"resource_id"`
+	ResourceType types.String `tfsdk:"resource_type"`
 }
 
 type reviewerSettingsModel struct {
@@ -192,6 +203,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"campaign_type": schema.StringAttribute{
 				Optional:    true,
+				Computed:    true,
 				Description: "Identifies if it is a resource campaign or a user campaign. By default it is RESOURCE.Values can be `RESOURCE` and `USER`.",
 			},
 			"description": schema.StringAttribute{
@@ -352,6 +364,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					},
 					"justification_required": schema.BoolAttribute{
 						Optional: true,
+						Computed: true,
 					},
 					"reassignment_disabled": schema.BoolAttribute{
 						Optional: true,
@@ -360,6 +373,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					},
 					"self_review_disabled": schema.BoolAttribute{
 						Optional: true,
+						Computed: true,
 					},
 					"reviewer_group_id": schema.StringAttribute{
 						Optional: true,
@@ -387,7 +401,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									Optional: true,
 								},
 								"reviewer_id": schema.StringAttribute{
-									Required: true,
+									Optional: true,
 								},
 								"reviewer_scope_expression": schema.StringAttribute{
 									Computed: true,
@@ -401,7 +415,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 								"start_review": schema.ListNestedBlock{
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
-											"on_day": schema.Int64Attribute{
+											"on_day": schema.Int32Attribute{
 												Computed: true,
 												Optional: true,
 											},
@@ -456,22 +470,23 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"notification_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"notify_reviewer_during_midpoint_of_review": schema.BoolAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"notify_reviewer_when_overdue": schema.BoolAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"notify_reviewer_when_review_assigned": schema.BoolAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"notify_review_period_end": schema.BoolAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"reminders_reviewer_before_campaign_close_in_secs": schema.ListAttribute{
 						Optional:    true,
+						Computed:    true,
 						ElementType: types.Int64Type,
 						Description: "Specifies times (in seconds) to send reminders to reviewers before the campaign closes. Max 3 values. Example: [86400, 172800, 604800]",
 					},
@@ -531,8 +546,6 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
-	fmt.Println("Schedule type = ", data.ScheduleSettings.Type)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -558,7 +571,13 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 		}
 	}
 
-	// Save data into Terraform state
+	resp.Diagnostics.Append(applyCampaignsToState(ctx, campaign, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	fmt.Println("Final campaign model JustificationRequired : ", data.ReviewerSettings.JustificationRequired)
+	fmt.Println("Final campaign model SelfReviewDisabled : ", data.ReviewerSettings.SelfReviewDisabled)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -624,20 +643,40 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 		c.ResourceSettings.Type = types.StringValue(string(resp.ResourceSettings.Type))
 	}
 	if len(resp.ResourceSettings.TargetResources) > 0 {
-		c.ResourceSettings.TargetResources = []targetResourceModel{
-			{
-				ResourceId:   types.StringValue(resp.ResourceSettings.TargetResources[0].ResourceId),
-				ResourceType: types.StringValue(string(*resp.ResourceSettings.TargetResources[0].ResourceType)),
-			},
+		sort.SliceStable(resp.ResourceSettings.TargetResources, func(i, j int) bool {
+			return resp.ResourceSettings.TargetResources[i].ResourceId < resp.ResourceSettings.TargetResources[j].ResourceId
+		})
+		var targets []targetResourceModel
+		for _, targetResource := range resp.ResourceSettings.TargetResources {
+			target := targetResourceModel{
+				ResourceId: types.StringValue(targetResource.ResourceId),
+			}
+			if targetResource.ResourceType != nil {
+				target.ResourceType = types.StringValue(string(*targetResource.ResourceType))
+			}
+			targets = append(targets, target)
 		}
+
+		c.ResourceSettings.TargetResources = targets
 	}
 	if len(resp.ResourceSettings.ExcludedResources) > 0 {
-		c.ResourceSettings.ExcludedResources = []targetResourceModel{
-			{
-				ResourceId:   types.StringValue(*resp.ResourceSettings.ExcludedResources[0].ResourceId),
-				ResourceType: types.StringValue(string(*resp.ResourceSettings.ExcludedResources[0].ResourceType)),
-			},
+		sort.SliceStable(resp.ResourceSettings.ExcludedResources, func(i, j int) bool {
+			return *resp.ResourceSettings.ExcludedResources[i].ResourceId < *resp.ResourceSettings.ExcludedResources[j].ResourceId
+		})
+		var excluded []excludedResourceModel
+		for _, res := range resp.ResourceSettings.ExcludedResources {
+			excludedRes := excludedResourceModel{
+				ResourceId: types.StringValue(*res.ResourceId),
+			}
+			if res.ResourceType != nil {
+				excludedRes.ResourceType = types.StringValue(string(*res.ResourceType))
+			} else {
+				excludedRes.ResourceType = types.StringNull()
+			}
+			excluded = append(excluded, excludedRes)
 		}
+
+		c.ResourceSettings.ExcludedResources = excluded
 	}
 	if resp.ResourceSettings.IncludeAdminRoles != nil {
 		c.ResourceSettings.IncludeAdminRoles = types.BoolValue(*resp.ResourceSettings.IncludeAdminRoles)
@@ -659,6 +698,8 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	c.ReviewerSettings.Type = types.StringValue(string(resp.ReviewerSettings.Type))
 	if resp.ReviewerSettings.BulkDecisionDisabled != nil {
 		c.ReviewerSettings.BulkDecisionDisabled = types.BoolValue(*resp.ReviewerSettings.BulkDecisionDisabled)
+	} else {
+		c.ReviewerSettings.BulkDecisionDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.FallBackReviewerId != nil {
 		c.ReviewerSettings.FallbackReviewerId = types.StringValue(*resp.ReviewerSettings.FallBackReviewerId)
@@ -668,6 +709,8 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	}
 	if resp.ReviewerSettings.ReassignmentDisabled != nil {
 		c.ReviewerSettings.ReassignmentDisabled = types.BoolValue(*resp.ReviewerSettings.ReassignmentDisabled)
+	} else {
+		c.ReviewerSettings.ReassignmentDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.ReviewerGroupId != nil {
 		c.ReviewerSettings.ReviewerGroupId = types.StringValue(*resp.ReviewerSettings.ReviewerGroupId)
@@ -680,23 +723,48 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	}
 	if resp.ReviewerSettings.SelfReviewDisabled != nil {
 		c.ReviewerSettings.SelfReviewDisabled = types.BoolValue(*resp.ReviewerSettings.SelfReviewDisabled)
+	} else {
+		c.ReviewerSettings.SelfReviewDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.ReviewerLevels != nil {
 		c.ReviewerSettings.ReviewerLevels = make([]reviewerLevelModel, 0, len(resp.ReviewerSettings.ReviewerLevels))
 		for _, level := range resp.ReviewerSettings.ReviewerLevels {
-			reviewerLevel := reviewerLevelModel{
-				Type:                    types.StringValue(string(level.Type)),
-				FallBackReviewerId:      types.StringValue(*level.FallBackReviewerId),
-				ReviewerGroupId:         types.StringValue(*level.ReviewerGroupId),
-				ReviewerId:              types.StringValue(*level.ReviewerId),
-				ReviewerScopeExpression: types.StringValue(*level.ReviewerScopeExpression),
-				SelfReviewDisabled:      types.BoolValue(*level.SelfReviewDisabled),
+			reviewerLevel := reviewerLevelModel{}
+			reviewerLevel.Type = types.StringValue(string(level.Type))
+			fallbackReviewerId := level.GetFallBackReviewerId()
+			if fallbackReviewerId != "" {
+				reviewerLevel.FallBackReviewerId = types.StringValue(fallbackReviewerId)
 			}
+			reviewerGroupId := level.GetReviewerGroupId()
+			if reviewerGroupId != "" {
+				reviewerLevel.ReviewerGroupId = types.StringValue(reviewerGroupId)
+			}
+			reviewerId := level.GetReviewerId()
+			if reviewerId != "" {
+				reviewerLevel.ReviewerId = types.StringValue(reviewerId)
+			}
+			reviewerScopeExpression := level.GetReviewerScopeExpression()
+			if reviewerScopeExpression != "" {
+				reviewerLevel.ReviewerScopeExpression = types.StringValue(reviewerScopeExpression)
+			}
+			if level.SelfReviewDisabled != nil {
+				reviewerLevel.SelfReviewDisabled = types.BoolValue(*level.SelfReviewDisabled)
+			}
+
+			//startReviews := make([]startReviewModel, 1)
+			//startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
+			//startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+			//
+			//c.ReviewerSettings.ReviewerLevels = append(c.ReviewerSettings.ReviewerLevels, reviewerLevel)
 			startReviews := make([]startReviewModel, 1)
 			startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
-			startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+			if level.StartReview.When != nil {
+				startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+			}
+			reviewerLevel.StartReview = startReviews
 
 			c.ReviewerSettings.ReviewerLevels = append(c.ReviewerSettings.ReviewerLevels, reviewerLevel)
+
 		}
 	}
 
@@ -709,43 +777,41 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	c.ScheduleSettings.Type = types.StringValue(string(resp.ScheduleSettings.Type))
 	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.DurationInDays))
 	if resp.ScheduleSettings.Recurrence != nil {
-		c.ScheduleSettings.Recurrence = make([]recurrenceModel, 1)
-		rec := recurrenceModel{
-			Interval:     types.StringValue(resp.ScheduleSettings.Recurrence.Interval),
-			Ends:         types.StringValue(resp.ScheduleSettings.Recurrence.Ends.UTC().Format("2006-01-02T15:04:05.000Z")),
-			RepeatOnType: types.StringValue(string(*resp.ScheduleSettings.Recurrence.RepeatOnType)),
-		}
+		c.ScheduleSettings.Recurrence = make([]recurrenceModel, 0)
+		rec := getRecurrence(resp)
 		c.ScheduleSettings.Recurrence = append(c.ScheduleSettings.Recurrence, rec)
 	}
 
 	c.NotificationSettings = &notificationSettingsModel{}
-	if resp.NotificationSettings.NotifyReviewerAtCampaignEnd != nil {
-		c.NotificationSettings.NotifyReviewerAtCampaignEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewerAtCampaignEnd)
-	}
-	if resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get() != nil {
-		c.NotificationSettings.NotifyReviewerDuringMidpointOfReview = types.BoolValue(*resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get())
-	}
-	if resp.NotificationSettings.NotifyReviewerWhenOverdue.Get() != nil {
-		c.NotificationSettings.NotifyReviewerWhenOverdue = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenOverdue.Get())
-	}
-	if resp.NotificationSettings.NotifyReviewerWhenReviewAssigned != nil {
-		c.NotificationSettings.NotifyReviewerWhenReviewAssigned = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenReviewAssigned)
-	}
-	if resp.NotificationSettings.NotifyReviewPeriodEnd.Get() != nil {
-		c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewPeriodEnd.Get())
-	}
-	if resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil {
-		reminders := make([]int64, 0, len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
-		for _, v := range resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
-			reminders = append(reminders, int64(v))
+	if resp.NotificationSettings != nil {
+		if resp.NotificationSettings.NotifyReviewerAtCampaignEnd != nil {
+			c.NotificationSettings.NotifyReviewerAtCampaignEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewerAtCampaignEnd)
 		}
+		if resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get() != nil {
+			c.NotificationSettings.NotifyReviewerDuringMidpointOfReview = types.BoolValue(*resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get())
+		}
+		if resp.NotificationSettings.NotifyReviewerWhenOverdue.Get() != nil {
+			c.NotificationSettings.NotifyReviewerWhenOverdue = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenOverdue.Get())
+		}
+		if resp.NotificationSettings.NotifyReviewerWhenReviewAssigned != nil {
+			c.NotificationSettings.NotifyReviewerWhenReviewAssigned = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenReviewAssigned)
+		}
+		if resp.NotificationSettings.NotifyReviewPeriodEnd.Get() != nil {
+			c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewPeriodEnd.Get())
+		}
+		if resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil && len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
+			reminders := make([]int64, 0, len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
+			for _, v := range resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
+				reminders = append(reminders, int64(v))
+			}
 
-		listVal, _ := types.ListValueFrom(ctx, types.Int64Type, reminders)
+			listVal, _ := types.ListValueFrom(ctx, types.Int64Type, reminders)
 
-		c.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs = listVal
-	} else {
-		// explicitly set an empty list with correct type
-		c.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs = types.ListNull(types.Int64Type)
+			c.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs = listVal
+		} else {
+			// explicitly set an empty list with correct type
+			c.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs = types.ListNull(types.Int64Type)
+		}
 	}
 
 	c.PrincipalScope = &principalScopeSettingsModel{}
@@ -798,6 +864,21 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	}
 
 	return diags
+}
+
+func getRecurrence(resp *oktaInternalGovernance.CampaignFull) recurrenceModel {
+	recurrence := recurrenceModel{}
+	recurrence.Interval = types.StringValue(resp.ScheduleSettings.Recurrence.Interval)
+	if resp.ScheduleSettings.Recurrence.Ends != nil && !resp.ScheduleSettings.Recurrence.Ends.IsZero() {
+		recurrence.Ends = types.StringValue(resp.ScheduleSettings.Recurrence.Ends.UTC().Format("2006-01-02T15:04:05.000Z"))
+	}
+
+	if resp.ScheduleSettings.Recurrence.RepeatOnType != nil {
+		recurrence.RepeatOnType = types.StringValue(string(*resp.ScheduleSettings.Recurrence.RepeatOnType))
+	}
+
+	fmt.Println("recurrence Ends", recurrence.Ends.String())
+	return recurrence
 }
 
 func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -853,6 +934,10 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 	// Delete API call logic
 	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error deleting Campaign",
+			"Could not delete Campaign with ID"+data.Id.ValueString()+" unexpected error: "+err.Error(),
+		)
 		return
 	}
 
@@ -878,15 +963,41 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 		})
 	}
 
-	var ExcludedResources = make([]oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
-	for _, ex := range d.ResourceSettings.ExcludedResources {
-		rt := oktaInternalGovernance.ResourceType(ex.ResourceType.ValueString())
-		ExcludedResources = append(ExcludedResources, oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner{
-			ResourceId:   ex.ResourceId.ValueStringPointer(),
-			ResourceType: &rt,
-		})
+	sort.Slice(targetResources, func(i, j int) bool {
+		return targetResources[i].ResourceId < targetResources[j].ResourceId
+	})
+
+	for _, tr := range d.ResourceSettings.TargetResources {
+		fmt.Println("Target Resource Id after sorting:", tr.ResourceId.ValueString())
 	}
 
+	var ExcludedResources = make([]oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
+	for _, ex := range d.ResourceSettings.ExcludedResources {
+		x := ex.ResourceId.ValueString()
+		var resourceType *oktaInternalGovernance.ResourceType
+		if !ex.ResourceType.IsNull() && ex.ResourceType.ValueString() != "" {
+			rt := oktaInternalGovernance.ResourceType(ex.ResourceType.ValueString())
+			resourceType = &rt
+		}
+		excludedRes := oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner{
+			ResourceId:   &x,           // pointer to string
+			ResourceType: resourceType, // pointer to ResourceType
+		}
+		//rt := oktaInternalGovernance.ResourceType(ex.ResourceType.ValueString())
+		ExcludedResources = append(ExcludedResources, excludedRes)
+	}
+
+	sort.Slice(ExcludedResources, func(i, j int) bool {
+		return *ExcludedResources[i].ResourceId < *ExcludedResources[j].ResourceId
+	})
+
+	//for _, ex := range d.ResourceSettings.ExcludedResources {
+	//	fmt.Println("Excluded Resource Id after sorting:", ex.ResourceId.ValueString())
+	//}
+
+	//if resp.ScheduleSettings.Recurrence.Ends != nil && !resp.ScheduleSettings.Recurrence.Ends.IsZero() {
+	//	recurrence.Ends = types.StringValue(resp.ScheduleSettings.Recurrence.Ends.UTC().Format("2006-01-02T15:04:05.000Z"))
+	//}
 	//todo check if this is correct, the r[0] part
 	var recur oktaInternalGovernance.RecurrenceDefinitionMutable
 	//for _, r := range d.ScheduleSettings.Recurrence {
@@ -894,17 +1005,27 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 	if len(r) != 0 {
 		endStr := r[0].Ends.ValueString()
 		parsedTime, _ := time.Parse(time.RFC3339, endStr)
+		if !parsedTime.IsZero() {
+			recur.Ends = &parsedTime
+		}
+		recur.Interval = r[0].Interval.ValueString()
 		repeatStr := oktaInternalGovernance.RecurrenceRepeatOnType(r[0].RepeatOnType.ValueString())
-		recur = oktaInternalGovernance.RecurrenceDefinitionMutable{
-			Interval:     r[0].Interval.ValueString(),
-			Ends:         &parsedTime,
-			RepeatOnType: &repeatStr,
+		if repeatStr != "" {
+			recur.RepeatOnType = &repeatStr
 		}
 	}
-	//}
 	var remindersReviewerBeforeCampaignCloseInSecs []int32
-	d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.ElementsAs(context.Background(), &remindersReviewerBeforeCampaignCloseInSecs, false)
 
+	if d.NotificationSettings != nil && !d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.IsNull() && !d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.IsUnknown() {
+		err := d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.ElementsAs(
+			context.Background(),
+			&remindersReviewerBeforeCampaignCloseInSecs,
+			false,
+		)
+		if err != nil {
+			log.Printf("Error remindersReviewerBeforeCampaignCloseInSecs: %v", err)
+		}
+	}
 	var autoRemediationSettings *oktaInternalGovernance.AutoRemediationSettings
 	if d.RemediationSettings.AutoRemediationSettings != nil {
 		var includeOnlyConverted []oktaInternalGovernance.AutoRemediationSettingsIncludeOnlyInner
@@ -932,16 +1053,46 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 	}
 
 	var reviewerLevels []oktaInternalGovernance.ReviewerLevelSettingsMutable
-	for i, level := range d.ReviewerSettings.ReviewerLevels {
-		reviewerLevel := oktaInternalGovernance.ReviewerLevelSettingsMutable{
-			Type:                    oktaInternalGovernance.ReviewerType(level.Type.ValueString()),
-			FallBackReviewerId:      level.FallBackReviewerId.ValueStringPointer(),
-			ReviewerGroupId:         level.ReviewerGroupId.ValueStringPointer(),
-			ReviewerId:              level.ReviewerId.ValueStringPointer(),
-			ReviewerScopeExpression: level.ReviewerScopeExpression.ValueStringPointer(),
-			SelfReviewDisabled:      level.SelfReviewDisabled.ValueBoolPointer(),
-			StartReview:             oktaInternalGovernance.ReviewerLevelStartReview{OnDay: level.StartReview[i].OnDay.ValueInt32(), When: (*oktaInternalGovernance.ReviewerLowerLevelCondition)(level.StartReview[i].When.ValueStringPointer())},
+	for _, level := range d.ReviewerSettings.ReviewerLevels {
+		var startReview oktaInternalGovernance.ReviewerLevelStartReview
+		if len(level.StartReview) > 0 {
+			start := level.StartReview[0]
+			startReview = oktaInternalGovernance.ReviewerLevelStartReview{
+				OnDay: start.OnDay.ValueInt32(),
+			}
+			if !start.When.IsNull() && start.When.ValueString() != "" {
+				when := start.When.ValueString()
+				startReview.When = (*oktaInternalGovernance.ReviewerLowerLevelCondition)(&when)
+			}
 		}
+		//}
+
+		//for _, level := range d.ReviewerSettings.ReviewerLevels {
+		var reviewerLevel oktaInternalGovernance.ReviewerLevelSettingsMutable
+		reviewerGroupId := level.ReviewerGroupId.ValueStringPointer()
+		var reviewerId = level.ReviewerId.ValueString()
+		var reviewerScopeExpression = level.ReviewerScopeExpression.ValueStringPointer()
+		var fallBackReviewerId = level.FallBackReviewerId.ValueStringPointer()
+		var selfReviewDisabled = level.SelfReviewDisabled.ValueBoolPointer()
+
+		reviewerLevel.SetType(oktaInternalGovernance.ReviewerType(level.Type.ValueString()))
+		if fallBackReviewerId != nil && *fallBackReviewerId != "" {
+			reviewerLevel.FallBackReviewerId = fallBackReviewerId
+		}
+		if reviewerGroupId != nil && *reviewerGroupId != "" {
+			reviewerLevel.ReviewerGroupId = reviewerGroupId
+		}
+		if reviewerId != "" {
+			reviewerLevel.SetReviewerId(reviewerId)
+		}
+		if reviewerScopeExpression != nil && *reviewerScopeExpression != "" {
+			reviewerLevel.ReviewerScopeExpression = reviewerScopeExpression
+		}
+		if selfReviewDisabled != nil {
+			reviewerLevel.SelfReviewDisabled = selfReviewDisabled
+		}
+		reviewerLevel.StartReview = startReview
+
 		reviewerLevels = append(reviewerLevels, reviewerLevel)
 	}
 
@@ -950,19 +1101,31 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 
 	// IDs related to principal scope settings
 	var (
-		excludedUserIDs       []string // Users to be excluded from the campaign
-		groupIDs              []string // Groups included in the campaign scope
-		principalScopeUserIDs []string // Users explicitly included in the campaign scope
+		excludedUserIDs []string // Users to be excluded from the campaign
+		groupIDs        []string // Groups included in the campaign scope
+		userIds         []string // Users explicitly included in the campaign scope
 	)
+
 	_ = d.PrincipalScope.ExcludedUserIds.ElementsAs(context.Background(), &excludedUserIDs, false)
 	_ = d.PrincipalScope.GroupIds.ElementsAs(context.Background(), &groupIDs, false)
-	_ = d.PrincipalScope.GroupIds.ElementsAs(context.Background(), &principalScopeUserIDs, false)
-
+	_ = d.PrincipalScope.UserIds.ElementsAs(context.Background(), &userIds, false)
+	//x := false
 	// Build and return CampaignMutable
+	var campaignType *oktaInternalGovernance.CampaignType
+	if v := d.CampaignType.ValueString(); v != "" {
+		cType := oktaInternalGovernance.CampaignType(v)
+		campaignType = &cType
+	}
+
+	var campaignTier *oktaInternalGovernance.CampaignTier
+	if v := d.CampaignTier.ValueString(); v != "" {
+		tier := oktaInternalGovernance.CampaignTier(v)
+		campaignTier = &tier
+	}
 	return oktaInternalGovernance.CampaignMutable{
 		Name:         d.Name.ValueString(),
-		CampaignTier: (*oktaInternalGovernance.CampaignTier)(d.CampaignTier.ValueStringPointer()),
-		CampaignType: (*oktaInternalGovernance.CampaignType)(d.CampaignType.ValueStringPointer()),
+		CampaignTier: campaignTier,
+		CampaignType: campaignType,
 		Description:  d.Description.ValueStringPointer(),
 		RemediationSettings: oktaInternalGovernance.RemediationSettings{
 			AccessApproved:          oktaInternalGovernance.ApprovedRemediationAction(d.RemediationSettings.AccessApproved.ValueString()),
@@ -980,43 +1143,89 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 			OnlyIncludeOutOfPolicyEntitlements: d.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements.ValueBoolPointer(),
 			ExcludedResources:                  ExcludedResources,
 		},
-		ReviewerSettings: oktaInternalGovernance.ReviewerSettingsMutable{
-			Type:                    oktaInternalGovernance.CampaignReviewerType(d.ReviewerSettings.Type.ValueString()),
-			ReviewerGroupId:         d.ReviewerSettings.ReviewerGroupId.ValueStringPointer(),
-			ReviewerId:              d.ReviewerSettings.ReviewerId.ValueStringPointer(),
-			ReviewerScopeExpression: d.ReviewerSettings.ReviewerScopeExpression.ValueStringPointer(),
-			FallBackReviewerId:      d.ReviewerSettings.FallbackReviewerId.ValueStringPointer(),
-			JustificationRequired:   d.ReviewerSettings.JustificationRequired.ValueBoolPointer(),
-			SelfReviewDisabled:      d.ReviewerSettings.SelfReviewDisabled.ValueBoolPointer(),
-			ReassignmentDisabled:    d.ReviewerSettings.ReassignmentDisabled.ValueBoolPointer(),
-			BulkDecisionDisabled:    d.ReviewerSettings.BulkDecisionDisabled.ValueBoolPointer(),
-			ReviewerLevels:          reviewerLevels,
-		},
-		ScheduleSettings: oktaInternalGovernance.ScheduleSettingsMutable{
-			StartDate:      parsedStartDate,
-			DurationInDays: float32(d.ScheduleSettings.DurationInDays.ValueInt32()),
-			TimeZone:       d.ScheduleSettings.TimeZone.ValueString(),
-			Type:           oktaInternalGovernance.ScheduleType(d.ScheduleSettings.Type.ValueString()),
-			Recurrence:     &recur,
-		},
-		NotificationSettings: &oktaInternalGovernance.NotificationSettings{
-			NotifyReviewerAtCampaignEnd:                d.NotificationSettings.NotifyReviewerAtCampaignEnd.ValueBoolPointer(),
-			NotifyReviewerDuringMidpointOfReview:       *toNullableBool(d.NotificationSettings.NotifyReviewerDuringMidpointOfReview.ValueBoolPointer()),
-			NotifyReviewerWhenOverdue:                  *toNullableBool(d.NotificationSettings.NotifyReviewerWhenOverdue.ValueBoolPointer()),
-			NotifyReviewerWhenReviewAssigned:           d.NotificationSettings.NotifyReviewerWhenReviewAssigned.ValueBoolPointer(),
-			NotifyReviewPeriodEnd:                      *toNullableBool(d.NotificationSettings.NotifyReviewPeriodEnd.ValueBoolPointer()),
-			RemindersReviewerBeforeCampaignCloseInSecs: remindersReviewerBeforeCampaignCloseInSecs,
-		},
+		ReviewerSettings:     *getReviewerSettingForRequests(d, reviewerLevels),
+		ScheduleSettings:     *getScheduleSettingForRequests(d, parsedStartDate, recur),
+		NotificationSettings: getNotificationSettingsForRequest(d, remindersReviewerBeforeCampaignCloseInSecs),
 		PrincipalScopeSettings: &oktaInternalGovernance.PrincipalScopeSettingsMutable{
 			Type:                             oktaInternalGovernance.PrincipalScopeType(d.PrincipalScope.Type.ValueString()),
 			ExcludedUserIds:                  excludedUserIDs,
 			GroupIds:                         groupIDs,
 			IncludeOnlyActiveUsers:           d.PrincipalScope.IncludeOnlyActiveUsers.ValueBoolPointer(),
 			OnlyIncludeUsersWithSODConflicts: d.PrincipalScope.OnlyIncludeUsersWithSODConflicts.ValueBoolPointer(),
-			UserIds:                          principalScopeUserIDs,
+			UserIds:                          userIds,
 			UserScopeExpression:              d.PrincipalScope.UserScopeExpression.ValueStringPointer(),
 		},
 	}
+}
+
+func getScheduleSettingForRequests(d campaignResourceModel, parsedStartDate time.Time, recur oktaInternalGovernance.RecurrenceDefinitionMutable) *oktaInternalGovernance.ScheduleSettingsMutable {
+	scheduleSettings := oktaInternalGovernance.NewScheduleSettingsMutableWithDefaults()
+	scheduleSettings.SetRecurrence(recur)
+	scheduleSettings.SetStartDate(parsedStartDate)
+	scheduleSettings.SetDurationInDays(float32(d.ScheduleSettings.DurationInDays.ValueInt32()))
+	scheduleSettings.SetTimeZone(d.ScheduleSettings.TimeZone.ValueString())
+	scheduleSettings.SetType(oktaInternalGovernance.ScheduleType(d.ScheduleSettings.Type.ValueString()))
+	return scheduleSettings
+}
+
+func getReviewerSettingForRequests(d campaignResourceModel, reviewerLevels []oktaInternalGovernance.ReviewerLevelSettingsMutable) *oktaInternalGovernance.ReviewerSettingsMutable {
+	reviewerSettings := oktaInternalGovernance.NewReviewerSettingsMutableWithDefaults()
+	if d.ReviewerSettings != nil {
+		if !d.ReviewerSettings.Type.IsNull() {
+			reviewerSettings.Type = oktaInternalGovernance.CampaignReviewerType(d.ReviewerSettings.Type.ValueString())
+		}
+		if !d.ReviewerSettings.BulkDecisionDisabled.IsNull() {
+			reviewerSettings.BulkDecisionDisabled = d.ReviewerSettings.BulkDecisionDisabled.ValueBoolPointer()
+		}
+		if !d.ReviewerSettings.FallbackReviewerId.IsNull() {
+			reviewerSettings.FallBackReviewerId = d.ReviewerSettings.FallbackReviewerId.ValueStringPointer()
+		}
+		if !d.ReviewerSettings.JustificationRequired.IsNull() {
+			reviewerSettings.JustificationRequired = d.ReviewerSettings.JustificationRequired.ValueBoolPointer()
+		}
+		if !d.ReviewerSettings.ReassignmentDisabled.IsNull() {
+			reviewerSettings.ReassignmentDisabled = d.ReviewerSettings.ReassignmentDisabled.ValueBoolPointer()
+		}
+		if !d.ReviewerSettings.ReviewerGroupId.IsNull() {
+			reviewerSettings.ReviewerGroupId = d.ReviewerSettings.ReviewerGroupId.ValueStringPointer()
+		}
+		if !d.ReviewerSettings.ReviewerId.IsNull() {
+			reviewerSettings.ReviewerId = d.ReviewerSettings.ReviewerId.ValueStringPointer()
+		}
+		if !d.ReviewerSettings.ReviewerScopeExpression.IsNull() {
+			reviewerSettings.ReviewerScopeExpression = d.ReviewerSettings.ReviewerScopeExpression.ValueStringPointer()
+		}
+		if !d.ReviewerSettings.SelfReviewDisabled.IsNull() {
+			reviewerSettings.SelfReviewDisabled = d.ReviewerSettings.SelfReviewDisabled.ValueBoolPointer()
+		}
+		reviewerSettings.ReviewerLevels = reviewerLevels
+	}
+	return reviewerSettings
+}
+
+func getNotificationSettingsForRequest(d campaignResourceModel, remindersReviewerBeforeCampaignCloseInSecs []int32) *oktaInternalGovernance.NotificationSettings {
+	notificationSettings := oktaInternalGovernance.NewNotificationSettingsWithDefaults()
+	if d.NotificationSettings != nil {
+		if !d.NotificationSettings.NotifyReviewerAtCampaignEnd.IsNull() {
+			notificationSettings.NotifyReviewerAtCampaignEnd = d.NotificationSettings.NotifyReviewerAtCampaignEnd.ValueBoolPointer()
+		}
+		if !d.NotificationSettings.NotifyReviewerDuringMidpointOfReview.IsNull() {
+			notificationSettings.NotifyReviewerDuringMidpointOfReview = *toNullableBool(d.NotificationSettings.NotifyReviewerDuringMidpointOfReview.ValueBoolPointer())
+		}
+		if !d.NotificationSettings.NotifyReviewerWhenOverdue.IsNull() {
+			notificationSettings.NotifyReviewerWhenOverdue = *toNullableBool(d.NotificationSettings.NotifyReviewerWhenOverdue.ValueBoolPointer())
+		}
+		if !d.NotificationSettings.NotifyReviewerWhenReviewAssigned.IsNull() {
+			notificationSettings.NotifyReviewerWhenReviewAssigned = d.NotificationSettings.NotifyReviewerWhenReviewAssigned.ValueBoolPointer()
+		}
+		if !d.NotificationSettings.NotifyReviewPeriodEnd.IsNull() {
+			notificationSettings.NotifyReviewPeriodEnd = *toNullableBool(d.NotificationSettings.NotifyReviewPeriodEnd.ValueBoolPointer())
+		}
+		if !d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.IsNull() && !d.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs.IsUnknown() {
+			notificationSettings.RemindersReviewerBeforeCampaignCloseInSecs = remindersReviewerBeforeCampaignCloseInSecs
+		}
+	}
+	return notificationSettings
 }
 
 func isOnlyLaunchChanged(plan, state campaignResourceModel) bool {
@@ -1066,4 +1275,16 @@ func toNullableBool(v *bool) *oktaInternalGovernance.NullableBool {
 		return nil
 	}
 	return oktaInternalGovernance.NewNullableBool(v)
+}
+
+func sortTargetResources(tr []targetResourceModel) {
+	sort.Slice(tr, func(i, j int) bool {
+		return tr[i].ResourceId.ValueString() < tr[j].ResourceId.ValueString()
+	})
+}
+
+func sortExcludedResources(ex []targetResourceModel) {
+	sort.Slice(ex, func(i, j int) bool {
+		return ex[i].ResourceId.ValueString() < ex[j].ResourceId.ValueString()
+	})
 }
