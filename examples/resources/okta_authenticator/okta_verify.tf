@@ -11,5 +11,6 @@ resource "okta_authenticator" "okta_verify" {
     "enrollmentSecurityLevel":"HIGH",
     "userVerificationMethods":["BIOMETRICS"]
   })
-  status = "ACTIVE1"
+  status = "ACTIVE"
 }
+
