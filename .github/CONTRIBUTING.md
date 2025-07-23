@@ -564,6 +564,6 @@ When executing the test, the following steps are taken for each `TestStep`:
    CheckDestroy: createCheckResourceDestroy(oktaGroup, doesGroupExist)
    ```
 
-[website]: https://github.com/okta/terraform-provider-okta/tree/master/website
+[website]: https://github.com/okta/terraform-provider-okta/tree/main/website
 [acctests]: https://github.com/hashicorp/terraform#acceptance-tests
 [ml]: https://groups.google.com/group/terraform-tool
