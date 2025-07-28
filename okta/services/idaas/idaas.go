@@ -109,6 +109,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newUserTypeDataSource,
 		newDeviceAssurancePolicyDataSource,
 		newFeaturesDataSource,
+		newAppGroupAssignmentsDataSource,
 	}
 }
 
@@ -209,7 +210,6 @@ func ProviderResources() map[string]*schema.Resource {
 func ProviderDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		resources.OktaIDaaSApp:                      dataSourceApp(),
-		resources.OktaIDaaSAppGroupAssignments:      dataSourceAppGroupAssignments(),
 		resources.OktaIDaaSAppMetadataSaml:          dataSourceAppMetadataSaml(),
 		resources.OktaIDaaSAppOAuth:                 dataSourceAppOauth(),
 		resources.OktaIDaaSAppSaml:                  dataSourceAppSaml(),
