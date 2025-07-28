@@ -71,6 +71,8 @@ type RequestAccessToken struct {
 
 type Authorization interface {
 	Authorize(method, URL string) error
+	IsUsingDpop() bool
+	RegenerateDpopJWT(method, URL string) error
 }
 
 type SSWSAuth struct {
@@ -87,6 +89,14 @@ func (a *SSWSAuth) Authorize(method, URL string) error {
 	return nil
 }
 
+func (a *SSWSAuth) IsUsingDpop() bool {
+	return false
+}
+
+func (a *SSWSAuth) RegenerateDpopJWT(method, URL string) error {
+	return nil // SSWS doesn't use DPoP
+}
+
 type BearerAuth struct {
 	token string
 	req   *http.Request
@@ -99,6 +109,14 @@ func NewBearerAuth(token string, req *http.Request) *BearerAuth {
 func (a *BearerAuth) Authorize(method, URL string) error {
 	a.req.Header.Add("Authorization", "Bearer "+a.token)
 	return nil
+}
+
+func (a *BearerAuth) IsUsingDpop() bool {
+	return false
+}
+
+func (a *BearerAuth) RegenerateDpopJWT(method, URL string) error {
+	return nil // Bearer doesn't use DPoP
 }
 
 type PrivateKeyAuth struct {
@@ -211,6 +229,54 @@ func (a *PrivateKeyAuth) Authorize(method, URL string) error {
 	return nil
 }
 
+func (a *PrivateKeyAuth) IsUsingDpop() bool {
+	accessToken, hasToken := a.tokenCache.Get(AccessTokenCacheKey)
+	if hasToken && accessToken != "" {
+		accessTokenStr := accessToken.(string)
+		return strings.HasPrefix(accessTokenStr, "DPoP ")
+	}
+	return false // Will be determined during first authorization
+}
+
+func (a *PrivateKeyAuth) RegenerateDpopJWT(method, URL string) error {
+	// Only regenerate if we're using DPoP authentication
+	if !a.IsUsingDpop() {
+		return nil
+	}
+
+	accessToken, hasToken := a.tokenCache.Get(AccessTokenCacheKey)
+	if !hasToken || accessToken == "" {
+		return nil // No token cached, nothing to regenerate
+	}
+
+	nonce, hasNonce := a.tokenCache.Get(DpopAccessTokenNonce)
+	if !hasNonce || nonce == "" {
+		return nil // No nonce cached, nothing to regenerate
+	}
+
+	privateKey, hasKey := a.tokenCache.Get(DpopAccessTokenPrivateKey)
+	if !hasKey || privateKey == nil {
+		return errors.New("DPoP private key not found in cache")
+	}
+
+	accessTokenStr := accessToken.(string)
+	res := strings.Split(accessTokenStr, " ")
+	if len(res) != 2 {
+		return errors.New("unidentified access token")
+	}
+
+	// Generate a new DPoP JWT with fresh jti and iat
+	dpopJWT, err := generateDpopJWT(privateKey.(*rsa.PrivateKey), method, URL, nonce.(string), res[1])
+	if err != nil {
+		return err
+	}
+
+	// Update the request headers with the new DPoP JWT
+	a.req.Header.Set("Dpop", dpopJWT)
+	a.req.Header.Set("x-okta-user-agent-extended", "isDPoP:true")
+	return nil
+}
+
 type JWTAuth struct {
 	tokenCache      *goCache.Cache
 	httpClient      *http.Client
@@ -296,6 +362,54 @@ func (a *JWTAuth) Authorize(method, URL string) error {
 		a.tokenCache.Set(DpopAccessTokenNonce, nonce, time.Second*time.Duration(expiration))
 		a.tokenCache.Set(DpopAccessTokenPrivateKey, privateKey, time.Second*time.Duration(expiration))
 	}
+	return nil
+}
+
+func (a *JWTAuth) IsUsingDpop() bool {
+	accessToken, hasToken := a.tokenCache.Get(AccessTokenCacheKey)
+	if hasToken && accessToken != "" {
+		accessTokenStr := accessToken.(string)
+		return strings.HasPrefix(accessTokenStr, "DPoP ")
+	}
+	return false // Will be determined during first authorization
+}
+
+func (a *JWTAuth) RegenerateDpopJWT(method, URL string) error {
+	// Only regenerate if we're using DPoP authentication
+	if !a.IsUsingDpop() {
+		return nil
+	}
+
+	accessToken, hasToken := a.tokenCache.Get(AccessTokenCacheKey)
+	if !hasToken || accessToken == "" {
+		return nil // No token cached, nothing to regenerate
+	}
+
+	nonce, hasNonce := a.tokenCache.Get(DpopAccessTokenNonce)
+	if !hasNonce || nonce == "" {
+		return nil // No nonce cached, nothing to regenerate
+	}
+
+	privateKey, hasKey := a.tokenCache.Get(DpopAccessTokenPrivateKey)
+	if !hasKey || privateKey == nil {
+		return errors.New("DPoP private key not found in cache")
+	}
+
+	accessTokenStr := accessToken.(string)
+	res := strings.Split(accessTokenStr, " ")
+	if len(res) != 2 {
+		return errors.New("unidentified access token")
+	}
+
+	// Generate a new DPoP JWT with fresh jti and iat
+	dpopJWT, err := generateDpopJWT(privateKey.(*rsa.PrivateKey), method, URL, nonce.(string), res[1])
+	if err != nil {
+		return err
+	}
+
+	// Update the request headers with the new DPoP JWT
+	a.req.Header.Set("Dpop", dpopJWT)
+	a.req.Header.Set("x-okta-user-agent-extended", "isDPoP:true")
 	return nil
 }
 
@@ -645,6 +759,11 @@ func (re *RequestExecutor) NewRequest(method, url string, body interface{}) (*ht
 		return nil, err
 	}
 
+	// Store the auth object in the request context for use in retries
+	ctx := context.WithValue(req.Context(), "auth", auth)
+	ctx = context.WithValue(ctx, "urlWithoutQuery", urlWithoutQuery.String())
+	req = req.WithContext(ctx)
+
 	req.Header.Add("User-Agent", NewUserAgent(re.config).String())
 	req.Header.Add("Accept", re.headerAccept)
 
@@ -760,6 +879,24 @@ func (re *RequestExecutor) doWithRetries(ctx context.Context, req *http.Request)
 		if bodyReader != nil {
 			req.Body = bodyReader()
 		}
+		
+		// If this is a retry (retryCount > 0) and using DPoP, regenerate the DPoP JWT
+		if bOff.retryCount > 0 {
+			if auth := req.Context().Value("auth"); auth != nil {
+				if authObj, ok := auth.(Authorization); ok && authObj.IsUsingDpop() {
+					if urlWithoutQuery := req.Context().Value("urlWithoutQuery"); urlWithoutQuery != nil {
+						if urlStr, ok := urlWithoutQuery.(string); ok {
+							err := authObj.RegenerateDpopJWT(req.Method, urlStr)
+							if err != nil {
+								// Log the error but don't fail the retry
+								// The original DPoP JWT might still work
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		resp, err = re.httpClient.Do(req.WithContext(ctx))
 		if errors.Is(err, io.EOF) {
 			// retry on EOF errors, which might be caused by network connectivity issues
