@@ -221,8 +221,8 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 	config, ok := providerConfigs[vcr.TestAndCassetteNameKey()]
 	providerConfigsLock.RUnlock()
 	if ok {
-		// don't record failing test runs
-		if !t.Failed() {
+		// don't record failing test runs (unless explicitly allowed for error response testing)
+		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// If a test succeeds, write new seed/yaml to files
 			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
 			rt := rtHelper.Transport()
