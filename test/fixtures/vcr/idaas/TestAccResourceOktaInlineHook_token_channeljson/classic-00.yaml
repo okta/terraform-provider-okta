@@ -1,0 +1,170 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 350
+        host: classic-00.dne-okta.com
+        body: |
+            {"channel":{"config":{"authScheme":{"key":"DHIWAKAR3","type":"HEADER","value":"RAVIKUMAR3"},"headers":[{"key":"customthreeKey","value":"customthreeVal"}],"method":"POST","uri":"https://httpbin.org/post"},"type":"HTTP","version":"1.0.0"},"name":"Inline Hook Channel JSON","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.0"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltpica0efVYFiSU697","status":"ACTIVE","name":"Inline Hook Channel JSON","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://httpbin.org/post","headers":[{"key":"customthreeKey","value":"customthreeVal"}],"method":"POST","authScheme":{"type":"HEADER","key":"DHIWAKAR3"}}},"created":"2025-07-30T03:47:17.000Z","lastUpdated":"2025-07-30T03:47:17.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 30 Jul 2025 03:47:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.336518209s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltpica0efVYFiSU697","status":"ACTIVE","name":"Inline Hook Channel JSON","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://httpbin.org/post","headers":[{"key":"customthreeKey","value":"customthreeVal"}],"method":"POST","authScheme":{"type":"HEADER","key":"DHIWAKAR3"}}},"created":"2025-07-30T03:47:17.000Z","lastUpdated":"2025-07-30T03:47:17.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 30 Jul 2025 03:47:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.226522417s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltpica0efVYFiSU697","status":"ACTIVE","name":"Inline Hook Channel JSON","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://httpbin.org/post","headers":[{"key":"customthreeKey","value":"customthreeVal"}],"method":"POST","authScheme":{"type":"HEADER","key":"DHIWAKAR3"}}},"created":"2025-07-30T03:47:17.000Z","lastUpdated":"2025-07-30T03:47:17.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 30 Jul 2025 03:47:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.2568505s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltpica0efVYFiSU697","status":"INACTIVE","name":"Inline Hook Channel JSON","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://httpbin.org/post","headers":[{"key":"customthreeKey","value":"customthreeVal"}],"method":"POST","authScheme":{"type":"HEADER","key":"DHIWAKAR3"}}},"created":"2025-07-30T03:47:17.000Z","lastUpdated":"2025-07-30T03:47:22.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 30 Jul 2025 03:47:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.17426925s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltpica0efVYFiSU697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 30 Jul 2025 03:47:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.001174542s
+

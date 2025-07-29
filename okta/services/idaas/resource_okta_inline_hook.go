@@ -143,6 +143,11 @@ func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta in
 					hook.Channel.Config.ClientSecret = oldChannel.Config.ClientSecret
 				}
 			}
+			if oldChannel.Config != nil && oldChannel.Config.AuthScheme != nil {
+				if hook.Channel != nil && hook.Channel.Config != nil {
+					hook.Channel.Config.AuthScheme.Value = oldChannel.Config.AuthScheme.Value
+				}
+			}
 		}
 
 		channelJson, err := json.Marshal(hook.Channel)
@@ -307,7 +312,9 @@ func setInlineHookStatus(ctx context.Context, d *schema.ResourceData, client *sd
 // true if old and new JSONs are equivalent object representations ...  It is
 // true, there is no change!  Edge chase if newJSON is blank, will also return
 // true which cover the new resource case.  Okta does not return
-// config.clientSecret in the response so ignore that value.
+// config.clientSecret, config.authScheme.value, auth.value in the response so ignore these values.
+// The above mentioned fields are mutually exclusive.
+// TODO Explore usage of Terraform's write only attributes for sensitive values.
 func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
 	if newJSON == "" {
 		return true
@@ -323,14 +330,42 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 
 	configField := "config"
 	clientSecretField := "clientSecret"
+	authField, authSchemeField, valueField := "auth", "authScheme", "value"
 	if config, ok := oldObj[configField]; ok {
 		if _config, ok := config.(map[string]any); ok {
+			// delete config.clientSecret
 			delete(_config, clientSecretField)
+			// delete config.authScheme.value if it exists
+			if authSchemeField, ok := _config[authSchemeField]; ok {
+				if _authSchemeField, ok := authSchemeField.(map[string]any); ok {
+					delete(_authSchemeField, valueField)
+				}
+			}
 		}
 	}
+	// delete auth.value if it exists from oldObj
+	if auth, ok := oldObj[authField]; ok {
+		if _auth, ok := auth.(map[string]any); ok {
+			delete(_auth, valueField)
+		}
+	}
+
 	if config, ok := newObj[configField]; ok {
 		if _config, ok := config.(map[string]any); ok {
+			// delete config.clientSecret
 			delete(_config, clientSecretField)
+			// delete config.authScheme.value if it exists
+			if authSchemeField, ok := _config[authSchemeField]; ok {
+				if _authSchemeField, ok := authSchemeField.(map[string]any); ok {
+					delete(_authSchemeField, valueField)
+				}
+			}
+		}
+	}
+	// delete auth.value if it exists from newObj
+	if auth, ok := newObj[authField]; ok {
+		if _auth, ok := auth.(map[string]any); ok {
+			delete(_auth, valueField)
 		}
 	}
 
