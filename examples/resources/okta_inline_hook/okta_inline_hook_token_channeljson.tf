@@ -11,14 +11,14 @@ resource "okta_inline_hook" "token_channeljson" {
       "uri" : "https://httpbin.org/post",
       "headers" : [
         {
-          "key" : "customthreeKey",
-          "value" : "customthreeVal"
+          "key" : "custom_key",
+          "value" : "custom_val"
         }
       ],
       "authScheme" : {
         "type" : "HEADER",
-        "key" : "DHIWAKAR3",
-        "value" : "RAVIKUMAR3"
+        "key" : "authorization",
+        "value" : "some_secret"
       }
     }
   })

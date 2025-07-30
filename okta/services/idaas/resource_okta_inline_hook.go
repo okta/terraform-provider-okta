@@ -71,6 +71,9 @@ func resourceInlineHook() *schema.Resource {
 					if k == "auth.type" && new == "" {
 						return true
 					}
+					if k == "auth.value" && new != "" && old != "" {
+						return true // we're basically suppressing diffs if the resource
+					}
 					return false
 				},
 				ConflictsWith: []string{"channel_json"},
@@ -330,7 +333,7 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 
 	configField := "config"
 	clientSecretField := "clientSecret"
-	authField, authSchemeField, valueField := "auth", "authScheme", "value"
+	authSchemeField, valueField := "authScheme", "value"
 	if config, ok := oldObj[configField]; ok {
 		if _config, ok := config.(map[string]any); ok {
 			// delete config.clientSecret
@@ -341,12 +344,6 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 					delete(_authSchemeField, valueField)
 				}
 			}
-		}
-	}
-	// delete auth.value if it exists from oldObj
-	if auth, ok := oldObj[authField]; ok {
-		if _auth, ok := auth.(map[string]any); ok {
-			delete(_auth, valueField)
 		}
 	}
 
@@ -362,12 +359,5 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 			}
 		}
 	}
-	// delete auth.value if it exists from newObj
-	if auth, ok := newObj[authField]; ok {
-		if _auth, ok := auth.(map[string]any); ok {
-			delete(_auth, valueField)
-		}
-	}
-
 	return reflect.DeepEqual(oldObj, newObj)
 }
