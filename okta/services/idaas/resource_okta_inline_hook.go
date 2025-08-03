@@ -71,9 +71,6 @@ func resourceInlineHook() *schema.Resource {
 					if k == "auth.type" && new == "" {
 						return true
 					}
-					if k == "auth.value" && new != "" && old != "" {
-						return true // we're basically suppressing diffs if the resource
-					}
 					return false
 				},
 				ConflictsWith: []string{"channel_json"},
@@ -329,35 +326,6 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 	}
 	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
 		return false
-	}
-
-	configField := "config"
-	clientSecretField := "clientSecret"
-	authSchemeField, valueField := "authScheme", "value"
-	if config, ok := oldObj[configField]; ok {
-		if _config, ok := config.(map[string]any); ok {
-			// delete config.clientSecret
-			delete(_config, clientSecretField)
-			// delete config.authScheme.value if it exists
-			if authSchemeField, ok := _config[authSchemeField]; ok {
-				if _authSchemeField, ok := authSchemeField.(map[string]any); ok {
-					delete(_authSchemeField, valueField)
-				}
-			}
-		}
-	}
-
-	if config, ok := newObj[configField]; ok {
-		if _config, ok := config.(map[string]any); ok {
-			// delete config.clientSecret
-			delete(_config, clientSecretField)
-			// delete config.authScheme.value if it exists
-			if authSchemeField, ok := _config[authSchemeField]; ok {
-				if _authSchemeField, ok := authSchemeField.(map[string]any); ok {
-					delete(_authSchemeField, valueField)
-				}
-			}
-		}
 	}
 	return reflect.DeepEqual(oldObj, newObj)
 }
