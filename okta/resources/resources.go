@@ -119,7 +119,7 @@ const (
 	OktaIDaaSUserSchemaProperty            = "okta_user_schema_property"
 	OktaIDaaSUserSecurityQuestions         = "okta_user_security_questions"
 	OktaIDaaSUserType                      = "okta_user_type"
-	OktaGovernanceCampaign                 = "okta_campaign"
-	OktaGovernanceEntitlement              = "okta_entitlement"
+	OktaInternalGovernanceCampaign         = "okta_campaign"
+	OktaInternalGovernanceEntitlement      = "okta_entitlement"
 	OktaEndUserMyRequests                  = "okta_end_user_my_requests"
 )

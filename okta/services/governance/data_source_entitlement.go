@@ -2,7 +2,8 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+
+	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -62,62 +63,50 @@ func (d *entitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: "The type of data for the entitlement, e.g., 'user', 'group', etc.",
 			},
 			"external_value": schema.StringAttribute{
-				Computed:    true,
-				Description: "The value of an entitlement property.",
+				Computed: true,
 			},
 			"multi_value": schema.BoolAttribute{
-				Computed:    true,
-				Description: "The property that determines if the entitlement property can hold multiple values.",
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Computed:    true,
-				Description: "The name of the entitlement property.",
+				Computed: true,
 			},
 			"parent_resource_orn": schema.StringAttribute{
-				Computed:    true,
-				Description: "The Okta app instance, in ORN format.",
+				Computed: true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"parent": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Computed:    true,
-						Description: "The Okta app.id of the resource.",
+						Computed: true,
 					},
 					"type": schema.StringAttribute{
-						Computed:    true,
-						Description: "The type of resource.",
+						Computed: true,
 					},
 				},
-				Description: "Representation of a resource.",
 			},
 			"values": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed:    true,
-							Description: "The id of the entitlement value.",
+							Computed: true,
 						},
 						"name": schema.StringAttribute{
-							Optional:    true,
-							Computed:    true,
-							Description: "The name of the entitlement value.",
+							Optional: true,
+							Computed: true,
 						},
 						"external_value": schema.StringAttribute{
-							Optional:    true,
-							Computed:    true,
-							Description: "The value of an entitlement property value.",
+							Optional: true,
+							Computed: true,
 						},
 						"external_id": schema.StringAttribute{
-							Optional:    true,
-							Computed:    true,
-							Description: "The id of the entitlement value.",
+							Optional: true,
+							Computed: true,
 						},
 						"description": schema.StringAttribute{
-							Optional:    true,
-							Computed:    true,
-							Description: "The description of an entitlement value.",
+							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -163,7 +152,7 @@ func (d *entitlementDataSource) Read(ctx context.Context, req datasource.ReadReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func convertValues(values []governance.EntitlementValueFull) []entitlementValues {
+func convertValues(values []oktaInternalGovernance.EntitlementValueFull) []entitlementValues {
 	var convertedValues []entitlementValues
 	for _, value := range values {
 		convertedValues = append(convertedValues, entitlementValues{
@@ -177,7 +166,7 @@ func convertValues(values []governance.EntitlementValueFull) []entitlementValues
 	return convertedValues
 }
 
-func convertParent(parent *governance.TargetResource) *parentBlockModel {
+func convertParent(parent *oktaInternalGovernance.TargetResource) *parentBlockModel {
 	if parent == nil {
 		return nil
 	}

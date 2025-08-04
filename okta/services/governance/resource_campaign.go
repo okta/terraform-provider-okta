@@ -5,8 +5,10 @@ import (
 	"log"
 	"time"
 
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
+
+	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -121,6 +123,11 @@ type targetResourceModel struct {
 	ResourceType                     types.String             `tfsdk:"resource_type"`
 	EntitlementBundles               []entitlementBundleModel `tfsdk:"entitlement_bundles"`
 	Entitlements                     []entitlementModel       `tfsdk:"entitlements"`
+}
+
+type excludedResourceMode struct {
+	ResourceId   types.String `tfsdk:"resource_id"`
+	ResourceType types.String `tfsdk:"resource_type"`
 }
 
 type reviewerSettingsModel struct {
@@ -313,7 +320,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						},
 						Description: "An array of resources that are excluded from the review.",
 					},
-					"target_resources": schema.SetNestedBlock{
+					"target_resources": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
@@ -691,45 +698,7 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 }
 
-func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data campaignResourceModel
-	var state campaignResourceModel
-
-	// Load both planned and current state
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.AddError(
-		"Update Not Supported",
-		"No other fields other than launch_campaign and end_campaign are updatable for this resource. Terraform will retain the existing state.",
-	)
-}
-
-func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data campaignResourceModel
-
-	// Read Terraform prior state data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.ValueString()).Execute()
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error deleting Campaign",
-			"Could not delete Campaign with ID"+data.Id.ValueString()+" unexpected error: "+err.Error(),
-		)
-		return
-	}
-}
-
-func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c *campaignResourceModel) diag.Diagnostics {
+func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.CampaignFull, c *campaignResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c.Id = types.StringValue(resp.Id)
 	c.Name = types.StringValue(resp.Name)
@@ -943,7 +912,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 		if resp.NotificationSettings.NotifyReviewPeriodEnd.Get() != nil {
 			c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewPeriodEnd.Get())
 		}
-		if len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
+		if resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil && len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
 			reminders := make([]int64, 0, len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
 			for _, v := range resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
 				reminders = append(reminders, int64(v))
@@ -962,7 +931,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	if resp.PrincipalScopeSettings.Type != "" {
 		c.PrincipalScope.Type = types.StringValue(string(resp.PrincipalScopeSettings.Type))
 	}
-	if len(resp.PrincipalScopeSettings.ExcludedUserIds) > 0 {
+	if resp.PrincipalScopeSettings.ExcludedUserIds != nil && len(resp.PrincipalScopeSettings.ExcludedUserIds) > 0 {
 		excluded := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.ExcludedUserIds))
 		for _, id := range resp.PrincipalScopeSettings.ExcludedUserIds {
 			excluded = append(excluded, types.StringValue(id))
@@ -975,7 +944,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	} else {
 		c.PrincipalScope.ExcludedUserIds = types.ListNull(types.StringType)
 	}
-	if len(resp.PrincipalScopeSettings.GroupIds) > 0 {
+	if resp.PrincipalScopeSettings.GroupIds != nil && len(resp.PrincipalScopeSettings.GroupIds) > 0 {
 		groupIds := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.GroupIds))
 		for _, id := range resp.PrincipalScopeSettings.GroupIds {
 			groupIds = append(groupIds, types.StringValue(id))
@@ -990,7 +959,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	if resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts != nil {
 		c.PrincipalScope.OnlyIncludeUsersWithSODConflicts = types.BoolValue(*resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts)
 	}
-	if len(resp.PrincipalScopeSettings.UserIds) > 0 {
+	if resp.PrincipalScopeSettings.UserIds != nil && len(resp.PrincipalScopeSettings.UserIds) > 0 {
 		listVal, _ := types.ListValueFrom(ctx, types.StringType, resp.PrincipalScopeSettings.UserIds)
 		c.PrincipalScope.UserIds = listVal
 	} else {
@@ -1010,7 +979,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	return diags
 }
 
-func getRecurrence(resp *governance.CampaignFull) recurrenceModel {
+func getRecurrence(resp *oktaInternalGovernance.CampaignFull) recurrenceModel {
 	recurrence := recurrenceModel{}
 	recurrence.Interval = types.StringValue(resp.ScheduleSettings.Recurrence.Interval)
 	if resp.ScheduleSettings.Recurrence.Ends != nil && !resp.ScheduleSettings.Recurrence.Ends.IsZero() {
@@ -1023,33 +992,73 @@ func getRecurrence(resp *governance.CampaignFull) recurrenceModel {
 	return recurrence
 }
 
-func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
+func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data campaignResourceModel
+	var state campaignResourceModel
+
+	// Load both planned and current state
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.AddError(
+		"Update Not Supported",
+		"No other fields other than launch_campaign and end_campaign are updatable for this resource. Terraform will retain the existing state.",
+	)
+}
+
+func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data campaignResourceModel
+
+	// Read Terraform prior state data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	// Delete API call logic
+	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error deleting Campaign",
+			"Could not delete Campaign with ID"+data.Id.ValueString()+" unexpected error: "+err.Error(),
+		)
+		return
+	}
+
+	return
+}
+
+func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutable {
 	startDate := d.ScheduleSettings.StartDate.ValueString()
 	parsedStartDate, err := time.Parse(time.RFC3339, startDate)
 	if err != nil {
 		log.Printf("invalid start_date format: %v", err)
-		return governance.CampaignMutable{}
+		return oktaInternalGovernance.CampaignMutable{}
 	}
 
 	// Convert target resources
 	targetResources := buildTargetResources(d)
 
-	var ExcludedResources = make([]governance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
+	var ExcludedResources = make([]oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
 	for _, ex := range d.ResourceSettings.ExcludedResources {
 		x := ex.ResourceId.ValueString()
-		var resourceType *governance.ResourceType
+		var resourceType *oktaInternalGovernance.ResourceType
 		if !ex.ResourceType.IsNull() && ex.ResourceType.ValueString() != "" {
-			rt := governance.ResourceType(ex.ResourceType.ValueString())
+			rt := oktaInternalGovernance.ResourceType(ex.ResourceType.ValueString())
 			resourceType = &rt
 		}
-		excludedRes := governance.ResourceSettingsMutableExcludedResourcesInner{
+		excludedRes := oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner{
 			ResourceId:   &x,
 			ResourceType: resourceType,
 		}
 		ExcludedResources = append(ExcludedResources, excludedRes)
 	}
 
-	var recur governance.RecurrenceDefinitionMutable
+	var recur oktaInternalGovernance.RecurrenceDefinitionMutable
 	r := d.ScheduleSettings.Recurrence
 	if len(r) != 0 {
 		endStr := r[0].Ends.ValueString()
@@ -1058,7 +1067,7 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 			recur.Ends = &parsedTime
 		}
 		recur.Interval = r[0].Interval.ValueString()
-		repeatStr := governance.RecurrenceRepeatOnType(r[0].RepeatOnType.ValueString())
+		repeatStr := oktaInternalGovernance.RecurrenceRepeatOnType(r[0].RepeatOnType.ValueString())
 		if repeatStr != "" {
 			recur.RepeatOnType = &repeatStr
 		}
@@ -1075,25 +1084,25 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 			log.Printf("Error remindersReviewerBeforeCampaignCloseInSecs: %v", err)
 		}
 	}
-	var autoRemediationSettings *governance.AutoRemediationSettings
+	var autoRemediationSettings *oktaInternalGovernance.AutoRemediationSettings
 	if d.RemediationSettings.AutoRemediationSettings != nil {
-		var includeOnlyConverted []governance.AutoRemediationSettingsIncludeOnlyInner
+		var includeOnlyConverted []oktaInternalGovernance.AutoRemediationSettingsIncludeOnlyInner
 
 		for _, tr := range d.RemediationSettings.AutoRemediationSettings.IncludeOnly {
-			rt := governance.AutoRemediationResourceType(tr.ResourceType.ValueString())
-			includeOnlyConverted = append(includeOnlyConverted, governance.AutoRemediationSettingsIncludeOnlyInner{
+			rt := oktaInternalGovernance.AutoRemediationResourceType(tr.ResourceType.ValueString())
+			includeOnlyConverted = append(includeOnlyConverted, oktaInternalGovernance.AutoRemediationSettingsIncludeOnlyInner{
 				ResourceId:   tr.ResourceId.ValueStringPointer(),
 				ResourceType: &rt,
 			})
 		}
-		autoRemediationSettings = &governance.AutoRemediationSettings{
+		autoRemediationSettings = &oktaInternalGovernance.AutoRemediationSettings{
 			IncludeAllIndirectAssignments: d.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments.ValueBoolPointer(),
 			IncludeOnly:                   includeOnlyConverted,
 		}
 
 		for _, includeOnly := range d.RemediationSettings.AutoRemediationSettings.IncludeOnly {
-			rt := governance.AutoRemediationResourceType(includeOnly.ResourceType.ValueString())
-			targetResource := governance.AutoRemediationSettingsIncludeOnlyInner{
+			rt := oktaInternalGovernance.AutoRemediationResourceType(includeOnly.ResourceType.ValueString())
+			targetResource := oktaInternalGovernance.AutoRemediationSettingsIncludeOnlyInner{
 				ResourceId:   includeOnly.ResourceId.ValueStringPointer(),
 				ResourceType: &rt,
 			}
@@ -1101,28 +1110,28 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 		}
 	}
 
-	var reviewerLevels []governance.ReviewerLevelSettingsMutable
+	var reviewerLevels []oktaInternalGovernance.ReviewerLevelSettingsMutable
 	for _, level := range d.ReviewerSettings.ReviewerLevels {
-		var startReview governance.ReviewerLevelStartReview
+		var startReview oktaInternalGovernance.ReviewerLevelStartReview
 		if len(level.StartReview) > 0 {
 			start := level.StartReview[0]
-			startReview = governance.ReviewerLevelStartReview{
+			startReview = oktaInternalGovernance.ReviewerLevelStartReview{
 				OnDay: start.OnDay.ValueInt32(),
 			}
 			if !start.When.IsNull() && start.When.ValueString() != "" {
 				when := start.When.ValueString()
-				startReview.When = (*governance.ReviewerLowerLevelCondition)(&when)
+				startReview.When = (*oktaInternalGovernance.ReviewerLowerLevelCondition)(&when)
 			}
 		}
 
-		var reviewerLevel governance.ReviewerLevelSettingsMutable
+		var reviewerLevel oktaInternalGovernance.ReviewerLevelSettingsMutable
 		reviewerGroupId := level.ReviewerGroupId.ValueStringPointer()
 		var reviewerId = level.ReviewerId.ValueString()
 		var reviewerScopeExpression = level.ReviewerScopeExpression.ValueStringPointer()
 		var fallBackReviewerId = level.FallBackReviewerId.ValueStringPointer()
 		var selfReviewDisabled = level.SelfReviewDisabled.ValueBoolPointer()
 
-		reviewerLevel.SetType(governance.ReviewerType(level.Type.ValueString()))
+		reviewerLevel.SetType(oktaInternalGovernance.ReviewerType(level.Type.ValueString()))
 		if fallBackReviewerId != nil && *fallBackReviewerId != "" {
 			reviewerLevel.FallBackReviewerId = fallBackReviewerId
 		}
@@ -1152,31 +1161,31 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 	_ = d.PrincipalScope.ExcludedUserIds.ElementsAs(context.Background(), &excludedUserIDs, false)
 	_ = d.PrincipalScope.GroupIds.ElementsAs(context.Background(), &groupIDs, false)
 	_ = d.PrincipalScope.UserIds.ElementsAs(context.Background(), &userIds, false)
-	var campaignType *governance.CampaignType
+	var campaignType *oktaInternalGovernance.CampaignType
 	if v := d.CampaignType.ValueString(); v != "" {
-		cType := governance.CampaignType(v)
+		cType := oktaInternalGovernance.CampaignType(v)
 		campaignType = &cType
 	}
 
-	var campaignTier *governance.CampaignTier
+	var campaignTier *oktaInternalGovernance.CampaignTier
 	if v := d.CampaignTier.ValueString(); v != "" {
-		tier := governance.CampaignTier(v)
+		tier := oktaInternalGovernance.CampaignTier(v)
 		campaignTier = &tier
 	}
 	predefinedInactiveUsersScope := buildPredefinedUserScope(d.PrincipalScope.PredefinedInactiveUsersScope)
-	return governance.CampaignMutable{
+	return oktaInternalGovernance.CampaignMutable{
 		Name:         d.Name.ValueString(),
 		CampaignTier: campaignTier,
 		CampaignType: campaignType,
 		Description:  d.Description.ValueStringPointer(),
-		RemediationSettings: governance.RemediationSettings{
-			AccessApproved:          governance.ApprovedRemediationAction(d.RemediationSettings.AccessApproved.ValueString()),
-			AccessRevoked:           governance.RevokedRemediationAction(d.RemediationSettings.AccessRevoked.ValueString()),
-			NoResponse:              governance.NoResponseRemediationAction(d.RemediationSettings.NoResponse.ValueString()),
+		RemediationSettings: oktaInternalGovernance.RemediationSettings{
+			AccessApproved:          oktaInternalGovernance.ApprovedRemediationAction(d.RemediationSettings.AccessApproved.ValueString()),
+			AccessRevoked:           oktaInternalGovernance.RevokedRemediationAction(d.RemediationSettings.AccessRevoked.ValueString()),
+			NoResponse:              oktaInternalGovernance.NoResponseRemediationAction(d.RemediationSettings.NoResponse.ValueString()),
 			AutoRemediationSettings: autoRemediationSettings,
 		},
-		ResourceSettings: governance.ResourceSettingsMutable{
-			Type:                               governance.CampaignResourceType(d.ResourceSettings.Type.ValueString()),
+		ResourceSettings: oktaInternalGovernance.ResourceSettingsMutable{
+			Type:                               oktaInternalGovernance.CampaignResourceType(d.ResourceSettings.Type.ValueString()),
 			TargetResources:                    targetResources,
 			IncludeAdminRoles:                  d.ResourceSettings.IncludeAdminRoles.ValueBoolPointer(),
 			IncludeEntitlements:                d.ResourceSettings.IncludeEntitlements.ValueBoolPointer(),
@@ -1185,16 +1194,17 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 			OnlyIncludeOutOfPolicyEntitlements: d.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements.ValueBoolPointer(),
 			ExcludedResources:                  ExcludedResources,
 		},
-		ReviewerSettings:       *getReviewerSettingForRequests(d, reviewerLevels),
-		ScheduleSettings:       *getScheduleSettingForRequests(d, parsedStartDate, recur),
-		NotificationSettings:   getNotificationSettingsForRequest(d, remindersReviewerBeforeCampaignCloseInSecs),
+		ReviewerSettings:     *getReviewerSettingForRequests(d, reviewerLevels),
+		ScheduleSettings:     *getScheduleSettingForRequests(d, parsedStartDate, recur),
+		NotificationSettings: getNotificationSettingsForRequest(d, remindersReviewerBeforeCampaignCloseInSecs),
+
 		PrincipalScopeSettings: buildPrincipalScopeSettings(d, excludedUserIDs, groupIDs, userIds, predefinedInactiveUsersScope),
 	}
 }
 
-func buildPrincipalScopeSettings(d campaignResourceModel, excludedUserIDs []string, groupIDs []string, userIds []string, predefinedInactiveUsersScope governance.PredefinedInactiveUsersScopeSettings) *governance.PrincipalScopeSettingsMutable {
-	var principalScopeSettings governance.PrincipalScopeSettingsMutable
-	principalScopeSettings.SetType(governance.PrincipalScopeType(d.PrincipalScope.Type.ValueString()))
+func buildPrincipalScopeSettings(d campaignResourceModel, excludedUserIDs []string, groupIDs []string, userIds []string, predefinedInactiveUsersScope oktaInternalGovernance.PredefinedInactiveUsersScopeSettings) *oktaInternalGovernance.PrincipalScopeSettingsMutable {
+	var principalScopeSettings oktaInternalGovernance.PrincipalScopeSettingsMutable
+	principalScopeSettings.SetType(oktaInternalGovernance.PrincipalScopeType(d.PrincipalScope.Type.ValueString()))
 	principalScopeSettings.SetExcludedUserIds(excludedUserIDs)
 	principalScopeSettings.SetGroupIds(groupIDs)
 	principalScopeSettings.SetUserIds(userIds)
@@ -1209,19 +1219,19 @@ func buildPrincipalScopeSettings(d campaignResourceModel, excludedUserIDs []stri
 	return &principalScopeSettings
 }
 
-func buildPredefinedUserScope(principalScopeSettings []inactiveUsersScopeModel) governance.PredefinedInactiveUsersScopeSettings {
-	var predefinedScopeSettings governance.PredefinedInactiveUsersScopeSettings
+func buildPredefinedUserScope(principalScopeSettings []inactiveUsersScopeModel) oktaInternalGovernance.PredefinedInactiveUsersScopeSettings {
+	var predefinedScopeSettings oktaInternalGovernance.PredefinedInactiveUsersScopeSettings
 	for _, scope := range principalScopeSettings {
 		predefinedScopeSettings.SetInactiveDays(scope.InactiveDays.ValueInt32())
 	}
 	return predefinedScopeSettings
 }
 
-func buildTargetResources(d campaignResourceModel) []governance.TargetResourcesRequestInner {
-	var targetResources []governance.TargetResourcesRequestInner
+func buildTargetResources(d campaignResourceModel) []oktaInternalGovernance.TargetResourcesRequestInner {
+	var targetResources []oktaInternalGovernance.TargetResourcesRequestInner
 	for _, tr := range d.ResourceSettings.TargetResources {
-		rt := governance.ResourceType(tr.ResourceType.ValueString())
-		x := governance.TargetResourcesRequestInner{
+		rt := oktaInternalGovernance.ResourceType(tr.ResourceType.ValueString())
+		x := oktaInternalGovernance.TargetResourcesRequestInner{
 			ResourceId:   tr.ResourceId.ValueString(),
 			ResourceType: &rt,
 		}
@@ -1229,10 +1239,10 @@ func buildTargetResources(d campaignResourceModel) []governance.TargetResourcesR
 			x.IncludeAllEntitlementsAndBundles = tr.IncludeAllEntitlementsAndBundles.ValueBoolPointer()
 		}
 		if len(tr.Entitlements) > 0 {
-			var entitlements []governance.EntitlementsInner
+			var entitlements []oktaInternalGovernance.EntitlementsInner
 			for _, entitlement := range tr.Entitlements {
 				v := getEntitlementValue(entitlement.Values)
-				entitlementInner := governance.EntitlementsInner{
+				entitlementInner := oktaInternalGovernance.EntitlementsInner{
 					Id:               entitlement.Id.ValueString(),
 					IncludeAllValues: entitlement.IncludeAllValues.ValueBoolPointer(),
 					Values:           v,
@@ -1246,10 +1256,10 @@ func buildTargetResources(d campaignResourceModel) []governance.TargetResourcesR
 	return targetResources
 }
 
-func getEntitlementValue(entitlements []entitlementValueModel) []governance.EntitlementValue {
-	var value []governance.EntitlementValue
+func getEntitlementValue(entitlements []entitlementValueModel) []oktaInternalGovernance.EntitlementValue {
+	var value []oktaInternalGovernance.EntitlementValue
 	for _, e := range entitlements {
-		v := governance.EntitlementValue{
+		v := oktaInternalGovernance.EntitlementValue{
 			Id: e.Id.ValueString(),
 		}
 		value = append(value, v)
@@ -1257,21 +1267,21 @@ func getEntitlementValue(entitlements []entitlementValueModel) []governance.Enti
 	return value
 }
 
-func getScheduleSettingForRequests(d campaignResourceModel, parsedStartDate time.Time, recur governance.RecurrenceDefinitionMutable) *governance.ScheduleSettingsMutable {
-	scheduleSettings := governance.NewScheduleSettingsMutableWithDefaults()
+func getScheduleSettingForRequests(d campaignResourceModel, parsedStartDate time.Time, recur oktaInternalGovernance.RecurrenceDefinitionMutable) *oktaInternalGovernance.ScheduleSettingsMutable {
+	scheduleSettings := oktaInternalGovernance.NewScheduleSettingsMutableWithDefaults()
 	scheduleSettings.SetRecurrence(recur)
 	scheduleSettings.SetStartDate(parsedStartDate)
 	scheduleSettings.SetDurationInDays(float32(d.ScheduleSettings.DurationInDays.ValueInt32()))
 	scheduleSettings.SetTimeZone(d.ScheduleSettings.TimeZone.ValueString())
-	scheduleSettings.SetType(governance.ScheduleType(d.ScheduleSettings.Type.ValueString()))
+	scheduleSettings.SetType(oktaInternalGovernance.ScheduleType(d.ScheduleSettings.Type.ValueString()))
 	return scheduleSettings
 }
 
-func getReviewerSettingForRequests(d campaignResourceModel, reviewerLevels []governance.ReviewerLevelSettingsMutable) *governance.ReviewerSettingsMutable {
-	reviewerSettings := governance.NewReviewerSettingsMutableWithDefaults()
+func getReviewerSettingForRequests(d campaignResourceModel, reviewerLevels []oktaInternalGovernance.ReviewerLevelSettingsMutable) *oktaInternalGovernance.ReviewerSettingsMutable {
+	reviewerSettings := oktaInternalGovernance.NewReviewerSettingsMutableWithDefaults()
 	if d.ReviewerSettings != nil {
 		if !d.ReviewerSettings.Type.IsNull() {
-			reviewerSettings.Type = governance.CampaignReviewerType(d.ReviewerSettings.Type.ValueString())
+			reviewerSettings.Type = oktaInternalGovernance.CampaignReviewerType(d.ReviewerSettings.Type.ValueString())
 		}
 		if !d.ReviewerSettings.BulkDecisionDisabled.IsNull() {
 			reviewerSettings.BulkDecisionDisabled = d.ReviewerSettings.BulkDecisionDisabled.ValueBoolPointer()
@@ -1302,8 +1312,8 @@ func getReviewerSettingForRequests(d campaignResourceModel, reviewerLevels []gov
 	return reviewerSettings
 }
 
-func getNotificationSettingsForRequest(d campaignResourceModel, remindersReviewerBeforeCampaignCloseInSecs []int32) *governance.NotificationSettings {
-	notificationSettings := governance.NewNotificationSettingsWithDefaults()
+func getNotificationSettingsForRequest(d campaignResourceModel, remindersReviewerBeforeCampaignCloseInSecs []int32) *oktaInternalGovernance.NotificationSettings {
+	notificationSettings := oktaInternalGovernance.NewNotificationSettingsWithDefaults()
 	if d.NotificationSettings != nil {
 		if !d.NotificationSettings.NotifyReviewerAtCampaignEnd.IsNull() {
 			notificationSettings.NotifyReviewerAtCampaignEnd = d.NotificationSettings.NotifyReviewerAtCampaignEnd.ValueBoolPointer()
@@ -1327,9 +1337,9 @@ func getNotificationSettingsForRequest(d campaignResourceModel, remindersReviewe
 	return notificationSettings
 }
 
-func toNullableBool(v *bool) *governance.NullableBool {
+func toNullableBool(v *bool) *oktaInternalGovernance.NullableBool {
 	if v == nil {
 		return nil
 	}
-	return governance.NewNullableBool(v)
+	return oktaInternalGovernance.NewNullableBool(v)
 }

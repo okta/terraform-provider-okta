@@ -2,8 +2,9 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"time"
+
+	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -55,47 +56,37 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "Unique identifier for the object.",
+				Optional: true,
+				Computed: true,
 			},
 			"created": schema.StringAttribute{
-				Computed:    true,
-				Description: "The ISO 8601 formatted date and time when the resource was created.",
+				Computed: true,
 			},
 			"created_by": schema.StringAttribute{
-				Computed:    true,
-				Description: "The id of the Okta user who created the resource.",
+				Computed: true,
 			},
 			"last_updated": schema.StringAttribute{
-				Computed:    true,
-				Description: "The ISO 8601 formatted date and time when the object was last updated.",
+				Computed: true,
 			},
 			"last_updated_by": schema.StringAttribute{
-				Computed:    true,
-				Description: "The id of the Okta user who last updated the object.",
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
-				Computed:    true,
-				Description: "Name of the campaign.",
+				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				Computed:    true,
-				Description: "The status of the campaign.",
+				Computed: true,
 			},
 			"campaign_type": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
-				Description: "Identifies if it is a resource campaign or a user campaign. By default it is RESOURCE.",
+				Computed: true,
+				Optional: true,
 			},
 			"description": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
-				Description: "Human readable description.",
+				Computed: true,
+				Optional: true,
 			},
 			"recurring_campaign_id": schema.StringAttribute{
-				Computed:    true,
-				Description: "ID of the recurring campaign if this campaign was created as part of a recurring schedule.",
+				Computed: true,
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -111,17 +102,15 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Description: "Specifies the action if the reviewer revokes access. NO_ACTION indicates the user retains the same access. DENY indicates the user will have their access revoked as long as they are not assigned to a group through Group Rules.",
 					},
 					"no_response": schema.StringAttribute{
-						Computed:    true,
-						Description: "Specifies the action if the reviewer doesn't respond to the request.",
+						Computed: true,
 					},
 				},
 				Blocks: map[string]schema.Block{
 					"auto_remediation_settings": schema.SingleNestedBlock{
 						Attributes: map[string]schema.Attribute{
 							"include_all_indirect_assignments": schema.BoolAttribute{
-								Computed:    true,
-								Optional:    true,
-								Description: "When a group is selected to be automatically remediated.",
+								Computed: true,
+								Optional: true,
 							},
 						},
 						Blocks: map[string]schema.Block{
@@ -129,16 +118,13 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 								NestedObject: schema.NestedBlockObject{
 									Attributes: map[string]schema.Attribute{
 										"resource_id": schema.StringAttribute{
-											Required:    true,
-											Description: "The resource ID of the target resource When type = GROUP, it will point to the group ID.",
+											Required: true,
 										},
 										"resource_type": schema.StringAttribute{
-											Required:    true,
-											Description: "The type of the resource to be automatically remediated. Only GROUP is supported.",
+											Required: true,
 										},
 									},
 								},
-								Description: "An array of resources to be automatically remediated.",
 							},
 						},
 					},
@@ -147,33 +133,27 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			"resource_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Computed:    true,
-						Description: "The type of Okta resource.",
+						Computed: true,
 					},
 					"include_admin_roles": schema.BoolAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: "Include admin roles.",
+						Computed: true,
+						Optional: true,
 					},
 					"include_entitlements": schema.BoolAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: "Include entitlements for this application.",
+						Computed: true,
+						Optional: true,
 					},
 					"individually_assigned_apps_only": schema.BoolAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: "Only include individually assigned groups.",
+						Computed: true,
+						Optional: true,
 					},
 					"individually_assigned_groups_only": schema.BoolAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: "Only include individually assigned groups.",
+						Computed: true,
+						Optional: true,
 					},
 					"only_include_out_of_policy_entitlements": schema.BoolAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: "Only include out-of-policy entitlements.",
+						Computed: true,
+						Optional: true,
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -181,31 +161,25 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
-									Computed:    true,
-									Description: "Okta specific resource ID.",
+									Computed: true,
 								},
 								"resource_type": schema.StringAttribute{
-									Computed:    true,
-									Description: "The type of Okta resource.",
+									Computed: true,
 								},
 							},
 						},
-						Description: "An array of resources that are excluded from the review.",
 					},
 					"target_resources": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
-									Required:    true,
-									Description: "The resource ID that is being reviewed.",
+									Required: true,
 								},
 								"include_all_entitlements_and_bundles": schema.BoolAttribute{
-									Computed:    true,
-									Description: "Include all entitlements and entitlement bundles for this application.",
+									Computed: true,
 								},
 								"resource_type": schema.StringAttribute{
-									Computed:    true,
-									Description: "The type of Okta resource.",
+									Computed: true,
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -213,23 +187,19 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
-												Required:    true,
-												Description: "The id of the entitlement bundle.",
+												Required: true,
 											},
 										},
 									},
-									Description: "An array of entitlement bundles associated with resourceId that should be chosen as target when creating reviews.",
 								},
 								"entitlements": schema.ListNestedBlock{
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
-												Required:    true,
-												Description: "The id of the entitlement.",
+												Required: true,
 											},
 											"include_all_values": schema.BoolAttribute{
-												Computed:    true,
-												Description: "Whether to include all values for this entitlement.",
+												Computed: true,
 											},
 										},
 										Blocks: map[string]schema.Block{
@@ -237,19 +207,16 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 												NestedObject: schema.NestedBlockObject{
 													Attributes: map[string]schema.Attribute{
 														"id": schema.StringAttribute{
-															Required:    true,
-															Description: "The entitlement value id.",
+															Required: true,
 														},
 													},
 												},
-												Description: "Entitlement value ids",
 											},
 										},
 									},
 								},
 							},
 						},
-						Description: "Represents a resource that will be part of Access certifications.",
 					},
 				},
 			},
@@ -645,7 +612,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (d *campaignDataSource) createSettingModelDS(campaign *governance.CampaignFull) *reviewerSettingsModel {
+func (d *campaignDataSource) createSettingModelDS(campaign *oktaInternalGovernance.CampaignFull) *reviewerSettingsModel {
 	var (
 		bulkDecisionDisabled    types.Bool
 		fallbackReviewerId      types.String

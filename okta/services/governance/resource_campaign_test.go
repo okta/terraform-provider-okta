@@ -9,11 +9,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-// Warning: Users need to enable governance manually from the console for applications, since it can't be enabled via API due to API not being public.
 func TestAccCampaignResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaGovernanceCampaign, t.Name())
+	mgr := newFixtureManager("resources", resources.OktaInternalGovernanceCampaign, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceCampaign)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaInternalGovernanceCampaign)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
