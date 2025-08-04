@@ -124,11 +124,6 @@ type targetResourceModel struct {
 	Entitlements                     []entitlementModel       `tfsdk:"entitlements"`
 }
 
-type excludedResourceMode struct {
-	ResourceId   types.String `tfsdk:"resource_id"`
-	ResourceType types.String `tfsdk:"resource_type"`
-}
-
 type reviewerSettingsModel struct {
 	Type                    types.String         `tfsdk:"type"`
 	BulkDecisionDisabled    types.Bool           `tfsdk:"bulk_decision_disabled"`
@@ -911,7 +906,7 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 		if resp.NotificationSettings.NotifyReviewPeriodEnd.Get() != nil {
 			c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewPeriodEnd.Get())
 		}
-		if resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil && len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
+		if len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
 			reminders := make([]int64, 0, len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
 			for _, v := range resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
 				reminders = append(reminders, int64(v))
@@ -930,7 +925,7 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	if resp.PrincipalScopeSettings.Type != "" {
 		c.PrincipalScope.Type = types.StringValue(string(resp.PrincipalScopeSettings.Type))
 	}
-	if resp.PrincipalScopeSettings.ExcludedUserIds != nil && len(resp.PrincipalScopeSettings.ExcludedUserIds) > 0 {
+	if len(resp.PrincipalScopeSettings.ExcludedUserIds) > 0 {
 		excluded := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.ExcludedUserIds))
 		for _, id := range resp.PrincipalScopeSettings.ExcludedUserIds {
 			excluded = append(excluded, types.StringValue(id))
@@ -943,7 +938,7 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	} else {
 		c.PrincipalScope.ExcludedUserIds = types.ListNull(types.StringType)
 	}
-	if resp.PrincipalScopeSettings.GroupIds != nil && len(resp.PrincipalScopeSettings.GroupIds) > 0 {
+	if len(resp.PrincipalScopeSettings.GroupIds) > 0 {
 		groupIds := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.GroupIds))
 		for _, id := range resp.PrincipalScopeSettings.GroupIds {
 			groupIds = append(groupIds, types.StringValue(id))
@@ -958,7 +953,7 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 	if resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts != nil {
 		c.PrincipalScope.OnlyIncludeUsersWithSODConflicts = types.BoolValue(*resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts)
 	}
-	if resp.PrincipalScopeSettings.UserIds != nil && len(resp.PrincipalScopeSettings.UserIds) > 0 {
+	if len(resp.PrincipalScopeSettings.UserIds) > 0 {
 		listVal, _ := types.ListValueFrom(ctx, types.StringType, resp.PrincipalScopeSettings.UserIds)
 		c.PrincipalScope.UserIds = listVal
 	} else {
@@ -1027,8 +1022,6 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 		)
 		return
 	}
-
-	return
 }
 
 func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutable {
