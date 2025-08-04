@@ -1,7 +1,6 @@
 package api
 
 import (
-<<<<<<< HEAD
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 )
 

@@ -13,6 +13,7 @@
     <img src="https://www.okta.com/sites/default/files/Dev_Logo-03_Large.png" alt="OKTA logo" title="OKTA" height="50" />
 </a>
 
+
 # Terraform Provider for Okta
 
 The Terraform Okta provider is a plugin for Terraform that allows for the full lifecycle management of Okta resources.

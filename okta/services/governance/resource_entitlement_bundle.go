@@ -2,11 +2,10 @@ package governance
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
-
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -147,7 +146,6 @@ func (r *entitlementBundleResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	data.Id = types.StringValue(entitlementBundle.Id)
 	resp.Diagnostics.Append(applyEntitlementBundleToState(ctx, entitlementBundle, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

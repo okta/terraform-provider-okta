@@ -2,8 +2,9 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"time"
+
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"

@@ -4,13 +4,13 @@ import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ resource.Resource = &riskRuleResource{}
