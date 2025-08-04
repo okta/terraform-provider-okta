@@ -227,7 +227,6 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	// Append resources from various modules
 	resources = append(resources, idaas.FWProviderResources()...)
 	resources = append(resources, governance.FWProviderResources()...)
-	resources = append(resources)
 
 	return resources
 }

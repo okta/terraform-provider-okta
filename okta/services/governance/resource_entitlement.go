@@ -26,14 +26,6 @@ type entitlementResource struct {
 	*config.Config
 }
 
-type entitlementUpdate struct {
-	Op      types.String            `tfsdk:"op"`
-	Path    types.String            `tfsdk:"path"`
-	RefType types.String            `tfsdk:"ref_type"`
-	Value   types.String            `tfsdk:"value"`
-	Values  *entitlementValuesModel `tfsdk:"values"`
-}
-
 type entitlementResourceModel struct {
 	Id            types.String             `tfsdk:"id"`
 	DataType      types.String             `tfsdk:"data_type"`
