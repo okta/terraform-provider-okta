@@ -63,9 +63,12 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
 		newCampaignResource,
-		newEntitlementBundleResource,
 		newReviewResource,
+		newEntitlementResource,
+		newEntitlementBundleResource,
+		newGrantResource,
 		newRiskRuleResource,
+		newCollectionResource,
 	}
 }
 
@@ -73,9 +76,13 @@ func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
 		newReviewDataSource,
+		newEntitlementDataSource,
+		newEntitlementBundlesDataSource,
 		newPrincipalEntitlementsDataSource,
 		newPrincipalAccessDataSource,
+		newGrantDataSource,
 		newRiskRulesDataSource,
+		newCollectionDataSource,
 	}
 }
 

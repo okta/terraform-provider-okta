@@ -3,19 +3,17 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
-	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
 	_ datasource.DataSource = &campaignDataSource{}
-	//_ datasource.DataSourceWithConfigure = &campaignDataSource{}
 )
 
 func newCampaignDataSource() datasource.DataSource {
@@ -57,8 +55,8 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
 				Optional: true,
+				Computed: true,
 			},
 			"created": schema.StringAttribute{
 				Computed: true,
@@ -395,8 +393,6 @@ func (d *campaignDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 }
 
 func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-
-	fmt.Println("INSIDE READ FOR CAMPAIGNS")
 	var data campaignDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -408,24 +404,22 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",
-			fmt.Sprintf("Could not retrieve campaign with ID %s: %s", data.Id.ValueString(), err.Error()),
+			"Could not read Campaign, unexpected error: "+err.Error(),
 		)
 		return
 	}
 
-	data.Id = types.StringValue(campaign.Id)
-	data.Name = types.StringValue(campaign.Name)
-	data.Status = types.StringValue(string(campaign.Status))
-	data.Description = types.StringValue(*campaign.Description)
-	data.CampaignType = types.StringValue(string(*campaign.CampaignType))
-	data.Created = types.StringValue(campaign.Created.Format(time.RFC3339))
-	data.CreatedBy = types.StringValue(campaign.CreatedBy)
-	data.LastUpdated = types.StringValue(campaign.LastUpdated.Format(time.RFC3339))
-	data.LastUpdatedBy = types.StringValue(campaign.LastUpdatedBy)
+	data.Id = types.StringValue(campaign.GetId())
+	data.Name = types.StringValue(campaign.GetName())
+	data.Status = types.StringValue(string(campaign.GetStatus()))
+	data.Description = types.StringValue(campaign.GetDescription())
+	data.CampaignType = types.StringValue(string(campaign.GetCampaignType()))
+	data.Created = types.StringValue(campaign.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(campaign.GetCreatedBy())
+	data.LastUpdated = types.StringValue(campaign.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(campaign.GetLastUpdatedBy())
 	if campaign.RecurringCampaignId.Get() != nil {
-		data.RecurringCampaignId = types.StringValue(*campaign.RecurringCampaignId.Get())
-	} else {
-		data.RecurringCampaignId = types.StringNull()
+		data.RecurringCampaignId = types.StringValue(campaign.GetRecurringCampaignId())
 	}
 
 	if campaign.RemediationSettings.AccessApproved != "" ||
@@ -435,29 +429,27 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 		if campaign.RemediationSettings.AutoRemediationSettings != nil {
 			data.RemediationSettings.AutoRemediationSettings = &autoRemediationSettingsModel{
 				IncludeAllIndirectAssignments: types.BoolValue(
-					derefBool(campaign.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments),
+					campaign.RemediationSettings.AutoRemediationSettings.GetIncludeAllIndirectAssignments(),
 				),
 			}
 		}
 		data.RemediationSettings = &campaignRemediationSettingsModel{
-			AccessApproved: stringOrNull(string(campaign.RemediationSettings.AccessApproved)),
-			AccessRevoked:  stringOrNull(string(campaign.RemediationSettings.AccessRevoked)),
-			NoResponse:     stringOrNull(string(campaign.RemediationSettings.NoResponse)),
+			AccessApproved: types.StringValue(string(campaign.RemediationSettings.GetAccessApproved())),
+			AccessRevoked:  types.StringValue(string(campaign.RemediationSettings.GetAccessRevoked())),
+			NoResponse:     types.StringValue(string(campaign.RemediationSettings.GetNoResponse())),
 		}
 	} else {
-		data.RemediationSettings = nil // required to avoid "null to non-nullable" error
+		data.RemediationSettings = nil
 	}
 
 	excluded := make([]excludedResourceModel, len(campaign.ResourceSettings.ExcludedResources))
 
 	for _, ex := range campaign.ResourceSettings.ExcludedResources {
 		excludedRes := excludedResourceModel{
-			ResourceId: types.StringValue(*ex.ResourceId),
+			ResourceId: types.StringValue(ex.GetResourceId()),
 		}
 		if ex.ResourceType != nil {
-			excludedRes.ResourceType = types.StringValue(string(*ex.ResourceType))
-		} else {
-			excludedRes.ResourceType = types.StringNull()
+			excludedRes.ResourceType = types.StringValue(string(ex.GetResourceType()))
 		}
 		excluded = append(excluded, excludedRes)
 	}
@@ -468,34 +460,34 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 		for j, ent := range tr.Entitlements {
 			values := make([]entitlementValueModel, len(ent.Values))
 			for k, v := range ent.Values {
-				values[k] = entitlementValueModel{Id: types.StringValue(v.Id)}
+				values[k] = entitlementValueModel{Id: types.StringValue(v.GetId())}
 			}
 			entitlements[j] = entitlementModel{
-				Id:               types.StringValue(ent.Id),
-				IncludeAllValues: types.BoolValue(*ent.IncludeAllValues),
+				Id:               types.StringValue(ent.GetId()),
+				IncludeAllValues: types.BoolValue(ent.GetIncludeAllValues()),
 				Values:           values,
 			}
 		}
 		bundles := make([]entitlementBundleModel, len(tr.EntitlementBundles))
 		for j, b := range tr.EntitlementBundles {
-			bundles[j] = entitlementBundleModel{Id: types.StringValue(b.Id)}
+			bundles[j] = entitlementBundleModel{Id: types.StringValue(b.GetId())}
 		}
 		targets[i] = targetResourceModel{
-			ResourceId:                       types.StringValue(tr.ResourceId),
-			IncludeAllEntitlementsAndBundles: types.BoolValue(*tr.IncludeAllEntitlementsAndBundles),
-			ResourceType:                     types.StringValue(string(*tr.ResourceType)),
+			ResourceId:                       types.StringValue(tr.GetResourceId()),
+			IncludeAllEntitlementsAndBundles: types.BoolValue(tr.GetIncludeAllEntitlementsAndBundles()),
+			ResourceType:                     types.StringValue(string(tr.GetResourceType())),
 			EntitlementBundles:               bundles,
 			Entitlements:                     entitlements,
 		}
 	}
 
 	data.ResourceSettings = &resourceSettingsModel{
-		Type:                               types.StringValue(string(campaign.ResourceSettings.Type)),
-		IncludeAdminRoles:                  types.BoolValue(*campaign.ResourceSettings.IncludeAdminRoles),
-		IncludeEntitlements:                types.BoolValue(*campaign.ResourceSettings.IncludeEntitlements),
-		IndividuallyAssignedAppsOnly:       types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedAppsOnly),
-		IndividuallyAssignedGroupsOnly:     types.BoolValue(*campaign.ResourceSettings.IndividuallyAssignedGroupsOnly),
-		OnlyIncludeOutOfPolicyEntitlements: types.BoolValue(*campaign.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements),
+		Type:                               types.StringValue(string(campaign.ResourceSettings.GetType())),
+		IncludeAdminRoles:                  types.BoolValue(campaign.ResourceSettings.GetIncludeAdminRoles()),
+		IncludeEntitlements:                types.BoolValue(campaign.ResourceSettings.GetIncludeEntitlements()),
+		IndividuallyAssignedAppsOnly:       types.BoolValue(campaign.ResourceSettings.GetIndividuallyAssignedAppsOnly()),
+		IndividuallyAssignedGroupsOnly:     types.BoolValue(campaign.ResourceSettings.GetIndividuallyAssignedGroupsOnly()),
+		OnlyIncludeOutOfPolicyEntitlements: types.BoolValue(campaign.ResourceSettings.GetOnlyIncludeOutOfPolicyEntitlements()),
 		ExcludedResources:                  excluded,
 		TargetResources:                    targets,
 	}
@@ -503,55 +495,55 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	var endDate types.String
 	if campaign.ScheduleSettings.EndDate != nil {
-		endDate = types.StringValue(campaign.ScheduleSettings.EndDate.Format(time.RFC3339))
+		endDate = types.StringValue(campaign.ScheduleSettings.GetEndDate().Format(time.RFC3339))
 	}
 	var recurrence []recurrenceModel
 	if campaign.ScheduleSettings.Recurrence != nil {
 		recurrenceList := make([]recurrenceModel, 1)
 		recurrenceList[0] = recurrenceModel{
-			Interval:     types.StringValue(campaign.ScheduleSettings.Recurrence.Interval),
-			Ends:         types.StringValue(campaign.ScheduleSettings.Recurrence.Ends.Format(time.RFC3339)),
-			RepeatOnType: types.StringValue(string(*campaign.ScheduleSettings.Recurrence.RepeatOnType)),
+			Interval:     types.StringValue(campaign.ScheduleSettings.Recurrence.GetInterval()),
+			Ends:         types.StringValue(campaign.ScheduleSettings.Recurrence.GetEnds().Format(time.RFC3339)),
+			RepeatOnType: types.StringValue(string(campaign.ScheduleSettings.Recurrence.GetRepeatOnType())),
 		}
 		recurrence = recurrenceList
 	} else {
 		recurrence = nil
 	}
 	data.ScheduleSettings = &scheduleSettingsModel{
-		DurationInDays: types.Int32Value(int32(campaign.ScheduleSettings.DurationInDays)),
+		DurationInDays: types.Int32Value(int32(campaign.ScheduleSettings.GetDurationInDays())),
 		EndDate:        endDate,
-		StartDate:      types.StringValue(campaign.ScheduleSettings.StartDate.Format(time.RFC3339)),
-		TimeZone:       types.StringValue(campaign.ScheduleSettings.TimeZone),
-		Type:           types.StringValue(string(campaign.ScheduleSettings.Type)),
+		StartDate:      types.StringValue(campaign.ScheduleSettings.GetStartDate().Format(time.RFC3339)),
+		TimeZone:       types.StringValue(campaign.ScheduleSettings.GetTimeZone()),
+		Type:           types.StringValue(string(campaign.ScheduleSettings.GetType())),
 		Recurrence:     recurrence,
 	}
 
 	var remindersReviewerBeforeCampaignCloseInSecs types.List
 	if campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil {
 		intValues := make([]attr.Value, 0, len(campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
-		for _, v := range campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
+		for _, v := range campaign.NotificationSettings.GetRemindersReviewerBeforeCampaignCloseInSecs() {
 			intValues = append(intValues, types.Int64Value(int64(v)))
 		}
 		remindersReviewerBeforeCampaignCloseInSecs = types.ListValueMust(
-			types.Int32Type,
+			types.Int64Type,
 			intValues,
 		)
 	} else {
-		remindersReviewerBeforeCampaignCloseInSecs = types.ListNull(types.Int32Type)
+		remindersReviewerBeforeCampaignCloseInSecs = types.ListNull(types.Int64Type)
 	}
 	data.NotificationSettings = &notificationSettingsModel{
-		NotifyReviewerAtCampaignEnd:                types.BoolValue(*campaign.NotificationSettings.NotifyReviewerAtCampaignEnd),
-		NotifyReviewerDuringMidpointOfReview:       types.BoolValue(*campaign.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get()),
-		NotifyReviewerWhenOverdue:                  types.BoolValue(*campaign.NotificationSettings.NotifyReviewerWhenOverdue.Get()),
-		NotifyReviewerWhenReviewAssigned:           types.BoolValue(*campaign.NotificationSettings.NotifyReviewerWhenReviewAssigned),
-		NotifyReviewPeriodEnd:                      types.BoolValue(*campaign.NotificationSettings.NotifyReviewPeriodEnd.Get()),
+		NotifyReviewerAtCampaignEnd:                types.BoolValue(campaign.NotificationSettings.GetNotifyReviewerAtCampaignEnd()),
+		NotifyReviewerDuringMidpointOfReview:       types.BoolValue(campaign.NotificationSettings.GetNotifyReviewerDuringMidpointOfReview()),
+		NotifyReviewerWhenOverdue:                  types.BoolValue(campaign.NotificationSettings.GetNotifyReviewerWhenOverdue()),
+		NotifyReviewerWhenReviewAssigned:           types.BoolValue(campaign.NotificationSettings.GetNotifyReviewerWhenReviewAssigned()),
+		NotifyReviewPeriodEnd:                      types.BoolValue(campaign.NotificationSettings.GetNotifyReviewPeriodEnd()),
 		RemindersReviewerBeforeCampaignCloseInSecs: remindersReviewerBeforeCampaignCloseInSecs,
 	}
 
 	var excludedUsersIds types.List
 	if len(campaign.PrincipalScopeSettings.ExcludedUserIds) > 0 {
 		excluded := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.ExcludedUserIds))
-		for _, id := range campaign.PrincipalScopeSettings.ExcludedUserIds {
+		for _, id := range campaign.PrincipalScopeSettings.GetExcludedUserIds() {
 			excluded = append(excluded, types.StringValue(id))
 		}
 		excludedUsersIds = types.ListValueMust(types.StringType, excluded)
@@ -562,7 +554,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	var userIdList types.List
 	if len(campaign.PrincipalScopeSettings.UserIds) > 0 {
 		userIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.UserIds))
-		for _, id := range campaign.PrincipalScopeSettings.UserIds {
+		for _, id := range campaign.PrincipalScopeSettings.GetUserIds() {
 			userIds = append(userIds, types.StringValue(id))
 		}
 		userIdList = types.ListValueMust(types.StringType, userIds)
@@ -573,7 +565,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	var groupIdList types.List
 	if len(campaign.PrincipalScopeSettings.GroupIds) > 0 {
 		groupIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GroupIds))
-		for _, id := range campaign.PrincipalScopeSettings.GroupIds {
+		for _, id := range campaign.PrincipalScopeSettings.GetGroupIds() {
 			groupIds = append(groupIds, types.StringValue(id))
 		}
 		groupIdList = types.ListValueMust(types.StringType, groupIds)
@@ -585,34 +577,28 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	if campaign.PrincipalScopeSettings.PredefinedInactiveUsersScope != nil {
 		inactiveUsersScope = []inactiveUsersScopeModel{
 			{
-				InactiveDays: types.Int32Value(*campaign.PrincipalScopeSettings.PredefinedInactiveUsersScope.InactiveDays),
+				InactiveDays: types.Int32Value(campaign.PrincipalScopeSettings.PredefinedInactiveUsersScope.GetInactiveDays()),
 			},
 		}
 	}
 
 	var includeOnlyActiveUsers types.Bool
 	if campaign.PrincipalScopeSettings.IncludeOnlyActiveUsers != nil {
-		includeOnlyActiveUsers = types.BoolValue(*campaign.PrincipalScopeSettings.IncludeOnlyActiveUsers)
-	} else {
-		includeOnlyActiveUsers = types.BoolNull()
+		includeOnlyActiveUsers = types.BoolValue(campaign.PrincipalScopeSettings.GetIncludeOnlyActiveUsers())
 	}
 
 	var onlyIncludeUsersWithSODConflicts types.Bool
 	if campaign.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts != nil {
-		onlyIncludeUsersWithSODConflicts = types.BoolValue(*campaign.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts)
-	} else {
-		onlyIncludeUsersWithSODConflicts = types.BoolNull()
+		onlyIncludeUsersWithSODConflicts = types.BoolValue(campaign.PrincipalScopeSettings.GetOnlyIncludeUsersWithSODConflicts())
 	}
 
 	var userScopeExpression types.String
 	if campaign.PrincipalScopeSettings.UserScopeExpression != nil {
-		userScopeExpression = types.StringValue(*campaign.PrincipalScopeSettings.UserScopeExpression)
-	} else {
-		userScopeExpression = types.StringNull()
+		userScopeExpression = types.StringValue(campaign.PrincipalScopeSettings.GetUserScopeExpression())
 	}
 
 	data.PrincipalScope = &principalScopeSettingsModel{
-		Type:                             types.StringValue(string(campaign.PrincipalScopeSettings.Type)),
+		Type:                             types.StringValue(string(campaign.PrincipalScopeSettings.GetType())),
 		ExcludedUserIds:                  excludedUsersIds,
 		GroupIds:                         groupIdList,
 		IncludeOnlyActiveUsers:           includeOnlyActiveUsers,
@@ -638,67 +624,51 @@ func (d *campaignDataSource) createSettingModelDS(campaign *oktaInternalGovernan
 	)
 
 	if campaign.ReviewerSettings.BulkDecisionDisabled != nil {
-		bulkDecisionDisabled = types.BoolValue(*campaign.ReviewerSettings.BulkDecisionDisabled)
-	} else {
-		bulkDecisionDisabled = types.BoolNull()
+		bulkDecisionDisabled = types.BoolValue(campaign.ReviewerSettings.GetBulkDecisionDisabled())
 	}
 
 	if campaign.ReviewerSettings.FallBackReviewerId != nil {
-		fallbackReviewerId = types.StringValue(*campaign.ReviewerSettings.FallBackReviewerId)
-	} else {
-		fallbackReviewerId = types.StringNull()
+		fallbackReviewerId = types.StringValue(campaign.ReviewerSettings.GetFallBackReviewerId())
 	}
 
 	if campaign.ReviewerSettings.JustificationRequired != nil {
-		justificationRequired = types.BoolValue(*campaign.ReviewerSettings.JustificationRequired)
-	} else {
-		justificationRequired = types.BoolNull()
+		justificationRequired = types.BoolValue(campaign.ReviewerSettings.GetJustificationRequired())
 	}
 
 	if campaign.ReviewerSettings.ReassignmentDisabled != nil {
-		reassignmentDisabled = types.BoolValue(*campaign.ReviewerSettings.ReassignmentDisabled)
-	} else {
-		reassignmentDisabled = types.BoolNull()
+		reassignmentDisabled = types.BoolValue(campaign.ReviewerSettings.GetReassignmentDisabled())
 	}
 
 	if campaign.ReviewerSettings.ReviewerGroupId != nil {
-		reviewerGroupId = types.StringValue(*campaign.ReviewerSettings.ReviewerGroupId)
-	} else {
-		reviewerGroupId = types.StringNull()
+		reviewerGroupId = types.StringValue(campaign.ReviewerSettings.GetReviewerGroupId())
 	}
 
 	if campaign.ReviewerSettings.ReviewerId != nil {
-		reviewerID = types.StringValue(*campaign.ReviewerSettings.ReviewerId)
-	} else {
-		reviewerID = types.StringNull()
+		reviewerID = types.StringValue(campaign.ReviewerSettings.GetReviewerId())
 	}
 
 	if campaign.ReviewerSettings.ReviewerScopeExpression != nil {
-		reviewerScopeExpression = types.StringValue(*campaign.ReviewerSettings.ReviewerScopeExpression)
-	} else {
-		reviewerScopeExpression = types.StringNull()
+		reviewerScopeExpression = types.StringValue(campaign.ReviewerSettings.GetReviewerScopeExpression())
 	}
 
 	if campaign.ReviewerSettings.SelfReviewDisabled != nil {
-		selfReviewDisabled = types.BoolValue(*campaign.ReviewerSettings.SelfReviewDisabled)
-	} else {
-		selfReviewDisabled = types.BoolNull()
+		selfReviewDisabled = types.BoolValue(campaign.ReviewerSettings.GetSelfReviewDisabled())
 	}
 
 	reviewerLevels := make([]reviewerLevelModel, len(campaign.ReviewerSettings.ReviewerLevels))
 	if campaign.ReviewerSettings.ReviewerLevels != nil {
 		for _, level := range campaign.ReviewerSettings.ReviewerLevels {
 			reviewerLevel := reviewerLevelModel{
-				Type:                    types.StringValue(string(level.Type)),
-				FallBackReviewerId:      types.StringValue(*level.FallBackReviewerId),
-				ReviewerGroupId:         types.StringValue(*level.ReviewerGroupId),
-				ReviewerId:              types.StringValue(*level.ReviewerId),
-				ReviewerScopeExpression: types.StringValue(*level.ReviewerScopeExpression),
-				SelfReviewDisabled:      types.BoolValue(*level.SelfReviewDisabled),
+				Type:                    types.StringValue(string(level.GetType())),
+				FallBackReviewerId:      types.StringValue(level.GetFallBackReviewerId()),
+				ReviewerGroupId:         types.StringValue(level.GetReviewerGroupId()),
+				ReviewerId:              types.StringValue(level.GetReviewerId()),
+				ReviewerScopeExpression: types.StringValue(level.GetReviewerScopeExpression()),
+				SelfReviewDisabled:      types.BoolValue(level.GetSelfReviewDisabled()),
 			}
 			startReviews := make([]startReviewModel, 1)
-			startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
-			startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+			startReviews[0].OnDay = types.Int32Value(level.StartReview.GetOnDay())
+			startReviews[0].When = types.StringValue(string(level.StartReview.GetWhen()))
 
 			reviewerLevels = append(reviewerLevels, reviewerLevel)
 		}
@@ -716,18 +686,4 @@ func (d *campaignDataSource) createSettingModelDS(campaign *oktaInternalGovernan
 		SelfReviewDisabled:      selfReviewDisabled,
 		ReviewerLevels:          reviewerLevels,
 	}
-}
-
-func stringOrNull(s string) types.String {
-	if s == "" {
-		return types.StringNull()
-	}
-	return types.StringValue(s)
-}
-
-func derefBool(b *bool) bool {
-	if b != nil {
-		return *b
-	}
-	return false
 }

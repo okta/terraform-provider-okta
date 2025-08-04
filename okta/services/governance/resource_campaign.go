@@ -2,20 +2,24 @@ package governance
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int32validator"
+	"log"
+	"time"
+
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
-	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/okta/terraform-provider-okta/okta/config"
-	"log"
-	"sort"
-	"time"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
@@ -44,7 +48,7 @@ type campaignResourceModel struct {
 	Id                   types.String                      `tfsdk:"id"`
 	CampaignTier         types.String                      `tfsdk:"campaign_tier"` // Indicates the minimum required SKU to manage the campaign. Values can be `BASIC` and `PREMIUM`.
 	Name                 types.String                      `tfsdk:"name"`
-	LaunchCampaign       types.Bool                        `tfsdk:"launch_campaign"`
+	SkipRemediation      types.Bool                        `tfsdk:"skip_remediation"`
 	CampaignType         types.String                      `tfsdk:"campaign_type"`
 	Description          types.String                      `tfsdk:"description"`
 	RemediationSettings  *campaignRemediationSettingsModel `tfsdk:"remediation_settings"`
@@ -191,12 +195,6 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Required:    true,
 				Description: "Name of the campaign. Maintain some uniqueness when naming the campaign as it helps to identify and filter for campaigns when needed.",
 			},
-			"launch_campaign": schema.BoolAttribute{
-				Optional:    true,
-				Description: "Launch the campaign after creation. Defaults to false.",
-				Computed:    true,
-				Default:     booldefault.StaticBool(false),
-			},
 			"campaign_tier": schema.StringAttribute{
 				Optional:    true,
 				Description: "Indicates the minimum required SKU to manage the campaign. Values can be `BASIC` and `PREMIUM`.",
@@ -205,10 +203,17 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Optional:    true,
 				Computed:    true,
 				Description: "Identifies if it is a resource campaign or a user campaign. By default it is RESOURCE.Values can be `RESOURCE` and `USER`.",
+				Validators: []validator.String{
+					stringvalidator.OneOf("RESOURCE", "USER"),
+				},
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
 				Description: "Description about the campaign.",
+			},
+			"skip_remediation": schema.BoolAttribute{
+				Optional:    true,
+				Description: "If true, skip remediation when ending the campaign (only applicable if remediationSetting.noResponse=DENY).",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -223,7 +228,8 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						Description: "Specifies the action if the reviewer revokes access. NO_ACTION indicates the user retains the same access. DENY indicates the user will have their access revoked as long as they are not assigned to a group through Group Rules.",
 					},
 					"no_response": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "Specifies the action if the reviewer doesn't respond to the request or if the campaign is closed before an action is taken.",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -257,32 +263,41 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"resource_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The type of Okta resource.",
+						Validators: []validator.String{
+							stringvalidator.OneOf("APPLICATION", "APPLICATION_AND_GROUP", "GROUP"),
+						},
 					},
 					"include_admin_roles": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Description: "Include admin roles.",
+						Default:     booldefault.StaticBool(false),
 					},
 					"include_entitlements": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Include entitlements for this application. This property is only applicable if resource_type = APPLICATION and Entitlement Management is enabled.",
 					},
 					"individually_assigned_apps_only": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Only include individually assigned apps. This is only applicable if campaign type is USER.",
 					},
 					"individually_assigned_groups_only": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Only include individually assigned groups. This is only applicable if campaign type is USER.",
 					},
 					"only_include_out_of_policy_entitlements": schema.BoolAttribute{
-						Computed: true,
-						Optional: true,
-						Default:  booldefault.StaticBool(false),
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Only include out-of-policy entitlements. Only applicable if resource_type = APPLICATION and Entitlement Management is enabled.",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -290,25 +305,38 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
-									Optional: true,
+									Optional:    true,
+									Description: "The ID of the resource to exclude in the campaign.",
 								},
 								"resource_type": schema.StringAttribute{
-									Optional: true,
+									Optional:    true,
+									Description: "The type of resource to exclude in the campaign.",
+									Validators: []validator.String{
+										stringvalidator.OneOf("APPLICATION", "GROUP"),
+									},
 								},
 							},
 						},
+						Description: "An array of resources that are excluded from the review.",
 					},
 					"target_resources": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
-									Required: true,
+									Required:    true,
+									Description: "The resource ID that is being reviewed.",
 								},
 								"resource_type": schema.StringAttribute{
-									Required: true,
+									Required:    true,
+									Description: "The type of Okta resource.",
+									Validators: []validator.String{
+										stringvalidator.OneOf("APPLICATION", "GROUP"),
+									},
 								},
 								"include_all_entitlements_and_bundles": schema.BoolAttribute{
-									Optional: true,
+									Optional:    true,
+									Computed:    true,
+									Description: "Include all entitlements and entitlement bundles for this application. Only applicable if the resourcetype = APPLICATION and Entitlement Management is enabled.",
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -316,19 +344,23 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
-												Required: true,
+												Required:    true,
+												Description: "The ID of the entitlement bundle.",
 											},
 										},
 									},
+									Description: "An array of entitlement bundles for this application.",
 								},
 								"entitlements": schema.ListNestedBlock{
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
 											"id": schema.StringAttribute{
-												Required: true,
+												Required:    true,
+												Description: "The entitlement id.",
 											},
 											"include_all_values": schema.BoolAttribute{
-												Optional: true,
+												Optional:    true,
+												Description: "Whether to include all entitlement values. If false we must provide the values property.",
 											},
 										},
 										Blocks: map[string]schema.Block{
@@ -336,53 +368,69 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 												NestedObject: schema.NestedBlockObject{
 													Attributes: map[string]schema.Attribute{
 														"id": schema.StringAttribute{
-															Required: true,
+															Required:    true,
+															Description: "The entitlement value id.",
 														},
 													},
 												},
 											},
 										},
 									},
+									Description: "An array of entitlements associated with resourceId that should be chosen as target when creating reviews",
 								},
 							},
 						},
+						Description: "Represents a resource that will be part of Access certifications. If the app is enabled for Access Certifications, it's possible to review entitlements and entitlement bundles.",
 					},
 				},
+				Description: "Resource specific properties.",
 			},
 			"reviewer_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "Identifies the kind of reviewer for Access Certification.",
+						Validators: []validator.String{
+							stringvalidator.OneOf("GROUP", "MULTI_LEVEL", "RESOURCE_OWNER", "REVIEWER_EXPRESSION", "USER"),
+						},
 					},
 					"bulk_decision_disabled": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "When approving or revoking review items, bulk actions are disabled if true.",
 					},
 					"fallback_reviewer_id": schema.StringAttribute{
-						Optional: true,
+						Optional:    true,
+						Description: "The ID of the fallback reviewer. Required when the type=`REVIEWER_EXPRESSION` or type=`RESOURCE_OWNER`",
 					},
 					"justification_required": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:    true,
+						Computed:    true,
+						Description: "When approving or revoking review items, a justification is required if true.",
 					},
 					"reassignment_disabled": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Reassignment is disabled for reviewers if true.",
 					},
 					"self_review_disabled": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "This property is required to be true for resource-centric campaigns when the Okta Admin Console is one of the resources.",
 					},
 					"reviewer_group_id": schema.StringAttribute{
-						Optional: true,
+						Optional:    true,
+						Description: "The ID of the reviewer group to which the reviewer is assigned.",
 					},
 					"reviewer_id": schema.StringAttribute{
 						Optional: true,
 					},
 					"reviewer_scope_expression": schema.StringAttribute{
-						Optional: true,
+						Optional:    true,
+						Description: "This property is required when type=`USER`",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -390,25 +438,35 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
-									Required: true,
+									Required:    true,
+									Description: "Identifies the kind of reviewer.",
+									Validators: []validator.String{
+										stringvalidator.OneOf("GROUP", "RESOURCE_OWNER", "REVIEWER_EXPRESSION", "USER"),
+									},
 								},
 								"fallback_reviewer_id": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:    true,
+									Optional:    true,
+									Description: "Required when the type=`REVIEWER_EXPRESSION` or type=`RESOURCE_OWNER`",
 								},
 								"reviewer_group_id": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:    true,
+									Optional:    true,
+									Description: "The ID of the reviewer group to which the reviewer is assigned.This property is required when type=`GROUP`",
 								},
 								"reviewer_id": schema.StringAttribute{
-									Optional: true,
+									Optional:    true,
+									Description: "The ID of the reviewer to which the reviewer is assigned.This property is required when type=`USER`.",
 								},
 								"reviewer_scope_expression": schema.StringAttribute{
-									Computed: true,
+									Optional:    true,
+									Computed:    true,
+									Description: "This property is required when type=`REVIEWER_EXPRESSION`",
 								},
 								"self_review_disabled": schema.BoolAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:    true,
+									Optional:    true,
+									Description: "This property is used to prevent self review.",
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -416,34 +474,53 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									NestedObject: schema.NestedBlockObject{
 										Attributes: map[string]schema.Attribute{
 											"on_day": schema.Int32Attribute{
-												Computed: true,
-												Optional: true,
+												Computed:    true,
+												Optional:    true,
+												Default:     int32default.StaticInt32(0),
+												Description: "The day of the campaign when the review starts. 0 means the first day of the campaign.",
 											},
 											"when": schema.StringAttribute{
-												Computed: true,
-												Optional: true,
+												Computed:    true,
+												Optional:    true,
+												Description: "The condition for which, the lower level reviews will move to that level for further review.",
 											},
 										},
 									},
+									Validators: []validator.List{
+										listvalidator.SizeAtMost(2),
+									},
+									Description: "The rules for which the reviews can move to that level.",
 								},
 							},
 						},
+						Validators: []validator.List{
+							listvalidator.SizeAtMost(2),
+						},
+						Description: "Definition of reviewer level for a given campaign. Each reviewer level defines the kind of reviewer who is going to review.",
 					},
 				},
+				Description: "Identifies the kind of reviewer for Access Certification.",
 			},
 			"schedule_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"start_date": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The date on which the campaign is supposed to start. Accepts date in ISO 8601 format.",
 					},
 					"duration_in_days": schema.Int32Attribute{
-						Required: true,
+						Required:    true,
+						Description: "The duration (in days) that the campaign is active.",
 					},
 					"time_zone": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The time zone in which the campaign is active.",
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The type of campaign being scheduled.",
+						Validators: []validator.String{
+							stringvalidator.OneOf("ONE_OFF", "RECURRING"),
+						},
 					},
 					"end_date": schema.StringAttribute{
 						Optional: true,
@@ -454,35 +531,47 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"interval": schema.StringAttribute{
-									Required: true,
+									Required:    true,
+									Description: "Recurrence interval specified according to ISO8061 notation for durations.",
 								},
 								"ends": schema.StringAttribute{
-									Optional: true,
+									Optional:    true,
+									Description: "Specifies when the recurring schedule can have an end.",
 								},
 								"repeat_on_type": schema.StringAttribute{
-									Optional: true,
+									Optional:    true,
+									Description: "Specifies when the recurring schedule can have an end.",
+									Validators: []validator.String{
+										stringvalidator.OneOf("LAST_WEEKDAY_AS_START_DATE", "SAME_DAY_AS_START_DATE", "SAME_WEEKDAY_AS_START_DATE"),
+									},
 								},
 							},
 						},
 					},
 				},
+				Description: "Scheduler specific settings.",
 			},
 			"notification_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
-						Required: true,
+						Required:    true,
+						Description: "To indicate whether a notification should be sent to the reviewers when campaign has come to an end.",
 					},
 					"notify_reviewer_during_midpoint_of_review": schema.BoolAttribute{
-						Required: true,
+						Required:    true,
+						Description: "To indicate whether a notification should be sent to the reviewer during the midpoint of the review process.",
 					},
 					"notify_reviewer_when_overdue": schema.BoolAttribute{
-						Required: true,
+						Required:    true,
+						Description: "To indicate whether a notification should be sent to the reviewer when the review is overdue.",
 					},
 					"notify_reviewer_when_review_assigned": schema.BoolAttribute{
-						Required: true,
+						Required:    true,
+						Description: "To indicate whether a notification should be sent to the reviewer when actionable reviews are assigned.",
 					},
 					"notify_review_period_end": schema.BoolAttribute{
-						Required: true,
+						Required:    true,
+						Description: "To indicate whether a notification should be sent to the reviewer when a given reviewer level period is about to end.",
 					},
 					"reminders_reviewer_before_campaign_close_in_secs": schema.ListAttribute{
 						Optional:    true,
@@ -495,40 +584,52 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"principal_scope_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "Specifies the type for principal_scope_settings.",
 					},
 					"excluded_user_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
+						Description: "An array of Okta user IDs excluded from access certification or the campaign. This field is optional. A maximum of 50 users can be specified in the array.",
 					},
 					"group_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
+						Description: "An array of Okta group IDs included from access certification or the campaign. userIds, groupIds or userScopeExpression is required if campaign type is USER. A maximum of 5 groups can be specified in the array.",
 					},
 					"include_only_active_users": schema.BoolAttribute{
-						Computed: true,
-						Optional: true,
-						Default:  booldefault.StaticBool(false),
+						Computed:    true,
+						Optional:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "If set to true, only active Okta users are included in the campaign.",
 					},
 					"only_include_users_with_sod_conflicts": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-						Default:  booldefault.StaticBool(false),
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "If set to true, only includes users that have at least one SOD conflict that was caused due to entitlement(s) within Campaign scope.",
 					},
 					"user_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
+						Description: "An array of Okta user IDs included from access certification or the campaign. userIds, groupIds or userScopeExpression is required if campaign type is USER. A maximum of 100 users can be specified in the array.",
 					},
 					"user_scope_expression": schema.StringAttribute{
-						Optional: true,
+						Optional:    true,
+						Description: "The Okta expression language user expression on the resourceSettings to include users in the campaign.",
 					},
 				},
 				Blocks: map[string]schema.Block{
 					"predefined_inactive_users_scope": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
-								"inactive_days": schema.Int64Attribute{
-									Optional: true,
+								"inactive_days": schema.Int32Attribute{
+									Optional:    true,
+									Description: "The duration the users have not used single sign on (SSO) to access their account within the specific time frame. Minimum 30 days and maximum 365 days are supported.",
+									Validators: []validator.Int32{
+										int32validator.AtLeast(30),
+										int32validator.AtMost(365),
+									},
 								},
 							},
 						},
@@ -537,7 +638,6 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 		},
 	}
-
 }
 
 func (r *campaignResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -558,26 +658,13 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 		)
 		return
 	}
-	// Example data value setting
 	data.Id = types.StringValue(campaign.Id)
-	if data.LaunchCampaign.ValueBool() {
-		_, err = r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.LaunchCampaign(ctx, campaign.Id).Execute()
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Error launching Campaign",
-				"Could not launch Campaign after creation, unexpected error: "+err.Error(),
-			)
-			return
-		}
-	}
 
 	resp.Diagnostics.Append(applyCampaignsToState(ctx, campaign, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	fmt.Println("Final campaign model JustificationRequired : ", data.ReviewerSettings.JustificationRequired)
-	fmt.Println("Final campaign model SelfReviewDisabled : ", data.ReviewerSettings.SelfReviewDisabled)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -594,7 +681,7 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",
-			err.Error(),
+			"Could not read Campaign, unexpected error: "+err.Error(),
 		)
 		return
 	}
@@ -643,9 +730,6 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 		c.ResourceSettings.Type = types.StringValue(string(resp.ResourceSettings.Type))
 	}
 	if len(resp.ResourceSettings.TargetResources) > 0 {
-		sort.SliceStable(resp.ResourceSettings.TargetResources, func(i, j int) bool {
-			return resp.ResourceSettings.TargetResources[i].ResourceId < resp.ResourceSettings.TargetResources[j].ResourceId
-		})
 		var targets []targetResourceModel
 		for _, targetResource := range resp.ResourceSettings.TargetResources {
 			target := targetResourceModel{
@@ -654,15 +738,45 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 			if targetResource.ResourceType != nil {
 				target.ResourceType = types.StringValue(string(*targetResource.ResourceType))
 			}
+			if targetResource.IncludeAllEntitlementsAndBundles != nil {
+				target.IncludeAllEntitlementsAndBundles = types.BoolValue(targetResource.GetIncludeAllEntitlementsAndBundles())
+			}
+			if targetResource.Entitlements != nil {
+				var entitlements []entitlementModel
+				for _, entitlement := range targetResource.Entitlements {
+					var values []entitlementValueModel
+					for _, val := range entitlement.Values {
+						v := entitlementValueModel{
+							Id: types.StringValue(val.Id),
+						}
+						values = append(values, v)
+					}
+					e := entitlementModel{
+						Id:               types.StringValue(entitlement.Id),
+						IncludeAllValues: types.BoolValue(entitlement.GetIncludeAllValues()),
+						Values:           values,
+					}
+					entitlements = append(entitlements, e)
+				}
+				target.Entitlements = entitlements
+			}
+
+			if target.EntitlementBundles != nil {
+				var entitlementBundles []entitlementBundleModel
+				for _, entitlementBundle := range target.EntitlementBundles {
+					bundle := entitlementBundleModel{
+						Id: entitlementBundle.Id,
+					}
+					entitlementBundles = append(entitlementBundles, bundle)
+				}
+				target.EntitlementBundles = entitlementBundles
+			}
+
 			targets = append(targets, target)
 		}
-
 		c.ResourceSettings.TargetResources = targets
 	}
 	if len(resp.ResourceSettings.ExcludedResources) > 0 {
-		sort.SliceStable(resp.ResourceSettings.ExcludedResources, func(i, j int) bool {
-			return *resp.ResourceSettings.ExcludedResources[i].ResourceId < *resp.ResourceSettings.ExcludedResources[j].ResourceId
-		})
 		var excluded []excludedResourceModel
 		for _, res := range resp.ResourceSettings.ExcludedResources {
 			excludedRes := excludedResourceModel{
@@ -767,8 +881,6 @@ func applyCampaignsToState(ctx context.Context, resp *oktaInternalGovernance.Cam
 
 		}
 	}
-
-	fmt.Println("ReviewerSettings:", c.ReviewerSettings.FallbackReviewerId.ValueString(), c.ReviewerSettings.ReviewerGroupId.ValueString())
 
 	c.ScheduleSettings = &scheduleSettingsModel{}
 	c.ScheduleSettings.StartDate = types.StringValue(resp.ScheduleSettings.StartDate.UTC().Format("2006-01-02T15:04:05.000Z"))
@@ -876,8 +988,6 @@ func getRecurrence(resp *oktaInternalGovernance.CampaignFull) recurrenceModel {
 	if resp.ScheduleSettings.Recurrence.RepeatOnType != nil {
 		recurrence.RepeatOnType = types.StringValue(string(*resp.ScheduleSettings.Recurrence.RepeatOnType))
 	}
-
-	fmt.Println("recurrence Ends", recurrence.Ends.String())
 	return recurrence
 }
 
@@ -890,27 +1000,6 @@ func (r *campaignResource) Update(ctx context.Context, req resource.UpdateReques
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Check if only 'launch_campaign' changed
-	if !data.LaunchCampaign.Equal(state.LaunchCampaign) && isOnlyLaunchChanged(data, state) {
-		// Call the create API again with updated launch flag
-		log.Println("launch_campaign updated — calling CreateCampaign API again")
-		data.Id = types.StringValue(state.Id.ValueString())
-		if data.LaunchCampaign.ValueBool() {
-			_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.LaunchCampaign(ctx, state.Id.ValueString()).Execute()
-			if err != nil {
-				resp.Diagnostics.AddError(
-					"Error launching Campaign",
-					"Could not launch Campaign after creation, unexpected error: "+err.Error(),
-				)
-				return
-			}
-
-			state.LaunchCampaign = data.LaunchCampaign
-			resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-		}
 		return
 	}
 
@@ -929,8 +1018,6 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	fmt.Println("Deleting Campaign with ID:", data.Id.ValueString())
 	// Delete API call logic
 	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.DeleteCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
@@ -953,23 +1040,7 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 	}
 
 	// Convert target resources
-	var targetResources []oktaInternalGovernance.TargetResourcesRequestInner
-	for _, tr := range d.ResourceSettings.TargetResources {
-		rt := oktaInternalGovernance.ResourceType(tr.ResourceType.ValueString())
-
-		targetResources = append(targetResources, oktaInternalGovernance.TargetResourcesRequestInner{
-			ResourceId:   tr.ResourceId.ValueString(),
-			ResourceType: &rt,
-		})
-	}
-
-	sort.Slice(targetResources, func(i, j int) bool {
-		return targetResources[i].ResourceId < targetResources[j].ResourceId
-	})
-
-	for _, tr := range d.ResourceSettings.TargetResources {
-		fmt.Println("Target Resource Id after sorting:", tr.ResourceId.ValueString())
-	}
+	targetResources := buildTargetResources(d)
 
 	var ExcludedResources = make([]oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
 	for _, ex := range d.ResourceSettings.ExcludedResources {
@@ -980,28 +1051,14 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 			resourceType = &rt
 		}
 		excludedRes := oktaInternalGovernance.ResourceSettingsMutableExcludedResourcesInner{
-			ResourceId:   &x,           // pointer to string
-			ResourceType: resourceType, // pointer to ResourceType
+			ResourceId:   &x,
+			ResourceType: resourceType,
 		}
-		//rt := oktaInternalGovernance.ResourceType(ex.ResourceType.ValueString())
 		ExcludedResources = append(ExcludedResources, excludedRes)
 	}
 
-	sort.Slice(ExcludedResources, func(i, j int) bool {
-		return *ExcludedResources[i].ResourceId < *ExcludedResources[j].ResourceId
-	})
-
-	//for _, ex := range d.ResourceSettings.ExcludedResources {
-	//	fmt.Println("Excluded Resource Id after sorting:", ex.ResourceId.ValueString())
-	//}
-
-	//if resp.ScheduleSettings.Recurrence.Ends != nil && !resp.ScheduleSettings.Recurrence.Ends.IsZero() {
-	//	recurrence.Ends = types.StringValue(resp.ScheduleSettings.Recurrence.Ends.UTC().Format("2006-01-02T15:04:05.000Z"))
-	//}
-	//todo check if this is correct, the r[0] part
 	var recur oktaInternalGovernance.RecurrenceDefinitionMutable
-	//for _, r := range d.ScheduleSettings.Recurrence {
-	r := d.ScheduleSettings.Recurrence // Assuming only one recurrence for simplicity
+	r := d.ScheduleSettings.Recurrence
 	if len(r) != 0 {
 		endStr := r[0].Ends.ValueString()
 		parsedTime, _ := time.Parse(time.RFC3339, endStr)
@@ -1065,9 +1122,7 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 				startReview.When = (*oktaInternalGovernance.ReviewerLowerLevelCondition)(&when)
 			}
 		}
-		//}
 
-		//for _, level := range d.ReviewerSettings.ReviewerLevels {
 		var reviewerLevel oktaInternalGovernance.ReviewerLevelSettingsMutable
 		reviewerGroupId := level.ReviewerGroupId.ValueStringPointer()
 		var reviewerId = level.ReviewerId.ValueString()
@@ -1096,21 +1151,15 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 		reviewerLevels = append(reviewerLevels, reviewerLevel)
 	}
 
-	//if d.PrincipalScope.ExcludedUserIds != nil && len(d.PrincipalScope.ExcludedUserIds) > 0 {
-	//	var excluded make([]string,0)
-
-	// IDs related to principal scope settings
 	var (
-		excludedUserIDs []string // Users to be excluded from the campaign
-		groupIDs        []string // Groups included in the campaign scope
-		userIds         []string // Users explicitly included in the campaign scope
+		excludedUserIDs []string
+		groupIDs        []string
+		userIds         []string
 	)
 
 	_ = d.PrincipalScope.ExcludedUserIds.ElementsAs(context.Background(), &excludedUserIDs, false)
 	_ = d.PrincipalScope.GroupIds.ElementsAs(context.Background(), &groupIDs, false)
 	_ = d.PrincipalScope.UserIds.ElementsAs(context.Background(), &userIds, false)
-	//x := false
-	// Build and return CampaignMutable
 	var campaignType *oktaInternalGovernance.CampaignType
 	if v := d.CampaignType.ValueString(); v != "" {
 		cType := oktaInternalGovernance.CampaignType(v)
@@ -1122,6 +1171,7 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 		tier := oktaInternalGovernance.CampaignTier(v)
 		campaignTier = &tier
 	}
+	predefinedInactiveUsersScope := buildPredefinedUserScope(d.PrincipalScope.PredefinedInactiveUsersScope)
 	return oktaInternalGovernance.CampaignMutable{
 		Name:         d.Name.ValueString(),
 		CampaignTier: campaignTier,
@@ -1146,16 +1196,74 @@ func buildCampaign(d campaignResourceModel) oktaInternalGovernance.CampaignMutab
 		ReviewerSettings:     *getReviewerSettingForRequests(d, reviewerLevels),
 		ScheduleSettings:     *getScheduleSettingForRequests(d, parsedStartDate, recur),
 		NotificationSettings: getNotificationSettingsForRequest(d, remindersReviewerBeforeCampaignCloseInSecs),
-		PrincipalScopeSettings: &oktaInternalGovernance.PrincipalScopeSettingsMutable{
-			Type:                             oktaInternalGovernance.PrincipalScopeType(d.PrincipalScope.Type.ValueString()),
-			ExcludedUserIds:                  excludedUserIDs,
-			GroupIds:                         groupIDs,
-			IncludeOnlyActiveUsers:           d.PrincipalScope.IncludeOnlyActiveUsers.ValueBoolPointer(),
-			OnlyIncludeUsersWithSODConflicts: d.PrincipalScope.OnlyIncludeUsersWithSODConflicts.ValueBoolPointer(),
-			UserIds:                          userIds,
-			UserScopeExpression:              d.PrincipalScope.UserScopeExpression.ValueStringPointer(),
-		},
+
+		PrincipalScopeSettings: buildPrincipalScopeSettings(d, excludedUserIDs, groupIDs, userIds, predefinedInactiveUsersScope),
 	}
+}
+
+func buildPrincipalScopeSettings(d campaignResourceModel, excludedUserIDs []string, groupIDs []string, userIds []string, predefinedInactiveUsersScope oktaInternalGovernance.PredefinedInactiveUsersScopeSettings) *oktaInternalGovernance.PrincipalScopeSettingsMutable {
+	var principalScopeSettings oktaInternalGovernance.PrincipalScopeSettingsMutable
+	principalScopeSettings.SetType(oktaInternalGovernance.PrincipalScopeType(d.PrincipalScope.Type.ValueString()))
+	principalScopeSettings.SetExcludedUserIds(excludedUserIDs)
+	principalScopeSettings.SetGroupIds(groupIDs)
+	principalScopeSettings.SetUserIds(userIds)
+	principalScopeSettings.SetIncludeOnlyActiveUsers(d.PrincipalScope.IncludeOnlyActiveUsers.ValueBool())
+	principalScopeSettings.SetOnlyIncludeUsersWithSODConflicts(d.PrincipalScope.OnlyIncludeUsersWithSODConflicts.ValueBool())
+	if d.PrincipalScope.UserScopeExpression.ValueStringPointer() != nil {
+		principalScopeSettings.SetUserScopeExpression(d.PrincipalScope.UserScopeExpression.ValueString())
+	}
+	if predefinedInactiveUsersScope.InactiveDays != nil {
+		principalScopeSettings.SetPredefinedInactiveUsersScope(predefinedInactiveUsersScope)
+	}
+	return &principalScopeSettings
+}
+
+func buildPredefinedUserScope(principalScopeSettings []inactiveUsersScopeModel) oktaInternalGovernance.PredefinedInactiveUsersScopeSettings {
+	var predefinedScopeSettings oktaInternalGovernance.PredefinedInactiveUsersScopeSettings
+	for _, scope := range principalScopeSettings {
+		predefinedScopeSettings.SetInactiveDays(scope.InactiveDays.ValueInt32())
+	}
+	return predefinedScopeSettings
+}
+
+func buildTargetResources(d campaignResourceModel) []oktaInternalGovernance.TargetResourcesRequestInner {
+	var targetResources []oktaInternalGovernance.TargetResourcesRequestInner
+	for _, tr := range d.ResourceSettings.TargetResources {
+		rt := oktaInternalGovernance.ResourceType(tr.ResourceType.ValueString())
+		x := oktaInternalGovernance.TargetResourcesRequestInner{
+			ResourceId:   tr.ResourceId.ValueString(),
+			ResourceType: &rt,
+		}
+		if tr.IncludeAllEntitlementsAndBundles.ValueBoolPointer() != nil {
+			x.IncludeAllEntitlementsAndBundles = tr.IncludeAllEntitlementsAndBundles.ValueBoolPointer()
+		}
+		if len(tr.Entitlements) > 0 {
+			var entitlements []oktaInternalGovernance.EntitlementsInner
+			for _, entitlement := range tr.Entitlements {
+				v := getEntitlementValue(entitlement.Values)
+				entitlementInner := oktaInternalGovernance.EntitlementsInner{
+					Id:               entitlement.Id.ValueString(),
+					IncludeAllValues: entitlement.IncludeAllValues.ValueBoolPointer(),
+					Values:           v,
+				}
+				entitlements = append(entitlements, entitlementInner)
+			}
+			x.Entitlements = entitlements
+		}
+		targetResources = append(targetResources, x)
+	}
+	return targetResources
+}
+
+func getEntitlementValue(entitlements []entitlementValueModel) []oktaInternalGovernance.EntitlementValue {
+	var value []oktaInternalGovernance.EntitlementValue
+	for _, e := range entitlements {
+		v := oktaInternalGovernance.EntitlementValue{
+			Id: e.Id.ValueString(),
+		}
+		value = append(value, v)
+	}
+	return value
 }
 
 func getScheduleSettingForRequests(d campaignResourceModel, parsedStartDate time.Time, recur oktaInternalGovernance.RecurrenceDefinitionMutable) *oktaInternalGovernance.ScheduleSettingsMutable {
@@ -1228,63 +1336,9 @@ func getNotificationSettingsForRequest(d campaignResourceModel, remindersReviewe
 	return notificationSettings
 }
 
-func isOnlyLaunchChanged(plan, state campaignResourceModel) bool {
-	return plan.Name.Equal(state.Name) &&
-		equalRemediation(plan.RemediationSettings, state.RemediationSettings) &&
-		equalResourceSettings(plan.ResourceSettings, state.ResourceSettings) &&
-		equalReviewerSettings(plan.ReviewerSettings, state.ReviewerSettings) &&
-		equalScheduleSettings(plan.ScheduleSettings, state.ScheduleSettings)
-}
-
-func equalScheduleSettings(planSchedule, stateSchedule *scheduleSettingsModel) bool {
-	return planSchedule.Type.Equal(stateSchedule.Type) &&
-		planSchedule.TimeZone.Equal(stateSchedule.TimeZone) &&
-		planSchedule.DurationInDays.Equal(stateSchedule.DurationInDays) &&
-		planSchedule.StartDate.Equal(stateSchedule.StartDate)
-}
-
-func equalReviewerSettings(planReviewer, stateReviewer *reviewerSettingsModel) bool {
-	return planReviewer.Type.Equal(stateReviewer.Type) &&
-		planReviewer.ReviewerGroupId.Equal(stateReviewer.ReviewerGroupId) &&
-		planReviewer.ReviewerId.Equal(stateReviewer.ReviewerId) &&
-		planReviewer.ReviewerScopeExpression.Equal(stateReviewer.ReviewerScopeExpression) &&
-		planReviewer.FallbackReviewerId.Equal(stateReviewer.FallbackReviewerId)
-}
-
-func equalResourceSettings(planResource, stateResource *resourceSettingsModel) bool {
-	if len(planResource.TargetResources) == len(stateResource.TargetResources) {
-		for i := 0; i < len(planResource.TargetResources); i++ {
-			if !(planResource.TargetResources[i].ResourceId.Equal(stateResource.TargetResources[i].ResourceId) &&
-				planResource.TargetResources[i].ResourceType.Equal(stateResource.TargetResources[i].ResourceType)) {
-				return false
-			}
-		}
-		return true
-	}
-	return false
-}
-
-func equalRemediation(a, b *campaignRemediationSettingsModel) bool {
-	return a.AccessApproved.Equal(b.AccessApproved) &&
-		a.AccessRevoked.Equal(b.AccessRevoked) &&
-		a.NoResponse.Equal(b.NoResponse)
-}
-
 func toNullableBool(v *bool) *oktaInternalGovernance.NullableBool {
 	if v == nil {
 		return nil
 	}
 	return oktaInternalGovernance.NewNullableBool(v)
-}
-
-func sortTargetResources(tr []targetResourceModel) {
-	sort.Slice(tr, func(i, j int) bool {
-		return tr[i].ResourceId.ValueString() < tr[j].ResourceId.ValueString()
-	})
-}
-
-func sortExcludedResources(ex []targetResourceModel) {
-	sort.Slice(ex, func(i, j int) bool {
-		return ex[i].ResourceId.ValueString() < ex[j].ResourceId.ValueString()
-	})
 }

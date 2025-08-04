@@ -4,12 +4,12 @@ import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"fmt"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = &reviewDataSource{}
@@ -44,6 +44,7 @@ type reviewDataSourceModel struct {
 	PrincipalProfile  *PrincipalProfileModel    `tfsdk:"principal_profile"`
 	ReviewerProfile   *PrincipalProfileModel    `tfsdk:"reviewer_profile"`
 	EntitlementValue  *ReviewerEntitlementValue `tfsdk:"entitlement_value"`
+	EntitlementBundle *ReviewerEntitlementValue `tfsdk:"entitlement_bundle"` // Assuming this is the same structure as EntitlementValue
 	Note              *noteModel                `tfsdk:"note"`
 	AllReviewerLevels []reviewLevelModel        `tfsdk:"all_reviewer_levels"`
 	Links             *linksModel               `tfsdk:"links"`
@@ -153,6 +154,12 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					"name": schema.StringAttribute{Computed: true},
 				},
 			},
+			"entitlement_bundle": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"id":   schema.StringAttribute{Computed: true},
+					"name": schema.StringAttribute{Computed: true},
+				},
+			},
 			"note": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"id":   schema.StringAttribute{Computed: true},
@@ -162,15 +169,14 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			"all_reviewer_levels": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
-						"id":                         schema.StringAttribute{Computed: true},
-						"created_by":                 schema.StringAttribute{Computed: true},
-						"created":                    schema.StringAttribute{Computed: true},
-						"last_updated":               schema.StringAttribute{Computed: true},
-						"last_updated_by":            schema.StringAttribute{Computed: true},
-						"reviewer_level":             schema.StringAttribute{Computed: true},
-						"decision":                   schema.StringAttribute{Computed: true},
-						"reviewer_type":              schema.StringAttribute{Computed: true},
-						"reviewer_group_resource_id": schema.StringAttribute{Computed: true},
+						"id":              schema.StringAttribute{Computed: true},
+						"created_by":      schema.StringAttribute{Computed: true},
+						"created":         schema.StringAttribute{Computed: true},
+						"last_updated":    schema.StringAttribute{Computed: true},
+						"last_updated_by": schema.StringAttribute{Computed: true},
+						"reviewer_level":  schema.StringAttribute{Computed: true},
+						"decision":        schema.StringAttribute{Computed: true},
+						"reviewer_type":   schema.StringAttribute{Computed: true},
 					},
 					Blocks: map[string]schema.Block{
 						"reviewer_profile": schema.SingleNestedBlock{
@@ -190,6 +196,7 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 								"group_type":  schema.StringAttribute{Computed: true},
 							},
 						},
+						//todo add links here
 					},
 				},
 			},
@@ -263,6 +270,7 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		PrincipalProfile:  convertPrincipalProfile(&review.PrincipalProfile),
 		ReviewerProfile:   convertPrincipalProfile(review.ReviewerProfile),
 		EntitlementValue:  convertEntitlementValue(review.EntitlementValue),
+		EntitlementBundle: convertEntitlementBundle(review.EntitlementBundle),
 		Note:              convertNote(review.Note),
 		AllReviewerLevels: convertReviewerLevels(review.AllReviewerLevels),
 		Links:             convertLinks(&review.Links),
@@ -270,6 +278,17 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	// Set state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func convertEntitlementBundle(bundle *oktaInternalGovernance.ReviewerEntitlementBundle) *ReviewerEntitlementValue {
+	if bundle == nil || bundle.Id == "" || bundle.Name == "" {
+		return nil
+	}
+
+	return &ReviewerEntitlementValue{
+		Id:   types.StringValue(bundle.Id),
+		Name: types.StringValue(bundle.Name),
+	}
 }
 
 func convertEntitlementValue(value *oktaInternalGovernance.ReviewerEntitlementValue) *ReviewerEntitlementValue {

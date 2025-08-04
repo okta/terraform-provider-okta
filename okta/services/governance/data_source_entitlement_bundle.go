@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -10,11 +11,13 @@ import (
 
 var _ datasource.DataSource = (*entitlementBundlesDataSource)(nil)
 
-func NewEntitlementBundlesDataSource() datasource.DataSource {
+func newEntitlementBundlesDataSource() datasource.DataSource {
 	return &entitlementBundlesDataSource{}
 }
 
-type entitlementBundlesDataSource struct{}
+type entitlementBundlesDataSource struct {
+	*config.Config
+}
 
 type entitlementBundlesDataSourceModel struct {
 	Id types.String `tfsdk:"id"`
