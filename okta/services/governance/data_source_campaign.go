@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -611,7 +611,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (d *campaignDataSource) createSettingModelDS(campaign *oktaInternalGovernance.CampaignFull) *reviewerSettingsModel {
+func (d *campaignDataSource) createSettingModelDS(campaign *governance.CampaignFull) *reviewerSettingsModel {
 	var (
 		bulkDecisionDisabled    types.Bool
 		fallbackReviewerId      types.String

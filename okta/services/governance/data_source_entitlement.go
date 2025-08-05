@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -151,7 +151,7 @@ func (d *entitlementDataSource) Read(ctx context.Context, req datasource.ReadReq
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func convertValues(values []oktaInternalGovernance.EntitlementValueFull) []entitlementValues {
+func convertValues(values []governance.EntitlementValueFull) []entitlementValues {
 	var convertedValues []entitlementValues
 	for _, value := range values {
 		convertedValues = append(convertedValues, entitlementValues{
@@ -165,7 +165,7 @@ func convertValues(values []oktaInternalGovernance.EntitlementValueFull) []entit
 	return convertedValues
 }
 
-func convertParent(parent *oktaInternalGovernance.TargetResource) *parentBlockModel {
+func convertParent(parent *governance.TargetResource) *parentBlockModel {
 	if parent == nil {
 		return nil
 	}
