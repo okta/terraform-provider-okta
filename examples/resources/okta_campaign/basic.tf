@@ -1,3 +1,10 @@
+resource "okta_user" "test" {
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
+}
+
 resource "okta_campaign" "test" {
   name        = "Monthly access review of sales team"
   description = "Multi app campaign"
@@ -35,7 +42,7 @@ resource "okta_campaign" "test" {
 
   reviewer_settings {
     type                  = "USER"
-    reviewer_id           = "00unkw1sfbTw08c0g1d7"
+    reviewer_id           = okta_user.test.id
     self_review_disabled  = true
     justification_required = true
     bulk_decision_disabled = true

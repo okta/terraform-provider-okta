@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -38,8 +38,8 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
 
-	//OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient
-	//OktaIGSDKClientV3() *oktaInternalGovernance.IGAPIClient
+	//OktaIGSDKClientV5() *governance.IGAPIClient
+	//OktaIGSDKClientV3() *governance.IGAPIClient
 	//OktaIGSDKClientV2() *sdk.Client
 }
 
@@ -66,7 +66,7 @@ type iDaaSAPIClient struct {
 	oktaSDKClientV5         *v5okta.APIClient
 	oktaSDKClientV3         *okta.APIClient
 	oktaSDKClientV2         *sdk.Client
-	oktaIGSDKClientV5       *oktaInternalGovernance.IGAPIClient
+	oktaIGSDKClientV5       *governance.IGAPIClient
 	oktaSDKSupplementClient *sdk.APISupplement
 }
 

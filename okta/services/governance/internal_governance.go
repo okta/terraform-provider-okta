@@ -8,7 +8,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 	"log"
 
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -26,7 +26,7 @@ var oktaMutexKV = mutexkv.NewMutexKV()
 //	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV2()
 //}
 
-//func getOktaV3ClientFromMetadata(meta interface{}) *oktaInternalGovernance.IGAPIClient {
+//func getOktaV3ClientFromMetadata(meta interface{}) *governance.IGAPIClient {
 //	return meta.(*config.Config).OktaIDaaSClient.OktaIGSDKClientV3()
 //}
 
@@ -34,7 +34,7 @@ func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKSupplementClient()
 }
 
-func getOktaV5ClientFromMetadata(meta interface{}) *oktaInternalGovernance.IGAPIClient {
+func getOktaV5ClientFromMetadata(meta interface{}) *governance.IGAPIClient {
 	c := meta.(*config.Config)
 	log.Println("[INFO]Inside oktaV5ClientFromMetadata", c.ApiToken)
 	log.Println("[INFO]Printing meta inside getOktaV5ClientFromMetadata", meta)
@@ -81,7 +81,7 @@ func ProviderResources() map[string]*schema.Resource {
 func ProviderDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 
-		//resources.OktaInternalGovernanceCampaigns:    dataSourceCampaigns(),
+		//resources.governanceCampaigns:    dataSourceCampaigns(),
 	}
 }
 
