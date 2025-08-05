@@ -115,20 +115,12 @@ func resourceDomainRead(ctx context.Context, d *schema.ResourceData, meta interf
 		d.SetId("")
 		return nil
 	}
-	vd, err := validateDomain(ctx, d, meta, string(domain.GetValidationStatus()))
-	if err != nil {
-		return diag.FromErr(err)
-	}
 
 	d.Set("name", domain.GetDomain())
 	d.Set("certificate_source_type", domain.GetCertificateSourceType())
 	d.Set("brand_id", domain.GetBrandId())
+	d.Set("validation_status", domain.GetValidationStatus())
 
-	if vd != nil {
-		_ = d.Set("validation_status", vd.GetValidationStatus())
-	} else {
-		_ = d.Set("validation_status", domain.GetValidationStatus())
-	}
 	arr := make([]map[string]interface{}, len(domain.DnsRecords))
 	for i := range domain.DnsRecords {
 		arr[i] = map[string]interface{}{

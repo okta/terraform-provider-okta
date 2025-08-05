@@ -62,6 +62,7 @@ const (
 	OktaIDaaSEventHookVerification         = "okta_event_hook_verification"
 	OktaIDaaSFactor                        = "okta_factor"
 	OktaIDaaSFactorTotp                    = "okta_factor_totp"
+	OktaIDaaSFeature                       = "okta_feature"
 	OktaIDaaSGroup                         = "okta_group"
 	OktaIDaaSGroupOwner                    = "okta_group_owner"
 	OktaIDaaSGroupEveryone                 = "okta_everyone_group"

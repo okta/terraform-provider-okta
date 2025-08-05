@@ -1,0 +1,237 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"00otcysnp4eKySMxF697","cell":"ok14","_links":{"organization":{"href":"https://classic-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":true,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":true}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.016224958s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"app","id":"0ktaV3rify1d","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-07-18T09:44:19.000Z","lastUpdated":"2025-07-23T06:39:47.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"ALWAYS"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"],"appInstanceId":""},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://classic-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.018557167s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"app","id":"0ktaV3rify1d","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-07-18T09:44:19.000Z","lastUpdated":"2025-07-23T06:39:47.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"ALWAYS"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"],"appInstanceId":""},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://classic-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.026726291s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 301
+        host: classic-00.dne-okta.com
+        body: |
+            {"id":"0ktaV3rify1d","key":"okta_verify","name":"Okta Verify","settings":{"channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"]},"type":"app"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"app","id":"0ktaV3rify1d","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-07-18T09:44:19.000Z","lastUpdated":"2025-07-23T06:40:29.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"ALWAYS"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"],"appInstanceId":""},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://classic-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.044831333s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"app","id":"0ktaV3rify1d","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-07-18T09:44:19.000Z","lastUpdated":"2025-07-23T06:40:29.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"ALWAYS"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"],"appInstanceId":""},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://classic-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.044627833s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"app","id":"0ktaV3rify1d","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-07-18T09:44:19.000Z","lastUpdated":"2025-07-23T06:40:29.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"ALWAYS"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"],"appInstanceId":""},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://classic-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.007521125s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/authenticators/0ktaV3rify1d/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000148","errorSummary":"Cannot modify/disable this authenticator because it is enabled in one or more policies. To continue, disable the authenticator in these policies. Additionally, if disabling Okta Verify when Fastpass is active, the \"Device state\" must not be set to \"registered\" in app assurance policies.","errorLink":"E0000148","errorId":"oae_6kiGksWSc6TOGdfHXot5A","errorCauses":[{"errorSummary":"Authenticator Enrollment Policies: Default Policy"}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 23 Jul 2025 06:40:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 403 Forbidden
+        code: 403
+        duration: 1.100811042s

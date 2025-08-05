@@ -197,3 +197,35 @@ resource "okta_authenticator" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.okta_verify", resources.OktaIDaaSAuthenticator)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("okta_verify.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				ImportState:        true,
+				ResourceName:       "okta_authenticator.okta_verify",
+				ImportStateId:      "0ktaV3rify1d",
+				ImportStatePersist: true,
+				Config:             config,
+				PlanOnly:           true,
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "app"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Okta Verify"),
+					// ensure any change to examples/resources/okta_authenticator/okta_verify.tf is reflected here.
+					testAttributeJSON(resourceName, "settings", `{"channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"]}`),
+				),
+			},
+		},
+	})
+}

@@ -143,6 +143,11 @@ func resourceInlineHookRead(ctx context.Context, d *schema.ResourceData, meta in
 					hook.Channel.Config.ClientSecret = oldChannel.Config.ClientSecret
 				}
 			}
+			if oldChannel.Config != nil && oldChannel.Config.AuthScheme != nil {
+				if hook.Channel != nil && hook.Channel.Config != nil {
+					hook.Channel.Config.AuthScheme.Value = oldChannel.Config.AuthScheme.Value
+				}
+			}
 		}
 
 		channelJson, err := json.Marshal(hook.Channel)
@@ -307,7 +312,9 @@ func setInlineHookStatus(ctx context.Context, d *schema.ResourceData, client *sd
 // true if old and new JSONs are equivalent object representations ...  It is
 // true, there is no change!  Edge chase if newJSON is blank, will also return
 // true which cover the new resource case.  Okta does not return
-// config.clientSecret in the response so ignore that value.
+// config.clientSecret, config.authScheme.value, auth.value in the response so ignore these values.
+// The above mentioned fields are mutually exclusive.
+// TODO Explore usage of Terraform's write only attributes for sensitive values.
 func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
 	if newJSON == "" {
 		return true
@@ -320,19 +327,5 @@ func noChangeInObjectFromUnmarshaledChannelJSON(k, oldJSON, newJSON string, d *s
 	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
 		return false
 	}
-
-	configField := "config"
-	clientSecretField := "clientSecret"
-	if config, ok := oldObj[configField]; ok {
-		if _config, ok := config.(map[string]any); ok {
-			delete(_config, clientSecretField)
-		}
-	}
-	if config, ok := newObj[configField]; ok {
-		if _config, ok := config.(map[string]any); ok {
-			delete(_config, clientSecretField)
-		}
-	}
-
 	return reflect.DeepEqual(oldObj, newObj)
 }
