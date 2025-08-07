@@ -118,4 +118,5 @@ const (
 	OktaIDaaSUserType                      = "okta_user_type"
 	GovernanceCampaign                     = "okta_campaign"
 	GovernanceEntitlement                  = "okta_entitlement"
+	GovernanceReview                       = "okta_review"
 )
