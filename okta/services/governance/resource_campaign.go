@@ -313,7 +313,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						},
 						Description: "An array of resources that are excluded from the review.",
 					},
-					"target_resources": schema.ListNestedBlock{
+					"target_resources": schema.SetNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"resource_id": schema.StringAttribute{
