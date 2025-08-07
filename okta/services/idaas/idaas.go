@@ -97,6 +97,8 @@ func FWProviderResources() []func() resource.Resource {
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
 		newFeaturesResource,
+		newRealmResource,
+		newRealmAssignmentResource,
 	}
 }
 
@@ -109,6 +111,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newUserTypeDataSource,
 		newDeviceAssurancePolicyDataSource,
 		newFeaturesDataSource,
+		newRealmDataSource,
+		newRealmAssignmentDataSource,
 	}
 }
 
