@@ -114,18 +114,18 @@ func (d *reviewDataSource) Configure(ctx context.Context, req datasource.Configu
 func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id":                     schema.StringAttribute{Required: true},
-			"campaign_id":            schema.StringAttribute{Computed: true},
-			"resource_id":            schema.StringAttribute{Computed: true},
-			"decision":               schema.StringAttribute{Computed: true},
+			"id":                     schema.StringAttribute{Required: true, Description: "Unique identifier for the Review."},
+			"campaign_id":            schema.StringAttribute{Computed: true, Description: "ID of the Campaign."},
+			"resource_id":            schema.StringAttribute{Computed: true, Description: "Resource ID for the Review."},
+			"decision":               schema.StringAttribute{Computed: true, Description: "The decision of the reviewer."},
 			"remediation_status":     schema.StringAttribute{Computed: true},
-			"reviewer_type":          schema.StringAttribute{Computed: true},
-			"current_reviewer_level": schema.StringAttribute{Computed: true},
-			"created":                schema.StringAttribute{Computed: true},
-			"created_by":             schema.StringAttribute{Computed: true},
-			"last_updated":           schema.StringAttribute{Computed: true},
-			"last_updated_by":        schema.StringAttribute{Computed: true},
-			"decided":                schema.StringAttribute{Computed: true},
+			"reviewer_type":          schema.StringAttribute{Computed: true, Description: "The type of reviewer to which the review is assigned."},
+			"current_reviewer_level": schema.StringAttribute{Computed: true, Description: "Identifies the reviewer level of each reviews during access certification."},
+			"created":                schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the resource was created."},
+			"created_by":             schema.StringAttribute{Computed: true, Description: "The id of user who created the resource."},
+			"last_updated":           schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the object was last updated."},
+			"last_updated_by":        schema.StringAttribute{Computed: true, Description: "The id of user who last updated the object."},
+			"decided":                schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the object status was decided."},
 		},
 		Blocks: map[string]schema.Block{
 			"principal_profile": schema.SingleNestedBlock{
@@ -137,6 +137,7 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					"status":     schema.StringAttribute{Computed: true},
 					"login":      schema.StringAttribute{Computed: true},
 				},
+				Description: "The principal profile associated with the reviewer.",
 			},
 			"reviewer_profile": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{

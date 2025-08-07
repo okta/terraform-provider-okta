@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -45,16 +47,10 @@ type reviewResourceModel struct {
 	ResourceId    types.String `tfsdk:"resource_id"`
 	Decision      types.String `tfsdk:"decision"`
 	ReviewerType  types.String `tfsdk:"reviewer_type"`
-	//CurrentReviewerLevel types.String `tfsdk:"current_reviewer_level"`
 	Created       types.String `tfsdk:"created"`
 	CreatedBy     types.String `tfsdk:"created_by"`
 	LastUpdated   types.String `tfsdk:"last_updated"`
 	LastUpdatedBy types.String `tfsdk:"last_updated_by"`
-	//Decided              types.String `tfsdk:"decided"`
-	//PrincipalProfile     *PrincipalProfileModel `tfsdk:"principal_profile"`
-	//ReviewerProfile      *PrincipalProfileModel `tfsdk:"reviewer_profile"`
-	//InternalLinks        *linksModel            `tfsdk:"internal_links"`
-	//ExternalLinks        *linksModel            `tfsdk:"external_links"`
 }
 
 func (r *reviewResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -70,7 +66,7 @@ func (r *reviewResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			},
 			"note": schema.StringAttribute{
 				Required:    true,
-				Description: "A note to justify the reassignment decision for the specified review(s).",
+				Description: "A note to justify the reassignment decision for the specified review.",
 			},
 			"campaign_id": schema.StringAttribute{
 				Required:    true,
@@ -88,60 +84,17 @@ func (r *reviewResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				ElementType: types.StringType,
 				Required:    true,
 				Description: "A list of reviews (review id values) that are reassigned to the new reviewer.",
+				Validators: []validator.List{
+					listvalidator.SizeAtMost(1),
+				},
 			},
 			"resource_id":     schema.StringAttribute{Computed: true},
-			"decision":        schema.StringAttribute{Computed: true},
-			"reviewer_type":   schema.StringAttribute{Computed: true},
-			"created":         schema.StringAttribute{Computed: true},
-			"created_by":      schema.StringAttribute{Computed: true},
-			"last_updated":    schema.StringAttribute{Computed: true},
-			"last_updated_by": schema.StringAttribute{Computed: true},
-		},
-		Blocks: map[string]schema.Block{
-			//"principal_profile": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"id":         schema.StringAttribute{Computed: true},
-			//		"email":      schema.StringAttribute{Computed: true},
-			//		"first_name": schema.StringAttribute{Computed: true},
-			//		"last_name":  schema.StringAttribute{Computed: true},
-			//		"status":     schema.StringAttribute{Computed: true},
-			//		"login":      schema.StringAttribute{Computed: true},
-			//	},
-			//},
-			//"reviewer_profile": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"id":         schema.StringAttribute{Computed: true},
-			//		"email":      schema.StringAttribute{Computed: true},
-			//		"first_name": schema.StringAttribute{Computed: true},
-			//		"last_name":  schema.StringAttribute{Computed: true},
-			//		"status":     schema.StringAttribute{Computed: true},
-			//		"login":      schema.StringAttribute{Computed: true},
-			//	},
-			//},
-			//"internal_links": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"self_href": schema.StringAttribute{
-			//			Computed: true,
-			//			Optional: true,
-			//		},
-			//		"reassign_review_href": schema.StringAttribute{
-			//			Computed: true,
-			//			Optional: true,
-			//		},
-			//	},
-			//},
-			//"external_links": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"self_href": schema.StringAttribute{
-			//			Computed: true,
-			//			Optional: true,
-			//		},
-			//		"reassign_review_href": schema.StringAttribute{
-			//			Computed: true,
-			//			Optional: true,
-			//		},
-			//	},
-			//},
+			"decision":        schema.StringAttribute{Computed: true, Description: "The decision of the reviewer."},
+			"reviewer_type":   schema.StringAttribute{Computed: true, Description: "The type of reviewer to which the review is assigned."},
+			"created":         schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the resource was created"},
+			"created_by":      schema.StringAttribute{Computed: true, Description: "The id of user who created the resource."},
+			"last_updated":    schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the object was last updated."},
+			"last_updated_by": schema.StringAttribute{Computed: true, Description: "The id of user who last updated the object."},
 		},
 	}
 }
@@ -273,7 +226,6 @@ func buildReassignReviewRequest(data reviewResourceModel) governance.ReviewsReas
 	reassignReviewBody.ReviewerLevel = reviewerLevel
 	reassignReviewBody.ReviewerId = data.ReviewerId.ValueString()
 	reassignReviewBody.Note = data.Note.ValueString()
-	fmt.Println("reassignReviewBody ReviewerID:", reassignReviewBody.ReviewerId)
 	return reassignReviewBody
 }
 
