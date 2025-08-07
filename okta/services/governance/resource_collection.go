@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
@@ -84,7 +84,7 @@ func (r *collectionResource) Create(ctx context.Context, req resource.CreateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *collectionResource) applyCollectionsToState(ctx context.Context, data *collectionResourceModel, createCollectinoResp *oktaInternalGovernance.CollectionFull) diag.Diagnostics {
+func (r *collectionResource) applyCollectionsToState(ctx context.Context, data *collectionResourceModel, createCollectinoResp *governance.CollectionFull) diag.Diagnostics {
 	var diags diag.Diagnostics
 	data.Id = types.StringValue(createCollectinoResp.Id)
 	data.Name = types.StringValue(createCollectinoResp.Name)
@@ -92,8 +92,8 @@ func (r *collectionResource) applyCollectionsToState(ctx context.Context, data *
 	return diags
 }
 
-func createCollection(data collectionResourceModel) oktaInternalGovernance.CollectionCreatable {
-	return oktaInternalGovernance.CollectionCreatable{
+func createCollection(data collectionResourceModel) governance.CollectionCreatable {
+	return governance.CollectionCreatable{
 		Name:        data.Name.ValueString(),
 		Description: data.Description.ValueStringPointer(),
 	}
@@ -151,8 +151,8 @@ func (r *collectionResource) Update(ctx context.Context, req resource.UpdateRequ
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func buildUpdateCollection(data collectionResourceModel) oktaInternalGovernance.CollectionUpdatable {
-	return oktaInternalGovernance.CollectionUpdatable{
+func buildUpdateCollection(data collectionResourceModel) governance.CollectionUpdatable {
+	return governance.CollectionUpdatable{
 		Name:        data.Name.ValueString(),
 		Description: data.Description.ValueStringPointer(),
 	}

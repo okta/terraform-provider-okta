@@ -1,25 +1,25 @@
 package api
 
 import (
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 )
 
 type governanceAPIClient struct {
-	oktaIGSDKClientV5 *oktaInternalGovernance.IGAPIClient
+	oktaIGSDKClientV5 *governance.IGAPIClient
 }
 
 type OktaGovernanceClient interface {
-	OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient
+	OktaIGSDKClientV5() *governance.IGAPIClient
 }
 
-func oktaV5IGSDKClient(c *OktaAPIConfig) (client *oktaInternalGovernance.IGAPIClient, err error) {
+func oktaV5IGSDKClient(c *OktaAPIConfig) (client *governance.IGAPIClient, err error) {
 	err, config, _, _ := getV5ClientConfig(c, err)
 
-	client = oktaInternalGovernance.NewAPIClient(config)
+	client = governance.NewAPIClient(config)
 	return client, nil
 }
 
-func (c *governanceAPIClient) OktaIGSDKClientV5() *oktaInternalGovernance.IGAPIClient {
+func (c *governanceAPIClient) OktaIGSDKClientV5() *governance.IGAPIClient {
 	return c.oktaIGSDKClientV5
 }
 

@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"time"
 
@@ -51,12 +51,12 @@ type reviewDataSourceModel struct {
 }
 
 type PrincipalProfileModel struct {
-	Id        string                                        `tfsdk:"id"`
-	Email     string                                        `tfsdk:"email"`
-	FirstName *string                                       `tfsdk:"first_name"`
-	LastName  *string                                       `tfsdk:"last_name"`
-	Login     *string                                       `tfsdk:"login"`
-	Status    oktaInternalGovernance.PrincipalProfileStatus `tfsdk:"status"`
+	Id        string                            `tfsdk:"id"`
+	Email     string                            `tfsdk:"email"`
+	FirstName *string                           `tfsdk:"first_name"`
+	LastName  *string                           `tfsdk:"last_name"`
+	Login     *string                           `tfsdk:"login"`
+	Status    governance.PrincipalProfileStatus `tfsdk:"status"`
 }
 
 type userProfileModel struct {
@@ -280,7 +280,7 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func convertEntitlementBundle(bundle *oktaInternalGovernance.ReviewerEntitlementBundle) *ReviewerEntitlementValue {
+func convertEntitlementBundle(bundle *governance.ReviewerEntitlementBundle) *ReviewerEntitlementValue {
 	if bundle == nil || bundle.Id == "" || bundle.Name == "" {
 		return nil
 	}
@@ -291,7 +291,7 @@ func convertEntitlementBundle(bundle *oktaInternalGovernance.ReviewerEntitlement
 	}
 }
 
-func convertEntitlementValue(value *oktaInternalGovernance.ReviewerEntitlementValue) *ReviewerEntitlementValue {
+func convertEntitlementValue(value *governance.ReviewerEntitlementValue) *ReviewerEntitlementValue {
 	if value == nil || value.Id == "" || value.Name == "" {
 		return nil
 	}
@@ -302,7 +302,7 @@ func convertEntitlementValue(value *oktaInternalGovernance.ReviewerEntitlementVa
 	}
 }
 
-func convertNote(n *oktaInternalGovernance.Note) *noteModel {
+func convertNote(n *governance.Note) *noteModel {
 	if n == nil || n.Note == nil || n.Id == nil {
 		return nil
 	}
@@ -312,7 +312,7 @@ func convertNote(n *oktaInternalGovernance.Note) *noteModel {
 	}
 }
 
-func convertReviewerLevels(levels []oktaInternalGovernance.ReviewerLevelInfoFull) []reviewLevelModel {
+func convertReviewerLevels(levels []governance.ReviewerLevelInfoFull) []reviewLevelModel {
 	var result []reviewLevelModel
 	for _, l := range levels {
 
@@ -327,14 +327,14 @@ func convertReviewerLevels(levels []oktaInternalGovernance.ReviewerLevelInfoFull
 			ReviewerType:  types.StringValue(string(l.ReviewerType)),
 			//ReviewerGroupResourceId: types.StringValue(l.ReviewerGroupResourceId),
 			ReviewerProfile:      buildUserProfileModel(l.ReviewerProfile),
-			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile), // oktaInternalGovernance.NewReviewerGroupProfile(l.ReviewerGroupProfile.Name, l.ReviewerGroupProfile.GroupId, l.ReviewerGroupProfile.GroupType),
+			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile), // governance.NewReviewerGroupProfile(l.ReviewerGroupProfile.Name, l.ReviewerGroupProfile.GroupId, l.ReviewerGroupProfile.GroupType),
 		}
 		result = append(result, level)
 	}
 	return result
 }
 
-func buildReviewerGroupProfile(profile *oktaInternalGovernance.ReviewerGroupProfile) groupProfileModel {
+func buildReviewerGroupProfile(profile *governance.ReviewerGroupProfile) groupProfileModel {
 	if profile == nil {
 		return groupProfileModel{}
 	}
@@ -345,7 +345,7 @@ func buildReviewerGroupProfile(profile *oktaInternalGovernance.ReviewerGroupProf
 	}
 }
 
-func buildUserProfileModel(profile *oktaInternalGovernance.PrincipalProfile) userProfileModel {
+func buildUserProfileModel(profile *governance.PrincipalProfile) userProfileModel {
 	userProfile := userProfileModel{}
 	if profile == nil {
 		return userProfileModel{}
@@ -362,16 +362,7 @@ func buildUserProfileModel(profile *oktaInternalGovernance.PrincipalProfile) use
 	return userProfile
 }
 
-//func convertLinks(links *oktaInternalGovernance.ReviewLinks) oktaInternalGovernance.Link {
-//	if links == nil {
-//		return oktaInternalGovernance.Link{}
-//	}
-//	return oktaInternalGovernance.Link{
-//		Name: links.Self.Name,
-//	}
-//}
-
-func convertLinks(links *oktaInternalGovernance.ReviewLinks) *linksModel {
+func convertLinks(links *governance.ReviewLinks) *linksModel {
 	var selfHref, reassignHref string
 
 	if links != nil {
@@ -389,7 +380,7 @@ func convertLinks(links *oktaInternalGovernance.ReviewLinks) *linksModel {
 	}
 }
 
-func convertPrincipalProfile(p *oktaInternalGovernance.PrincipalProfile) *PrincipalProfileModel {
+func convertPrincipalProfile(p *governance.PrincipalProfile) *PrincipalProfileModel {
 	if p == nil {
 		return nil
 	}

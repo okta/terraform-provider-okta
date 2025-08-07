@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -225,7 +225,7 @@ func (r *grantResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// Nothing to do – Terraform will forget the resource
 }
 
-func (r *grantResource) applyGrantToState(ctx context.Context, data *grantResourceModel, createGrantResp *oktaInternalGovernance.GrantFull) diag.Diagnostics {
+func (r *grantResource) applyGrantToState(ctx context.Context, data *grantResourceModel, createGrantResp *governance.GrantFull) diag.Diagnostics {
 	var diags diag.Diagnostics
 	data.Id = types.StringValue(createGrantResp.Id)
 	data.EntitlementBundleId = types.StringPointerValue(createGrantResp.EntitlementBundleId)
@@ -246,7 +246,7 @@ func (r *grantResource) applyGrantToState(ctx context.Context, data *grantResour
 		}
 	}
 
-	if createGrantResp.GrantType != oktaInternalGovernance.GRANTTYPE_ENTITLEMENT_BUNDLE {
+	if createGrantResp.GrantType != governance.GRANTTYPE_ENTITLEMENT_BUNDLE {
 		if target, ok := createGrantResp.GetTargetOk(); ok {
 			data.Target = &principalModel{
 				ExternalId: types.StringValue(target.ExternalId),
@@ -278,8 +278,8 @@ func (r *grantResource) applyGrantToState(ctx context.Context, data *grantResour
 	return diags
 }
 
-func buildGrant(data grantResourceModel) *oktaInternalGovernance.GrantCreatable {
-	if data.GrantType.ValueString() == string(oktaInternalGovernance.GRANTTYPE_ENTITLEMENT_BUNDLE) {
+func buildGrant(data grantResourceModel) *governance.GrantCreatable {
+	if data.GrantType.ValueString() == string(governance.GRANTTYPE_ENTITLEMENT_BUNDLE) {
 		var expirationDate *time.Time
 		var timezone *string
 		if data.ScheduleSettings != nil {
@@ -290,29 +290,29 @@ func buildGrant(data grantResourceModel) *oktaInternalGovernance.GrantCreatable 
 			}
 			timezone = data.ScheduleSettings.Timezone.ValueStringPointer()
 		}
-		grant := &oktaInternalGovernance.GrantCreatable{
-			GrantTypeBundleWriteable: &oktaInternalGovernance.GrantTypeBundleWriteable{
+		grant := &governance.GrantCreatable{
+			GrantTypeBundleWriteable: &governance.GrantTypeBundleWriteable{
 				GrantType:           data.GrantType.ValueString(),
 				EntitlementBundleId: data.EntitlementBundleId.ValueString(),
-				Action:              (*oktaInternalGovernance.GrantAction)(data.Action.ValueStringPointer()),
-				TargetPrincipal: oktaInternalGovernance.TargetPrincipal{
+				Action:              (*governance.GrantAction)(data.Action.ValueStringPointer()),
+				TargetPrincipal: governance.TargetPrincipal{
 					ExternalId: data.TargetPrincipal.ExternalId.ValueString(),
-					Type:       oktaInternalGovernance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
+					Type:       governance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
 				},
-				Actor: (*oktaInternalGovernance.GrantActor)(data.Actor.ValueStringPointer()),
+				Actor: (*governance.GrantActor)(data.Actor.ValueStringPointer()),
 			},
 		}
 		if expirationDate != nil && timezone != nil {
-			grant.GrantTypeBundleWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypeBundleWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypeBundleWriteable.ScheduleSettings.ExpirationDate = expirationDate
 			grant.GrantTypeBundleWriteable.ScheduleSettings.TimeZone = timezone
 		} else if expirationDate != nil {
-			grant.GrantTypeBundleWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypeBundleWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypeBundleWriteable.ScheduleSettings.ExpirationDate = expirationDate
 		}
 		return grant
 
-	} else if data.GrantType.ValueString() == string(oktaInternalGovernance.GRANTTYPE_POLICY) {
+	} else if data.GrantType.ValueString() == string(governance.GRANTTYPE_POLICY) {
 		// Handle other grant types if necessary
 		var expirationDate *time.Time
 		var timezone *string
@@ -324,32 +324,32 @@ func buildGrant(data grantResourceModel) *oktaInternalGovernance.GrantCreatable 
 			}
 			timezone = data.ScheduleSettings.Timezone.ValueStringPointer()
 		}
-		grant := &oktaInternalGovernance.GrantCreatable{
-			GrantTypePolicyWriteable: &oktaInternalGovernance.GrantTypePolicyWriteable{
+		grant := &governance.GrantCreatable{
+			GrantTypePolicyWriteable: &governance.GrantTypePolicyWriteable{
 				// Populate fields as needed
 				GrantType: data.GrantType.ValueString(),
-				Target: oktaInternalGovernance.TargetResource{
+				Target: governance.TargetResource{
 					ExternalId: data.Target.ExternalId.ValueString(),
-					Type:       oktaInternalGovernance.ResourceType2(data.Target.Type.ValueString()),
+					Type:       governance.ResourceType2(data.Target.Type.ValueString()),
 				},
-				Action: (*oktaInternalGovernance.GrantAction)(data.Action.ValueStringPointer()),
-				TargetPrincipal: oktaInternalGovernance.TargetPrincipal{
+				Action: (*governance.GrantAction)(data.Action.ValueStringPointer()),
+				TargetPrincipal: governance.TargetPrincipal{
 					ExternalId: data.TargetPrincipal.ExternalId.ValueString(),
-					Type:       oktaInternalGovernance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
+					Type:       governance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
 				},
-				Actor: (*oktaInternalGovernance.GrantActor)(data.Actor.ValueStringPointer()),
+				Actor: (*governance.GrantActor)(data.Actor.ValueStringPointer()),
 			},
 		}
 		if expirationDate != nil && timezone != nil {
-			grant.GrantTypeCustomWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypeCustomWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypeCustomWriteable.ScheduleSettings.ExpirationDate = expirationDate
 			grant.GrantTypeCustomWriteable.ScheduleSettings.TimeZone = timezone
 		} else if expirationDate != nil {
-			grant.GrantTypePolicyWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypePolicyWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypePolicyWriteable.ScheduleSettings.ExpirationDate = expirationDate
 		}
 		return grant
-	} else if data.GrantType.ValueString() == string(oktaInternalGovernance.GRANTTYPE_CUSTOM) {
+	} else if data.GrantType.ValueString() == string(governance.GRANTTYPE_CUSTOM) {
 		var expirationDate *time.Time
 		var timezone *string
 		if data.ScheduleSettings != nil {
@@ -361,28 +361,28 @@ func buildGrant(data grantResourceModel) *oktaInternalGovernance.GrantCreatable 
 			timezone = data.ScheduleSettings.Timezone.ValueStringPointer()
 		}
 		// Handle custom grant type if necessary
-		grant := &oktaInternalGovernance.GrantCreatable{
-			GrantTypeCustomWriteable: &oktaInternalGovernance.GrantTypeCustomWriteable{
+		grant := &governance.GrantCreatable{
+			GrantTypeCustomWriteable: &governance.GrantTypeCustomWriteable{
 				GrantType: data.GrantType.ValueString(),
-				Target: oktaInternalGovernance.TargetResource{
+				Target: governance.TargetResource{
 					ExternalId: data.Target.ExternalId.ValueString(),
-					Type:       oktaInternalGovernance.ResourceType2(data.Target.Type.ValueString()),
+					Type:       governance.ResourceType2(data.Target.Type.ValueString()),
 				},
 				Entitlements: buildEntitlements(data.Entitlements),
-				TargetPrincipal: oktaInternalGovernance.TargetPrincipal{
+				TargetPrincipal: governance.TargetPrincipal{
 					ExternalId: data.TargetPrincipal.ExternalId.ValueString(),
-					Type:       oktaInternalGovernance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
+					Type:       governance.PrincipalType(data.TargetPrincipal.Type.ValueString()),
 				},
-				Action: (*oktaInternalGovernance.GrantAction)(data.Action.ValueStringPointer()),
-				Actor:  (*oktaInternalGovernance.GrantActor)(data.Actor.ValueStringPointer()),
+				Action: (*governance.GrantAction)(data.Action.ValueStringPointer()),
+				Actor:  (*governance.GrantActor)(data.Actor.ValueStringPointer()),
 			},
 		}
 		if expirationDate != nil && timezone != nil {
-			grant.GrantTypeCustomWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypeCustomWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypeCustomWriteable.ScheduleSettings.ExpirationDate = expirationDate
 			grant.GrantTypeCustomWriteable.ScheduleSettings.TimeZone = timezone
 		} else if expirationDate != nil {
-			grant.GrantTypeCustomWriteable.ScheduleSettings = oktaInternalGovernance.NewScheduleSettingsWriteableWithDefaults()
+			grant.GrantTypeCustomWriteable.ScheduleSettings = governance.NewScheduleSettingsWriteableWithDefaults()
 			grant.GrantTypeCustomWriteable.ScheduleSettings.ExpirationDate = expirationDate
 		}
 		return grant
@@ -390,15 +390,15 @@ func buildGrant(data grantResourceModel) *oktaInternalGovernance.GrantCreatable 
 	return nil
 }
 
-func buildEntitlements(entitlements []entitlementGrantModel) []oktaInternalGovernance.EntitlementCreatable {
-	var entitlementCreatables []oktaInternalGovernance.EntitlementCreatable
+func buildEntitlements(entitlements []entitlementGrantModel) []governance.EntitlementCreatable {
+	var entitlementCreatables []governance.EntitlementCreatable
 	for _, ent := range entitlements {
-		var values []oktaInternalGovernance.EntitlementValueCreatable
+		var values []governance.EntitlementValueCreatable
 		for _, val := range ent.Values {
-			creatable := oktaInternalGovernance.EntitlementValueCreatable{Id: val.Id.ValueStringPointer()}
+			creatable := governance.EntitlementValueCreatable{Id: val.Id.ValueStringPointer()}
 			values = append(values, creatable)
 		}
-		entitlementCreatable := oktaInternalGovernance.EntitlementCreatable{
+		entitlementCreatable := governance.EntitlementCreatable{
 			Id:     ent.Id.ValueStringPointer(),
 			Values: values,
 		}
@@ -407,21 +407,21 @@ func buildEntitlements(entitlements []entitlementGrantModel) []oktaInternalGover
 	return entitlementCreatables
 }
 
-func buildGrantPatch(plan grantResourceModel) oktaInternalGovernance.GrantPatch {
+func buildGrantPatch(plan grantResourceModel) governance.GrantPatch {
 	var expirationDate *time.Time
 	if ptr := plan.ScheduleSettings.ExpirationDate.ValueStringPointer(); ptr != nil && *ptr != "" {
 		t, _ := time.Parse(time.RFC3339, *ptr)
 		expirationDate = &t
 	}
 	timezone := plan.ScheduleSettings.Timezone.ValueStringPointer()
-	scheduleSettings := oktaInternalGovernance.ScheduleSettingsWriteable{}
+	scheduleSettings := governance.ScheduleSettingsWriteable{}
 	if expirationDate != nil {
 		scheduleSettings.ExpirationDate = expirationDate
 	}
 	if timezone != nil {
 		scheduleSettings.TimeZone = timezone
 	}
-	return oktaInternalGovernance.GrantPatch{
+	return governance.GrantPatch{
 		Id:               plan.Id.ValueString(),
 		ScheduleSettings: scheduleSettings,
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaCampaign_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.OktaInternalGovernanceCampaign, t.Name())
+	mgr := newFixtureManager("data-sources", resources.GovernanceCampaign, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

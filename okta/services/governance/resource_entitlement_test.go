@@ -9,9 +9,9 @@ import (
 )
 
 func TestAccEntitlement_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaInternalGovernanceEntitlement, t.Name())
+	mgr := newFixtureManager("resources", resources.GovernanceEntitlement, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaInternalGovernanceEntitlement)
+	resourceName := fmt.Sprintf("%s.test", resources.GovernanceEntitlement)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),

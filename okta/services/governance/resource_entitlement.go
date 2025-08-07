@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -71,16 +71,20 @@ func (r *entitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed: true,
 			},
 			"data_type": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The data type of the entitlement property.",
 			},
 			"external_value": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The external value of the entitlement property.",
 			},
 			"multi_value": schema.BoolAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The property that determines if the entitlement property can hold multiple values.",
 			},
 			"name": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "The name of the entitlement property.",
 			},
 			"description": schema.StringAttribute{
 				Optional: true,
@@ -89,20 +93,24 @@ func (r *entitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 				Optional: true,
 			},
 			"parent_resource_orn": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "The Okta app instance, in ORN format.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"parent": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The Okta app.id of the resource.",
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The type of the resource.",
 					},
 				},
+				Description: "Representation of a resource.",
 			},
 			"values": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
@@ -112,13 +120,16 @@ func (r *entitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 							Computed: true,
 						},
 						"external_value": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "The value of an entitlement property value.",
 						},
 						"name": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "The display name for an entitlement value.",
 						},
 						"description": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "The description of an entitlement value.",
 						},
 					},
 				},
@@ -236,7 +247,7 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 }
 
-func (r *entitlementResource) applyEntitlementToState(data *entitlementResourceModel, createEntitlementResp *oktaInternalGovernance.EntitlementsFullWithParent) diag.Diagnostics {
+func (r *entitlementResource) applyEntitlementToState(data *entitlementResourceModel, createEntitlementResp *governance.EntitlementsFullWithParent) diag.Diagnostics {
 	data.Id = types.StringValue(createEntitlementResp.Id)
 	data.DataType = types.StringValue(string(createEntitlementResp.DataType))
 	data.ExternalValue = types.StringValue(createEntitlementResp.ExternalValue)
@@ -264,25 +275,25 @@ func (r *entitlementResource) applyEntitlementToState(data *entitlementResourceM
 	return nil
 }
 
-func buildEntitlement(data entitlementResourceModel) oktaInternalGovernance.EntitlementCreate {
-	return oktaInternalGovernance.EntitlementCreate{
-		DataType:      oktaInternalGovernance.EntitlementPropertyDatatype(data.DataType.ValueString()),
+func buildEntitlement(data entitlementResourceModel) governance.EntitlementCreate {
+	return governance.EntitlementCreate{
+		DataType:      governance.EntitlementPropertyDatatype(data.DataType.ValueString()),
 		ExternalValue: data.ExternalValue.ValueString(),
 		MultiValue:    data.MultiValue.ValueBool(),
 		Name:          data.Name.ValueString(),
 		Description:   data.Description.ValueStringPointer(),
-		Parent: &oktaInternalGovernance.TargetResource{
+		Parent: &governance.TargetResource{
 			ExternalId: data.Parent.ExternalID.ValueString(),
-			Type:       oktaInternalGovernance.ResourceType2(data.Parent.Type.ValueString()),
+			Type:       governance.ResourceType2(data.Parent.Type.ValueString()),
 		},
 		Values: buildEntitlementValues(data.Values),
 	}
 }
 
-func buildEntitlementValues(data []entitlementValuesModel) []oktaInternalGovernance.EntitlementValueWritableProperties {
-	x := make([]oktaInternalGovernance.EntitlementValueWritableProperties, len(data))
+func buildEntitlementValues(data []entitlementValuesModel) []governance.EntitlementValueWritableProperties {
+	x := make([]governance.EntitlementValueWritableProperties, len(data))
 	for i, value := range data {
-		x[i] = oktaInternalGovernance.EntitlementValueWritableProperties{
+		x[i] = governance.EntitlementValueWritableProperties{
 			ExternalValue: value.ExternalValue.ValueString(),
 			Name:          value.Name.ValueString(),
 			Description:   value.Description.ValueStringPointer(),
@@ -291,25 +302,25 @@ func buildEntitlementValues(data []entitlementValuesModel) []oktaInternalGoverna
 	return x
 }
 
-func buildEntitlementReplace(data, state entitlementResourceModel) oktaInternalGovernance.EntitlementsFullWithParent {
-	return oktaInternalGovernance.EntitlementsFullWithParent{
+func buildEntitlementReplace(data, state entitlementResourceModel) governance.EntitlementsFullWithParent {
+	return governance.EntitlementsFullWithParent{
 		Id:            data.Id.ValueString(),
-		DataType:      oktaInternalGovernance.EntitlementPropertyDatatype(data.DataType.ValueString()),
+		DataType:      governance.EntitlementPropertyDatatype(data.DataType.ValueString()),
 		ExternalValue: data.ExternalValue.ValueString(),
 		MultiValue:    data.MultiValue.ValueBool(),
 		Name:          data.Name.ValueString(),
 		Description:   data.Description.ValueStringPointer(),
-		Parent: oktaInternalGovernance.TargetResource{
+		Parent: governance.TargetResource{
 			ExternalId: data.Parent.ExternalID.ValueString(),
-			Type:       oktaInternalGovernance.ResourceType2(data.Parent.Type.ValueString()),
+			Type:       governance.ResourceType2(data.Parent.Type.ValueString()),
 		},
 		ParentResourceOrn: state.ParentResourceOrn.ValueString(),
 		Values:            buildEntitlementValuesForReplace(data.Values, state.Values),
 	}
 }
 
-func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []oktaInternalGovernance.EntitlementValueFull {
-	x := make([]oktaInternalGovernance.EntitlementValueFull, len(values))
+func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []governance.EntitlementValueFull {
+	x := make([]governance.EntitlementValueFull, len(values))
 	for i, value := range values {
 		var Id *string
 		if i < len(state) {
@@ -318,7 +329,7 @@ func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []
 			}
 		}
 
-		x[i] = oktaInternalGovernance.EntitlementValueFull{
+		x[i] = governance.EntitlementValueFull{
 			ExternalValue: value.ExternalValue.ValueStringPointer(),
 			Name:          value.Name.ValueStringPointer(),
 			Description:   value.Description.ValueStringPointer(),

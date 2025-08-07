@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"time"
 
@@ -65,23 +65,29 @@ func (r *reviewResource) Schema(ctx context.Context, req resource.SchemaRequest,
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Unique identifier for the Review.",
 			},
 			"note": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "A note to justify the reassignment decision for the specified review(s).",
 			},
 			"campaign_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the campaign.",
 			},
 			"reviewer_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The Okta user id of the new reviewer.",
 			},
 			"reviewer_level": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Identifies the reviewer level of each reviews during access certification. Applicable for multi level campaigns only.",
 			},
 			"review_ids": schema.ListAttribute{
 				ElementType: types.StringType,
 				Required:    true,
+				Description: "A list of reviews (review id values) that are reassigned to the new reviewer.",
 			},
 			"resource_id":     schema.StringAttribute{Computed: true},
 			"decision":        schema.StringAttribute{Computed: true},
@@ -165,68 +171,25 @@ func (r *reviewResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	review := reassignedReview.Data[0]
-	fmt.Println("Final reveiwerID", review.ReviewerProfile.Id)
-	data.Id = types.StringValue(review.Id)
-	data.ReviewerId = types.StringValue(review.ReviewerProfile.Id)
-	data.CampaignId = types.StringValue(review.CampaignId)
-	data.ResourceId = types.StringValue(review.ResourceId)
-	data.Decision = types.StringValue(string(review.Decision))
-	data.ReviewerType = types.StringValue(string(review.ReviewerType))
-	//data.CurrentReviewerLevel = func() types.String {
-	//	if review.CurrentReviewerLevel != nil {
-	//		return types.StringValue(string(*review.CurrentReviewerLevel))
-	//	}
-	//	return types.StringNull()
-	//}()
-	data.Created = types.StringValue(review.Created.Format(time.RFC3339))
-	data.CreatedBy = types.StringValue(review.CreatedBy)
-	data.LastUpdated = types.StringValue(review.LastUpdated.Format(time.RFC3339))
-	data.LastUpdatedBy = types.StringValue(review.LastUpdatedBy)
-	//data.Decided = func() types.String {
-	//	if review.Decided != nil {
-	//		return types.StringValue(review.Decided.Format(time.RFC3339))
-	//	}
-	//	return types.StringNull()
-	//}()
+	applyReviewToState(ctx, &data, reassignedReview)
 	// Save updated state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-//	func applyReassignReviewToState(ctx context.Context, data *oktaInternalGovernance.ReviewFull, state *reviewResourceModel) diag.Diagnostics {
-//		var diags diag.Diagnostics
-//
-//		state.Id = types.StringValue(data.Id)
-//		state.CampaignId = types.StringValue(data.CampaignId)
-//		state.ResourceId = types.StringValue(data.ResourceId)
-//		state.Decision = types.StringValue(string(data.Decision))
-//		state.ReviewerType = types.StringValue(string(data.ReviewerType))
-//
-//		state.CurrentReviewerLevel = func() types.String {
-//			if data.CurrentReviewerLevel != nil {
-//				return types.StringValue(string(*data.CurrentReviewerLevel))
-//			}
-//			return types.StringNull()
-//		}()
-//
-//		state.Created = types.StringValue(data.Created.Format(time.RFC3339))
-//		state.CreatedBy = types.StringValue(data.CreatedBy)
-//		state.LastUpdated = types.StringValue(data.LastUpdated.Format(time.RFC3339))
-//		state.LastUpdatedBy = types.StringValue(data.LastUpdatedBy)
-//
-//		state.Decided = func() types.String {
-//			if data.Decided != nil {
-//				return types.StringValue(data.Decided.Format(time.RFC3339))
-//			}
-//			return types.StringNull()
-//		}()
-//
-//		state.PrincipalProfile = convertPrincipalProfile(&data.PrincipalProfile)
-//		state.ReviewerProfile = convertPrincipalProfile(data.ReviewerProfile)
-//		state.Links = convertLinks(&data.Links)
-//
-//		return diags
-//	}
+func applyReviewToState(ctx context.Context, data *reviewResourceModel, reassignedReview *governance.ReviewReassignList) {
+	review := reassignedReview.Data[0]
+	data.Id = types.StringValue(review.Id)
+	data.ReviewerId = types.StringValue(review.ReviewerProfile.GetId())
+	data.CampaignId = types.StringValue(review.GetCampaignId())
+	data.ResourceId = types.StringValue(review.GetResourceId())
+	data.Decision = types.StringValue(string(review.GetDecision()))
+	data.ReviewerType = types.StringValue(string(review.GetReviewerType()))
+	data.Created = types.StringValue(review.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(review.GetCreatedBy())
+	data.LastUpdated = types.StringValue(review.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(review.GetLastUpdatedBy())
+}
+
 func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data reviewResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -246,22 +209,10 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 	data.ResourceId = types.StringValue(getReview.ResourceId)
 	data.Decision = types.StringValue(string(getReview.Decision))
 	data.ReviewerType = types.StringValue(string(getReview.ReviewerType))
-	//data.CurrentReviewerLevel = func() types.String {
-	//	if getReview.CurrentReviewerLevel != nil {
-	//		return types.StringValue(string(*getReview.CurrentReviewerLevel))
-	//	}
-	//	return types.StringNull()
-	//}()
 	data.Created = types.StringValue(getReview.Created.Format(time.RFC3339))
 	data.CreatedBy = types.StringValue(getReview.CreatedBy)
 	data.LastUpdated = types.StringValue(getReview.LastUpdated.Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(getReview.LastUpdatedBy)
-	//data.Decided = func() types.String {
-	//	if getReview.Decided != nil {
-	//		return types.StringValue(getReview.Decided.Format(time.RFC3339))
-	//	}
-	//	return types.StringNull()
-	//}()
 
 	// No-op: the reassignment is not persisted on Okta's side
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -300,23 +251,11 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 	data.ResourceId = types.StringValue(review.ResourceId)
 	data.Decision = types.StringValue(string(review.Decision))
 	data.ReviewerType = types.StringValue(string(review.ReviewerType))
-	//data.CurrentReviewerLevel = func() types.String {
-	//	if review.CurrentReviewerLevel != nil {
-	//		return types.StringValue(string(*review.CurrentReviewerLevel))
-	//	}
-	//	return types.StringNull()
-	//}()
 	data.Created = types.StringValue(review.Created.Format(time.RFC3339))
 	data.CreatedBy = types.StringValue(review.CreatedBy)
 	data.LastUpdated = types.StringValue(review.LastUpdated.Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(review.LastUpdatedBy)
-	//data.Decided = func() types.String {
-	//	if review.Decided != nil {
-	//		return types.StringValue(review.Decided.Format(time.RFC3339))
-	//	}
-	//	return types.StringNull()
-	//}()
-	////// Save updated data into Terraform state
+	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -324,9 +263,9 @@ func (r *reviewResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	// No delete call exists in Okta — review reassignments are immutable
 }
 
-func buildReassignReviewRequest(data reviewResourceModel) oktaInternalGovernance.ReviewsReassign {
-	reassignReviewBody := oktaInternalGovernance.ReviewsReassign{}
-	reviewerLevel, _ := oktaInternalGovernance.NewReviewerLevelTypeFromValue(data.ReviewerLevel.ValueString())
+func buildReassignReviewRequest(data reviewResourceModel) governance.ReviewsReassign {
+	reassignReviewBody := governance.ReviewsReassign{}
+	reviewerLevel, _ := governance.NewReviewerLevelTypeFromValue(data.ReviewerLevel.ValueString())
 	reviewIds := buildReviewIds(data.ReviewIds)
 	if len(reviewIds) > 0 {
 		reassignReviewBody.ReviewIds = reviewIds

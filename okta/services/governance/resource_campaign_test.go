@@ -10,9 +10,9 @@ import (
 )
 
 func TestAccCampaignResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaInternalGovernanceCampaign, t.Name())
+	mgr := newFixtureManager("resources", resources.GovernanceCampaign, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaInternalGovernanceCampaign)
+	resourceName := fmt.Sprintf("%s.test", resources.GovernanceCampaign)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
