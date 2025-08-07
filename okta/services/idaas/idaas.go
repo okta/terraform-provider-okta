@@ -98,6 +98,7 @@ func FWProviderResources() []func() resource.Resource {
 		newEmailTemplateSettingsResource,
 		newFeaturesResource,
 		newRealmResource,
+		newRealmAssignmentResource,
 	}
 }
 
@@ -111,6 +112,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newDeviceAssurancePolicyDataSource,
 		newFeaturesDataSource,
 		newRealmDataSource,
+		newRealmAssignmentDataSource,
 	}
 }
 
