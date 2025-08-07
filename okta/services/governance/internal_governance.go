@@ -13,11 +13,11 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	fwdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 // oktaMutexKV is a global MutexKV for use within this plugin
@@ -156,21 +156,4 @@ func resourceConfiguration(req resource.ConfigureRequest, resp *resource.Configu
 	}
 
 	return p
-}
-
-func frameworkResourceOIEOnlyFeatureError(name string) fwdiag.Diagnostics {
-	return frameworkOIEOnlyFeatureError("resources", name)
-}
-
-func frameworkOIEOnlyFeatureError(kind, name string) fwdiag.Diagnostics {
-	url := fmt.Sprintf("https://registry.terraform.io/providers/okta/okta/latest/docs/%s/%s", kind, string(name[5:]))
-	if kind == "resources" {
-		kind = "resource"
-	}
-	if kind == "data-sources" {
-		kind = "datasource"
-	}
-	var diags fwdiag.Diagnostics
-	diags.AddError(fmt.Sprintf("%q is a %s for OIE Orgs only", name, kind), fmt.Sprintf(", see %s", url))
-	return diags
 }

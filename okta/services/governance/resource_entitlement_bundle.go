@@ -3,7 +3,7 @@ package governance
 import (
 	"context"
 
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -241,29 +241,29 @@ func (r *entitlementBundleResource) Delete(ctx context.Context, req resource.Del
 
 }
 
-func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) oktaInternalGovernance.EntitlementBundleCreatable {
-	rt := oktaInternalGovernance.ResourceType2(data.Target.Type.ValueString())
+func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) governance.EntitlementBundleCreatable {
+	rt := governance.ResourceType2(data.Target.Type.ValueString())
 	name := data.Name.ValueString()
 	description := data.Description.ValueStringPointer()
-	target := oktaInternalGovernance.TargetResource{
+	target := governance.TargetResource{
 		ExternalId: data.Target.ExternalId.ValueString(),
 		Type:       rt,
 	}
-	entitlements := make([]oktaInternalGovernance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
+	entitlements := make([]governance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
 	for _, ent := range data.EntitlementsBundles {
-		values := make([]oktaInternalGovernance.EntitlementValueCreatable, 0, len(ent.Values))
+		values := make([]governance.EntitlementValueCreatable, 0, len(ent.Values))
 		for _, val := range ent.Values {
-			values = append(values, oktaInternalGovernance.EntitlementValueCreatable{
+			values = append(values, governance.EntitlementValueCreatable{
 				Id: val.Id.ValueStringPointer(),
 			})
 		}
-		entitlements = append(entitlements, oktaInternalGovernance.EntitlementCreatable{
+		entitlements = append(entitlements, governance.EntitlementCreatable{
 			Id:     ent.Id.ValueStringPointer(),
 			Values: values,
 		})
 	}
 
-	return oktaInternalGovernance.EntitlementBundleCreatable{
+	return governance.EntitlementBundleCreatable{
 		Name:         name,
 		Description:  description,
 		Target:       target,
@@ -271,7 +271,7 @@ func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) oktaI
 	}
 }
 
-func applyEntitlementBundleToState(ctx context.Context, data *oktaInternalGovernance.EntitlementBundleFull, state *entitlementBundleResourceModel) diag.Diagnostics {
+func applyEntitlementBundleToState(ctx context.Context, data *governance.EntitlementBundleFull, state *entitlementBundleResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	state.Id = types.StringValue(data.Id)
 	state.Name = types.StringValue(data.Name)
@@ -299,32 +299,32 @@ func applyEntitlementBundleToState(ctx context.Context, data *oktaInternalGovern
 	return diags
 }
 
-func buildEntitlementBundleUpdateBody(data entitlementBundleResourceModel) oktaInternalGovernance.EntitlementBundleUpdatable {
-	rt := oktaInternalGovernance.ResourceType2(data.Target.Type.ValueString())
-	status := oktaInternalGovernance.EntitlementBundleStatus(data.Status.ValueString())
+func buildEntitlementBundleUpdateBody(data entitlementBundleResourceModel) governance.EntitlementBundleUpdatable {
+	rt := governance.ResourceType2(data.Target.Type.ValueString())
+	status := governance.EntitlementBundleStatus(data.Status.ValueString())
 	name := data.Name.ValueString()
 	description := data.Description.ValueStringPointer()
-	target := oktaInternalGovernance.TargetResource{
+	target := governance.TargetResource{
 		ExternalId: data.Target.ExternalId.ValueString(),
 		Type:       rt,
 	}
 	targetResourceOrn := data.TargetResourceOrn.ValueString()
-	entitlements := make([]oktaInternalGovernance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
+	entitlements := make([]governance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
 	if data.EntitlementsBundles != nil || len(data.EntitlementsBundles) > 0 {
 		for _, ent := range data.EntitlementsBundles {
-			values := make([]oktaInternalGovernance.EntitlementValueCreatable, 0, len(ent.Values))
+			values := make([]governance.EntitlementValueCreatable, 0, len(ent.Values))
 			for _, val := range ent.Values {
-				values = append(values, oktaInternalGovernance.EntitlementValueCreatable{
+				values = append(values, governance.EntitlementValueCreatable{
 					Id: val.Id.ValueStringPointer(),
 				})
 			}
-			entitlements = append(entitlements, oktaInternalGovernance.EntitlementCreatable{
+			entitlements = append(entitlements, governance.EntitlementCreatable{
 				Id:     ent.Id.ValueStringPointer(),
 				Values: values,
 			})
 		}
 	}
-	return oktaInternalGovernance.EntitlementBundleUpdatable{
+	return governance.EntitlementBundleUpdatable{
 		Id:                data.Id.ValueString(),
 		Name:              name,
 		Description:       description,

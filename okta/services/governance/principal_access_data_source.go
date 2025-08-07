@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
@@ -259,7 +259,7 @@ func (d *principalAccessDataSource) Read(ctx context.Context, req datasource.Rea
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func convertGrant(g oktaInternalGovernance.Grant) *grantModel {
+func convertGrant(g governance.Grant) *grantModel {
 	if &g == nil {
 		return nil
 	}

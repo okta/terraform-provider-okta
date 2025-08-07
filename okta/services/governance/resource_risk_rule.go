@@ -2,7 +2,7 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"time"
 
@@ -277,8 +277,8 @@ func (r *riskRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func buildUpdateRiskRule(data riskRuleModel) oktaInternalGovernance.UpdateRiskRuleRequest {
-	var r oktaInternalGovernance.UpdateRiskRuleRequest
+func buildUpdateRiskRule(data riskRuleModel) governance.UpdateRiskRuleRequest {
+	var r governance.UpdateRiskRuleRequest
 	r.SetId(data.Id.ValueString())
 	r.SetName(data.Name.ValueString())
 	r.SetDescription(data.Description.ValueString())
@@ -287,8 +287,8 @@ func buildUpdateRiskRule(data riskRuleModel) oktaInternalGovernance.UpdateRiskRu
 	return r
 }
 
-func buildRiskRuleConflictCriteriaUpdatable(criteria *conflictCriteriaModel) oktaInternalGovernance.ConflictCriteriaUpdatable {
-	var r oktaInternalGovernance.ConflictCriteriaUpdatable
+func buildRiskRuleConflictCriteriaUpdatable(criteria *conflictCriteriaModel) governance.ConflictCriteriaUpdatable {
+	var r governance.ConflictCriteriaUpdatable
 	if criteria != nil {
 		r.SetAnd(buildRiskRuleCriteria(criteria.And))
 	}
@@ -316,7 +316,7 @@ func (r *riskRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 }
 
-func applyToState(data *riskRuleModel, createdRiskRule *oktaInternalGovernance.RiskRuleResponse) {
+func applyToState(data *riskRuleModel, createdRiskRule *governance.RiskRuleResponse) {
 	data.Id = types.StringValue(createdRiskRule.Id)
 	data.Notes = types.StringPointerValue(createdRiskRule.Notes)
 	data.Name = types.StringValue(createdRiskRule.Name)
@@ -375,8 +375,8 @@ func applyToState(data *riskRuleModel, createdRiskRule *oktaInternalGovernance.R
 	}
 }
 
-func buildRiskRule(data riskRuleModel) oktaInternalGovernance.CreateRiskRuleRequest {
-	return oktaInternalGovernance.CreateRiskRuleRequest{
+func buildRiskRule(data riskRuleModel) governance.CreateRiskRuleRequest {
+	return governance.CreateRiskRuleRequest{
 		Name:             data.Name.ValueString(),
 		Description:      data.Description.ValueStringPointer(),
 		Type:             data.Type.ValueString(),
@@ -386,20 +386,20 @@ func buildRiskRule(data riskRuleModel) oktaInternalGovernance.CreateRiskRuleRequ
 	}
 }
 
-func buildRiskRuleConflictCriteria(criteria *conflictCriteriaModel) oktaInternalGovernance.ConflictCriteriaCreatable {
-	return oktaInternalGovernance.ConflictCriteriaCreatable{
+func buildRiskRuleConflictCriteria(criteria *conflictCriteriaModel) governance.ConflictCriteriaCreatable {
+	return governance.ConflictCriteriaCreatable{
 		And: buildRiskRuleCriteria(criteria.And),
 	}
 }
 
-func buildRiskRuleCriteria(and []conflictCriterionModel) []oktaInternalGovernance.CriteriaCreatable {
-	result := make([]oktaInternalGovernance.CriteriaCreatable, len(and))
+func buildRiskRuleCriteria(and []conflictCriterionModel) []governance.CriteriaCreatable {
+	result := make([]governance.CriteriaCreatable, len(and))
 	for i, item := range and {
-		result[i] = oktaInternalGovernance.CriteriaCreatable{
+		result[i] = governance.CriteriaCreatable{
 			Name:      item.Name.ValueStringPointer(),
 			Attribute: item.Attribute.ValueStringPointer(),
 			Operation: item.Operation.ValueStringPointer(),
-			Value: &oktaInternalGovernance.CriteriaValueCreatable{
+			Value: &governance.CriteriaValueCreatable{
 				Type:  item.Value.Type.ValueStringPointer(),
 				Value: buildRiskRuleEntitlementMatch(item.Value.Value),
 			},
@@ -408,14 +408,14 @@ func buildRiskRuleCriteria(and []conflictCriterionModel) []oktaInternalGovernanc
 	return result
 }
 
-func buildRiskRuleEntitlementMatch(value []entitlementRuleModel) []oktaInternalGovernance.EntitlementCreatable {
-	var result []oktaInternalGovernance.EntitlementCreatable
+func buildRiskRuleEntitlementMatch(value []entitlementRuleModel) []governance.EntitlementCreatable {
+	var result []governance.EntitlementCreatable
 	for _, item := range value {
-		entitlement := oktaInternalGovernance.EntitlementCreatable{
+		entitlement := governance.EntitlementCreatable{
 			Id: item.Id.ValueStringPointer(),
 		}
 		for _, val := range item.Values {
-			entitlement.Values = append(entitlement.Values, oktaInternalGovernance.EntitlementValueCreatable{
+			entitlement.Values = append(entitlement.Values, governance.EntitlementValueCreatable{
 				Id: val.Id.ValueStringPointer(),
 			})
 		}
@@ -424,10 +424,10 @@ func buildRiskRuleEntitlementMatch(value []entitlementRuleModel) []oktaInternalG
 	return result
 }
 
-func buildRiskRuleResources(riskResources []riskRuleResourceModel) []oktaInternalGovernance.RuleConflictResource {
-	var result []oktaInternalGovernance.RuleConflictResource
+func buildRiskRuleResources(riskResources []riskRuleResourceModel) []governance.RuleConflictResource {
+	var result []governance.RuleConflictResource
 	for _, riskResource := range riskResources {
-		result = append(result, oktaInternalGovernance.RuleConflictResource{
+		result = append(result, governance.RuleConflictResource{
 			ResourceOrn: riskResource.ResourceOrn.ValueStringPointer(),
 		})
 	}
