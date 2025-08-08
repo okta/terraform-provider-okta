@@ -1,0 +1,346 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1061
+        host: skip-auth-policy-00.dne-okta.com
+        body: |
+            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_3231961193","settings":{"app":{},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"allowMultipleAcsEndpoints":false,"assertionSigned":true,"attributeStatements":[],"audience":"http://audience.com","audienceOverride":"","authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","defaultRelayState":"","destination":"http://its-about-the-journey.com","destinationOverride":"","digestAlgorithm":"SHA1","honorForceAuthn":true,"recipient":"http://here.com","recipientOverride":"","responseSigned":true,"samlSignedRequestEnabled":false,"signatureAlgorithm":"RSA_SHA1","slo":{"enabled":false},"ssoAcsUrl":"http://google.com","ssoAcsUrlOverride":"","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","subjectNameIdTemplate":"${source.login}"}},"signOnMode":"SAML_2_0","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form:
+            activate:
+                - "true"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy89cvLokD3DJ697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:skip-auth-policy-00_testacc3231961193_1:0oatzy89cvLokD3DJ697","name":"skip-auth-policy-00_testacc3231961193_1","label":"testAcc_3231961193","status":"ACTIVE","lastUpdated":"2025-08-08T02:13:33.000Z","created":"2025-08-08T02:13:33.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"skip-auth-policy-00_testacc3231961193_1_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${source.login}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","responseSigned":true,"assertionSigned":true,"signatureAlgorithm":"RSA_SHA1","digestAlgorithm":"SHA1","honorForceAuthn":true,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://skip-auth-policy-00-admin.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"skip-auth-policy-00_testacc3231961193_1_link","href":"https://skip-auth-policy-00.dne-okta.com/home/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/alntzyedqtOcgEHZw697","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.367770083s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy89cvLokD3DJ697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:skip-auth-policy-00_testacc3231961193_1:0oatzy89cvLokD3DJ697","name":"skip-auth-policy-00_testacc3231961193_1","label":"testAcc_3231961193","status":"ACTIVE","lastUpdated":"2025-08-08T02:13:33.000Z","created":"2025-08-08T02:13:33.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"skip-auth-policy-00_testacc3231961193_1_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${source.login}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","responseSigned":true,"assertionSigned":true,"signatureAlgorithm":"RSA_SHA1","digestAlgorithm":"SHA1","honorForceAuthn":true,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://skip-auth-policy-00-admin.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"skip-auth-policy-00_testacc3231961193_1_link","href":"https://skip-auth-policy-00.dne-okta.com/home/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/alntzyedqtOcgEHZw697","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 698.66725ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            kid:
+                - uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/sso/saml/metadata?kid=uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2349
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exktzy89cuD71VlGN697" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDqjCCApKgAwIBAgIGAZiHdHVgMA0GCSqGSIb3DQEBCwUAMIGVMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxFjAUBgNVBAMMDXRyaWFsLTUzMDk1NDIxHDAaBgkqhkiG9w0B
+            CQEWDWluZm9Ab2t0YS5jb20wHhcNMjUwODA4MDIxMjMzWhcNMzUwODA4MDIxMzMyWjCBlTELMAkG
+            A1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTAL
+            BgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRYwFAYDVQQDDA10cmlhbC01MzA5NTQy
+            MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+            CgKCAQEAsFjMFJpbWe/D7H3wij4EG5wqBZLIkoKF0a+DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFp
+            UcS4QLfxZ/Iq+4NKC/FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZ
+            baMtXZ24RPbf/ifQfbnClreLVFAU4OrEqtEax/SZ0+2FMKt/KdIja29ok0lrq8GHjk/aZs0hId0H
+            eEvdtaS8JprBMsZ/Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIj
+            m9Dtsx8i/6xbUlChk65IymNtCExa215ThBSS6X05934c9wIDAQABMA0GCSqGSIb3DQEBCwUAA4IB
+            AQANZPCBxjgMRLIPCrFtsxH7zyviUQlflwY2ESxH9fSLwVl0tjerJvkKNqRQIb+dTMO1knTSsxEX
+            tJFULM9fboltmGfNfTWjbBzv0ZdtESUT+fd/Y4RdyezIPP6d/hVu75Ai11OIXK9RXJ1s1iAi33Rj
+            tgIk+j5xY0M9HGQeaYPNLWb7F4hvy5Cq25RPlgvxR+d1zy2hFasyoOMZ5ySz9Yw2tL19acgeSIgE
+            I5m7/KuW3W2QNbM7YU7f9qIJuxv8A68yWjob7DTwVK6uVkLocvqvgwWF8hzEHpNHnAzZwJUvUSh8
+            im0oNKjSZdjVoLrM52my+n2pTuvWsMnXHlbsUDux</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://skip-auth-policy-00.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/exktzy89cuD71VlGN697/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://skip-auth-policy-00.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/exktzy89cuD71VlGN697/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2349"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Fri, 08 Aug 2025 02:13:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 939.370417ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2025-08-08T02:13:33.000Z","lastUpdated":"2025-08-08T02:13:33.000Z","expiresAt":"2035-08-08T02:13:32.000Z","kid":"uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4","use":"sig","x5c":["MIIDqjCCApKgAwIBAgIGAZiHdHVgMA0GCSqGSIb3DQEBCwUAMIGVMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFjAUBgNVBAMMDXRyaWFsLTUzMDk1NDIxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjUwODA4MDIxMjMzWhcNMzUwODA4MDIxMzMyWjCBlTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRYwFAYDVQQDDA10cmlhbC01MzA5NTQyMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsFjMFJpbWe/D7H3wij4EG5wqBZLIkoKF0a+DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFpUcS4QLfxZ/Iq+4NKC/FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZbaMtXZ24RPbf/ifQfbnClreLVFAU4OrEqtEax/SZ0+2FMKt/KdIja29ok0lrq8GHjk/aZs0hId0HeEvdtaS8JprBMsZ/Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIjm9Dtsx8i/6xbUlChk65IymNtCExa215ThBSS6X05934c9wIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQANZPCBxjgMRLIPCrFtsxH7zyviUQlflwY2ESxH9fSLwVl0tjerJvkKNqRQIb+dTMO1knTSsxEXtJFULM9fboltmGfNfTWjbBzv0ZdtESUT+fd/Y4RdyezIPP6d/hVu75Ai11OIXK9RXJ1s1iAi33RjtgIk+j5xY0M9HGQeaYPNLWb7F4hvy5Cq25RPlgvxR+d1zy2hFasyoOMZ5ySz9Yw2tL19acgeSIgEI5m7/KuW3W2QNbM7YU7f9qIJuxv8A68yWjob7DTwVK6uVkLocvqvgwWF8hzEHpNHnAzZwJUvUSh8im0oNKjSZdjVoLrM52my+n2pTuvWsMnXHlbsUDux"],"x5t#S256":"hETNU1q45_TbxVAHybf0QGzcQ5Hqx6VQ4fZqsmgeao0","e":"AQAB","n":"sFjMFJpbWe_D7H3wij4EG5wqBZLIkoKF0a-DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFpUcS4QLfxZ_Iq-4NKC_FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZbaMtXZ24RPbf_ifQfbnClreLVFAU4OrEqtEax_SZ0-2FMKt_KdIja29ok0lrq8GHjk_aZs0hId0HeEvdtaS8JprBMsZ_Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIjm9Dtsx8i_6xbUlChk65IymNtCExa215ThBSS6X05934c9w"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 847.01475ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy89cvLokD3DJ697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:skip-auth-policy-00_testacc3231961193_1:0oatzy89cvLokD3DJ697","name":"skip-auth-policy-00_testacc3231961193_1","label":"testAcc_3231961193","status":"ACTIVE","lastUpdated":"2025-08-08T02:13:33.000Z","created":"2025-08-08T02:13:33.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"skip-auth-policy-00_testacc3231961193_1_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":"","ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${source.login}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","responseSigned":true,"assertionSigned":true,"signatureAlgorithm":"RSA_SHA1","digestAlgorithm":"SHA1","honorForceAuthn":true,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://skip-auth-policy-00-admin.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"skip-auth-policy-00_testacc3231961193_1_link","href":"https://skip-auth-policy-00.dne-okta.com/home/skip-auth-policy-00_testacc3231961193_1/0oatzy89cvLokD3DJ697/alntzyedqtOcgEHZw697","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 688.011042ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            kid:
+                - uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/sso/saml/metadata?kid=uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2349
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exktzy89cuD71VlGN697" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDqjCCApKgAwIBAgIGAZiHdHVgMA0GCSqGSIb3DQEBCwUAMIGVMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxFjAUBgNVBAMMDXRyaWFsLTUzMDk1NDIxHDAaBgkqhkiG9w0B
+            CQEWDWluZm9Ab2t0YS5jb20wHhcNMjUwODA4MDIxMjMzWhcNMzUwODA4MDIxMzMyWjCBlTELMAkG
+            A1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTAL
+            BgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRYwFAYDVQQDDA10cmlhbC01MzA5NTQy
+            MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+            CgKCAQEAsFjMFJpbWe/D7H3wij4EG5wqBZLIkoKF0a+DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFp
+            UcS4QLfxZ/Iq+4NKC/FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZ
+            baMtXZ24RPbf/ifQfbnClreLVFAU4OrEqtEax/SZ0+2FMKt/KdIja29ok0lrq8GHjk/aZs0hId0H
+            eEvdtaS8JprBMsZ/Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIj
+            m9Dtsx8i/6xbUlChk65IymNtCExa215ThBSS6X05934c9wIDAQABMA0GCSqGSIb3DQEBCwUAA4IB
+            AQANZPCBxjgMRLIPCrFtsxH7zyviUQlflwY2ESxH9fSLwVl0tjerJvkKNqRQIb+dTMO1knTSsxEX
+            tJFULM9fboltmGfNfTWjbBzv0ZdtESUT+fd/Y4RdyezIPP6d/hVu75Ai11OIXK9RXJ1s1iAi33Rj
+            tgIk+j5xY0M9HGQeaYPNLWb7F4hvy5Cq25RPlgvxR+d1zy2hFasyoOMZ5ySz9Yw2tL19acgeSIgE
+            I5m7/KuW3W2QNbM7YU7f9qIJuxv8A68yWjob7DTwVK6uVkLocvqvgwWF8hzEHpNHnAzZwJUvUSh8
+            im0oNKjSZdjVoLrM52my+n2pTuvWsMnXHlbsUDux</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://skip-auth-policy-00.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/exktzy89cuD71VlGN697/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://skip-auth-policy-00.dne-okta.com/app/skip-auth-policy-00_testacc3231961193_1/exktzy89cuD71VlGN697/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2349"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Fri, 08 Aug 2025 02:13:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 839.084333ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2025-08-08T02:13:33.000Z","lastUpdated":"2025-08-08T02:13:33.000Z","expiresAt":"2035-08-08T02:13:32.000Z","kid":"uKQQ_FvO4VgD92YHyXApF6GZgWSa6qy3XPYTuEqdGg4","use":"sig","x5c":["MIIDqjCCApKgAwIBAgIGAZiHdHVgMA0GCSqGSIb3DQEBCwUAMIGVMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFjAUBgNVBAMMDXRyaWFsLTUzMDk1NDIxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjUwODA4MDIxMjMzWhcNMzUwODA4MDIxMzMyWjCBlTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRYwFAYDVQQDDA10cmlhbC01MzA5NTQyMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsFjMFJpbWe/D7H3wij4EG5wqBZLIkoKF0a+DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFpUcS4QLfxZ/Iq+4NKC/FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZbaMtXZ24RPbf/ifQfbnClreLVFAU4OrEqtEax/SZ0+2FMKt/KdIja29ok0lrq8GHjk/aZs0hId0HeEvdtaS8JprBMsZ/Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIjm9Dtsx8i/6xbUlChk65IymNtCExa215ThBSS6X05934c9wIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQANZPCBxjgMRLIPCrFtsxH7zyviUQlflwY2ESxH9fSLwVl0tjerJvkKNqRQIb+dTMO1knTSsxEXtJFULM9fboltmGfNfTWjbBzv0ZdtESUT+fd/Y4RdyezIPP6d/hVu75Ai11OIXK9RXJ1s1iAi33RjtgIk+j5xY0M9HGQeaYPNLWb7F4hvy5Cq25RPlgvxR+d1zy2hFasyoOMZ5ySz9Yw2tL19acgeSIgEI5m7/KuW3W2QNbM7YU7f9qIJuxv8A68yWjob7DTwVK6uVkLocvqvgwWF8hzEHpNHnAzZwJUvUSh8im0oNKjSZdjVoLrM52my+n2pTuvWsMnXHlbsUDux"],"x5t#S256":"hETNU1q45_TbxVAHybf0QGzcQ5Hqx6VQ4fZqsmgeao0","e":"AQAB","n":"sFjMFJpbWe_D7H3wij4EG5wqBZLIkoKF0a-DVJbtbXQAmE5XVEE3Ou9nMrMI3htevQFpUcS4QLfxZ_Iq-4NKC_FhFnPMkaPMEQp8GlospS99deTRPoXYPTHliHscAmhbHUPqne0SiNt8jQQZbaMtXZ24RPbf_ifQfbnClreLVFAU4OrEqtEax_SZ0-2FMKt_KdIja29ok0lrq8GHjk_aZs0hId0HeEvdtaS8JprBMsZ_Ma7wYbi3XP76wFI30Cadbez5wkBICvPOXFrxTbvS6ZcDz8DNWlQfcyzY9bIjm9Dtsx8i_6xbUlChk65IymNtCExa215ThBSS6X05934c9w"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 907.187084ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:13:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 693.951042ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy89cvLokD3DJ697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 08 Aug 2025 02:13:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 799.050125ms

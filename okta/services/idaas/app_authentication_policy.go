@@ -9,6 +9,14 @@ import (
 )
 
 func createOrUpdateAuthenticationPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, appId string) error {
+	// Check if authentication policy operations should be skipped
+	// Only check if the field exists in the schema to avoid errors
+	if _, exists := d.GetOk("skip_authentication_policy"); exists {
+		if skip, ok := d.GetOk("skip_authentication_policy"); ok && skip.(bool) {
+			return nil
+		}
+	}
+
 	raw, ok := d.GetOk("authentication_policy")
 	if !ok {
 		return assignDefaultAuthenticationPolicy(ctx, m, appId)
@@ -19,6 +27,13 @@ func createOrUpdateAuthenticationPolicy(ctx context.Context, d *schema.ResourceD
 }
 
 func setAuthenticationPolicy(ctx context.Context, m interface{}, d *schema.ResourceData, links interface{}) {
+	// Check if authentication policy operations should be skipped
+	// Only check if the field exists in the schema to avoid errors
+	if _, exists := d.GetOk("skip_authentication_policy"); exists {
+		if skip, ok := d.GetOk("skip_authentication_policy"); ok && skip.(bool) {
+			return
+		}
+	}
 	// setAuthenticationPolicy by default, switching from optional to optional and computed
 	if providerIsClassicOrg(ctx, m) {
 		return
