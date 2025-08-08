@@ -436,6 +436,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Description: "SAML Signed Request enabled",
 				Default:     false,
 			},
+			"skip_authentication_policy": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip authentication policy operations. When set to true, the provider will not attempt to create, update, or delete authentication policies for this application.",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -474,9 +480,11 @@ func resourceAppSamlCreate(ctx context.Context, d *schema.ResourceData, meta int
 	// New applications (other than Office365, Radius, and MFA) are assigned to the default Policy.
 	// TODO: determine how to inspect app for MFA status
 	if app.Name != "office365" && app.Name != "radius" {
-		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-		if err != nil {
-			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+		if !d.Get("skip_authentication_policy").(bool) {
+			err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+			if err != nil {
+				return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+			}
 		}
 	}
 	return resourceAppSamlRead(ctx, d, meta)
@@ -492,7 +500,9 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, meta, d, app.Links)
+	if !d.Get("skip_authentication_policy").(bool) {
+		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	}
 	if app.Settings != nil {
 		if app.Settings.SignOn != nil {
 			err = setSamlSettings(d, app.Settings.SignOn)
@@ -605,9 +615,11 @@ func resourceAppSamlUpdate(ctx context.Context, d *schema.ResourceData, meta int
 			return diag.Errorf("failed to upload logo for SAML application: %v", err)
 		}
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for an SAML application: %v", err)
+		}
 	}
 	return resourceAppSamlRead(ctx, d, meta)
 }
