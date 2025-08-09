@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
-	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 func FWProviderResources() []func() resource.Resource {
@@ -23,7 +22,6 @@ func FWProviderResources() []func() resource.Resource {
 		newGrantResource,
 		newRiskRuleResource,
 		newCollectionResource,
-		newMyRequestsResource,
 		newEndUserMyRequestsResource,
 	}
 }

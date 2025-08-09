@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 
-	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -12,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -225,27 +225,27 @@ func (r *EndUserMyRequestsResource) Delete(ctx context.Context, req resource.Del
 	)
 }
 
-func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequestsResourceModel) (oktaInternalGovernance.MyRequestCreatable, diag.Diagnostics) {
+func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequestsResourceModel) (governance.MyRequestCreatable, diag.Diagnostics) {
 	if data.RequesterFieldValues.IsNull() || data.RequesterFieldValues.IsUnknown() {
-		return oktaInternalGovernance.MyRequestCreatable{}, nil
+		return governance.MyRequestCreatable{}, nil
 	}
 
 	var RequesterFieldValues []RequesterFieldValueEntry
 	diags := data.RequesterFieldValues.ElementsAs(ctx, &RequesterFieldValues, true)
 	if diags.HasError() {
-		return oktaInternalGovernance.MyRequestCreatable{}, diags
+		return governance.MyRequestCreatable{}, diags
 	}
 
-	requesterFieldValues := []oktaInternalGovernance.RequestFieldValue{}
+	requesterFieldValues := []governance.RequestFieldValue{}
 	for _, element := range RequesterFieldValues {
-		requestFieldValue := oktaInternalGovernance.RequestFieldValue{}
+		requestFieldValue := governance.RequestFieldValue{}
 		requestFieldValue.Id = element.Id.ValueString()
 
 		if !element.Label.IsNull() && !element.Label.IsUnknown() {
 			requestFieldValue.Label = element.Label.ValueStringPointer()
 		}
 		if !element.Type.IsNull() && !element.Type.IsUnknown() {
-			requestFieldValue.Type = (*oktaInternalGovernance.RequestFieldType)(element.Type.ValueStringPointer())
+			requestFieldValue.Type = (*governance.RequestFieldType)(element.Type.ValueStringPointer())
 		}
 		if !element.Value.IsNull() && !element.Value.IsUnknown() {
 			requestFieldValue.Value = element.Value.ValueStringPointer()
@@ -254,13 +254,13 @@ func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequests
 			var values []string
 			diags := element.Values.ElementsAs(ctx, &values, false)
 			if diags.HasError() {
-				return oktaInternalGovernance.MyRequestCreatable{}, diags
+				return governance.MyRequestCreatable{}, diags
 			}
 			requestFieldValue.Values = values
 		}
 		requesterFieldValues = append(requesterFieldValues, requestFieldValue)
 	}
-	return oktaInternalGovernance.MyRequestCreatable{
+	return governance.MyRequestCreatable{
 		RequesterFieldValues: requesterFieldValues,
 	}, nil
 }
