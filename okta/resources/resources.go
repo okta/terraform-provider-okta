@@ -119,4 +119,7 @@ const (
 	GovernanceCampaign                     = "okta_campaign"
 	GovernanceEntitlement                  = "okta_entitlement"
 	GovernanceReview                       = "okta_review"
+	OktaInternalGovernanceCampaign         = "okta_campaign"
+	OktaInternalGovernanceEntitlement      = "okta_entitlement"
+	OktaEndUserMyRequests                  = "okta_end_user_my_requests"
 )
