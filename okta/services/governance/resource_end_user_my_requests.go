@@ -6,6 +6,7 @@ import (
 	"example.com/aditya-okta/okta-ig-sdk-golang/oktaInternalGovernance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -20,7 +21,7 @@ var (
 	_ resource.ResourceWithImportState = &EndUserMyRequestsResource{}
 )
 
-func newMyRequestsResource() resource.Resource {
+func newEndUserMyRequestsResource() resource.Resource {
 	return &EndUserMyRequestsResource{}
 }
 
@@ -35,9 +36,10 @@ type EndUserMyRequestsResourceModel struct {
 	Status               types.String `tfsdk:"status"`
 }
 
-type RequesterFieldValue struct {
+type RequesterFieldValueEntry struct {
 	Id     types.String `tfsdk:"id"`
 	Label  types.String `tfsdk:"label"`
+	Type   types.String `tfsdk:"type"`
 	Value  types.String `tfsdk:"value"`
 	Values types.List   `tfsdk:"values"`
 }
@@ -58,8 +60,9 @@ func (r *EndUserMyRequestsResource) Schema(ctx context.Context, req resource.Sch
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Unique identifier for the object",
+				Description: "The id of the request",
 				Computed:    true,
+				Optional:    true,
 			},
 			"entry_id": schema.StringAttribute{
 				Description: "The ID of the catalog entry",
@@ -107,7 +110,7 @@ func (r *EndUserMyRequestsResource) Schema(ctx context.Context, req resource.Sch
 }
 
 func (r *EndUserMyRequestsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var stateData EndUserMyRequestsResourceModel // what our plan contains (assuming it read from state file)
+	var stateData EndUserMyRequestsResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &stateData)...)
@@ -118,7 +121,12 @@ func (r *EndUserMyRequestsResource) Create(ctx context.Context, req resource.Cre
 
 	// step 1 : "Convert" Terraform Type to API Compatible Type.
 	createMyRequestV2Request := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.CreateMyRequestV2(ctx, stateData.EntryId.ValueString())
-	endUserMyRequest, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.CreateMyRequestV2Execute(createMyRequestV2Request.MyRequestCreatable(buildEndUserMyRequestCreateBody(ctx, stateData)))
+	endRequestBody, diags := buildEndUserMyRequestCreateBody(ctx, stateData)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	endUserMyRequest, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.CreateMyRequestV2Execute(createMyRequestV2Request.MyRequestCreatable(endRequestBody))
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating End User My Request", "Could not create End User My Request, unexpected error: "+err.Error())
 		return
@@ -129,7 +137,8 @@ func (r *EndUserMyRequestsResource) Create(ctx context.Context, req resource.Cre
 	stateData.EntryId = types.StringPointerValue(endUserMyRequest.GetRequested().EntryId)
 	stateData.Status = types.StringPointerValue((*string)(endUserMyRequest.Status.Ptr()))
 
-	if requesterFieldValues, ok := endUserMyRequest.GetRequesterFieldValuesOk(); ok && len(requesterFieldValues) > 0 {
+	if _, ok := endUserMyRequest.GetRequesterFieldValuesOk(); ok {
+		// Define consistent field types that match the schema
 		fieldTypes := map[string]attr.Type{
 			"id":     types.StringType,
 			"label":  types.StringType,
@@ -137,57 +146,46 @@ func (r *EndUserMyRequestsResource) Create(ctx context.Context, req resource.Cre
 			"value":  types.StringType,
 			"values": types.ListType{ElemType: types.StringType},
 		}
-		requesterFieldValuesList := []attr.Value{}
-		for _, requesterFieldValue := range requesterFieldValues {
-			fields := make(map[string]attr.Value)
-			fields = map[string]attr.Value{
-				"id": types.StringValue(requesterFieldValue.GetId()),
+
+		requesterFieldValues := []attr.Value{}
+		for _, requesterFieldValue := range endUserMyRequest.GetRequesterFieldValues() {
+			fields := map[string]attr.Value{
+				"id":     types.StringValue(requesterFieldValue.GetId()),
+				"label":  types.StringNull(),
+				"type":   types.StringNull(),
+				"value":  types.StringNull(),
+				"values": types.ListNull(types.StringType),
 			}
-			// Check before setting labe, type, value
-			if label, ok := requesterFieldValue.GetLabelOk(); ok {
-				fields["label"] = types.StringPointerValue(label)
+
+			if labelField, ok := requesterFieldValue.GetLabelOk(); ok {
+				fields["label"] = types.StringPointerValue(labelField)
 			}
-			if typ, ok := requesterFieldValue.GetTypeOk(); ok {
-				fields["type"] = types.StringPointerValue((*string)(typ.Ptr()))
+
+			if typeField, ok := requesterFieldValue.GetTypeOk(); ok {
+				fields["type"] = types.StringPointerValue((*string)(typeField.Ptr()))
 			}
-			if value, ok := requesterFieldValue.GetValueOk(); ok {
-				fields["value"] = types.StringPointerValue(value)
+
+			if valueField, ok := requesterFieldValue.GetValueOk(); ok {
+				fields["value"] = types.StringPointerValue(valueField)
 			}
+
 			if valuesField, ok := requesterFieldValue.GetValuesOk(); ok {
 				values := []attr.Value{}
 				for _, value := range valuesField {
 					values = append(values, types.StringValue(value))
 				}
-				valuesList, diags := types.ListValue(types.StringType, values)
-				if diags.HasError() {
-					resp.Diagnostics.Append(diags...)
-					return
-				}
-				fields["values"] = valuesList
-			} else {
-				// // Initialize with empty list
-				// emptyList, diags := types.ListValue(types.StringType, []attr.Value{})
-				// if diags.HasError() {
-				// 	resp.Diagnostics.Append(diags...)
-				// 	return
-				// }
-				// fields["values"] = emptyList
+				fields["values"] = types.ListValueMust(types.StringType, values)
 			}
 			fieldsObject := types.ObjectValueMust(fieldTypes, fields)
-			requesterFieldValuesList = append(requesterFieldValuesList, fieldsObject)
+			requesterFieldValues = append(requesterFieldValues, fieldsObject)
 		}
-
-		// Set the requester field values in the state
-		requesterFieldValuesListValue, diags := types.ListValue(types.ObjectType{
-			AttrTypes: fieldTypes,
-		}, requesterFieldValuesList)
+		RequesterFieldValues, diags := types.ListValue(types.ObjectType{AttrTypes: fieldTypes}, requesterFieldValues)
 		if diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
 		}
-		stateData.RequesterFieldValues = requesterFieldValuesListValue
+		stateData.RequesterFieldValues = RequesterFieldValues
 	}
-	// If API doesn't return requester field values, keep what was in the plan (stateData already has it from req.Plan.Get)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...)
 }
 
@@ -216,7 +214,7 @@ func (r *EndUserMyRequestsResource) Read(ctx context.Context, req resource.ReadR
 func (r *EndUserMyRequestsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	resp.Diagnostics.AddWarning(
 		"Update Not Supported",
-		"This resource does not support updates. Please cancel the request via the Okta Dashboard and recreate the resource instead.",
+		"This resource does not support updates. Please cancel the request via the Okta Dashboard & recreate the resource instead.",
 	)
 }
 
@@ -227,31 +225,36 @@ func (r *EndUserMyRequestsResource) Delete(ctx context.Context, req resource.Del
 	)
 }
 
-func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequestsResourceModel) oktaInternalGovernance.MyRequestCreatable {
+func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequestsResourceModel) (oktaInternalGovernance.MyRequestCreatable, diag.Diagnostics) {
 	if data.RequesterFieldValues.IsNull() || data.RequesterFieldValues.IsUnknown() {
-		return oktaInternalGovernance.MyRequestCreatable{}
+		return oktaInternalGovernance.MyRequestCreatable{}, nil
 	}
 
-	// Convert types.List to []RequesterFieldValue
-	var requesterFieldValuesList []RequesterFieldValue
-	diags := data.RequesterFieldValues.ElementsAs(ctx, &requesterFieldValuesList, false)
+	var RequesterFieldValues []RequesterFieldValueEntry
+	diags := data.RequesterFieldValues.ElementsAs(ctx, &RequesterFieldValues, true)
 	if diags.HasError() {
-		return oktaInternalGovernance.MyRequestCreatable{}
+		return oktaInternalGovernance.MyRequestCreatable{}, diags
 	}
 
 	requesterFieldValues := []oktaInternalGovernance.RequestFieldValue{}
-	for _, element := range requesterFieldValuesList {
+	for _, element := range RequesterFieldValues {
 		requestFieldValue := oktaInternalGovernance.RequestFieldValue{}
 		requestFieldValue.Id = element.Id.ValueString()
-		requestFieldValue.Label = element.Label.ValueStringPointer()
-		requestFieldValue.Value = element.Value.ValueStringPointer()
 
-		// Handle the values field for MULTISELECT type
+		if !element.Label.IsNull() && !element.Label.IsUnknown() {
+			requestFieldValue.Label = element.Label.ValueStringPointer()
+		}
+		if !element.Type.IsNull() && !element.Type.IsUnknown() {
+			requestFieldValue.Type = (*oktaInternalGovernance.RequestFieldType)(element.Type.ValueStringPointer())
+		}
+		if !element.Value.IsNull() && !element.Value.IsUnknown() {
+			requestFieldValue.Value = element.Value.ValueStringPointer()
+		}
 		if !element.Values.IsNull() && !element.Values.IsUnknown() {
 			var values []string
 			diags := element.Values.ElementsAs(ctx, &values, false)
 			if diags.HasError() {
-				return oktaInternalGovernance.MyRequestCreatable{}
+				return oktaInternalGovernance.MyRequestCreatable{}, diags
 			}
 			requestFieldValue.Values = values
 		}
@@ -259,5 +262,5 @@ func buildEndUserMyRequestCreateBody(ctx context.Context, data EndUserMyRequests
 	}
 	return oktaInternalGovernance.MyRequestCreatable{
 		RequesterFieldValues: requesterFieldValues,
-	}
+	}, nil
 }

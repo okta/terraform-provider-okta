@@ -14,7 +14,7 @@ import (
 
 var _ datasource.DataSource = &EndUserMyRequestsDataSource{}
 
-func newMyRequestsDataSource() datasource.DataSource {
+func newEndUserMyRequestsDataSource() datasource.DataSource {
 	return &EndUserMyRequestsDataSource{}
 }
 
@@ -23,7 +23,7 @@ type EndUserMyRequestsDataSource struct {
 }
 
 type EndUserMyRequestsDataSourceModel struct {
-	Id                   types.String `tfsdk:"id"`
+	RequestId            types.String `tfsdk:"request_id"`
 	EntryId              types.String `tfsdk:"entry_id"`
 	RequesterFieldValues types.List   `tfsdk:"requester_field_values"`
 	Status               types.String `tfsdk:"status"`
@@ -36,7 +36,7 @@ type EndUserMyRequestsDataSourceModel struct {
 	GrantStatus          types.String `tfsdk:"grant_status"`
 	Requested            types.Object `tfsdk:"requested"`
 	RequestedBy          types.Object `tfsdk:"requested_by"`
-	RequestedFor         types.Object `tfsdk:"requested_by"`
+	RequestedFor         types.Object `tfsdk:"requested_for"`
 }
 
 func (r *EndUserMyRequestsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -50,9 +50,9 @@ func (d *EndUserMyRequestsDataSource) Configure(ctx context.Context, req datasou
 func (r *EndUserMyRequestsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Unique identifier for the object",
-				Computed:    true,
+			"request_id": schema.StringAttribute{
+				Description: "The ID of the request",
+				Required:    true,
 			},
 			"entry_id": schema.StringAttribute{
 				Description: "The ID of the catalog entry",
@@ -72,7 +72,7 @@ func (r *EndUserMyRequestsDataSource) Schema(ctx context.Context, req datasource
 			},
 			"created_by": schema.StringAttribute{
 				Description: "The id of the Okta user who created the resource",
-				Required:    true,
+				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "The ISO 8601 formatted date and time when the object was last updated",
@@ -186,7 +186,7 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// step 1 : Retrieve End User's Request.
-	getMyRequestV2Request := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2(ctx, stateData.EntryId.ValueString(), stateData.Id.ValueString())
+	getMyRequestV2Request := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2(ctx, stateData.EntryId.ValueString(), stateData.RequestId.ValueString())
 	endUserMyRequest, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2Execute(getMyRequestV2Request)
 	if err != nil {
 		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieving End User My Request, unexpected error: "+err.Error())
@@ -194,9 +194,15 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// step 2 : "Convert" API Compatible Type Back To Terraform Type.
-	stateData.Id = types.StringValue(endUserMyRequest.GetId())
+	stateData.RequestId = types.StringValue(endUserMyRequest.GetId())
 	stateData.EntryId = types.StringPointerValue(endUserMyRequest.GetRequested().EntryId)
 	stateData.Status = types.StringPointerValue((*string)(endUserMyRequest.GetStatus().Ptr()))
+	stateData.Created = types.StringValue(endUserMyRequest.GetCreated().String())
+	stateData.CreatedBy = types.StringValue(endUserMyRequest.GetCreatedBy())
+	stateData.LastUpdated = types.StringValue(endUserMyRequest.GetLastUpdated().String())
+	stateData.LastUpdatedBy = types.StringValue(endUserMyRequest.GetLastUpdatedBy())
+	stateData.GrantStatus = types.StringValue(string(*endUserMyRequest.GetGrantStatus().Ptr()))
+	stateData.Granted = types.StringValue(endUserMyRequest.GetGranted().String())
 	requestedFieldsType := map[string]attr.Type{
 		"access_scope_id":   types.StringType,
 		"access_scope_type": types.StringType,
@@ -213,9 +219,83 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	}
 	requested, diags := types.ObjectValue(requestedFieldsType, requestedFieldsValue)
 	if diags != nil {
-		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieve Requested field: "+err.Error())
+		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieve Requested field: ")
 		return
 	}
 	stateData.Requested = requested
+
+	// fields for 'requested_by' and 'requested_for' objects are same
+	requestedByForFieldsType := map[string]attr.Type{
+		"external_id": types.StringType,
+		"type":        types.StringType,
+	}
+
+	requestedByFieldsValue := map[string]attr.Value{
+		"external_id": types.StringValue(endUserMyRequest.GetRequestedBy().ExternalId),
+		"type":        types.StringValue(string(endUserMyRequest.GetRequestedBy().Type)),
+	}
+	requestedBy, diags := types.ObjectValue(requestedByForFieldsType, requestedByFieldsValue)
+	if diags != nil {
+		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieve Requested By field: ")
+		return
+	}
+	stateData.RequestedBy = requestedBy
+
+	requestedForFieldsValue := map[string]attr.Value{
+		"external_id": types.StringValue(endUserMyRequest.GetRequestedFor().ExternalId),
+		"type":        types.StringValue(string(endUserMyRequest.GetRequestedFor().Type)),
+	}
+	requestedFor, diags := types.ObjectValue(requestedByForFieldsType, requestedForFieldsValue)
+	if diags != nil {
+		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieve Requested For field: ")
+		return
+	}
+	stateData.RequestedFor = requestedFor
+	requesterFieldValuesType := map[string]attr.Type{
+		"id":     types.StringType,
+		"label":  types.StringType,
+		"type":   types.StringType,
+		"value":  types.StringType,
+		"values": types.ListType{ElemType: types.StringType},
+	}
+
+	RequesterFieldValues := []attr.Value{}
+	for _, requesterFieldValue := range endUserMyRequest.GetRequesterFieldValues() {
+		fields := map[string]attr.Value{
+			"id":     types.StringValue(requesterFieldValue.GetId()),
+			"label":  types.StringNull(),
+			"type":   types.StringNull(),
+			"value":  types.StringNull(),
+			"values": types.ListNull(types.StringType),
+		}
+
+		if labelField, ok := requesterFieldValue.GetLabelOk(); ok {
+			fields["label"] = types.StringPointerValue(labelField)
+		}
+
+		if typeField, ok := requesterFieldValue.GetTypeOk(); ok {
+			fields["type"] = types.StringPointerValue((*string)(typeField.Ptr()))
+		}
+
+		if valueField, ok := requesterFieldValue.GetValueOk(); ok {
+			fields["value"] = types.StringPointerValue(valueField)
+		}
+
+		if valuesField, ok := requesterFieldValue.GetValuesOk(); ok {
+			values := []attr.Value{}
+			for _, value := range valuesField {
+				values = append(values, types.StringValue(value))
+			}
+			fields["values"] = types.ListValueMust(types.StringType, values)
+		}
+		requesterFieldValue := types.ObjectValueMust(requesterFieldValuesType, fields)
+		RequesterFieldValues = append(RequesterFieldValues, requesterFieldValue)
+	}
+	requesterFieldValuesListValue, diags := types.ListValue(types.ObjectType{AttrTypes: requesterFieldValuesType}, RequesterFieldValues)
+	if diags.HasError() {
+		resp.Diagnostics.Append(diags...)
+		return
+	}
+	stateData.RequesterFieldValues = requesterFieldValuesListValue
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...)
 }

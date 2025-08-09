@@ -24,6 +24,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRiskRuleResource,
 		newCollectionResource,
 		newMyRequestsResource,
+		newEndUserMyRequestsResource,
 	}
 }
 
@@ -38,6 +39,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newGrantDataSource,
 		newRiskRulesDataSource,
 		newCollectionDataSource,
+		newEndUserMyRequestsDataSource,
 	}
 }
 
