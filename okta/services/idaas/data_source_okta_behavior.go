@@ -82,3 +82,39 @@ func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta in
 	_ = d.Set("settings", settings)
 	return nil
 }
+
+// func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// 	var behavior *v5okta.ListBehaviorDetectionRules200ResponseInner
+// 	behaviorID, ok := d.GetOk("id")
+// 	if ok {
+// 		respBehavior, _, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.GetBehaviorDetectionRule(ctx, behaviorID.(string)).Execute()
+// 		if err != nil {
+// 			return diag.Errorf("failed get behavior by ID: %v", err)
+// 		}
+// 		behavior = respBehavior
+// 	} else {
+// 		name := d.Get("name").(string)
+// 		searchParams := &query.Params{Q: name, Limit: 1}
+// 		logger(meta).Info("looking for behavior", "query", searchParams.String())
+// 		listBehaviorDetectionRules := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ListBehaviorDetectionRules(ctx)
+// 		behaviors, _, err := listBehaviorDetectionRules.Execute()
+// 		switch {
+// 		case err != nil:
+// 			return diag.Errorf("failed to query for behaviors: %v", err)
+// 		case len(behaviors) < 1:
+// 			return diag.Errorf("behavior with name '%s' does not exist", name)
+// 		case behaviors[0].Name != name:
+// 			logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
+// 		}
+// 		behavior = behaviors[0]
+// 	}
+// 	d.SetId(behavior.ID)
+// 	_ = d.Set("type", behavior.Type)
+// 	_ = d.Set("status", behavior.Status)
+// 	settings := make(map[string]string)
+// 	for k, v := range behavior.Settings {
+// 		settings[k] = fmt.Sprint(v)
+// 	}
+// 	_ = d.Set("settings", settings)
+// 	return nil
+// }
