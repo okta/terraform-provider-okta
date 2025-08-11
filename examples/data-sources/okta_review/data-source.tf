@@ -1,1 +1,0 @@
-data "okta_review" "test" {}

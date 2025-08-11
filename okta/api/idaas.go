@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -9,8 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-hclog"

@@ -64,10 +64,6 @@ func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
 		newCampaignResource,
 		newEntitlementResource,
-		newEntitlementBundleResource,
-		newGrantResource,
-		newRiskRuleResource,
-		newCollectionResource,
 		newEndUserMyRequestsResource,
 	}
 }

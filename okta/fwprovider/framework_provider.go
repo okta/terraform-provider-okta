@@ -2,7 +2,6 @@ package fwprovider
 
 import (
 	"context"
-
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -228,7 +227,6 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	// Append resources from various modules
 	resources = append(resources, idaas.FWProviderResources()...)
 	resources = append(resources, governance.FWProviderResources()...)
-	resources = append(resources)
 
 	return resources
 }
