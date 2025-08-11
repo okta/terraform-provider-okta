@@ -23,6 +23,10 @@ func newRequestTypeResource() resource.Resource {
 	return &requestTypeResource{}
 }
 
+func (r *requestTypeResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_request_type"
+}
+
 func (r *requestTypeResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(request, response)
 }
@@ -37,11 +41,11 @@ type requestTypeResource struct {
 
 type requestTypeTargetResourceModel struct {
 	ResourceId []string `tfsdk:"resource_id"`
-	Type       string   `tfsdk:"type"`
 }
 
 type requestTypeResourceSettingsModel struct {
-	targetResources requestTypeTargetResourceModel `tfsdk:"target_resources"`
+	Types           string                           `tfsdk:"types"`
+	TargetResources []requestTypeTargetResourceModel `tfsdk:"target_resources"`
 }
 
 type approvalsModel struct {
@@ -58,15 +62,15 @@ type requestTypeApproverSettingsModel struct {
 }
 
 type requestTypeResourceModel struct {
-	Id               types.String                     `tfsdk:"id"`
-	Name             types.String                     `tfsdk:"name"`
-	OwnerID          types.String                     `tfsdk:"owner_id"`
-	AccessDuration   types.String                     `tfsdk:"access_duration"`
-	Description      types.String                     `tfsdk:"description"`
-	Status           types.String                     `tfsdk:"status"`
-	RequestSettings  requestSettingsModel             `tfsdk:"request_settings"`
-	ResourceSettings requestTypeResourceSettingsModel `tfsdk:"resource_settings"`
-	ApprovalSettings requestTypeApproverSettingsModel `tfsdk:"approval_settings"`
+	Id               types.String                      `tfsdk:"id"`
+	Name             types.String                      `tfsdk:"name"`
+	OwnerID          types.String                      `tfsdk:"owner_id"`
+	AccessDuration   types.String                      `tfsdk:"access_duration"`
+	Description      types.String                      `tfsdk:"description"`
+	Status           types.String                      `tfsdk:"status"`
+	RequestSettings  *requestSettingsModel             `tfsdk:"request_settings"`
+	ResourceSettings *requestTypeResourceSettingsModel `tfsdk:"resource_settings"`
+	ApprovalSettings *requestTypeApproverSettingsModel `tfsdk:"approval_settings"`
 }
 
 type requestMemberOf struct {
@@ -91,10 +95,6 @@ type requesterOptionModel struct {
 	Value types.String `tfsdk:"value"`
 }
 
-func (r *requestTypeResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_request_type"
-}
-
 func (r *requestTypeResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
@@ -109,19 +109,21 @@ func (r *requestTypeResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 			"access_duration": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"description": schema.StringAttribute{
 				Optional: true,
 			},
 			"status": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"request_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("EVERYONE", "MEMBER_OF"),
 						},
@@ -187,8 +189,12 @@ func (r *requestTypeResource) Schema(ctx context.Context, req resource.SchemaReq
 					"target_resources": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
-								"resource_id": schema.StringAttribute{
-									Required: true,
+								"resource_id": schema.ListAttribute{
+									Required:    true,
+									ElementType: types.StringType,
+									Validators: []validator.List{
+										listvalidator.SizeAtMost(1),
+									},
 								},
 							},
 						},
@@ -219,13 +225,14 @@ func (r *requestTypeResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 								"description": schema.StringAttribute{
 									Optional: true,
+									Computed: true,
 								},
 							},
 							Blocks: map[string]schema.Block{
 								"approver_member_of": schema.SingleNestedBlock{
 									Attributes: map[string]schema.Attribute{
 										"group_id": schema.StringAttribute{
-											Required: true,
+											Optional: true,
 										},
 									},
 								},
@@ -284,7 +291,8 @@ func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Create API call logic
-	requestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestTypesAPI.CreateRequestType(ctx).RequestTypeCreatable(createRequest(data)).Execute()
+
+	requestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestTypesAPI.CreateRequestType(ctx).RequestTypeCreatable(*createRequest(data)).Execute() // Panic likely here
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Request type",
@@ -299,9 +307,9 @@ func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateReq
 	data.AccessDuration = types.StringValue(requestTypeResp.GetAccessDuration())
 	data.Description = types.StringValue(requestTypeResp.GetDescription())
 	data.Status = types.StringValue(string(requestTypeResp.GetStatus()))
-	data.ResourceSettings = *setResourceSettings(requestTypeResp.ResourceSettings)
-	data.RequestSettings = *setRequestSettings(requestTypeResp.RequestSettings)
-	data.ApprovalSettings = *setApproverSettings(requestTypeResp.ApprovalSettings)
+	data.ResourceSettings = setResourceSettings(requestTypeResp.ResourceSettings)
+	data.RequestSettings = setRequestSettings(requestTypeResp.RequestSettings)
+	data.ApprovalSettings = setApproverSettings(requestTypeResp.ApprovalSettings)
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -331,31 +339,19 @@ func (r *requestTypeResource) Read(ctx context.Context, req resource.ReadRequest
 	data.AccessDuration = types.StringValue(readRequestTypeResp.GetAccessDuration())
 	data.Description = types.StringValue(readRequestTypeResp.GetDescription())
 	data.Status = types.StringValue(string(readRequestTypeResp.GetStatus()))
-	data.ResourceSettings = *setResourceSettings(readRequestTypeResp.ResourceSettings)
-	data.RequestSettings = *setRequestSettings(readRequestTypeResp.RequestSettings)
+	data.ResourceSettings = setResourceSettings(readRequestTypeResp.ResourceSettings)
+	data.RequestSettings = setRequestSettings(readRequestTypeResp.RequestSettings)
+	data.ApprovalSettings = setApproverSettings(readRequestTypeResp.ApprovalSettings)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestTypeResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data requestTypeResourceModel
-
-	// Read Terraform plan data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Update API call logic
-	resp.Diagnostics.AddError(
+	resp.Diagnostics.AddWarning(
 		"Update Not Supported",
 		"No fields are updatable for this resource. Terraform will retain the existing state.",
 	)
-
-	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestTypeResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -449,7 +445,7 @@ func setRequestSettings(settings governance.RequestTypeRequestSettingsReadable) 
 			requesterFields = append(requesterFields, requestedField)
 		}
 		result.RequesterFields = requesterFields
-		result.Type = types.StringValue(settings.RequestTypeRequesterCustom.GetType())
+		result.Type = types.StringValue(settings.RequestTypeRequesterEveryone.GetType())
 		return &result
 	}
 	return nil
@@ -462,10 +458,12 @@ func setResourceSettings(settings governance.RequestTypeResourceSettingsReadable
 			resourceIds = append(resourceIds, tr.ResourceId)
 		}
 		return &requestTypeResourceSettingsModel{
-			targetResources: requestTypeTargetResourceModel{
-				ResourceId: resourceIds,
-				Type:       "APPS",
+			TargetResources: []requestTypeTargetResourceModel{
+				{
+					ResourceId: resourceIds,
+				},
 			},
+			Types: "APPS",
 		}
 	} else if settings.RequestTypeResourceSettingsEntitlementBundles != nil {
 		var resourceIds []string
@@ -473,10 +471,12 @@ func setResourceSettings(settings governance.RequestTypeResourceSettingsReadable
 			resourceIds = append(resourceIds, tr.ResourceId)
 		}
 		return &requestTypeResourceSettingsModel{
-			targetResources: requestTypeTargetResourceModel{
-				ResourceId: resourceIds,
-				Type:       "ENTITLEMENT_BUNDLES",
+			TargetResources: []requestTypeTargetResourceModel{
+				{
+					ResourceId: resourceIds,
+				},
 			},
+			Types: "ENTITLEMENT_BUNDLES",
 		}
 	} else if settings.RequestTypeResourceSettingsGroups != nil {
 		var resourceIds []string
@@ -484,10 +484,12 @@ func setResourceSettings(settings governance.RequestTypeResourceSettingsReadable
 			resourceIds = append(resourceIds, tr.ResourceId)
 		}
 		return &requestTypeResourceSettingsModel{
-			targetResources: requestTypeTargetResourceModel{
-				ResourceId: resourceIds,
-				Type:       "GROUPS",
+			TargetResources: []requestTypeTargetResourceModel{
+				{
+					ResourceId: resourceIds,
+				},
 			},
+			Types: "GROUPS",
 		}
 	}
 	return nil
@@ -574,10 +576,10 @@ func setApproverSettings(settings governance.RequestTypeApprovalSettingsReadable
 				approval.ApproverFields = requesterFields
 				approvals = append(approvals, approval)
 			} else if as.RequestTypeApprovalManager != nil {
-				approval.ApproverType = types.StringValue(as.RequestTypeApprovalUser.GetApproverType())
-				approval.Description = types.StringValue(as.RequestTypeApprovalUser.GetDescription())
+				approval.ApproverType = types.StringValue(as.RequestTypeApprovalManager.GetApproverType())
+				approval.Description = types.StringValue(as.RequestTypeApprovalManager.GetDescription())
 				var requesterFields []requesterFieldModel
-				for _, rf := range as.RequestTypeApprovalMemberOf.GetApproverFields() {
+				for _, rf := range as.RequestTypeApprovalManager.GetApproverFields() {
 					var requestedField requesterFieldModel
 					if rf.FieldText != nil {
 						requestedField.Id = types.StringValue(rf.FieldText.GetId())
@@ -606,6 +608,7 @@ func setApproverSettings(settings governance.RequestTypeApprovalSettingsReadable
 				approvals = append(approvals, approval)
 			}
 		}
+		approverSettings.Approvals = approvals
 		return &approverSettings
 	} else if settings.RequestTypeApprovalSettingsNone != nil {
 		approverSettings.Type = settings.RequestTypeApprovalSettingsNone.GetType()
@@ -617,31 +620,48 @@ func setApproverSettings(settings governance.RequestTypeApprovalSettingsReadable
 	return nil
 }
 
-func createRequest(data requestTypeResourceModel) governance.RequestTypeCreatable {
-	return governance.RequestTypeCreatable{
-		Name:             data.Name.ValueString(),
-		OwnerId:          data.OwnerID.ValueString(),
-		AccessDuration:   *governance.NewNullableString(data.AccessDuration.ValueStringPointer()),
-		Description:      data.Description.ValueStringPointer(),
-		Status:           (*governance.RequestTypeCreatableStatus)(data.Status.ValueStringPointer()),
-		RequestSettings:  createRequestSettings(data.RequestSettings),
-		ResourceSettings: *createResourceSettings(data.ResourceSettings),
-		ApprovalSettings: *createApprovalSettings(data.ApprovalSettings),
+func createRequest(data requestTypeResourceModel) *governance.RequestTypeCreatable {
+	var requestType governance.RequestTypeCreatable
+	requestType.SetName(data.Name.ValueString())
+	requestType.SetOwnerId(data.OwnerID.ValueString())
+	if data.AccessDuration.ValueString() != "" {
+		requestType.SetAccessDuration(data.AccessDuration.ValueString())
 	}
+	requestType.SetDescription(data.Description.ValueString())
+	if data.Status.ValueString() != "" {
+		requestType.SetStatus((governance.RequestTypeCreatableStatus)(data.Status.ValueString()))
+	}
+	requestSettings := createRequestSettings(data.RequestSettings)
+	if requestSettings != nil {
+		requestType.SetRequestSettings(*requestSettings)
+	} else {
+		requestType.SetRequestSettings(governance.RequestTypeRequestSettingsMutable{
+			RequestTypeRequesterEveryoneWritable: &governance.RequestTypeRequesterEveryoneWritable{
+				Type:            "EVERYONE",
+				RequesterFields: []governance.FieldWritable{},
+			},
+		})
+	}
+	requestType.SetResourceSettings(*createResourceSettings(data.ResourceSettings))
+	requestType.SetApprovalSettings(*createApprovalSettings(data.ApprovalSettings))
+	return &requestType
 }
 
-func createApprovalSettings(settings requestTypeApproverSettingsModel) *governance.RequestTypeApprovalSettingsMutable {
+func createApprovalSettings(settings *requestTypeApproverSettingsModel) *governance.RequestTypeApprovalSettingsMutable {
 	if settings.Type == "NONE" {
 		return nil
 	} else if settings.Type == "SERIAL" {
 		var approvalSettings governance.RequestTypeApprovalSettingsMutable
+		approvalSettings.RequestTypeApprovalSettingsSerialWritable = &governance.RequestTypeApprovalSettingsSerialWritable{}
 		approvalSettings.RequestTypeApprovalSettingsSerialWritable.Type = settings.Type
 		var approvals []governance.RequestTypeApprovalWritable
 		for _, app := range settings.Approvals {
 			if app.ApproverType.ValueString() == "MEMBER_OF" {
 				var approval governance.RequestTypeApprovalMemberOfWritable
 				approval.ApproverType = app.ApproverType.ValueString()
-				approval.Description = app.Description.ValueStringPointer()
+				if !app.Description.IsNull() && app.Description.ValueString() != "" {
+					approval.Description = app.Description.ValueStringPointer()
+				}
 				for _, member := range app.ApproverMemberOf {
 					approval.ApproverMemberOf = append(approval.ApproverMemberOf, member.GroupId.ValueString())
 				}
@@ -654,14 +674,18 @@ func createApprovalSettings(settings requestTypeApproverSettingsModel) *governan
 			} else if app.ApproverType.ValueString() == "RESOURCE_OWNER" {
 				var approval governance.RequestTypeApprovalResourceOwnerWritable
 				approval.ApproverType = app.ApproverType.ValueString()
-				approval.Description = app.Description.ValueStringPointer()
+				if !app.Description.IsNull() && app.Description.ValueString() != "" {
+					approval.Description = app.Description.ValueStringPointer()
+				}
 				approvals = append(approvals, governance.RequestTypeApprovalWritable{
 					RequestTypeApprovalResourceOwnerWritable: &approval,
 				})
 			} else if app.ApproverType.ValueString() == "MANAGER" {
 				var approval governance.RequestTypeApprovalManagerWritable
 				approval.ApproverType = app.ApproverType.ValueString()
-				approval.Description = app.Description.ValueStringPointer()
+				if !app.Description.IsNull() && app.Description.ValueString() != "" {
+					approval.Description = app.Description.ValueStringPointer()
+				}
 				var approverFields []governance.FieldWritable
 				getApproverFields(app, approverFields)
 				approval.ApproverFields = approverFields
@@ -671,7 +695,9 @@ func createApprovalSettings(settings requestTypeApproverSettingsModel) *governan
 			} else if app.ApproverType.ValueString() == "USER" {
 				var approval governance.RequestTypeApprovalUserWritable
 				approval.ApproverType = app.ApproverType.ValueString()
-				approval.Description = app.Description.ValueStringPointer()
+				if !app.Description.IsNull() && app.Description.ValueString() != "" {
+					approval.Description = app.Description.ValueStringPointer()
+				}
 				approval.ApproverUserId = app.ApproverUserId.ValueString()
 				var approverFields []governance.FieldWritable
 				getApproverFields(app, approverFields)
@@ -717,65 +743,80 @@ func getApproverFields(app approvalsModel, fields []governance.FieldWritable) {
 	}
 }
 
-func createResourceSettings(settings requestTypeResourceSettingsModel) *governance.RequestTypeResourceSettingsMutable {
-	if settings.targetResources.Type == "APPS" {
+func createResourceSettings(settings *requestTypeResourceSettingsModel) *governance.RequestTypeResourceSettingsMutable {
+	if settings.Types == "APPS" {
 		var resourceSettings governance.RequestTypeResourceSettingsApps
 		resourceSettings.Type = "APPS"
 		var targetResourcesId []governance.OktaApplicationResource
-		for _, tr := range settings.targetResources.ResourceId {
-			targetResourcesId = append(targetResourcesId, governance.OktaApplicationResource{
-				ResourceId: tr,
-			})
+		for _, t := range settings.TargetResources {
+			for _, tr := range t.ResourceId {
+				targetResourcesId = append(targetResourcesId, governance.OktaApplicationResource{
+					ResourceId: tr,
+				})
+			}
+			resourceSettings.TargetResources = targetResourcesId
 		}
-		resourceSettings.TargetResources = targetResourcesId
+
 		return &governance.RequestTypeResourceSettingsMutable{RequestTypeResourceSettingsApps: &resourceSettings}
-	} else if settings.targetResources.Type == "ENTITLEMENT_BUNDLES" {
+	} else if settings.Types == "ENTITLEMENT_BUNDLES" {
 		var resourceSettings governance.RequestTypeResourceSettingsEntitlementBundles
 		resourceSettings.Type = "ENTITLEMENT_BUNDLES"
 		var targetResourcesId []governance.OktaEntitlementBundleResource
-		for _, tr := range settings.targetResources.ResourceId {
-			targetResourcesId = append(targetResourcesId, governance.OktaEntitlementBundleResource{
-				ResourceId: tr,
-			})
+		for _, t := range settings.TargetResources {
+			for _, tr := range t.ResourceId {
+				targetResourcesId = append(targetResourcesId, governance.OktaEntitlementBundleResource{
+					ResourceId: tr,
+				})
+			}
+			resourceSettings.TargetResources = targetResourcesId
 		}
-		resourceSettings.TargetResources = targetResourcesId
+
 		return &governance.RequestTypeResourceSettingsMutable{RequestTypeResourceSettingsEntitlementBundles: &resourceSettings}
-	} else if settings.targetResources.Type == "GROUPS" {
+	} else if settings.Types == "GROUPS" {
 		var resourceSettings governance.RequestTypeResourceSettingsGroups
-		resourceSettings.Type = "groups"
+		resourceSettings.Type = "GROUPS"
 		var targetResourcesId []governance.OktaGroupResource
-		for _, tr := range settings.targetResources.ResourceId {
-			targetResourcesId = append(targetResourcesId, governance.OktaGroupResource{
-				ResourceId: tr,
-			})
+		for _, t := range settings.TargetResources {
+			for _, tr := range t.ResourceId {
+				targetResourcesId = append(targetResourcesId, governance.OktaGroupResource{
+					ResourceId: tr,
+				})
+			}
+			resourceSettings.TargetResources = targetResourcesId
 		}
-		resourceSettings.TargetResources = targetResourcesId
+
 		return &governance.RequestTypeResourceSettingsMutable{RequestTypeResourceSettingsGroups: &resourceSettings}
 	}
 	return nil
 }
 
-func createRequestSettings(settings requestSettingsModel) *governance.RequestTypeRequestSettingsMutable {
-	if settings.Type.ValueString() == "EVERYONE" {
-		var requestTypeRequester *governance.RequestTypeRequesterEveryoneWritable
-		requestTypeRequester.Type = settings.Type.ValueString()
-		var requesterFields []governance.FieldWritable
-		getRequesterFields(settings, requesterFields)
-		return &governance.RequestTypeRequestSettingsMutable{
-			RequestTypeRequesterEveryoneWritable: requestTypeRequester,
-		}
-	} else if settings.Type.ValueString() == "MEMBER_OF" {
-		var requestTypeRequester *governance.RequestTypeRequesterMemberOfWritable
-		requestTypeRequester.Type = settings.Type.ValueString()
-		var groups []string
-		for _, group := range settings.RequesterMemberOf {
-			groups = append(groups, group.GroupId.ValueString())
-		}
-		requestTypeRequester.RequesterMemberOf = groups
-		var requesterFields []governance.FieldWritable
-		getRequesterFields(settings, requesterFields)
-		return &governance.RequestTypeRequestSettingsMutable{
-			RequestTypeRequesterMemberOfWritable: requestTypeRequester,
+func createRequestSettings(settings *requestSettingsModel) *governance.RequestTypeRequestSettingsMutable {
+	if settings != nil {
+		if settings.Type != types.StringNull() && settings.Type.ValueString() == "EVERYONE" {
+			requestTypeRequester := &governance.RequestTypeRequesterEveryoneWritable{
+				RequesterFields: []governance.FieldWritable{},
+			}
+			requestTypeRequester.Type = settings.Type.ValueString()
+			var requesterFields []governance.FieldWritable
+			getRequesterFields(*settings, requesterFields)
+			return &governance.RequestTypeRequestSettingsMutable{
+				RequestTypeRequesterEveryoneWritable: requestTypeRequester,
+			}
+		} else if settings.Type != types.StringNull() && settings.Type.ValueString() == "MEMBER_OF" {
+			requestTypeRequester := &governance.RequestTypeRequesterMemberOfWritable{
+				RequesterFields: []governance.FieldWritable{},
+			}
+			requestTypeRequester.Type = settings.Type.ValueString()
+			var groups []string
+			for _, group := range settings.RequesterMemberOf {
+				groups = append(groups, group.GroupId.ValueString())
+			}
+			requestTypeRequester.RequesterMemberOf = groups
+			var requesterFields []governance.FieldWritable
+			getRequesterFields(*settings, requesterFields)
+			return &governance.RequestTypeRequestSettingsMutable{
+				RequestTypeRequesterMemberOfWritable: requestTypeRequester,
+			}
 		}
 	}
 	return nil

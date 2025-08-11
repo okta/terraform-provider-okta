@@ -2,22 +2,36 @@ package governance
 
 import (
 	"context"
+	"github.com/okta/terraform-provider-okta/okta/config"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ datasource.DataSource = (*requestConditionsDataSource)(nil)
+var _ datasource.DataSource = &requestConditionsDataSource{}
 
-func NewRequestConditionsDataSource() datasource.DataSource {
+func newRequestConditionsDataSource() datasource.DataSource {
 	return &requestConditionsDataSource{}
 }
 
-type requestConditionsDataSource struct{}
+type requestConditionsDataSource struct {
+	*config.Config
+}
 
 type requestConditionsDataSourceModel struct {
-	Id types.String `tfsdk:"id"`
+	Id                  types.String `tfschema:"id"`
+	ResourceId          types.String `tfsdk:"resource_id"`
+	Created             types.String `tfsdk:"created"`
+	CreatedBy           types.String `tfsdk:"created_by"`
+	LastUpdated         types.String `tfsdk:"last_updated"`
+	LastUpdatedBy       types.String `tfsdk:"last_updated_by"`
+	Status              types.String `tfsdk:"status"`
+	Name                types.String `tfsdk:"name"`
+	Priority            types.Int32  `tfsdk:"priority"`
+	AccessScopeSettings *Settings    `tfsdk:"access_scope_settings"`
+	RequesterSettings   *Settings    `tfsdk:"requester_settings"`
 }
 
 func (d *requestConditionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -28,7 +42,73 @@ func (d *requestConditionsDataSource) Schema(ctx context.Context, req datasource
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
+				Required: true,
+			},
+			"resource_id": schema.StringAttribute{
+				Required: true,
+			},
+			"created": schema.StringAttribute{
 				Computed: true,
+			},
+			"created_by": schema.StringAttribute{
+				Computed: true,
+			},
+			"last_updated": schema.StringAttribute{
+				Computed: true,
+			},
+			"last_updated_by": schema.StringAttribute{
+				Computed: true,
+			},
+			"status": schema.StringAttribute{
+				Computed: true,
+			},
+			"name": schema.StringAttribute{
+				Computed: true,
+			},
+			"priority": schema.Int32Attribute{
+				Computed: true,
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"access_scope_settings": schema.SingleNestedBlock{
+				Blocks: map[string]schema.Block{
+					"ids": schema.ListNestedBlock{
+						Description: "List of groups/entitlement bundles.",
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Computed:    true,
+									Description: "The group/entitlement bundle ID.",
+								},
+							},
+						},
+					},
+				},
+				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Computed: true,
+					},
+				},
+			},
+			"requester_settings": schema.SingleNestedBlock{
+				Blocks: map[string]schema.Block{
+					"ids": schema.ListNestedBlock{
+						Description: "List of teams/groups ids.",
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"id": schema.StringAttribute{
+									Computed:    true,
+									Description: "The group/team ID.",
+								},
+							},
+						},
+					},
+				},
+				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Computed: true,
+					},
+				},
 			},
 		},
 	}
@@ -45,9 +125,25 @@ func (d *requestConditionsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// Read API call logic
-
+	readRequestConditionResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request conditions",
+			"Could not read Request conditions, unexpected error: "+err.Error(),
+		)
+		return
+	}
 	// Example data value setting
-	data.Id = types.StringValue("example-id")
+	data.Id = types.StringValue(readRequestConditionResp.GetId())
+	data.Name = types.StringValue(readRequestConditionResp.GetName())
+	data.Priority = types.Int32Value(readRequestConditionResp.GetPriority())
+	data.Created = types.StringValue(readRequestConditionResp.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(readRequestConditionResp.GetCreatedBy())
+	data.LastUpdated = types.StringValue(readRequestConditionResp.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(readRequestConditionResp.GetLastUpdatedBy())
+	data.Status = types.StringValue(string(readRequestConditionResp.GetStatus()))
+	data.AccessScopeSettings, _ = setAccessScopeSettings(readRequestConditionResp.GetAccessScopeSettings())
+	data.RequesterSettings, _ = setRequesterSettings(readRequestConditionResp.GetRequesterSettings())
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

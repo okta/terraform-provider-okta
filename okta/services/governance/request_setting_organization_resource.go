@@ -2,6 +2,9 @@ package governance
 
 import (
 	"context"
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -14,10 +17,15 @@ func NewRequestSettingOrganizationResource() resource.Resource {
 	return &requestSettingOrganizationResource{}
 }
 
-type requestSettingOrganizationResource struct{}
+type requestSettingOrganizationResource struct {
+	*config.Config
+}
 
 type requestSettingOrganizationResourceModel struct {
-	Id types.String `tfsdk:"id"`
+	LongTimePastProvisioned   types.Bool   `tfsdk:"long_time_past_provisioned"`
+	ProvisioningStatus        types.String `tfsdk:"provisioning_status"`
+	RequestExperiences        types.List   `tfsdk:"request_experiences"`
+	SubprocessorsAcknowledged types.Bool   `tfsdk:"subprocessors_acknowledged"`
 }
 
 func (r *requestSettingOrganizationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -27,7 +35,17 @@ func (r *requestSettingOrganizationResource) Metadata(ctx context.Context, req r
 func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
+			"long_time_past_provisioned": schema.StringAttribute{
+				Computed: true,
+			},
+			"provisioning_status": schema.StringAttribute{
+				Computed: true,
+			},
+			"request_experiences": schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
+			},
+			"subprocessors_acknowledged": schema.StringAttribute{
 				Computed: true,
 			},
 		},
@@ -35,22 +53,10 @@ func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req res
 }
 
 func (r *requestSettingOrganizationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data requestSettingOrganizationResourceModel
-
-	// Read Terraform plan data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Create API call logic
-
-	// Example data value setting
-	data.Id = types.StringValue("example-id")
-
-	// Save data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddWarning(
+		"Create Not Supported",
+		"This resource cannot be created via Terraform. Please import it or let Terraform read it from the existing system.",
+	)
 }
 
 func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -64,6 +70,20 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 	}
 
 	// Read API call logic
+	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
+	if err != nil {
+		return
+	}
+	data.LongTimePastProvisioned = types.BoolValue(readOrgRequestSettingResp.GetLongTimePastProvisioned())
+	data.ProvisioningStatus = types.StringValue(string(readOrgRequestSettingResp.GetProvisioningStatus()))
+	data.SubprocessorsAcknowledged = types.BoolValue(readOrgRequestSettingResp.SubprocessorsAcknowledged)
+	var reqExpVals []attr.Value
+	for _, reqExp := range readOrgRequestSettingResp.GetRequestExperiences() {
+		reqExpVals = append(reqExpVals, types.StringValue(string(reqExp)))
+	}
+
+	listVal, _ := types.ListValue(types.StringType, reqExpVals)
+	data.RequestExperiences = listVal
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -80,20 +100,25 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 	}
 
 	// Update API call logic
+	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
+	if err != nil {
+		return
+	}
+	data.SubprocessorsAcknowledged = types.BoolValue(updateOrgSettingsResp.GetSubprocessorsAcknowledged())
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *requestSettingOrganizationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data requestSettingOrganizationResourceModel
-
-	// Read Terraform prior state data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
+func createOrgRequestsSettings(data requestSettingOrganizationResourceModel) governance.OrgRequestSettingsPatchable {
+	return governance.OrgRequestSettingsPatchable{
+		SubprocessorsAcknowledged: data.SubprocessorsAcknowledged.ValueBool(),
 	}
+}
 
-	// Delete API call logic
+func (r *requestSettingOrganizationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	resp.Diagnostics.AddWarning(
+		"Delete Not Supported",
+		"This resource cannot be deleted via Terraform. Please import it or let Terraform read it from the existing system.",
+	)
 }
