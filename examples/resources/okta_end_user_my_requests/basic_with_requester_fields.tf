@@ -16,3 +16,4 @@ resource "okta_end_user_my_requests" "example" {
     value = "Yes"
   }
 }
+
