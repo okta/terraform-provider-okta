@@ -77,7 +77,7 @@ resource "okta_end_user_my_requests" "multi_select_example" {
 
 ### Read-Only
 
-- `status` (String) The status of the request. Possible values include: `APPROVED`, `CANCELED`, `DENIED`, `EXPIRED`, `PENDING`, `REJECTED`
+- `status` (String) The status of the request. Possible values include: `APPROVED`, `CANCELED`, `DENIED`, `EXPIRED`, `PENDING`, `REJECTED`, `SUBMITTED`
 
 <a id="nestedblock--requester_field_values"></a>
 ### Nested Schema for `requester_field_values`

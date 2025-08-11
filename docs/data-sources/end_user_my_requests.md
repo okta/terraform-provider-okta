@@ -44,7 +44,7 @@ output "request_field_values" {
 
 - `entry_id` (String) The ID of the catalog entry for which the request was made.
 - `requester_field_values` (List of Object) The requester input fields and their values from the request. (see [below for nested schema](#nestedatt--requester_field_values))
-- `status` (String) The current status of the request. Possible values include: `APPROVED`, `CANCELED`, `DENIED`, `EXPIRED`, `PENDING`, `REJECTED`
+- `status` (String) The current status of the request. Possible values include: `APPROVED`, `CANCELED`, `DENIED`, `EXPIRED`, `PENDING`, `REJECTED`, `SUBMITTED`
 
 <a id="nestedatt--requester_field_values"></a>
 ### Nested Schema for `requester_field_values`
