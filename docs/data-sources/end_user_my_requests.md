@@ -15,9 +15,10 @@ Use this data source to fetch details about a specific request, including its cu
 ## Example Usage
 
 ```terraform
-# Get a request by its ID
+# Get a request by its catalog entry ID and request ID
 data "okta_end_user_my_requests" "example" {
-  id = "req123456789abcdefg"
+  entry_id   = "cen123456789abcdefgh"
+  request_id = "reqABCDEFG0123456789"
 }
 
 # Output the request status
@@ -36,13 +37,14 @@ output "request_field_values" {
 
 ### Required
 
-- `id` (String) The ID of the request to retrieve.
+- `entry_id` (String) The ID of the catalog entry to retrieve.
+- `request_id` (String) The ID of the request to retrieve.
 
 ### Read-Only
 
 - `entry_id` (String) The ID of the catalog entry for which the request was made.
 - `requester_field_values` (List of Object) The requester input fields and their values from the request. (see [below for nested schema](#nestedatt--requester_field_values))
-- `status` (String) The current status of the request. Possible values include: `SUBMITTED`, `PENDING`, `APPROVED`, `REJECTED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`, etc.
+- `status` (String) The current status of the request. Possible values include: `APPROVED`, `CANCELED`, `DENIED`, `EXPIRED`, `PENDING`, `REJECTED`
 
 <a id="nestedatt--requester_field_values"></a>
 ### Nested Schema for `requester_field_values`
@@ -64,7 +66,7 @@ Read-Only:
 - **MULTISELECT**: Contains multiple selection values in the `values` attribute (list)
 - **DURATION**: Contains time duration specification in the `value` attribute (e.g., "5 days", "2 weeks")
 - **ISO_DATE**: Contains date specification in ISO format in the `value` attribute
-- **OKTA_USER_ID**: Contains Okta user identifier in the `value` attribute
+- **OKTA_USER_ID**: Contains Okta user ID in the `value` attribute
 
 ### Usage Notes
 
