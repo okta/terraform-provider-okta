@@ -121,4 +121,5 @@ const (
 	OktaIDaaSUserType                      = "okta_user_type"
 	OktaGovernanceCampaign                 = "okta_campaign"
 	OktaGovernanceEntitlement              = "okta_entitlement"
+	OktaEndUserMyRequests                  = "okta_end_user_my_requests"
 )

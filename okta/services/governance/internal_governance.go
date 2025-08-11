@@ -76,6 +76,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
 		newEntitlementDataSource,
+		newEndUserMyRequestsDataSource,
 	}
 }
 
