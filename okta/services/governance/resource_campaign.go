@@ -731,60 +731,60 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 
 func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c *campaignResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c.Id = types.StringValue(resp.Id)
-	c.Name = types.StringValue(resp.Name)
-	c.CampaignType = types.StringValue(string(*resp.CampaignType))
-	c.Description = types.StringValue(*resp.Description)
+	c.Id = types.StringValue(resp.GetId())
+	c.Name = types.StringValue(resp.GetName())
+	c.CampaignType = types.StringValue(string(resp.GetCampaignType()))
+	c.Description = types.StringValue(resp.GetDescription())
 
 	c.RemediationSettings = &campaignRemediationSettingsModel{}
-	if resp.RemediationSettings.AccessRevoked != "" {
-		c.RemediationSettings.AccessRevoked = types.StringValue(string(resp.RemediationSettings.AccessRevoked))
+	if resp.RemediationSettings.GetAccessRevoked() != "" {
+		c.RemediationSettings.AccessRevoked = types.StringValue(string(resp.RemediationSettings.GetAccessRevoked()))
 	}
-	if resp.RemediationSettings.AccessApproved != "" {
-		c.RemediationSettings.AccessApproved = types.StringValue(string(resp.RemediationSettings.AccessApproved))
+	if resp.RemediationSettings.GetAccessApproved() != "" {
+		c.RemediationSettings.AccessApproved = types.StringValue(string(resp.RemediationSettings.GetAccessApproved()))
 	}
-	if resp.RemediationSettings.NoResponse != "" {
-		c.RemediationSettings.NoResponse = types.StringValue(string(resp.RemediationSettings.NoResponse))
+	if resp.RemediationSettings.GetNoResponse() != "" {
+		c.RemediationSettings.NoResponse = types.StringValue(string(resp.RemediationSettings.GetNoResponse()))
 	}
-	if resp.RemediationSettings.AutoRemediationSettings != nil {
-		c.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments = types.BoolValue(*resp.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments)
-		for _, includeOnly := range resp.RemediationSettings.AutoRemediationSettings.IncludeOnly {
+	if autoRemediationSettings, ok := resp.RemediationSettings.GetAutoRemediationSettingsOk(); ok != false {
+		c.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments = types.BoolValue(autoRemediationSettings.GetIncludeAllIndirectAssignments())
+		for _, includeOnly := range autoRemediationSettings.GetIncludeOnly() {
 			targetResource := targetResourceModel{
-				ResourceId:   types.StringValue(*includeOnly.ResourceId),
-				ResourceType: types.StringValue(string(*includeOnly.ResourceType)),
+				ResourceId:   types.StringValue(includeOnly.GetResourceId()),
+				ResourceType: types.StringValue(string(includeOnly.GetResourceType())),
 			}
 			c.RemediationSettings.AutoRemediationSettings.IncludeOnly = append(c.RemediationSettings.AutoRemediationSettings.IncludeOnly, targetResource)
 		}
 	}
 
 	c.ResourceSettings = &resourceSettingsModel{}
-	if resp.ResourceSettings.Type != "" {
-		c.ResourceSettings.Type = types.StringValue(string(resp.ResourceSettings.Type))
+	if resp.ResourceSettings.GetType() != "" {
+		c.ResourceSettings.Type = types.StringValue(string(resp.ResourceSettings.GetType()))
 	}
-	if len(resp.ResourceSettings.TargetResources) > 0 {
+	if len(resp.ResourceSettings.GetTargetResources()) > 0 {
 		var targets []targetResourceModel
-		for _, targetResource := range resp.ResourceSettings.TargetResources {
+		for _, targetResource := range resp.ResourceSettings.GetTargetResources() {
 			target := targetResourceModel{
-				ResourceId: types.StringValue(targetResource.ResourceId),
+				ResourceId: types.StringValue(targetResource.GetResourceId()),
 			}
 			if targetResource.ResourceType != nil {
-				target.ResourceType = types.StringValue(string(*targetResource.ResourceType))
+				target.ResourceType = types.StringValue(string(targetResource.GetResourceType()))
 			}
 			if targetResource.IncludeAllEntitlementsAndBundles != nil {
 				target.IncludeAllEntitlementsAndBundles = types.BoolValue(targetResource.GetIncludeAllEntitlementsAndBundles())
 			}
-			if targetResource.Entitlements != nil {
+			if targetResource.GetEntitlements() != nil {
 				var entitlements []entitlementModel
-				for _, entitlement := range targetResource.Entitlements {
+				for _, entitlement := range targetResource.GetEntitlements() {
 					var values []entitlementValueModel
-					for _, val := range entitlement.Values {
+					for _, val := range entitlement.GetValues() {
 						v := entitlementValueModel{
-							Id: types.StringValue(val.Id),
+							Id: types.StringValue(val.GetId()),
 						}
 						values = append(values, v)
 					}
 					e := entitlementModel{
-						Id:               types.StringValue(entitlement.Id),
+						Id:               types.StringValue(entitlement.GetId()),
 						IncludeAllValues: types.BoolValue(entitlement.GetIncludeAllValues()),
 						Values:           values,
 					}
@@ -825,58 +825,58 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 		c.ResourceSettings.ExcludedResources = excluded
 	}
 	if resp.ResourceSettings.IncludeAdminRoles != nil {
-		c.ResourceSettings.IncludeAdminRoles = types.BoolValue(*resp.ResourceSettings.IncludeAdminRoles)
+		c.ResourceSettings.IncludeAdminRoles = types.BoolValue(resp.ResourceSettings.GetIncludeAdminRoles())
 	}
 	if resp.ResourceSettings.IncludeEntitlements != nil {
-		c.ResourceSettings.IncludeEntitlements = types.BoolValue(*resp.ResourceSettings.IncludeEntitlements)
+		c.ResourceSettings.IncludeEntitlements = types.BoolValue(resp.ResourceSettings.GetIncludeEntitlements())
 	}
 	if resp.ResourceSettings.IndividuallyAssignedAppsOnly != nil {
-		c.ResourceSettings.IndividuallyAssignedAppsOnly = types.BoolValue(*resp.ResourceSettings.IndividuallyAssignedAppsOnly)
+		c.ResourceSettings.IndividuallyAssignedAppsOnly = types.BoolValue(resp.ResourceSettings.GetIndividuallyAssignedAppsOnly())
 	}
 	if resp.ResourceSettings.IndividuallyAssignedGroupsOnly != nil {
-		c.ResourceSettings.IndividuallyAssignedGroupsOnly = types.BoolValue(*resp.ResourceSettings.IndividuallyAssignedGroupsOnly)
+		c.ResourceSettings.IndividuallyAssignedGroupsOnly = types.BoolValue(resp.ResourceSettings.GetIndividuallyAssignedGroupsOnly())
 	}
 	if resp.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements != nil {
-		c.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements = types.BoolValue(*resp.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements)
+		c.ResourceSettings.OnlyIncludeOutOfPolicyEntitlements = types.BoolValue(resp.ResourceSettings.GetOnlyIncludeOutOfPolicyEntitlements())
 	}
 
 	c.ReviewerSettings = &reviewerSettingsModel{}
-	c.ReviewerSettings.Type = types.StringValue(string(resp.ReviewerSettings.Type))
+	c.ReviewerSettings.Type = types.StringValue(string(resp.ReviewerSettings.GetType()))
 	if resp.ReviewerSettings.BulkDecisionDisabled != nil {
-		c.ReviewerSettings.BulkDecisionDisabled = types.BoolValue(*resp.ReviewerSettings.BulkDecisionDisabled)
+		c.ReviewerSettings.BulkDecisionDisabled = types.BoolValue(resp.ReviewerSettings.GetBulkDecisionDisabled())
 	} else {
 		c.ReviewerSettings.BulkDecisionDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.FallBackReviewerId != nil {
-		c.ReviewerSettings.FallbackReviewerId = types.StringValue(*resp.ReviewerSettings.FallBackReviewerId)
+		c.ReviewerSettings.FallbackReviewerId = types.StringValue(resp.ReviewerSettings.GetFallBackReviewerId())
 	}
 	if resp.ReviewerSettings.JustificationRequired != nil {
-		c.ReviewerSettings.JustificationRequired = types.BoolValue(*resp.ReviewerSettings.JustificationRequired)
+		c.ReviewerSettings.JustificationRequired = types.BoolValue(resp.ReviewerSettings.GetJustificationRequired())
 	}
 	if resp.ReviewerSettings.ReassignmentDisabled != nil {
-		c.ReviewerSettings.ReassignmentDisabled = types.BoolValue(*resp.ReviewerSettings.ReassignmentDisabled)
+		c.ReviewerSettings.ReassignmentDisabled = types.BoolValue(resp.ReviewerSettings.GetReassignmentDisabled())
 	} else {
 		c.ReviewerSettings.ReassignmentDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.ReviewerGroupId != nil {
-		c.ReviewerSettings.ReviewerGroupId = types.StringValue(*resp.ReviewerSettings.ReviewerGroupId)
+		c.ReviewerSettings.ReviewerGroupId = types.StringValue(resp.ReviewerSettings.GetReviewerGroupId())
 	}
 	if resp.ReviewerSettings.ReviewerId != nil {
-		c.ReviewerSettings.ReviewerId = types.StringValue(*resp.ReviewerSettings.ReviewerId)
+		c.ReviewerSettings.ReviewerId = types.StringValue(resp.ReviewerSettings.GetReviewerId())
 	}
 	if resp.ReviewerSettings.ReviewerScopeExpression != nil {
-		c.ReviewerSettings.ReviewerScopeExpression = types.StringValue(*resp.ReviewerSettings.ReviewerScopeExpression)
+		c.ReviewerSettings.ReviewerScopeExpression = types.StringValue(resp.ReviewerSettings.GetReviewerScopeExpression())
 	}
 	if resp.ReviewerSettings.SelfReviewDisabled != nil {
-		c.ReviewerSettings.SelfReviewDisabled = types.BoolValue(*resp.ReviewerSettings.SelfReviewDisabled)
+		c.ReviewerSettings.SelfReviewDisabled = types.BoolValue(resp.ReviewerSettings.GetSelfReviewDisabled())
 	} else {
 		c.ReviewerSettings.SelfReviewDisabled = types.BoolValue(false)
 	}
 	if resp.ReviewerSettings.ReviewerLevels != nil {
-		c.ReviewerSettings.ReviewerLevels = make([]reviewerLevelModel, 0, len(resp.ReviewerSettings.ReviewerLevels))
+		c.ReviewerSettings.ReviewerLevels = make([]reviewerLevelModel, 0, len(resp.ReviewerSettings.GetReviewerLevels()))
 		for _, level := range resp.ReviewerSettings.ReviewerLevels {
 			reviewerLevel := reviewerLevelModel{}
-			reviewerLevel.Type = types.StringValue(string(level.Type))
+			reviewerLevel.Type = types.StringValue(string(level.GetType()))
 			fallbackReviewerId := level.GetFallBackReviewerId()
 			if fallbackReviewerId != "" {
 				reviewerLevel.FallBackReviewerId = types.StringValue(fallbackReviewerId)
@@ -894,18 +894,13 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 				reviewerLevel.ReviewerScopeExpression = types.StringValue(reviewerScopeExpression)
 			}
 			if level.SelfReviewDisabled != nil {
-				reviewerLevel.SelfReviewDisabled = types.BoolValue(*level.SelfReviewDisabled)
+				reviewerLevel.SelfReviewDisabled = types.BoolValue(level.GetSelfReviewDisabled())
 			}
 
-			//startReviews := make([]startReviewModel, 1)
-			//startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
-			//startReviews[0].When = types.StringValue(string(*level.StartReview.When))
-			//
-			//c.ReviewerSettings.ReviewerLevels = append(c.ReviewerSettings.ReviewerLevels, reviewerLevel)
 			startReviews := make([]startReviewModel, 1)
-			startReviews[0].OnDay = types.Int32Value(level.StartReview.OnDay)
+			startReviews[0].OnDay = types.Int32Value(level.StartReview.GetOnDay())
 			if level.StartReview.When != nil {
-				startReviews[0].When = types.StringValue(string(*level.StartReview.When))
+				startReviews[0].When = types.StringValue(string(level.StartReview.GetWhen()))
 			}
 			reviewerLevel.StartReview = startReviews
 
@@ -915,11 +910,11 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	}
 
 	c.ScheduleSettings = &scheduleSettingsModel{}
-	c.ScheduleSettings.StartDate = types.StringValue(resp.ScheduleSettings.StartDate.UTC().Format("2006-01-02T15:04:05.000Z"))
-	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.DurationInDays))
-	c.ScheduleSettings.TimeZone = types.StringValue(resp.ScheduleSettings.TimeZone)
+	c.ScheduleSettings.StartDate = types.StringValue(resp.ScheduleSettings.GetStartDate().UTC().Format("2006-01-02T15:04:05.000Z"))
+	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.GetDurationInDays()))
+	c.ScheduleSettings.TimeZone = types.StringValue(resp.ScheduleSettings.GetTimeZone())
 	c.ScheduleSettings.Type = types.StringValue(string(resp.ScheduleSettings.Type))
-	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.DurationInDays))
+	c.ScheduleSettings.DurationInDays = types.Int32Value(int32(resp.ScheduleSettings.GetDurationInDays()))
 	if resp.ScheduleSettings.Recurrence != nil {
 		c.ScheduleSettings.Recurrence = make([]recurrenceModel, 0)
 		rec := getRecurrence(resp)
@@ -929,23 +924,23 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	c.NotificationSettings = &notificationSettingsModel{}
 	if resp.NotificationSettings != nil {
 		if resp.NotificationSettings.NotifyReviewerAtCampaignEnd != nil {
-			c.NotificationSettings.NotifyReviewerAtCampaignEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewerAtCampaignEnd)
+			c.NotificationSettings.NotifyReviewerAtCampaignEnd = types.BoolValue(resp.NotificationSettings.GetNotifyReviewerAtCampaignEnd())
 		}
 		if resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get() != nil {
-			c.NotificationSettings.NotifyReviewerDuringMidpointOfReview = types.BoolValue(*resp.NotificationSettings.NotifyReviewerDuringMidpointOfReview.Get())
+			c.NotificationSettings.NotifyReviewerDuringMidpointOfReview = types.BoolValue(resp.NotificationSettings.GetNotifyReviewerDuringMidpointOfReview())
 		}
 		if resp.NotificationSettings.NotifyReviewerWhenOverdue.Get() != nil {
-			c.NotificationSettings.NotifyReviewerWhenOverdue = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenOverdue.Get())
+			c.NotificationSettings.NotifyReviewerWhenOverdue = types.BoolValue(resp.NotificationSettings.GetNotifyReviewerWhenOverdue())
 		}
 		if resp.NotificationSettings.NotifyReviewerWhenReviewAssigned != nil {
-			c.NotificationSettings.NotifyReviewerWhenReviewAssigned = types.BoolValue(*resp.NotificationSettings.NotifyReviewerWhenReviewAssigned)
+			c.NotificationSettings.NotifyReviewerWhenReviewAssigned = types.BoolValue(resp.NotificationSettings.GetNotifyReviewerWhenReviewAssigned())
 		}
 		if resp.NotificationSettings.NotifyReviewPeriodEnd.Get() != nil {
-			c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(*resp.NotificationSettings.NotifyReviewPeriodEnd.Get())
+			c.NotificationSettings.NotifyReviewPeriodEnd = types.BoolValue(resp.NotificationSettings.GetNotifyReviewPeriodEnd())
 		}
 		if len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs) > 0 {
-			reminders := make([]int64, 0, len(resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
-			for _, v := range resp.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs {
+			reminders := make([]int64, 0, len(resp.NotificationSettings.GetRemindersReviewerBeforeCampaignCloseInSecs()))
+			for _, v := range resp.NotificationSettings.GetRemindersReviewerBeforeCampaignCloseInSecs() {
 				reminders = append(reminders, int64(v))
 			}
 
@@ -959,25 +954,21 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 	}
 
 	c.PrincipalScope = &principalScopeSettingsModel{}
-	if resp.PrincipalScopeSettings.Type != "" {
-		c.PrincipalScope.Type = types.StringValue(string(resp.PrincipalScopeSettings.Type))
+	if resp.PrincipalScopeSettings.GetType() != "" {
+		c.PrincipalScope.Type = types.StringValue(string(resp.PrincipalScopeSettings.GetType()))
 	}
-	if len(resp.PrincipalScopeSettings.ExcludedUserIds) > 0 {
-		excluded := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.ExcludedUserIds))
-		for _, id := range resp.PrincipalScopeSettings.ExcludedUserIds {
+	if len(resp.PrincipalScopeSettings.GetExcludedUserIds()) > 0 {
+		excluded := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.GetExcludedUserIds()))
+		for _, id := range resp.PrincipalScopeSettings.GetExcludedUserIds() {
 			excluded = append(excluded, types.StringValue(id))
 		}
-		var diags diag.Diagnostics
-		c.PrincipalScope.ExcludedUserIds, diags = types.ListValue(types.StringType, excluded)
-		if diags.HasError() {
-			println(diags.Errors())
-		}
+		c.PrincipalScope.ExcludedUserIds, _ = types.ListValue(types.StringType, excluded)
 	} else {
 		c.PrincipalScope.ExcludedUserIds = types.ListNull(types.StringType)
 	}
-	if len(resp.PrincipalScopeSettings.GroupIds) > 0 {
-		groupIds := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.GroupIds))
-		for _, id := range resp.PrincipalScopeSettings.GroupIds {
+	if len(resp.PrincipalScopeSettings.GetGroupIds()) > 0 {
+		groupIds := make([]attr.Value, 0, len(resp.PrincipalScopeSettings.GetGroupIds()))
+		for _, id := range resp.PrincipalScopeSettings.GetGroupIds() {
 			groupIds = append(groupIds, types.StringValue(id))
 		}
 		c.PrincipalScope.GroupIds = types.ListValueMust(types.StringType, groupIds)
@@ -985,24 +976,28 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 		c.PrincipalScope.GroupIds = types.ListNull(types.StringType)
 	}
 	if resp.PrincipalScopeSettings.IncludeOnlyActiveUsers != nil {
-		c.PrincipalScope.IncludeOnlyActiveUsers = types.BoolValue(*resp.PrincipalScopeSettings.IncludeOnlyActiveUsers)
+		c.PrincipalScope.IncludeOnlyActiveUsers = types.BoolValue(resp.PrincipalScopeSettings.GetIncludeOnlyActiveUsers())
 	}
 	if resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts != nil {
-		c.PrincipalScope.OnlyIncludeUsersWithSODConflicts = types.BoolValue(*resp.PrincipalScopeSettings.OnlyIncludeUsersWithSODConflicts)
+		c.PrincipalScope.OnlyIncludeUsersWithSODConflicts = types.BoolValue(resp.PrincipalScopeSettings.GetOnlyIncludeUsersWithSODConflicts())
 	}
-	if len(resp.PrincipalScopeSettings.UserIds) > 0 {
-		listVal, _ := types.ListValueFrom(ctx, types.StringType, resp.PrincipalScopeSettings.UserIds)
+	if len(resp.PrincipalScopeSettings.GetUserIds()) > 0 {
+		listVal, diags := types.ListValueFrom(ctx, types.StringType, resp.PrincipalScopeSettings.GetUserIds())
+		if diags.HasError() {
+			diags.Append(diags...)
+			return diags
+		}
 		c.PrincipalScope.UserIds = listVal
 	} else {
 		c.PrincipalScope.UserIds = types.ListNull(types.StringType)
 	}
 	if resp.PrincipalScopeSettings.UserScopeExpression != nil {
-		c.PrincipalScope.UserScopeExpression = types.StringValue(*resp.PrincipalScopeSettings.UserScopeExpression)
+		c.PrincipalScope.UserScopeExpression = types.StringValue(resp.PrincipalScopeSettings.GetUserScopeExpression())
 	}
 	if resp.PrincipalScopeSettings.PredefinedInactiveUsersScope != nil {
 		c.PrincipalScope.PredefinedInactiveUsersScope = []inactiveUsersScopeModel{
 			{
-				InactiveDays: types.Int32Value(*resp.PrincipalScopeSettings.PredefinedInactiveUsersScope.InactiveDays),
+				InactiveDays: types.Int32Value(resp.PrincipalScopeSettings.PredefinedInactiveUsersScope.GetInactiveDays()),
 			},
 		}
 	}

@@ -2,9 +2,9 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"time"
 
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -488,12 +488,12 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 		excluded = append(excluded, excludedRes)
 	}
 
-	targets := make([]targetResourceModel, len(campaign.ResourceSettings.TargetResources))
-	for i, tr := range campaign.ResourceSettings.TargetResources {
-		entitlements := make([]entitlementModel, len(tr.Entitlements))
-		for j, ent := range tr.Entitlements {
-			values := make([]entitlementValueModel, len(ent.Values))
-			for k, v := range ent.Values {
+	targets := make([]targetResourceModel, len(campaign.ResourceSettings.GetTargetResources()))
+	for i, tr := range campaign.ResourceSettings.GetTargetResources() {
+		entitlements := make([]entitlementModel, len(tr.GetEntitlements()))
+		for j, ent := range tr.GetEntitlements() {
+			values := make([]entitlementValueModel, len(ent.GetValues()))
+			for k, v := range ent.GetValues() {
 				values[k] = entitlementValueModel{Id: types.StringValue(v.GetId())}
 			}
 			entitlements[j] = entitlementModel{
@@ -502,8 +502,8 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 				Values:           values,
 			}
 		}
-		bundles := make([]entitlementBundleModel, len(tr.EntitlementBundles))
-		for j, b := range tr.EntitlementBundles {
+		bundles := make([]entitlementBundleModel, len(tr.GetEntitlementBundles()))
+		for j, b := range tr.GetEntitlementBundles() {
 			bundles[j] = entitlementBundleModel{Id: types.StringValue(b.GetId())}
 		}
 		targets[i] = targetResourceModel{
@@ -554,7 +554,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	var remindersReviewerBeforeCampaignCloseInSecs types.List
 	if campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs != nil {
-		intValues := make([]attr.Value, 0, len(campaign.NotificationSettings.RemindersReviewerBeforeCampaignCloseInSecs))
+		intValues := make([]attr.Value, 0, len(campaign.NotificationSettings.GetRemindersReviewerBeforeCampaignCloseInSecs()))
 		for _, v := range campaign.NotificationSettings.GetRemindersReviewerBeforeCampaignCloseInSecs() {
 			intValues = append(intValues, types.Int64Value(int64(v)))
 		}
@@ -575,8 +575,8 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	var excludedUsersIds types.List
-	if len(campaign.PrincipalScopeSettings.ExcludedUserIds) > 0 {
-		excluded := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.ExcludedUserIds))
+	if len(campaign.PrincipalScopeSettings.GetExcludedUserIds()) > 0 {
+		excluded := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GetExcludedUserIds()))
 		for _, id := range campaign.PrincipalScopeSettings.GetExcludedUserIds() {
 			excluded = append(excluded, types.StringValue(id))
 		}
@@ -586,8 +586,8 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	var userIdList types.List
-	if len(campaign.PrincipalScopeSettings.UserIds) > 0 {
-		userIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.UserIds))
+	if len(campaign.PrincipalScopeSettings.GetUserIds()) > 0 {
+		userIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GetUserIds()))
 		for _, id := range campaign.PrincipalScopeSettings.GetUserIds() {
 			userIds = append(userIds, types.StringValue(id))
 		}
@@ -597,8 +597,8 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	var groupIdList types.List
-	if len(campaign.PrincipalScopeSettings.GroupIds) > 0 {
-		groupIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GroupIds))
+	if len(campaign.PrincipalScopeSettings.GetGroupIds()) > 0 {
+		groupIds := make([]attr.Value, 0, len(campaign.PrincipalScopeSettings.GetGroupIds()))
 		for _, id := range campaign.PrincipalScopeSettings.GetGroupIds() {
 			groupIds = append(groupIds, types.StringValue(id))
 		}
@@ -689,9 +689,9 @@ func (d *campaignDataSource) createSettingModelDS(campaign *governance.CampaignF
 		selfReviewDisabled = types.BoolValue(campaign.ReviewerSettings.GetSelfReviewDisabled())
 	}
 
-	reviewerLevels := make([]reviewerLevelModel, len(campaign.ReviewerSettings.ReviewerLevels))
+	reviewerLevels := make([]reviewerLevelModel, len(campaign.ReviewerSettings.GetReviewerLevels()))
 	if campaign.ReviewerSettings.ReviewerLevels != nil {
-		for _, level := range campaign.ReviewerSettings.ReviewerLevels {
+		for _, level := range campaign.ReviewerSettings.GetReviewerLevels() {
 			reviewerLevel := reviewerLevelModel{
 				Type:                    types.StringValue(string(level.GetType())),
 				FallBackReviewerId:      types.StringValue(level.GetFallBackReviewerId()),

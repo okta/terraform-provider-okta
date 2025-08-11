@@ -244,28 +244,28 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *entitlementResource) applyEntitlementToState(data *entitlementResourceModel, createEntitlementResp *governance.EntitlementsFullWithParent) diag.Diagnostics {
-	data.Id = types.StringValue(createEntitlementResp.Id)
-	data.DataType = types.StringValue(string(createEntitlementResp.DataType))
-	data.ExternalValue = types.StringValue(createEntitlementResp.ExternalValue)
-	data.MultiValue = types.BoolValue(createEntitlementResp.MultiValue)
-	data.Name = types.StringValue(createEntitlementResp.Name)
-	data.ParentResourceOrn = types.StringValue(createEntitlementResp.ParentResourceOrn)
+	data.Id = types.StringValue(createEntitlementResp.GetId())
+	data.DataType = types.StringValue(string(createEntitlementResp.GetDataType()))
+	data.ExternalValue = types.StringValue(createEntitlementResp.GetExternalValue())
+	data.MultiValue = types.BoolValue(createEntitlementResp.GetMultiValue())
+	data.Name = types.StringValue(createEntitlementResp.GetName())
+	data.ParentResourceOrn = types.StringValue(createEntitlementResp.GetParentResourceOrn())
 	if createEntitlementResp.Description != nil {
-		data.Description = types.StringValue(*createEntitlementResp.Description)
+		data.Description = types.StringValue(createEntitlementResp.GetDescription())
 	} else {
 		data.Description = types.StringNull()
 	}
 	data.Parent = &entitlementParentModel{
-		ExternalID: types.StringValue(createEntitlementResp.Parent.ExternalId),
-		Type:       types.StringValue(string(createEntitlementResp.Parent.Type)),
+		ExternalID: types.StringValue(createEntitlementResp.Parent.GetExternalId()),
+		Type:       types.StringValue(string(createEntitlementResp.Parent.GetType())),
 	}
-	data.Values = make([]entitlementValuesModel, len(createEntitlementResp.Values))
-	for i, value := range createEntitlementResp.Values {
+	data.Values = make([]entitlementValuesModel, len(createEntitlementResp.GetValues()))
+	for i, value := range createEntitlementResp.GetValues() {
 		data.Values[i] = entitlementValuesModel{
-			Id:            types.StringValue(*value.Id),
-			ExternalValue: types.StringValue(*value.ExternalValue),
-			Name:          types.StringValue(*value.Name),
-			Description:   types.StringValue(*value.Description),
+			Id:            types.StringValue(value.GetId()),
+			ExternalValue: types.StringValue(value.GetExternalValue()),
+			Name:          types.StringValue(value.GetName()),
+			Description:   types.StringValue(value.GetDescription()),
 		}
 	}
 	return nil

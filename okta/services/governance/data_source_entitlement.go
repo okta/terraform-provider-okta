@@ -3,6 +3,7 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -157,7 +158,7 @@ func (d *entitlementDataSource) Read(ctx context.Context, req datasource.ReadReq
 		Name:              types.StringValue(readEntitlementResp.GetName()),
 		ParentResourceOrn: types.StringValue(readEntitlementResp.GetParentResourceOrn()),
 		Parent:            convertParent(&readEntitlementResp.Parent),
-		Values:            convertValues(readEntitlementResp.Values),
+		Values:            convertValues(readEntitlementResp.GetValues()),
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
