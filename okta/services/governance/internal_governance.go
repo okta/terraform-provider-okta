@@ -22,6 +22,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRequestSequenceResource,
 		newRequestSettingOrganizationResource,
 		newRequestSettingResourceResource,
+		newRequestV2Resource,
 	}
 }
 
@@ -40,6 +41,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRequestSequencesDataSource,
 		newRequestSettingOrganizationDataSource,
 		newRequestSettingResourceDataSource,
+		newRequestV2DataSource,
 	}
 }
 

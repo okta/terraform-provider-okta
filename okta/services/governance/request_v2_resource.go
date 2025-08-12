@@ -2,25 +2,48 @@ package governance
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"time"
 
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var _ resource.Resource = (*requestV2Resource)(nil)
+var (
+	_ resource.Resource                = &requestV2Resource{}
+	_ resource.ResourceWithConfigure   = &requestV2Resource{}
+	_ resource.ResourceWithImportState = &requestV2Resource{}
+)
 
-func NewRequestV2Resource() resource.Resource {
+func newRequestV2Resource() resource.Resource {
 	return &requestV2Resource{}
 }
 
-type requestV2Resource struct{}
+func (r *requestV2Resource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+}
+
+func (r *requestV2Resource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(request, response)
+}
+
+type requestV2Resource struct {
+	*config.Config
+}
 
 type requested struct {
-	EntryId types.String `type:"entry_id"`
-	Type    types.String `type:"type"`
+	EntryId         types.String `type:"entry_id"`
+	Type            types.String `type:"type"`
+	AccessScopeId   types.String `type:"access_scope_id"`
+	AccessScopeType types.String `type:"access_scope_type"`
+	ResourceId      types.String `type:"resoruce_id"`
+	ResourceType    types.String `type:"resource_type"`
 }
 
 type riskAssessment struct {
@@ -122,6 +145,18 @@ func (r *requestV2Resource) Schema(ctx context.Context, req resource.SchemaReque
 					"type": schema.StringAttribute{
 						Required: true,
 					},
+					"access_scope_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"access_scope_type": schema.StringAttribute{
+						Computed: true,
+					},
+					"resource_id": schema.StringAttribute{
+						Computed: true,
+					},
+					"resource_type": schema.StringAttribute{
+						Computed: true,
+					},
 				},
 			},
 			"requested_for": schema.SingleNestedBlock{
@@ -211,9 +246,12 @@ func (r *requestV2Resource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Create API call logic
+	reqCreatableResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestsAPI.CreateRequestV2(ctx).RequestCreatable2(createRequestReq(data)).Execute()
+	if err != nil {
+		return
+	}
 
-	// Example data value setting
-	data.Id = types.StringValue("example-id")
+	applyRequestResourceToState(&data, reqCreatableResp)
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -230,36 +268,174 @@ func (r *requestV2Resource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	// Read API call logic
+	getRequestV2Resp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
+	if err != nil {
+		return
+	}
+
+	//cannot use the applyToState func since the type of response is different
+	data.Id = types.StringValue(getRequestV2Resp.GetId())
+	data.Created = types.StringValue(getRequestV2Resp.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(getRequestV2Resp.GetCreatedBy())
+	data.LastUpdated = types.StringValue(getRequestV2Resp.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(getRequestV2Resp.GetLastUpdatedBy())
+	data.Requested = setRequested(getRequestV2Resp.GetRequested())
+	data.RequestedBy = setRequestedBy(getRequestV2Resp.GetRequestedBy())
+	data.RequestedFor = setRequestedBy(getRequestV2Resp.GetRequestedFor())
+	data.Status = types.StringValue(string(getRequestV2Resp.GetStatus()))
+	data.AccessDuration = types.StringValue(getRequestV2Resp.GetAccessDuration())
+	data.Granted = types.StringValue(getRequestV2Resp.GetGranted().Format(time.RFC3339))
+	data.GrantStatus = types.StringValue(string(getRequestV2Resp.GetGrantStatus()))
+	data.Resolved = types.StringValue(getRequestV2Resp.GetResolved().Format(time.RFC3339))
+	data.RevocationStatus = types.StringValue(string(getRequestV2Resp.GetRevocationStatus()))
+	data.RevocationScheduled = types.StringValue(string(getRequestV2Resp.GetRevocationScheduled().Format(time.RFC3339)))
+	var requesterFieldValues []requestedFieldValues
+	for _, reqValue := range getRequestV2Resp.GetRequesterFieldValues() {
+		var requesterFieldValue requestedFieldValues
+		requesterFieldValue.Id = types.StringValue(reqValue.GetId())
+		requesterFieldValue.Label = types.StringValue(reqValue.GetLabel())
+		requesterFieldValue.Type = types.StringValue(string(reqValue.GetType()))
+		requesterFieldValue.Value = types.StringValue(reqValue.GetValue())
+		var values []attr.Value
+		for _, val := range reqValue.Values {
+			values = append(values, types.StringValue(val))
+		}
+		listVal, _ := types.ListValue(types.StringType, values)
+		requesterFieldValue.Values = listVal
+		requesterFieldValues = append(requesterFieldValues, requesterFieldValue)
+	}
+	data.RequesterFieldValues = requesterFieldValues
+	var riskAssessments riskAssessment
+	assessment := getRequestV2Resp.GetRiskAssessment()
+	var rules []riskRules
+	for _, riskRule := range assessment.GetRiskRules() {
+		var rule riskRules
+		rule.Name = types.StringValue(riskRule.GetName())
+		rule.Description = types.StringValue(riskRule.GetDescription())
+		rule.ResourceName = types.StringValue(riskRule.GetResourceName())
+		rules = append(rules, rule)
+	}
+	riskAssessments.RequestSubmissionType = types.StringValue(string(assessment.GetRequestSubmissionType()))
+	riskAssessments.RiskRules = rules
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestV2Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data requestV2ResourceModel
-
-	// Read Terraform plan data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Update API call logic
-
-	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddWarning(
+		"Update Not Supported",
+		"This resource cannot be updated via Terraform.",
+	)
 }
 
 func (r *requestV2Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data requestV2ResourceModel
+	resp.Diagnostics.AddWarning(
+		"Delete Not Supported",
+		"This resource cannot be deleted via Terraform.",
+	)
+}
 
-	// Read Terraform prior state data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+func applyRequestResourceToState(data *requestV2ResourceModel, reqCreatableResp *governance.RequestSubmissionFull) {
+	data.Id = types.StringValue(reqCreatableResp.GetId())
+	data.Created = types.StringValue(reqCreatableResp.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(reqCreatableResp.GetCreatedBy())
+	data.LastUpdated = types.StringValue(reqCreatableResp.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(reqCreatableResp.GetLastUpdatedBy())
+	data.Requested = setRequested(reqCreatableResp.GetRequested())
+	data.RequestedBy = setRequestedBy(reqCreatableResp.GetRequestedBy())
+	data.RequestedFor = setRequestedBy(reqCreatableResp.GetRequestedFor())
+	data.Status = types.StringValue(reqCreatableResp.GetStatus())
+	data.AccessDuration = types.StringValue(reqCreatableResp.GetAccessDuration())
+	data.Granted = types.StringValue(reqCreatableResp.GetGranted().Format(time.RFC3339))
+	data.GrantStatus = types.StringValue(string(reqCreatableResp.GetGrantStatus()))
+	data.Resolved = types.StringValue(reqCreatableResp.GetResolved().Format(time.RFC3339))
+	data.RevocationStatus = types.StringValue(string(reqCreatableResp.GetRevocationStatus()))
+	data.RevocationScheduled = types.StringValue(string(reqCreatableResp.GetRevocationScheduled().Format(time.RFC3339)))
+	var requesterFieldValues []requestedFieldValues
+	for _, reqValue := range reqCreatableResp.GetRequesterFieldValues() {
+		var requesterFieldValue requestedFieldValues
+		requesterFieldValue.Id = types.StringValue(reqValue.GetId())
+		requesterFieldValue.Label = types.StringValue(reqValue.GetLabel())
+		requesterFieldValue.Type = types.StringValue(string(reqValue.GetType()))
+		requesterFieldValue.Value = types.StringValue(reqValue.GetValue())
+		var values []attr.Value
+		for _, val := range reqValue.Values {
+			values = append(values, types.StringValue(val))
+		}
+		listVal, _ := types.ListValue(types.StringType, values)
+		requesterFieldValue.Values = listVal
+		requesterFieldValues = append(requesterFieldValues, requesterFieldValue)
+	}
+	data.RequesterFieldValues = requesterFieldValues
+	var riskAssessments riskAssessment
+	assessment := reqCreatableResp.GetRiskAssessment()
+	var rules []riskRules
+	for _, riskRule := range assessment.GetRiskRules() {
+		var rule riskRules
+		rule.Name = types.StringValue(riskRule.GetName())
+		rule.Description = types.StringValue(riskRule.GetDescription())
+		rule.ResourceName = types.StringValue(riskRule.GetResourceName())
+		rules = append(rules, rule)
+	}
+	riskAssessments.RequestSubmissionType = types.StringValue(string(assessment.GetRequestSubmissionType()))
+	riskAssessments.RiskRules = rules
+}
 
-	if resp.Diagnostics.HasError() {
-		return
+func setRequestedBy(by governance.TargetPrincipal) entitlementParentModel {
+	return entitlementParentModel{
+		Type:       types.StringValue(string(by.GetType())),
+		ExternalID: types.StringValue(by.GetExternalId()),
+	}
+}
+
+func setRequested(getRequested governance.Requested) requested {
+	var reqResource requested
+	reqResource.EntryId = types.StringValue(getRequested.GetEntryId())
+	reqResource.AccessScopeId = types.StringValue(getRequested.GetAccessScopeId())
+	reqResource.AccessScopeType = types.StringValue(string(getRequested.GetAccessScopeType()))
+	reqResource.ResourceId = types.StringValue(getRequested.GetResourceId())
+	reqResource.ResourceType = types.StringValue(string(getRequested.GetResourceType()))
+	reqResource.EntryId = types.StringValue("CATALOG_ENTRY")
+	return reqResource
+}
+
+func createRequestReq(data requestV2ResourceModel) governance.RequestCreatable2 {
+	var reqCreatable governance.RequestCreatable2
+	reqCreatable.Requested = governance.RequestResourceCreatable{
+		RequestResourceCatalogEntryCreatable: &governance.RequestResourceCatalogEntryCreatable{
+			Type:    data.Requested.Type.ValueString(),
+			EntryId: data.Requested.EntryId.ValueString(),
+		},
+	}
+	reqCreatable.RequestedFor = governance.TargetPrincipal{
+		ExternalId: data.RequestedFor.ExternalID.ValueString(),
+		Type:       governance.PrincipalType(data.RequestedFor.Type.ValueString()),
 	}
 
-	// Delete API call logic
+	if &data.RequestedBy != nil {
+		reqCreatable.RequestedBy = &governance.TargetPrincipal{
+			ExternalId: data.Requested.EntryId.ValueString(),
+			Type:       governance.PrincipalType(data.Requested.Type.ValueString()),
+		}
+	}
+
+	var requesterFields []governance.RequestFieldValue
+	for _, field := range data.RequesterFieldValues {
+		var reqField governance.RequestFieldValue
+		reqField.Id = field.Id.ValueString()
+		reqField.Value = field.Value.ValueStringPointer()
+		reqField.Label = field.Label.ValueStringPointer()
+		reqFieldType := governance.RequestFieldType(field.Type.ValueString())
+		reqField.Type = &reqFieldType
+		var values []string
+		for _, val := range reqField.Values {
+			values = append(values, val)
+		}
+		reqField.Values = values
+
+		requesterFields = append(requesterFields, reqField)
+	}
+	reqCreatable.RequesterFieldValues = requesterFields
+	return reqCreatable
 }
