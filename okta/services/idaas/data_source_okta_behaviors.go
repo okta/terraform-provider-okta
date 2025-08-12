@@ -7,13 +7,14 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceBehaviors() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceBehaviorsRead,
+		ReadContext: dataSourceBehaviorsReadUsingSDK,
 		Schema: map[string]*schema.Schema{
 			"q": {
 				Type:        schema.TypeString,
@@ -85,5 +86,59 @@ func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, meta i
 		arr[i]["settings"] = settings
 	}
 	err = d.Set("behaviors", arr)
+	return diag.FromErr(err)
+}
+
+func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
+	listBehaviorDetectionRules := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ListBehaviorDetectionRules(ctx)
+	behaviors, _, err := listBehaviorDetectionRules.Execute()
+	if err != nil {
+		return diag.Errorf("failed to list behaviors: %v", err)
+	}
+	arr := make([]map[string]any, len(behaviors))
+	for i, behavior := range behaviors {
+
+		switch concreteType := behavior.GetActualInstance().(type) {
+		case oktav5sdk.BehaviorRuleAnomalousDevice:
+			arr[i] = map[string]any{
+				"type":   concreteType.GetType(),
+				"status": concreteType.GetStatus(),
+				"settings": map[string]any{
+					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
+					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
+				},
+			}
+
+		case oktav5sdk.BehaviorRuleAnomalousLocation:
+			arr[i] = map[string]any{
+				"type":   concreteType.GetType(),
+				"status": concreteType.GetStatus(),
+				"settings": map[string]any{
+					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
+					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
+					"radiusKilometers":           *concreteType.GetSettings().RadiusKilometers,
+					"granularity":                concreteType.GetSettings().Granularity,
+				},
+			}
+		case oktav5sdk.BehaviorRuleAnomalousIP:
+			arr[i] = map[string]any{
+				"type":   concreteType.GetType(),
+				"status": concreteType.GetStatus(),
+				"settings": map[string]any{
+					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
+					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
+				},
+			}
+		case oktav5sdk.BehaviorRuleVelocity:
+			arr[i] = map[string]any{
+				"type":   concreteType.GetType(),
+				"status": concreteType.GetStatus(),
+				"settings": map[string]any{
+					"velocityKph": concreteType.GetSettings().VelocityKph,
+				},
+			}
+		}
+		err = d.Set("behaviors", arr)
+	}
 	return diag.FromErr(err)
 }
