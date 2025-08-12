@@ -2,10 +2,10 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"time"
 
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -22,7 +22,7 @@ type reviewDataSource struct {
 	*config.Config
 }
 
-type ReviewerEntitlementValue struct {
+type reviewerEntitlementValue struct {
 	Id   types.String `tfsdk:"id"`
 	Name types.String `tfsdk:"name"`
 }
@@ -41,16 +41,16 @@ type reviewDataSourceModel struct {
 	LastUpdatedBy        types.String `tfsdk:"last_updated_by"`
 	Decided              types.String `tfsdk:"decided"`
 
-	PrincipalProfile  *PrincipalProfileModel    `tfsdk:"principal_profile"`
-	ReviewerProfile   *PrincipalProfileModel    `tfsdk:"reviewer_profile"`
-	EntitlementValue  *ReviewerEntitlementValue `tfsdk:"entitlement_value"`
-	EntitlementBundle *ReviewerEntitlementValue `tfsdk:"entitlement_bundle"` // Assuming this is the same structure as EntitlementValue
+	PrincipalProfile  *principalProfileModel    `tfsdk:"principal_profile"`
+	ReviewerProfile   *principalProfileModel    `tfsdk:"reviewer_profile"`
+	EntitlementValue  *reviewerEntitlementValue `tfsdk:"entitlement_value"`
+	EntitlementBundle *reviewerEntitlementValue `tfsdk:"entitlement_bundle"` // Assuming this is the same structure as EntitlementValue
 	Note              *noteModel                `tfsdk:"note"`
 	AllReviewerLevels []reviewLevelModel        `tfsdk:"all_reviewer_levels"`
 	Links             *linksModel               `tfsdk:"links"`
 }
 
-type PrincipalProfileModel struct {
+type principalProfileModel struct {
 	Id        string                            `tfsdk:"id"`
 	Email     string                            `tfsdk:"email"`
 	FirstName *string                           `tfsdk:"first_name"`
@@ -235,7 +235,7 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	// Call Okta API to fetch review details
-	review, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().ReviewsAPI.GetReview(ctx, reviewId).Execute()
+	review, _, err := d.OktaGovernanceClient.OktaIGSDKClient().ReviewsAPI.GetReview(ctx, reviewId).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to read review",
@@ -281,23 +281,23 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func convertEntitlementBundle(bundle *governance.ReviewerEntitlementBundle) *ReviewerEntitlementValue {
+func convertEntitlementBundle(bundle *governance.ReviewerEntitlementBundle) *reviewerEntitlementValue {
 	if bundle == nil || bundle.Id == "" || bundle.Name == "" {
 		return nil
 	}
 
-	return &ReviewerEntitlementValue{
+	return &reviewerEntitlementValue{
 		Id:   types.StringValue(bundle.Id),
 		Name: types.StringValue(bundle.Name),
 	}
 }
 
-func convertEntitlementValue(value *governance.ReviewerEntitlementValue) *ReviewerEntitlementValue {
+func convertEntitlementValue(value *governance.ReviewerEntitlementValue) *reviewerEntitlementValue {
 	if value == nil || value.Id == "" || value.Name == "" {
 		return nil
 	}
 
-	return &ReviewerEntitlementValue{
+	return &reviewerEntitlementValue{
 		Id:   types.StringValue(value.Id),
 		Name: types.StringValue(value.Name),
 	}
@@ -381,12 +381,12 @@ func convertLinks(links *governance.ReviewLinks) *linksModel {
 	}
 }
 
-func convertPrincipalProfile(p *governance.PrincipalProfile) *PrincipalProfileModel {
+func convertPrincipalProfile(p *governance.PrincipalProfile) *principalProfileModel {
 	if p == nil {
 		return nil
 	}
 
-	return &PrincipalProfileModel{
+	return &principalProfileModel{
 		Id:        p.GetId(),
 		Email:     p.GetEmail(),
 		FirstName: p.FirstName,

@@ -38,7 +38,7 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
 
-	//OktaIGSDKClientV5() *governance.IGAPIClient
+	//OktaIGSDKClient() *governance.IGAPIClient
 	//OktaIGSDKClientV3() *governance.IGAPIClient
 	//OktaIGSDKClientV2() *sdk.Client
 }

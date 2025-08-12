@@ -400,7 +400,7 @@ func (d *campaignDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	campaign, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().CampaignsAPI.GetCampaign(ctx, data.Id.ValueString()).Execute()
+	campaign, _, err := d.OktaGovernanceClient.OktaIGSDKClient().CampaignsAPI.GetCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",

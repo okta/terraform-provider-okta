@@ -137,7 +137,7 @@ func (r *entitlementBundleResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	// Create API call logic
-	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementBundlesAPI.CreateEntitlementBundle(ctx).EntitlementBundleCreatable(buildEntitlementBundleCreateBody(data)).Execute()
+	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.CreateEntitlementBundle(ctx).EntitlementBundleCreatable(buildEntitlementBundleCreateBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Entitlement Bundles",
@@ -167,7 +167,7 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 
 	// Read API call logic
 	s := []string{"full_entitlements"}
-	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Include(s).Execute()
+	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Include(s).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",
@@ -202,7 +202,7 @@ func (r *entitlementBundleResource) Update(ctx context.Context, req resource.Upd
 	plan.Status = state.Status
 
 	// Update API call logic
-	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementBundlesAPI.ReplaceEntitlementBundle(ctx, plan.Id.ValueString()).EntitlementBundleUpdatable(buildEntitlementBundleUpdateBody(plan)).Execute()
+	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.ReplaceEntitlementBundle(ctx, plan.Id.ValueString()).EntitlementBundleUpdatable(buildEntitlementBundleUpdateBody(plan)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Entitlement Bundles",
@@ -230,7 +230,7 @@ func (r *entitlementBundleResource) Delete(ctx context.Context, req resource.Del
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementBundlesAPI.DeleteEntitlementBundle(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.DeleteEntitlementBundle(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Entitlement Bundle",

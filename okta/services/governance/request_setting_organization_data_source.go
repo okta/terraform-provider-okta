@@ -2,17 +2,17 @@ package governance
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
-	"github.com/okta/terraform-provider-okta/okta/config"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = (*requestSettingOrganizationDataSource)(nil)
 
-func NewRequestSettingOrganizationDataSource() datasource.DataSource {
+func newRequestSettingOrganizationDataSource() datasource.DataSource {
 	return &requestSettingOrganizationDataSource{}
 }
 
@@ -62,7 +62,7 @@ func (d *requestSettingOrganizationDataSource) Read(ctx context.Context, req dat
 	}
 
 	// Read API call logic
-	orgSettingsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
+	orgSettingsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
 		return
 	}

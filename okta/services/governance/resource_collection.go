@@ -2,14 +2,14 @@ package governance
 
 import (
 	"context"
+
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/okta/terraform-provider-okta/okta/config"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
@@ -67,7 +67,7 @@ func (r *collectionResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 
 	// Create API call logic
-	createCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CollectionsAPI.CreateCollection(ctx).CollectionCreatable(createCollection(data)).Execute()
+	createCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().CollectionsAPI.CreateCollection(ctx).CollectionCreatable(createCollection(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Collections",
@@ -110,7 +110,7 @@ func (r *collectionResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	// Read API call logic
-	getCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CollectionsAPI.GetCollection(ctx, data.Id.ValueString()).Execute()
+	getCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().CollectionsAPI.GetCollection(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Collections",
@@ -138,7 +138,7 @@ func (r *collectionResource) Update(ctx context.Context, req resource.UpdateRequ
 
 	// Update API call logic
 	data.Id = state.Id
-	updatedCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().CollectionsAPI.ReplaceCollection(ctx, state.Id.ValueString()).CollectionUpdatable(buildUpdateCollection(data)).Execute()
+	updatedCollectionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().CollectionsAPI.ReplaceCollection(ctx, state.Id.ValueString()).CollectionUpdatable(buildUpdateCollection(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Collections",
@@ -169,7 +169,7 @@ func (r *collectionResource) Delete(ctx context.Context, req resource.DeleteRequ
 	}
 
 	// Delete API call logic
-	r.OktaGovernanceClient.OktaIGSDKClientV5().CollectionsAPI.DeleteCollection(ctx, data.Id.ValueString())
+	r.OktaGovernanceClient.OktaIGSDKClient().CollectionsAPI.DeleteCollection(ctx, data.Id.ValueString())
 }
 
 func (r *collectionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

@@ -2,14 +2,14 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = &principalAccessDataSource{}
@@ -217,7 +217,7 @@ func (d *principalAccessDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	// Read API call logic
-	principalAccessResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().PrincipalAccessAPI.GetPrincipalAccess(ctx).Filter(buildFilterForPrincipalAccess(data)).Execute()
+	principalAccessResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().PrincipalAccessAPI.GetPrincipalAccess(ctx).Filter(buildFilterForPrincipalAccess(data)).Execute()
 	if err != nil {
 		return
 	}

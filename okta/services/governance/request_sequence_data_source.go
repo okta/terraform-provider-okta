@@ -14,7 +14,7 @@ import (
 
 var _ datasource.DataSource = (*requestSequenceDataSource)(nil)
 
-func NewRequestSequencesDataSource() datasource.DataSource {
+func newRequestSequencesDataSource() datasource.DataSource {
 	return &requestSequenceDataSource{}
 }
 
@@ -77,7 +77,7 @@ func (d *requestSequenceDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	// Read API call logic
-	readRequestSeqResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestSeqResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

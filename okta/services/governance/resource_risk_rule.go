@@ -223,7 +223,7 @@ func (r *riskRuleResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Create API call logic
-	createdRiskRule, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RiskRulesAPI.CreateRiskRule(ctx).CreateRiskRuleRequest(buildRiskRule(data)).Execute()
+	createdRiskRule, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.CreateRiskRule(ctx).CreateRiskRuleRequest(buildRiskRule(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -243,7 +243,7 @@ func (r *riskRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	getRiskRuleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
+	getRiskRuleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}
@@ -265,7 +265,7 @@ func (r *riskRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	data.Id = state.Id
 	// Update API call logic
 	fmt.Println("DAta ID", data.Id.ValueString())
-	updateRiskRuleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RiskRulesAPI.ReplaceRiskRule(ctx, data.Id.ValueString()).UpdateRiskRuleRequest(buildUpdateRiskRule(data)).Execute()
+	updateRiskRuleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.ReplaceRiskRule(ctx, data.Id.ValueString()).UpdateRiskRuleRequest(buildUpdateRiskRule(data)).Execute()
 	fmt.Println("Update Risk Rule Response:")
 	if err != nil {
 		return
@@ -306,7 +306,7 @@ func (r *riskRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RiskRulesAPI.DeleteRiskRule(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.DeleteRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete risk rule",

@@ -2,6 +2,7 @@ package governance
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/okta/terraform-provider-okta/okta/config"
@@ -17,6 +18,10 @@ func FWProviderResources() []func() resource.Resource {
 		newRiskRuleResource,
 		newCollectionResource,
 		newRequestTypeResource,
+		newRequestConditionResource,
+		newRequestSequenceResource,
+		newRequestSettingOrganizationResource,
+		newRequestSettingResourceResource,
 	}
 }
 
@@ -31,6 +36,10 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newGrantDataSource,
 		newRiskRulesDataSource,
 		newCollectionDataSource,
+		newRequestConditionDataSource,
+		newRequestSequencesDataSource,
+		newRequestSettingOrganizationDataSource,
+		newRequestSettingResourceDataSource,
 	}
 }
 

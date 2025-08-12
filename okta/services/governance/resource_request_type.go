@@ -292,7 +292,7 @@ func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateReq
 
 	// Create API call logic
 
-	requestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestTypesAPI.CreateRequestType(ctx).RequestTypeCreatable(*createRequest(data)).Execute() // Panic likely here
+	requestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestTypesAPI.CreateRequestType(ctx).RequestTypeCreatable(*createRequest(data)).Execute() // Panic likely here
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Request type",
@@ -325,7 +325,7 @@ func (r *requestTypeResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	// Read API call logic
-	readRequestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestTypesAPI.GetRequestType(ctx, data.Id.ValueString()).Execute()
+	readRequestTypeResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestTypesAPI.GetRequestType(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request type",
@@ -365,7 +365,7 @@ func (r *requestTypeResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestTypesAPI.DeleteRequestType(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestTypesAPI.DeleteRequestType(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Request type",

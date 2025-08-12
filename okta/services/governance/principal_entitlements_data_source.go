@@ -3,11 +3,11 @@ package governance
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = &principalEntitlementsDataSource{}
@@ -183,7 +183,7 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 	// Read API call logic
 	//fmt.Println("Making call")
 	fmt.Println("Filter used:", prepareFilter(data))
-	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
+	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
 	if err != nil {
 		return
 	}

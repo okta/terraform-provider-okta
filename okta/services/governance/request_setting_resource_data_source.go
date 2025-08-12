@@ -3,21 +3,29 @@ package governance
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = (*requestSettingResourceDataSource)(nil)
 
-func NewRequestSettingResourceDataSource() datasource.DataSource {
+func newRequestSettingResourceDataSource() datasource.DataSource {
 	return &requestSettingResourceDataSource{}
 }
 
-type requestSettingResourceDataSource struct{}
+type requestSettingResourceDataSource struct {
+	*config.Config
+}
 
 type requestSettingResourceDataSourceModel struct {
-	Id types.String `tfsdk:"id"`
+	ResourceId                  types.String                `tfsdk:"resource_id"`
+	ValidAccessDurationSettings validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
+	ValidAccessScopeSettings    []supportedTypes            `tfsdk:"valid_access_scope_settings"`
+	ValidRequesterSettings      []supportedTypes            `tfsdk:"valid_requester_settings"`
 }
 
 func (d *requestSettingResourceDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -27,8 +35,74 @@ func (d *requestSettingResourceDataSource) Metadata(ctx context.Context, req dat
 func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
+			"resource_id": schema.StringAttribute{
+				Required: true,
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"valid_access_duration_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"maximum_days": schema.Float32Attribute{
+						Computed: true,
+					},
+					"maximum_weeks": schema.Float32Attribute{
+						Computed: true,
+					},
+					"maximum_hours": schema.Float32Attribute{
+						Computed: true,
+					},
+					"required": schema.BoolAttribute{
+						Computed: true,
+					},
+				},
+				Blocks: map[string]schema.Block{
+					"supported_types": schema.SetNestedBlock{
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"type": schema.StringAttribute{
+									Computed: true,
+									Validators: []validator.String{
+										stringvalidator.OneOf("ADMIN_FIXED_DURATION", "REQUESTER_SPECIFIED_DURATION"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"valid_access_scope_settings": schema.ListNestedBlock{
+				NestedObject: schema.NestedBlockObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Computed: true,
+							Validators: []validator.String{
+								stringvalidator.OneOf(
+									"ENTITLEMENT_BUNDLES",
+									"GROUPS",
+									"RESOURCE_DEFAULT",
+								),
+							},
+						},
+					},
+				},
+				Description: "Access scope settings eligible to be added to a request condition.",
+			},
+			"valid_requester_settings": schema.ListNestedBlock{
+				NestedObject: schema.NestedBlockObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Computed: true,
+							Validators: []validator.String{
+								stringvalidator.OneOf(
+									"EVERYONE",
+									"GROUPS",
+									"TEAMS",
+								),
+							},
+						},
+					},
+				},
+				Description: "Access scope settings eligible to be added to a request condition.",
 			},
 		},
 	}
@@ -45,9 +119,18 @@ func (d *requestSettingResourceDataSource) Read(ctx context.Context, req datasou
 	}
 
 	// Read API call logic
+	reqSettingsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request Settings",
+			"Could not read request settings, unexpected error: "+err.Error(),
+		)
+		return
+	}
 
-	// Example data value setting
-	data.Id = types.StringValue("example-id")
+	data.ValidAccessScopeSettings = setValidAccessSettings(reqSettingsResp.ValidAccessScopeSettings)
+	data.ValidAccessDurationSettings = setValidAccessDurationSettings(reqSettingsResp.ValidAccessDurationSettings)
+	data.ValidRequesterSettings = setValidRequesterSettings(reqSettingsResp.ValidRequesterSettings)
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

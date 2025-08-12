@@ -4,6 +4,7 @@ import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,10 +12,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.Resource = (*requestSettingOrganizationResource)(nil)
+var (
+	_ resource.Resource                = &requestSettingOrganizationResource{}
+	_ resource.ResourceWithConfigure   = &requestSettingOrganizationResource{}
+	_ resource.ResourceWithImportState = &requestSettingOrganizationResource{}
+)
 
-func NewRequestSettingOrganizationResource() resource.Resource {
+func newRequestSettingOrganizationResource() resource.Resource {
 	return &requestSettingOrganizationResource{}
+}
+
+func (r *requestSettingOrganizationResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+}
+
+func (r *requestSettingOrganizationResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(request, response)
 }
 
 type requestSettingOrganizationResource struct {
@@ -70,7 +83,7 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 	}
 
 	// Read API call logic
-	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
+	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
 		return
 	}
@@ -100,7 +113,7 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 	}
 
 	// Update API call logic
-	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
+	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -119,6 +132,6 @@ func createOrgRequestsSettings(data requestSettingOrganizationResourceModel) gov
 func (r *requestSettingOrganizationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	resp.Diagnostics.AddWarning(
 		"Delete Not Supported",
-		"This resource cannot be deleted via Terraform. Please import it or let Terraform read it from the existing system.",
+		"This resource cannot be deleted via Terraform.",
 	)
 }

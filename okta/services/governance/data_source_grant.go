@@ -128,7 +128,7 @@ func (d *grantDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	}
 
 	// Read API call logic
-	getGrantResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().GrantsAPI.GetGrant(ctx, data.Id.ValueString()).Execute()
+	getGrantResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().GrantsAPI.GetGrant(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to read Grant",

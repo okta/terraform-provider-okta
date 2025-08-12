@@ -2,21 +2,21 @@ package governance
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var _ datasource.DataSource = &requestConditionsDataSource{}
+var _ datasource.DataSource = &requestConditionDataSource{}
 
-func newRequestConditionsDataSource() datasource.DataSource {
-	return &requestConditionsDataSource{}
+func newRequestConditionDataSource() datasource.DataSource {
+	return &requestConditionDataSource{}
 }
 
-type requestConditionsDataSource struct {
+type requestConditionDataSource struct {
 	*config.Config
 }
 
@@ -34,11 +34,11 @@ type requestConditionsDataSourceModel struct {
 	RequesterSettings   *Settings    `tfsdk:"requester_settings"`
 }
 
-func (d *requestConditionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_request_conditions"
+func (d *requestConditionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_request_condition"
 }
 
-func (d *requestConditionsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -114,7 +114,7 @@ func (d *requestConditionsDataSource) Schema(ctx context.Context, req datasource
 	}
 }
 
-func (d *requestConditionsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+func (d *requestConditionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data requestConditionsDataSourceModel
 
 	// Read Terraform configuration data into the model
@@ -125,7 +125,7 @@ func (d *requestConditionsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// Read API call logic
-	readRequestConditionResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",

@@ -2,11 +2,11 @@ package governance
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = &riskRulesDataSource{}
@@ -184,7 +184,7 @@ func (d *riskRulesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	// Read API call logic
-	getRiskRuleResp, _, err := d.OktaGovernanceClient.OktaIGSDKClientV5().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
+	getRiskRuleResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

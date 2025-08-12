@@ -5,6 +5,7 @@ import (
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/okta/terraform-provider-okta/okta/config"
 
@@ -13,57 +14,69 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ resource.Resource = (*requestSettingResourceResource)(nil)
+var (
+	_ resource.Resource                = &requestSettingResourceResource{}
+	_ resource.ResourceWithConfigure   = &requestSettingResourceResource{}
+	_ resource.ResourceWithImportState = &requestSettingResourceResource{}
+)
 
-func NewRequestSettingResourceResource() resource.Resource {
+func newRequestSettingResourceResource() resource.Resource {
 	return &requestSettingResourceResource{}
+}
+
+func (r *requestSettingResourceResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+}
+
+func (r *requestSettingResourceResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(request, response)
 }
 
 type requestSettingResourceResource struct {
 	*config.Config
 }
 
-type SupportedTypes struct {
+type supportedTypes struct {
 	Type types.String `tfsdk:"type"`
 }
 
-type ValidAccessDurationSettings struct {
+type validAccessDurationSettings struct {
 	MaximumDays    types.Float32    `tfsdk:"maximum_days"`
 	MaximumWeeks   types.Float32    `tfsdk:"maximum_weeks"`
 	MaximumHours   types.Float32    `tfsdk:"maximum_hours"`
 	Required       types.Bool       `tfsdk:"required"`
-	SupportedTypes []SupportedTypes `tfsdk:"supported_types"`
+	SupportedTypes []supportedTypes `tfsdk:"supported_types"`
 }
 
-type ValidSettings struct {
-	Supported []SupportedTypes `tfsdk:"supported"`
+type validSettings struct {
+	Supported []supportedTypes `tfsdk:"supported"`
 }
 
-type RequestOnBehalfOfSettings struct {
+type requestOnBehalfOfSettings struct {
 	Allowed types.Bool `tfsdk:"allowed"`
 	OnlyFor types.List `tfsdk:"only_for"`
 }
 
-type DefaultSetting struct {
+type defaultSetting struct {
 	RequestSubmissionType  types.String           `tfsdk:"request_submission_type"`
 	ApprovalSequenceId     types.String           `tfsdk:"approval_sequence_id"`
 	AccessDurationSettings AccessDurationSettings `tfsdk:"access_duration"`
 	Error                  types.List             `tfsdk:"error"`
 }
 
-type RiskSettings struct {
-	DefaultSetting DefaultSetting `tfsdk:"default_setting"`
+type riskSettings struct {
+	DefaultSetting defaultSetting `tfsdk:"default_setting"`
 }
 
 type requestSettingResourceResourceModel struct {
 	ResourceId                     types.String                `tfsdk:"resource_id"`
-	ValidAccessDurationSettings    ValidAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
-	ValidAccessScopeSettings       []SupportedTypes            `tfsdk:"valid_access_scope_settings"`
-	ValidRequesterSettings         []SupportedTypes            `tfsdk:"valid_requester_settings"`
-	RequestOnBehalfOfSettings      RequestOnBehalfOfSettings   `tfsdk:"request_on_behalf_of_settings"`
-	RiskSettings                   RiskSettings                `tfsdk:"risk_settings"`
-	ValidRequestOnBehalfOfSettings []SupportedTypes            `tfsdk:"valid_request_on_behalf_of_settings"`
-	ValidRiskSettings              ValidSettings               `tfsdk:"valid_risk_settings"`
+	ValidAccessDurationSettings    validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
+	ValidAccessScopeSettings       []supportedTypes            `tfsdk:"valid_access_scope_settings"`
+	ValidRequesterSettings         []supportedTypes            `tfsdk:"valid_requester_settings"`
+	RequestOnBehalfOfSettings      requestOnBehalfOfSettings   `tfsdk:"request_on_behalf_of_settings"`
+	RiskSettings                   riskSettings                `tfsdk:"risk_settings"`
+	ValidRequestOnBehalfOfSettings []supportedTypes            `tfsdk:"valid_request_on_behalf_of_settings"`
+	ValidRiskSettings              validSettings               `tfsdk:"valid_risk_settings"`
 }
 
 func (r *requestSettingResourceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -145,10 +158,12 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 			"requester_on_behalf_of_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"allowed": schema.BoolAttribute{
+						Optional: true,
 						Computed: true,
 					},
 					"only_for": schema.ListAttribute{
 						Computed:    true,
+						Optional:    true,
 						ElementType: types.StringType,
 					},
 				},
@@ -242,27 +257,95 @@ func (r *requestSettingResourceResource) Read(ctx context.Context, req resource.
 	}
 
 	// Read API call logic
-	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request Settings",
+			"Could not read request settings, unexpected error: "+err.Error(),
+		)
 		return
 	}
 
-	data.ValidAccessDurationSettings = setValidAccessDurationSettings(reqSettingsResp.ValidAccessDurationSettings)
-	data.ValidAccessScopeSettings = setValidAccessSettings(reqSettingsResp.ValidAccessScopeSettings)
-	data.ValidRequesterSettings = setValidRequesterSettings(reqSettingsResp.ValidRequesterSettings)
-	data.RequestOnBehalfOfSettings = setRequesterOnBehalfSettings(reqSettingsResp.RequestOnBehalfOfSettings)
-	data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
+	applyResourceSettingToState(&data, reqSettingsResp)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func setRiskSettings(settings *governance.RiskSettingsDetails) RiskSettings {
-
+func applyResourceSettingToState(data *requestSettingResourceResourceModel, reqSettingsResp *governance.RequestSettings) {
+	data.ValidAccessDurationSettings = setValidAccessDurationSettings(reqSettingsResp.ValidAccessDurationSettings)
+	data.ValidAccessScopeSettings = setValidAccessSettings(reqSettingsResp.ValidAccessScopeSettings)
+	data.ValidRequesterSettings = setValidRequesterSettings(reqSettingsResp.ValidRequesterSettings)
+	data.RequestOnBehalfOfSettings = setRequesterOnBehalfSettings(reqSettingsResp.RequestOnBehalfOfSettings)
+	data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
+	//data.ValidRequestOnBehalfOfSettings = setValidOnBehalfOfSettings(reqSettingsResp.)
+	data.ValidRiskSettings = setValidRiskSettings(reqSettingsResp.ValidRiskSettings)
 }
 
-func setRequesterOnBehalfSettings(settings *governance.RequestOnBehalfOfSettingsDetails) RequestOnBehalfOfSettings {
-	var onBehalfOfSettings RequestOnBehalfOfSettings
+func setValidRiskSettings(settings *governance.ValidRiskSettingsDetails) validSettings {
+	var supportedTypes []supportedTypes
+	for _, supportedType := range settings.SupportedTypes {
+		supportedTypes = append(supportedTypes, supportedTypes{
+			Type: types.StringValue(supportedType.GetType()),
+		})
+	}
+	return validSettings{
+		Supported: supportedTypes,
+	}
+}
+
+func setRiskSettings(settings *governance.RiskSettingsDetails) riskSettings {
+
+	var defaultSetting defaultSetting
+	if settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails != nil {
+		accessDurationSettings := setAccessDurationSettings(settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetAccessDurationSettings())
+		if accessDurationSettings != nil {
+			defaultSetting.AccessDurationSettings = *accessDurationSettings
+		}
+		var errors []attr.Value
+		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
+			errors = append(errors, types.StringValue(string(err)))
+		}
+		errList, _ := types.ListValue(types.StringType, errors)
+		defaultSetting.Error = errList
+
+		return riskSettings{
+			DefaultSetting: defaultSetting,
+		}
+	} else if settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails != nil {
+		approvalSequenceId := settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetApprovalSequenceId()
+		accessDurationSettings := setAccessDurationSettings(settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetAccessDurationSettings())
+		defaultSetting.ApprovalSequenceId = types.StringValue(approvalSequenceId)
+		if accessDurationSettings != nil {
+			defaultSetting.AccessDurationSettings = *accessDurationSettings
+		}
+		var errors []attr.Value
+		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
+			errors = append(errors, types.StringValue(string(err)))
+		}
+		errList, _ := types.ListValue(types.StringType, errors)
+		defaultSetting.Error = errList
+		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetRequestSubmissionType())
+		return riskSettings{
+			DefaultSetting: defaultSetting,
+		}
+	} else if settings.DefaultSetting.RiskSettingsDefaultAllowedWithNoOverridesDetails != nil {
+		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetRequestSubmissionType())
+		var errors []attr.Value
+		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
+			errors = append(errors, types.StringValue(string(err)))
+		}
+		errList, _ := types.ListValue(types.StringType, errors)
+		defaultSetting.Error = errList
+		return riskSettings{
+			DefaultSetting: defaultSetting,
+		}
+	}
+	return riskSettings{}
+}
+
+func setRequesterOnBehalfSettings(settings *governance.RequestOnBehalfOfSettingsDetails) requestOnBehalfOfSettings {
+	var onBehalfOfSettings requestOnBehalfOfSettings
 	onBehalfOfSettings.Allowed = types.BoolValue(settings.GetAllowed())
 
 	var reqExpVals []attr.Value
@@ -274,34 +357,34 @@ func setRequesterOnBehalfSettings(settings *governance.RequestOnBehalfOfSettings
 	return onBehalfOfSettings
 }
 
-func setValidRequesterSettings(settings []governance.ValidRequesterSetting) []SupportedTypes {
-	var accessSettingsType []SupportedTypes
+func setValidRequesterSettings(settings []governance.ValidRequesterSetting) []supportedTypes {
+	var accessSettingsType []supportedTypes
 	for _, setting := range settings {
-		accessSettingsType = append(accessSettingsType, SupportedTypes{
+		accessSettingsType = append(accessSettingsType, supportedTypes{
 			Type: types.StringValue(string(setting.GetType())),
 		})
 	}
 	return accessSettingsType
 }
 
-func setValidAccessSettings(settings []governance.ValidAccessDetail) []SupportedTypes {
-	var accessSettingsType []SupportedTypes
+func setValidAccessSettings(settings []governance.ValidAccessDetail) []supportedTypes {
+	var accessSettingsType []supportedTypes
 	for _, setting := range settings {
-		accessSettingsType = append(accessSettingsType, SupportedTypes{
+		accessSettingsType = append(accessSettingsType, supportedTypes{
 			Type: types.StringValue(string(setting.GetType())),
 		})
 	}
 	return accessSettingsType
 }
 
-func setValidAccessDurationSettings(settings governance.ValidAccessDurationSettingsDetails) ValidAccessDurationSettings {
-	var supportedTypes []SupportedTypes
+func setValidAccessDurationSettings(settings governance.ValidAccessDurationSettingsDetails) validAccessDurationSettings {
+	var supportedTypes []supportedTypes
 	for _, supportedType := range settings.SupportedTypes {
-		supportedTypes = append(supportedTypes, SupportedTypes{
+		supportedTypes = append(supportedTypes, supportedTypes{
 			Type: types.StringValue(string(supportedType.GetType())),
 		})
 	}
-	return ValidAccessDurationSettings{
+	return validAccessDurationSettings{
 		MaximumDays:    types.Float32Value(settings.GetMaximumDays()),
 		MaximumHours:   types.Float32Value(settings.GetMaximumHours()),
 		MaximumWeeks:   types.Float32Value(settings.GetMaximumWeeks()),
@@ -321,20 +404,24 @@ func (r *requestSettingResourceResource) Update(ctx context.Context, req resourc
 	}
 
 	// Update API call logic
+	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error update Request Settings",
+			"Could not update request settings, unexpected error: "+err.Error(),
+		)
+		return
+	}
+
+	applyResourceSettingToState(&data, updatedResourceSettingResp)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestSettingResourceResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data requestSettingResourceResourceModel
-
-	// Read Terraform prior state data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Delete API call logic
+	resp.Diagnostics.AddWarning(
+		"Delete Not Supported",
+		"This resource cannot be deleted via Terraform.",
+	)
 }

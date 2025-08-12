@@ -2,10 +2,10 @@ package governance
 
 import (
 	"context"
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"fmt"
 	"time"
 
+	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -110,7 +110,7 @@ func (r *reviewResource) Create(ctx context.Context, req resource.CreateRequest,
 	request := buildReassignReviewRequest(data)
 	// Call the Okta API
 	reassignedReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClientV5().
+		OktaIGSDKClient().
 		ReviewsAPI.
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
@@ -151,7 +151,7 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	getReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClientV5().
+		OktaIGSDKClient().
 		ReviewsAPI.GetReview(ctx, data.CampaignId.ValueString()).Execute()
 	if err != nil {
 		return
@@ -182,7 +182,7 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 	request := buildReassignReviewRequest(data)
 	// Call the Okta API
 	reassignedReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClientV5().
+		OktaIGSDKClient().
 		ReviewsAPI.
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).

@@ -2,23 +2,36 @@ package governance
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"time"
+
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/okta/terraform-provider-okta/okta/config"
-	"time"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var _ resource.Resource = (*requestConditionResource)(nil)
+var (
+	_ resource.Resource                = &requestConditionResource{}
+	_ resource.ResourceWithConfigure   = &requestConditionResource{}
+	_ resource.ResourceWithImportState = &requestConditionResource{}
+)
 
-func NewRequestConditionResource() resource.Resource {
+func newRequestConditionResource() resource.Resource {
 	return &requestConditionResource{}
+}
+
+func (r *requestConditionResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+}
+
+func (r *requestConditionResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(request, response)
 }
 
 type requestConditionResource struct {
@@ -162,7 +175,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 			return
 		}
 	}
-	requestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(*requestConditionReq).Execute()
+	requestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(*requestConditionReq).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Request conditions",
@@ -356,7 +369,7 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Read API call logic
-	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",
@@ -399,7 +412,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		}
 	}
 	// Update API call logic
-	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).RequestConditionPatchable(patch).Execute()
+	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).RequestConditionPatchable(patch).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Request conditions",
@@ -527,7 +540,7 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Request conditions",

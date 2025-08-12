@@ -155,7 +155,7 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 	// Create API call logic
-	createEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementsAPI.CreateEntitlement(ctx).EntitlementCreate(buildEntitlement(data)).Execute()
+	createEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementsAPI.CreateEntitlement(ctx).EntitlementCreate(buildEntitlement(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Entitlement",
@@ -179,7 +179,7 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	// Read API call logic
-	readEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementsAPI.GetEntitlement(ctx, data.Id.ValueString()).Execute()
+	readEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementsAPI.GetEntitlement(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}
@@ -208,7 +208,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	data.Id = state.Id
 	// Update API call logic
-	replaceEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementsAPI.ReplaceEntitlement(ctx, data.Id.ValueString()).EntitlementsFullWithParent(buildEntitlementReplace(data, state)).Execute()
+	replaceEntitlementResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementsAPI.ReplaceEntitlement(ctx, data.Id.ValueString()).EntitlementsFullWithParent(buildEntitlementReplace(data, state)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Entitlement",
@@ -237,7 +237,7 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClientV5().EntitlementsAPI.DeleteEntitlement(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementsAPI.DeleteEntitlement(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to delete entitlement",
