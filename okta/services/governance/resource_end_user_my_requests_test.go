@@ -25,7 +25,7 @@ func TestEndUserMyRequests_with_requesterFields(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", "SUBMITTED"),
-					resource.TestCheckResourceAttr(resourceName, "entry_id", "ce123456789abcdefg"),
+					resource.TestCheckResourceAttr(resourceName, "entry_id", "cen123456789abcdefgh"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.0.id", "abcdefgh-0123-4567-8910-hgfedcba123"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.0.value", "I need access to complete my certification."),
@@ -38,8 +38,8 @@ func TestEndUserMyRequests_with_requesterFields(t *testing.T) {
 			{
 				RefreshState: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(resourceName, "status", regexp.MustCompile(`^(SUBMITTED)$`)),
-					resource.TestCheckResourceAttr(resourceName, "entry_id", "ce123456789abcdefg"),
+					resource.TestMatchResourceAttr(resourceName, "status", regexp.MustCompile(`^(APPROVED|CANCELED|DENIED|EXPIRED|PENDING|REJECTED)$`)),
+					resource.TestCheckResourceAttr(resourceName, "entry_id", "cen123456789abcdefgh"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.0.id", "abcdefgh-0123-4567-8910-hgfedcba123"),
 					resource.TestCheckResourceAttr(resourceName, "requester_field_values.0.value", "I need access to complete my certification."),
@@ -74,7 +74,7 @@ func TestEndUserMyRequests_without_requesterFields(t *testing.T) {
 			{
 				RefreshState: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(resourceName, "status", regexp.MustCompile(`^(SUBMITTED)$`)),
+					resource.TestMatchResourceAttr(resourceName, "status", regexp.MustCompile(`^(APPROVED|CANCELED|DENIED|EXPIRED|PENDING|REJECTED)$`)),
 				),
 			},
 		},

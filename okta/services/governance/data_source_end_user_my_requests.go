@@ -23,7 +23,7 @@ type EndUserMyRequestsDataSource struct {
 }
 
 type EndUserMyRequestsDataSourceModel struct {
-	RequestId            types.String `tfsdk:"request_id"`
+	Id                   types.String `tfsdk:"id"`
 	EntryId              types.String `tfsdk:"entry_id"`
 	RequesterFieldValues types.List   `tfsdk:"requester_field_values"`
 	Status               types.String `tfsdk:"status"`
@@ -37,6 +37,11 @@ type EndUserMyRequestsDataSourceModel struct {
 	Requested            types.Object `tfsdk:"requested"`
 	RequestedBy          types.Object `tfsdk:"requested_by"`
 	RequestedFor         types.Object `tfsdk:"requested_for"`
+	RiskAssessment       types.Object `tfsdk:"risk_assessment"`
+	RevocationStatus     types.String `tfsdk:"revocation_status"`
+	RevocationScheduled  types.String `tfsdk:"revocation_scheduled"`
+	Revoked              types.String `tfsdk:"revoked"`
+	Resolved             types.String `tfsdk:"resolved"`
 }
 
 func (r *EndUserMyRequestsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -50,7 +55,7 @@ func (d *EndUserMyRequestsDataSource) Configure(ctx context.Context, req datasou
 func (r *EndUserMyRequestsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"request_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Description: "The ID of the request",
 				Required:    true,
 			},
@@ -88,6 +93,22 @@ func (r *EndUserMyRequestsDataSource) Schema(ctx context.Context, req datasource
 			},
 			"grant_status": schema.StringAttribute{
 				Description: "The grant status of the request",
+				Computed:    true,
+			},
+			"revocation_scheduled": schema.StringAttribute{
+				Description: "The date the granted access is scheduled for recovation. Only set if request.accessDuration exists, and request.grantStatus is GRANTED.",
+				Computed:    true,
+			},
+			"revocation_status": schema.StringAttribute{
+				Description: "The revocation status of the request, possible values are 'FAILED' 'PENDING' 'REVOKED'",
+				Computed:    true,
+			},
+			"revoked": schema.StringAttribute{
+				Description: "The date the granted access was revoked. Only set if request.grantStatus is GRANTED and request.revocationStatus is REVOKED.",
+				Computed:    true,
+			},
+			"resolved": schema.StringAttribute{
+				Description: "The date the request was resolved. The property may transition from having a value to null if the request is reopened.",
 				Computed:    true,
 			},
 		},
@@ -174,6 +195,36 @@ func (r *EndUserMyRequestsDataSource) Schema(ctx context.Context, req datasource
 					},
 				},
 			},
+			"risk_assessment": schema.SingleNestedBlock{
+				Description: "A risk assessment indicates whether request submission is allowed or restricted and contains the risk rules that lead to possible conflicts for the requested resource.",
+				Attributes: map[string]schema.Attribute{
+					"request_submission_type": schema.StringAttribute{
+						Optional:    true,
+						Description: "Whether request submission is allowed or restricted in the risk settings.",
+					},
+				},
+				Blocks: map[string]schema.Block{
+					"risk_rules": schema.ListNestedBlock{
+						Description: "An array of resources that are excluded from the review.",
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"name": schema.StringAttribute{
+									Optional:    true,
+									Description: "The name of a resource rule causing a conflict.",
+								},
+								"description": schema.StringAttribute{
+									Optional:    true,
+									Description: "The human readable description.",
+								},
+								"resource_name": schema.StringAttribute{
+									Optional:    true,
+									Description: "Human readable name of the resource.",
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -186,7 +237,7 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// step 1 : Retrieve End User's Request.
-	getMyRequestV2Request := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2(ctx, stateData.EntryId.ValueString(), stateData.RequestId.ValueString())
+	getMyRequestV2Request := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2(ctx, stateData.EntryId.ValueString(), stateData.Id.ValueString())
 	endUserMyRequest, _, err := r.OktaGovernanceClient.OktaIGSDKClientV5().MyRequestsAPI.GetMyRequestV2Execute(getMyRequestV2Request)
 	if err != nil {
 		resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieving End User My Request, unexpected error: "+err.Error())
@@ -194,7 +245,7 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// step 2 : "Convert" API Compatible Type Back To Terraform Type.
-	stateData.RequestId = types.StringValue(endUserMyRequest.GetId())
+	stateData.Id = types.StringValue(endUserMyRequest.GetId())
 	stateData.EntryId = types.StringPointerValue(endUserMyRequest.GetRequested().EntryId)
 	stateData.Status = types.StringPointerValue((*string)(endUserMyRequest.GetStatus().Ptr()))
 	stateData.Created = types.StringValue(endUserMyRequest.GetCreated().String())
@@ -203,6 +254,10 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 	stateData.LastUpdatedBy = types.StringValue(endUserMyRequest.GetLastUpdatedBy())
 	stateData.GrantStatus = types.StringValue(string(*endUserMyRequest.GetGrantStatus().Ptr()))
 	stateData.Granted = types.StringValue(endUserMyRequest.GetGranted().String())
+	stateData.RevocationStatus = types.StringValue(string(endUserMyRequest.GetRevocationStatus()))
+	stateData.RevocationScheduled = types.StringValue(string(endUserMyRequest.GetRevocationScheduled().String()))
+	stateData.Revoked = types.StringValue(string(endUserMyRequest.GetRevoked().String()))
+	stateData.Resolved = types.StringValue(string(endUserMyRequest.GetResolved().String()))
 	requestedFieldsType := map[string]attr.Type{
 		"access_scope_id":   types.StringType,
 		"access_scope_type": types.StringType,
@@ -296,6 +351,52 @@ func (r *EndUserMyRequestsDataSource) Read(ctx context.Context, req datasource.R
 		resp.Diagnostics.Append(diags...)
 		return
 	}
+
 	stateData.RequesterFieldValues = requesterFieldValuesListValue
+
+	if riskAssessment, ok := endUserMyRequest.GetRiskAssessmentOk(); ok {
+		// parse the risk rules
+		riskRulesType := map[string]attr.Type{
+			"name":          types.StringType,
+			"description":   types.StringType,
+			"resource_name": types.StringType,
+		}
+
+		riskRulesList := []attr.Value{}
+		for _, riskRule := range riskAssessment.RiskRules {
+			riskRuleEntry := map[string]attr.Value{
+				"name":          types.StringValue(riskRule.GetName()),
+				"description":   types.StringValue(riskRule.GetDescription()),
+				"resource_name": types.StringValue(riskRule.GetResourceName()),
+			}
+			riskRuleObject, diags := types.ObjectValue(riskRulesType, riskRuleEntry)
+			if diags.HasError() {
+				resp.Diagnostics.Append(diags...)
+				return
+			}
+			riskRulesList = append(riskRulesList, riskRuleObject)
+		}
+
+		riskRulesListValue, diags := types.ListValue(types.ObjectType{AttrTypes: riskRulesType}, riskRulesList)
+		if diags.HasError() {
+			resp.Diagnostics.Append(diags...)
+			return
+		}
+
+		riskAssessmentFieldsType := map[string]attr.Type{
+			"request_submission_type": types.StringType,
+			"risk_rules":              types.ListType{ElemType: types.ObjectType{AttrTypes: riskRulesType}},
+		}
+		riskAssessmentFieldsValue := map[string]attr.Value{
+			"request_submission_type": types.StringValue(string(riskAssessment.GetRequestSubmissionType())),
+			"risk_rules":              riskRulesListValue,
+		}
+		riskAssessment, diags := types.ObjectValue(riskAssessmentFieldsType, riskAssessmentFieldsValue)
+		if diags != nil {
+			resp.Diagnostics.AddError("Error retrieving End User My Request", "Could not retrieve Requested field: ")
+			return
+		}
+		stateData.RiskAssessment = riskAssessment
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...)
 }
