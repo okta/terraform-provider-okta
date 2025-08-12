@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.3.0 (August 12, 2025)
+
+### BUG FIXES
+
+* 400 Bad Request - The DPoP proof JWT has already been used [#2421](https://github.com/okta/terraform-provider-okta/pull/2421) by [pranav-okta](https://github.com/pranav-okta)
+* Add missing fields to state to avoid false diffs for `okta_inline_hook` [#2420](https://github.com/okta/terraform-provider-okta/pull/2420) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### IMPROVEMENTS
+
+* Realm assignment support [#2293](https://github.com/okta/terraform-provider-okta/pull/2293) by [tim-koehler](https://github.com/tim-koehler)
+* Add support for `enrollmentSecurityLevel` and `userVerificationMethods` to `okta_authenticator` [#2409](https://github.com/okta/terraform-provider-okta/pull/2409) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 ## 5.2.0 (July 16, 2025)
 
 ### BUG FIXES
