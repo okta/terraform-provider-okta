@@ -9,22 +9,22 @@ type governanceAPIClient struct {
 }
 
 type OktaGovernanceClient interface {
-	OktaIGSDKClientV5() *governance.IGAPIClient
+	OktaIGSDKClient() *governance.IGAPIClient
 }
 
-func oktaV5IGSDKClient(c *OktaAPIConfig) (client *governance.IGAPIClient, err error) {
+func oktaIGSDKClient(c *OktaAPIConfig) (client *governance.IGAPIClient, err error) {
 	err, config, _, _ := getV5ClientConfig(c, err)
 
 	client = governance.NewAPIClient(config)
 	return client, nil
 }
 
-func (c *governanceAPIClient) OktaIGSDKClientV5() *governance.IGAPIClient {
+func (c *governanceAPIClient) OktaIGSDKClient() *governance.IGAPIClient {
 	return c.oktaIGSDKClientV5
 }
 
 func NewOktaGovernanceAPIClient(c *OktaAPIConfig) (client OktaGovernanceClient, err error) {
-	v5IGClient, err := oktaV5IGSDKClient(c)
+	v5IGClient, err := oktaIGSDKClient(c)
 	if err != nil {
 		return
 	}
