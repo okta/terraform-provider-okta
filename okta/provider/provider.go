@@ -116,6 +116,12 @@ func Provider() *schema.Provider {
 				ValidateDiagFunc: intBetween(0, 300),
 				Description:      "Timeout for single request (in seconds) which is made to Okta, the default is `0` (means no limit is set). The maximum value can be `300`.",
 			},
+			"skip_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip validation of the provided Okta credentials during provider initialization. This allows the provider to be configured without valid credentials, which can be useful in environments where Okta resources are conditionally used.",
+			},
 		},
 		ResourcesMap:         idaas.ProviderResources(),
 		DataSourcesMap:       idaas.ProviderDataSources(),
@@ -136,9 +142,19 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	// NOTE: production runtime needs to know about VCR test environment for
 	// this one case where the validate function calls GET /api/v1/users/me to
 	// quickly verify if the operator's auth settings are correct.
-	if os.Getenv("OKTA_VCR_TF_ACC") == "" {
+	shouldSkipValidation := os.Getenv("OKTA_VCR_TF_ACC") != "" || cfg.SkipValidation
+
+	if shouldSkipValidation {
+		if cfg.Logger != nil {
+			if os.Getenv("OKTA_VCR_TF_ACC") != "" {
+				cfg.Logger.Info("Skipping Okta credential validation due to VCR test mode")
+			} else {
+				cfg.Logger.Info("Skipping Okta credential validation as requested")
+			}
+		}
+	} else {
 		if err := cfg.VerifyCredentials(ctx); err != nil {
-			return nil, diag.Errorf("[ERROR] failed validate configuration: %v", err)
+			return nil, diag.Errorf("[ERROR] failed to validate configuration: %v", err)
 		}
 	}
 
