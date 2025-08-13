@@ -254,6 +254,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSUserProfileMappingSource: dataSourceUserProfileMappingSource(),
 		resources.OktaIDaaSUsers:                    dataSourceUsers(),
 		resources.OktaIDaaSUserSecurityQuestions:    dataSourceUserSecurityQuestions(),
+		resources.OktaIDaaSIamAssigneesUsers:        dataSourceIamAssigneesUsers(),
 	}
 }
 
