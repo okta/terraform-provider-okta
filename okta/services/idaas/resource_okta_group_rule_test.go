@@ -222,3 +222,27 @@ func TestAccResourceOktaGroupRule_nameLengthVerification_Issue2396(t *testing.T)
 		},
 	})
 }
+
+func TestAccResourceOktaGroupRule_423ResponseCapture(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
+	mgr := newFixtureManager("resources", "okta_group_rule", t.Name())
+
+	// Test that captures 423 responses but handles them gracefully
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroupRule, doesGroupRuleExist),
+		Steps: []resource.TestStep{
+			{
+				// Create a minimal set of resources that should succeed
+				Config: mgr.GetFixtures("test_423_response_capture.tf", t),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test_423_response_capture"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "expression_value", "String.startsWith(user.firstName,\"andy\")"),
+				),
+			},
+		},
+	})
+}
