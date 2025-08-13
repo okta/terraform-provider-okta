@@ -8,6 +8,13 @@ GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 TFPROVIDERLINTX=tfproviderlintx
 STATICCHECK=staticcheck
+TESTARGS?=-test.v
+TEST?=./okta
+
+# Tool Versions
+GOFUMPT_VERSION=v0.7.0
+TFPROVIDERLINT_VERSION=v0.30.0
+STATICCHECK_VERSION=v0.5.1
 
 # Expression to match against tests
 # go test -run <filter>
@@ -78,13 +85,13 @@ testacc:
 	TF_ACC=1 go test $(ACC_TESTS) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
 test-play-vcr-acc:
-	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(PKG_NAME)
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run $(TEST_FILTER) ./$(PKG_NAME)
 
 smoke-test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ $(ACC_TESTS)
 
 test-record-vcr-acc:
-	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
+	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly $(TESTARGS) -timeout 120m -run $(TEST_FILTER) ./$(PKG_NAME)
 
 qc: fmtcheck vet staticcheck lint
 
@@ -97,7 +104,7 @@ staticcheck:
 	@staticcheck ./...
 
 fmt: tools # Format the code
-	@echo "formatting the code with $(GOFMT)..."
+	@echo "==> Formatting the code with $(GOFMT)..."
 	@$(GOFMT) -l -w .
 	@terraform fmt -recursive ./examples/
 
