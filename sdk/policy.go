@@ -141,6 +141,7 @@ type PolicyFactorsSettings struct {
 	FidoWebauthn *PolicyFactor `json:"fido_webauthn,omitempty"`
 	Hotp         *PolicyFactor `json:"hotp,omitempty"`
 	GoogleOtp    *PolicyFactor `json:"google_otp,omitempty"`
+	CustomOtp    *PolicyFactor `json:"custom_otp,omitempty"`
 	OktaCall     *PolicyFactor `json:"okta_call,omitempty"`
 	OktaOtp      *PolicyFactor `json:"okta_otp,omitempty"`
 	OktaPassword *PolicyFactor `json:"okta_password,omitempty"`
