@@ -18,30 +18,29 @@ import (
 type (
 	// Config contains our provider schema values and Okta clients
 	Config struct {
-		AccessToken          string
-		ApiToken             string
-		Backoff              bool
-		ClassicOrg           bool
-		ClientID             string
-		Domain               string
-		HttpProxy            string
-		HttpTransport        http.RoundTripper
-		LogLevel             int
-		Logger               hclog.Logger
-		MaxAPICapacity       int
-		MaxWait              int
-		MinWait              int
-		OktaIDaaSClient      api.OktaIDaaSClient
-		OktaGovernanceClient api.OktaGovernanceClient
-		OrgName              string
-		Parallelism          int
-		PrivateKey           string
-		PrivateKeyId         string
-		QueriedWellKnown     bool
-		RequestTimeout       int
-		RetryCount           int
-		Scopes               []string
-		TimeOperations       TimeOperations
+		AccessToken      string
+		ApiToken         string
+		Backoff          bool
+		ClassicOrg       bool
+		ClientID         string
+		Domain           string
+		HttpProxy        string
+		HttpTransport    http.RoundTripper
+		LogLevel         int
+		Logger           hclog.Logger
+		MaxAPICapacity   int
+		MaxWait          int
+		MinWait          int
+		OktaIDaaSClient  api.OktaIDaaSClient
+		OrgName          string
+		Parallelism      int
+		PrivateKey       string
+		PrivateKeyId     string
+		QueriedWellKnown bool
+		RequestTimeout   int
+		RetryCount       int
+		Scopes           []string
+		TimeOperations   TimeOperations
 	}
 )
 
@@ -213,7 +212,7 @@ func (c *Config) SetTimeOperations(op TimeOperations) {
 
 // LoadAPIClient initializes the Okta SDK clients
 func (c *Config) LoadAPIClient() (err error) {
-	iDaaSConfig := &api.OktaAPIConfig{
+	iDaaSConfig := &api.OktaIDaaSConfig{
 		AccessToken:    c.AccessToken,
 		ApiToken:       c.ApiToken,
 		Backoff:        c.Backoff,
@@ -232,23 +231,17 @@ func (c *Config) LoadAPIClient() (err error) {
 		Scopes:         c.Scopes,
 	}
 
-	idaasClient, err := api.NewOktaIDaaSAPIClient(iDaaSConfig)
-	governanceClient, err := api.NewOktaGovernanceAPIClient(iDaaSConfig)
+	client, err := api.NewOktaIDaaSAPIClient(iDaaSConfig)
 	if err != nil {
 		return err
 	}
-	c.SetIdaasAPIClient(idaasClient)
-	c.SetGovernanceAPIClient(governanceClient)
+	c.SetAPIClient(client)
 	return
 }
 
-// SetIdaasAPIClient allow other environments to inject an alternative idaas client to the config
-func (c *Config) SetIdaasAPIClient(client api.OktaIDaaSClient) {
+// SetAPIClient allow other environments to inject an alternative idaas client to the config
+func (c *Config) SetAPIClient(client api.OktaIDaaSClient) {
 	c.OktaIDaaSClient = client
-}
-
-func (c *Config) SetGovernanceAPIClient(client api.OktaGovernanceClient) {
-	c.OktaGovernanceClient = client
 }
 
 func (c *Config) VerifyCredentials(ctx context.Context) error {

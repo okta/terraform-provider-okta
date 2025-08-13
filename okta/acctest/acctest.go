@@ -185,7 +185,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
 
 	idaasTestClient := NewVcrIDaaSClient(d)
-	cfg.SetIdaasAPIClient(idaasTestClient)
+	cfg.SetAPIClient(idaasTestClient)
 
 	rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
