@@ -3,6 +3,7 @@ package governance
 import (
 	"fmt"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	fwdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -13,18 +14,18 @@ import (
 // oktaMutexKV is a global MutexKV for use within this plugin
 var oktaMutexKV = mutexkv.NewMutexKV()
 
+func logger(meta interface{}) hclog.Logger {
+	return meta.(*config.Config).Logger
+}
+
 func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
-		newCampaignResource,
-		newEntitlementResource,
 		newEndUserMyRequestsResource,
 	}
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		newCampaignDataSource,
-		newEntitlementDataSource,
 		newEndUserMyRequestsDataSource,
 	}
 }

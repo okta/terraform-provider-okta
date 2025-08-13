@@ -18,7 +18,7 @@ Use this data source to fetch details about a specific request, including its cu
 # Get a request by its catalog entry ID and request ID
 data "okta_end_user_my_requests" "example" {
   entry_id   = "cen123456789abcdefgh"
-  request_id = "reqABCDEFG0123456789"
+  id = "reqABCDEFG0123456789"
 }
 
 # Output the request status
@@ -38,7 +38,7 @@ output "request_field_values" {
 ### Required
 
 - `entry_id` (String) The ID of the catalog entry to retrieve.
-- `request_id` (String) The ID of the request to retrieve.
+- `id` (String) The ID of the request to retrieve.
 
 ### Read-Only
 
