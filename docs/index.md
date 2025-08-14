@@ -49,7 +49,7 @@ provider "okta" {
 }
 ```
 
-For the resources and data sources examples, please check the [examples](https://github.com/okta/terraform-provider-okta/tree/master/examples) directory.
+For the resources and data sources examples, please check the [examples](https://github.com/okta/terraform-provider-okta/tree/main/examples) directory.
 
 ## Authentication
 
