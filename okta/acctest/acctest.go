@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/api"
@@ -186,6 +187,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 
 	idaasTestClient := NewVcrIDaaSClient(d)
 	cfg.SetIdaasAPIClient(idaasTestClient)
+	cfg.SetGovernanceAPIClient(idaasTestClient)
 
 	rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
@@ -601,8 +603,9 @@ func SkipVCRTest(t *testing.T) bool {
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ api.OktaIDaaSClient = &vcrIDaaSTestClient{}
-	_ HttpClientHelper    = &vcrIDaaSTestClient{}
+	_ api.OktaIDaaSClient      = &vcrIDaaSTestClient{}
+	_ api.OktaGovernanceClient = &vcrIDaaSTestClient{}
+	_ HttpClientHelper         = &vcrIDaaSTestClient{}
 )
 
 type HttpClientHelper interface {
@@ -611,6 +614,7 @@ type HttpClientHelper interface {
 }
 
 type vcrIDaaSTestClient struct {
+	governanceClient    *governance.IGAPIClient
 	sdkV5Client         *v5SdkOkta.APIClient
 	sdkV3Client         *v4SdkOkta.APIClient
 	sdkV2Client         *oktaSdk.Client
@@ -628,6 +632,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
 	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient.Transport = tripper
+	c.OktaGovernanceClient.OktaIGSDKClient().GetConfig().HTTPClient.Transport = tripper
 	re := c.OktaIDaaSClient.OktaSDKClientV2().CloneRequestExecutor()
 	re.SetHTTPTransport(tripper)
 	supClient := &oktaSdk.APISupplement{
@@ -635,6 +640,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		governanceClient:    c.OktaGovernanceClient.OktaIGSDKClient(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
 		sdkV3Client:         c.OktaIDaaSClient.OktaSDKClientV3(),
 		sdkV2Client:         c.OktaIDaaSClient.OktaSDKClientV2(),
@@ -655,6 +661,7 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV3Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV2Client.GetConfig().HttpClient.Transport = rt
+	c.governanceClient.GetConfig().HTTPClient.Transport = rt
 	re := c.sdkV2Client.CloneRequestExecutor()
 	re.SetHTTPTransport(rt)
 	c.sdkSupplementClient = &oktaSdk.APISupplement{
@@ -676,6 +683,10 @@ func (c *vcrIDaaSTestClient) OktaSDKClientV2() *oktaSdk.Client {
 
 func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
+}
+
+func (c *vcrIDaaSTestClient) OktaIGSDKClient() *governance.IGAPIClient {
+	return c.governanceClient
 }
 
 func currentVCRManager(name string) *vcrManager {
