@@ -37,10 +37,6 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV3() *okta.APIClient
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
-
-	//OktaIGSDKClient() *governance.IGAPIClient
-	//OktaIGSDKClientV3() *governance.IGAPIClient
-	//OktaIGSDKClientV2() *sdk.Client
 }
 
 type OktaAPIConfig struct {
