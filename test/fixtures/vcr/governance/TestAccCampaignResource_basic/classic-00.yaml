@@ -1,0 +1,106 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1347
+        host: classic-00.dne-okta.com
+        body: |
+            {"campaignType":"RESOURCE","description":"Multi app campaign","name":"Monthly access review of sales team","notificationSettings":{"notifyReviewPeriodEnd":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewerWhenOverdue":false,"notifyReviewerWhenReviewAssigned":false},"principalScopeSettings":{"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false,"type":"USERS"},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"resourceSettings":{"excludedResources":[],"includeAdminRoles":false,"includeEntitlements":true,"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"onlyIncludeOutOfPolicyEntitlements":false,"targetResources":[{"includeAllEntitlementsAndBundles":false,"resourceId":"0oanlpd3xkLkePi3W1d7","resourceType":"APPLICATION"},{"includeAllEntitlementsAndBundles":true,"resourceId":"0oao01ardu8r8qUP91d7","resourceType":"APPLICATION"}],"type":"APPLICATION"},"reviewerSettings":{"bulkDecisionDisabled":true,"justificationRequired":true,"reassignmentDisabled":false,"reviewerId":"00up7e7s7bADdiXT41d7","selfReviewDisabled":true,"type":"USER"},"scheduleSettings":{"durationInDays":21,"recurrence":{"interval":""},"startDate":"2025-10-04T13:43:40Z","timeZone":"America/Vancouver","type":"ONE_OFF"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/governance/api/v1/campaigns
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2212
+        body: '{"_links":{"launchCampaign":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7/launch","hints":{}},"endCampaign":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7/end","hints":{}},"reviews":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici10fuabpW1j2TTP1d7%22","hints":{}},"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7","hints":{}}},"id":"ici10fuabpW1j2TTP1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-15T18:18:49Z","lastUpdated":"2025-08-15T18:18:49Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","name":"Monthly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2025-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2025-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetResources":[{"resourceId":"0oao01ardu8r8qUP91d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":true},{"resourceId":"0oanlpd3xkLkePi3W1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":true,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00up7e7s7bADdiXT41d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2212"
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 15 Aug 2025 18:18:49 GMT
+            Location:
+                - https://dcp-testing-oig-2025-06-26-admin.oktapreview.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.173046625s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"launchCampaign":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7/launch","hints":{}},"endCampaign":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7/end","hints":{}},"reviews":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici10fuabpW1j2TTP1d7%22","hints":{}},"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7","hints":{}}},"id":"ici10fuabpW1j2TTP1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-15T18:18:49Z","lastUpdated":"2025-08-15T18:18:49Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","name":"Monthly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2025-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2025-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetResources":[{"resourceId":"0oao01ardu8r8qUP91d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":true},{"resourceId":"0oanlpd3xkLkePi3W1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":true,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00up7e7s7bADdiXT41d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 15 Aug 2025 18:18:51 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.046320333s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/campaigns/ici10fuabpW1j2TTP1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 15 Aug 2025 18:18:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.195759s

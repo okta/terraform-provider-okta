@@ -88,7 +88,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 		}
 
 		if !mgr.HasGovernanceCassettesToPlay() {
-			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.IdaaSCassettesPath)
+			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.GovernanceCassettesPath)
 			return
 		}
 
@@ -108,7 +108,6 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 			// we disable check destroy when recording/playing vcr tests
 			c.CheckDestroy = nil
-			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
 
 			// FIXME: Once we get fully mux'd ACC tests recording with VCR
 			// revisit if we can call ParallelTest when playing.
@@ -123,7 +122,6 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 	}
 
 	if mgr.IsRecording() {
-		fmt.Println("[VCR] Using cassette path:", mgr.CassettePath())
 		defer closeRecorder(t, mgr)
 		if mgr.AttemptedWriteIsMissingCassetteName() {
 			t.Fatalf("%q test is attempting to write cassette to %q, but OKTA_VCR_CASSETTE ENV var is missing. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information.", t.Name(), mgr.CassettePath())
@@ -135,7 +133,6 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 		}
 		// we disable check destroy when recording/playing vcr tests
 		c.CheckDestroy = nil
-		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
 		resource.Test(t, c)
 		return
 	}
@@ -199,10 +196,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
 
 	idaasTestClient := NewVcrIDaaSClient(d)
-	governanceTestClient := NewVcrGovernanceClient(d)
-
 	cfg.SetIdaasAPIClient(idaasTestClient)
-	cfg.SetGovernanceAPIClient(governanceTestClient)
 
 	idaaSRec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
@@ -210,6 +204,9 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	}
 	idaaSRt := http.RoundTripper(idaaSRec)
 	idaasTestClient.SetTransport(idaaSRt)
+
+	governanceTestClient := NewVcrGovernanceClient(d)
+	cfg.SetGovernanceAPIClient(governanceTestClient)
 
 	governanceRec, err := newVCRRecorder(mgr, governanceTestClient.Transport())
 	if err != nil {
@@ -248,10 +245,12 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		// don't record failing test runs
 		if !t.Failed() {
 			// If a test succeeds, write new seed/yaml to files
-			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
-			rt := rtHelper.Transport()
+			rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
+			rt := rtIDaasHelper.Transport()
 			err := rt.(*recorder.Recorder).Stop()
-			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
+			rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
+			rtGovernance := rtGovernanceHelper.Transport()
+			err = rtGovernance.(*recorder.Recorder).Stop()
 			if err != nil {
 				t.Error(err)
 			}
@@ -648,8 +647,10 @@ func SkipVCRTest(t *testing.T) bool {
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ api.OktaIDaaSClient = &vcrIDaaSTestClient{}
-	_ HttpClientHelper    = &vcrIDaaSTestClient{}
+	_ api.OktaIDaaSClient      = &vcrIDaaSTestClient{}
+	_ HttpClientHelper         = &vcrIDaaSTestClient{}
+	_ api.OktaGovernanceClient = &vcrGovernanceTestClient{}
+	_ HttpClientHelper         = &vcrGovernanceTestClient{}
 )
 
 type HttpClientHelper interface {
@@ -666,8 +667,8 @@ type vcrIDaaSTestClient struct {
 }
 
 type vcrGovernanceTestClient struct {
-	oktaIGSDKClientV5 *governance.IGAPIClient
-	transport         http.RoundTripper
+	oktaGovernanceSDKClient *governance.IGAPIClient
+	transport               http.RoundTripper
 }
 
 func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
@@ -704,11 +705,11 @@ func NewVcrGovernanceClient(d *schema_sdk.ResourceData) *vcrGovernanceTestClient
 
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
-	tripper := c.OktaGovernanceClient.OktaIGSDKClientV5().GetConfig().HTTPClient.Transport
+	tripper := c.OktaGovernanceClient.OktaGovernanceSDKClient().GetConfig().HTTPClient.Transport
 
 	client := &vcrGovernanceTestClient{
-		oktaIGSDKClientV5: c.OktaGovernanceClient.OktaIGSDKClientV5(),
-		transport:         tripper,
+		oktaGovernanceSDKClient: c.OktaGovernanceClient.OktaGovernanceSDKClient(),
+		transport:               tripper,
 	}
 
 	return client
@@ -737,7 +738,7 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 
 func (c *vcrGovernanceTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
-	c.oktaIGSDKClientV5.GetConfig().HTTPClient.Transport = rt
+	c.oktaGovernanceSDKClient.GetConfig().HTTPClient.Transport = rt
 }
 
 func (c *vcrIDaaSTestClient) OktaSDKClientV5() *v5SdkOkta.APIClient {
@@ -756,8 +757,8 @@ func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
 }
 
-func (c *vcrGovernanceTestClient) OktaIGSDKClientV5() *governance.IGAPIClient {
-	return c.oktaIGSDKClientV5
+func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.IGAPIClient {
+	return c.oktaGovernanceSDKClient
 }
 
 func currentVCRManager(name string) *vcrManager {
