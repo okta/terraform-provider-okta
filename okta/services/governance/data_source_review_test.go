@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaReview_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.GovernanceReview, t.Name())
+	mgr := newFixtureManager("Data-sources", resources.GovernanceReview, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -19,9 +19,9 @@ func TestAccDataSourceOktaReview_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_review.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_review.test", "campaign_id", "icizigd86iM9sOcbN1d6"),
-					resource.TestCheckResourceAttr("data.okta_review.test", "decision", "UNREVIEWED"),
+					resource.TestCheckResourceAttrSet("Data.okta_review.test", "id"),
+					resource.TestCheckResourceAttr("Data.okta_review.test", "campaign_id", "icizigd86iM9sOcbN1d6"),
+					resource.TestCheckResourceAttr("Data.okta_review.test", "decision", "UNREVIEWED"),
 				),
 			},
 		},

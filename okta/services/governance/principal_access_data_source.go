@@ -209,7 +209,7 @@ func grantNestedBlocks() map[string]schema.Block {
 func (d *principalAccessDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data principalAccessDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

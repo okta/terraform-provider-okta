@@ -283,7 +283,7 @@ func (r *requestTypeResource) Schema(ctx context.Context, req resource.SchemaReq
 func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data requestTypeResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -300,7 +300,7 @@ func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateReq
 		)
 		return
 	}
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue(requestTypeResp.GetId())
 	data.Name = types.StringValue(requestTypeResp.GetName())
 	data.OwnerID = types.StringValue(requestTypeResp.GetOwnerId())
@@ -310,14 +310,14 @@ func (r *requestTypeResource) Create(ctx context.Context, req resource.CreateReq
 	data.ResourceSettings = setResourceSettings(requestTypeResp.ResourceSettings)
 	data.RequestSettings = setRequestSettings(requestTypeResp.RequestSettings)
 	data.ApprovalSettings = setApproverSettings(requestTypeResp.ApprovalSettings)
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestTypeResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data requestTypeResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -343,7 +343,7 @@ func (r *requestTypeResource) Read(ctx context.Context, req resource.ReadRequest
 	data.RequestSettings = setRequestSettings(readRequestTypeResp.RequestSettings)
 	data.ApprovalSettings = setApproverSettings(readRequestTypeResp.ApprovalSettings)
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -357,7 +357,7 @@ func (r *requestTypeResource) Update(ctx context.Context, req resource.UpdateReq
 func (r *requestTypeResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data requestTypeResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

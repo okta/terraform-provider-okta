@@ -2,17 +2,18 @@ package governance
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"strings"
 )
 
 var (
@@ -26,7 +27,17 @@ func newRequestSequenceResource() resource.Resource {
 }
 
 func (r *requestSequenceResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+	parts := strings.Split(request.ID, "/")
+	if len(parts) != 2 {
+		response.Diagnostics.AddError(
+			"Invalid import ID",
+			"Expected format: resource_id/sequence_id",
+		)
+		return
+	}
+
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, path.Root("resource_id"), parts[0])...)
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, path.Root("id"), parts[1])...)
 }
 
 func (r *requestSequenceResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
@@ -91,12 +102,14 @@ func (r *requestSequenceResource) Create(ctx context.Context, req resource.Creat
 func (r *requestSequenceResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data requestSequenceResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	fmt.Println("Reading Request Sequence with ID:", data.Id.ValueString(), "and Resource ID:", data.ResourceId.ValueString())
 
 	// Read API call logic
 	readResourceRequestSeqResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
@@ -110,7 +123,7 @@ func (r *requestSequenceResource) Read(ctx context.Context, req resource.ReadReq
 
 	data.Id = types.StringValue(readResourceRequestSeqResp.Id)
 	data.Name = types.StringValue(readResourceRequestSeqResp.Name)
-	data.ResourceId = types.StringValue(readResourceRequestSeqResp.Id)
+	data.ResourceId = types.StringValue(data.ResourceId.ValueString())
 	data.Description = types.StringValue(readResourceRequestSeqResp.Description)
 	data.Link = types.StringValue(readResourceRequestSeqResp.Link)
 	data.CompatibleResourceTypes = setCompatibleResourceType(readResourceRequestSeqResp.CompatibleResourceTypes)
@@ -137,7 +150,7 @@ func (r *requestSequenceResource) Update(ctx context.Context, req resource.Updat
 func (r *requestSequenceResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data requestSequenceResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

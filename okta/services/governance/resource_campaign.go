@@ -643,7 +643,7 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 func (r *campaignResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data campaignResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -670,7 +670,7 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 
 func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data campaignResourceModel
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1012,7 +1012,7 @@ func (r *campaignResource) Update(ctx context.Context, req resource.UpdateReques
 func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data campaignResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

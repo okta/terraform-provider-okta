@@ -59,7 +59,7 @@ func (r *collectionResource) Schema(ctx context.Context, req resource.SchemaRequ
 func (r *collectionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data collectionResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -80,7 +80,7 @@ func (r *collectionResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -102,7 +102,7 @@ func createCollection(data collectionResourceModel) governance.CollectionCreatab
 func (r *collectionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data collectionResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -119,7 +119,7 @@ func (r *collectionResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(r.applyCollectionsToState(ctx, &data, getCollectionResp)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -128,7 +128,7 @@ func (r *collectionResource) Update(ctx context.Context, req resource.UpdateRequ
 	var data collectionResourceModel
 	var state collectionResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -146,7 +146,7 @@ func (r *collectionResource) Update(ctx context.Context, req resource.UpdateRequ
 		)
 		return
 	}
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	r.applyCollectionsToState(ctx, &data, updatedCollectionResp)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -161,7 +161,7 @@ func buildUpdateCollection(data collectionResourceModel) governance.CollectionUp
 func (r *collectionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data collectionResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

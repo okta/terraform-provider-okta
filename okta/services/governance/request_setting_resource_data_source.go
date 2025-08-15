@@ -21,11 +21,17 @@ type requestSettingResourceDataSource struct {
 	*config.Config
 }
 
+func (d *requestSettingResourceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
+}
+
 type requestSettingResourceDataSourceModel struct {
-	ResourceId                  types.String                `tfsdk:"resource_id"`
-	ValidAccessDurationSettings validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
-	ValidAccessScopeSettings    []supportedTypes            `tfsdk:"valid_access_scope_settings"`
-	ValidRequesterSettings      []supportedTypes            `tfsdk:"valid_requester_settings"`
+	ResourceId                  types.String                 `tfsdk:"resource_id"`
+	ValidAccessDurationSettings *validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
+	ValidAccessScopeSettings    []supportedTypes             `tfsdk:"valid_access_scope_settings"`
+	ValidRequesterSettings      []supportedTypes             `tfsdk:"valid_requester_settings"`
+	RequestOnBehalfOfSettings   *requestOnBehalfOfSettings   `tfsdk:"request_on_behalf_of_settings"`
+	RiskSettings                *riskSettings                `tfsdk:"risk_settings"`
 }
 
 func (d *requestSettingResourceDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -70,7 +76,7 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 					},
 				},
 			},
-			"valid_access_scope_settings": schema.ListNestedBlock{
+			"valid_access_scope_settings": schema.SetNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -87,7 +93,7 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 				},
 				Description: "Access scope settings eligible to be added to a request condition.",
 			},
-			"valid_requester_settings": schema.ListNestedBlock{
+			"valid_requester_settings": schema.SetNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"type": schema.StringAttribute{
@@ -104,6 +110,58 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 				},
 				Description: "Access scope settings eligible to be added to a request condition.",
 			},
+			"request_on_behalf_of_settings": schema.SingleNestedBlock{
+				Attributes: map[string]schema.Attribute{
+					"allowed": schema.BoolAttribute{
+						Computed: true,
+					},
+					//"only_for": schema.ListAttribute{
+					//	Computed:    true,
+					//	ElementType: types.StringType,
+					//},
+				},
+				Blocks: map[string]schema.Block{
+					"only_for": schema.SetNestedBlock{
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"type": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+						},
+					},
+				},
+			},
+			"risk_settings": schema.SingleNestedBlock{
+				Blocks: map[string]schema.Block{
+					"default_setting": schema.SingleNestedBlock{
+						Attributes: map[string]schema.Attribute{
+							"request_submission_type": schema.StringAttribute{
+								Computed: true,
+							},
+							"error": schema.ListAttribute{
+								ElementType: types.StringType,
+								Computed:    true,
+							},
+							"approval_sequence_id": schema.StringAttribute{
+								Computed: true,
+							},
+						},
+						Blocks: map[string]schema.Block{
+							"access_duration_settings": schema.SingleNestedBlock{
+								Attributes: map[string]schema.Attribute{
+									"type": schema.StringAttribute{
+										Computed: true,
+									},
+									"duration": schema.StringAttribute{
+										Computed: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -111,7 +169,7 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 func (d *requestSettingResourceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data requestSettingResourceDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -131,7 +189,9 @@ func (d *requestSettingResourceDataSource) Read(ctx context.Context, req datasou
 	data.ValidAccessScopeSettings = setValidAccessSettings(reqSettingsResp.ValidAccessScopeSettings)
 	data.ValidAccessDurationSettings = setValidAccessDurationSettings(reqSettingsResp.ValidAccessDurationSettings)
 	data.ValidRequesterSettings = setValidRequesterSettings(reqSettingsResp.ValidRequesterSettings)
+	data.RequestOnBehalfOfSettings = setRequesterOnBehalfSettings(reqSettingsResp.RequestOnBehalfOfSettings)
+	data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

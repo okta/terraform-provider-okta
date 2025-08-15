@@ -120,7 +120,7 @@ func (d *grantDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 func (d *grantDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data grantDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -136,7 +136,7 @@ func (d *grantDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		)
 		return
 	}
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue(getGrantResp.GrantFull.Id)
 	data.TargetPrincipalOrn = types.StringValue(getGrantResp.GrantFull.TargetPrincipalOrn)
 	data.TargetResourceOrn = types.StringValue(getGrantResp.GrantFull.TargetResourceOrn)
@@ -166,6 +166,6 @@ func (d *grantDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		data.Target = nil
 	}
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -174,7 +174,7 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data reviewResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -208,7 +208,7 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 	data.CreatedBy = types.StringValue(review.CreatedBy)
 	data.LastUpdated = types.StringValue(review.LastUpdated.Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(review.LastUpdatedBy)
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaEntitlement_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.GovernanceEntitlement, t.Name())
+	mgr := newFixtureManager("Data-sources", resources.GovernanceEntitlement, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -20,10 +20,10 @@ func TestAccDataSourceOktaEntitlement_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_entitlement.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_entitlement.test", "name", "Entitlement Bundle"),
-					resource.TestCheckResourceAttr("data.okta_entitlement.test", "external_value", "Entitlement Bundle"),
-					resource.TestCheckResourceAttr("data.okta_entitlement.test", "parent.type", "APPLICATION"),
+					resource.TestCheckResourceAttrSet("Data.okta_entitlement.test", "id"),
+					resource.TestCheckResourceAttr("Data.okta_entitlement.test", "name", "Entitlement Bundle"),
+					resource.TestCheckResourceAttr("Data.okta_entitlement.test", "external_value", "Entitlement Bundle"),
+					resource.TestCheckResourceAttr("Data.okta_entitlement.test", "parent.type", "APPLICATION"),
 				),
 			},
 		},

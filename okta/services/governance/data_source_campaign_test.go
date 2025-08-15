@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaCampaign_read(t *testing.T) {
-	mgr := newFixtureManager("data-source", resources.GovernanceCampaign, t.Name())
+	mgr := newFixtureManager("Data-source", resources.GovernanceCampaign, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -20,10 +20,10 @@ func TestAccDataSourceOktaCampaign_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_campaign.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_campaign.test", "name", "Monthly access review of sales team"),
-					resource.TestCheckResourceAttr("data.okta_campaign.test", "resource_settings.type", "GROUP"),
-					resource.TestCheckResourceAttr("data.okta_campaign.test", "principal_scope_settings.type", "USERS"),
+					resource.TestCheckResourceAttrSet("Data.okta_campaign.test", "id"),
+					resource.TestCheckResourceAttr("Data.okta_campaign.test", "name", "Monthly access review of sales team"),
+					resource.TestCheckResourceAttr("Data.okta_campaign.test", "resource_settings.type", "GROUP"),
+					resource.TestCheckResourceAttr("Data.okta_campaign.test", "principal_scope_settings.type", "USERS"),
 				),
 			},
 		},

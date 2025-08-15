@@ -155,7 +155,7 @@ func (r *grantResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 func (r *grantResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data grantResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -168,17 +168,17 @@ func (r *grantResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	// Example data value setting
+	// Example Data value setting
 	r.applyGrantToState(ctx, &data, createGrantResp)
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *grantResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data grantResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -187,7 +187,7 @@ func (r *grantResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	// Read API call logic
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -195,7 +195,7 @@ func (r *grantResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	var plan grantResourceModel
 	var state grantResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	// Read plan and state
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -216,7 +216,7 @@ func (r *grantResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(r.applyGrantToState(ctx, &plan, updatedGrantResp)...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }

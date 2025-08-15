@@ -23,19 +23,23 @@ type requestV2DataSource struct {
 }
 
 type requestV2DataSourceModel struct {
-	Id            types.String           `tfsdk:"id"`
-	Created       types.String           `tfsdk:"created"`
-	CreatedBy     types.String           `tfsdk:"created_by"`
-	LastUpdated   types.String           `tfsdk:"last_updated"`
-	LastUpdatedBy types.String           `tfsdk:"last_updated_by"`
-	Status        types.String           `tfsdk:"status"`
-	Requested     requested              `tfsdk:"requested"`
-	RequestedFor  entitlementParentModel `tfsdk:"requested_for"`
-	RequestedBy   entitlementParentModel `tfsdk:"requested_by"`
+	Id            types.String            `tfsdk:"id"`
+	Created       types.String            `tfsdk:"created"`
+	CreatedBy     types.String            `tfsdk:"created_by"`
+	LastUpdated   types.String            `tfsdk:"last_updated"`
+	LastUpdatedBy types.String            `tfsdk:"last_updated_by"`
+	Status        types.String            `tfsdk:"status"`
+	Requested     *requested              `tfsdk:"requested"`
+	RequestedFor  *entitlementParentModel `tfsdk:"requested_for"`
+	RequestedBy   *entitlementParentModel `tfsdk:"requested_by"`
 }
 
 func (d *requestV2DataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_request_v2"
+}
+
+func (d *requestV2DataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -64,10 +68,10 @@ func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaR
 			"requested": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"entry_id": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 					},
 					"access_scope_id": schema.StringAttribute{
 						Computed: true,
@@ -86,10 +90,10 @@ func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaR
 			"requested_for": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("OKTA_USER"),
 						},
@@ -99,10 +103,10 @@ func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaR
 			"requested_by": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("OKTA_USER"),
 						},
@@ -116,7 +120,7 @@ func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaR
 func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data requestV2DataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -128,7 +132,7 @@ func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadReque
 	if err != nil {
 		return
 	}
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue(getRequestV2Resp.GetId())
 	data.Created = types.StringValue(getRequestV2Resp.GetCreated().Format(time.RFC3339))
 	data.CreatedBy = types.StringValue(getRequestV2Resp.GetCreatedBy())
@@ -137,6 +141,6 @@ func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.Requested = setRequested(getRequestV2Resp.GetRequested())
 	data.RequestedBy = setRequestedBy(getRequestV2Resp.GetRequestedBy())
 	data.RequestedFor = setRequestedBy(getRequestV2Resp.GetRequestedFor())
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

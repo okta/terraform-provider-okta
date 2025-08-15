@@ -92,7 +92,7 @@ func (d *collectionDataSource) Schema(ctx context.Context, req datasource.Schema
 func (d *collectionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data collectionDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -109,7 +109,7 @@ func (d *collectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue(readCollectionResp.GetId())
 	data.Created = types.StringValue(readCollectionResp.GetCreated().String())
 	data.CreatedBy = types.StringValue(readCollectionResp.GetCreatedBy())
@@ -124,7 +124,7 @@ func (d *collectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			data.Counts.ResourceCounts.Applications = types.Int32Value(resourceCounts.Applications)
 		}
 	}
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

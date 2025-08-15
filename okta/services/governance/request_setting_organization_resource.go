@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
 
@@ -34,10 +33,12 @@ type requestSettingOrganizationResource struct {
 	*config.Config
 }
 
+type experience struct {
+	ExperienceType string `tfsdk:"experience_type"`
+}
+
 type requestSettingOrganizationResourceModel struct {
-	LongTimePastProvisioned   types.Bool   `tfsdk:"long_time_past_provisioned"`
-	ProvisioningStatus        types.String `tfsdk:"provisioning_status"`
-	RequestExperiences        types.List   `tfsdk:"request_experiences"`
+	Id                        types.String `tfsdk:"id"`
 	SubprocessorsAcknowledged types.Bool   `tfsdk:"subprocessors_acknowledged"`
 }
 
@@ -48,17 +49,12 @@ func (r *requestSettingOrganizationResource) Metadata(ctx context.Context, req r
 func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"long_time_past_provisioned": schema.StringAttribute{
+			"id": schema.StringAttribute{
+				Optional: true,
 				Computed: true,
 			},
-			"provisioning_status": schema.StringAttribute{
-				Computed: true,
-			},
-			"request_experiences": schema.ListAttribute{
-				Required:    true,
-				ElementType: types.StringType,
-			},
-			"subprocessors_acknowledged": schema.StringAttribute{
+			"subprocessors_acknowledged": schema.BoolAttribute{
+				Optional: true,
 				Computed: true,
 			},
 		},
@@ -75,7 +71,7 @@ func (r *requestSettingOrganizationResource) Create(ctx context.Context, req res
 func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data requestSettingOrganizationResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -87,25 +83,26 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 	if err != nil {
 		return
 	}
-	data.LongTimePastProvisioned = types.BoolValue(readOrgRequestSettingResp.GetLongTimePastProvisioned())
-	data.ProvisioningStatus = types.StringValue(string(readOrgRequestSettingResp.GetProvisioningStatus()))
+	//data.LongTimePastProvisioned = types.BoolValue(readOrgRequestSettingResp.GetLongTimePastProvisioned())
+	//data.ProvisioningStatus = types.StringValue(string(readOrgRequestSettingResp.GetProvisioningStatus()))
 	data.SubprocessorsAcknowledged = types.BoolValue(readOrgRequestSettingResp.SubprocessorsAcknowledged)
-	var reqExpVals []attr.Value
-	for _, reqExp := range readOrgRequestSettingResp.GetRequestExperiences() {
-		reqExpVals = append(reqExpVals, types.StringValue(string(reqExp)))
+	var experiences []experience
+	for _, exp := range readOrgRequestSettingResp.GetRequestExperiences() {
+		experiences = append(experiences, experience{
+			ExperienceType: string(exp),
+		})
 	}
 
-	listVal, _ := types.ListValue(types.StringType, reqExpVals)
-	data.RequestExperiences = listVal
+	//data.RequestExperiences = experiences
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestSettingOrganizationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data requestSettingOrganizationResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -119,7 +116,7 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 	}
 	data.SubprocessorsAcknowledged = types.BoolValue(updateOrgSettingsResp.GetSubprocessorsAcknowledged())
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

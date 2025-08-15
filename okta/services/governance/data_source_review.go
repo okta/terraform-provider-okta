@@ -220,7 +220,7 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data reviewDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

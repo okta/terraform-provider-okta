@@ -16,26 +16,12 @@ func newRequestConditionDataSource() datasource.DataSource {
 	return &requestConditionDataSource{}
 }
 
-type requestConditionDataSource struct {
-	*config.Config
-}
-
-type requestConditionsDataSourceModel struct {
-	Id                  types.String `tfschema:"id"`
-	ResourceId          types.String `tfsdk:"resource_id"`
-	Created             types.String `tfsdk:"created"`
-	CreatedBy           types.String `tfsdk:"created_by"`
-	LastUpdated         types.String `tfsdk:"last_updated"`
-	LastUpdatedBy       types.String `tfsdk:"last_updated_by"`
-	Status              types.String `tfsdk:"status"`
-	Name                types.String `tfsdk:"name"`
-	Priority            types.Int32  `tfsdk:"priority"`
-	AccessScopeSettings *Settings    `tfsdk:"access_scope_settings"`
-	RequesterSettings   *Settings    `tfsdk:"requester_settings"`
-}
-
 func (d *requestConditionDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_request_condition"
+}
+
+func (d *requestConditionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -114,10 +100,27 @@ func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.
 	}
 }
 
+type requestConditionDataSource struct {
+	*config.Config
+}
+type requestConditionsDataSourceModel struct {
+	Id                  types.String `tfsdk:"id"`
+	ResourceId          types.String `tfsdk:"resource_id"`
+	Created             types.String `tfsdk:"created"`
+	CreatedBy           types.String `tfsdk:"created_by"`
+	LastUpdated         types.String `tfsdk:"last_updated"`
+	LastUpdatedBy       types.String `tfsdk:"last_updated_by"`
+	Status              types.String `tfsdk:"status"`
+	Name                types.String `tfsdk:"name"`
+	Priority            types.Int32  `tfsdk:"priority"`
+	AccessScopeSettings *Settings    `tfsdk:"access_scope_settings"`
+	RequesterSettings   *Settings    `tfsdk:"requester_settings"`
+}
+
 func (d *requestConditionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data requestConditionsDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -133,7 +136,7 @@ func (d *requestConditionDataSource) Read(ctx context.Context, req datasource.Re
 		)
 		return
 	}
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue(readRequestConditionResp.GetId())
 	data.Name = types.StringValue(readRequestConditionResp.GetName())
 	data.Priority = types.Int32Value(readRequestConditionResp.GetPriority())
@@ -145,6 +148,6 @@ func (d *requestConditionDataSource) Read(ctx context.Context, req datasource.Re
 	data.AccessScopeSettings, _ = setAccessScopeSettings(readRequestConditionResp.GetAccessScopeSettings())
 	data.RequesterSettings, _ = setRequesterSettings(readRequestConditionResp.GetRequesterSettings())
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

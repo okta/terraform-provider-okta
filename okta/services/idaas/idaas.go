@@ -296,7 +296,7 @@ func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.C
 	config, ok := req.ProviderData.(*config.Config)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
+			"Unexpected RequesterFields Source Configure Type",
 			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return nil

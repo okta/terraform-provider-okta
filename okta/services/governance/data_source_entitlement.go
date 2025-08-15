@@ -32,7 +32,7 @@ type entitlementValues struct {
 	Description   types.String `tfsdk:"description"`
 }
 
-type entitlementsDataSourceModel struct {
+type entitlementDataSourceModel struct {
 	Id                types.String        `tfsdk:"id"`
 	DataType          types.String        `tfsdk:"data_type"`
 	ExternalValue     types.String        `tfsdk:"external_value"`
@@ -59,7 +59,7 @@ func (d *entitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"data_type": schema.StringAttribute{
 				Computed:    true,
-				Description: "The type of data for the entitlement, e.g., 'user', 'group', etc.",
+				Description: "The type of Data for the entitlement, e.g., 'user', 'group', etc.",
 			},
 			"external_value": schema.StringAttribute{
 				Computed: true,
@@ -115,9 +115,9 @@ func (d *entitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 func (d *entitlementDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data entitlementsDataSourceModel
+	var data entitlementDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -137,7 +137,7 @@ func (d *entitlementDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	data = entitlementsDataSourceModel{
+	data = entitlementDataSourceModel{
 		Id:                types.StringValue(readEntitlementResp.GetId()),
 		DataType:          types.StringValue(string(readEntitlementResp.GetDataType())),
 		ExternalValue:     types.StringValue(readEntitlementResp.GetExternalValue()),

@@ -173,7 +173,7 @@ func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req dataso
 func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data principalEntitlementsDataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -228,12 +228,12 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 		entitlements = append(entitlements, entitlement)
 	}
 
-	// Set data in model
+	// Set Data in model
 	data.Data = entitlements
-	// Save data into state
+	// Save Data into state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

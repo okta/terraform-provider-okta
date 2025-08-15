@@ -37,7 +37,7 @@ func (r *catalogEntriesMyAccessRequestResource) Schema(ctx context.Context, req 
 func (r *catalogEntriesMyAccessRequestResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data catalogEntriesMyAccessRequestResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -46,17 +46,17 @@ func (r *catalogEntriesMyAccessRequestResource) Create(ctx context.Context, req 
 
 	// Create API call logic
 
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue("example-id")
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *catalogEntriesMyAccessRequestResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data catalogEntriesMyAccessRequestResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -65,14 +65,14 @@ func (r *catalogEntriesMyAccessRequestResource) Read(ctx context.Context, req re
 
 	// Read API call logic
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *catalogEntriesMyAccessRequestResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data catalogEntriesMyAccessRequestResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -81,14 +81,14 @@ func (r *catalogEntriesMyAccessRequestResource) Update(ctx context.Context, req 
 
 	// Update API call logic
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *catalogEntriesMyAccessRequestResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data catalogEntriesMyAccessRequestResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

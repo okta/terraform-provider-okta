@@ -215,7 +215,7 @@ func (r *riskRuleResource) Configure(ctx context.Context, request resource.Confi
 
 func (r *riskRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data riskRuleModel
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -228,15 +228,15 @@ func (r *riskRuleResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// Example data value setting
+	// Example Data value setting
 	applyToState(&data, createdRiskRule)
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *riskRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data riskRuleModel
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -248,14 +248,14 @@ func (r *riskRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 	applyToState(&data, getRiskRuleResp)
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *riskRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data riskRuleModel
 	var state riskRuleModel
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
@@ -273,7 +273,7 @@ func (r *riskRuleResource) Update(ctx context.Context, req resource.UpdateReques
 
 	applyToState(&data, updateRiskRuleResp)
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -298,7 +298,7 @@ func buildRiskRuleConflictCriteriaUpdatable(criteria *conflictCriteriaModel) gov
 func (r *riskRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data riskRuleModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

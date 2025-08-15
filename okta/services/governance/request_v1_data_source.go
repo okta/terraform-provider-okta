@@ -37,7 +37,7 @@ func (d *requestV1DataSource) Schema(ctx context.Context, req datasource.SchemaR
 func (d *requestV1DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data requestV1DataSourceModel
 
-	// Read Terraform configuration data into the model
+	// Read Terraform configuration Data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -46,9 +46,9 @@ func (d *requestV1DataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	// Read API call logic
 
-	// Example data value setting
+	// Example Data value setting
 	data.Id = types.StringValue("example-id")
 
-	// Save data into Terraform state
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

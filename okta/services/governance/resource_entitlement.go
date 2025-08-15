@@ -72,7 +72,7 @@ func (r *entitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 			"data_type": schema.StringAttribute{
 				Required:    true,
-				Description: "The data type of the entitlement property.",
+				Description: "The Data type of the entitlement property.",
 			},
 			"external_value": schema.StringAttribute{
 				Required:    true,
@@ -149,8 +149,8 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 	if data.MultiValue.ValueBool() && data.DataType.ValueString() == "string" {
 		resp.Diagnostics.AddAttributeError(
 			path.Root("multi_value"),
-			"Invalid Data Type Value",
-			"Data type value should be array when multiValue is set to true.",
+			"Invalid RequesterFields Type Value",
+			"RequesterFields type value should be array when multiValue is set to true.",
 		)
 		return
 	}
@@ -171,7 +171,7 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data entitlementResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -193,14 +193,14 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data entitlementResourceModel
 	var state entitlementResourceModel
-	// Read Terraform plan data into the model
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -228,7 +228,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data entitlementResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {

@@ -29,8 +29,10 @@ func FWProviderResources() []func() resource.Resource {
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
+		newCampaignsDataSource,
 		newReviewDataSource,
 		newEntitlementDataSource,
+		newEntitlementsDataSource,
 		newEntitlementBundlesDataSource,
 		newPrincipalEntitlementsDataSource,
 		newPrincipalAccessDataSource,
@@ -42,6 +44,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRequestSettingOrganizationDataSource,
 		newRequestSettingResourceDataSource,
 		newRequestV2DataSource,
+		newCatalogEntryDefaultDataSource,
+		newCatalogEntryUserAccessRequestFieldsDataSource,
 	}
 }
 
@@ -53,7 +57,7 @@ func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.C
 	config, ok := req.ProviderData.(*config.Config)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
+			"Unexpected RequesterFields Source Configure Type",
 			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 		return nil

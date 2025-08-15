@@ -3,15 +3,15 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/okta/terraform-provider-okta/okta/config"
-
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
@@ -25,7 +25,7 @@ func newRequestSettingResourceResource() resource.Resource {
 }
 
 func (r *requestSettingResourceResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+	resource.ImportStatePassthroughID(ctx, path.Root("resource_id"), request, response)
 }
 
 func (r *requestSettingResourceResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
@@ -49,34 +49,33 @@ type validAccessDurationSettings struct {
 }
 
 type validSettings struct {
-	Supported []supportedTypes `tfsdk:"supported"`
+	Supported []supportedTypes `tfsdk:"supported_types"`
+}
+
+type onlyFor struct {
+	Type types.String `tfsdk:"type"`
 }
 
 type requestOnBehalfOfSettings struct {
 	Allowed types.Bool `tfsdk:"allowed"`
-	OnlyFor types.List `tfsdk:"only_for"`
+	OnlyFor []onlyFor  `tfsdk:"only_for"`
 }
 
 type defaultSetting struct {
-	RequestSubmissionType  types.String           `tfsdk:"request_submission_type"`
-	ApprovalSequenceId     types.String           `tfsdk:"approval_sequence_id"`
-	AccessDurationSettings AccessDurationSettings `tfsdk:"access_duration"`
-	Error                  types.List             `tfsdk:"error"`
+	RequestSubmissionType  types.String            `tfsdk:"request_submission_type"`
+	ApprovalSequenceId     types.String            `tfsdk:"approval_sequence_id"`
+	AccessDurationSettings *AccessDurationSettings `tfsdk:"access_duration_settings"`
+	Error                  types.List              `tfsdk:"error"`
 }
 
 type riskSettings struct {
-	DefaultSetting defaultSetting `tfsdk:"default_setting"`
+	DefaultSetting *defaultSetting `tfsdk:"default_setting"`
 }
 
 type requestSettingResourceResourceModel struct {
-	ResourceId                     types.String                `tfsdk:"resource_id"`
-	ValidAccessDurationSettings    validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
-	ValidAccessScopeSettings       []supportedTypes            `tfsdk:"valid_access_scope_settings"`
-	ValidRequesterSettings         []supportedTypes            `tfsdk:"valid_requester_settings"`
-	RequestOnBehalfOfSettings      requestOnBehalfOfSettings   `tfsdk:"request_on_behalf_of_settings"`
-	RiskSettings                   riskSettings                `tfsdk:"risk_settings"`
-	ValidRequestOnBehalfOfSettings []supportedTypes            `tfsdk:"valid_request_on_behalf_of_settings"`
-	ValidRiskSettings              validSettings               `tfsdk:"valid_risk_settings"`
+	ResourceId                types.String               `tfsdk:"resource_id"`
+	RequestOnBehalfOfSettings *requestOnBehalfOfSettings `tfsdk:"request_on_behalf_of_settings"`
+	RiskSettings              *riskSettings              `tfsdk:"risk_settings"`
 }
 
 func (r *requestSettingResourceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -91,80 +90,23 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"valid_access_duration_settings": schema.SingleNestedBlock{
-				Attributes: map[string]schema.Attribute{
-					"maximum_days": schema.Float32Attribute{
-						Computed: true,
-					},
-					"maximum_weeks": schema.Float32Attribute{
-						Computed: true,
-					},
-					"maximum_hours": schema.Float32Attribute{
-						Computed: true,
-					},
-					"required": schema.BoolAttribute{
-						Computed: true,
-					},
-				},
-				Blocks: map[string]schema.Block{
-					"supported_types": schema.SetNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"type": schema.StringAttribute{
-									Computed: true,
-									Validators: []validator.String{
-										stringvalidator.OneOf("ADMIN_FIXED_DURATION", "REQUESTER_SPECIFIED_DURATION"),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			"valid_access_scope_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Computed: true,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"ENTITLEMENT_BUNDLES",
-									"GROUPS",
-									"RESOURCE_DEFAULT",
-								),
-							},
-						},
-					},
-				},
-				Description: "Access scope settings eligible to be added to a request condition.",
-			},
-			"valid_requester_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Computed: true,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"EVERYONE",
-									"GROUPS",
-									"TEAMS",
-								),
-							},
-						},
-					},
-				},
-				Description: "Access scope settings eligible to be added to a request condition.",
-			},
-			"requester_on_behalf_of_settings": schema.SingleNestedBlock{
+			"request_on_behalf_of_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"allowed": schema.BoolAttribute{
 						Optional: true,
 						Computed: true,
 					},
-					"only_for": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
-						ElementType: types.StringType,
+				},
+				Blocks: map[string]schema.Block{
+					"only_for": schema.SetNestedBlock{
+						NestedObject: schema.NestedBlockObject{
+							Attributes: map[string]schema.Attribute{
+								"type": schema.StringAttribute{
+									Computed: true,
+									Optional: true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -174,10 +116,11 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 						Attributes: map[string]schema.Attribute{
 							"request_submission_type": schema.StringAttribute{
 								Optional: true,
+								Computed: true,
 							},
 							"error": schema.ListAttribute{
 								ElementType: types.StringType,
-								Optional:    true,
+								Computed:    true,
 							},
 							"approval_sequence_id": schema.StringAttribute{
 								Optional: true,
@@ -201,40 +144,6 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 					},
 				},
 			},
-			"valid_request_on_behalf_of_settings": schema.ListNestedBlock{
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Computed: true,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"EVERYONE",
-									"DIRECT_REPORT",
-								),
-							},
-						},
-					},
-				},
-			},
-			"valid_risk_settings": schema.SingleNestedBlock{
-				Blocks: map[string]schema.Block{
-					"supported_types": schema.ListNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"type": schema.StringAttribute{
-									Computed: true,
-									Validators: []validator.String{
-										stringvalidator.OneOf(
-											"DEFAULT_SETTING",
-										),
-									},
-								},
-							},
-						},
-						Description: "Access scope settings eligible to be added to a request condition.",
-					},
-				},
-			},
 		},
 	}
 }
@@ -249,7 +158,7 @@ func (r *requestSettingResourceResource) Create(ctx context.Context, req resourc
 func (r *requestSettingResourceResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data requestSettingResourceResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state Data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -268,39 +177,36 @@ func (r *requestSettingResourceResource) Read(ctx context.Context, req resource.
 
 	applyResourceSettingToState(&data, reqSettingsResp)
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func applyResourceSettingToState(data *requestSettingResourceResourceModel, reqSettingsResp *governance.RequestSettings) {
-	data.ValidAccessDurationSettings = setValidAccessDurationSettings(reqSettingsResp.ValidAccessDurationSettings)
-	data.ValidAccessScopeSettings = setValidAccessSettings(reqSettingsResp.ValidAccessScopeSettings)
-	data.ValidRequesterSettings = setValidRequesterSettings(reqSettingsResp.ValidRequesterSettings)
 	data.RequestOnBehalfOfSettings = setRequesterOnBehalfSettings(reqSettingsResp.RequestOnBehalfOfSettings)
-	data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
-	//data.ValidRequestOnBehalfOfSettings = setValidOnBehalfOfSettings(reqSettingsResp.)
-	data.ValidRiskSettings = setValidRiskSettings(reqSettingsResp.ValidRiskSettings)
+	if data.RiskSettings != nil {
+		data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
+	}
 }
 
-func setValidRiskSettings(settings *governance.ValidRiskSettingsDetails) validSettings {
-	var supportedTypes []supportedTypes
+func setValidRiskSettings(settings *governance.ValidRiskSettingsDetails) *validSettings {
+	var supportTypes []supportedTypes
 	for _, supportedType := range settings.SupportedTypes {
-		supportedTypes = append(supportedTypes, supportedTypes{
+		supportTypes = append(supportTypes, supportedTypes{
 			Type: types.StringValue(supportedType.GetType()),
 		})
 	}
-	return validSettings{
-		Supported: supportedTypes,
+	return &validSettings{
+		Supported: supportTypes,
 	}
 }
 
-func setRiskSettings(settings *governance.RiskSettingsDetails) riskSettings {
-
-	var defaultSetting defaultSetting
+func setRiskSettings(settings *governance.RiskSettingsDetails) *riskSettings {
+	defaultSetting := defaultSetting{}
 	if settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails != nil {
+		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetRequestSubmissionType())
 		accessDurationSettings := setAccessDurationSettings(settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetAccessDurationSettings())
 		if accessDurationSettings != nil {
-			defaultSetting.AccessDurationSettings = *accessDurationSettings
+			defaultSetting.AccessDurationSettings = accessDurationSettings
 		}
 		var errors []attr.Value
 		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
@@ -309,52 +215,62 @@ func setRiskSettings(settings *governance.RiskSettingsDetails) riskSettings {
 		errList, _ := types.ListValue(types.StringType, errors)
 		defaultSetting.Error = errList
 
-		return riskSettings{
-			DefaultSetting: defaultSetting,
+		return &riskSettings{
+			DefaultSetting: &defaultSetting,
 		}
 	} else if settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails != nil {
+		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetRequestSubmissionType())
 		approvalSequenceId := settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetApprovalSequenceId()
-		accessDurationSettings := setAccessDurationSettings(settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetAccessDurationSettings())
+		accessDurationSettings := setAccessDurationSettings(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetAccessDurationSettings())
 		defaultSetting.ApprovalSequenceId = types.StringValue(approvalSequenceId)
 		if accessDurationSettings != nil {
-			defaultSetting.AccessDurationSettings = *accessDurationSettings
+			defaultSetting.AccessDurationSettings = accessDurationSettings
 		}
 		var errors []attr.Value
-		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
+		for _, err := range settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetError() {
 			errors = append(errors, types.StringValue(string(err)))
 		}
 		errList, _ := types.ListValue(types.StringType, errors)
 		defaultSetting.Error = errList
 		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetRequestSubmissionType())
-		return riskSettings{
-			DefaultSetting: defaultSetting,
+		return &riskSettings{
+			DefaultSetting: &defaultSetting,
 		}
 	} else if settings.DefaultSetting.RiskSettingsDefaultAllowedWithNoOverridesDetails != nil {
-		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesDetails.GetRequestSubmissionType())
+		defaultSetting.RequestSubmissionType = types.StringValue(settings.DefaultSetting.RiskSettingsDefaultAllowedWithNoOverridesDetails.GetRequestSubmissionType())
 		var errors []attr.Value
-		for _, err := range settings.DefaultSetting.RiskSettingsDefaultRestrictedDetails.GetError() {
+		for _, err := range settings.DefaultSetting.RiskSettingsDefaultAllowedWithNoOverridesDetails.GetError() {
 			errors = append(errors, types.StringValue(string(err)))
 		}
 		errList, _ := types.ListValue(types.StringType, errors)
 		defaultSetting.Error = errList
-		return riskSettings{
-			DefaultSetting: defaultSetting,
+		return &riskSettings{
+			DefaultSetting: &defaultSetting,
 		}
 	}
-	return riskSettings{}
+	return &riskSettings{}
 }
 
-func setRequesterOnBehalfSettings(settings *governance.RequestOnBehalfOfSettingsDetails) requestOnBehalfOfSettings {
+func setRequesterOnBehalfSettings(settings *governance.RequestOnBehalfOfSettingsDetails) *requestOnBehalfOfSettings {
 	var onBehalfOfSettings requestOnBehalfOfSettings
+	if settings == nil {
+		return nil
+	}
 	onBehalfOfSettings.Allowed = types.BoolValue(settings.GetAllowed())
 
-	var reqExpVals []attr.Value
-	for _, reqExp := range settings.GetOnlyFor() {
-		reqExpVals = append(reqExpVals, types.StringValue(string(reqExp)))
+	var requesters []onlyFor
+	if len(settings.GetOnlyFor()) == 0 {
+		requesters = nil
+		onBehalfOfSettings.OnlyFor = requesters
+		return &onBehalfOfSettings
 	}
-	onlyFor, _ := types.ListValue(types.StringType, reqExpVals)
-	onBehalfOfSettings.OnlyFor = onlyFor
-	return onBehalfOfSettings
+	for _, of := range settings.GetOnlyFor() {
+		requesters = append(requesters, onlyFor{
+			Type: types.StringValue(string(of)),
+		})
+	}
+	onBehalfOfSettings.OnlyFor = requesters
+	return &onBehalfOfSettings
 }
 
 func setValidRequesterSettings(settings []governance.ValidRequesterSetting) []supportedTypes {
@@ -377,46 +293,152 @@ func setValidAccessSettings(settings []governance.ValidAccessDetail) []supported
 	return accessSettingsType
 }
 
-func setValidAccessDurationSettings(settings governance.ValidAccessDurationSettingsDetails) validAccessDurationSettings {
-	var supportedTypes []supportedTypes
-	for _, supportedType := range settings.SupportedTypes {
-		supportedTypes = append(supportedTypes, supportedTypes{
-			Type: types.StringValue(string(supportedType.GetType())),
-		})
+func setValidAccessDurationSettings(settings governance.ValidAccessDurationSettingsDetails) *validAccessDurationSettings {
+	var supportTypes []supportedTypes
+	if settings.SupportedTypes != nil {
+		for _, supportedType := range settings.GetSupportedTypes() {
+			if supportedType.GetType() != "" {
+				supportTypes = append(supportTypes, supportedTypes{
+					Type: types.StringValue(string(supportedType.GetType())),
+				})
+			}
+		}
 	}
-	return validAccessDurationSettings{
+	return &validAccessDurationSettings{
 		MaximumDays:    types.Float32Value(settings.GetMaximumDays()),
 		MaximumHours:   types.Float32Value(settings.GetMaximumHours()),
 		MaximumWeeks:   types.Float32Value(settings.GetMaximumWeeks()),
 		Required:       types.BoolValue(settings.GetRequired()),
-		SupportedTypes: supportedTypes,
+		SupportedTypes: supportTypes,
 	}
 }
 
 func (r *requestSettingResourceResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data requestSettingResourceResourceModel
+	var data, state requestSettingResourceResourceModel
 
-	// Read Terraform plan data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Read Terraform plan Data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Update API call logic
-	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
-	if err != nil {
+	patchedRequestSettingsReq := buildResourceRequestSettingsPatchable(data)
+	if patchedRequestSettingsReq == nil {
 		resp.Diagnostics.AddError(
-			"Error update Request Settings",
-			"Could not update request settings, unexpected error: "+err.Error(),
+			"Error building Request Settings Patchable",
+			"Could not build request settings patchable, unexpected error.",
 		)
 		return
 	}
 
+	// Update API call logic
+	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).ResourceRequestSettingsPatchable(*buildResourceRequestSettingsPatchable(data)).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error update Request Settings",
+			"Could not update request settings, unexpected error: "+err.Error())
+		return
+	}
+
+	fmt.Println("patchedRequestSettingsReq", patchedRequestSettingsReq.RequestOnBehalfOfSettings, patchedRequestSettingsReq.RiskSettings)
+
 	applyResourceSettingToState(&data, updatedResourceSettingResp)
 
-	// Save updated data into Terraform state
+	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func buildResourceRequestSettingsPatchable(data requestSettingResourceResourceModel) *governance.ResourceRequestSettingsPatchable {
+	var patchedRiskSettings *governance.RiskSettingsPatchable // pointer, nil unless set
+
+	if data.RiskSettings != nil && data.RiskSettings.DefaultSetting != nil {
+		patchedRiskSettings = &governance.RiskSettingsPatchable{
+			DefaultSetting: governance.RiskSettingsDefaultPatchable{},
+		}
+
+		reqType := data.RiskSettings.DefaultSetting.RequestSubmissionType.ValueString()
+		switch reqType {
+		case "RESTRICTED":
+			patchedRiskSettings.DefaultSetting.RiskSettingsDefaultRestrictedPatchable = &governance.RiskSettingsDefaultRestrictedPatchable{
+				RequestSubmissionType: reqType,
+			}
+		case "ALLOWED_WITH_OVERRIDES":
+			patchedRiskSettings.DefaultSetting.RiskSettingsDefaultAllowedWithOverridesPatchable = &governance.RiskSettingsDefaultAllowedWithOverridesPatchable{
+				RequestSubmissionType:  reqType,
+				ApprovalSequenceId:     data.RiskSettings.DefaultSetting.ApprovalSequenceId.ValueString(),
+				AccessDurationSettings: buildAccessDurationSettings(data.RiskSettings.DefaultSetting.AccessDurationSettings),
+			}
+
+		case "ALLOWED_WITH_NO_OVERRIDES":
+			patchedRiskSettings.DefaultSetting.RiskSettingsDefaultAllowedWithNoOverridesPatchable = &governance.RiskSettingsDefaultAllowedWithNoOverridesPatchable{
+				RequestSubmissionType: reqType,
+			}
+		}
+	}
+
+	var patchedRequestOnBehalfOfSettings *governance.RequestOnBehalfOfSettingsPatchable
+	if data.RequestOnBehalfOfSettings != nil {
+		var patchedOnlyFor []governance.RequestOnBehalfOfType
+		if data.RequestOnBehalfOfSettings.OnlyFor != nil {
+			for _, onlyForVal := range data.RequestOnBehalfOfSettings.OnlyFor {
+				if !onlyForVal.Type.IsNull() || onlyForVal.Type.ValueString() != "" {
+					patchedOnlyFor = append(patchedOnlyFor, governance.RequestOnBehalfOfType(onlyForVal.Type.ValueString()))
+				}
+			}
+		} else {
+			patchedOnlyFor = nil
+		}
+		if !data.RequestOnBehalfOfSettings.Allowed.IsNull() && data.RequestOnBehalfOfSettings.Allowed.ValueBool() {
+			patchedRequestOnBehalfOfSettings = &governance.RequestOnBehalfOfSettingsPatchable{
+				Allowed: data.RequestOnBehalfOfSettings.Allowed.ValueBool(),
+				OnlyFor: patchedOnlyFor,
+			}
+		} else {
+			patchedRequestOnBehalfOfSettings = nil
+		}
+	}
+
+	resourceRequestSettingsPatchable := &governance.ResourceRequestSettingsPatchable{}
+	if patchedRequestOnBehalfOfSettings != nil {
+		resourceRequestSettingsPatchable.SetRequestOnBehalfOfSettings(*patchedRequestOnBehalfOfSettings)
+	} else {
+		resourceRequestSettingsPatchable.SetRequestOnBehalfOfSettingsNil()
+	}
+	if patchedRiskSettings != nil {
+		resourceRequestSettingsPatchable.SetRiskSettings(*patchedRiskSettings)
+	}
+
+	return resourceRequestSettingsPatchable
+}
+
+func buildAccessDurationSettings(settings *AccessDurationSettings) governance.NullableAccessDurationSettingsPatchable {
+	durationSettings := governance.NullableAccessDurationSettingsPatchable{}
+	if settings != nil && settings.Type.ValueString() == "ADMIN_FIXED_DURATION" {
+		fixedDuration := &governance.AccessDurationSettingsAdminFixedDuration{
+			Type:     settings.Type.ValueString(),
+			Duration: settings.Duration.ValueString(),
+		}
+		durationSettings.Set(&governance.AccessDurationSettingsPatchable{
+			AccessDurationSettingsAdminFixedDuration: fixedDuration,
+		})
+	} else if settings != nil && settings.Type.ValueString() == "REQUESTER_SPECIFIED_DURATION" {
+		requesterDuration := &governance.AccessDurationSettingsRequesterSpecifiedDuration{
+			Type:            settings.Type.ValueString(),
+			MaximumDuration: settings.Duration.ValueString(),
+		}
+		durationSettings.Set(&governance.AccessDurationSettingsPatchable{
+			AccessDurationSettingsRequesterSpecifiedDuration: requesterDuration,
+		})
+	} else {
+		durationSettings.Set(nil)
+	}
+	return durationSettings
 }
 
 func (r *requestSettingResourceResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
