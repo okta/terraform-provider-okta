@@ -77,14 +77,12 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Risc level: ANY, LOW, MEDIUM or HIGH. Default: `ANY`",
-				// Default:     "ANY",
-				Deprecated: "Attribute typo, switch to risk_level instead. Default: `ANY`",
+				Deprecated:  "Attribute typo, switch to risk_level instead. Default: `ANY`",
 			},
 			"risk_level": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Risk level: ANY, LOW, MEDIUM or HIGH. Default: `ANY`",
-				// Default:     "ANY",
 			},
 			"behaviors": {
 				Type:        schema.TypeSet,
@@ -202,11 +200,11 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 			curRiskLevel, riskLevelSet := d.GetOk("risk_level")
 			if riskLevelSet {
 				_ = d.Set("risk_level", rule.Conditions.RiskScore.Level)
-				_ = d.Set("risc_level", curRiscLevel) // always set it to its current value only and avoid diff during plan.
+				_ = d.Set("risc_level", curRiscLevel) // retain current value to avoid diff during plan.
 
 			} else if riscLevelSet {
 				_ = d.Set("risc_level", rule.Conditions.RiskScore.Level)
-				_ = d.Set("risk_level", curRiskLevel) // always set it to its current value only and avoid diff during plan.
+				_ = d.Set("risk_level", curRiskLevel) // retain current value to avoid diff during plan.
 			}
 		}
 		if rule.Conditions.Risk != nil {
