@@ -19,7 +19,7 @@ resource "okta_email_domain" "example" {
   domain               = "example.com"
   display_name         = "test"
   user_name            = "paul_atreides"
-  validation_subdomain = "email"
+  validation_subdomain = "mail"
 }
 ```
 
