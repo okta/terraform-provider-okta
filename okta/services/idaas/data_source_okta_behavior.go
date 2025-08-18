@@ -160,3 +160,14 @@ func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData,
 	}
 	return nil
 }
+
+func ListBehaviorsUsingSDK(ctx context.Context, meta any) ([]oktav5sdk.ListBehaviorDetectionRules200ResponseInner, error) {
+	listBehaviorDetectionRules := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ListBehaviorDetectionRules(ctx)
+	behaviors, _, err := listBehaviorDetectionRules.Execute()
+	if err != nil {
+		err = fmt.Errorf("failed to list behaviors: %v", err)
+	} else if len(behaviors) == 0 {
+		err = fmt.Errorf("no behaviors seem to exist")
+	}
+	return behaviors, err
+}
