@@ -1,3 +1,10 @@
+resource "okta_user" "test" {
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
+}
+
 resource "okta_campaign" "test" {
   name        = "Monthly access review of sales team"
   description = "Review access of all sales team members to a specific app"

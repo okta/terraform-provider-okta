@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"time"
 )
 
 var (
@@ -67,24 +68,22 @@ type requestedFieldValues struct {
 }
 
 type requestV2ResourceModel struct {
-	Id types.String `tfsdk:"id"`
-	//Created              types.String            `tfsdk:"created"`
-	//CreatedBy            types.String            `tfsdk:"created_by"`
-	//LastUpdated          types.String            `tfsdk:"last_updated"`
-	//LastUpdatedBy        types.String            `tfsdk:"last_updated_by"`
-	//Status               types.String            `tfsdk:"status"`
-	//AccessDuration       types.String            `tfsdk:"access_duration"`
-	//Granted              types.String            `tfsdk:"granted"`
-	//GrantStatus          types.String            `tfsdk:"grant_status"`
-	//Resolved             types.String            `tfsdk:"resolved"`
-	//RevocationScheduled  types.String            `tfsdk:"revocation_scheduled"`
-	//RevocationStatus     types.String            `tfsdk:"revocation_status"`
-	//Revoked              types.String            `tfsdk:"revoked"`
-	//RiskAssessment       *riskAssessment         `tfsdk:"risk_assessment"`
-	Requested    *requested              `tfsdk:"requested"`
-	RequestedFor *entitlementParentModel `tfsdk:"requested_for"`
-	//RequestedBy          *entitlementParentModel `tfsdk:"requested_by"`
-	RequesterFieldValues []requestedFieldValues `tfsdk:"requester_field_values"`
+	Id                   types.String            `tfsdk:"id"`
+	Created              types.String            `tfsdk:"created"`
+	CreatedBy            types.String            `tfsdk:"created_by"`
+	LastUpdated          types.String            `tfsdk:"last_updated"`
+	LastUpdatedBy        types.String            `tfsdk:"last_updated_by"`
+	Status               types.String            `tfsdk:"status"`
+	AccessDuration       types.String            `tfsdk:"access_duration"`
+	Granted              types.String            `tfsdk:"granted"`
+	GrantStatus          types.String            `tfsdk:"grant_status"`
+	Resolved             types.String            `tfsdk:"resolved"`
+	RevocationScheduled  types.String            `tfsdk:"revocation_scheduled"`
+	RevocationStatus     types.String            `tfsdk:"revocation_status"`
+	Revoked              types.String            `tfsdk:"revoked"`
+	Requested            *requested              `tfsdk:"requested"`
+	RequestedFor         *entitlementParentModel `tfsdk:"requested_for"`
+	RequesterFieldValues []requestedFieldValues  `tfsdk:"requester_field_values"`
 }
 
 func (r *requestV2Resource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -95,115 +94,123 @@ func (r *requestV2Resource) Schema(ctx context.Context, req resource.SchemaReque
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Unique identifier for the request.",
 			},
-			//"created": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"created_by": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"last_updated": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"last_updated_by": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"status": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"access_duration": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"granted": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"grant_status": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"resolved": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"revocation_scheduled": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"revocation_status": schema.StringAttribute{
-			//	Computed: true,
-			//},
-			//"revoked": schema.StringAttribute{
-			//	Computed: true,
-			//},
+			"created": schema.StringAttribute{
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the resource was created.",
+			},
+			"created_by": schema.StringAttribute{
+				Computed:    true,
+				Description: "The user who created the resource.",
+			},
+			"last_updated": schema.StringAttribute{
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the resource was last updated.",
+			},
+			"last_updated_by": schema.StringAttribute{
+				Computed:    true,
+				Description: "The user who last updated the resource.",
+			},
+			"status": schema.StringAttribute{
+				Computed:    true,
+				Description: "The status of the request.",
+			},
+			"access_duration": schema.StringAttribute{
+				Computed:    true,
+				Description: "How long the requester retains access after their request is approved and fulfilled.",
+			},
+			"granted": schema.StringAttribute{
+				Computed:    true,
+				Description: "The date the approved access was granted. Only set if request.status is APPROVED.",
+			},
+			"grant_status": schema.StringAttribute{
+				Computed:    true,
+				Description: "The status of the granted access request.",
+			},
+			"resolved": schema.StringAttribute{
+				Computed:    true,
+				Description: "The date the request was resolved.",
+			},
+			"revocation_scheduled": schema.StringAttribute{
+				Computed:    true,
+				Description: "The date the granted access is scheduled for revocation.",
+			},
+			"revocation_status": schema.StringAttribute{
+				Computed:    true,
+				Description: "The revocation status of the request.",
+			},
+			"revoked": schema.StringAttribute{
+				Computed:    true,
+				Description: "The date the granted access was revoked.",
+			},
 		},
 		Blocks: map[string]schema.Block{
 			"requested": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"entry_id": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The ID of the resource catalog entry.",
 					},
 					"type": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The type of the resource.",
 					},
 					"access_scope_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the access scope associated with the resource.",
 					},
 					"access_scope_type": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The access scope type.",
 					},
 					"resource_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the requested resource.",
 					},
 					"resource_type": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The requested resource type.",
 					},
 				},
+				Description: "A representation of a resource that can be requested for access.",
 			},
 			"requested_for": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Required: true,
+						Required:    true,
+						Description: "The ID of the Okta user.",
 					},
 					"type": schema.StringAttribute{
 						Required: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("OKTA_USER"),
 						},
+						Description: "The type of principal.",
 					},
 				},
+				Description: "A representation of a principal.",
 			},
-			//"requested_by": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"external_id": schema.StringAttribute{
-			//			Optional: true,
-			//			Computed: true,
-			//		},
-			//		"type": schema.StringAttribute{
-			//			Optional: true,
-			//			Computed: true,
-			//			Validators: []validator.String{
-			//				stringvalidator.OneOf("OKTA_USER"),
-			//			},
-			//		},
-			//	},
-			//},
 			"requester_field_values": schema.SetNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "The ID of a requester field.",
 						},
 						"label": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "A human-readable description of requester field.",
 						},
 						"type": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "Type of value for the requester field.",
 						},
 						"value": schema.StringAttribute{
-							Optional: true,
+							Optional:    true,
+							Description: "The value of requester field, which depends on the type of the field.",
 						},
-						//"values": schema.ListAttribute{
-						//	Optional:    true,
-						//	ElementType: types.StringType,
-						//},
 					},
 					Blocks: map[string]schema.Block{
 						"values": schema.SetNestedBlock{
@@ -214,34 +221,12 @@ func (r *requestV2Resource) Schema(ctx context.Context, req resource.SchemaReque
 									},
 								},
 							},
+							Description: "The values of requester field with the type MULTISELECT. If the field type is MULTISELECT, this property is required.",
 						},
 					},
 				},
+				Description: "The requester input fields required by the approval system.",
 			},
-			//"risk_assessment": schema.SingleNestedBlock{
-			//	Attributes: map[string]schema.Attribute{
-			//		"request_submission_type": schema.StringAttribute{
-			//			Optional: true,
-			//		},
-			//	},
-			//	Blocks: map[string]schema.Block{
-			//		"risk_rules": schema.SetNestedBlock{
-			//			NestedObject: schema.NestedBlockObject{
-			//				Attributes: map[string]schema.Attribute{
-			//					"name": schema.StringAttribute{
-			//						Optional: true,
-			//					},
-			//					"description": schema.StringAttribute{
-			//						Optional: true,
-			//					},
-			//					"resource_name": schema.StringAttribute{
-			//						Optional: true,
-			//					},
-			//				},
-			//			},
-			//		},
-			//	},
-			//},
 		},
 	}
 }
@@ -286,21 +271,20 @@ func (r *requestV2Resource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	//cannot use the applyToState func since the type of response is different
 	data.Id = types.StringValue(getRequestV2Resp.GetId())
-	//data.Created = types.StringValue(getRequestV2Resp.GetCreated().Format(time.RFC3339))
-	//data.CreatedBy = types.StringValue(getRequestV2Resp.GetCreatedBy())
-	//data.LastUpdated = types.StringValue(getRequestV2Resp.GetLastUpdated().Format(time.RFC3339))
-	//data.LastUpdatedBy = types.StringValue(getRequestV2Resp.GetLastUpdatedBy())
+	data.Created = types.StringValue(getRequestV2Resp.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(getRequestV2Resp.GetCreatedBy())
+	data.LastUpdated = types.StringValue(getRequestV2Resp.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(getRequestV2Resp.GetLastUpdatedBy())
 	data.Requested = setRequested(getRequestV2Resp.GetRequested())
-	//data.RequestedBy = setRequestedBy(getRequestV2Resp.GetRequestedBy())
 	data.RequestedFor = setRequestedBy(getRequestV2Resp.GetRequestedFor())
-	//data.Status = types.StringValue(string(getRequestV2Resp.GetStatus()))
-	//data.AccessDuration = types.StringValue(getRequestV2Resp.GetAccessDuration())
-	//data.Granted = types.StringValue(getRequestV2Resp.GetGranted().Format(time.RFC3339))
-	//data.GrantStatus = types.StringValue(string(getRequestV2Resp.GetGrantStatus()))
-	//data.Resolved = types.StringValue(getRequestV2Resp.GetResolved().Format(time.RFC3339))
-	//data.RevocationStatus = types.StringValue(string(getRequestV2Resp.GetRevocationStatus()))
-	//data.RevocationScheduled = types.StringValue(string(getRequestV2Resp.GetRevocationScheduled().Format(time.RFC3339)))
-	//data.Revoked = types.StringValue(getRequestV2Resp.GetRevoked().Format(time.RFC3339))
+	data.Status = types.StringValue(string(getRequestV2Resp.GetStatus()))
+	data.AccessDuration = types.StringValue(getRequestV2Resp.GetAccessDuration())
+	data.Granted = types.StringValue(getRequestV2Resp.GetGranted().Format(time.RFC3339))
+	data.GrantStatus = types.StringValue(string(getRequestV2Resp.GetGrantStatus()))
+	data.Resolved = types.StringValue(getRequestV2Resp.GetResolved().Format(time.RFC3339))
+	data.RevocationStatus = types.StringValue(string(getRequestV2Resp.GetRevocationStatus()))
+	data.RevocationScheduled = types.StringValue(string(getRequestV2Resp.GetRevocationScheduled().Format(time.RFC3339)))
+	data.Revoked = types.StringValue(getRequestV2Resp.GetRevoked().Format(time.RFC3339))
 	var requesterFieldValues []requestedFieldValues
 	for _, reqValue := range getRequestV2Resp.GetRequesterFieldValues() {
 		var requesterFieldValue requestedFieldValues
@@ -351,20 +335,20 @@ func (r *requestV2Resource) Delete(ctx context.Context, req resource.DeleteReque
 
 func applyRequestResourceToState(data *requestV2ResourceModel, reqCreatableResp *governance.RequestSubmissionFull) {
 	data.Id = types.StringValue(reqCreatableResp.GetId())
-	//data.Created = types.StringValue(reqCreatableResp.GetCreated().Format(time.RFC3339))
-	//data.CreatedBy = types.StringValue(reqCreatableResp.GetCreatedBy())
-	//data.LastUpdated = types.StringValue(reqCreatableResp.GetLastUpdated().Format(time.RFC3339))
-	//data.LastUpdatedBy = types.StringValue(reqCreatableResp.GetLastUpdatedBy())
+	data.Created = types.StringValue(reqCreatableResp.GetCreated().Format(time.RFC3339))
+	data.CreatedBy = types.StringValue(reqCreatableResp.GetCreatedBy())
+	data.LastUpdated = types.StringValue(reqCreatableResp.GetLastUpdated().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(reqCreatableResp.GetLastUpdatedBy())
 	data.Requested = setRequested(reqCreatableResp.GetRequested())
 	data.RequestedFor = setRequestedBy(reqCreatableResp.GetRequestedFor())
-	//data.Status = types.StringValue(reqCreatableResp.GetStatus())
-	//data.AccessDuration = types.StringValue(reqCreatableResp.GetAccessDuration())
-	//data.Granted = types.StringValue(reqCreatableResp.GetGranted().Format(time.RFC3339))
-	//data.GrantStatus = types.StringValue(string(reqCreatableResp.GetGrantStatus()))
-	//data.Resolved = types.StringValue(reqCreatableResp.GetResolved().Format(time.RFC3339))
-	//data.RevocationStatus = types.StringValue(string(reqCreatableResp.GetRevocationStatus()))
-	//data.RevocationScheduled = types.StringValue(string(reqCreatableResp.GetRevocationScheduled().Format(time.RFC3339)))
-	//data.Revoked = types.StringValue(reqCreatableResp.GetRevoked().Format(time.RFC3339))
+	data.Status = types.StringValue(reqCreatableResp.GetStatus())
+	data.AccessDuration = types.StringValue(reqCreatableResp.GetAccessDuration())
+	data.Granted = types.StringValue(reqCreatableResp.GetGranted().Format(time.RFC3339))
+	data.GrantStatus = types.StringValue(string(reqCreatableResp.GetGrantStatus()))
+	data.Resolved = types.StringValue(reqCreatableResp.GetResolved().Format(time.RFC3339))
+	data.RevocationStatus = types.StringValue(string(reqCreatableResp.GetRevocationStatus()))
+	data.RevocationScheduled = types.StringValue(string(reqCreatableResp.GetRevocationScheduled().Format(time.RFC3339)))
+	data.Revoked = types.StringValue(reqCreatableResp.GetRevoked().Format(time.RFC3339))
 	var requesterFieldValues []requestedFieldValues
 	for _, reqValue := range reqCreatableResp.GetRequesterFieldValues() {
 		var requesterFieldValue requestedFieldValues
@@ -424,13 +408,6 @@ func createRequestReq(data requestV2ResourceModel) governance.RequestCreatable2 
 		ExternalId: data.RequestedFor.ExternalID.ValueString(),
 		Type:       governance.PrincipalType(data.RequestedFor.Type.ValueString()),
 	}
-
-	//if data.RequestedBy != nil {
-	//	reqCreatable.RequestedBy = &governance.TargetPrincipal{
-	//		ExternalId: data.RequestedBy.ExternalID.ValueString(),
-	//		Type:       governance.PrincipalType(data.RequestedBy.Type.ValueString()),
-	//	}
-	//}
 
 	var requesterFields []governance.RequestFieldValue
 	for _, field := range data.RequesterFieldValues {

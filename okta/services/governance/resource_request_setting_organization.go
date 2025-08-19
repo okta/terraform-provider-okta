@@ -50,11 +50,13 @@ func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req res
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Optional: true,
+				Required:    true,
+				Description: "The internal identifier for this resource, required by Terraform to track state. This field does not exist in the Okta API response.",
 			},
 			"subprocessors_acknowledged": schema.BoolAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "Whether a customer has acknowledged Access Requests subprocessors.",
 			},
 		},
 	}

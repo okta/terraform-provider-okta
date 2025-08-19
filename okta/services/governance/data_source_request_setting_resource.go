@@ -26,8 +26,7 @@ func (d *requestSettingResourceDataSource) Configure(ctx context.Context, req da
 }
 
 type requestSettingResourceDataSourceModel struct {
-	Id types.String `tfsdk:"id"`
-	//ResourceId                  types.String                 `tfsdk:"resource_id"`
+	Id                          types.String                 `tfsdk:"id"`
 	ValidAccessDurationSettings *validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
 	ValidAccessScopeSettings    []supportedTypes             `tfsdk:"valid_access_scope_settings"`
 	ValidRequesterSettings      []supportedTypes             `tfsdk:"valid_requester_settings"`

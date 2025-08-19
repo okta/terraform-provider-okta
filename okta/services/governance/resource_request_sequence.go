@@ -72,19 +72,19 @@ func (r *requestSequenceResource) Schema(ctx context.Context, req resource.Schem
 				Description: "The id of the resource in Okta ID format.",
 			},
 			"description": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: "Description of the request sequence",
 			},
 			"link": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: "Link to edit the request sequence.",
 			},
 			"name": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: "Name of the request sequence.",
 			},
 			"compatible_resource_types": schema.ListAttribute{
-				Optional:    true,
+				Computed:    true,
 				ElementType: types.StringType,
 				Validators: []validator.List{
 					listvalidator.ValueStringsAre(

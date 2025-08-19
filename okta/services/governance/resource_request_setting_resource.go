@@ -86,15 +86,17 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"resource_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"request_on_behalf_of_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"allowed": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:    true,
+						Computed:    true,
+						Description: "Indicates that users who can request this resource could also request for another requester of the same resource",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -102,13 +104,15 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"type": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
+									Computed:    true,
+									Optional:    true,
+									Description: "Which requesters the resource requester can request on behalf of. If onlyFor is not specified then any requester may request a resource on the behalf of any other user",
 								},
 							},
 						},
 					},
 				},
+				Description: "Specifies if and for whom a requester may request the resource for.",
 			},
 			"risk_settings": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
@@ -123,7 +127,8 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 								Computed:    true,
 							},
 							"approval_sequence_id": schema.StringAttribute{
-								Optional: true,
+								Optional:    true,
+								Description: "The ID of the approval sequence.",
 							},
 						},
 						Blocks: map[string]schema.Block{
@@ -139,10 +144,13 @@ func (r *requestSettingResourceResource) Schema(ctx context.Context, req resourc
 										Optional: true,
 									},
 								},
+								Description: "Settings that control who may specify the access duration allowed by this request condition or risk settings, as well as what duration may be requested.",
 							},
 						},
+						Description: "Default risk settings that are valid for an access request when a risk has been detected for the resource and requesting user.",
 					},
 				},
+				Description: "Risk settings that are valid for an access request when a risk has been detected for the resource and requesting user.",
 			},
 		},
 	}

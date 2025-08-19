@@ -39,6 +39,7 @@ type requesterFields struct {
 }
 
 type catalogEntryUserAccessRequestFieldsDataSourceModel struct {
+	Id      types.String      `tfsdk:"id"`
 	EntryId types.String      `tfsdk:"entry_id"`
 	UserId  types.String      `tfsdk:"user_id"`
 	Data    []requesterFields `tfsdk:"data"`
@@ -51,6 +52,10 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Metadata(ctx context.Con
 func (d *catalogEntryUserAccessRequestFieldsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The internal identifier for this data source, required by Terraform to track state. This field does not exist in the Okta API response.",
+			},
 			"entry_id": schema.StringAttribute{
 				Required:    true,
 				Description: "The ID of the catalog entry.",
@@ -77,7 +82,7 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Schema(ctx context.Conte
 						},
 						"label": schema.StringAttribute{
 							Computed:    true,
-							Description: "label of the requester field.",
+							Description: "Label of the requester field.",
 						},
 						"maximum_value": schema.StringAttribute{
 							Computed:    true,
@@ -152,6 +157,7 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Read(ctx context.Context
 		requesterField.Choices = c
 		data.Data = append(data.Data, requesterField)
 	}
+	data.Id = types.StringValue(data.EntryId.ValueString() + "-" + data.UserId.ValueString())
 	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

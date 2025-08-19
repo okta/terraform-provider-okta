@@ -2,14 +2,14 @@ package governance
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/okta/terraform-provider-okta/okta/config"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = &requestV2DataSource{}
@@ -46,72 +46,89 @@ func (d *requestV2DataSource) Schema(ctx context.Context, req datasource.SchemaR
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the request.",
 			},
 			"created": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the resource was created.",
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The user who created the resource.",
 			},
 			"last_updated": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the resource was last updated.",
 			},
 			"last_updated_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The user who last updated the resource.",
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The status of the request.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"requested": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"entry_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the resource catalog entry.",
 					},
 					"type": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The type of the resource.",
 					},
 					"access_scope_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the access scope associated with the resource.",
 					},
 					"access_scope_type": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The access scope type.",
 					},
 					"resource_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the requested resource.",
 					},
 					"resource_type": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The requested resource type.",
 					},
 				},
 			},
 			"requested_for": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The ID of the Okta user.",
 					},
 					"type": schema.StringAttribute{
 						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("OKTA_USER"),
 						},
+						Description: "The type of principal.",
 					},
 				},
 			},
 			"requested_by": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The Okta user id.",
 					},
 					"type": schema.StringAttribute{
 						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("OKTA_USER"),
 						},
+						Description: "The type of principal.",
 					},
 				},
+				Description: "A representation of a principal.",
 			},
 		},
 	}

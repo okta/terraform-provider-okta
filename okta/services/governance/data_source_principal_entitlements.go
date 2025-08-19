@@ -72,27 +72,27 @@ func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req dataso
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
-				Description: "The id property of an entitlement.",
+				Description: "The internal identifier for this data source, required by Terraform to track state. This field does not exist in the Okta API response.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"target_principal": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"type": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 					},
 				},
 			},
 			"parent": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 					},
 					"type": schema.StringAttribute{
-						Optional: true,
+						Required: true,
 					},
 				},
 			},
@@ -249,7 +249,7 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 
 	// Set Data in model
 	data.Data = entitlements
-	data.Id = types.StringValue("principal_entitlements")
+	data.Id = types.StringValue("principal-entitlements")
 	// Save Data into state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 
