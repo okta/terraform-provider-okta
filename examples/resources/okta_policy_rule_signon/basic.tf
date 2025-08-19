@@ -9,8 +9,32 @@ resource "okta_policy_signon" "test" {
   groups_included = [data.okta_group.all.id]
 }
 
-resource "okta_policy_rule_signon" "test" {
-  policy_id = okta_policy_signon.test.id
-  name      = "testAcc_replace_with_uuid"
-  status    = "ACTIVE"
+resource "okta_policy_signon" "test_two" {
+  name            = "test_two"
+  status          = "ACTIVE"
+  description     = "Terraform Acceptance Test SignOn Policy"
+  groups_included = [data.okta_group.all.id]
 }
+
+resource "okta_policy_rule_signon" "test_risk_ONLY" {
+  policy_id       = okta_policy_signon.test_two.id
+  name            = "test_policy_risk_ONLY"
+  status          = "ACTIVE"
+  risk_level      = "ANY"
+}
+
+resource "okta_policy_rule_signon" "test_risc_ONLY" {
+  policy_id       = okta_policy_signon.test_two.id
+  name            = "test_policy_risc_ONLY"
+  status          = "ACTIVE"
+  risc_level      = "MEDIUM"
+} 
+
+resource "okta_policy_rule_signon" "test_BOTH" {
+  policy_id = okta_policy_signon.test_two.id
+  name            = "test_policy_BOTH"
+  status          = "ACTIVE"
+  risk_level      = "LOW"
+  risc_level      = "HIGH"
+}
+
