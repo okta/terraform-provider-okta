@@ -51,7 +51,6 @@ func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req res
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Optional: true,
-				Computed: true,
 			},
 			"subprocessors_acknowledged": schema.BoolAttribute{
 				Optional: true,
@@ -79,12 +78,10 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 	}
 
 	// Read API call logic
-	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
+	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
 		return
 	}
-	//data.LongTimePastProvisioned = types.BoolValue(readOrgRequestSettingResp.GetLongTimePastProvisioned())
-	//data.ProvisioningStatus = types.StringValue(string(readOrgRequestSettingResp.GetProvisioningStatus()))
 	data.SubprocessorsAcknowledged = types.BoolValue(readOrgRequestSettingResp.SubprocessorsAcknowledged)
 	var experiences []experience
 	for _, exp := range readOrgRequestSettingResp.GetRequestExperiences() {
@@ -93,7 +90,7 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 		})
 	}
 
-	//data.RequestExperiences = experiences
+	data.Id = types.StringValue("default")
 
 	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -110,7 +107,7 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 	}
 
 	// Update API call logic
-	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
+	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
 	if err != nil {
 		return
 	}

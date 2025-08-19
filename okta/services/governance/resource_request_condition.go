@@ -2,7 +2,6 @@ package governance
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -87,29 +86,35 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The id of the request condition.",
 			},
 			"resource_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 			"approval_sequence_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The ID of the approval sequence.",
 			},
 			"name": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The name of the request condition.",
 			},
 			"description": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "The description of the request condition.",
 			},
 			"priority": schema.Int32Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "The priority of the condition. The smaller the number, the higher the priority.",
 			},
-			"created":         schema.StringAttribute{Computed: true},
-			"created_by":      schema.StringAttribute{Computed: true},
-			"last_updated":    schema.StringAttribute{Computed: true},
-			"last_updated_by": schema.StringAttribute{Computed: true},
-			"status":          schema.StringAttribute{Computed: true},
+			"created":         schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the resource was created."},
+			"created_by":      schema.StringAttribute{Computed: true, Description: "The id of the Okta user who created the resource."},
+			"last_updated":    schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the object was last updated."},
+			"last_updated_by": schema.StringAttribute{Computed: true, Description: "The id of the Okta user who last updated the object."},
+			"status":          schema.StringAttribute{Computed: true, Description: "Status indicates if this condition is active or not. Default status is INACTIVE"},
 		},
 		Blocks: map[string]schema.Block{
 			"access_scope_settings": schema.SingleNestedBlock{
@@ -162,9 +167,11 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 						},
 					},
 					"duration": schema.StringAttribute{
-						Optional: true,
+						Optional:    true,
+						Description: "The duration set by the admin for access durations. Use ISO8061 notation for duration values.",
 					},
 				},
+				Description: "Settings that control who may specify the access duration allowed by this request condition or risk settings, as well as what duration may be requested.",
 			},
 		},
 	}
@@ -180,9 +187,6 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	// Create API call logic
-
-	// Example Data value setting
 	requestConditionReq, diags := createRequestCondtion(data)
 	if diags.HasError() {
 		if diags.HasError() {
@@ -198,7 +202,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	requestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(*requestConditionReq).Execute()
+	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(*requestConditionReq).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Request conditions",
@@ -226,7 +230,7 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Read API call logic
-	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",
@@ -262,8 +266,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		}
 	}
 	// Update API call logic
-	fmt.Println("Resource id", data.ResourceId.ValueString(), " Request condition id", state.Id.ValueString())
-	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(patch).Execute()
+	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(patch).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Request conditions",
@@ -293,7 +296,7 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Request conditions",
@@ -339,7 +342,6 @@ func setAccessDurationSettings(settings governance.AccessDurationSettingsFull) *
 func setAccessScopeSettings(settings governance.AccessScopeSettingsFullAccessScopeSettings) (*Settings, diag.Diagnostics) {
 	var setting Settings
 	if settings.GroupAccessScopeSettings != nil {
-		fmt.Println("INSIDE GroupAccessScopeSettings")
 		setting.Type = types.StringValue(settings.GroupAccessScopeSettings.GetType())
 		groupIds := settings.GroupAccessScopeSettings.GetGroups()
 		var ids []IdModel
@@ -352,7 +354,6 @@ func setAccessScopeSettings(settings governance.AccessScopeSettingsFullAccessSco
 		}
 		setting.Ids = ids
 	} else if settings.EntitlementBundleAccessScopeSettings != nil {
-		fmt.Println("INSIDE EntitlementBundleAccessScopeSettings")
 		setting.Type = types.StringValue(settings.EntitlementBundleAccessScopeSettings.GetType())
 		entitlementBundleIds := settings.EntitlementBundleAccessScopeSettings.GetEntitlementBundles()
 		var ids []IdModel
@@ -365,7 +366,6 @@ func setAccessScopeSettings(settings governance.AccessScopeSettingsFullAccessSco
 		}
 		setting.Ids = ids
 	} else if settings.ResourceDefaultAccessScopeSettings != nil {
-		fmt.Println("INSIDE ResourceDefaultAccessScopeSettings")
 		setting.Type = types.StringValue(settings.ResourceDefaultAccessScopeSettings.GetType())
 	}
 	return &setting, nil
@@ -374,7 +374,6 @@ func setAccessScopeSettings(settings governance.AccessScopeSettingsFullAccessSco
 func setRequesterSettings(settings governance.RequesterSettingsFullRequesterSettings) (*Settings, diag.Diagnostics) {
 	var setting Settings
 	if settings.GroupsRequesterSettings != nil {
-		fmt.Println("INSIDE GROUP REQUESTER SETTINGS")
 		setting.Type = types.StringValue(settings.GroupsRequesterSettings.GetType())
 		groupIds := settings.GroupsRequesterSettings.GetGroups()
 		var ids []IdModel
@@ -387,7 +386,6 @@ func setRequesterSettings(settings governance.RequesterSettingsFullRequesterSett
 		}
 		setting.Ids = ids
 	} else if settings.EveryoneRequesterSettings != nil {
-		fmt.Println("INSIDE EVERYONE REQUESTER SETTINGS")
 		setting.Type = types.StringValue(settings.EveryoneRequesterSettings.GetType())
 	}
 	return &setting, nil

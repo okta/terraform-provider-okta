@@ -119,4 +119,10 @@ const (
 	GovernanceCampaign                     = "okta_campaign"
 	GovernanceEntitlement                  = "okta_entitlement"
 	GovernanceReview                       = "okta_review"
+	GovernancePrincipalEntitlements        = "okta_principal_entitlements"
+	GovernancePrincipalAccess              = "okta_principal_access"
+	GovernanceRequestCondition             = "okta_request_condition"
+	GovernanceRequestSequence              = "okta_request_sequence"
+	GovernanceRequestSettingOrganization   = "okta_request_setting_organization"
+	GovernanceRequestSetting               = "okta_request_setting"
 )

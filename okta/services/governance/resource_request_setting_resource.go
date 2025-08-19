@@ -166,7 +166,7 @@ func (r *requestSettingResourceResource) Read(ctx context.Context, req resource.
 	}
 
 	// Read API call logic
-	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request Settings",
@@ -338,7 +338,7 @@ func (r *requestSettingResourceResource) Update(ctx context.Context, req resourc
 	}
 
 	// Update API call logic
-	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).ResourceRequestSettingsPatchable(*buildResourceRequestSettingsPatchable(data)).Execute()
+	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).ResourceRequestSettingsPatchable(*buildResourceRequestSettingsPatchable(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error update Request Settings",

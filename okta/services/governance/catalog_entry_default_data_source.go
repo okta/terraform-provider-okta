@@ -2,11 +2,11 @@ package governance
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/config"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var _ datasource.DataSource = (*catalogEntryDefaultDataSource)(nil)
@@ -59,28 +59,32 @@ func (d *catalogEntryDefaultDataSource) Schema(ctx context.Context, req datasour
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Unique identifier for the entry.",
 			},
 			"entry_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The ID of the catalog entry.",
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The name of the catalog entry.",
 			},
 			"requestable": schema.BoolAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Is the resource requestable.",
 			},
 			"label": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Description: "Label of the entry. Currently either Application or Resource Collection.",
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Description: "Description of the catalog entry.",
 			},
 			"parent": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Description: "Parent of the catalog entry.",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -89,22 +93,28 @@ func (d *catalogEntryDefaultDataSource) Schema(ctx context.Context, req datasour
 					"resource_counts": schema.SingleNestedBlock{
 						Attributes: map[string]schema.Attribute{
 							"applications": schema.Int32Attribute{
-								Computed: true,
+								Computed:    true,
+								Description: "Number of app resources in a collection.",
 							},
 						},
+						Description: "Collection resource counts.",
 					},
 				},
+				Description: "Entry count metadata.",
 			},
 			"links": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
 					"self": schema.SingleNestedBlock{
 						Attributes: map[string]schema.Attribute{
 							"href": schema.StringAttribute{
-								Computed: true,
+								Computed:    true,
+								Description: "Contains the absolute API URL for retrieving this catalog entry resource.",
 							},
 						},
+						Description: "A link to the catalog entry itself.",
 					},
 				},
+				Description: "Links available for a resource catalog entry.",
 			},
 		},
 	}
@@ -121,7 +131,7 @@ func (d *catalogEntryDefaultDataSource) Read(ctx context.Context, req datasource
 	}
 
 	// Read API call logic
-	getCatalogEntryResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().CatalogsAPI.GetCatalogEntryV2(ctx, data.EntryId.ValueString()).Execute()
+	getCatalogEntryResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().CatalogsAPI.GetCatalogEntryV2(ctx, data.EntryId.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Catalog entry",

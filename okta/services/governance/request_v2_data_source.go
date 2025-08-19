@@ -128,7 +128,7 @@ func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	// Read API call logic
-	getRequestV2Resp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
+	getRequestV2Resp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

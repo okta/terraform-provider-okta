@@ -25,6 +25,7 @@ type principalEntitlementsDataSource struct {
 }
 
 type principalEntitlementsDataSourceModel struct {
+	Id              types.String                          `tfsdk:"id"`
 	Parent          *parentModel                          `tfsdk:"parent"`           // Optional block input
 	TargetPrincipal *principalModel                       `tfsdk:"target_principal"` // Optional block input
 	Data            []principalEntitlementDataSourceModel `tfsdk:"data"`
@@ -68,16 +69,20 @@ func (d *principalEntitlementsDataSource) Metadata(ctx context.Context, req data
 
 func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The id property of an entitlement.",
+			},
+		},
 		Blocks: map[string]schema.Block{
 			"target_principal": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
 						Optional: true,
-						//Computed: true,
 					},
 					"type": schema.StringAttribute{
 						Optional: true,
-						//Computed: true,
 					},
 				},
 			},
@@ -85,10 +90,8 @@ func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req dataso
 				Attributes: map[string]schema.Attribute{
 					"external_id": schema.StringAttribute{
 						Optional: true,
-						//Computed: true,
 					},
 					"type": schema.StringAttribute{
-						//Computed: true,
 						Optional: true,
 					},
 				},
@@ -97,51 +100,64 @@ func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req dataso
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The id property of an entitlement.",
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The display name for an entitlement property.",
 						},
 						"external_value": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The value of an entitlement property.",
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The description of an entitlement property.",
 						},
 						"multi_value": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The property that determines if the entitlement property can hold multiple values.",
 						},
 						"required": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The property that determines if the entitlement property is a required attribute",
 						},
 						"data_type": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The data type of the entitlement property.",
 						},
 						"target_principal_orn": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The Okta user id in ORN format.",
 						},
 						"parent_resource_orn": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The Okta app instance, in ORN format.",
 						},
 					},
 					Blocks: map[string]schema.Block{
 						"target_principal": schema.SingleNestedBlock{
 							Attributes: map[string]schema.Attribute{
 								"external_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: "The Okta user id.",
 								},
 								"type": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: "The type of principal.",
 								},
 							},
 						},
 						"parent": schema.SingleNestedBlock{
 							Attributes: map[string]schema.Attribute{
 								"external_id": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: "The Okta id of the resource.",
 								},
 								"type": schema.StringAttribute{
-									Computed: true,
+									Computed:    true,
+									Description: "The type of the resource.",
 								},
 							},
 						},
@@ -149,19 +165,24 @@ func (d *principalEntitlementsDataSource) Schema(ctx context.Context, req dataso
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: "The id of an entitlement value.",
 									},
 									"external_value": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: "The value of an entitlement property value.",
 									},
 									"name": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: "The name of an entitlement value.",
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: "The description of an entitlement property.",
 									},
 								},
 							},
+							Description: "Collection of entitlement values.",
 						},
 					},
 				},
@@ -181,9 +202,7 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 	}
 
 	// Read API call logic
-	//fmt.Println("Making call")
-	fmt.Println("Filter used:", prepareFilter(data))
-	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
+	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -230,6 +249,7 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 
 	// Set Data in model
 	data.Data = entitlements
+	data.Id = types.StringValue("principal_entitlements")
 	// Save Data into state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 

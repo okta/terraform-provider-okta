@@ -100,7 +100,7 @@ func (d *collectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	// Read API call logic
-	readCollectionResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().CollectionsAPI.GetCollection(ctx, data.Id.ValueString()).Execute()
+	readCollectionResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().CollectionsAPI.GetCollection(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Collections",

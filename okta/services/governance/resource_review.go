@@ -110,7 +110,7 @@ func (r *reviewResource) Create(ctx context.Context, req resource.CreateRequest,
 	request := buildReassignReviewRequest(data)
 	// Call the Okta API
 	reassignedReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClient().
+		OktaGovernanceSDKClient().
 		ReviewsAPI.
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
@@ -151,7 +151,7 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	getReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClient().
+		OktaGovernanceSDKClient().
 		ReviewsAPI.GetReview(ctx, data.CampaignId.ValueString()).Execute()
 	if err != nil {
 		return
@@ -182,7 +182,7 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 	request := buildReassignReviewRequest(data)
 	// Call the Okta API
 	reassignedReview, _, err := r.OktaGovernanceClient.
-		OktaIGSDKClient().
+		OktaGovernanceSDKClient().
 		ReviewsAPI.
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).

@@ -26,7 +26,8 @@ func (d *requestSettingResourceDataSource) Configure(ctx context.Context, req da
 }
 
 type requestSettingResourceDataSourceModel struct {
-	ResourceId                  types.String                 `tfsdk:"resource_id"`
+	Id types.String `tfsdk:"id"`
+	//ResourceId                  types.String                 `tfsdk:"resource_id"`
 	ValidAccessDurationSettings *validAccessDurationSettings `tfsdk:"valid_access_duration_settings"`
 	ValidAccessScopeSettings    []supportedTypes             `tfsdk:"valid_access_scope_settings"`
 	ValidRequesterSettings      []supportedTypes             `tfsdk:"valid_requester_settings"`
@@ -41,24 +42,29 @@ func (d *requestSettingResourceDataSource) Metadata(ctx context.Context, req dat
 func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"resource_id": schema.StringAttribute{
-				Required: true,
+			"id": schema.StringAttribute{
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"valid_access_duration_settings": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"maximum_days": schema.Float32Attribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The maximum value allowed for a request condition or risk setting.",
 					},
 					"maximum_weeks": schema.Float32Attribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The maximum value allowed for a request condition or risk setting.",
 					},
 					"maximum_hours": schema.Float32Attribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The maximum value allowed for a request condition or risk setting.",
 					},
 					"required": schema.BoolAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Whether accessDurationSetting must be included in the request conditions or risk settings for the specified resource.",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -73,6 +79,7 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 								},
 							},
 						},
+						Description: "Access duration settings that are eligible to be added to a request condition or risk settings for the specified resource.",
 					},
 				},
 			},
@@ -115,10 +122,6 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 					"allowed": schema.BoolAttribute{
 						Computed: true,
 					},
-					//"only_for": schema.ListAttribute{
-					//	Computed:    true,
-					//	ElementType: types.StringType,
-					//},
 				},
 				Blocks: map[string]schema.Block{
 					"only_for": schema.SetNestedBlock{
@@ -131,6 +134,7 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 						},
 					},
 				},
+				Description: "Specifies if and for whom a requester may request the resource for.",
 			},
 			"risk_settings": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
@@ -159,8 +163,10 @@ func (d *requestSettingResourceDataSource) Schema(ctx context.Context, req datas
 								},
 							},
 						},
+						Description: "Default risk settings that are valid for an access request when a risk has been detected for the resource and requesting user.",
 					},
 				},
+				Description: "Risk settings that are valid for an access request when a risk has been detected for the resource and requesting user",
 			},
 		},
 	}
@@ -177,7 +183,7 @@ func (d *requestSettingResourceDataSource) Read(ctx context.Context, req datasou
 	}
 
 	// Read API call logic
-	reqSettingsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	reqSettingsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request Settings",

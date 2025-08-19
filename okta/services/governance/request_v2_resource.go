@@ -257,7 +257,7 @@ func (r *requestV2Resource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Create API call logic
-	reqCreatableResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestsAPI.CreateRequestV2(ctx).RequestCreatable2(createRequestReq(data)).Execute()
+	reqCreatableResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestsAPI.CreateRequestV2(ctx).RequestCreatable2(createRequestReq(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -279,7 +279,7 @@ func (r *requestV2Resource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	// Read API call logic
-	getRequestV2Resp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
+	getRequestV2Resp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

@@ -2,7 +2,6 @@ package governance
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -31,19 +30,24 @@ func (d *requestSequenceDataSource) Schema(ctx context.Context, req datasource.S
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The unique identifier for the request sequence. This is typically the sequence ID in Okta.",
 			},
 			"resource_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 			"description": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Description of the request sequence",
 			},
 			"link": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Link to edit the request sequence.",
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Name of the request sequence.",
 			},
 			"compatible_resource_types": schema.ListAttribute{
 				Computed:    true,
@@ -81,9 +85,8 @@ func (d *requestSequenceDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	fmt.Println("Reading Request Sequence with ID:", data.Id.ValueString(), "and Resource ID:", data.ResourceId.ValueString())
 	// Read API call logic
-	readRequestSeqResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestSeqResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

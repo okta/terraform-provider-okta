@@ -24,6 +24,7 @@ func (d *requestSettingOrganizationDataSource) Configure(ctx context.Context, re
 }
 
 type requestSettingOrganizationDataSourceModel struct {
+	Id                        types.String `tfsdk:"id"`
 	LongTimePastProvisioned   types.Bool   `tfsdk:"long_time_past_provisioned"`
 	ProvisioningStatus        types.String `tfsdk:"provisioning_status"`
 	RequestExperiences        []experience `tfsdk:"request_experiences"`
@@ -37,14 +38,21 @@ func (d *requestSettingOrganizationDataSource) Metadata(ctx context.Context, req
 func (d *requestSettingOrganizationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The internal identifier for this data source, required by Terraform to track state. This field does not exist in the Okta API response.",
+			},
 			"long_time_past_provisioned": schema.BoolAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Whether it has been a long time since the Access Requests org has been provisioned.",
 			},
 			"provisioning_status": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The org provisioning status in Access Requests.",
 			},
 			"subprocessors_acknowledged": schema.BoolAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Whether a customer has acknowledged Access Requests.",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -56,6 +64,7 @@ func (d *requestSettingOrganizationDataSource) Schema(ctx context.Context, req d
 						},
 					},
 				},
+				Description: "Which request experiences this org supports",
 			},
 		},
 	}
@@ -72,12 +81,12 @@ func (d *requestSettingOrganizationDataSource) Read(ctx context.Context, req dat
 	}
 
 	// Read API call logic
-	orgSettingsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
+	orgSettingsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
 		return
 	}
 
-	// Example Data value setting
+	data.Id = types.StringValue("organization_request_settings")
 	data.SubprocessorsAcknowledged = types.BoolValue(orgSettingsResp.SubprocessorsAcknowledged)
 	data.ProvisioningStatus = types.StringValue(string(orgSettingsResp.ProvisioningStatus))
 	data.LongTimePastProvisioned = types.BoolValue(orgSettingsResp.LongTimePastProvisioned)

@@ -163,7 +163,7 @@ func (r *grantResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	// Create API call logic
-	createGrantResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().GrantsAPI.CreateGrant(ctx).GrantCreatable(*buildGrant(data)).Execute()
+	createGrantResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().GrantsAPI.CreateGrant(ctx).GrantCreatable(*buildGrant(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -207,7 +207,7 @@ func (r *grantResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.Id = state.Id
 
 	// Update API call logic
-	updatedGrantResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().GrantsAPI.UpdateGrant(ctx, plan.Id.ValueString()).GrantPatch(buildGrantPatch(plan)).Execute()
+	updatedGrantResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().GrantsAPI.UpdateGrant(ctx, plan.Id.ValueString()).GrantPatch(buildGrantPatch(plan)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Grants",

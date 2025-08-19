@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -65,19 +64,24 @@ func (r *requestSequenceResource) Schema(ctx context.Context, req resource.Schem
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The unique identifier for the request sequence. This is typically the sequence ID in Okta.",
 			},
 			"resource_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 			"description": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Description of the request sequence",
 			},
 			"link": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Link to edit the request sequence.",
 			},
 			"name": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Name of the request sequence.",
 			},
 			"compatible_resource_types": schema.ListAttribute{
 				Optional:    true,
@@ -109,10 +113,8 @@ func (r *requestSequenceResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	fmt.Println("Reading Request Sequence with ID:", data.Id.ValueString(), "and Resource ID:", data.ResourceId.ValueString())
-
 	// Read API call logic
-	readResourceRequestSeqResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readResourceRequestSeqResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request Sequence",
@@ -158,7 +160,7 @@ func (r *requestSequenceResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClient().RequestSequencesAPI.DeleteRequestSequenceV2(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSequencesAPI.DeleteRequestSequenceV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Request Sequence",

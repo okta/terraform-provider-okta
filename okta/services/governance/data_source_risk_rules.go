@@ -184,7 +184,7 @@ func (d *riskRulesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	// Read API call logic
-	getRiskRuleResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
+	getRiskRuleResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		return
 	}

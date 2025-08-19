@@ -27,6 +27,7 @@ type principalAccessDataSource struct {
 }
 
 type principalAccessDataSourceModel struct {
+	Id                 types.String    `tfsdk:"id"`
 	TargetPrincipalOrn types.String    `tfsdk:"target_principal_orn"`
 	ParentResourceOrn  types.String    `tfsdk:"parent_resource_orn"`
 	ExpirationTime     types.String    `tfsdk:"expiration_time"`
@@ -96,23 +97,28 @@ func (d *principalAccessDataSource) Metadata(ctx context.Context, req datasource
 func (d *principalAccessDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"target_principal_orn": schema.StringAttribute{Computed: true},
-			"parent_resource_orn":  schema.StringAttribute{Computed: true},
-			"expiration_time":      schema.StringAttribute{Computed: true, Optional: true},
-			"time_zone":            schema.StringAttribute{Computed: true, Optional: true},
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The internal identifier for this data source, required by Terraform to track state. This field does not exist in the Okta API response.",
+			},
+			"target_principal_orn": schema.StringAttribute{Computed: true, Description: "The target principal orn for this data source."},
+			"parent_resource_orn":  schema.StringAttribute{Computed: true, Description: "The parent resource orn for this data source."},
+			"expiration_time":      schema.StringAttribute{Computed: true, Optional: true, Description: "The date on which the user access expires. Date in ISO 8601 format."},
+			"time_zone":            schema.StringAttribute{Computed: true, Optional: true, Description: "The time zone, in IANA format, for the end date of the user access."},
 		},
 		Blocks: map[string]schema.Block{
 			"target_principal": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
-					"external_id": schema.StringAttribute{Optional: true, Computed: true},
-					"type":        schema.StringAttribute{Optional: true, Computed: true},
+					"external_id": schema.StringAttribute{Optional: true, Computed: true, Description: "The Okta user id."},
+					"type":        schema.StringAttribute{Optional: true, Computed: true, Description: "The type of principal."},
 				},
 			},
 			"parent": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
-					"external_id": schema.StringAttribute{Optional: true, Computed: true},
-					"type":        schema.StringAttribute{Optional: true, Computed: true},
+					"external_id": schema.StringAttribute{Optional: true, Computed: true, Description: "The Okta app id of the resource."},
+					"type":        schema.StringAttribute{Optional: true, Computed: true, Description: "The type of resource."},
 				},
+				Description: "Representation of a resource.",
 			},
 			"base": grantBlock(),
 			"additional": schema.ListNestedBlock{
@@ -125,11 +131,11 @@ func (d *principalAccessDataSource) Schema(ctx context.Context, req datasource.S
 func grantBlock() schema.SingleNestedBlock {
 	return schema.SingleNestedBlock{
 		Attributes: map[string]schema.Attribute{
-			"grant_type":      schema.StringAttribute{Computed: true},
-			"grant_method":    schema.StringAttribute{Computed: true},
-			"expiration_time": schema.StringAttribute{Computed: true, Optional: true},
-			"start_time":      schema.StringAttribute{Computed: true, Optional: true},
-			"time_zone":       schema.StringAttribute{Computed: true, Optional: true},
+			"grant_type":      schema.StringAttribute{Computed: true, Description: "The grant type."},
+			"grant_method":    schema.StringAttribute{Computed: true, Description: "Type of grant assignment method."},
+			"expiration_time": schema.StringAttribute{Computed: true, Optional: true, Description: "The date on which the user access expires. Date in ISO 8601 format."},
+			"start_time":      schema.StringAttribute{Computed: true, Optional: true, Description: "The date on which the user received an access. Date in ISO 8601 format."},
+			"time_zone":       schema.StringAttribute{Computed: true, Optional: true, Description: "The time zone, in IANA format."},
 		},
 		Blocks: grantNestedBlocks(),
 	}
@@ -138,11 +144,11 @@ func grantBlock() schema.SingleNestedBlock {
 func grantBlockObject() schema.NestedBlockObject {
 	return schema.NestedBlockObject{
 		Attributes: map[string]schema.Attribute{
-			"grant_type":      schema.StringAttribute{Computed: true},
-			"grant_method":    schema.StringAttribute{Computed: true},
-			"expiration_time": schema.StringAttribute{Computed: true, Optional: true},
-			"start_time":      schema.StringAttribute{Computed: true, Optional: true},
-			"time_zone":       schema.StringAttribute{Computed: true, Optional: true},
+			"grant_type":      schema.StringAttribute{Computed: true, Description: "The grant type."},
+			"grant_method":    schema.StringAttribute{Computed: true, Description: "Type of grant assignment method."},
+			"expiration_time": schema.StringAttribute{Computed: true, Optional: true, Description: "The date on which the user access expires. Date in ISO 8601 format."},
+			"start_time":      schema.StringAttribute{Computed: true, Optional: true, Description: "The date on which the user received an access. Date in ISO 8601 format."},
+			"time_zone":       schema.StringAttribute{Computed: true, Optional: true, Description: "The time zone, in IANA format."},
 		},
 		Blocks: grantNestedBlocks(),
 	}
@@ -152,51 +158,51 @@ func grantNestedBlocks() map[string]schema.Block {
 	return map[string]schema.Block{
 		"grant": schema.SingleNestedBlock{
 			Attributes: map[string]schema.Attribute{
-				"id": schema.StringAttribute{Computed: true},
+				"id": schema.StringAttribute{Computed: true, Description: "The Grant id."},
 			},
 			Blocks: map[string]schema.Block{
 				"metadata": schema.SingleNestedBlock{
-					Attributes: map[string]schema.Attribute{},
 					Blocks: map[string]schema.Block{
 						"collection": schema.SingleNestedBlock{
 							Attributes: map[string]schema.Attribute{
-								"id":   schema.StringAttribute{Computed: true},
-								"name": schema.StringAttribute{Computed: true},
+								"id":   schema.StringAttribute{Computed: true, Description: "The resource collection id."},
+								"name": schema.StringAttribute{Computed: true, Description: "The name of a resource collection."},
 							},
+							Description: "Collection metadata properties.",
 						},
 					},
 				},
 				"self": schema.SingleNestedBlock{
 					Attributes: map[string]schema.Attribute{
-						"href": schema.StringAttribute{Computed: true},
+						"href": schema.StringAttribute{Computed: true, Description: "Link URI"},
 					},
 				},
 			},
 		},
 		"bundle": schema.SingleNestedBlock{
 			Attributes: map[string]schema.Attribute{
-				"id":   schema.StringAttribute{Computed: true},
-				"name": schema.StringAttribute{Computed: true},
+				"id":   schema.StringAttribute{Computed: true, Description: "The entitlement bundle id."},
+				"name": schema.StringAttribute{Computed: true, Description: "The unique name of the entitlement bundle."},
 			},
 		},
 		"entitlements": schema.ListNestedBlock{
 			NestedObject: schema.NestedBlockObject{
 				Attributes: map[string]schema.Attribute{
-					"id":             schema.StringAttribute{Computed: true},
-					"name":           schema.StringAttribute{Computed: true},
-					"external_value": schema.StringAttribute{Computed: true},
-					"description":    schema.StringAttribute{Computed: true},
-					"multi_value":    schema.BoolAttribute{Computed: true},
-					"required":       schema.BoolAttribute{Computed: true},
-					"data_type":      schema.StringAttribute{Computed: true},
+					"id":             schema.StringAttribute{Computed: true, Description: "The id property of an entitlement."},
+					"name":           schema.StringAttribute{Computed: true, Description: "The display name for an entitlement property."},
+					"external_value": schema.StringAttribute{Computed: true, Description: "The value of an entitlement property."},
+					"description":    schema.StringAttribute{Computed: true, Description: "The description of an entitlement property."},
+					"multi_value":    schema.BoolAttribute{Computed: true, Description: "The property that determines if the entitlement property can hold multiple values."},
+					"required":       schema.BoolAttribute{Computed: true, Description: "The property that determines if the entitlement property is a required attribute."},
+					"data_type":      schema.StringAttribute{Computed: true, Description: "The data type of the entitlement property."},
 				},
 				Blocks: map[string]schema.Block{
 					"values": schema.ListNestedBlock{
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
-								"id":             schema.StringAttribute{Computed: true},
-								"name":           schema.StringAttribute{Computed: true},
-								"external_value": schema.StringAttribute{Computed: true},
+								"id":             schema.StringAttribute{Computed: true, Description: "The id property of an entitlement value."},
+								"name":           schema.StringAttribute{Computed: true, Description: "The display name for an entitlement value."},
+								"external_value": schema.StringAttribute{Computed: true, Description: "The value of an entitlement value."},
 							},
 						},
 					},
@@ -217,11 +223,12 @@ func (d *principalAccessDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	// Read API call logic
-	principalAccessResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().PrincipalAccessAPI.GetPrincipalAccess(ctx).Filter(buildFilterForPrincipalAccess(data)).Execute()
+	principalAccessResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().PrincipalAccessAPI.GetPrincipalAccess(ctx).Filter(buildFilterForPrincipalAccess(data)).Execute()
 	if err != nil {
 		return
 	}
 	// Set top-level fields
+	data.Id = types.StringValue("principal_access")
 	data.TargetPrincipalOrn = types.StringValue(principalAccessResp.TargetPrincipalOrn)
 	data.ParentResourceOrn = types.StringValue(principalAccessResp.ParentResourceOrn)
 	if principalAccessResp.ExpirationTime != nil {

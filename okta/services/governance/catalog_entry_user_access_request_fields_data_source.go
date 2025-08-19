@@ -28,8 +28,7 @@ type choices struct {
 }
 
 type requesterFields struct {
-	Id types.String `tfsdk:"id"`
-	//EntryId      types.String `tfsdk:"entry_Id"`
+	Id           types.String `tfsdk:"id"`
 	Required     types.Bool   `tfsdk:"required"`
 	Type         types.String `tfsdk:"type"`
 	Choices      []choices    `tfsdk:"choices"`
@@ -53,10 +52,12 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Schema(ctx context.Conte
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"entry_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The ID of the catalog entry.",
 			},
 			"user_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The ID of the user.",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -67,22 +68,28 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Schema(ctx context.Conte
 							Computed: true,
 						},
 						"required": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Indicates whether a value to this field is required to advance the request.",
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Type of value for the requester field.",
 						},
 						"label": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "label of the requester field.",
 						},
 						"maximum_value": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The maximum value allowed for this field. Only applies to DURATION fields.",
 						},
 						"read_only": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Indicates this field is immutable.",
 						},
 						"value": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "An admin configured value for this field. Only applies to DURATION fields.",
 						},
 					},
 					Blocks: map[string]schema.Block{
@@ -90,10 +97,12 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Schema(ctx context.Conte
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"choice": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: "Valid choice.",
 									},
 								},
 							},
+							Description: "Valid choices when type is SELECT or MULTISELECT.",
 						},
 					},
 				},
@@ -113,7 +122,7 @@ func (d *catalogEntryUserAccessRequestFieldsDataSource) Read(ctx context.Context
 	}
 
 	// Read API call logic
-	getUserRequestFieldResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().CatalogsAPI.GetCatalogEntryRequestFieldsV2(ctx, data.EntryId.ValueString(), data.UserId.ValueString()).Execute()
+	getUserRequestFieldResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().CatalogsAPI.GetCatalogEntryRequestFieldsV2(ctx, data.EntryId.ValueString(), data.UserId.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request Fields",

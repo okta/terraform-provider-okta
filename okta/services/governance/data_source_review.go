@@ -235,7 +235,7 @@ func (d *reviewDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	// Call Okta API to fetch review details
-	review, _, err := d.OktaGovernanceClient.OktaIGSDKClient().ReviewsAPI.GetReview(ctx, reviewId).Execute()
+	review, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().ReviewsAPI.GetReview(ctx, reviewId).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to read review",

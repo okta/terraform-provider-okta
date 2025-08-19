@@ -119,7 +119,7 @@ func (d *entitlementsDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	// Read API call logic
-	listEntitlementsResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().EntitlementsAPI.ListEntitlements(ctx).Filter(buildEntitlementFilter(data)).Execute()
+	listEntitlementsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementsAPI.ListEntitlements(ctx).Filter(buildEntitlementFilter(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Entitlements",

@@ -31,28 +31,36 @@ func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.
 				Required: true,
 			},
 			"resource_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The id of the resource in Okta ID format.",
 			},
 			"created": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the resource was created.",
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The id of the Okta user who created the resource.",
 			},
 			"last_updated": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The ISO 8601 formatted date and time when the object was last updated.",
 			},
 			"last_updated_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The id of the Okta user who last updated the object.",
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Status indicates if this condition is active or not. Default status is INACTIVE",
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The name of the request condition.",
 			},
 			"priority": schema.Int32Attribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The priority of the request condition.",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -75,6 +83,7 @@ func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.
 						Computed: true,
 					},
 				},
+				Description: "List of groups/entitlement bundles.",
 			},
 			"requester_settings": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
@@ -95,6 +104,7 @@ func (d *requestConditionDataSource) Schema(ctx context.Context, req datasource.
 						Computed: true,
 					},
 				},
+				Description: "List of teams/groups ids.",
 			},
 		},
 	}
@@ -128,7 +138,7 @@ func (d *requestConditionDataSource) Read(ctx context.Context, req datasource.Re
 	}
 
 	// Read API call logic
-	readRequestConditionResp, _, err := d.OktaGovernanceClient.OktaIGSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",

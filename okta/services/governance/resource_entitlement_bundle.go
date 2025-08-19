@@ -2,8 +2,8 @@ package governance
 
 import (
 	"context"
-
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -40,16 +40,16 @@ type TargetResourceModel struct {
 }
 
 type entitlementBundleResourceModel struct {
-	Id                  types.String          `tfsdk:"id"`
-	Name                types.String          `tfsdk:"name"`
-	Target              TargetResourceModel   `tfsdk:"target"`
-	TargetResourceOrn   types.String          `tfsdk:"target_resource_orn"`
-	Description         types.String          `tfsdk:"description"`
-	EntitlementsBundles []entitlementsBundles `tfsdk:"entitlements_bundles"`
-	Status              types.String          `tfsdk:"status"`
+	Id                types.String        `tfsdk:"id"`
+	Name              types.String        `tfsdk:"name"`
+	Target            TargetResourceModel `tfsdk:"target"`
+	TargetResourceOrn types.String        `tfsdk:"target_resource_orn"`
+	Description       types.String        `tfsdk:"description"`
+	Entitlements      []entitlements      `tfsdk:"entitlements"`
+	Status            types.String        `tfsdk:"status"`
 }
 
-type entitlementsBundles struct {
+type entitlements struct {
 	Id     types.String `tfsdk:"id"`
 	Values []valueBlock `tfsdk:"values"`
 }
@@ -101,7 +101,7 @@ func (r *entitlementBundleResource) Schema(ctx context.Context, req resource.Sch
 					},
 				},
 			},
-			"entitlements_bundles": schema.ListNestedBlock{
+			"entitlements": schema.SetNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
@@ -110,7 +110,7 @@ func (r *entitlementBundleResource) Schema(ctx context.Context, req resource.Sch
 						},
 					},
 					Blocks: map[string]schema.Block{
-						"values": schema.ListNestedBlock{
+						"values": schema.SetNestedBlock{
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
@@ -137,7 +137,7 @@ func (r *entitlementBundleResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	// Create API call logic
-	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.CreateEntitlementBundle(ctx).EntitlementBundleCreatable(buildEntitlementBundleCreateBody(data)).Execute()
+	entitlementBundle, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.CreateEntitlementBundle(ctx).EntitlementBundleCreatable(buildEntitlementBundleCreateBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Entitlement Bundles",
@@ -166,8 +166,8 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	// Read API call logic
-	s := []string{"full_entitlements"}
-	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Include(s).Execute()
+	//s := []string{"full_entitlements"}
+	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",
@@ -175,7 +175,7 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 		)
 		return
 	}
-
+	fmt.Println("getEntitlementBundleResp", getEntitlementBundleResp.EntitlementBundleFullWithEntitlements.Id)
 	resp.Diagnostics.Append(applyEntitlementBundleToState(ctx, getEntitlementBundleResp.EntitlementBundleFull, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -186,37 +186,36 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 }
 
 func (r *entitlementBundleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan entitlementBundleResourceModel
-	var state entitlementBundleResourceModel
-
-	// Read plan and state
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
+	var data, state entitlementBundleResourceModel
+	// Read Terraform prior state Data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	plan.Id = state.Id
-	plan.TargetResourceOrn = state.TargetResourceOrn
-	plan.Status = state.Status
+	// Read Terraform prior state Data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	data.Id = state.Id // Ensure the ID is set from the prior state
+	data.Status = state.Status
+	data.TargetResourceOrn = state.TargetResourceOrn
 
 	// Update API call logic
-	entitlementBundle, _, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.ReplaceEntitlementBundle(ctx, plan.Id.ValueString()).EntitlementBundleUpdatable(buildEntitlementBundleUpdateBody(plan)).Execute()
+	replaceEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.ReplaceEntitlementBundle(ctx, data.Id.ValueString()).EntitlementBundleUpdatable(buildEntitlementBundleUpdateBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error updating Entitlement Bundles",
-			"Could not update Entitlement Bundles, unexpected error: "+err.Error(),
+			"Error updating Entitlement Bundle",
+			"Could not update Entitlement Bundle with ID "+data.Id.ValueString()+", unexpected error: "+err.Error(),
 		)
 		return
 	}
-
-	resp.Diagnostics.Append(applyEntitlementBundleToState(ctx, entitlementBundle, &plan)...)
+	resp.Diagnostics.Append(applyEntitlementBundleToState(ctx, replaceEntitlementBundleResp, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 	// Save updated Data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *entitlementBundleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -230,7 +229,7 @@ func (r *entitlementBundleResource) Delete(ctx context.Context, req resource.Del
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaIGSDKClient().EntitlementBundlesAPI.DeleteEntitlementBundle(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.DeleteEntitlementBundle(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Entitlement Bundle",
@@ -249,8 +248,8 @@ func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) gover
 		ExternalId: data.Target.ExternalId.ValueString(),
 		Type:       rt,
 	}
-	entitlements := make([]governance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
-	for _, ent := range data.EntitlementsBundles {
+	entitlements := make([]governance.EntitlementCreatable, 0, len(data.Entitlements))
+	for _, ent := range data.Entitlements {
 		values := make([]governance.EntitlementValueCreatable, 0, len(ent.Values))
 		for _, val := range ent.Values {
 			values = append(values, governance.EntitlementValueCreatable{
@@ -273,29 +272,32 @@ func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) gover
 
 func applyEntitlementBundleToState(ctx context.Context, data *governance.EntitlementBundleFull, state *entitlementBundleResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	state.Id = types.StringValue(data.Id)
-	state.Name = types.StringValue(data.Name)
-	state.Description = types.StringPointerValue(data.Description)
-	state.Target = TargetResourceModel{
-		ExternalId: types.StringValue(data.Target.ExternalId),
-		Type:       types.StringValue(string(data.Target.Type)),
+	fmt.Println("applyEntitlementBundleToState, id=", data.GetId())
+	state.Id = types.StringValue(data.GetId())
+	state.Name = types.StringValue(data.GetName())
+	state.Description = types.StringValue(data.GetDescription())
+	if target, ok := data.GetTargetOk(); ok {
+		state.Target = TargetResourceModel{
+			ExternalId: types.StringValue(target.GetExternalId()),
+			Type:       types.StringValue(string(target.GetType())),
+		}
 	}
-	entitlements := make([]entitlementsBundles, 0, len(data.Entitlements))
-	for _, ent := range data.Entitlements {
-		vals := make([]valueBlock, 0, len(ent.Values))
-		for _, v := range ent.Values {
+	e := make([]entitlements, 0, len(data.GetEntitlements()))
+	for _, ent := range data.GetEntitlements() {
+		vals := make([]valueBlock, 0, len(ent.GetValues()))
+		for _, v := range ent.GetValues() {
 			vals = append(vals, valueBlock{
 				Id: types.StringValue(v.GetId()),
 			})
 		}
-		entitlements = append(entitlements, entitlementsBundles{
+		e = append(e, entitlements{
 			Id:     types.StringValue(ent.GetId()),
 			Values: vals,
 		})
 	}
-	state.EntitlementsBundles = entitlements
-	state.TargetResourceOrn = types.StringValue(data.TargetResourceOrn)
-	state.Status = types.StringValue(string(data.Status))
+	state.Entitlements = e
+	state.TargetResourceOrn = types.StringValue(data.GetTargetResourceOrn())
+	state.Status = types.StringValue(string(data.GetStatus()))
 	return diags
 }
 
@@ -309,9 +311,9 @@ func buildEntitlementBundleUpdateBody(data entitlementBundleResourceModel) gover
 		Type:       rt,
 	}
 	targetResourceOrn := data.TargetResourceOrn.ValueString()
-	entitlements := make([]governance.EntitlementCreatable, 0, len(data.EntitlementsBundles))
-	if data.EntitlementsBundles != nil || len(data.EntitlementsBundles) > 0 {
-		for _, ent := range data.EntitlementsBundles {
+	entitlements := make([]governance.EntitlementCreatable, 0, len(data.Entitlements))
+	if data.Entitlements != nil || len(data.Entitlements) > 0 {
+		for _, ent := range data.Entitlements {
 			values := make([]governance.EntitlementValueCreatable, 0, len(ent.Values))
 			for _, val := range ent.Values {
 				values = append(values, governance.EntitlementValueCreatable{
