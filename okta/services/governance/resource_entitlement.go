@@ -160,7 +160,7 @@ func (r *entitlementResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	r.applyEntitlementToState(&data, createEntitlementResp)
+	applyEntitlementToState(&data, createEntitlementResp)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -177,15 +177,15 @@ func (r *entitlementResource) Read(ctx context.Context, req resource.ReadRequest
 	// Read API call logic
 	readEntitlementResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementsAPI.GetEntitlement(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Entitlement",
+			"Could not create Entitlement, unexpected error: "+err.Error(),
+		)
 		return
 	}
 
-	resp.Diagnostics.Append(r.applyEntitlementToState(&data, readEntitlementResp)...)
+	resp.Diagnostics.Append(applyEntitlementToState(&data, readEntitlementResp)...)
 	if resp.Diagnostics.HasError() {
-		resp.Diagnostics.AddError(
-			"Unable to read entitlement",
-			"Could not retrieve entitlement, unexpected error: "+err.Error(),
-		)
 		return
 	}
 
@@ -212,7 +212,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 		)
 		return
 	}
-	resp.Diagnostics.Append(r.applyEntitlementToState(&data, replaceEntitlementResp)...)
+	resp.Diagnostics.Append(applyEntitlementToState(&data, replaceEntitlementResp)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -236,14 +236,14 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementsAPI.DeleteEntitlement(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to delete entitlement",
+			"Error deleting entitlement",
 			"Could not delete entitlement, unexpected error: "+err.Error(),
 		)
 		return
 	}
 }
 
-func (r *entitlementResource) applyEntitlementToState(data *entitlementResourceModel, createEntitlementResp *governance.EntitlementsFullWithParent) diag.Diagnostics {
+func applyEntitlementToState(data *entitlementResourceModel, createEntitlementResp *governance.EntitlementsFullWithParent) diag.Diagnostics {
 	data.Id = types.StringValue(createEntitlementResp.GetId())
 	data.DataType = types.StringValue(string(createEntitlementResp.GetDataType()))
 	data.ExternalValue = types.StringValue(createEntitlementResp.GetExternalValue())
