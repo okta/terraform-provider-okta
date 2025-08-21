@@ -68,7 +68,7 @@ func TestEndUserMyRequests_without_requesterFields(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", "SUBMITTED"),
-					resource.TestCheckResourceAttr(resourceName, "entry_id", "ce5678abcdefghi1234"),
+					resource.TestCheckResourceAttr(resourceName, "entry_id", "ce5678abcdefghi12345"),
 				),
 			},
 			{

@@ -13,7 +13,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789
+        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm
         method: GET
       response:
         proto: HTTP/2.0
@@ -21,19 +21,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"reqABCDEFG0123456789","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-09T12:58:57Z","lastUpdated":"2025-08-09T12:59:00Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789","hints":{}}},"status":"REJECTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaout8jxz0cQ02BX1d7","resourceType":"APPLICATION","accessScopeId":"0oaout8jxz0cQ02BX1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[{"id":"abcdefgh-0123-4567-8910-hgfedcba123","label":"Why are you requesting access for this?","type":"TEXT","value":"I need access to complete my certification AGAIN."},{"id":"ijklmnop-a12b2-c3d4-e5f6-abcdefghi","label":"Do you know the consequences of requesting for this ?","type":"TEXT","value":"For 500 days"},{"id":"tuvwxyz-0123-456-8910-zyxwvut0123","label":"Are you really really sure ?","type":"SELECT","value":"Yes Maybe ?"}],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+        body: '{"id":"req123abcd456ghijklm","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-21T08:33:46Z","lastUpdated":"2025-08-21T08:33:47Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 12 Aug 2025 18:26:23 GMT
+                - Thu, 21 Aug 2025 08:40:35 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.171028791s
+        duration: 1.053934208s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -46,7 +46,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789
+        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm
         method: GET
       response:
         proto: HTTP/2.0
@@ -54,19 +54,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"reqABCDEFG0123456789","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-09T12:58:57Z","lastUpdated":"2025-08-09T12:59:00Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789","hints":{}}},"status":"REJECTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaout8jxz0cQ02BX1d7","resourceType":"APPLICATION","accessScopeId":"0oaout8jxz0cQ02BX1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[{"id":"abcdefgh-0123-4567-8910-hgfedcba123","label":"Why are you requesting access for this?","type":"TEXT","value":"I need access to complete my certification AGAIN."},{"id":"ijklmnop-a12b2-c3d4-e5f6-abcdefghi","label":"Do you know the consequences of requesting for this ?","type":"TEXT","value":"For 500 days"},{"id":"tuvwxyz-0123-456-8910-zyxwvut0123","label":"Are you really really sure ?","type":"SELECT","value":"Yes Maybe ?"}],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+        body: '{"id":"req123abcd456ghijklm","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-21T08:33:46Z","lastUpdated":"2025-08-21T08:33:47Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 12 Aug 2025 18:26:24 GMT
+                - Thu, 21 Aug 2025 08:40:36 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.064631708s
+        duration: 1.020689917s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -79,7 +79,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789
+        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm
         method: GET
       response:
         proto: HTTP/2.0
@@ -87,19 +87,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"reqABCDEFG0123456789","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-09T12:58:57Z","lastUpdated":"2025-08-09T12:59:00Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789","hints":{}}},"status":"REJECTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaout8jxz0cQ02BX1d7","resourceType":"APPLICATION","accessScopeId":"0oaout8jxz0cQ02BX1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[{"id":"abcdefgh-0123-4567-8910-hgfedcba123","label":"Why are you requesting access for this?","type":"TEXT","value":"I need access to complete my certification AGAIN."},{"id":"ijklmnop-a12b2-c3d4-e5f6-abcdefghi","label":"Do you know the consequences of requesting for this ?","type":"TEXT","value":"For 500 days"},{"id":"tuvwxyz-0123-456-8910-zyxwvut0123","label":"Are you really really sure ?","type":"SELECT","value":"Yes Maybe ?"}],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+        body: '{"id":"req123abcd456ghijklm","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-21T08:33:46Z","lastUpdated":"2025-08-21T08:33:47Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 12 Aug 2025 18:26:25 GMT
+                - Thu, 21 Aug 2025 08:40:37 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.06384375s
+        duration: 1.0429275s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -112,7 +112,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789
+        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm
         method: GET
       response:
         proto: HTTP/2.0
@@ -120,19 +120,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"reqABCDEFG0123456789","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-09T12:58:57Z","lastUpdated":"2025-08-09T12:59:00Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789","hints":{}}},"status":"REJECTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaout8jxz0cQ02BX1d7","resourceType":"APPLICATION","accessScopeId":"0oaout8jxz0cQ02BX1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[{"id":"abcdefgh-0123-4567-8910-hgfedcba123","label":"Why are you requesting access for this?","type":"TEXT","value":"I need access to complete my certification AGAIN."},{"id":"ijklmnop-a12b2-c3d4-e5f6-abcdefghi","label":"Do you know the consequences of requesting for this ?","type":"TEXT","value":"For 500 days"},{"id":"tuvwxyz-0123-456-8910-zyxwvut0123","label":"Are you really really sure ?","type":"SELECT","value":"Yes Maybe ?"}],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+        body: '{"id":"req123abcd456ghijklm","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-21T08:33:46Z","lastUpdated":"2025-08-21T08:33:47Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 12 Aug 2025 18:26:26 GMT
+                - Thu, 21 Aug 2025 08:40:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.164960916s
+        duration: 1.018414584s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -145,7 +145,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789
+        url: https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm
         method: GET
       response:
         proto: HTTP/2.0
@@ -153,16 +153,16 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"reqABCDEFG0123456789","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-09T12:58:57Z","lastUpdated":"2025-08-09T12:59:00Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/reqABCDEFG0123456789","hints":{}}},"status":"REJECTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaout8jxz0cQ02BX1d7","resourceType":"APPLICATION","accessScopeId":"0oaout8jxz0cQ02BX1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[{"id":"abcdefgh-0123-4567-8910-hgfedcba123","label":"Why are you requesting access for this?","type":"TEXT","value":"I need access to complete my certification AGAIN."},{"id":"ijklmnop-a12b2-c3d4-e5f6-abcdefghi","label":"Do you know the consequences of requesting for this ?","type":"TEXT","value":"For 500 days"},{"id":"tuvwxyz-0123-456-8910-zyxwvut0123","label":"Are you really really sure ?","type":"SELECT","value":"Yes Maybe ?"}],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+        body: '{"id":"req123abcd456ghijklm","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-08-21T08:33:46Z","lastUpdated":"2025-08-21T08:33:47Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","_links":{"catalogEntry":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh","hints":{}},"self":{"href":"https://oie-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/cen123456789abcdefgh/requests/req123abcd456ghijklm","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00unkw1sfbTw08c0g1d7","type":"OKTA_USER"},"requested":{"entryId":"cen123456789abcdefgh","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Tue, 12 Aug 2025 18:26:28 GMT
+                - Thu, 21 Aug 2025 08:40:39 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.164977s
+        duration: 1.065342917s

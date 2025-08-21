@@ -20,7 +20,7 @@ This resource creates access requests with the specified requester field values 
 
 ```terraform
 resource "okta_end_user_my_requests" "example" {
-  entry_id = "ce123456789abcdefg"
+  entry_id = "cen123456789abcdefgh"
 
   requester_field_values {
     id    = "abcdefgh-0123-4567-8910-hgfedcba123"
@@ -46,7 +46,7 @@ resource "okta_end_user_my_requests" "example" {
 
 ```terraform
 resource "okta_end_user_my_requests" "multi_select_example" {
-  entry_id = "ce123456789abcdefg"
+  entry_id = "cen123456789abcdefgh"
 
   requester_field_values {
     id     = "multi-select-field-id"
