@@ -128,4 +128,5 @@ const (
 	GovernanceRequestV2                           = "okta_request_v2"
 	GovernanceCatalogEntryDefault                 = "okta_catalog_entry_default"
 	GovernanceCatalogEntryUserAccessRequestFields = "okta_catalog_entry_user_access_request_fields"
+	OktaEndUserMyRequests                         = "okta_end_user_my_requests"
 )
