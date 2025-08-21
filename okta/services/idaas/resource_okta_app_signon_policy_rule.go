@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -402,7 +403,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		},
 		Name:        d.Get("name").(string),
 		PriorityPtr: utils.Int64Ptr(d.Get("priority").(int)),
-		Type:        "ACCESS_POLICY",
+		Type:        "ACCESS_POLICY", // TODO New types of access policy rules like MFA_ENROLL etc. introduced since this resource was created. These access policy rule types will be supported iff there is an ask.
 	}
 
 	// NOTE: Only the API read will be able to set the "system" boolean so it is
@@ -427,13 +428,23 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
 	var chains []*sdk.AccessPolicyChains
 	vc, ok := d.GetOk("chains")
-	if ok {
+	none := true // dhiwakar
+	if ok {      // condition should be true iff type is verification method = AUTH_METHOD_CHAIN
 		valueList := vc.([]interface{})
 		for _, item := range valueList {
 			var chain sdk.AccessPolicyChains
 			_ = json.Unmarshal([]byte(item.(string)), &chain)
 			chains = append(chains, &chain)
+			if chain.ReauthenticateIn != "" {
+				// if ReauthenticateIn has been set in any chain, unset it in VerificationMethod as the combination isn't supported .
+				rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn = ""
+				fmt.Println("DHIWAKAR REAUTHENTICATE IN WAS SET IN CHAIN")
+				none = false
+			}
 		}
+	}
+	if none {
+		fmt.Println("DHIWAKAR SO NONE OF THE CHAINS HAD reauthenticateIn set to true")
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Chains = chains
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{

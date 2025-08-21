@@ -38,3 +38,85 @@ resource "okta_app_signon_policy_rule" "test" {
   }
 }
 
+
+resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only" {
+  policy_id = "rstpbfm3a3IBq00o11d7"
+  name     = "DhiwakarTerraformCreated"
+  type     = "AUTH_METHOD_CHAIN"
+  priority = 3
+  network_connection = "ANYWHERE"
+  access     = "ALLOW"
+  factor_mode = "2FA"
+  chains = [
+      jsonencode({
+          "reauthenticateIn": "PT43800H",
+          "authenticationMethods": [
+              {
+              "key": "okta_password",
+              "method": "password"
+              }
+          ],
+          "next": [
+              {
+              "authenticationMethods": [
+                  {
+                  "key": "phone_number",
+                  "method": "sms"
+                  }
+              ]
+              }
+          ]
+      }),
+    jsonencode({
+      "reauthenticateIn" : "P90D",
+      "authenticationMethods": [
+          {
+          "key": "okta_verify",
+          "method": "signed_nonce",
+          "userVerification": "REQUIRED"
+          }
+      ]
+      })
+  ]
+ }
+
+
+ resource "okta_app_signon_policy_rule" "test_with_re_authentication_frequency_only" {
+  policy_id = "rstpbfm3a3IBq00o11d7"
+  name     = "DhiwakarTerraformCreated"
+  type     = "AUTH_METHOD_CHAIN"
+  priority = 3
+  network_connection = "ANYWHERE"
+  access     = "ALLOW"
+  factor_mode = "2FA"
+  re_authentication_frequency = "PT0S"
+  chains = [
+      jsonencode({
+          "authenticationMethods": [
+              {
+              "key": "okta_password",
+              "method": "password"
+              }
+          ],
+          "next": [
+              {
+              "authenticationMethods": [
+                  {
+                  "key": "phone_number",
+                  "method": "sms"
+                  }
+              ]
+              }
+          ]
+      }),
+    jsonencode({
+      "authenticationMethods": [
+          {
+          "key": "okta_verify",
+          "method": "signed_nonce",
+          "userVerification": "REQUIRED"
+          }
+      ]
+      })
+  ]
+ }
