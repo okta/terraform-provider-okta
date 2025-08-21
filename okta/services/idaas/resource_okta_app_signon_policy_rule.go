@@ -3,7 +3,6 @@ package idaas
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -178,6 +177,20 @@ The only difference is that these fields are immutable and can not be managed: '
 				Optional:    true,
 				Description: "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
 				Default:     "PT2H",
+				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+					// check if reauthenticateIn is present for any of the entries in chains.
+					if vc, ok := d.GetOk("chains"); ok {
+						valueList := vc.([]interface{})
+						for _, item := range valueList {
+							var chain sdk.AccessPolicyChains
+							_ = json.Unmarshal([]byte(item.(string)), &chain)
+							if chain.ReauthenticateIn != "" {
+								return true // ignore re_authentication_frequency as it'll fail if it has been set in config and if it hasn't been (set) then it's default value
+							}
+						}
+					}
+					return oldValue == newValue
+				},
 			},
 			"inactivity_period": {
 				Type:        schema.TypeString,
@@ -428,8 +441,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
 	var chains []*sdk.AccessPolicyChains
 	vc, ok := d.GetOk("chains")
-	none := true // dhiwakar
-	if ok {      // condition should be true iff type is verification method = AUTH_METHOD_CHAIN
+	if ok { // condition should be true iff type is verification method = AUTH_METHOD_CHAIN
 		valueList := vc.([]interface{})
 		for _, item := range valueList {
 			var chain sdk.AccessPolicyChains
@@ -438,13 +450,8 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 			if chain.ReauthenticateIn != "" {
 				// if ReauthenticateIn has been set in any chain, unset it in VerificationMethod as the combination isn't supported .
 				rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn = ""
-				fmt.Println("DHIWAKAR REAUTHENTICATE IN WAS SET IN CHAIN")
-				none = false
 			}
 		}
-	}
-	if none {
-		fmt.Println("DHIWAKAR SO NONE OF THE CHAINS HAD reauthenticateIn set to true")
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Chains = chains
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
