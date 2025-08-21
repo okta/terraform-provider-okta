@@ -23,6 +23,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRequestSettingOrganizationResource,
 		newRequestSettingResourceResource,
 		newRequestV2Resource,
+		newEndUserMyRequestsResource,
 	}
 }
 
@@ -46,6 +47,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRequestV2DataSource,
 		newCatalogEntryDefaultDataSource,
 		newCatalogEntryUserAccessRequestFieldsDataSource,
+		newEndUserMyRequestsDataSource,
 	}
 }
 
