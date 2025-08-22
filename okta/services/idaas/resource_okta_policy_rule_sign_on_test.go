@@ -31,8 +31,8 @@ func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 
 func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleSignOn, t.Name())
-	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	config := mgr.GetFixtures("gh2419.tf", t)
+	updatedConfig := mgr.GetFixtures("gh2419_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test_risk_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName2 := fmt.Sprintf("%s.test_risc_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName3 := fmt.Sprintf("%s.test_BOTH", resources.OktaIDaaSPolicyRuleSignOn)
@@ -41,13 +41,11 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					// ensureRuleExists(resourceName), resource.TestCheckResourceAttr(resourceName, "name", "test_policy_risk_ONLY"),
-					// ensureRuleExists(resourceName2), resource.TestCheckResourceAttr(resourceName2, "name", "test_policy_risc_ONLY"),
-					// ensureRuleExists(resourceName3), resource.TestCheckResourceAttr(resourceName3, "name", "test_policy_BOTH"),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
@@ -60,9 +58,6 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					// ensureRuleExists(resourceName), resource.TestCheckResourceAttr(resourceName, "name", "test_policy_risk_ONLY"),
-					// ensureRuleExists(resourceName2), resource.TestCheckResourceAttr(resourceName2, "name", "test_policy_risc_ONLY"),
-					// ensureRuleExists(resourceName3), resource.TestCheckResourceAttr(resourceName3, "name", "test_policy_BOTH"),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
