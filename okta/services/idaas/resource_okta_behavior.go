@@ -2,8 +2,11 @@ package idaas
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -214,15 +217,33 @@ func validateBehavior(d *schema.ResourceData) error {
 }
 
 func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	logger(meta).Info("creating location behavior", "name", d.Get("name").(string))
+	logger(meta).Info("creating behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	behavior, _, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehaviorUsingSDK(ctx, d))
+	behavior, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehaviorUsingSDK(ctx, d))
 	if err != nil {
-		return diag.Errorf("failed to create location behavior: %v", err)
+		if strings.HasPrefix(err.Error(), "parsing time") && (200 <= rawResp.StatusCode && rawResp.StatusCode <= 299) { // error is during parsing of time && http status code is 2xx
+			logger(meta).Info("expected error due to unsupported timestamp format in API response, handling it by processing raw response.")
+		} else {
+			return diag.Errorf("failed to create behavior: %v", err)
+		}
 	}
+	rawRespBody, err := io.ReadAll(rawResp.Body)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	respMap := make(map[string]any)
+	err = json.Unmarshal(rawRespBody, &respMap)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	fmt.Printf("DHIWAKAR rawRespMap = %+v\n", respMap)
+	d.Set("name", respMap["name"])
+	d.Set("type", respMap["type"])
+	d.Set("status", respMap["status"])
+	d.Set("settings", respMap["settings"])
 	d.SetId(*behavior.Id)
 	return resourceBehaviorReadUsingSDK(ctx, d, meta)
 }
@@ -316,7 +337,7 @@ func buildRuleUsingSDK(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules
 		behaviorRuleAnomalousDevice := v5okta.NewBehaviorRuleAnomalousDevice(behaviorName, behaviorType)
 		listBehaviorDetectionRules = v5okta.BehaviorRuleAnomalousDeviceAsListBehaviorDetectionRules200ResponseInner(behaviorRuleAnomalousDevice)
 		settings := v5okta.NewBehaviorRuleSettingsAnomalousDevice()
-		settings.SetMaxEventsUsedForEvaluation(d.Get("number_of_authentications").(int32)) // this needs to be validated, potential for panic
+		settings.SetMaxEventsUsedForEvaluation(int32(d.Get("number_of_authentications").(int))) // this needs to be validated, potential for panic
 		listBehaviorDetectionRules.BehaviorRuleAnomalousDevice.SetSettings(*settings)
 		listBehaviorDetectionRules.BehaviorRuleAnomalousDevice.SetStatus(behaviorStatus)
 
@@ -324,7 +345,7 @@ func buildRuleUsingSDK(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules
 		behaviorRuleAnomalousIP := v5okta.NewBehaviorRuleAnomalousIP(behaviorName, behaviorType)
 		listBehaviorDetectionRules = v5okta.BehaviorRuleAnomalousIPAsListBehaviorDetectionRules200ResponseInner(behaviorRuleAnomalousIP)
 		settings := v5okta.NewBehaviorRuleSettingsAnomalousIP()
-		settings.SetMaxEventsUsedForEvaluation(d.Get("number_of_authentications").(int32)) // this needs to be validated, potential for panic
+		settings.SetMaxEventsUsedForEvaluation(int32(d.Get("number_of_authentications").(int))) // this needs to be validated, potential for panic
 		listBehaviorDetectionRules.BehaviorRuleAnomalousIP.SetSettings(*settings)
 		listBehaviorDetectionRules.BehaviorRuleAnomalousIP.SetStatus(behaviorStatus)
 
@@ -335,17 +356,17 @@ func buildRuleUsingSDK(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules
 		locationGranularityType := d.Get("location_granularity_type").(string) // this needs to be validated, potential for panic
 		settings := v5okta.NewBehaviorRuleSettingsAnomalousLocation(granularity)
 		if locationGranularityType == "LAT_LONG" {
-			settings.SetRadiusKilometers(d.Get("radius_from_location").(int32)) // this needs to be validated, potential for panic
+			settings.SetRadiusKilometers(int32(d.Get("radius_from_location").(int))) // this needs to be validated, potential for panic
 		}
-		settings.SetMaxEventsUsedForEvaluation(d.Get("number_of_authentications").(int32)) // this needs to be validated, potential for panic
+		settings.SetMaxEventsUsedForEvaluation(int32(d.Get("number_of_authentications").(int))) // this needs to be validated, potential for panic
 		listBehaviorDetectionRules.BehaviorRuleAnomalousLocation.SetSettings(*settings)
 		listBehaviorDetectionRules.BehaviorRuleAnomalousLocation.SetStatus(behaviorStatus)
 
 	case behaviorVelocity:
 		behaviorRuleVelocity := v5okta.NewBehaviorRuleVelocity(behaviorName, behaviorType)
 		listBehaviorDetectionRules = v5okta.BehaviorRuleVelocityAsListBehaviorDetectionRules200ResponseInner(behaviorRuleVelocity)
-		velocity := d.Get("velocity").(int32) // this needs to be validated, potential for panic
-		settings := v5okta.NewBehaviorRuleSettingsVelocity(velocity)
+		velocity := d.Get("velocity").(int) // this needs to be validated, potential for panic
+		settings := v5okta.NewBehaviorRuleSettingsVelocity(int32(velocity))
 		listBehaviorDetectionRules.BehaviorRuleVelocity.SetSettings(*settings)
 		listBehaviorDetectionRules.BehaviorRuleVelocity.SetStatus(behaviorStatus)
 	}
