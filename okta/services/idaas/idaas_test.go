@@ -404,6 +404,10 @@ func sweepGroupRules(client api.OktaIDaaSClient) error {
 	}
 
 	for _, s := range rules {
+		// Only sweep resources with testAcc_ prefix
+		if !strings.HasPrefix(s.Name, acctest.ResourcePrefixForTest) {
+			continue
+		}
 		if s.Status == idaas.StatusActive {
 			if _, err := client.OktaSDKClientV2().Group.DeactivateGroupRule(context.Background(), s.Id); err != nil {
 				errorList = append(errorList, err)
