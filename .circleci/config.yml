@@ -49,11 +49,25 @@ jobs:
               --commit $CIRCLE_SHA1 \
               --build-env "circleci" \
               --suppress_output
+  snyk-scan:
+    docker:
+      - image: cimg/go:1.23.0
+    steps:
+      - checkout
+      - general-platform-helpers/step-load-dependencies
+      - general-platform-helpers/step-run-snyk-monitor:
+          scan-all-projects: false
+          skip-unresolved: false
+          run-on-non-main: true
 
 workflows:
   # See OKTA-634442
   semgrep:
     jobs:
+      - snyk-scan:
+          name: execute-snyk
+          context:
+            - static-analysis
       - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
           context:
