@@ -31,7 +31,7 @@ resource "okta_policy_rule_signon" "test_risc_ONLY" {
 } 
 
 resource "okta_policy_rule_signon" "test_BOTH" {
-  policy_id = okta_policy_signon.test_two.id
+  policy_id       = okta_policy_signon.test_two.id
   name            = "test_policy_BOTH"
   status          = "ACTIVE"
   risk_level      = "LOW"
