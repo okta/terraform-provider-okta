@@ -2,14 +2,10 @@ package idaas
 
 import (
 	"context"
-	"fmt"
-	"hash/crc32"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
-	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceBehaviors() *schema.Resource {
@@ -58,35 +54,6 @@ func dataSourceBehaviors() *schema.Resource {
 		},
 		Description: "Get a behaviors by search criteria.",
 	}
-}
-
-func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	qp := &query.Params{Limit: utils.DefaultPaginationLimit}
-	q, ok := d.GetOk("q")
-	if ok {
-		qp.Q = q.(string)
-	}
-	behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, qp)
-	if err != nil {
-		return diag.Errorf("failed to list behaviors: %v", err)
-	}
-	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
-	arr := make([]map[string]interface{}, len(behaviors))
-	for i := range behaviors {
-		arr[i] = map[string]interface{}{
-			"id":     behaviors[i].ID,
-			"name":   behaviors[i].Name,
-			"type":   behaviors[i].Type,
-			"status": behaviors[i].Status,
-		}
-		settings := make(map[string]string)
-		for k, v := range behaviors[i].Settings {
-			settings[k] = fmt.Sprint(v)
-		}
-		arr[i]["settings"] = settings
-	}
-	err = d.Set("behaviors", arr)
-	return diag.FromErr(err)
 }
 
 func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
