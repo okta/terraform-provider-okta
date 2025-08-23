@@ -76,8 +76,6 @@ workflows:
             - static-analysis
       - snyk-scan:
           name: execute-snyk
-          requires:
-            - prepare-snyk
           filters:
             branches:
               only:
