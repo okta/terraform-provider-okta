@@ -64,10 +64,6 @@ workflows:
   # See OKTA-634442
   semgrep:
     jobs:
-      - snyk-scan:
-          name: execute-snyk
-          context:
-            - static-analysis
       - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
           context:
@@ -77,3 +73,13 @@ workflows:
       - reversing-labs:
           context:
             - static-analysis
+      - snyk-scan:
+          name: execute-snyk
+          requires:
+            - prepare-snyk
+          filters:
+            branches:
+              only:
+                - master
+                - main
+                - OKTA-802788
