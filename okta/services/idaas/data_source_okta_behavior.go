@@ -46,5 +46,5 @@ func dataSourceBehavior() *schema.Resource {
 }
 
 func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceBehaviorCreateUsingSDK(ctx, d, meta)
+	return resourceBehaviorReadUsingSDK(ctx, d, meta)
 }
