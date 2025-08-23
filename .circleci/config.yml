@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   platform-helpers: okta/platform-helpers@1
+  general-platform-helpers: okta/general-platform-helpers@1.9
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
 
@@ -64,12 +65,12 @@ workflows:
   # See OKTA-634442
   semgrep:
     jobs:
-      - snyk-scan:
-          name: execute-snyk
-          context:
-            - static-analysis
       - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
+          context:
+            - static-analysis
+      - snyk-scan:
+          name: execute-snyk
           context:
             - static-analysis
   "Malware Scanner":
@@ -77,3 +78,4 @@ workflows:
       - reversing-labs:
           context:
             - static-analysis
+
