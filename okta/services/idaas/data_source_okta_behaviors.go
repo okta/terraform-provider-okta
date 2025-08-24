@@ -4,11 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"hash/crc32"
 	"io"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/terraform-provider-okta/okta/utils"
+	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceBehaviors() *schema.Resource {
@@ -78,6 +81,12 @@ func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData
 			"settings": settingsMap,
 		})
 	}
+	qp := &query.Params{Limit: utils.DefaultPaginationLimit}
+	q, ok := d.GetOk("q")
+	if ok {
+		qp.Q = q.(string)
+	}
+	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
 	err = d.Set("behaviors", behaviorRules)
 	return diag.FromErr(err)
 }
