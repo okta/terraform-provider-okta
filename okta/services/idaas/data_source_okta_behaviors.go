@@ -67,8 +67,16 @@ func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	qp := &query.Params{Limit: utils.DefaultPaginationLimit}
+	q, ok := d.GetOk("q")
+	if ok {
+		qp.Q = q.(string)
+	}
 	behaviorRules := []map[string]any{}
 	for _, behaviorRule := range behaviorRulesFromRawResp {
+		if !strings.Contains(behaviorRule["name"].(string), q.(string)) {
+			continue // since name does not contain our "q" substring partial match, continue
+		}
 		settingsMap := make(map[string]string)
 		for k, v := range behaviorRule["settings"].(map[string]any) {
 			settingsMap[k] = fmt.Sprint(v)
@@ -80,11 +88,6 @@ func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData
 			"status":   behaviorRule["status"],
 			"settings": settingsMap,
 		})
-	}
-	qp := &query.Params{Limit: utils.DefaultPaginationLimit}
-	q, ok := d.GetOk("q")
-	if ok {
-		qp.Q = q.(string)
 	}
 	d.SetId(fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(qp.String()))))
 	err = d.Set("behaviors", behaviorRules)
