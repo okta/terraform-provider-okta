@@ -73,122 +73,6 @@ func resourceBehavior() *schema.Resource {
 	}
 }
 
-/*
-	func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		logger(meta).Info("creating location behavior", "name", d.Get("name").(string))
-		err := validateBehavior(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		behavior, _, err := getAPISupplementFromMetadata(meta).CreateBehavior(ctx, buildBehavior(d))
-		if err != nil {
-			return diag.Errorf("failed to create location behavior: %v", err)
-		}
-		d.SetId(behavior.ID)
-		return resourceBehaviorRead(ctx, d, meta)
-	}
-
-	func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		logger(meta).Info("getting behavior", "id", d.Id())
-		behavior, resp, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, d.Id())
-		if err := utils.SuppressErrorOn404(resp, err); err != nil {
-			return diag.Errorf("failed to find behavior: %v", err)
-		}
-		if behavior == nil {
-			d.SetId("")
-			return nil
-		}
-		_ = d.Set("name", behavior.Name)
-		_ = d.Set("type", behavior.Type)
-		_ = d.Set("status", behavior.Status)
-		setSettings(d, behavior.Type, behavior.Settings)
-		return nil
-	}
-
-	func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		logger(meta).Info("updating location behavior", "name", d.Get("name").(string))
-		err := validateBehavior(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		_, _, err = getAPISupplementFromMetadata(meta).UpdateBehavior(ctx, d.Id(), buildBehavior(d))
-		if err != nil {
-			return diag.Errorf("failed to update location behavior: %v", err)
-		}
-		if d.HasChange("status") {
-			err := handleBehaviorLifecycle(ctx, d, meta)
-			if err != nil {
-				return err
-			}
-		}
-		return resourceBehaviorRead(ctx, d, meta)
-	}
-
-	func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		logger(meta).Info("deleting location behavior", "name", d.Get("name").(string))
-		_, err := getAPISupplementFromMetadata(meta).DeleteBehavior(ctx, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to delete location behavior: %v", err)
-		}
-		return nil
-	}
-
-	func buildBehavior(d *schema.ResourceData) sdk.Behavior {
-		b := sdk.Behavior{
-			Name:     d.Get("name").(string),
-			Status:   d.Get("status").(string),
-			Settings: make(map[string]interface{}),
-			Type:     d.Get("type").(string),
-		}
-		if b.Type == behaviorAnomalousLocation || b.Type == behaviorAnomalousDevice || b.Type == behaviorAnomalousIP {
-			b.Settings["maxEventsUsedForEvaluation"] = d.Get("number_of_authentications")
-		}
-		if b.Type == behaviorAnomalousLocation {
-			b.Settings["granularity"] = d.Get("location_granularity_type")
-			if d.Get("location_granularity_type").(string) == "LAT_LONG" {
-				b.Settings["radiusKilometers"] = d.Get("radius_from_location")
-			}
-		}
-		if b.Type == behaviorVelocity {
-			b.Settings["velocityKph"] = d.Get("velocity")
-		}
-		return b
-	}
-
-	func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-		client := getAPISupplementFromMetadata(meta)
-		if d.Get("status").(string) == StatusActive {
-			logger(meta).Info("activating behavior", "name", d.Get("name").(string))
-			_, err := client.ActivateBehavior(ctx, d.Id())
-			if err != nil {
-				return diag.Errorf("failed to activate behavior: %v", err)
-			}
-			return nil
-		}
-		logger(meta).Info("deactivating behavior", "name", d.Get("name").(string))
-		_, err := client.DeactivateBehavior(ctx, d.Id())
-		if err != nil {
-			return diag.Errorf("failed to deactivate behavior: %v", err)
-		}
-		return nil
-	}
-*/
-
-func setSettings(d *schema.ResourceData, typ string, settings map[string]interface{}) {
-	if typ == behaviorAnomalousLocation || typ == behaviorAnomalousDevice || typ == behaviorAnomalousIP {
-		_ = d.Set("number_of_authentications", settings["maxEventsUsedForEvaluation"])
-	}
-	if typ == behaviorAnomalousLocation {
-		_ = d.Set("location_granularity_type", settings["granularity"])
-		if settings["granularity"].(string) == "LAT_LONG" {
-			_ = d.Set("radius_from_location", settings["radiusKilometers"])
-		}
-	}
-	if typ == behaviorVelocity {
-		_ = d.Set("velocity", settings["velocityKph"])
-	}
-}
-
 func validateBehavior(d *schema.ResourceData) error {
 	typ := d.Get("type").(string)
 	if typ == behaviorAnomalousLocation || typ == behaviorAnomalousDevice || typ == behaviorAnomalousIP {
@@ -260,7 +144,7 @@ func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, m
 				logger(meta).Info("error when parsing number, will process raw HTTP response")
 			}
 		} else {
-			return diag.Errorf("failed to create behavior: %v", err)
+			return diag.Errorf("failed to get behavior: %v", err)
 		}
 	}
 	rawRespBody, err := io.ReadAll(rawResp.Body)
@@ -275,7 +159,20 @@ func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, m
 	d.Set("name", respMap["name"])
 	d.Set("type", respMap["type"])
 	d.Set("status", respMap["status"])
-	setSettings(d, respMap["type"].(string), respMap["settings"].(map[string]any))
+	typ := respMap["type"].(string)
+	settings := respMap["settings"].(map[string]any)
+	if typ == behaviorAnomalousLocation || typ == behaviorAnomalousDevice || typ == behaviorAnomalousIP {
+		_ = d.Set("number_of_authentications", settings["maxEventsUsedForEvaluation"])
+	}
+	if typ == behaviorAnomalousLocation {
+		_ = d.Set("location_granularity_type", settings["granularity"])
+		if settings["granularity"] == "LAT_LONG" {
+			_ = d.Set("radius_from_location", settings["radiusKilometers"])
+		}
+	}
+	if typ == behaviorVelocity {
+		_ = d.Set("velocity", settings["velocityKph"])
+	}
 	d.SetId(respMap["id"].(string))
 	return nil
 }
@@ -299,7 +196,7 @@ func resourceBehaviorUpdateUsingSDK(ctx context.Context, d *schema.ResourceData,
 				logger(meta).Info("error when parsing number, will process raw HTTP response")
 			}
 		} else {
-			return diag.Errorf("failed to create behavior: %v", err)
+			return diag.Errorf("failed to update behavior: %v", err)
 		}
 	}
 

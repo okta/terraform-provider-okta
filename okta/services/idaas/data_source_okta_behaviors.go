@@ -2,10 +2,13 @@ package idaas
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 func dataSourceBehaviors() *schema.Resource {
@@ -57,55 +60,47 @@ func dataSourceBehaviors() *schema.Resource {
 }
 
 func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	listBehaviorDetectionRules := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ListBehaviorDetectionRules(ctx)
-	behaviors, _, err := listBehaviorDetectionRules.Execute()
+	behaviorRulesFromRawResp, err := getBehaviorRules(ctx, meta)
 	if err != nil {
-		return diag.Errorf("failed to list behaviors: %v", err)
+		return diag.FromErr(err)
 	}
-	arr := make([]map[string]any, len(behaviors))
-	for i, behavior := range behaviors {
-
-		switch concreteType := behavior.GetActualInstance().(type) {
-		case oktav5sdk.BehaviorRuleAnomalousDevice:
-			arr[i] = map[string]any{
-				"type":   concreteType.GetType(),
-				"status": concreteType.GetStatus(),
-				"settings": map[string]any{
-					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
-					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
-				},
-			}
-
-		case oktav5sdk.BehaviorRuleAnomalousLocation:
-			arr[i] = map[string]any{
-				"type":   concreteType.GetType(),
-				"status": concreteType.GetStatus(),
-				"settings": map[string]any{
-					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
-					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
-					"radiusKilometers":           *concreteType.GetSettings().RadiusKilometers,
-					"granularity":                concreteType.GetSettings().Granularity,
-				},
-			}
-		case oktav5sdk.BehaviorRuleAnomalousIP:
-			arr[i] = map[string]any{
-				"type":   concreteType.GetType(),
-				"status": concreteType.GetStatus(),
-				"settings": map[string]any{
-					"maxEventsUsedForEvaluation": *concreteType.GetSettings().MaxEventsUsedForEvaluation,
-					"minEventsUsedForEvaluation": *concreteType.GetSettings().MinEventsNeededForEvaluation,
-				},
-			}
-		case oktav5sdk.BehaviorRuleVelocity:
-			arr[i] = map[string]any{
-				"type":   concreteType.GetType(),
-				"status": concreteType.GetStatus(),
-				"settings": map[string]any{
-					"velocityKph": concreteType.GetSettings().VelocityKph,
-				},
-			}
+	behaviorRules := []map[string]any{}
+	for _, behaviorRule := range behaviorRulesFromRawResp {
+		settingsMap := make(map[string]string)
+		for k, v := range behaviorRule["settings"].(map[string]any) {
+			settingsMap[k] = fmt.Sprint(v)
 		}
-		err = d.Set("behaviors", arr)
+		behaviorRules = append(behaviorRules, map[string]any{
+			"id":       behaviorRule["id"],
+			"name":     behaviorRule["name"],
+			"type":     behaviorRule["type"],
+			"status":   behaviorRule["status"],
+			"settings": settingsMap,
+		})
 	}
+	err = d.Set("behaviors", behaviorRules)
 	return diag.FromErr(err)
+}
+
+func getBehaviorRules(ctx context.Context, meta any) ([]map[string]any, error) {
+	var behaviorRulesFromRawResp []map[string]any
+	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ListBehaviorDetectionRules(ctx).Execute()
+	if err != nil {
+		if 200 <= rawResp.StatusCode && rawResp.StatusCode <= 299 {
+			if strings.HasPrefix(err.Error(), "parsing time") {
+				logger(meta).Info("error when parsing time, will process raw HTTP response")
+			}
+			if strings.Contains(err.Error(), "cannot unmarshal number") {
+				logger(meta).Info("error when parsing number, will process raw HTTP response")
+			}
+		} else {
+			return behaviorRulesFromRawResp, fmt.Errorf("failed to list data source behavior: %v", err)
+		}
+	}
+	rawRespBody, err := io.ReadAll(rawResp.Body)
+	if err != nil {
+		return behaviorRulesFromRawResp, err
+	}
+	err = json.Unmarshal(rawRespBody, &behaviorRulesFromRawResp)
+	return behaviorRulesFromRawResp, err
 }
