@@ -11,7 +11,7 @@ import (
 
 func dataSourceBehavior() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceBehaviorReadUsingSDK,
+		ReadContext: dataSourceBehaviorRead,
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:          schema.TypeString,
@@ -47,11 +47,11 @@ func dataSourceBehavior() *schema.Resource {
 	}
 }
 
-func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	_, idExists := d.GetOk("id")
 	if idExists {
 		d.SetId(fmt.Sprint(d.Get("id")))
-		return resourceBehaviorReadUsingSDK(ctx, d, meta)
+		return resourceBehaviorRead(ctx, d, meta)
 	}
 	partialRes, partialFound := make(map[string]any), false
 	name, nameExists := d.GetOk("name")

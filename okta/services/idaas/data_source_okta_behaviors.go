@@ -16,7 +16,7 @@ import (
 
 func dataSourceBehaviors() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceBehaviorsReadUsingSDK,
+		ReadContext: dataSourceBehaviorsRead,
 		Schema: map[string]*schema.Schema{
 			"q": {
 				Type:        schema.TypeString,
@@ -62,7 +62,7 @@ func dataSourceBehaviors() *schema.Resource {
 	}
 }
 
-func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
+func dataSourceBehaviorsRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	behaviorRulesFromRawResp, err := getBehaviorRules(ctx, meta)
 	if err != nil {
 		return diag.FromErr(err)

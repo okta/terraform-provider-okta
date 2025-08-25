@@ -22,10 +22,10 @@ const (
 
 func resourceBehavior() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceBehaviorCreateUsingSDK,
-		ReadContext:   resourceBehaviorReadUsingSDK,
-		UpdateContext: resourceBehaviorUpdateUsingSDK,
-		DeleteContext: resourceBehaviorDeleteUsingSDK,
+		CreateContext: resourceBehaviorCreate,
+		ReadContext:   resourceBehaviorRead,
+		UpdateContext: resourceBehaviorUpdate,
+		DeleteContext: resourceBehaviorDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -100,13 +100,13 @@ func validateBehavior(d *schema.ResourceData) error {
 	return nil
 }
 
-func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceBehaviorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	logger(meta).Info("creating behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehaviorUsingSDK(ctx, d))
+	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehavior(ctx, d))
 	if err != nil {
 		if 200 <= rawResp.StatusCode && rawResp.StatusCode <= 299 {
 			if strings.HasPrefix(err.Error(), "parsing time") {
@@ -129,10 +129,10 @@ func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(err)
 	}
 	d.SetId(respMap["id"].(string))
-	return resourceBehaviorReadUsingSDK(ctx, d, meta)
+	return resourceBehaviorRead(ctx, d, meta)
 }
 
-func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	logger(meta).Info("getting behavior", "id", d.Id())
 	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.GetBehaviorDetectionRule(ctx, d.Id()).Execute()
 	if err != nil {
@@ -177,13 +177,13 @@ func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceBehaviorUpdateUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceBehaviorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	logger(meta).Info("updating behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	rule := buildRuleUsingSDK(d)
+	rule := buildRule(d)
 	replaceBehaviorDetectionRule := getOktaV5ClientFromMetadata(meta).BehaviorAPI.ReplaceBehaviorDetectionRule(ctx, d.Id())
 	replaceBehaviorDetectionRule = replaceBehaviorDetectionRule.Rule(rule)
 	_, rawResp, err := replaceBehaviorDetectionRule.Execute()
@@ -201,15 +201,15 @@ func resourceBehaviorUpdateUsingSDK(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if d.HasChange("status") {
-		err := handleBehaviorLifecycleUsingSDK(ctx, d, meta)
+		err := handleBehaviorLifecycle(ctx, d, meta)
 		if err != nil {
 			return err
 		}
 	}
-	return resourceBehaviorReadUsingSDK(ctx, d, meta)
+	return resourceBehaviorRead(ctx, d, meta)
 }
 
-func resourceBehaviorDeleteUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceBehaviorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	logger(meta).Info("deleting behavior", "name", d.Get("name").(string))
 	deleteBehaviorDetectionRule := getOktaV5ClientFromMetadata(meta).BehaviorAPI.DeleteBehaviorDetectionRule(ctx, d.Id())
 	_, err := deleteBehaviorDetectionRule.Execute()
@@ -219,7 +219,7 @@ func resourceBehaviorDeleteUsingSDK(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildRuleUsingSDK(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules200ResponseInner {
+func buildRule(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules200ResponseInner {
 	behaviorType := d.Get("type").(string)
 	behaviorName := d.Get("name").(string)
 	behaviorStatus := d.Get("status").(string)
@@ -266,15 +266,15 @@ func buildRuleUsingSDK(d *schema.ResourceData) v5okta.ListBehaviorDetectionRules
 	return listBehaviorDetectionRules
 }
 
-func buildBehaviorUsingSDK(ctx context.Context, d *schema.ResourceData) v5okta.ApiCreateBehaviorDetectionRuleRequest {
-	listBehaviorDetectionRules := buildRuleUsingSDK(d)
+func buildBehavior(ctx context.Context, d *schema.ResourceData) v5okta.ApiCreateBehaviorDetectionRuleRequest {
+	listBehaviorDetectionRules := buildRule(d)
 	behaviorAPIService := v5okta.BehaviorAPIService{}
 	behaviorDetectionRuleRequest := behaviorAPIService.CreateBehaviorDetectionRule(ctx)
 	behaviorDetectionRuleRequest = behaviorDetectionRuleRequest.Rule(listBehaviorDetectionRules)
 	return behaviorDetectionRuleRequest
 }
 
-func handleBehaviorLifecycleUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func handleBehaviorLifecycle(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := getOktaV5ClientFromMetadata(meta)
 	if d.Get("status").(string) == StatusActive {
 		logger(meta).Info("activating behavior", "name", d.Get("name").(string))
