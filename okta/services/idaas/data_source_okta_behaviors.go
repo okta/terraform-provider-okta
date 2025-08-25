@@ -63,6 +63,7 @@ func dataSourceBehaviors() *schema.Resource {
 }
 
 func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
+	fmt.Println("DHIWAKAR DATASOURCE BEHAVIOR PLURAL READ")
 	behaviorRulesFromRawResp, err := getBehaviorRules(ctx, meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -106,7 +107,7 @@ func getBehaviorRules(ctx context.Context, meta any) ([]map[string]any, error) {
 				logger(meta).Info("error when parsing number, will process raw HTTP response")
 			}
 		} else {
-			return behaviorRulesFromRawResp, fmt.Errorf("failed to list data source behavior: %v", err)
+			return behaviorRulesFromRawResp, fmt.Errorf("failed to query for behaviors: %v", err)
 		}
 	}
 	rawRespBody, err := io.ReadAll(rawResp.Body)
