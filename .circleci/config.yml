@@ -69,18 +69,13 @@ workflows:
           name: "Scan with Semgrep"
           context:
             - static-analysis
+      - snyk-scan:
+          name: execute-snyk
+          context:
+            - static-analysis
   "Malware Scanner":
     jobs:
       - reversing-labs:
           context:
             - static-analysis
-      - snyk-scan:
-          name: execute-snyk
-          filters:
-            branches:
-              only:
-                - master
-                - main
-                - OKTA-802788
-          context:
-            - static-analysis
+
