@@ -47,6 +47,11 @@ func resourceEmailDomain() *schema.Resource {
 				Computed:    true,
 				Description: "Status of the email domain. Values: NOT_STARTED, IN_PROGRESS, VERIFIED, COMPLETED",
 			},
+			"validation_subdomain": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Subdomain for the email sender's custom mail domain.",
+			},
 			"dns_validation_records": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -144,10 +149,11 @@ func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, meta
 
 func buildEmailDomain(d *schema.ResourceData) okta.EmailDomain {
 	return okta.EmailDomain{
-		BrandId:     d.Get("brand_id").(string),
-		Domain:      d.Get("domain").(string),
-		DisplayName: d.Get("display_name").(string),
-		UserName:    d.Get("user_name").(string),
+		BrandId:             d.Get("brand_id").(string),
+		Domain:              d.Get("domain").(string),
+		DisplayName:         d.Get("display_name").(string),
+		UserName:            d.Get("user_name").(string),
+		ValidationSubdomain: d.Get("validation_subdomain").(*string),
 	}
 }
 
