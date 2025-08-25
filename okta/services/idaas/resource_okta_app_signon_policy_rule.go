@@ -177,6 +177,20 @@ The only difference is that these fields are immutable and can not be managed: '
 				Optional:    true,
 				Description: "The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session",
 				Default:     "PT2H",
+				DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool {
+					// check if reauthenticateIn is present for any of the entries in chains.
+					if vc, ok := d.GetOk("chains"); ok {
+						valueList := vc.([]interface{})
+						for _, item := range valueList {
+							var chain sdk.AccessPolicyChains
+							_ = json.Unmarshal([]byte(item.(string)), &chain)
+							if chain.ReauthenticateIn != "" {
+								return true // ignore re_authentication_frequency as it'll fail if it has been set in config and if it hasn't been (set) then it's default value
+							}
+						}
+					}
+					return oldValue == newValue
+				},
 			},
 			"inactivity_period": {
 				Type:        schema.TypeString,
@@ -402,7 +416,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		},
 		Name:        d.Get("name").(string),
 		PriorityPtr: utils.Int64Ptr(d.Get("priority").(int)),
-		Type:        "ACCESS_POLICY",
+		Type:        "ACCESS_POLICY", // TODO New types of access policy rules like MFA_ENROLL etc. introduced since this resource was created. These access policy rule types will be supported iff there is an ask.
 	}
 
 	// NOTE: Only the API read will be able to set the "system" boolean so it is
@@ -427,12 +441,16 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 	rule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
 	var chains []*sdk.AccessPolicyChains
 	vc, ok := d.GetOk("chains")
-	if ok {
+	if ok { // condition should be true iff type is verification method = AUTH_METHOD_CHAIN
 		valueList := vc.([]interface{})
 		for _, item := range valueList {
 			var chain sdk.AccessPolicyChains
 			_ = json.Unmarshal([]byte(item.(string)), &chain)
 			chains = append(chains, &chain)
+			if chain.ReauthenticateIn != "" {
+				// if ReauthenticateIn has been set in any chain, unset it in VerificationMethod as the combination isn't supported .
+				rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn = ""
+			}
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Chains = chains
