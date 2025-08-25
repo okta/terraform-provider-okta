@@ -3,11 +3,10 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceBehavior() *schema.Resource {
@@ -49,36 +48,53 @@ func dataSourceBehavior() *schema.Resource {
 }
 
 func dataSourceBehaviorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	var behavior *sdk.Behavior
-	behaviorID, ok := d.GetOk("id")
-	if ok {
-		respBehavior, _, err := getAPISupplementFromMetadata(meta).GetBehavior(ctx, behaviorID.(string))
-		if err != nil {
-			return diag.Errorf("failed get behavior by ID: %v", err)
-		}
-		behavior = respBehavior
-	} else {
-		name := d.Get("name").(string)
-		searchParams := &query.Params{Q: name, Limit: 1}
-		logger(meta).Info("looking for behavior", "query", searchParams.String())
-		behaviors, _, err := getAPISupplementFromMetadata(meta).ListBehaviors(ctx, searchParams)
-		switch {
-		case err != nil:
-			return diag.Errorf("failed to query for behaviors: %v", err)
-		case len(behaviors) < 1:
-			return diag.Errorf("behavior with name '%s' does not exist", name)
-		case behaviors[0].Name != name:
-			logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", behaviors[0].Name)
-		}
-		behavior = behaviors[0]
+	_, idExists := d.GetOk("id")
+	if idExists {
+		d.SetId(fmt.Sprint(d.Get("id")))
+		return resourceBehaviorRead(ctx, d, meta)
 	}
-	d.SetId(behavior.ID)
-	_ = d.Set("type", behavior.Type)
-	_ = d.Set("status", behavior.Status)
-	settings := make(map[string]string)
-	for k, v := range behavior.Settings {
-		settings[k] = fmt.Sprint(v)
+	partialRes, partialFound := make(map[string]any), false
+	name, nameExists := d.GetOk("name")
+	if !nameExists {
+		return diag.Errorf("either id or name must be specified")
 	}
-	_ = d.Set("settings", settings)
+	behaviorRulesFromRawResp, err := getBehaviorRules(ctx, meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	for _, behaviorRule := range behaviorRulesFromRawResp {
+		settingsMap := make(map[string]any)
+		for k, v := range behaviorRule["settings"].(map[string]any) {
+			settingsMap[k] = fmt.Sprint(v)
+		}
+		if name == behaviorRule["name"] {
+			d.Set("name", behaviorRule["name"])
+			d.Set("type", behaviorRule["type"])
+			d.Set("status", behaviorRule["status"])
+			d.Set("settings", settingsMap)
+			d.SetId(behaviorRule["id"].(string))
+			return nil // we already found our behavior
+		}
+		if !partialFound && strings.Contains(behaviorRule["name"].(string), name.(string)) {
+			partialFound = true
+			partialRes = map[string]any{
+				"id":       behaviorRule["id"],
+				"name":     behaviorRule["name"],
+				"type":     behaviorRule["type"],
+				"status":   behaviorRule["status"],
+				"settings": settingsMap,
+			}
+			// cannot break since we might find an exact match later on.
+		}
+	}
+	if !partialFound {
+		return diag.Errorf("behavior with name '%s' does not exist", name)
+	}
+	logger(meta).Warn("behavior with exact name match was not found: using partial match which contains name as a substring", "name", partialRes["name"])
+	d.Set("id", partialRes["id"])
+	d.Set("name", partialRes["name"])
+	d.Set("type", partialRes["type"])
+	d.Set("status", partialRes["status"])
+	d.Set("settings", partialRes["settings"])
 	return nil
 }
