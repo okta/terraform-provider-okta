@@ -49,7 +49,7 @@ func dataSourceBehavior() *schema.Resource {
 
 func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	fmt.Println("DHIWAKAR DATASOURCE BEHAVIOR READ")
-	id, idExists := d.GetOk("id")
+	_, idExists := d.GetOk("id")
 	if idExists {
 		return resourceBehaviorReadUsingSDK(ctx, d, meta)
 	}
@@ -72,7 +72,7 @@ func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData,
 			d.Set("type", behaviorRule["type"])
 			d.Set("status", behaviorRule["status"])
 			d.Set("settings", settingsMap)
-			d.SetId(id.(string))
+			d.SetId(behaviorRule["id"].(string))
 			return nil // we already found our behavior
 		}
 		if !partialFound && strings.Contains(behaviorRule["name"].(string), name.(string)) {
