@@ -63,7 +63,6 @@ func dataSourceBehaviors() *schema.Resource {
 }
 
 func dataSourceBehaviorsReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
-	fmt.Println("DHIWAKAR DATASOURCE BEHAVIOR PLURAL READ")
 	behaviorRulesFromRawResp, err := getBehaviorRules(ctx, meta)
 	if err != nil {
 		return diag.FromErr(err)

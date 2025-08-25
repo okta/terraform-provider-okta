@@ -101,7 +101,6 @@ func validateBehavior(d *schema.ResourceData) error {
 }
 
 func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR RESOURCE BEHAVIOR CREATE")
 	logger(meta).Info("creating behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
@@ -134,7 +133,6 @@ func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR RESOURCE BEHAVIOR READ")
 	logger(meta).Info("getting behavior", "id", d.Id())
 	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.GetBehaviorDetectionRule(ctx, d.Id()).Execute()
 	if err != nil {
@@ -180,7 +178,6 @@ func resourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceBehaviorUpdateUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR RESOURCE BEHAVIOR UPDATE")
 	logger(meta).Info("updating behavior", "name", d.Get("name").(string))
 	err := validateBehavior(d)
 	if err != nil {
@@ -213,7 +210,6 @@ func resourceBehaviorUpdateUsingSDK(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceBehaviorDeleteUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR RESOURCE BEHAVIOR DELETE")
 	logger(meta).Info("deleting behavior", "name", d.Get("name").(string))
 	deleteBehaviorDetectionRule := getOktaV5ClientFromMetadata(meta).BehaviorAPI.DeleteBehaviorDetectionRule(ctx, d.Id())
 	_, err := deleteBehaviorDetectionRule.Execute()

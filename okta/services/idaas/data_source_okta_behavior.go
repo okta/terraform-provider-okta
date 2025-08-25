@@ -48,9 +48,9 @@ func dataSourceBehavior() *schema.Resource {
 }
 
 func dataSourceBehaviorReadUsingSDK(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR DATASOURCE BEHAVIOR READ")
 	_, idExists := d.GetOk("id")
 	if idExists {
+		d.SetId(fmt.Sprint(d.Get("id")))
 		return resourceBehaviorReadUsingSDK(ctx, d, meta)
 	}
 	partialRes, partialFound := make(map[string]any), false
