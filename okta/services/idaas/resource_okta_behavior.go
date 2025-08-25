@@ -106,7 +106,7 @@ func resourceBehaviorCreateUsingSDK(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehaviorUsingSDK(ctx, d)) // ignore the actual behavior object
+	_, rawResp, err := getOktaV5ClientFromMetadata(meta).BehaviorAPI.CreateBehaviorDetectionRuleExecute(buildBehaviorUsingSDK(ctx, d))
 	if err != nil {
 		if 200 <= rawResp.StatusCode && rawResp.StatusCode <= 299 {
 			if strings.HasPrefix(err.Error(), "parsing time") {
@@ -279,17 +279,35 @@ func handleBehaviorLifecycleUsingSDK(ctx context.Context, d *schema.ResourceData
 	if d.Get("status").(string) == StatusActive {
 		logger(meta).Info("activating behavior", "name", d.Get("name").(string))
 		activateBehaviorDetectionRuleRequest := client.BehaviorAPI.ActivateBehaviorDetectionRule(ctx, d.Id())
-		_, _, err := activateBehaviorDetectionRuleRequest.Execute()
+		_, rawResp, err := activateBehaviorDetectionRuleRequest.Execute()
 		if err != nil {
-			return diag.Errorf("failed to activate behavior: %v", err)
+			if 200 <= rawResp.StatusCode && rawResp.StatusCode <= 299 {
+				if strings.HasPrefix(err.Error(), "parsing time") {
+					logger(meta).Info("error when parsing time, will process raw HTTP response")
+				}
+				if strings.Contains(err.Error(), "cannot unmarshal number") {
+					logger(meta).Info("error when parsing number, will process raw HTTP response")
+				}
+			} else {
+				return diag.Errorf("failed to activate behavior: %v", err)
+			}
 		}
 		return nil
 	}
 	logger(meta).Info("deactivating behavior", "name", d.Get("name").(string))
 	deactivateBehaviorDetectionRuleRequest := client.BehaviorAPI.DeactivateBehaviorDetectionRule(ctx, d.Id())
-	_, _, err := deactivateBehaviorDetectionRuleRequest.Execute()
+	_, rawResp, err := deactivateBehaviorDetectionRuleRequest.Execute()
 	if err != nil {
-		return diag.Errorf("failed to deactivate behavior: %v", err)
+		if 200 <= rawResp.StatusCode && rawResp.StatusCode <= 299 {
+			if strings.HasPrefix(err.Error(), "parsing time") {
+				logger(meta).Info("error when parsing time, will process raw HTTP response")
+			}
+			if strings.Contains(err.Error(), "cannot unmarshal number") {
+				logger(meta).Info("error when parsing number, will process raw HTTP response")
+			}
+		} else {
+			return diag.Errorf("failed to activate behavior: %v", err)
+		}
 	}
 	return nil
 }
