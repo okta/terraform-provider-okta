@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -46,6 +47,16 @@ type RequesterFieldValueEntry struct {
 
 func (r *EndUserMyRequestsResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
+	parts := strings.Split(request.ID, "/")
+	if len(parts) != 2 {
+		response.Diagnostics.AddError(
+			"Invalid ID",
+			"Expected format: request_id/entry_id",
+		)
+		return
+	}
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, path.Root("id"), parts[0])...)
+	response.Diagnostics.Append(response.State.SetAttribute(ctx, path.Root("entry_id"), parts[1])...)
 }
 
 func (r *EndUserMyRequestsResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
