@@ -141,10 +141,19 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 
 	listGroupOwners, _, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.ListGroupOwners(ctx, state.GroupID.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error retrieving list group owners",
-			fmt.Sprintf("Error returned: %s", err.Error()),
-		)
+		if suppressErr := utils.SuppressErrorOn404_V5(resp, err); suppressErr == nil {
+			resp.Diagnostics.Info(
+				fmt.Sprintf("Got 404 when attempting to list group owners for group %s", state.GroupID.ValueString()),
+				"The Okta group likely no longer exists, tainting okta_group_owner resource",
+			)
+		} else {
+			resp.Diagnostics.AddError(
+				fmt.Sprintf("Error retrieving list group owners for group %s", state.GroupID.ValueString()),
+				fmt.Sprintf("Error returned: %s", err.Error()),
+			)
+		}
+		// Clear the state since we couldn't read the resource
+		resp.State.RemoveResource(ctx)
 		return
 	}
 
