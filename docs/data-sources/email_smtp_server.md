@@ -4,14 +4,14 @@ description: |-
   Get SMTP email server configuration.
 ---
 
-# Data Source: okta_email_smtp
+# Data Source: okta_email_smtp_server
 
 Get existing SMTP email server configuration.
 
 ## Example Usage
 
 ```terraform
-resource "okta_email_smtp" "smtp_server" {
+resource "okta_email_smtp_server" "smtp_server" {
   alias    = "CustomServer"
   host     = "192.168.160.1"
   port     = 8086
@@ -19,7 +19,7 @@ resource "okta_email_smtp" "smtp_server" {
   password = "abcd"
 }
 
-data "okta_email_smtp" "server_config" {
+data "okta_email_smtp_server" "server_config" {
   id = "id-of-your-smtp-server"
 }
 ```
