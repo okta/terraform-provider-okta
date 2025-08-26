@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -226,7 +227,41 @@ func (r *groupOwnerResource) Update(ctx context.Context, req resource.UpdateRequ
 }
 
 func (r *groupOwnerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	// Import ID format should be "group_id/group_owner_id"
+	// Example: "group_123/group_owner_456"
+	importID := req.ID
+	if importID == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Import ID cannot be empty. Expected format: group_id/group_owner_id",
+		)
+		return
+	}
+
+	// Split the import ID by forward slash
+	parts := strings.Split(importID, "/")
+	if len(parts) != 2 {
+		resp.Diagnostics.AddError(
+			"Invalid import ID format",
+			fmt.Sprintf("Expected import ID format 'group_id/group_owner_id', got '%s'", importID),
+		)
+		return
+	}
+
+	groupID := parts[0]
+	groupOwnerID := parts[1]
+
+	if groupID == "" || groupOwnerID == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Both group_id and group_owner_id must be provided in import ID",
+		)
+		return
+	}
+
+	// Set both the group_id and id fields in the state
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), groupID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), groupOwnerID)...)
 }
 
 func buildCreateGroupOwnerRequest(model groupOwnerResourceModel) (okta.AssignGroupOwnerRequestBody, error) {
