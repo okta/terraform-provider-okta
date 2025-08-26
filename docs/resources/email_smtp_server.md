@@ -1,17 +1,17 @@
 ---
-page_title: "Resource: okta_email_domain_verification"
+page_title: "Resource: okta_email_smtp_server"
 description: |-
   Verifies the email domain. The resource won't be created if the email domain could not be verified.
 ---
 
-# Resource: okta_email_smtp
+# Resource: okta_email_smtp_server
 
 Create and configure SMTP email server configuration for your org.
 
 ## Example Usage
 
 ```terraform
-resource "okta_email_smtp" "example" {
+resource "okta_email_smtp_server" "example" {
   alias    = "CustomServer"
   host     = "192.168.160.1"
   port     = 8086
