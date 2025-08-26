@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/terraform-plugin-mux v0.20.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.37.0
 	github.com/hashicorp/terraform-plugin-testing v1.13.2
-	github.com/jarcoal/httpmock v1.4.0
+	github.com/jarcoal/httpmock v1.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lestrrat-go/jwx v1.2.31
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
