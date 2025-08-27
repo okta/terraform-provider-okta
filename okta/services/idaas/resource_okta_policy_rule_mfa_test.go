@@ -13,7 +13,7 @@ import (
 func TestAccResourceOktaMfaPolicyRule_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleMfa, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleMfa)
 
 	// NOTE can/will fail with "conditions: Invalid condition type specified: app."

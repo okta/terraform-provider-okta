@@ -14,7 +14,7 @@ func TestAccResourceOktaAuthServerClaim_create(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthServerClaim)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthServerClaim, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),

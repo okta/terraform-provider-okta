@@ -17,7 +17,7 @@ func TestAccResourceOktaAuthServerScope_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthServerScope)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthServerScope, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	importConfig := mgr.GetFixtures("import.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

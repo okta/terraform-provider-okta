@@ -204,6 +204,10 @@ func (d *principalEntitlementsDataSource) Read(ctx context.Context, req datasour
 	// Read API call logic
 	principalEntitlementsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().PrincipalEntitlementsAPI.GetPrincipalEntitlements(ctx).Filter(prepareFilter(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Principal Entitlements",
+			"Could not read Principal Entitlements, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	var entitlements []principalEntitlementDataSourceModel

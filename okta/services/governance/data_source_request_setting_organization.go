@@ -83,6 +83,10 @@ func (d *requestSettingOrganizationDataSource) Read(ctx context.Context, req dat
 	// Read API call logic
 	orgSettingsResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request Setting Organization",
+			"Could not read Request Setting Organization, unexpected error: "+err.Error(),
+		)
 		return
 	}
 

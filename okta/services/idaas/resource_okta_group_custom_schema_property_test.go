@@ -17,7 +17,7 @@ import (
 func TestAccResourceOktaGroupSchema_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupSchemaProperty, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updated := mgr.GetFixtures("basic_updated.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	// unique := mgr.GetFixtures("unique.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupSchemaProperty)
 

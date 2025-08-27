@@ -15,7 +15,7 @@ import (
 func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSIdpSaml, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpSaml)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

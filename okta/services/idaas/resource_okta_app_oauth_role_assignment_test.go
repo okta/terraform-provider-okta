@@ -42,7 +42,7 @@ func TestAccResourceOktaAppOAuthRoleAssignment_basic(t *testing.T) {
 				},
 			},
 			{
-				Config: mgr.GetFixtures("basic_updated.tf", t),
+				Config: mgr.GetFixtures("updated.tf", t),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "type", "GROUP_MEMBERSHIP_ADMIN"),
 					resource.TestCheckResourceAttr("okta_app_oauth_role_assignment.test", "status", "ACTIVE"),

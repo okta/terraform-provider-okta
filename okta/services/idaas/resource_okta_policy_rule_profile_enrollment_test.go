@@ -13,7 +13,7 @@ import (
 func TestAccResourceOktaPolicyRuleProfileEnrollment_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleProfileEnrollment, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleProfileEnrollment)
 
 	// NOTE: teardownConfig is a hack so that the okta_policy_profile_enrollment

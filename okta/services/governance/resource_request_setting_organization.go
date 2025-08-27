@@ -65,7 +65,7 @@ func (r *requestSettingOrganizationResource) Schema(ctx context.Context, req res
 func (r *requestSettingOrganizationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	resp.Diagnostics.AddWarning(
 		"Create Not Supported",
-		"This resource cannot be created via Terraform. Please import it or let Terraform read it from the existing system.",
+		"This resource cannot be created via Terraform.",
 	)
 }
 
@@ -82,9 +82,13 @@ func (r *requestSettingOrganizationResource) Read(ctx context.Context, req resou
 	// Read API call logic
 	readOrgRequestSettingResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetOrgRequestSettingsV2(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request Setting Organization",
+			"Could not read Request Setting Organization, unexpected error: "+err.Error(),
+		)
 		return
 	}
-	data.SubprocessorsAcknowledged = types.BoolValue(readOrgRequestSettingResp.SubprocessorsAcknowledged)
+	data.SubprocessorsAcknowledged = types.BoolValue(readOrgRequestSettingResp.GetSubprocessorsAcknowledged())
 	var experiences []experience
 	for _, exp := range readOrgRequestSettingResp.GetRequestExperiences() {
 		experiences = append(experiences, experience{
@@ -111,6 +115,10 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 	// Update API call logic
 	updateOrgSettingsResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.UpdateOrgRequestSettingsV2(ctx).OrgRequestSettingsPatchable(createOrgRequestsSettings(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error updating Request Setting Organization",
+			"Could not updating Request Setting Organization, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	data.SubprocessorsAcknowledged = types.BoolValue(updateOrgSettingsResp.GetSubprocessorsAcknowledged())

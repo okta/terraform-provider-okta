@@ -147,6 +147,10 @@ func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadReque
 	// Read API call logic
 	getRequestV2Resp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestsAPI.GetRequestV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Request V2",
+			"Could not read Request V2, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	// Example Data value setting

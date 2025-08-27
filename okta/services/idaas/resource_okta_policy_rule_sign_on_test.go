@@ -32,7 +32,7 @@ func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 func TestAccResourceOktaPolicyRuleSignon_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleSignOn, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	excludedNetwork := mgr.GetFixtures("excluded_network.tf", t)
 	oktaIdentityProvider := mgr.GetFixtures("okta_identity_provider.tf", t)
 	otherIdentityProvider := mgr.GetFixtures("other_identity_provider.tf", t)

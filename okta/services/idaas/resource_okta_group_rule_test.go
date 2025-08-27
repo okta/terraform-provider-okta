@@ -18,7 +18,7 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupRule)
 	mgr := newFixtureManager("resources", "okta_group_rule", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	name := acctest.BuildResourceName(mgr.Seed)
 	groupUpdate := mgr.GetFixtures("basic_group_update.tf", t)
 	deactivated := mgr.GetFixtures("basic_deactivated.tf", t)

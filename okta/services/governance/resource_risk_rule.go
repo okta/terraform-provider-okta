@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -225,6 +224,10 @@ func (r *riskRuleResource) Create(ctx context.Context, req resource.CreateReques
 	// Create API call logic
 	createdRiskRule, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.CreateRiskRule(ctx).CreateRiskRuleRequest(buildRiskRule(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error creating Risk Rule",
+			"Could not create Risk Rule, unexpected error: "+err.Error(),
+		)
 		return
 	}
 
@@ -245,6 +248,10 @@ func (r *riskRuleResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	getRiskRuleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Risk Rule",
+			"Could not read Risk Rule, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	applyToState(&data, getRiskRuleResp)
@@ -264,10 +271,12 @@ func (r *riskRuleResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 	data.Id = state.Id
 	// Update API call logic
-	fmt.Println("DAta ID", data.Id.ValueString())
 	updateRiskRuleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.ReplaceRiskRule(ctx, data.Id.ValueString()).UpdateRiskRuleRequest(buildUpdateRiskRule(data)).Execute()
-	fmt.Println("Update Risk Rule Response:")
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error updating Risk Rule",
+			"Could not update Risk Rule, unexpected error: "+err.Error(),
+		)
 		return
 	}
 
@@ -309,8 +318,8 @@ func (r *riskRuleResource) Delete(ctx context.Context, req resource.DeleteReques
 	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.DeleteRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"failed to delete risk rule",
-			err.Error(),
+			"Error deleting Risk Rule",
+			"Could not delete Risk Rule, unexpected error: "+err.Error(),
 		)
 		return
 	}

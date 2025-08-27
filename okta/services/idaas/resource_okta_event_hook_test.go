@@ -20,7 +20,7 @@ func TestAccResourceOktaEventHook_crud(t *testing.T) {
 	resourceName := "okta_event_hook.test"
 	mgr := newFixtureManager("resources", resources.OktaIDaaSEventHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

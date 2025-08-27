@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-func TestAccRequestConditionResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.GovernanceRequestCondition, t.Name())
+func TestAccRequestSettingOrganization_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.GovernanceRequestSettingOrganization, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.GovernanceRequestCondition)
+	resourceName := fmt.Sprintf("%s.test", resources.GovernanceRequestSettingOrganization)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -21,20 +21,26 @@ func TestAccRequestConditionResource_basic(t *testing.T) {
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
+				ImportState:        true,
+				ResourceName:       "okta_request_setting_organization.test",
+				ImportStateId:      "default",
+				ImportStatePersist: true,
+				Config:             config,
+				PlanOnly:           true,
+			},
+			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "test-condition"),
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.type", "EVERYONE"),
+					resource.TestCheckResourceAttr(resourceName, "subprocessors_acknowledged", "true"),
 				),
 			},
 			{
+				//todo :update this to false if this is a bug in the API
 				Config: mgr.ConfigReplace(updatedConfig),
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "test-condition"),
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.type", "GROUPS"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "subprocessors_acknowledged", "true"),
 				),
 			},
 		},
 	})
-
 }

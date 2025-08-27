@@ -17,7 +17,7 @@ func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
 	mgr := newFixtureManager("resources", resources.OktaIDaaSInlineHook, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	activatedConfig := mgr.GetFixtures("basic_activated.tf", t)
 	registration := mgr.GetFixtures("registration.tf", t)
 	passwordImport := mgr.GetFixtures("password_import.tf", t)

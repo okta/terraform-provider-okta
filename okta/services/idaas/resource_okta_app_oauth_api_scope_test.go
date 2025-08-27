@@ -16,7 +16,7 @@ import (
 func TestAccResourceOktaAppOAuthApplication_apiScope(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuthAPIScope, t.Name())
 	plainConfig := mgr.GetFixtures("basic.tf", t)
-	plainUpdatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	plainUpdatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test_app_scopes", resources.OktaIDaaSAppOAuthAPIScope)
 
 	// Replace example org url with actual url to prevent API error

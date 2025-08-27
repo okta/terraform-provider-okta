@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataSourceOktaRequestSetting_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.GovernanceRequestSetting, t.Name())
+	mgr := newFixtureManager("data-sources", resources.GovernanceRequestSettingResource, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

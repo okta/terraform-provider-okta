@@ -186,6 +186,10 @@ func (d *riskRulesDataSource) Read(ctx context.Context, req datasource.ReadReque
 	// Read API call logic
 	getRiskRuleResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RiskRulesAPI.GetRiskRule(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Risk Rules",
+			"Could not read Risk Rules, unexpected error: "+err.Error(),
+		)
 		return
 	}
 

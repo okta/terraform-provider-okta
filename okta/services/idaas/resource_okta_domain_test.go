@@ -14,7 +14,7 @@ import (
 func TestAccResourceOktaDomain_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSDomain, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSDomain)
 	domainName := fmt.Sprintf("testacc-%d.example.com", mgr.Seed)
 

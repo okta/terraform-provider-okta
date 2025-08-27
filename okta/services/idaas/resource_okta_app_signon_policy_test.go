@@ -14,7 +14,7 @@ import (
 func TestAccResourceOktaAppSignOnPolicy_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicy, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	renamedConfig := mgr.GetFixtures("basic_renamed.tf", t)
 	resourceName := fmt.Sprintf("%v.test", resources.OktaIDaaSAppSignOnPolicy)
 

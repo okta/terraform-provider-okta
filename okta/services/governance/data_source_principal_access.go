@@ -225,6 +225,10 @@ func (d *principalAccessDataSource) Read(ctx context.Context, req datasource.Rea
 	// Read API call logic
 	principalAccessResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().PrincipalAccessAPI.GetPrincipalAccess(ctx).Filter(buildFilterForPrincipalAccess(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Principal Access",
+			"Could not read Principal Access, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	// Set top-level fields

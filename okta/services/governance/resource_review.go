@@ -154,6 +154,10 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 		OktaGovernanceSDKClient().
 		ReviewsAPI.GetReview(ctx, data.CampaignId.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading Review",
+			"Could not reading Review, unexpected error: "+err.Error(),
+		)
 		return
 	}
 	data.Id = types.StringValue(getReview.Id)

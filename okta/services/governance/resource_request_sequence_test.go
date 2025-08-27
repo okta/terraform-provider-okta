@@ -11,7 +11,7 @@ import (
 func TestAccRequestSequenceResource_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.GovernanceRequestSequence, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.GovernanceRequestSequence)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

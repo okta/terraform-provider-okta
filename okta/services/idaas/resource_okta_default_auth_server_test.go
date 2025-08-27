@@ -13,7 +13,7 @@ func TestAccResourceOktaAuthServerDefault_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.sun_also_rises", resources.OktaIDaaSAuthServerDefault)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthServerDefault, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),

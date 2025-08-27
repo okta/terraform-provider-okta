@@ -124,7 +124,7 @@ const (
 	GovernanceRequestCondition                    = "okta_request_condition"
 	GovernanceRequestSequence                     = "okta_request_sequence"
 	GovernanceRequestSettingOrganization          = "okta_request_setting_organization"
-	GovernanceRequestSetting                      = "okta_request_setting"
+	GovernanceRequestSettingResource              = "okta_request_setting_resource"
 	GovernanceRequestV2                           = "okta_request_v2"
 	GovernanceCatalogEntryDefault                 = "okta_catalog_entry_default"
 	GovernanceCatalogEntryUserAccessRequestFields = "okta_catalog_entry_user_access_request_fields"

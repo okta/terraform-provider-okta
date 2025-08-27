@@ -12,7 +12,7 @@ import (
 func TestAccResourceOktaPolicyProfileEnrollmentApps_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyProfileEnrollmentApps, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyProfileEnrollmentApps)
 	resourceName2 := fmt.Sprintf("%s.test_2", resources.OktaIDaaSPolicyProfileEnrollmentApps)
 	acctest.OktaResourceTest(t, resource.TestCase{

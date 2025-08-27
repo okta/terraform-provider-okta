@@ -17,7 +17,7 @@ import (
 func TestAccResourceOktaLogStream_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSLogStream, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	awsEventBridgeResourceName := fmt.Sprintf("%s.eventbridge", resources.OktaIDaaSLogStream)
 	splunkResourceName := fmt.Sprintf("%s.splunk", resources.OktaIDaaSLogStream)
 	acctest.OktaResourceTest(t, resource.TestCase{

@@ -15,7 +15,7 @@ import (
 func TestAccResourceOktaThreatInsightSettings_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSThreatInsightSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updated := mgr.GetFixtures("basic_updated.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSThreatInsightSettings)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

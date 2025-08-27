@@ -14,7 +14,7 @@ import (
 func TestAccResourceOktaMfaPolicy_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

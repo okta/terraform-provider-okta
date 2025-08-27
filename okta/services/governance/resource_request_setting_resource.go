@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -25,7 +24,7 @@ func newRequestSettingResourceResource() resource.Resource {
 }
 
 func (r *requestSettingResourceResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("resource_id"), request, response)
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), request, response)
 }
 
 func (r *requestSettingResourceResource) Configure(ctx context.Context, request resource.ConfigureRequest, response *resource.ConfigureResponse) {
@@ -73,7 +72,7 @@ type riskSettings struct {
 }
 
 type requestSettingResourceResourceModel struct {
-	ResourceId                types.String               `tfsdk:"resource_id"`
+	Id                        types.String               `tfsdk:"id"`
 	RequestOnBehalfOfSettings *requestOnBehalfOfSettings `tfsdk:"request_on_behalf_of_settings"`
 	RiskSettings              *riskSettings              `tfsdk:"risk_settings"`
 }
@@ -85,7 +84,7 @@ func (r *requestSettingResourceResource) Metadata(ctx context.Context, req resou
 func (r *requestSettingResourceResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"resource_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Required:    true,
 				Description: "The id of the resource in Okta ID format.",
 			},
@@ -174,7 +173,7 @@ func (r *requestSettingResourceResource) Read(ctx context.Context, req resource.
 	}
 
 	// Read API call logic
-	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.ResourceId.ValueString()).Execute()
+	reqSettingsResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.GetRequestSettingsV2(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Request Settings",
@@ -193,18 +192,6 @@ func applyResourceSettingToState(data *requestSettingResourceResourceModel, reqS
 	data.RequestOnBehalfOfSettings = setRequesterOnBehalfSettings(reqSettingsResp.RequestOnBehalfOfSettings)
 	if data.RiskSettings != nil {
 		data.RiskSettings = setRiskSettings(reqSettingsResp.RiskSettings)
-	}
-}
-
-func setValidRiskSettings(settings *governance.ValidRiskSettingsDetails) *validSettings {
-	var supportTypes []supportedTypes
-	for _, supportedType := range settings.SupportedTypes {
-		supportTypes = append(supportTypes, supportedTypes{
-			Type: types.StringValue(supportedType.GetType()),
-		})
-	}
-	return &validSettings{
-		Supported: supportTypes,
 	}
 }
 
@@ -346,15 +333,13 @@ func (r *requestSettingResourceResource) Update(ctx context.Context, req resourc
 	}
 
 	// Update API call logic
-	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.ResourceId.ValueString()).ResourceRequestSettingsPatchable(*buildResourceRequestSettingsPatchable(data)).Execute()
+	updatedResourceSettingResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSettingsAPI.UpdateResourceRequestSettingsV2(ctx, data.Id.ValueString()).ResourceRequestSettingsPatchable(*buildResourceRequestSettingsPatchable(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error update Request Settings",
 			"Could not update request settings, unexpected error: "+err.Error())
 		return
 	}
-
-	fmt.Println("patchedRequestSettingsReq", patchedRequestSettingsReq.RequestOnBehalfOfSettings, patchedRequestSettingsReq.RiskSettings)
 
 	applyResourceSettingToState(&data, updatedResourceSettingResp)
 
