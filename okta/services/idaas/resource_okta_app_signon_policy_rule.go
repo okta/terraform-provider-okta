@@ -23,7 +23,7 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
 				reauthenticateInFreqPresent := !req.RawConfig.GetAttr("re_authentication_frequency").IsNull()
 				chains := req.RawConfig.GetAttr("chains")
-				reauthenticateInInChainsPresent := !reauthenticateInFreqPresent && !chains.IsNull() && strings.Contains(chains.GoString(), "reauthenticateIn")
+				reauthenticateInInChainsPresent := !chains.IsNull() && strings.Contains(chains.GoString(), "reauthenticateIn")
 				if reauthenticateInFreqPresent && reauthenticateInInChainsPresent {
 					resp.Diagnostics = append(resp.Diagnostics, diag.Errorf("CANNOT set re_authentication_frequency AND reauthenticateIn in one or more entries in chains at the same time")...)
 				}
