@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"encoding/json"
+	"strings"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -18,7 +19,17 @@ func resourceAppSignOnPolicyRule() *schema.Resource {
 		ReadContext:   resourceAppSignOnPolicyRuleRead,
 		UpdateContext: resourceAppSignOnPolicyRuleUpdate,
 		DeleteContext: resourceAppSignOnPolicyRuleDelete,
-		Importer:      createPolicyRuleImporter(),
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
+				reauthenticateInFreqPresent := !req.RawConfig.GetAttr("re_authentication_frequency").IsNull()
+				chains := req.RawConfig.GetAttr("chains")
+				reauthenticateInInChainsPresent := !reauthenticateInFreqPresent && !chains.IsNull() && strings.Contains(chains.GoString(), "reauthenticateIn")
+				if reauthenticateInFreqPresent && reauthenticateInInChainsPresent {
+					resp.Diagnostics = append(resp.Diagnostics, diag.Errorf("CANNOT set re_authentication_frequency AND reauthenticateIn in one or more entries in chains at the same time")...)
+				}
+			},
+		},
+		Importer: createPolicyRuleImporter(),
 		Description: ` Manages a sign-on policy rules for the application.
 ~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 This resource allows you to create and configure a sign-on policy rule for the application.
@@ -416,7 +427,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		},
 		Name:        d.Get("name").(string),
 		PriorityPtr: utils.Int64Ptr(d.Get("priority").(int)),
-		Type:        "ACCESS_POLICY", // TODO New types of access policy rules like MFA_ENROLL etc. introduced since this resource was created. These access policy rule types will be supported iff there is an ask.
+		Type:        "ACCESS_POLICY", // TODO New types of access policy rules like MFA_ENROLL etc. will be supported iff there is an ask.
 	}
 
 	// NOTE: Only the API read will be able to set the "system" boolean so it is

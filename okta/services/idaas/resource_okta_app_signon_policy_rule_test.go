@@ -24,7 +24,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
-
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -442,4 +441,36 @@ func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccResourceOktaAppSignOnPolicyRule_ReauthenticationFrequency(t *testing.T) {
+
+	resourceName1 := fmt.Sprintf("%s.test_with_reauthenticate_in_chains_only", resources.OktaIDaaSAppSignOnPolicyRule)
+	resourceName2 := fmt.Sprintf("%s.test_with_re_authentication_frequency_only", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrWith(resourceName1, "chains.0", checkReauthenticateInChains),
+					resource.TestCheckResourceAttrWith(resourceName1, "chains.1", checkReauthenticateInChains),
+					resource.TestCheckResourceAttr(resourceName2, "re_authentication_frequency", "PT2H10M"),
+				),
+			},
+		},
+	})
+}
+
+func checkReauthenticateInChains(value string) error {
+	if strings.Contains(value, `"reauthenticateIn":"PT43800H"`) {
+		return nil
+	}
+	return fmt.Errorf("chains does not contain expected value")
 }

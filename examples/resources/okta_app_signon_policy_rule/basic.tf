@@ -92,7 +92,7 @@ resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only"
                "method" : "webauthn"
              }
            ],
-           "reauthenticateIn" : "P90D"
+           "reauthenticateIn" : "PT43800H"
          }
        ]
      }
@@ -101,15 +101,15 @@ resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only"
 }
 
 
- resource "okta_app_signon_policy_rule" "test_with_re_authentication_frequency_only" {
+resource "okta_app_signon_policy_rule" "test_with_re_authentication_frequency_only" {
   policy_id = "rstpbfm3a3IBq00o11d7"
   name     = "test_with_re_authentication_frequency_only"
   type     = "AUTH_METHOD_CHAIN"
-  priority = 3
+  priority = 4
   network_connection = "ANYWHERE"
   access     = "ALLOW"
   factor_mode = "2FA"
-  re_authentication_frequency = "PT0S"
+  re_authentication_frequency = "PT2H10M"
   chains = [
       jsonencode({
           "authenticationMethods": [
@@ -139,4 +139,5 @@ resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only"
       ]
       })
   ]
- }
+}
+
