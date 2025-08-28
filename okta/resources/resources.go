@@ -65,6 +65,7 @@ const (
 	OktaIDaaSFeature                       = "okta_feature"
 	OktaIDaaSGroup                         = "okta_group"
 	OktaIDaaSGroupOwner                    = "okta_group_owner"
+	OktaIDaaSGroupOwners                   = "okta_group_owners"
 	OktaIDaaSGroupEveryone                 = "okta_everyone_group"
 	OktaIDaaSGroupMemberships              = "okta_group_memberships"
 	OktaIDaaSGroupRole                     = "okta_group_role"

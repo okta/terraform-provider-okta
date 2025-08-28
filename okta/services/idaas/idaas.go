@@ -94,6 +94,7 @@ func FWProviderResources() []func() resource.Resource {
 		newCustomizedSigninResource,
 		newPreviewSigninResource,
 		newGroupOwnerResource,
+		newGroupOwnersResource,
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
 		newFeaturesResource,
