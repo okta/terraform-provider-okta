@@ -337,25 +337,51 @@ func buildCreateBrandRequest(model brandResourceModel) (okta.CreateBrandRequest,
 }
 
 func buildUpdateBrandRequest(model brandResourceModel, emailDomainID *string) (okta.BrandRequest, error) {
+	// mandatory fields
+	brandRequest := okta.BrandRequest{
+		Name:          model.Name.ValueStringPointer(),
+		EmailDomainId: emailDomainID,
+	}
+
+	// Only include optional fields if they are not null
+	if !model.AgreeToCustomPrivacyPolicy.IsNull() {
+		brandRequest.AgreeToCustomPrivacyPolicy = model.AgreeToCustomPrivacyPolicy.ValueBoolPointer()
+	}
+
+	if !model.CustomPrivacyPolicyURL.IsNull() {
+		brandRequest.CustomPrivacyPolicyUrl = model.CustomPrivacyPolicyURL.ValueStringPointer()
+	}
+
+	if !model.Locale.IsNull() {
+		brandRequest.Locale = model.Locale.ValueStringPointer()
+	}
+
+	if !model.RemovePoweredByOkta.IsNull() {
+		brandRequest.RemovePoweredByOkta = model.RemovePoweredByOkta.ValueBoolPointer()
+	}
+
+	// Handle DefaultApp - only include if at least one field is set
 	defaultApp := &okta.DefaultApp{}
+	hasDefaultAppFields := false
+
 	if !model.DefaultAppAppInstanceID.IsNull() && model.DefaultAppAppInstanceID.ValueString() != "" {
 		defaultApp.AppInstanceId = model.DefaultAppAppInstanceID.ValueStringPointer()
+		hasDefaultAppFields = true
 	}
 	if !model.DefaultAppAppLinkName.IsNull() && model.DefaultAppAppLinkName.ValueString() != "" {
 		defaultApp.AppLinkName = model.DefaultAppAppLinkName.ValueStringPointer()
+		hasDefaultAppFields = true
 	}
 	if !model.DefaultAppClassicApplicationURI.IsNull() && model.DefaultAppClassicApplicationURI.ValueString() != "" {
 		defaultApp.ClassicApplicationUri = model.DefaultAppClassicApplicationURI.ValueStringPointer()
+		hasDefaultAppFields = true
 	}
-	return okta.BrandRequest{
-		Name:                       model.Name.ValueStringPointer(),
-		AgreeToCustomPrivacyPolicy: model.AgreeToCustomPrivacyPolicy.ValueBoolPointer(),
-		CustomPrivacyPolicyUrl:     model.CustomPrivacyPolicyURL.ValueStringPointer(),
-		DefaultApp:                 defaultApp,
-		EmailDomainId:              emailDomainID,
-		Locale:                     model.Locale.ValueStringPointer(),
-		RemovePoweredByOkta:        model.RemovePoweredByOkta.ValueBoolPointer(),
-	}, nil
+
+	if hasDefaultAppFields {
+		brandRequest.DefaultApp = defaultApp
+	}
+
+	return brandRequest, nil
 }
 
 func mapBrandToState(data *okta.BrandWithEmbedded, state *brandResourceModel) diag.Diagnostics {

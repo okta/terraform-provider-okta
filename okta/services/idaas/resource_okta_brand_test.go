@@ -172,3 +172,58 @@ resource okta_brand test{
 		},
 	})
 }
+
+// TestAccResourceOktaBrand_minimal_update verifies that updating a brand with only one optional field
+// doesn't accidentally send other null/empty optional fields to the API
+func TestAccResourceOktaBrand_minimal_update(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSBrand, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSBrand)
+
+	// Step 1: Create with minimal config (only name)
+	step1 := `
+resource okta_brand test{
+	name = "testAcc-replace_with_uuid"
+}`
+
+	// Step 2: Update by adding only one optional field
+	step2 := `
+resource okta_brand test{
+	name = "testAcc-replace_with_uuid"
+	remove_powered_by_okta = true
+}`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		CheckDestroy:             nil,
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(step1),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
+					// Verify optional fields are not set
+					resource.TestCheckNoResourceAttr(resourceName, "custom_privacy_policy_url"),
+					resource.TestCheckNoResourceAttr(resourceName, "email_domain_id"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_app_instance_id"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_app_link_name"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_classic_application_uri"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(step2),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
+					// Verify the updated field is set
+					resource.TestCheckResourceAttr(resourceName, "remove_powered_by_okta", "true"),
+					// Verify other optional fields remain unset after update
+					resource.TestCheckNoResourceAttr(resourceName, "custom_privacy_policy_url"),
+					resource.TestCheckNoResourceAttr(resourceName, "email_domain_id"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_app_instance_id"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_app_link_name"),
+					resource.TestCheckNoResourceAttr(resourceName, "default_app_classic_application_uri"),
+				),
+			},
+		},
+	})
+}
