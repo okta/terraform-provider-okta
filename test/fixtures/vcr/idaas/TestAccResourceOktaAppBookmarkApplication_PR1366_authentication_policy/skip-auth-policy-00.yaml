@@ -1,0 +1,666 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:21 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 700.644458ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:22 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 693.640916ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"00osd501x0KyUtOul697","cell":"ok14","_links":{"organization":{"href":"https://skip-auth-policy-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":true,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":true}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 651.763458ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 104
+        host: skip-auth-policy-00.dne-okta.com
+        body: |
+            {"description":"Sign On Policy","name":"testAcc_Policy_2122253235","priority":1,"type":"ACCESS_POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 748.997041ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultzy9044GfNAnNp697","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","system":true,"conditions":null,"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H","constraints":[{"possession":{"required":true,"deviceBound":"REQUIRED"}}]},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules/rultzy9044GfNAnNp697","hints":{"allow":["GET","PUT"]}}},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 661.356417ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 296
+        host: skip-auth-policy-00.dne-okta.com
+        body: |
+            {"accessibility":{"selfService":false},"label":"testAcc_2122253235","name":"bookmark","settings":{"app":{"requestIntegration":false,"url":"https://test.com"},"notes":{"admin":null,"enduser":null}},"signOnMode":"BOOKMARK","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form:
+            activate:
+                - "true"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy7zfhDuuxB8D697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:bookmark:0oatzy7zfhDuuxB8D697","name":"bookmark","label":"testAcc_2122253235","status":"ACTIVE","lastUpdated":"2025-08-08T02:14:25.000Z","created":"2025-08-08T02:14:25.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BOOKMARK","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{}},"universalLogout":null,"settings":{"app":{"requestIntegration":false,"url":"https://test.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://skip-auth-policy-00.dne-okta.com/home/bookmark/0oatzy7zfhDuuxB8D697/2557","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/bookmark-app.b81c03e2607468e5b5f9c9351c99313e.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.022013375s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/policies/rsttzy90421RvoRW1697
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 08 Aug 2025 02:14:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 754.37925ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy7zfhDuuxB8D697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:bookmark:0oatzy7zfhDuuxB8D697","name":"bookmark","label":"testAcc_2122253235","status":"ACTIVE","lastUpdated":"2025-08-08T02:14:25.000Z","created":"2025-08-08T02:14:25.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BOOKMARK","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{}},"universalLogout":null,"settings":{"app":{"requestIntegration":false,"url":"https://test.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://skip-auth-policy-00.dne-okta.com/home/bookmark/0oatzy7zfhDuuxB8D697/2557","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/bookmark-app.b81c03e2607468e5b5f9c9351c99313e.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 672.249708ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:29 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 718.972541ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:29 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 710.534583ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 668.223334ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultzy9044GfNAnNp697","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","system":true,"conditions":null,"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H","constraints":[{"possession":{"required":true,"deviceBound":"REQUIRED"}}]},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules/rultzy9044GfNAnNp697","hints":{"allow":["GET","PUT"]}}},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 688.263958ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatzy7zfhDuuxB8D697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:bookmark:0oatzy7zfhDuuxB8D697","name":"bookmark","label":"testAcc_2122253235","status":"ACTIVE","lastUpdated":"2025-08-08T02:14:25.000Z","created":"2025-08-08T02:14:25.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"BOOKMARK","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{}},"universalLogout":null,"settings":{"app":{"requestIntegration":false,"url":"https://test.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://skip-auth-policy-00.dne-okta.com/home/bookmark/0oatzy7zfhDuuxB8D697/2557","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/bookmark-app.b81c03e2607468e5b5f9c9351c99313e.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 696.790333ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:32 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 711.829ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 695.983292ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oatzy7zfhDuuxB8D697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 08 Aug 2025 02:14:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 751.98375ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstsd5021voj5gb73697","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50222gqdCXKi697","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd50225GsonOX2697","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:16.000Z","lastUpdated":"2025-06-16T00:28:16.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5022pPoMSA4q697","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-16T00:28:17.000Z","lastUpdated":"2025-06-16T00:28:17.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsd5027xfw4M8MN697","status":"ACTIVE","name":"Okta OIN Submission Tester","priority":1,"system":false,"conditions":null,"created":"2025-06-16T00:28:19.000Z","lastUpdated":"2025-06-16T00:28:19.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstspstj7wpPUXhYA697","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:17:11.000Z","lastUpdated":"2025-06-27T01:17:11.000Z","_links":{"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697","hints":{"allow":["GET"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspstj7wpPUXhYA697/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstspsvpr5xRNeF4d697","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2025-06-27T01:18:09.000Z","lastUpdated":"2025-06-27T01:18:09.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttzy90421RvoRW1697","status":"ACTIVE","name":"testAcc_Policy_2122253235","description":"Sign On Policy","priority":1,"system":false,"conditions":null,"created":"2025-08-08T02:14:24.000Z","lastUpdated":"2025-08-08T02:14:24.000Z","_links":{"mappings":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:35 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 688.3305ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/apps?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"0oasd501xaCakxNFq697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:saasure:0oasd501xaCakxNFq697","name":"saasure","label":"Okta Admin Console","status":"ACTIVE","lastUpdated":"2025-06-16T00:28:12.000Z","created":"2025-06-16T00:28:12.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"admin":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501xaCakxNFq697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"admin","href":"https://skip-auth-policy-00.dne-okta.com/home/saasure/0oasd501xaCakxNFq697/2","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501xaCakxNFq697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501xaCakxNFq697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta_admin_app.da3325676d57eaf566cb786dd0c7a819.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5021voj5gb73697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501xaCakxNFq697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501xaCakxNFq697/lifecycle/deactivate"}}},{"id":"0oasd501y2jRcQ4yT697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_enduser:0oasd501y2jRcQ4yT697","name":"okta_enduser","label":"Okta Dashboard","status":"ACTIVE","lastUpdated":"2025-06-16T00:28:13.000Z","created":"2025-06-16T00:28:13.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501y2jRcQ4yT697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501y2jRcQ4yT697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501y2jRcQ4yT697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta-logo-end-user-dashboard.fc6d8fdbcb8cb4c933d009e71456cec6.svg","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50222gqdCXKi697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501y2jRcQ4yT697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd501y2jRcQ4yT697/lifecycle/deactivate"}}},{"id":"0oasd50204lOWHqm0697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_browser_plugin:0oasd50204lOWHqm0697","name":"okta_browser_plugin","label":"Okta Browser Plugin","status":"ACTIVE","lastUpdated":"2025-06-16T00:28:15.000Z","created":"2025-06-16T00:28:15.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd50204lOWHqm0697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd50204lOWHqm0697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd50204lOWHqm0697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta-logo-browser-plugin.1db9f55776407dfc548a5d6985ff280a.svg","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd50225GsonOX2697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd50204lOWHqm0697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd50204lOWHqm0697/lifecycle/deactivate"}}},{"id":"0oasd5027ojSAobVC697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_oin_submission_tester_app:0oasd5027ojSAobVC697","name":"okta_oin_submission_tester_app","label":"Okta OIN Submission Tester","status":"ACTIVE","lastUpdated":"2025-06-16T00:28:19.000Z","created":"2025-06-16T00:28:19.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd5027ojSAobVC697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd5027ojSAobVC697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd5027ojSAobVC697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta-logo-browser-plugin.1db9f55776407dfc548a5d6985ff280a.svg","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5027xfw4M8MN697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd5027ojSAobVC697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd5027ojSAobVC697/lifecycle/deactivate"}}},{"id":"0oasd53qemvGYgVlz697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_flow_sso:0oasd53qemvGYgVlz697","name":"okta_flow_sso","label":"Okta Workflows","status":"ACTIVE","lastUpdated":"2025-07-18T17:43:35.000Z","created":"2025-06-16T00:28:49.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"workflow_login":true}},"features":["PUSH_NEW_USERS","PUSH_USER_DEACTIVATION","SCIM_PROVISIONING","GROUP_PUSH","REACTIVATE_USERS","PUSH_PROFILE_UPDATES"],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{"redirectURI":"https://skip-auth-policy-00.workflows.okta.com/oidc/0oasd53qemvGYgVlz697/cb","initiateLoginURI":"https://skip-auth-policy-00.workflows.okta.com/oidc/0oasd53qemvGYgVlz697/login"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"workflow_login","href":"https://skip-auth-policy-00.dne-okta.com/home/okta_flow_sso/0oasd53qemvGYgVlz697/alnbibn6b0OPFATt20g7","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta-workflows.27df74eb53570679e5cc3a4b0f160602.png","type":"image/png"}],"clientCredentials":[{"name":"jwks","href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/credentials/jwks"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qemvGYgVlz697/lifecycle/deactivate"}}},{"id":"0oasd53qfbUr5kCYX697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:flow:0oasd53qfbUr5kCYX697","name":"flow","label":"Okta Workflows OAuth","status":"ACTIVE","lastUpdated":"2025-06-16T00:28:51.000Z","created":"2025-06-16T00:28:51.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{"redirectURI":"https://oauth.workflows.okta.com/oauth/okta/cb","serviceDomain":"https://oauth.workflows.okta.com"},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/okta-workflows.27df74eb53570679e5cc3a4b0f160602.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/credentials/secrets"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oasd53qfbUr5kCYX697/lifecycle/deactivate"}}},{"id":"0oaspsvpr1oRyei4i697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_account_settings:0oaspsvpr1oRyei4i697","name":"okta_account_settings","label":"Okta End User Settings","status":"ACTIVE","lastUpdated":"2025-06-27T01:18:09.000Z","created":"2025-06-27T01:18:09.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspsvpr1oRyei4i697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspsvpr1oRyei4i697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspsvpr1oRyei4i697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/enduser-settings-okta-logo.f1dca29029a40a5b8c59ce5ff7912fd0.svg","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstspsvpr5xRNeF4d697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspsvpr1oRyei4i697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspsvpr1oRyei4i697/lifecycle/deactivate"}}},{"id":"0oaspt8i2g3NSQeak697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_access_requests_admin:0oaspt8i2g3NSQeak697","name":"okta_access_requests_admin","label":"Okta Access Requests Admin","status":"ACTIVE","lastUpdated":"2025-08-07T23:10:40.000Z","created":"2025-06-27T01:17:49.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8i2g3NSQeak697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8i2g3NSQeak697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8i2g3NSQeak697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/iga_admin_app_logo.6386c588b45087ec4054523aff62f598.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8i2g3NSQeak697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8i2g3NSQeak697/lifecycle/deactivate"}}},{"id":"0oaspt8w1kuwQEqCI697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_iga:0oaspt8w1kuwQEqCI697","name":"okta_iga","label":"Okta Access Certifications","status":"ACTIVE","lastUpdated":"2025-08-08T00:00:40.000Z","created":"2025-06-27T01:17:47.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8w1kuwQEqCI697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8w1kuwQEqCI697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8w1kuwQEqCI697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/iga_admin_app_logo.6386c588b45087ec4054523aff62f598.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8w1kuwQEqCI697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8w1kuwQEqCI697/lifecycle/deactivate"}}},{"id":"0oaspt8wc5hF3O4JF697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_iga_reviewer:0oaspt8wc5hF3O4JF697","name":"okta_iga_reviewer","label":"Okta Access Certification Reviews","status":"ACTIVE","lastUpdated":"2025-06-27T01:17:49.000Z","created":"2025-06-27T01:17:48.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"login":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{"initiateLoginURI":null},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null}},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wc5hF3O4JF697/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"login","href":"https://skip-auth-policy-00.dne-okta.com/home/okta_iga_reviewer/0oaspt8wc5hF3O4JF697/aln99ley5E1bkaiQF0g6","type":"text/html"}],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wc5hF3O4JF697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wc5hF3O4JF697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/iga_reviewer_app_logo.2c68be805203d9708e6bc63179a9e0ae.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wc5hF3O4JF697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wc5hF3O4JF697/lifecycle/deactivate"}}},{"id":"0oaspt8wg1MVOCLJn697","orn":"orn:okta:idp:00osd501x0KyUtOul697:apps:okta_entitlement_management:0oaspt8wg1MVOCLJn697","name":"okta_entitlement_management","label":"Okta Entitlement Management","status":"ACTIVE","lastUpdated":"2025-07-02T01:52:40.000Z","created":"2025-06-27T01:17:49.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"EByxJjNUZhat2djCEjTepjBA4jWl48VkZssYvA9uVxI"}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE"},"_links":{"uploadLogo":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wg1MVOCLJn697/logo","hints":{"allow":["POST"]}},"appLinks":[],"profileEnrollment":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022rAok3aFp697"},"policies":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wg1MVOCLJn697/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wg1MVOCLJn697/groups"},"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/iga_admin_app_logo.6386c588b45087ec4054523aff62f598.png","type":"image/png"}],"accessPolicy":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rstsd5022pPoMSA4q697"},"users":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wg1MVOCLJn697/users"},"deactivate":{"href":"https://skip-auth-policy-00.dne-okta.com/api/v1/apps/0oaspt8wg1MVOCLJn697/lifecycle/deactivate"}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 08 Aug 2025 02:14:36 GMT
+            Link:
+                - <https://skip-auth-policy-00.dne-okta.com/api/v1/apps?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 908.960542ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: skip-auth-policy-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://skip-auth-policy-00.dne-okta.com/api/v1/policies/rsttzy90421RvoRW1697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 08 Aug 2025 02:14:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 731.207542ms
