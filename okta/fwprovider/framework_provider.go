@@ -57,6 +57,7 @@ type FrameworkProviderData struct {
 	LogLevel       types.Int64  `tfsdk:"log_level"`
 	MaxAPICapacity types.Int64  `tfsdk:"max_api_capacity"`
 	RequestTimeout types.Int64  `tfsdk:"request_timeout"`
+	SkipValidation types.Bool   `tfsdk:"skip_validation"`
 }
 
 // Metadata returns the provider type name.
@@ -193,6 +194,10 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					int64validator.AtLeast(0),
 					int64validator.AtMost(300),
 				},
+			},
+			"skip_validation": schema.BoolAttribute{
+				Optional:    true,
+				Description: "Skip validation of the provided Okta credentials during provider initialization. This allows the provider to be configured without valid credentials, which can be useful in environments where Okta resources are conditionally used.",
 			},
 		},
 	}

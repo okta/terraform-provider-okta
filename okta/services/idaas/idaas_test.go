@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -15,6 +18,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/fwprovider"
 	"github.com/okta/terraform-provider-okta/okta/provider"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -135,37 +139,43 @@ func TestProviderValidate(t *testing.T) {
 	}
 
 	tests := []struct {
-		name         string
-		accessToken  string
-		apiToken     string
-		clientID     string
-		privateKey   string
-		privateKeyID string
-		scopes       []interface{}
-		expectError  bool
+		name           string
+		accessToken    string
+		apiToken       string
+		clientID       string
+		privateKey     string
+		privateKeyID   string
+		scopes         []interface{}
+		skipValidation bool
+		expectError    bool
 	}{
-		{"simple pass", "", "", "", "", "", []interface{}{}, false},
-		{"access_token pass", "accessToken", "", "", "", "", []interface{}{}, false},
-		{"access_token fail 1", "accessToken", "apiToken", "", "", "", []interface{}{}, true},
-		{"access_token fail 2", "accessToken", "", "cliendID", "", "", []interface{}{}, true},
-		{"access_token fail 3", "accessToken", "", "", "privateKey", "", []interface{}{}, true},
-		{"access_token fail 4", "accessToken", "", "", "", "", []interface{}{"scope1", "scope2"}, true},
-		{"api_token pass", "", "apiToken", "", "", "", []interface{}{}, false},
-		{"api_token fail 1", "accessToken", "apiToken", "", "", "", []interface{}{}, true},
-		{"api_token fail 2", "", "apiToken", "clientID", "", "", []interface{}{}, true},
-		{"api_token fail 3", "", "apiToken", "", "", "privateKey", []interface{}{}, true},
-		{"api_token fail 4", "", "apiToken", "", "", "", []interface{}{"scope1", "scope2"}, true},
-		{"client_id pass", "", "", "clientID", "", "", []interface{}{}, false},
-		{"client_id fail 1", "accessToken", "", "clientID", "", "", []interface{}{}, true},
-		{"client_id fail 2", "accessToken", "apiToken", "clientID", "", "", []interface{}{}, true},
-		{"private_key pass", "", "", "", "privateKey", "", []interface{}{}, false},
-		{"private_key fail 1", "accessToken", "", "", "privateKey", "", []interface{}{}, true},
-		{"private_key fail 2", "", "apiToken", "", "privateKey", "", []interface{}{}, true},
-		{"private_key_id pass", "", "", "", "", "privateKeyID", []interface{}{}, false},
-		{"private_key_id fail 1", "", "apiToken", "", "", "privateKeyID", []interface{}{}, true},
-		{"scopes pass", "", "", "", "", "", []interface{}{"scope1", "scope2"}, false},
-		{"scopes fail 1", "accessToken", "", "", "", "", []interface{}{"scope1", "scope2"}, true},
-		{"scopes fail 2", "", "apiToken", "", "", "", []interface{}{"scope1", "scope2"}, true},
+		{"simple pass", "", "", "", "", "", []interface{}{}, false, false},
+		{"access_token pass", "accessToken", "", "", "", "", []interface{}{}, false, false},
+		{"access_token fail 1", "accessToken", "apiToken", "", "", "", []interface{}{}, false, true},
+		{"access_token fail 2", "accessToken", "", "cliendID", "", "", []interface{}{}, false, true},
+		{"access_token fail 3", "accessToken", "", "", "privateKey", "", []interface{}{}, false, true},
+		{"access_token fail 4", "accessToken", "", "", "", "", []interface{}{"scope1", "scope2"}, false, true},
+		{"api_token pass", "", "apiToken", "", "", "", []interface{}{}, false, false},
+		{"api_token fail 1", "accessToken", "apiToken", "", "", "", []interface{}{}, false, true},
+		{"api_token fail 2", "", "apiToken", "clientID", "", "", []interface{}{}, false, true},
+		{"api_token fail 3", "", "apiToken", "", "", "privateKey", []interface{}{}, false, true},
+		{"api_token fail 4", "", "apiToken", "", "", "", []interface{}{"scope1", "scope2"}, false, true},
+		{"client_id pass", "", "", "clientID", "", "", []interface{}{}, false, false},
+		{"client_id fail 1", "accessToken", "", "clientID", "", "", []interface{}{}, false, true},
+		{"client_id fail 2", "accessToken", "apiToken", "clientID", "", "", []interface{}{}, false, true},
+		{"private_key pass", "", "", "", "privateKey", "", []interface{}{}, false, false},
+		{"private_key fail 1", "accessToken", "", "", "privateKey", "", []interface{}{}, false, true},
+		{"private_key fail 2", "", "apiToken", "", "privateKey", "", []interface{}{}, false, true},
+		{"private_key_id pass", "", "", "", "", "privateKeyID", []interface{}{}, false, false},
+		{"private_key_id fail 1", "", "apiToken", "", "", "privateKeyID", []interface{}{}, false, true},
+		{"scopes pass", "", "", "", "", "", []interface{}{"scope1", "scope2"}, false, false},
+		{"scopes fail 1", "accessToken", "", "", "", "", []interface{}{"scope1", "scope2"}, false, true},
+		{"scopes fail 2", "", "apiToken", "", "", "", []interface{}{"scope1", "scope2"}, false, true},
+		// skip_validation parameter tests
+		{"skip_validation true pass", "", "", "", "", "", []interface{}{}, true, false},
+		{"skip_validation false pass", "", "", "", "", "", []interface{}{}, false, false},
+		{"skip_validation with api_token", "", "apiToken", "", "", "", []interface{}{}, true, false},
+		{"skip_validation with access_token", "accessToken", "", "", "", "", []interface{}{}, true, false},
 	}
 
 	for _, test := range tests {
@@ -187,6 +197,9 @@ func TestProviderValidate(t *testing.T) {
 		}
 		if len(test.scopes) > 0 {
 			resourceConfig["scopes"] = test.scopes
+		}
+		if test.skipValidation {
+			resourceConfig["skip_validation"] = test.skipValidation
 		}
 
 		config := terraform.NewResourceConfigRaw(resourceConfig)
@@ -793,6 +806,388 @@ func sweepPolicyRulesByType(ruleType string, client api.OktaIDaaSClient) error {
 		}
 	}
 	return nil
+}
+
+// Provider skip_validation tests
+
+func TestProviderSkipValidationWithInvalidCredentials(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use the standard AccPreCheck since we're testing invalid credentials
+		},
+		ProviderFactories: map[string]func() (*schema_sdk.Provider, error){
+			"okta": func() (*schema_sdk.Provider, error) {
+				return provider.Provider(), nil
+			},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testProviderSkipValidationConfig(),
+				Check: func(s *terraform.State) error {
+					// Verify that the provider was configured successfully
+					// even with invalid credentials
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestProviderSkipValidationWithEnvironmentVariable(t *testing.T) {
+	// Set environment variable
+	t.Setenv("OKTA_SKIP_VALIDATION", "true")
+	t.Setenv("OKTA_ORG_NAME", "invalid")
+	t.Setenv("OKTA_BASE_URL", "invalid.com")
+	t.Setenv("OKTA_API_TOKEN", "invalid")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck
+		},
+		ProviderFactories: map[string]func() (*schema_sdk.Provider, error){
+			"okta": func() (*schema_sdk.Provider, error) {
+				return provider.Provider(), nil
+			},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testProviderSkipValidationEnvConfig(),
+				Check: func(s *terraform.State) error {
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestProviderValidationFailsWithoutSkip(t *testing.T) {
+	// This test verifies that validation fails when skip_validation is false
+	// and invalid credentials are provided with an API token
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck
+		},
+		ProviderFactories: map[string]func() (*schema_sdk.Provider, error){
+			"okta": func() (*schema_sdk.Provider, error) {
+				return provider.Provider(), nil
+			},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config:      testProviderInvalidCredentialsWithTokenConfig(),
+				ExpectError: regexp.MustCompile("failed validate configuration"),
+			},
+		},
+	})
+}
+
+func TestAccProviderSkipValidationConditionalResources(t *testing.T) {
+	// This test demonstrates the real-world use case from issue #1452:
+	// - Monolithic Terraform codebase with conditional Okta resource usage
+	// - skip_validation=true allows provider to initialize without valid credentials
+	// - Resources are conditionally created based on feature flags/variables
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck since we're testing with invalid credentials
+		},
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProviderSkipValidationConditionalResourcesConfig(false),
+				Check: resource.ComposeTestCheckFunc(
+					// When count=0, the resource shouldn't exist in state
+					// We verify this by checking that the plan applies successfully
+					// without any resources being created
+					func(s *terraform.State) error {
+						// Verify that no okta_group.conditional resources exist
+						if _, ok := s.RootModule().Resources["okta_group.conditional"]; ok {
+							return fmt.Errorf("expected no okta_group.conditional resources, but found some")
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+func TestAccProviderSkipValidationWithValidCredentials(t *testing.T) {
+	// This test verifies that skip_validation works correctly with valid credentials
+	// and that resources can be created when the feature flag is enabled
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProviderSkipValidationWithValidCredsConfig(true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group.conditional.0", "name", "testAcc_skip_validation_group"),
+					resource.TestCheckResourceAttr("okta_group.conditional.0", "description", "Test group for skip_validation feature"),
+				),
+			},
+			{
+				// Test that we can disable the feature flag and the resource gets destroyed
+				Config: testAccProviderSkipValidationWithValidCredsConfig(false),
+				Check: resource.ComposeTestCheckFunc(
+					// Verify that the resource no longer exists
+					resource.TestCheckNoResourceAttr("okta_group.conditional", "id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccProviderSkipValidationEnvironmentVariable(t *testing.T) {
+	// Test that skip_validation works via environment variable
+
+	// Set environment variables for invalid credentials
+	t.Setenv("OKTA_SKIP_VALIDATION", "true")
+	t.Setenv("OKTA_ORG_NAME", "invalid-org")
+	t.Setenv("OKTA_BASE_URL", "invalid.okta.com")
+	t.Setenv("OKTA_API_TOKEN", "invalid_token")
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck since we're using invalid credentials
+		},
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccProviderSkipValidationEnvironmentConfig(false),
+				Check: resource.ComposeTestCheckFunc(
+					// Verify that no resources were created when feature flag is false
+					resource.TestCheckNoResourceAttr("okta_group.conditional", "id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccProviderSkipValidationResourceOperationFails(t *testing.T) {
+	// This test verifies that when skip_validation=true allows provider initialization,
+	// but actual resource operations still fail with invalid credentials
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck since we're testing with invalid credentials
+		},
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config:      testAccProviderSkipValidationResourceOperationFailsConfig(),
+				ExpectError: regexp.MustCompile("error|failed|unauthorized|invalid"),
+			},
+		},
+	})
+}
+
+func TestFrameworkProviderSkipValidationWithInvalidCredentials(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck since we're testing invalid credentials
+		},
+		ProtoV5ProviderFactories: map[string]func() (tfprotov5.ProviderServer, error){
+			"okta": func() (tfprotov5.ProviderServer, error) {
+				return providerserver.NewProtocol5(
+					fwprovider.NewFrameworkProvider("test", provider.Provider()),
+				)(), nil
+			},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testFrameworkProviderSkipValidationConfig(),
+				Check: func(s *terraform.State) error {
+					return nil
+				},
+			},
+		},
+	})
+}
+
+func TestFrameworkProviderSkipValidationWithEnvironmentVariable(t *testing.T) {
+	// Set environment variable
+	t.Setenv("OKTA_SKIP_VALIDATION", "true")
+	t.Setenv("OKTA_ORG_NAME", "invalid")
+	t.Setenv("OKTA_BASE_URL", "invalid.com")
+	t.Setenv("OKTA_API_TOKEN", "invalid")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			// Don't use standard AccPreCheck
+		},
+		ProtoV5ProviderFactories: map[string]func() (tfprotov5.ProviderServer, error){
+			"okta": func() (tfprotov5.ProviderServer, error) {
+				return providerserver.NewProtocol5(
+					fwprovider.NewFrameworkProvider("test", provider.Provider()),
+				)(), nil
+			},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testFrameworkProviderSkipValidationEnvConfig(),
+				Check: func(s *terraform.State) error {
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// Test configuration functions
+
+func testProviderSkipValidationConfig() string {
+	return `
+provider "okta" {
+  org_name        = "invalid"
+  base_url        = "invalid.com"
+  api_token       = "invalid"
+  skip_validation = true
+}
+
+# Empty configuration to test provider initialization
+`
+}
+
+func testProviderSkipValidationEnvConfig() string {
+	return `
+provider "okta" {
+  # Configuration comes from environment variables
+}
+
+# Empty configuration to test provider initialization
+`
+}
+
+func testProviderInvalidCredentialsWithTokenConfig() string {
+	return `
+provider "okta" {
+  org_name        = "invalid"
+  base_url        = "invalid.com"
+  api_token       = "invalid_token_that_will_fail_validation"
+  skip_validation = false
+}
+
+# Empty configuration to test provider initialization
+`
+}
+
+func testAccProviderSkipValidationConditionalResourcesConfig(enableOktaResources bool) string {
+	return fmt.Sprintf(`
+# Provider with skip_validation enabled and invalid credentials
+provider "okta" {
+  org_name        = "invalid-org"
+  base_url        = "invalid.okta.com"
+  api_token       = "invalid_token"
+  skip_validation = true
+}
+
+# Local variable to control conditional resource creation
+locals {
+  enable_okta_resources = %t
+}
+
+# Conditional resource creation - the main use case from issue #1452
+resource "okta_group" "conditional" {
+  count = local.enable_okta_resources ? 1 : 0
+  
+  name        = "testAcc_skip_validation_group"
+  description = "Test group for skip_validation feature"
+}
+
+# Output to demonstrate the conditional behavior
+output "group_created" {
+  value = local.enable_okta_resources ? "Group would be created" : "Group creation skipped"
+}
+`, enableOktaResources)
+}
+
+func testAccProviderSkipValidationWithValidCredsConfig(enableOktaResources bool) string {
+	return fmt.Sprintf(`
+# Provider with skip_validation enabled but using valid credentials from environment
+provider "okta" {
+  skip_validation = true
+}
+
+# Local variable to control conditional resource creation
+locals {
+  enable_okta_resources = %t
+}
+
+# Conditional resource creation
+resource "okta_group" "conditional" {
+  count = local.enable_okta_resources ? 1 : 0
+  
+  name        = "testAcc_skip_validation_group"
+  description = "Test group for skip_validation feature"
+}
+`, enableOktaResources)
+}
+
+func testAccProviderSkipValidationEnvironmentConfig(enableOktaResources bool) string {
+	return fmt.Sprintf(`
+# Provider configuration comes entirely from environment variables
+# OKTA_SKIP_VALIDATION=true should be set
+provider "okta" {
+  # All configuration from environment variables
+}
+
+# Local variable to control conditional resource creation
+locals {
+  enable_okta_resources = %t
+}
+
+# Conditional resource creation
+resource "okta_group" "conditional" {
+  count = local.enable_okta_resources ? 1 : 0
+  
+  name        = "testAcc_skip_validation_group"
+  description = "Test group for skip_validation feature"
+}
+`, enableOktaResources)
+}
+
+func testAccProviderSkipValidationResourceOperationFailsConfig() string {
+	return `
+# Provider with skip_validation enabled and invalid credentials
+provider "okta" {
+  org_name        = "invalid-org"
+  base_url        = "invalid.okta.com"
+  api_token       = "invalid_token"
+  skip_validation = true
+}
+
+# This resource creation should fail because credentials are invalid
+# even though provider initialization succeeded due to skip_validation
+resource "okta_group" "test_failure" {
+  name        = "testAcc_should_fail"
+  description = "This should fail due to invalid credentials"
+}
+`
+}
+
+func testFrameworkProviderSkipValidationConfig() string {
+	return `
+provider "okta" {
+  org_name        = "invalid"
+  base_url        = "invalid.com"
+  api_token       = "invalid"
+  skip_validation = true
+}
+
+# Empty configuration to test provider initialization
+`
+}
+
+func testFrameworkProviderSkipValidationEnvConfig() string {
+	return `
+provider "okta" {
+  # Configuration comes from environment variables
+}
+
+# Empty configuration to test provider initialization
+`
 }
 
 func condenseError(errorList []error) error {

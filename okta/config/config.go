@@ -40,7 +40,9 @@ type (
 		RequestTimeout   int
 		RetryCount       int
 		Scopes           []string
-		TimeOperations   TimeOperations
+		// SkipValidation determines whether to skip credential validation during provider initialization
+		SkipValidation bool
+		TimeOperations TimeOperations
 	}
 )
 
@@ -165,6 +167,26 @@ func NewConfig(d *schema.ResourceData) *Config {
 
 	if v := os.Getenv("OKTA_API_SCOPES"); v != "" && len(config.Scopes) == 0 {
 		config.Scopes = strings.Split(v, ",")
+	}
+
+	if val, ok := d.GetOk("skip_validation"); ok {
+		config.SkipValidation = val.(bool)
+	} else if envVal := os.Getenv("OKTA_SKIP_VALIDATION"); envVal != "" {
+		// Only use environment variable if not explicitly set in provider config
+		if skipValidation, err := strconv.ParseBool(envVal); err == nil {
+			config.SkipValidation = skipValidation
+		} else {
+			// Log warning with more context about valid values
+			if config.Logger != nil {
+				config.Logger.Warn("Invalid value for OKTA_SKIP_VALIDATION environment variable; defaulting to false",
+					"value", envVal,
+					"valid_values", "true, false, 1, 0",
+					"error", err.Error(),
+					"default_value", false)
+			}
+			// Explicitly set to false for invalid values
+			config.SkipValidation = false
+		}
 	}
 
 	config.SetupLogger()
