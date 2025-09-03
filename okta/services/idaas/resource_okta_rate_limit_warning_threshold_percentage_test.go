@@ -2,16 +2,15 @@ package idaas_test
 
 import (
 	"fmt"
-	"testing"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
+	"testing"
 )
 
-func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSRateLimiting)
-	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimiting, t.Name())
+func TestAccResourceOktaRateLimitWarningPercentage(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSRateLimitWarningThresholdPercentage)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimitWarningThresholdPercentage, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -23,8 +22,7 @@ func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "default_mode", "ENFORCE"),
-					resource.TestCheckResourceAttr(resourceName, "use_case_mode_overrides.login_page", "ENFORCE"),
+					resource.TestCheckResourceAttr(resourceName, "warning_threshold", "90"),
 				),
 			},
 		},

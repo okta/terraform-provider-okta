@@ -1,0 +1,208 @@
+package idaas
+
+import (
+	"context"
+	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
+	"github.com/okta/terraform-provider-okta/okta/config"
+	"time"
+)
+
+var (
+	_ resource.Resource                = &principalRateLimits{}
+	_ resource.ResourceWithConfigure   = &principalRateLimits{}
+	_ resource.ResourceWithImportState = &principalRateLimits{}
+)
+
+var _ resource.Resource = &principalRateLimits{}
+
+type principalRateLimits struct {
+	*config.Config
+}
+
+type principalRateLimitsModel struct {
+	Id                           types.String `tfsdk:"id"`
+	PrincipalId                  types.String `tfsdk:"principal_id"`
+	PrincipalType                types.String `tfsdk:"principal_type"`
+	DefaultConcurrencyPercentage types.Int32  `tfsdk:"default_concurrency_percentage"`
+	DefaultPercentage            types.Int32  `tfsdk:"default_percentage"`
+	CreatedBy                    types.String `tfsdk:"created_by"`
+	CreatedDate                  types.String `tfsdk:"created_date"`
+	LastUpdate                   types.String `tfsdk:"last_update"`
+	LastUpdatedBy                types.String `tfsdk:"last_updated_by"`
+	OrgId                        types.String `tfsdk:"org_id"`
+}
+
+func newPrincipalRateLimitsResource() resource.Resource {
+	return &principalRateLimits{}
+}
+
+func (r *principalRateLimits) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_principal_rate_limits"
+}
+
+func (r *principalRateLimits) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(req, resp)
+}
+
+func (r *principalRateLimits) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, tfpath.Root("id"), req, resp)
+}
+
+func (r *principalRateLimits) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"principal_id": schema.StringAttribute{
+				Required: true,
+			},
+			"principal_type": schema.StringAttribute{
+				Required: true,
+				Validators: []validator.String{
+					stringvalidator.OneOf([]string{
+						"OAUTH_CLIENT",
+						"SSWS_TOKEN",
+					}...),
+				},
+			},
+			"default_concurrency_percentage": schema.Int32Attribute{
+				Optional: true,
+			},
+			"default_percentage": schema.Int32Attribute{
+				Optional: true,
+			},
+			"created_by": schema.StringAttribute{
+				Computed: true,
+			},
+			"created_date": schema.StringAttribute{
+				Computed: true,
+			},
+			"last_update": schema.StringAttribute{
+				Computed: true,
+			},
+			"last_updated_by": schema.StringAttribute{
+				Computed: true,
+			},
+			"org_id": schema.StringAttribute{
+				Computed: true,
+			},
+		},
+	}
+}
+
+func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data principalRateLimitsModel
+
+	// Read Terraform plan Data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create API call logic
+	principalRateLimitSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.CreatePrincipalRateLimitEntity(ctx).Entity(buildPrincipalRateLimits(data)).Execute()
+	if err != nil {
+		return
+	}
+
+	applyPrincipalRateSettingsToState(&data, principalRateLimitSettingsResp)
+
+	// Save Data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data principalRateLimitsModel
+
+	// Read Terraform prior state Data into the model
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Read API call logic
+	getPrincipalRateSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.GetPrincipalRateLimitEntity(ctx, data.Id.ValueString()).Execute()
+	if err != nil {
+		return
+	}
+
+	applyPrincipalRateSettingsToState(&data, getPrincipalRateSettingsResp)
+
+	// Save updated Data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data principalRateLimitsModel
+
+	// Read Terraform plan Data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Update API call logic
+	fmt.Println("principal limit Id", data.Id.ValueString())
+	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
+	if err != nil {
+		return
+	}
+
+	applyPrincipalRateSettingsToState(&data, updatePrincipalRateSettingsRespSettingsResp)
+	// Save updated Data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	resp.Diagnostics.AddWarning(
+		"Delete Not Supported",
+		"This resource cannot be deleted via Terraform.",
+	)
+}
+
+func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRateLimitEntity {
+
+	principalRateSettings := v5okta.PrincipalRateLimitEntity{
+		PrincipalId:   data.PrincipalId.ValueString(),
+		PrincipalType: data.PrincipalType.ValueString(),
+	}
+
+	if data.DefaultConcurrencyPercentage.ValueInt32Pointer() != nil {
+		principalRateSettings.DefaultConcurrencyPercentage = data.DefaultConcurrencyPercentage.ValueInt32Pointer()
+	}
+
+	if data.DefaultPercentage.ValueInt32Pointer() != nil {
+		principalRateSettings.DefaultPercentage = data.DefaultPercentage.ValueInt32Pointer()
+	}
+
+	return principalRateSettings
+}
+
+func applyPrincipalRateSettingsToState(data *principalRateLimitsModel, principalRateLimitSettingsResp *v5okta.PrincipalRateLimitEntity) {
+	data.Id = types.StringValue(principalRateLimitSettingsResp.GetId())
+	data.PrincipalId = types.StringValue(principalRateLimitSettingsResp.GetPrincipalId())
+	data.PrincipalType = types.StringValue(principalRateLimitSettingsResp.GetPrincipalType())
+	data.DefaultConcurrencyPercentage = types.Int32Value(principalRateLimitSettingsResp.GetDefaultConcurrencyPercentage())
+	data.DefaultPercentage = types.Int32Value(principalRateLimitSettingsResp.GetDefaultPercentage())
+	data.CreatedBy = types.StringValue(principalRateLimitSettingsResp.GetCreatedBy())
+	data.CreatedDate = types.StringValue(principalRateLimitSettingsResp.GetCreatedDate().Format(time.RFC3339))
+	data.LastUpdate = types.StringValue(principalRateLimitSettingsResp.GetLastUpdate().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(principalRateLimitSettingsResp.GetLastUpdatedBy())
+	data.OrgId = types.StringValue(principalRateLimitSettingsResp.GetOrgId())
+}
