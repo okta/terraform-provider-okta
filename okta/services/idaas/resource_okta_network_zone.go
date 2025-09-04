@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -47,7 +48,12 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Use with type `IP`",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				// TODO: Next Major Release - add support for IP types
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateFunc:     validateIPaddress,
+					DiffSuppressFunc: suppressIPDiff,
+				},
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -58,7 +64,12 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				// TODO: Next Major Release - add support for IP types
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateFunc:     validateIPaddress,
+					DiffSuppressFunc: suppressIPDiff,
+				},
 			},
 			"type": {
 				Type:        schema.TypeString,
@@ -68,6 +79,7 @@ func resourceNetworkZone() *schema.Resource {
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Default:      "ACTIVE",
 				Description:  "Network Status - can either be `ACTIVE` or `INACTIVE` only",
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 			},
@@ -238,17 +250,17 @@ func buildNetworkZone(d *schema.ResourceData) (v5okta.ListNetworkZones200Respons
 }
 
 func buildAddressObjList(values *schema.Set) []v5okta.NetworkZoneAddress {
-	var addressType string
 	var addressObjList []v5okta.NetworkZoneAddress
 	for _, value := range values.List() {
-		if strings.Contains(value.(string), "/") {
-			addressType = "CIDR"
-		} else {
-			addressType = "RANGE"
-		}
+		addr := value.(string)
 		obj := v5okta.NetworkZoneAddress{}
-		obj.SetType(addressType)
-		obj.SetValue(value.(string))
+		// Let API handle the type - if it contains "/" it's CIDR, otherwise RANGE
+		if strings.Contains(addr, "/") {
+			obj.SetType("CIDR")
+		} else {
+			obj.SetType("RANGE")
+		}
+		obj.SetValue(addr)
 		addressObjList = append(addressObjList, obj)
 	}
 	return addressObjList
@@ -277,7 +289,15 @@ func flattenAddresses(gateways []v5okta.NetworkZoneAddress) interface{} {
 	}
 	arr := make([]interface{}, len(gateways))
 	for i := range gateways {
-		arr[i] = gateways[i].GetValue()
+		value := gateways[i].GetValue()
+		// If it's a range with same start/end IP, convert to single IP
+		if strings.Contains(value, "-") {
+			parts := strings.Split(value, "-")
+			if len(parts) == 2 && parts[0] == parts[1] {
+				value = parts[0]
+			}
+		}
+		arr[i] = value
 	}
 	return schema.NewSet(schema.HashString, arr)
 }
@@ -395,4 +415,35 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 		})
 	}
 	return err
+}
+
+func validateIPaddress(v interface{}, k string) (warnings []string, errors []error) {
+	addr := v.(string)
+	if strings.Contains(addr, "/") {
+		if _, _, err := net.ParseCIDR(addr); err != nil {
+			errors = append(errors, fmt.Errorf("invalid CIDR format: %v", addr))
+		}
+	} else if strings.Contains(addr, "-") {
+		parts := strings.Split(addr, "-")
+		if len(parts) != 2 || net.ParseIP(parts[0]) == nil || net.ParseIP(parts[1]) == nil {
+			errors = append(errors, fmt.Errorf("invalid IP range format: %v", addr))
+		}
+	} else if net.ParseIP(addr) == nil {
+		errors = append(errors, fmt.Errorf("invalid IP address format: %v", addr))
+	}
+	return
+}
+
+func suppressIPDiff(k, old, new string, d *schema.ResourceData) bool {
+	if old == new {
+		return true
+	}
+	// Handle case where API returns range format for single IP
+	if strings.Contains(old, "-") {
+		parts := strings.Split(old, "-")
+		if len(parts) == 2 && parts[0] == parts[1] && parts[0] == new {
+			return true
+		}
+	}
+	return false
 }
