@@ -1,0 +1,1088 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1277
+        host: realm-assignment-support.dne-okta.com
+        body: |
+            {"x5c":["MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5p\nYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMM\nB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCB\njzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9r\ndGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29t\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTf\nn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4\nwWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8s\nDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/\nDwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/I\nYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93s\nDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo\n1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/credentials/keys
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","expiresAt":"2025-12-18T22:23:32.000Z","alg":"RSA","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","use":"sig","x5c":["MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5p\nYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMM\nB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCB\njzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9r\ndGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29t\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTf\nn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4\nwWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8s\nDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/\nDwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/I\nYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93s\nDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo\n1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9"],"x5t#S256":"wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE","e":"AQAB","n":"tcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K_iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp-UKALJHV-k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G_IUnPe4MvjXqB6CpKkog1-ThWsItPRJPAM-RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30-y0X_oY_yV4YEJ00LL6eJWU4wi7ViY3HP6_VCdRjHoRdr5L_Dw"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 815.696458ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 64
+        host: realm-assignment-support.dne-okta.com
+        body: |
+            {"profile":{"name":"AccTest Test Realm","realmType":"DEFAULT"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realms
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"guotyzl8x0FsTicXD697","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","profile":{"name":"AccTest Test Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 996.598042ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/credentials/keys/47d4234d-8f43-4db5-b96b-b7a8b154fed6
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","expiresAt":"2025-12-18T22:23:32.000Z","alg":"RSA","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","use":"sig","x5c":["MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5p\nYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMM\nB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCB\njzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9r\ndGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29t\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTf\nn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4\nwWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8s\nDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/\nDwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/I\nYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93s\nDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo\n1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9"],"x5t#S256":"wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE","e":"AQAB","n":"tcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K_iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp-UKALJHV-k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G_IUnPe4MvjXqB6CpKkog1-ThWsItPRJPAM-RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30-y0X_oY_yV4YEJ00LL6eJWU4wi7ViY3HP6_VCdRjHoRdr5L_Dw"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 703.774625ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 943
+        host: realm-assignment-support.dne-okta.com
+        body: |
+            {"issuerMode":"ORG_URL","name":"testAcc_1887585029","policy":{"accountLink":{"action":"AUTO"},"maxClockSkew":0,"provisioning":{"action":"AUTO","conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}},"groups":{"action":"NONE"},"profileMaster":true},"subject":{"matchType":"USERNAME","userNameTemplate":{"template":"idpuser.email"}}},"protocol":{"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"credentials":{"trust":{"issuer":"https://idp.example.com","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6"}},"endpoints":{"acs":{"binding":"HTTP-POST","type":"INSTANCE"},"sso":{"binding":"HTTP-POST","destination":"https://idp.example.com","url":"https://idp.example.com"}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"type":"SAML2"},"status":"ACTIVE","type":"SAML2"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatyzkb26lqRdpSh697","name":"testAcc_1887585029","status":"ACTIVE","created":"2025-08-07T11:09:15.000Z","lastUpdated":"2025-08-07T11:09:15.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/sphtkhakdqrzymotezse","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"c0zEpT-05GxB3m9TXK28cwdeNE9smtjnfJKFiLqW1aE"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":true,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"trustClaims":false,"transformedUsernameMatchingEnabled":false},"type":"SAML2","_links":{"metadata":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://realm-assignment-support.dne-okta.com/sso/saml2/0oatyzkb26lqRdpSh697","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.649526375s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatyzkb26lqRdpSh697","name":"testAcc_1887585029","status":"ACTIVE","created":"2025-08-07T11:09:15.000Z","lastUpdated":"2025-08-07T11:09:15.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/sphtkhakdqrzymotezse","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"c0zEpT-05GxB3m9TXK28cwdeNE9smtjnfJKFiLqW1aE"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":true,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"trustClaims":false,"transformedUsernameMatchingEnabled":false},"type":"SAML2","_links":{"metadata":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://realm-assignment-support.dne-okta.com/sso/saml2/0oatyzkb26lqRdpSh697","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 801.024667ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        form:
+            limit:
+                - "200"
+            sourceId:
+                - 0oatyzkb26lqRdpSh697
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200&sourceId=0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}},{"id":"prmtyzkb2tYV5jVpz697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrhtaqpcfZq5YTT697","name":"test","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrhtaqpcfZq5YTT697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrhtaqpcfZq5YTT697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2tYV5jVpz697"}}},{"id":"prmtyzkb34vOmpwhs697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrmrfp42aizIlme697","name":"asdf","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrmrfp42aizIlme697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrmrfp42aizIlme697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb34vOmpwhs697"}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:17 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 726.743375ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"properties":{"firstName":{"expression":"source.firstName","pushStatus":"PUSH"},"lastName":{"expression":"source.lastName","pushStatus":"PUSH"},"email":{"expression":"source.email","pushStatus":"PUSH"},"mobilePhone":{"expression":"source.mobilePhone","pushStatus":"PUSH"},"login":{"expression":"source.userName","pushStatus":"PUSH"}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 811.786708ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 252
+        host: realm-assignment-support.dne-okta.com
+        body: |
+            {"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"name":"AccTest Example Realm Assignment","priority":55}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rultyznk3qky6Mwyb697","status":"INACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:18.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 930.47525ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 986.336209ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:19.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false},{"id":"rulnpgdahzOowz09N697","status":"ACTIVE","name":"Assign @alto.example.com usernames to Alto realm","created":"2025-01-17T13:12:16.000Z","lastUpdated":"2025-04-30T11:59:08.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@alto.example.com\")"},"profileSourceId":"00onpeshmxP6rI9dz697"},"actions":{"assignUserToRealm":{"realmId":"guonpg87mogHYWhOR697"}},"priority":495,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgdahzOowz09N697","method":"GET"}},"isDefault":false},{"id":"rulnpgyrc2rMxVka4697","status":"INACTIVE","name":"Dummy Partner - all users from 3rd party SAML IDP","created":"2025-01-17T13:24:07.000Z","lastUpdated":"2025-05-16T10:38:53.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oanpgues3lO0dMIJ697"},"actions":{"assignUserToRealm":{"realmId":"guonpgx75gtRCyAmr697"}},"priority":496,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgyrc2rMxVka4697","method":"GET"}},"isDefault":false},{"id":"rulpfsfr2yHboptHB697","status":"INACTIVE","name":"Kitten2","created":"2025-03-06T16:27:27.000Z","lastUpdated":"2025-07-25T13:29:08.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oaojqpgowwwQOK51697"},"actions":{"assignUserToRealm":{"realmId":"guoocmktc3jso2H6S697"}},"priority":497,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulpfsfr2yHboptHB697","method":"GET"}},"isDefault":false},{"id":"rulnpfb6rvwTssavS697","status":"ACTIVE","name":"Catch-all realm assignment","created":"2025-01-17T12:37:00.000Z","lastUpdated":"2025-01-17T12:37:00.000Z","actions":{"assignUserToRealm":{"realmId":"guonpfb6rn4oleVfB697"}},"priority":499,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpfb6rvwTssavS697","method":"GET"}},"isDefault":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:20 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 840.652083ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:19.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false},{"id":"rulnpgdahzOowz09N697","status":"ACTIVE","name":"Assign @alto.example.com usernames to Alto realm","created":"2025-01-17T13:12:16.000Z","lastUpdated":"2025-04-30T11:59:08.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@alto.example.com\")"},"profileSourceId":"00onpeshmxP6rI9dz697"},"actions":{"assignUserToRealm":{"realmId":"guonpg87mogHYWhOR697"}},"priority":495,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgdahzOowz09N697","method":"GET"}},"isDefault":false},{"id":"rulnpgyrc2rMxVka4697","status":"INACTIVE","name":"Dummy Partner - all users from 3rd party SAML IDP","created":"2025-01-17T13:24:07.000Z","lastUpdated":"2025-05-16T10:38:53.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oanpgues3lO0dMIJ697"},"actions":{"assignUserToRealm":{"realmId":"guonpgx75gtRCyAmr697"}},"priority":496,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgyrc2rMxVka4697","method":"GET"}},"isDefault":false},{"id":"rulpfsfr2yHboptHB697","status":"INACTIVE","name":"Kitten2","created":"2025-03-06T16:27:27.000Z","lastUpdated":"2025-07-25T13:29:08.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oaojqpgowwwQOK51697"},"actions":{"assignUserToRealm":{"realmId":"guoocmktc3jso2H6S697"}},"priority":497,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulpfsfr2yHboptHB697","method":"GET"}},"isDefault":false},{"id":"rulnpfb6rvwTssavS697","status":"ACTIVE","name":"Catch-all realm assignment","created":"2025-01-17T12:37:00.000Z","lastUpdated":"2025-01-17T12:37:00.000Z","actions":{"assignUserToRealm":{"realmId":"guonpfb6rn4oleVfB697"}},"priority":499,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpfb6rvwTssavS697","method":"GET"}},"isDefault":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:21 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 778.547916ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/credentials/keys/47d4234d-8f43-4db5-b96b-b7a8b154fed6
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","expiresAt":"2025-12-18T22:23:32.000Z","alg":"RSA","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","use":"sig","x5c":["MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5p\nYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMM\nB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCB\njzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9r\ndGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29t\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTf\nn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4\nwWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8s\nDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/\nDwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/I\nYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93s\nDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo\n1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9"],"x5t#S256":"wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE","e":"AQAB","n":"tcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K_iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp-UKALJHV-k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G_IUnPe4MvjXqB6CpKkog1-ThWsItPRJPAM-RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30-y0X_oY_yV4YEJ00LL6eJWU4wi7ViY3HP6_VCdRjHoRdr5L_Dw"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 733.528584ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"guotyzl8x0FsTicXD697","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","profile":{"name":"AccTest Test Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 880.620084ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatyzkb26lqRdpSh697","name":"testAcc_1887585029","status":"ACTIVE","created":"2025-08-07T11:09:15.000Z","lastUpdated":"2025-08-07T11:09:15.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/sphtkhakdqrzymotezse","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"c0zEpT-05GxB3m9TXK28cwdeNE9smtjnfJKFiLqW1aE"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":true,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"trustClaims":false,"transformedUsernameMatchingEnabled":false},"type":"SAML2","_links":{"metadata":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://realm-assignment-support.dne-okta.com/sso/saml2/0oatyzkb26lqRdpSh697","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 707.94575ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        form:
+            limit:
+                - "200"
+            sourceId:
+                - 0oatyzkb26lqRdpSh697
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200&sourceId=0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}},{"id":"prmtyzkb2tYV5jVpz697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrhtaqpcfZq5YTT697","name":"test","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrhtaqpcfZq5YTT697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrhtaqpcfZq5YTT697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2tYV5jVpz697"}}},{"id":"prmtyzkb34vOmpwhs697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrmrfp42aizIlme697","name":"asdf","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrmrfp42aizIlme697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrmrfp42aizIlme697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb34vOmpwhs697"}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:23 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 720.558583ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"properties":{"firstName":{"expression":"source.firstName","pushStatus":"PUSH"},"lastName":{"expression":"source.lastName","pushStatus":"PUSH"},"email":{"expression":"source.email","pushStatus":"PUSH"},"mobilePhone":{"expression":"source.mobilePhone","pushStatus":"PUSH"},"login":{"expression":"source.userName","pushStatus":"PUSH"}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 735.5395ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:18.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 711.065709ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:19.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false},{"id":"rulnpgdahzOowz09N697","status":"ACTIVE","name":"Assign @alto.example.com usernames to Alto realm","created":"2025-01-17T13:12:16.000Z","lastUpdated":"2025-04-30T11:59:08.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@alto.example.com\")"},"profileSourceId":"00onpeshmxP6rI9dz697"},"actions":{"assignUserToRealm":{"realmId":"guonpg87mogHYWhOR697"}},"priority":495,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgdahzOowz09N697","method":"GET"}},"isDefault":false},{"id":"rulnpgyrc2rMxVka4697","status":"INACTIVE","name":"Dummy Partner - all users from 3rd party SAML IDP","created":"2025-01-17T13:24:07.000Z","lastUpdated":"2025-05-16T10:38:53.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oanpgues3lO0dMIJ697"},"actions":{"assignUserToRealm":{"realmId":"guonpgx75gtRCyAmr697"}},"priority":496,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgyrc2rMxVka4697","method":"GET"}},"isDefault":false},{"id":"rulpfsfr2yHboptHB697","status":"INACTIVE","name":"Kitten2","created":"2025-03-06T16:27:27.000Z","lastUpdated":"2025-07-25T13:29:08.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oaojqpgowwwQOK51697"},"actions":{"assignUserToRealm":{"realmId":"guoocmktc3jso2H6S697"}},"priority":497,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulpfsfr2yHboptHB697","method":"GET"}},"isDefault":false},{"id":"rulnpfb6rvwTssavS697","status":"ACTIVE","name":"Catch-all realm assignment","created":"2025-01-17T12:37:00.000Z","lastUpdated":"2025-01-17T12:37:00.000Z","actions":{"assignUserToRealm":{"realmId":"guonpfb6rn4oleVfB697"}},"priority":499,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpfb6rvwTssavS697","method":"GET"}},"isDefault":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:26 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 739.527542ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:19.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false},{"id":"rulnpgdahzOowz09N697","status":"ACTIVE","name":"Assign @alto.example.com usernames to Alto realm","created":"2025-01-17T13:12:16.000Z","lastUpdated":"2025-04-30T11:59:08.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@alto.example.com\")"},"profileSourceId":"00onpeshmxP6rI9dz697"},"actions":{"assignUserToRealm":{"realmId":"guonpg87mogHYWhOR697"}},"priority":495,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgdahzOowz09N697","method":"GET"}},"isDefault":false},{"id":"rulnpgyrc2rMxVka4697","status":"INACTIVE","name":"Dummy Partner - all users from 3rd party SAML IDP","created":"2025-01-17T13:24:07.000Z","lastUpdated":"2025-05-16T10:38:53.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oanpgues3lO0dMIJ697"},"actions":{"assignUserToRealm":{"realmId":"guonpgx75gtRCyAmr697"}},"priority":496,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgyrc2rMxVka4697","method":"GET"}},"isDefault":false},{"id":"rulpfsfr2yHboptHB697","status":"INACTIVE","name":"Kitten2","created":"2025-03-06T16:27:27.000Z","lastUpdated":"2025-07-25T13:29:08.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oaojqpgowwwQOK51697"},"actions":{"assignUserToRealm":{"realmId":"guoocmktc3jso2H6S697"}},"priority":497,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulpfsfr2yHboptHB697","method":"GET"}},"isDefault":false},{"id":"rulnpfb6rvwTssavS697","status":"ACTIVE","name":"Catch-all realm assignment","created":"2025-01-17T12:37:00.000Z","lastUpdated":"2025-01-17T12:37:00.000Z","actions":{"assignUserToRealm":{"realmId":"guonpfb6rn4oleVfB697"}},"priority":499,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpfb6rvwTssavS697","method":"GET"}},"isDefault":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:26 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 693.772292ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatyzkb26lqRdpSh697","name":"testAcc_1887585029","status":"ACTIVE","created":"2025-08-07T11:09:15.000Z","lastUpdated":"2025-08-07T11:09:15.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/sphtkhakdqrzymotezse","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"c0zEpT-05GxB3m9TXK28cwdeNE9smtjnfJKFiLqW1aE"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":true,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"trustClaims":false,"transformedUsernameMatchingEnabled":false},"type":"SAML2","_links":{"metadata":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://realm-assignment-support.dne-okta.com/sso/saml2/0oatyzkb26lqRdpSh697","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/users","hints":{"allow":["GET"]}},"deactivate":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 719.489ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:19.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false},{"id":"rulnpgdahzOowz09N697","status":"ACTIVE","name":"Assign @alto.example.com usernames to Alto realm","created":"2025-01-17T13:12:16.000Z","lastUpdated":"2025-04-30T11:59:08.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@alto.example.com\")"},"profileSourceId":"00onpeshmxP6rI9dz697"},"actions":{"assignUserToRealm":{"realmId":"guonpg87mogHYWhOR697"}},"priority":495,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgdahzOowz09N697","method":"GET"}},"isDefault":false},{"id":"rulnpgyrc2rMxVka4697","status":"INACTIVE","name":"Dummy Partner - all users from 3rd party SAML IDP","created":"2025-01-17T13:24:07.000Z","lastUpdated":"2025-05-16T10:38:53.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oanpgues3lO0dMIJ697"},"actions":{"assignUserToRealm":{"realmId":"guonpgx75gtRCyAmr697"}},"priority":496,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpgyrc2rMxVka4697","method":"GET"}},"isDefault":false},{"id":"rulpfsfr2yHboptHB697","status":"INACTIVE","name":"Kitten2","created":"2025-03-06T16:27:27.000Z","lastUpdated":"2025-07-25T13:29:08.000Z","conditions":{"expression":{"value":""},"profileSourceId":"0oaojqpgowwwQOK51697"},"actions":{"assignUserToRealm":{"realmId":"guoocmktc3jso2H6S697"}},"priority":497,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulpfsfr2yHboptHB697","method":"GET"}},"isDefault":false},{"id":"rulnpfb6rvwTssavS697","status":"ACTIVE","name":"Catch-all realm assignment","created":"2025-01-17T12:37:00.000Z","lastUpdated":"2025-01-17T12:37:00.000Z","actions":{"assignUserToRealm":{"realmId":"guonpfb6rn4oleVfB697"}},"priority":499,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rulnpfb6rvwTssavS697","method":"GET"}},"isDefault":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:27 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments?limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 720.455ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rultyznk3qky6Mwyb697","status":"ACTIVE","name":"AccTest Example Realm Assignment","created":"2025-08-07T11:09:18.000Z","lastUpdated":"2025-08-07T11:09:18.000Z","conditions":{"expression":{"value":"user.profile.login.contains(\"@acctest.com\")"},"profileSourceId":"0oatyzkb26lqRdpSh697"},"actions":{"assignUserToRealm":{"realmId":"guotyzl8x0FsTicXD697"}},"priority":55,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697","method":"GET"}},"isDefault":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 728.421166ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/credentials/keys/47d4234d-8f43-4db5-b96b-b7a8b154fed6
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"kty":"RSA","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","expiresAt":"2025-12-18T22:23:32.000Z","alg":"RSA","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","use":"sig","x5c":["MIIDnjCCAoagAwIBAgIGAVG3MN+PMA0GCSqGSIb3DQEBBQUAMIGPMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5p\nYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxEDAOBgNVBAMM\nB2V4YW1wbGUxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMTUxMjE4MjIyMjMyWhcNMjUxMjE4MjIyMzMyWjCB\njzELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9r\ndGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMRAwDgYDVQQDDAdleGFtcGxlMRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29t\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K/iZfE8BMj2wpTf\nn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp+UKALJHV+k4\nwWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G/IUnPe4MvjXqB6CpKkog1+ThWsItPRJPAM+RweFHXq7KfChXsYE7Mmfuly8s\nDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30+y0X/oY/yV4YEJ00LL6eJWU4wi7ViY3HP6/VCdRjHoRdr5L/\nDwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCzzhOFkvyYLNFj2WDcq1YqD4sBy1iCia9QpRH3rjQvMKDwQDYWbi6EdOX0TQ/I\nYR7UWGj+2pXd6v0t33lYtoKocp/4lUvT3tfBnWZ5KnObi+J2uY2teUqoYkASN7F+GRPVOuMVoVgm05ss8tuMb2dLc9vsx93s\nDt+XlMTv/2qi5VPwaDtqduKkzwW9lUfn4xIMkTiVvCpe0X2HneD2Bpuao3/U8Rk0uiPfq6TooWaoW3kjsmErhEAs9bA7xuqo\n1KKY9CdHcFhkSsMhoeaZylZHtzbnoipUlQKSLMdJQiiYZQ0bYL83/Ta9fulr1EERICMFt3GUmtYaZZKHpWSfdJp9"],"x5t#S256":"wzPVobIrveR1x-PCbjsFGNV-6zn7Rm9KuOWOG4Rk6jE","e":"AQAB","n":"tcnyvuVCrsFEKCwHDenS3Ocjed8eWDv3zLtD2K_iZfE8BMj2wpTfn6Ry8zCYey3mWlKdxIybnV9amrujGRnE0ab6Q16v9D6RlFQLOG6dwqoRKuZy33Uyg8PGdEudZjGbWuKCqqXEp-UKALJHV-k4wWeVH8g5d1n3KyR2TVajVJpCrPhLFmq1Il4G_IUnPe4MvjXqB6CpKkog1-ThWsItPRJPAM-RweFHXq7KfChXsYE7Mmfuly8sDQlvBmQyxZnFHVuiPfCvGHJjpvHy11YlHdOjfgqHRvZbmo30-y0X_oY_yV4YEJ00LL6eJWU4wi7ViY3HP6_VCdRjHoRdr5L_Dw"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 728.735792ms
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"guotyzl8x0FsTicXD697","created":"2025-08-07T11:09:13.000Z","lastUpdated":"2025-08-07T11:09:13.000Z","profile":{"name":"AccTest Test Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.378969625s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        form:
+            limit:
+                - "200"
+            sourceId:
+                - 0oatyzkb26lqRdpSh697
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200&sourceId=0oatyzkb26lqRdpSh697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}},{"id":"prmtyzkb2tYV5jVpz697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrhtaqpcfZq5YTT697","name":"test","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrhtaqpcfZq5YTT697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrhtaqpcfZq5YTT697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2tYV5jVpz697"}}},{"id":"prmtyzkb34vOmpwhs697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otyrmrfp42aizIlme697","name":"asdf","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otyrmrfp42aizIlme697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscrmrfp42aizIlme697"}}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb34vOmpwhs697"}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:28 GMT
+            Link:
+                - <https://realm-assignment-support.dne-okta.com/api/v1/mappings?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 720.789916ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prmtyzkb2hAHy4Nr0697","source":{"id":"0oatyzkb26lqRdpSh697","name":"saml_idp","type":"appuser","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/apps/0oatyzkb26lqRdpSh697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/apps/0oatyzkb26lqRdpSh697/default"}}},"target":{"id":"otynpeshnul1gz4lw697","name":"user","type":"user","_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/types/user/otynpeshnul1gz4lw697"},"schema":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/meta/schemas/user/oscnpeshnul1gz4lw697"}}},"properties":{"firstName":{"expression":"source.firstName","pushStatus":"PUSH"},"lastName":{"expression":"source.lastName","pushStatus":"PUSH"},"email":{"expression":"source.email","pushStatus":"PUSH"},"mobilePhone":{"expression":"source.mobilePhone","pushStatus":"PUSH"},"login":{"expression":"source.userName","pushStatus":"PUSH"}},"_links":{"self":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/mappings/prmtyzkb2hAHy4Nr0697"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 814.885416ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 860.41975ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realm-assignments/rultyznk3qky6Mwyb697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 777.746708ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/realms/guotyzl8x0FsTicXD697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 730.016666ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oatyzkb26lqRdpSh697","name":"testAcc_1887585029","status":"INACTIVE","created":"2025-08-07T11:09:15.000Z","lastUpdated":"2025-08-07T11:09:31.000Z","protocol":{"type":"SAML2","endpoints":{"sso":{"url":"https://idp.example.com","binding":"HTTP-POST","destination":"https://idp.example.com"},"acs":{"binding":"HTTP-POST","type":"INSTANCE"}},"algorithms":{"request":{"signature":{"algorithm":"SHA-256","scope":"REQUEST"}},"response":{"signature":{"algorithm":"SHA-256","scope":"ANY"}}},"settings":{"nameFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified","honorPersistentNameId":false},"credentials":{"trust":{"issuer":"https://idp.example.com","audience":"https://www.okta.com/saml2/service-provider/sphtkhakdqrzymotezse","kid":"47d4234d-8f43-4db5-b96b-b7a8b154fed6","revocation":null,"revocationCacheLifetime":0},"signing":{"kid":"c0zEpT-05GxB3m9TXK28cwdeNE9smtjnfJKFiLqW1aE"}}},"policy":{"provisioning":{"action":"AUTO","profileMaster":true,"groups":{"action":"NONE"},"conditions":{"deprovisioned":{"action":"NONE"},"suspended":{"action":"NONE"}}},"accountLink":{"filter":null,"action":"AUTO"},"subject":{"userNameTemplate":{"template":"idpuser.email"},"filter":null,"matchType":"USERNAME","matchAttribute":null},"maxClockSkew":0,"trustClaims":false,"transformedUsernameMatchingEnabled":false},"type":"SAML2","_links":{"metadata":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/metadata.xml","type":"application/xml","hints":{"allow":["GET"]}},"acs":{"href":"https://realm-assignment-support.dne-okta.com/sso/saml2/0oatyzkb26lqRdpSh697","type":"application/xml","hints":{"allow":["POST"]}},"users":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/users","hints":{"allow":["GET"]}},"activate":{"href":"https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697/lifecycle/activate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 07 Aug 2025 11:09:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 820.896042ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/0oatyzkb26lqRdpSh697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.005435542s
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: realm-assignment-support.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://realm-assignment-support.dne-okta.com/api/v1/idps/credentials/keys/47d4234d-8f43-4db5-b96b-b7a8b154fed6
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 07 Aug 2025 11:09:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 773.609ms

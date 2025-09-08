@@ -1,6 +1,7 @@
 # Changelog
 
-## 6.0.0 (Aug 18, 2025)
+
+## 6.0.0 (September 9, 2025)
 
 ### ANNOUNCEMENT
 This is a major release introducing expanded support for Okta Governance resources, including Campaigns and Entitlements.  
@@ -9,6 +10,35 @@ Version 5.x of the provider will be deprecated soon.
 ### FEATURE
 * New resource: `okta_campaign` Adds support for managing Campaigns in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
 * New resource: `okta_entitlement` Adds support for managing Entitlements in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+
+## 5.4.0 (September 3, 2025)
+
+### BUG FIXES
+
+* Fix documentation error for `risk_level` for resource `okta_policy_rule_signon` [#2436](https://github.com/okta/terraform-provider-okta/pull/2436) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix documentation for `resource_okta_email_smtp_server` [#2456](https://github.com/okta/terraform-provider-okta/pull/2456) by [aditya-okta](https://github.com/aditya-okta).
+* Added handling for missing reauthenticateIn field for resource `okta_app_signon_policy_rule` [#2443](https://github.com/okta/terraform-provider-okta/pull/2443) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+### IMPROVEMENTS
+
+* Replace usage of the sdk API with okta-sdk-golang API for `resource_okta_behavior` and `data_source_behavior` [#2429](https://github.com/okta/terraform-provider-okta/pull/2429) by [dhiwakar-okta](https://github.com/dhiwakar-okta). 
+* Add documentation for `resource_okta_realm` , `resource_okta_realm_assignment`, `data_source_okta_realm_assignment`, and `data_source_okta_realm_assignment` [#2440](https://github.com/okta/terraform-provider-okta/pull/2440) by [tim-koehler](https://github.com/tim-koehler)
+* Add deprecation warning msg to `resource_okta_rate_limiting` [#2455](https://github.com/okta/terraform-provider-okta/pull/2455)  by [pranav-okta](https://github.com/pranav-okta).
+* Make HTTP 423 retryable for resource `okta_group_rule` [#2258](https://github.com/okta/terraform-provider-okta/pull/2258) by [exitcode0](https://github.com/exitcode0).
+* Replaced delete binding with removing binding for resource `okta_admin_role_custom_assignments` [#2458](https://github.com/okta/terraform-provider-okta/pull/2458) by [aditya-okta](https://github.com/aditya-okta).
+
+## 5.3.0 (August 12, 2025)
+
+### BUG FIXES
+
+* 400 Bad Request - The DPoP proof JWT has already been used [#2421](https://github.com/okta/terraform-provider-okta/pull/2421) by [pranav-okta](https://github.com/pranav-okta)
+* Add missing fields to state to avoid false diffs for `okta_inline_hook` [#2420](https://github.com/okta/terraform-provider-okta/pull/2420) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### IMPROVEMENTS
+
+* Realm assignment support [#2293](https://github.com/okta/terraform-provider-okta/pull/2293) by [tim-koehler](https://github.com/tim-koehler)
+* Add support for `enrollmentSecurityLevel` and `userVerificationMethods` to `okta_authenticator` [#2409](https://github.com/okta/terraform-provider-okta/pull/2409) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 
 ## 5.2.0 (July 16, 2025)
 

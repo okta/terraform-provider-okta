@@ -40,6 +40,7 @@ This resource allows you to configure the client-based rate limit and rate limit
 				Default:     true,
 			},
 		},
+		DeprecationMessage: "This resource is deprecated and will be removed in a future release. A new resource to manage rate limiting settings will be implemented in the future.",
 	}
 }
 

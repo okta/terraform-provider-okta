@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   platform-helpers: okta/platform-helpers@1
+  general-platform-helpers: okta/general-platform-helpers@1.9
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
 
@@ -49,6 +50,16 @@ jobs:
               --commit $CIRCLE_SHA1 \
               --build-env "circleci" \
               --suppress_output
+  snyk-scan:
+    docker:
+      - image: cimg/go:1.23.0
+    steps:
+      - checkout
+      - general-platform-helpers/step-load-dependencies
+      - general-platform-helpers/step-run-snyk-monitor:
+          scan-all-projects: false
+          skip-unresolved: false
+          run-on-non-main: true
 
 workflows:
   # See OKTA-634442
@@ -56,6 +67,10 @@ workflows:
     jobs:
       - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
+          context:
+            - static-analysis
+      - snyk-scan:
+          name: execute-snyk
           context:
             - static-analysis
   "Malware Scanner":

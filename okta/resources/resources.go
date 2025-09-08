@@ -98,6 +98,8 @@ const (
 	OktaIDaaSPolicySignOn                  = "okta_policy_signon"
 	OktaIDaaSProfileMapping                = "okta_profile_mapping"
 	OktaIDaaSRateLimiting                  = "okta_rate_limiting"
+	OktaIDaaSRealm                         = "okta_realm"
+	OktaIDaaSRealmAssignment               = "okta_realm_assignment"
 	OktaIDaaSResourceSet                   = "okta_resource_set"
 	OktaIDaaSRoleSubscription              = "okta_role_subscription"
 	OktaIDaaSSecurityNotificationEmails    = "okta_security_notification_emails"

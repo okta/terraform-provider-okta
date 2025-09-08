@@ -760,6 +760,43 @@ func (re *RequestExecutor) doWithRetries(ctx context.Context, req *http.Request)
 		if bodyReader != nil {
 			req.Body = bodyReader()
 		}
+
+		// Re-authorize the request to create a new DPoP JWT and access token
+		if re.config.Okta.Client.AuthorizationMode == "PrivateKey" || re.config.Okta.Client.AuthorizationMode == "JWT" {
+			// Clear the token cache to force fresh authorization
+			// This will get a new access token and potentially a new nonce
+			re.tokenCache.Delete(AccessTokenCacheKey)
+			re.tokenCache.Delete(DpopAccessTokenNonce)
+			re.tokenCache.Delete(DpopAccessTokenPrivateKey)
+
+			urlPath := req.URL.RequestURI()
+
+			auth, err := re.NewRequest(req.Method, urlPath, nil)
+			if err != nil {
+				return err
+			}
+
+			req.Header = req.Header.Clone() // Start with original headers
+
+			// Update only the authentication headers from the fresh auth request
+			req.Header.Set("Authorization", auth.Header.Get("Authorization"))
+			if dpopHeader := auth.Header.Get("Dpop"); dpopHeader != "" {
+				req.Header.Set("Dpop", dpopHeader)
+			}
+			if userAgentExt := auth.Header.Get("x-okta-user-agent-extended"); userAgentExt != "" {
+				req.Header.Set("x-okta-user-agent-extended", userAgentExt)
+			}
+
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
+		} else {
+			// Reuse the existing request headers and body
+			req.Header = req.Header.Clone()
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
+		}
 		resp, err = re.httpClient.Do(req.WithContext(ctx))
 		if errors.Is(err, io.EOF) {
 			// retry on EOF errors, which might be caused by network connectivity issues
