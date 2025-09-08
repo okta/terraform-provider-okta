@@ -1,7 +1,7 @@
 package api
 
 import (
-	"example.com/aditya-okta/okta-ig-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 )
 
 type governanceAPIClient struct {

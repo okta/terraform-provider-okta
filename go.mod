@@ -3,7 +3,6 @@ module github.com/okta/terraform-provider-okta
 go 1.23.7
 
 require (
-	example.com/aditya-okta/okta-ig-sdk-golang v0.0.0-UNPUBLISHED
 	github.com/BurntSushi/toml v1.5.0
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/cenkalti/backoff/v4 v4.3.0
@@ -86,6 +85,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
+	github.com/okta/okta-governance-sdk-golang v0.0.0-20250908153252-d49884d24b67 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/posener/complete v1.2.3 // indirect
