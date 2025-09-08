@@ -114,16 +114,16 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 }
 
 func oktaV5SDKClient(c *OktaAPIConfig) (client *v5okta.APIClient, err error) {
-	err, config, apiClient, configErr := getV5ClientConfig(c, err)
-	if configErr != nil {
-		return apiClient, configErr
+	config, apiClient, err := getV5ClientConfig(c)
+	if err != nil {
+		return apiClient, err
 	}
 	client = v5okta.NewAPIClient(config)
 	return client, nil
 }
 
 func oktaV3SDKClient(c *OktaAPIConfig) (client *okta.APIClient, err error) {
-	err, config, apiClient, configErr := GetV3ClientConfig(c, err)
+	config, apiClient, configErr := GetV3ClientConfig(c)
 	if configErr != nil {
 		return apiClient, configErr
 	}
@@ -131,7 +131,7 @@ func oktaV3SDKClient(c *OktaAPIConfig) (client *okta.APIClient, err error) {
 	return client, nil
 }
 
-func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration, *okta.APIClient, error) {
+func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
@@ -169,7 +169,7 @@ func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration,
 		c.Logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.MaxAPICapacity)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.Logger)
 	}
@@ -181,9 +181,9 @@ func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration,
 	} else {
 		orgUrl = fmt.Sprintf("https://%v.%v", c.OrgName, c.Domain)
 	}
-	_, err = url.Parse(orgUrl)
+	_, err := url.Parse(orgUrl)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
 	setters := []okta.ConfigSetter{
@@ -199,7 +199,7 @@ func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration,
 	if c.HttpProxy != "" {
 		_url, err := url.Parse(c.HttpProxy)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		host := okta.WithProxyHost(_url.Hostname())
 		setters = append(setters, host)
@@ -210,7 +210,7 @@ func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration,
 		}
 		iPort, err := strconv.Atoi(sPort)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		port := okta.WithProxyPort(int32(iPort))
 		setters = append(setters, port)
@@ -242,9 +242,9 @@ func GetV3ClientConfig(c *OktaAPIConfig, err error) (error, *okta.Configuration,
 
 	config, err := okta.NewConfiguration(setters...)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-	return err, config, nil, nil
+	return config, nil, nil
 }
 
 func oktaV2SDKClient(httpClient *http.Client, c *OktaAPIConfig) (client *sdk.Client, err error) {

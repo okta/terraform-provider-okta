@@ -3,20 +3,10 @@ package governance
 import (
 	"fmt"
 
-	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	fwdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/okta/terraform-provider-okta/okta/config"
-	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 )
-
-// oktaMutexKV is a global MutexKV for use within this plugin
-var oktaMutexKV = mutexkv.NewMutexKV()
-
-func logger(meta interface{}) hclog.Logger {
-	return meta.(*config.Config).Logger
-}
 
 func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
@@ -64,17 +54,4 @@ func resourceConfiguration(req resource.ConfigureRequest, resp *resource.Configu
 	}
 
 	return p
-}
-
-func frameworkOIEOnlyFeatureError(kind, name string) fwdiag.Diagnostics {
-	url := fmt.Sprintf("https://registry.terraform.io/providers/okta/okta/latest/docs/%s/%s", kind, string(name[5:]))
-	if kind == "resources" {
-		kind = "resource"
-	}
-	if kind == "data-sources" {
-		kind = "datasource"
-	}
-	var diags fwdiag.Diagnostics
-	diags.AddError(fmt.Sprintf("%q is a %s for OIE Orgs only", name, kind), fmt.Sprintf(", see %s", url))
-	return diags
 }

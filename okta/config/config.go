@@ -232,7 +232,7 @@ func (c *Config) LoadAPIClient() (err error) {
 		Scopes:         c.Scopes,
 	}
 
-	idaasClient, err := api.NewOktaIDaaSAPIClient(iDaaSConfig)
+	idaasClient, _ := api.NewOktaIDaaSAPIClient(iDaaSConfig)
 	governanceClient, err := api.NewOktaGovernanceAPIClient(iDaaSConfig)
 	if err != nil {
 		return err

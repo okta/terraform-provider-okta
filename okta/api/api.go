@@ -21,7 +21,7 @@ import (
 	"time"
 )
 
-func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuration, *v5okta.APIClient, error) {
+func getV5ClientConfig(c *OktaAPIConfig) (*v5okta.Configuration, *v5okta.APIClient, error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
@@ -59,7 +59,7 @@ func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuratio
 		c.Logger.Info(fmt.Sprintf("running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.MaxAPICapacity)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.Logger)
 	}
@@ -71,9 +71,9 @@ func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuratio
 	} else {
 		orgUrl = fmt.Sprintf("https://%v.%v", c.OrgName, c.Domain)
 	}
-	_, err = url.Parse(orgUrl)
+	_, err := url.Parse(orgUrl)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
 	setters := []v5okta.ConfigSetter{
@@ -89,7 +89,7 @@ func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuratio
 	if c.HttpProxy != "" {
 		_url, err := url.Parse(c.HttpProxy)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		host := v5okta.WithProxyHost(_url.Hostname())
 		setters = append(setters, host)
@@ -100,7 +100,7 @@ func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuratio
 		}
 		iPort, err := strconv.Atoi(sPort)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, err
 		}
 		port := v5okta.WithProxyPort(int32(iPort))
 		setters = append(setters, port)
@@ -132,9 +132,9 @@ func getV5ClientConfig(c *OktaAPIConfig, err error) (error, *v5okta.Configuratio
 
 	config, err := v5okta.NewConfiguration(setters...)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
-	return err, config, nil, nil
+	return config, nil, nil
 }
 
 func errHandler(resp *http.Response, err error, numTries int) (*http.Response, error) {

@@ -108,6 +108,7 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 			// we disable check destroy when recording/playing vcr tests
 			c.CheckDestroy = nil
+			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
 
 			// FIXME: Once we get fully mux'd ACC tests recording with VCR
 			// revisit if we can call ParallelTest when playing.
@@ -248,6 +249,7 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 			rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
 			rt := rtIDaasHelper.Transport()
 			err := rt.(*recorder.Recorder).Stop()
+			fmt.Printf("error in stopping vcr recorder %s\n", err)
 			rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
 			rtGovernance := rtGovernanceHelper.Transport()
 			err = rtGovernance.(*recorder.Recorder).Stop()
