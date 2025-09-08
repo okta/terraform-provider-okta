@@ -27,17 +27,16 @@ type entitlementResource struct {
 }
 
 type entitlementResourceModel struct {
-	Id            types.String             `tfsdk:"id"`
-	DataType      types.String             `tfsdk:"data_type"`
-	ExternalValue types.String             `tfsdk:"external_value"`
-	MultiValue    types.Bool               `tfsdk:"multi_value"`
-	Name          types.String             `tfsdk:"name"`
-	Description   types.String             `tfsdk:"description"`
-	Value         types.String             `tfsdk:"value"`
-	Values        []entitlementValuesModel `tfsdk:"values"`
-	Parent        *entitlementParentModel  `tfsdk:"parent"`
-	//PatchOperations []entitlementUpdate      `tfsdk:"patch_operations"`
-	ParentResourceOrn types.String `tfsdk:"parent_resource_orn"`
+	Id                types.String             `tfsdk:"id"`
+	DataType          types.String             `tfsdk:"data_type"`
+	ExternalValue     types.String             `tfsdk:"external_value"`
+	MultiValue        types.Bool               `tfsdk:"multi_value"`
+	Name              types.String             `tfsdk:"name"`
+	Description       types.String             `tfsdk:"description"`
+	Value             types.String             `tfsdk:"value"`
+	Values            []entitlementValuesModel `tfsdk:"values"`
+	Parent            *entitlementParentModel  `tfsdk:"parent"`
+	ParentResourceOrn types.String             `tfsdk:"parent_resource_orn"`
 }
 
 type entitlementParentModel struct {

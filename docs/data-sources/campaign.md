@@ -12,6 +12,7 @@ Get the campaign belonging to an Okta organization.
 
 ```terraform
 data "okta_campaign" "test" {
+  id = "<campaign id>"
 }
 ```
 

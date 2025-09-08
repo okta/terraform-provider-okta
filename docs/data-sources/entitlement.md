@@ -12,6 +12,7 @@ Get the entitlement belonging to an Okta organization.
 
 ```terraform
 data "okta_entitlement" "test" {
+  id = "<entitlement id>"
 }
 ```
 

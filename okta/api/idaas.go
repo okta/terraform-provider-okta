@@ -116,18 +116,18 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 }
 
 func oktaV5SDKClient(c *OktaAPIConfig) (client *v5okta.APIClient, err error) {
-	err, config, apiClient, err2 := getV5ClientConfig(c, err)
-	if err2 != nil {
-		return apiClient, err2
+	err, config, apiClient, configErr := getV5ClientConfig(c, err)
+	if configErr != nil {
+		return apiClient, configErr
 	}
 	client = v5okta.NewAPIClient(config)
 	return client, nil
 }
 
 func oktaV3SDKClient(c *OktaAPIConfig) (client *okta.APIClient, err error) {
-	err, config, apiClient, err2 := GetV3ClientConfig(c, err)
-	if err2 != nil {
-		return apiClient, err2
+	err, config, apiClient, configErr := GetV3ClientConfig(c, err)
+	if configErr != nil {
+		return apiClient, configErr
 	}
 	client = okta.NewAPIClient(config)
 	return client, nil

@@ -274,7 +274,7 @@ func (m *vcrManager) TestAndCassetteNameKey() string {
 
 // IsVcrEnabled test is considered to be in VCR mode if ENV var OKTA_VCR_TF_ACC
 // is not empty. Valid values are "record" for recording VCR cassettes (test
-// runs), and "play" for playing all casset tes of a test.
+// runs), and "play" for playing all cassettes of a test.
 func (m *vcrManager) IsVcrEnabled() bool {
 	return m.IsPlaying() || m.IsRecording()
 }
@@ -701,7 +701,11 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 func NewVcrGovernanceClient(d *schema_sdk.ResourceData) *vcrGovernanceTestClient {
 	c := config.NewConfig(d)
 	c.Backoff = false
-	c.LoadAPIClient()
+	err := c.LoadAPIClient()
+	if err != nil {
+		fmt.Printf("Error loading API client: %v", err)
+		return nil
+	}
 
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
