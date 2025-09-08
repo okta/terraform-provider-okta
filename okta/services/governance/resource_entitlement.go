@@ -2,13 +2,13 @@ package governance
 
 import (
 	"context"
-	"github.com/okta/okta-governance-sdk-golang/governance"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -227,7 +227,6 @@ func (r *entitlementResource) Delete(ctx context.Context, req resource.DeleteReq
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
-
 		return
 	}
 

@@ -12,9 +12,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var (
-	_ datasource.DataSource = &campaignDataSource{}
-)
+var _ datasource.DataSource = &campaignDataSource{}
 
 func newCampaignDataSource() datasource.DataSource {
 	return &campaignDataSource{}

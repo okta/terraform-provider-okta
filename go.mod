@@ -23,6 +23,7 @@ require (
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lestrrat-go/jwx v1.2.31
+	github.com/okta/okta-governance-sdk-golang v0.0.0-20250908153252-d49884d24b67
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
 	github.com/okta/okta-sdk-golang/v5 v5.0.6
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -85,7 +86,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
-	github.com/okta/okta-governance-sdk-golang v0.0.0-20250908153252-d49884d24b67 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/posener/complete v1.2.3 // indirect

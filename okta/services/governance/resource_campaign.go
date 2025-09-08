@@ -1029,7 +1029,7 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 	// Convert target resources
 	targetResources := buildTargetResources(d)
 
-	var ExcludedResources = make([]governance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
+	ExcludedResources := make([]governance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
 	for _, ex := range d.ResourceSettings.ExcludedResources {
 		x := ex.ResourceId.ValueString()
 		var resourceType *governance.ResourceType
@@ -1112,10 +1112,10 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 
 		var reviewerLevel governance.ReviewerLevelSettingsMutable
 		reviewerGroupId := level.ReviewerGroupId.ValueStringPointer()
-		var reviewerId = level.ReviewerId.ValueString()
-		var reviewerScopeExpression = level.ReviewerScopeExpression.ValueStringPointer()
-		var fallBackReviewerId = level.FallBackReviewerId.ValueStringPointer()
-		var selfReviewDisabled = level.SelfReviewDisabled.ValueBoolPointer()
+		reviewerId := level.ReviewerId.ValueString()
+		reviewerScopeExpression := level.ReviewerScopeExpression.ValueStringPointer()
+		fallBackReviewerId := level.FallBackReviewerId.ValueStringPointer()
+		selfReviewDisabled := level.SelfReviewDisabled.ValueBoolPointer()
 
 		reviewerLevel.SetType(governance.ReviewerType(level.Type.ValueString()))
 		if fallBackReviewerId != nil && *fallBackReviewerId != "" {

@@ -32,5 +32,4 @@ func TestAccCampaignResource_basic(t *testing.T) {
 			},
 		},
 	})
-
 }
