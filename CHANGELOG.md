@@ -1,5 +1,16 @@
 # Changelog
 
+
+## 6.0.0 (September 9, 2025)
+
+### ANNOUNCEMENT
+This is a major release introducing expanded support for Okta Governance resources, including Campaigns and Entitlements.  
+Version 5.x of the provider will be deprecated soon.
+
+### FEATURE
+* New resource: `okta_campaign` Adds support for managing Campaigns in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+* New resource: `okta_entitlement` Adds support for managing Entitlements in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+
 ## 5.4.0 (September 3, 2025)
 
 ### BUG FIXES
@@ -27,6 +38,7 @@
 
 * Realm assignment support [#2293](https://github.com/okta/terraform-provider-okta/pull/2293) by [tim-koehler](https://github.com/tim-koehler)
 * Add support for `enrollmentSecurityLevel` and `userVerificationMethods` to `okta_authenticator` [#2409](https://github.com/okta/terraform-provider-okta/pull/2409) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 
 ## 5.2.0 (July 16, 2025)
 

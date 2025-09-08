@@ -1,0 +1,110 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 390
+        host: classic-00.dne-okta.com
+        body: |
+            {"dataType":"array","description":"Some license entitlement","externalValue":"Entitlement Bundle","multiValue":true,"name":"Entitlement Bundle","parent":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"values":[{"description":"description for value1","externalValue":"value_1","name":"value1"},{"description":"description for value2","externalValue":"value_2","name":"value2"}]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlements
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 763
+        body: '{"parentResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","parent":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"values":[{"id":"ent10fuc75rIw9imq1d7","name":"value1","externalValue":"value_1","description":"description for value1"},{"id":"ent10fuc76dUXHZcY1d7","name":"value2","externalValue":"value_2","description":"description for value2"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7","hints":{}}},"metadata":{"total":2},"id":"esp10fuc74ffLTNHZ1d7","name":"Entitlement Bundle","externalValue":"Entitlement Bundle","description":"Some license entitlement","multiValue":true,"required":false,"dataType":"array"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "763"
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 15 Aug 2025 19:23:42 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7>; rel="self"
+            Location:
+                - https://dcp-testing-oig-2025-06-26-admin.oktapreview.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.154181042s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"parentResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","parent":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"values":[{"id":"ent10fuc75rIw9imq1d7","name":"value1","externalValue":"value_1","description":"description for value1"},{"id":"ent10fuc76dUXHZcY1d7","name":"value2","externalValue":"value_2","description":"description for value2"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7","hints":{}}},"metadata":{"total":2},"id":"esp10fuc74ffLTNHZ1d7","name":"Entitlement Bundle","externalValue":"Entitlement Bundle","description":"Some license entitlement","multiValue":true,"required":false,"dataType":"array"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 15 Aug 2025 19:23:43 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.06533925s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlements/esp10fuc74ffLTNHZ1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 15 Aug 2025 19:23:44 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.19227975s

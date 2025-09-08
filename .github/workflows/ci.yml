@@ -32,4 +32,8 @@ jobs:
         run: make test
 
       - name: Run VCR acceptance tests
-        run: time make test-play-vcr-acc
+        run: |
+          echo "Running IDaaS tests..."
+          time make test-play-vcr-acc
+          echo "Running Governance tests..."
+          time make test-play-vcr-acc-governance
