@@ -667,7 +667,7 @@ type vcrIDaaSTestClient struct {
 }
 
 type vcrGovernanceTestClient struct {
-	oktaGovernanceSDKClient *governance.IGAPIClient
+	oktaGovernanceSDKClient *governance.OktaGovernanceAPIClient
 	transport               http.RoundTripper
 }
 
@@ -761,7 +761,7 @@ func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
 }
 
-func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.IGAPIClient {
+func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.OktaGovernanceAPIClient {
 	return c.oktaGovernanceSDKClient
 }
 
