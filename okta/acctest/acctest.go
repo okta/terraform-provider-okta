@@ -246,16 +246,22 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		// don't record failing test runs (unless explicitly allowed for error response testing)
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// If a test succeeds, write new seed/yaml to files
-			rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
-			rt := rtIDaasHelper.Transport()
-			err := rt.(*recorder.Recorder).Stop()
-			fmt.Printf("error in stopping vcr recorder %s\n", err)
-			rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
-			rtGovernance := rtGovernanceHelper.Transport()
-			err = rtGovernance.(*recorder.Recorder).Stop()
-			if err != nil {
-				t.Error(err)
+			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
+				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
+				rt := rtIDaasHelper.Transport()
+				err := rt.(*recorder.Recorder).Stop()
+				if err != nil {
+					t.Error(err)
+				}
+			} else {
+				rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
+				rtGovernance := rtGovernanceHelper.Transport()
+				err := rtGovernance.(*recorder.Recorder).Stop()
+				if err != nil {
+					t.Error(err)
+				}
 			}
+			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
 		}
 		// Clean up test config
 		providerConfigsLock.Lock()

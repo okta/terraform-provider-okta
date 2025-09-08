@@ -216,6 +216,7 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	var sources []func() datasource.DataSource
+	sources = append(sources, idaas.FWProviderDataSources()...)
 	sources = append(sources, governance.FWProviderDataSources()...)
 	return sources
 }
