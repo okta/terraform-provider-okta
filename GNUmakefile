@@ -80,6 +80,9 @@ testacc:
 test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(PKG_NAME)
 
+test-play-vcr-acc-governance:
+	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m ./okta/services/governance
+
 smoke-test-play-vcr-acc:
 	OKTA_VCR_TF_ACC=play TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m -run ^$(smoke_tests)$$ $(ACC_TESTS)
 

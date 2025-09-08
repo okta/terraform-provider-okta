@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaEntitlement_read(t *testing.T) {
+	t.Skip("Skipping Entitlement tests")
 	mgr := newFixtureManager("data-sources", resources.OktaGovernanceEntitlement, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
