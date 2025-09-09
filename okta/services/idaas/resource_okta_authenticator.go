@@ -435,6 +435,10 @@ func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.Resource
 }
 
 func noChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	if newJSON == "" {
+		return true
+	}
+
 	var oldObj sdk.AuthenticatorSettings
 	var newObj sdk.AuthenticatorSettings
 	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
