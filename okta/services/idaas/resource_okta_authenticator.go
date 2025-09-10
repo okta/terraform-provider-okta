@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"reflect"
-	"slices"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -64,7 +62,7 @@ deactivated if it's not in use by any other policy.`,
 				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key`",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        utils.NormalizeDataJSON,
-				DiffSuppressFunc: noChangeInObjectFromUnmarshaledJSON,
+				DiffSuppressFunc: utils.NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON,
 			},
 			"provider_json": {
 				Type:             schema.TypeString,
@@ -432,24 +430,4 @@ func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.Resource
 			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
 		}
 	}
-}
-
-func noChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
-	if newJSON == "" {
-		return true
-	}
-
-	var oldObj sdk.AuthenticatorSettings
-	var newObj sdk.AuthenticatorSettings
-	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
-		return false
-	}
-	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
-		return false
-	}
-
-	slices.Sort(oldObj.UserVerificationMethods)
-	slices.Sort(newObj.UserVerificationMethods)
-
-	return reflect.DeepEqual(oldObj, newObj)
 }
