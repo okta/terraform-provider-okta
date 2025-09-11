@@ -409,7 +409,7 @@ func deleteGroupAssignments(
 ) error {
 	for i := range assignments {
 		resp, err := delete(ctx, appID, assignments[i].Id)
-		if err := suppressErrorOn404(resp, err); err != nil {
+		if err := utils.SuppressErrorOn404(resp, err); err != nil {
 			return fmt.Errorf("could not delete assignment for group %s, to application %s: %w", assignments[i].Id, appID, err)
 		}
 	}
