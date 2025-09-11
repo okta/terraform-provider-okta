@@ -98,7 +98,7 @@ func buildRuleSchema(target map[string]*schema.Schema) map[string]*schema.Schema
 	return utils.BuildSchema(baseRuleSchema, target, userExcludedSchema)
 }
 
-func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicyRule, ruleType string) error {
+func createRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicyRule, _ string) error {
 	logger(m).Info("creating policy rule", "name", d.Get("name").(string))
 	err := ensureNotDefaultRule(d)
 	if err != nil {
