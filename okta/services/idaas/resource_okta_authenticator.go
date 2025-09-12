@@ -62,7 +62,7 @@ deactivated if it's not in use by any other policy.`,
 				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key`",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        utils.NormalizeDataJSON,
-				DiffSuppressFunc: utils.NoChangeInObjectFromUnmarshaledJSON,
+				DiffSuppressFunc: utils.NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON,
 			},
 			"provider_json": {
 				Type:             schema.TypeString,
