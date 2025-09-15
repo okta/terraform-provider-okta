@@ -154,6 +154,11 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: \"SUBDOMAIN\", \"DISABLED\".",
 			},
+			"authentication_policy": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ID of the app's authentication policy",
+			},
 		}),
 		Description: "Get a OIDC application from Okta.",
 	}
@@ -249,6 +254,7 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 	}
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))
+	setAuthenticationPolicy(ctx, meta, d, app.Links)
 	return nil
 }
 

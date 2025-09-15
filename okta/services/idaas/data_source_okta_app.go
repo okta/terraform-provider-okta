@@ -74,6 +74,11 @@ func dataSourceApp() *schema.Resource {
 				Description: "Users associated with the application",
 				Deprecated:  "The `users` field is now deprecated for the data source `okta_app`, please replace all uses of this with: `okta_app_user_assignments`",
 			},
+			"authentication_policy": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ID of the app's authentication policy",
+			},
 		}),
 		Description: "Get an application of any kind from Okta.",
 	}
@@ -125,5 +130,6 @@ func dataSourceAppRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	_ = d.Set("status", app.Status)
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))
+	setAuthenticationPolicy(ctx, meta, d, app.Links)
 	return nil
 }
