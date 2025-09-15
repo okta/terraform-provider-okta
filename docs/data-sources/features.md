@@ -4,7 +4,7 @@ description: |-
   Get a list of features from Okta.
 ---
 
-# Data Source: okta_brands
+# Data Source: okta_features
 
 Get a list of features from Okta.
 
