@@ -27,7 +27,7 @@ type Lifecycle struct {
 }
 
 type Create struct {
-	LifecycleCreate Lifecycle
+	LifecycleCreate Lifecycle `tfsdk:"lifecycle_create"`
 }
 
 type Passsword struct {
@@ -41,9 +41,9 @@ type Profile struct {
 }
 
 type Update struct {
-	lifecycleDelete *Lifecycle
-	password        *Passsword
-	profile         *Profile
+	LifecycleDelete *Lifecycle `tfsdk:"lifecycle_delete"`
+	Password        *Passsword `tfsdk:"password"`
+	Profile         *Profile   `tfsdk:"profile"`
 }
 
 type UserCreateAndMatch struct {
@@ -88,6 +88,7 @@ type Capabilities struct {
 
 type appFeaturesModel struct {
 	Id           types.String  `tfsdk:"id"`
+	AppId        types.String  `tfsdk:"app_id"`
 	Description  types.String  `tfsdk:"description"`
 	Name         types.String  `tfsdk:"name"`
 	Status       types.String  `tfsdk:"status"`
@@ -116,14 +117,17 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 			"id": schema.StringAttribute{
 				Computed: true,
 			},
-			"description": schema.StringAttribute{
+			"app_id": schema.StringAttribute{
 				Required: true,
+			},
+			"description": schema.StringAttribute{
+				Optional: true,
 			},
 			"name": schema.StringAttribute{
 				Required: true,
 			},
 			"status": schema.StringAttribute{
-				Required: true,
+				Optional: true,
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -135,7 +139,7 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 							"lifecycle_create": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"status": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 							},
@@ -146,27 +150,27 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 							"lifecycle_delete": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"status": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 							},
 							"password": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"change": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 									"seed": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 									"status": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 							},
 							"profile": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"status": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 							},
@@ -203,7 +207,7 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 							"username": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"username_format": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 									"username_expression": schema.StringAttribute{
 										Optional: true,
@@ -213,14 +217,14 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 							"schedule": schema.SingleNestedBlock{
 								Attributes: map[string]schema.Attribute{
 									"status": schema.StringAttribute{
-										Required: true,
+										Optional: true,
 									},
 								},
 								Blocks: map[string]schema.Block{
 									"full_import": schema.SingleNestedBlock{
 										Attributes: map[string]schema.Attribute{
 											"expression": schema.StringAttribute{
-												Required: true,
+												Optional: true,
 											},
 											"timezone": schema.StringAttribute{
 												Optional: true,
@@ -230,7 +234,7 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 									"incremental_import": schema.SingleNestedBlock{
 										Attributes: map[string]schema.Attribute{
 											"expression": schema.StringAttribute{
-												Required: true,
+												Optional: true,
 											},
 											"timezone": schema.StringAttribute{
 												Optional: true,
@@ -249,16 +253,13 @@ func (r *appFeatures) Schema(_ context.Context, _ resource.SchemaRequest, resp *
 
 func (r *appFeatures) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data appFeaturesModel
-
-	// Read Terraform plan Data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	// Create API call logic
-	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.Id.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
+	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.AppId.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
 	if err != nil {
 		return
 	}
@@ -280,21 +281,22 @@ func updateAppFeatureState(data *appFeaturesModel, updateAppFeatureResp *v5okta.
 	data.Capabilities.ImportSettings.Username.UsernameExpression = types.StringValue(updateAppFeatureResp.InboundProvisioningApplicationFeature.Capabilities.ImportSettings.Username.GetUserNameExpression())
 
 	data.Capabilities.Create.LifecycleCreate.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Create.LifecycleCreate.GetStatus())
-	data.Capabilities.Update.lifecycleDelete.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.LifecycleDeactivate.GetStatus())
+	data.Capabilities.Update.LifecycleDelete.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.LifecycleDeactivate.GetStatus())
 
-	data.Capabilities.Update.password.Change = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetChange())
-	data.Capabilities.Update.password.Seed = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetSeed())
-	data.Capabilities.Update.password.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetStatus())
+	data.Capabilities.Update.Password.Change = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetChange())
+	data.Capabilities.Update.Password.Seed = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetSeed())
+	data.Capabilities.Update.Password.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Password.GetStatus())
 
-	data.Capabilities.Update.profile.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Profile.GetStatus())
+	data.Capabilities.Update.Profile.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.Capabilities.Update.Profile.GetStatus())
 	data.Description = types.StringValue(updateAppFeatureResp.InboundProvisioningApplicationFeature.GetDescription())
 	data.Status = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.GetStatus())
 	data.Name = types.StringValue(updateAppFeatureResp.UserProvisioningApplicationFeature.GetName())
-	data.Id = types.StringValue(data.Id.String() + "/" + data.Name.ValueString())
+	data.Id = types.StringValue(data.AppId.String() + "/" + data.Name.ValueString())
 }
 
 func buildUpdateAppFeature(data appFeaturesModel) v5okta.UpdateFeatureForApplicationRequest {
 	var updateFeatureForApplicationRequest v5okta.UpdateFeatureForApplicationRequest
+	updateFeatureForApplicationRequest.CapabilitiesObject = &v5okta.CapabilitiesObject{}
 	if data.Capabilities != nil && data.Capabilities.Create != nil {
 		updateFeatureForApplicationRequest.CapabilitiesObject.Create = &v5okta.CapabilitiesCreateObject{
 			LifecycleCreate: &v5okta.LifecycleCreateSettingObject{
@@ -304,25 +306,25 @@ func buildUpdateAppFeature(data appFeaturesModel) v5okta.UpdateFeatureForApplica
 	}
 
 	if data.Capabilities != nil && data.Capabilities.Update != nil {
-		if data.Capabilities.Update.lifecycleDelete != nil {
+		if data.Capabilities.Update.LifecycleDelete != nil {
 			updateFeatureForApplicationRequest.CapabilitiesObject.Update = &v5okta.CapabilitiesUpdateObject{
 				LifecycleDeactivate: &v5okta.LifecycleDeactivateSettingObject{
-					Status: data.Capabilities.Update.lifecycleDelete.Status.ValueStringPointer(),
+					Status: data.Capabilities.Update.LifecycleDelete.Status.ValueStringPointer(),
 				},
 			}
 		}
 
-		if data.Capabilities.Update.password != nil {
+		if data.Capabilities.Update.Password != nil {
 			updateFeatureForApplicationRequest.CapabilitiesObject.Update.Password = &v5okta.PasswordSettingObject{
-				Change: data.Capabilities.Update.password.Change.ValueStringPointer(),
-				Seed:   data.Capabilities.Update.password.Seed.ValueStringPointer(),
-				Status: data.Capabilities.Update.password.Status.ValueStringPointer(),
+				Change: data.Capabilities.Update.Password.Change.ValueStringPointer(),
+				Seed:   data.Capabilities.Update.Password.Seed.ValueStringPointer(),
+				Status: data.Capabilities.Update.Password.Status.ValueStringPointer(),
 			}
 		}
 
-		if data.Capabilities.Update.profile != nil {
+		if data.Capabilities.Update.Profile != nil {
 			updateFeatureForApplicationRequest.CapabilitiesObject.Update.Profile = &v5okta.ProfileSettingObject{
-				Status: data.Capabilities.Update.profile.Status.ValueStringPointer(),
+				Status: data.Capabilities.Update.Profile.Status.ValueStringPointer(),
 			}
 		}
 	}
