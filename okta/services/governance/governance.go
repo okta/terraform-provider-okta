@@ -12,6 +12,13 @@ func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
 		newCampaignResource,
 		newEntitlementResource,
+		newReviewResource,
+		newRequestConditionResource,
+		newEndUserMyRequestsResource,
+		newRequestSequenceResource,
+		newRequestSettingOrganizationResource,
+		newRequestSettingResourceResource,
+		newRequestV2Resource,
 	}
 }
 
@@ -19,6 +26,14 @@ func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
 		newEntitlementDataSource,
+		newReviewDataSource,
+		newPrincipalEntitlementsDataSource,
+		newRequestSequencesDataSource,
+		newRequestSettingOrganizationDataSource,
+		newRequestSettingResourceDataSource,
+		newRequestV2DataSource,
+		newRequestConditionDataSource,
+		newEndUserMyRequestsDataSource,
 	}
 }
 
@@ -27,7 +42,7 @@ func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.C
 		return nil
 	}
 
-	config, ok := req.ProviderData.(*config.Config)
+	conf, ok := req.ProviderData.(*config.Config)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
@@ -36,7 +51,7 @@ func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.C
 		return nil
 	}
 
-	return config
+	return conf
 }
 
 func resourceConfiguration(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *config.Config {
