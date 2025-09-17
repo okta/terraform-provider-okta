@@ -27,6 +27,7 @@ const (
 	OktaIDaaSAppThreeField                 = "okta_app_three_field"
 	OktaIDaaSAppUser                       = "okta_app_user"
 	OktaIDaaSAppUserAssignments            = "okta_app_user_assignments"
+	OktaIDaaSAppUserProfile                = "okta_app_user_profile"
 	OktaIDaaSAppUserBaseSchemaProperty     = "okta_app_user_base_schema_property"
 	OktaIDaaSAppUserSchemaProperty         = "okta_app_user_schema_property"
 	OktaIDaaSAuthenticator                 = "okta_authenticator"
