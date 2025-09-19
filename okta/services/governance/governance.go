@@ -14,25 +14,27 @@ func FWProviderResources() []func() resource.Resource {
 		newEntitlementResource,
 		newReviewResource,
 		newRequestConditionResource,
-		newEndUserMyRequestsResource,
 		newRequestSequenceResource,
 		newRequestSettingOrganizationResource,
 		newRequestSettingResourceResource,
 		newRequestV2Resource,
+		newEndUserMyRequestsResource,
 	}
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
-		newEntitlementDataSource,
 		newReviewDataSource,
+		newEntitlementDataSource,
 		newPrincipalEntitlementsDataSource,
+		newRequestConditionDataSource,
 		newRequestSequencesDataSource,
 		newRequestSettingOrganizationDataSource,
 		newRequestSettingResourceDataSource,
 		newRequestV2DataSource,
-		newRequestConditionDataSource,
+		newCatalogEntryDefaultDataSource,
+		newCatalogEntryUserAccessRequestFieldsDataSource,
 		newEndUserMyRequestsDataSource,
 	}
 }

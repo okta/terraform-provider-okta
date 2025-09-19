@@ -1,12 +1,12 @@
 ---
 page_title: "Data Source: okta_catalog_entry_user_access_request_fields"
 description: |-
-  Get the campaign belonging to an Okta organization.
+  Get the request fields for catalog entry.
 ---
 
 # Data Source: okta_catalog_entry_user_access_request_fields
 
-Get the campaign belonging to an Okta organization.
+Get the request fields for catalog entry.
 
 ## Example Usage
 
@@ -21,9 +21,6 @@ data "okta_catalog_entry_user_access_request_fields" "test" {
 ### Required
 - `entry_id` (String) TThe ID of the catalog entry.
 - `user_id` (String) The ID of the user.
-
-<a id="nestedatt--brands"></a>
-### Nested Schema for `campaign`
 
 ### Read-Only:
 
