@@ -19,16 +19,7 @@ The Terraform Okta provider is a plugin for Terraform that allows for the full l
 This provider is maintained internally by the Okta development team.
 
 ## :tada: __It's Official__ :tada:
-We’re excited to announce that with v6.0.0, the Terraform Okta provider now officially supports the Okta Governance API.
-
-This release allows you to manage following Governance resources:
-
-1. Campaigns
-2. Entitlements
-
-Directly through Terraform! 🚀
-
-More Governance API support is on the way in future releases.
+We’re excited to announce that with v6.1.0, the Terraform Okta provider now officially supports the Okta Governance API.
 
 > [!CAUTION]
 > With this release, all 5.x versions of the provider will soon be **deprecated**.

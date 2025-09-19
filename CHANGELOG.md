@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.1.0 (September 19, 2025)
+
+### FEATURE
+* New resource and data source `okta_reviews`, `okta_principal_entitlements`, `okta_request_conditions`, `okta_request_sequences`, `okta_request_settings`, `okta_request_v2`, `okta_catalog_entry_default`, `okta_catalog_entry_user_access_request_fields`, `okta_end_user_my_requests` Adds support for managing resources in Okta Internal Governance [#2483](https://github.com/okta/terraform-provider-okta/pull/2483) by [aditya-okta](https://github.com/aditya-okta) and [dhiwakar-okta](https://github.com/dhiwakar-okta).
 
 ## 6.0.0 (September 9, 2025)
 
