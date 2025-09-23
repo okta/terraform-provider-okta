@@ -121,6 +121,7 @@ const (
 	OktaIDaaSUserType                                 = "okta_user_type"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
+	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
 	OktaGovernanceReview                              = "okta_review"
 	OktaGovernancePrincipalEntitlements               = "okta_principal_entitlements"
 	OktaGovernanceRequestCondition                    = "okta_request_condition"

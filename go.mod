@@ -23,7 +23,7 @@ require (
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lestrrat-go/jwx v1.2.31
-	github.com/okta/okta-governance-sdk-golang v1.0.0
+	github.com/okta/okta-governance-sdk-golang v1.0.1
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
 	github.com/okta/okta-sdk-golang/v5 v5.0.6
 	github.com/patrickmn/go-cache v2.1.0+incompatible
