@@ -25,7 +25,7 @@ type EndUserMyCatalogsEntryUserRequestFieldsDataSourceModel struct {
 }
 
 func (r *EndUserMyCatalogsEntryUserRequestFieldsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_end_user_my_requests_entry_user_request_fields"
+	resp.TypeName = req.ProviderTypeName + "_end_user_my_catalogs_entry_user_request_fields"
 }
 
 func (r *EndUserMyCatalogsEntryUserRequestFieldsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

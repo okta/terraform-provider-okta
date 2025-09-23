@@ -35,7 +35,7 @@ type EndUserMyCatalogsDataSourceModel struct {
 }
 
 func (r *EndUserMyCatalogsEntryDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_end_user_my_requests_entry"
+	resp.TypeName = req.ProviderTypeName + "_end_user_my_catalogs_entry"
 }
 
 func (d *EndUserMyCatalogsEntryDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {

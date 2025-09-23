@@ -130,5 +130,7 @@ const (
 	OktaGovernanceRequestV2                           = "okta_request_v2"
 	OktaGovernanceCatalogEntryDefault                 = "okta_catalog_entry_default"
 	OktaGovernanceCatalogEntryUserAccessRequestFields = "okta_catalog_entry_user_access_request_fields"
-	OktaGovernanceEndUserMyRequests                   = "okta_end_user_my_requests"
+	OktaEndUsersMyCatalogsEntry                       = "okta_end_user_my_catalogs_entry"
+	OktaEndUsersMyCatalogsEntryRequestFields          = "okta_end_user_my_catalogs_entry_request_fields"
+	OktaEndUsersMyCatalogsEntryUserRequestFileds      = "okta_end_user_my_catalogs_entry_user_request_fields"
 )

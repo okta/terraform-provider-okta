@@ -52,7 +52,7 @@ type EndUserMyCatalogsEntryRequestFieldsDataSourceModel struct {
 }
 
 func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_end_user_my_requests_entry_request_fields"
+	resp.TypeName = req.ProviderTypeName + "_end_user_my_catalogs_entry_request_fields"
 }
 
 func (d *EndUserMyCatalogsEntryRequestFieldsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
