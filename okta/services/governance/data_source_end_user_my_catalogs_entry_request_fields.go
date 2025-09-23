@@ -42,13 +42,14 @@ type RiskAssessment struct {
 }
 
 type Metadata struct {
-	RiskAssessment RiskAssessment `tfsdk:"risk_assessment"`
+	RiskAssessment *RiskAssessment `tfsdk:"risk_assessment"`
 }
 
 type EndUserMyCatalogsEntryRequestFieldsDataSourceModel struct {
+	Id       types.String `tfsdk:"id"`
 	EntryId  types.String `tfsdk:"entry_id"`
 	Data     []Data       `tfsdk:"data"`
-	Metadata Metadata     `tfsdk:"metadata"`
+	Metadata *Metadata    `tfsdk:"metadata"`
 }
 
 func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -61,14 +62,19 @@ func (d *EndUserMyCatalogsEntryRequestFieldsDataSource) Configure(ctx context.Co
 
 func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed: true, // the response doesn't return any ID that we can rely upon.
+			},
+			"entry_id": schema.StringAttribute{
+				Description: "The ID of the catalog entry",
+				Required:    true,
+			},
+		},
 		Blocks: map[string]schema.Block{
 			"data": schema.ListNestedBlock{
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
-						"entry_id": schema.StringAttribute{
-							Description: "The ID of the catalog entry",
-							Required:    true,
-						},
 						"id": schema.StringAttribute{
 							Description: "Useful for specifying requesterFieldValues when adding a request.",
 							Computed:    true,
@@ -84,6 +90,7 @@ func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Schema(ctx context.Conte
 						"choices": schema.ListAttribute{
 							Description: "Valid choices when type is SELECT or MULTISELECT.",
 							ElementType: types.StringType,
+							Computed:    true,
 						},
 						"label": schema.StringAttribute{
 							Description: "label of the requester field",
@@ -110,6 +117,7 @@ func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Schema(ctx context.Conte
 						Description: "A risk assessment indicates whether request submission is allowed or restricted and contains the risk rules that lead to possible conflicts for the requested resource.",
 						Attributes: map[string]schema.Attribute{
 							"request_submission_type": schema.StringAttribute{
+								Computed:    true,
 								Description: "Whether request submission is allowed or restricted in the risk settings.",
 							},
 						},
@@ -123,9 +131,11 @@ func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Schema(ctx context.Conte
 										},
 										"description": schema.StringAttribute{
 											Description: "The human readable description",
+											Computed:    true,
 										},
 										"resource_name": schema.StringAttribute{
 											Description: "Human readable name of the resource",
+											Computed:    true,
 										},
 									},
 								},
@@ -139,6 +149,7 @@ func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Schema(ctx context.Conte
 }
 
 func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+
 	var stateData EndUserMyCatalogsEntryRequestFieldsDataSourceModel
 	resp.Diagnostics.Append(resp.State.Get(ctx, &stateData)...)
 	if resp.Diagnostics.HasError() {
@@ -175,13 +186,18 @@ func (r *EndUserMyCatalogsEntryRequestFieldsDataSource) Read(ctx context.Context
 	}
 
 	stateData.Data = dataItems
-	stateData.Metadata.RiskAssessment.RequestSubmissionType = types.StringValue(string(endUserMyCatalogEntryRequestFields.GetMetadata().RiskAssessment.RequestSubmissionType))
-	for _, riskRule := range endUserMyCatalogEntryRequestFields.GetMetadata().RiskAssessment.RiskRules {
-		stateData.Metadata.RiskAssessment.RiskRules = append(stateData.Metadata.RiskAssessment.RiskRules, RiskRule{
-			Name:         types.StringValue(riskRule.Name),
-			Description:  types.StringValue(*riskRule.Description),
-			ResourceName: types.StringValue(*riskRule.ResourceName),
-		})
+	if endUserMyCatalogEntryRequestFields.GetMetadata().RiskAssessment != nil {
+		stateData.Metadata = &Metadata{}
+		stateData.Metadata.RiskAssessment = &RiskAssessment{}
+		stateData.Metadata.RiskAssessment.RequestSubmissionType = types.StringValue(string(endUserMyCatalogEntryRequestFields.GetMetadata().RiskAssessment.RequestSubmissionType))
+		for _, riskRule := range endUserMyCatalogEntryRequestFields.GetMetadata().RiskAssessment.RiskRules {
+			stateData.Metadata.RiskAssessment.RiskRules = append(stateData.Metadata.RiskAssessment.RiskRules, RiskRule{
+				Name:         types.StringValue(riskRule.Name),
+				Description:  types.StringValue(*riskRule.Description),
+				ResourceName: types.StringValue(*riskRule.ResourceName),
+			})
+		}
 	}
+	stateData.Id = types.StringValue(stateData.EntryId.ValueString()) // the response doesn't return any ID that we can rely upon.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceOktaEndUserMyCatalogsEntry_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.OktaGovernanceCampaign, t.Name())
+	mgr := newFixtureManager("data-sources", resources.OktaGovernanceEndUsersMyCatalogsEntry, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -20,12 +20,10 @@ func TestAccDataSourceOktaEndUserMyCatalogsEntry_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_end_user_my_requests_entry.test", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_end_user_my_requests_entry.test", "name"),
-					resource.TestCheckResourceAttrSet("data.okta_end_user_my_requests_entry.test", "requestable"),
-					resource.TestCheckResourceAttrSet("data.okta_end_user_my_requests_entry.test", "label"),
-					// Parent might be empty for root entries
-					resource.TestCheckResourceAttr("data.okta_end_user_my_requests_entry.test", "counts.resource_counts.applications", "1"),
+					resource.TestCheckResourceAttr("data.okta_end_user_my_catalogs_entry.test", "id", "cen1043mnuxScMKl91d7"),
+					resource.TestCheckResourceAttr("data.okta_end_user_my_catalogs_entry.test", "name", "Workplace by Facebook"),
+					resource.TestCheckResourceAttr("data.okta_end_user_my_catalogs_entry.test", "requestable", "false"),
+					resource.TestCheckResourceAttr("data.okta_end_user_my_catalogs_entry.test", "label", "Application"),
 				),
 			},
 		},

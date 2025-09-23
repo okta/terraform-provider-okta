@@ -27,11 +27,15 @@ type EndUserMyCatalogsDataSourceModel struct {
 	Description types.String `tfsdk:"description"`
 	Label       types.String `tfsdk:"label"`
 	Parent      types.String `tfsdk:"parent"`
-	Counts      struct {
-		ResourceCounts struct {
-			Applications types.Int32 `tfsdk:"applications"`
-		} `tfsdk:"resource_counts"`
-	} `tfsdk:"counts"`
+	Counts      *Count       `tfsdk:"counts"`
+}
+
+type Count struct {
+	ResourceCounts ResourceCount `tfsdk:"resource_counts"`
+}
+
+type ResourceCount struct {
+	Applications types.Int32 `tfsdk:"applications"`
 }
 
 func (r *EndUserMyCatalogsEntryDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -93,6 +97,7 @@ func (r *EndUserMyCatalogsEntryDataSource) Schema(ctx context.Context, req datas
 	}
 }
 func (r *EndUserMyCatalogsEntryDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+
 	var stateData EndUserMyCatalogsDataSourceModel
 	resp.Diagnostics.Append(resp.State.Get(ctx, &stateData)...)
 	if resp.Diagnostics.HasError() {
@@ -114,6 +119,13 @@ func (r *EndUserMyCatalogsEntryDataSource) Read(ctx context.Context, req datasou
 	stateData.Description = types.StringValue(endUserMyCatalogEntry.GetDescription())
 	stateData.Label = types.StringValue(endUserMyCatalogEntry.GetLabel())
 	stateData.Parent = types.StringValue(endUserMyCatalogEntry.GetParent())
-	stateData.Counts.ResourceCounts.Applications = types.Int32Value(endUserMyCatalogEntry.GetCounts().ResourceCounts.GetApplications())
+
+	// Handle counts - check if counts exist and populate accordingly
+	if endUserMyCatalogEntry.Counts != nil {
+		if endUserMyCatalogEntry.GetCounts().ResourceCounts != nil {
+			applications := endUserMyCatalogEntry.GetCounts().ResourceCounts.GetApplications()
+			stateData.Counts.ResourceCounts.Applications = types.Int32Value(applications)
+		}
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...)
 }
