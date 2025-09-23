@@ -35,6 +35,9 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRequestV2DataSource,
 		newCatalogEntryDefaultDataSource,
 		newCatalogEntryUserAccessRequestFieldsDataSource,
+		newEndUserMyCatalogsEntryDataSource,
+		newEndUserMyCatalogsEntryRequestFieldsDataSource,
+		newEndUserMyCatalogsEntryUserRequestFieldsDataSource,
 		newEndUserMyRequestsDataSource,
 	}
 }
