@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccResourceOktaRateLimitAdminNotificationSettings(t *testing.T) {
+func TestAccResourceOktaRateLimitAdminNotificationSettings_cru(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSRateLimitAdminNotificationSettings)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimitAdminNotificationSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

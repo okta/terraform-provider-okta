@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestAccResourceOktaPrincipalRateLimits(t *testing.T) {
+func TestAccResourceOktaPrincipalRateLimits_ru(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPrincipalRateLimits)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPrincipalRateLimits, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)

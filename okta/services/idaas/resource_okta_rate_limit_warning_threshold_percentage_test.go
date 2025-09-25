@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestAccResourceOktaRateLimitWarningPercentage(t *testing.T) {
+func TestAccResourceOktaRateLimitWarningPercentage_cru(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSRateLimitWarningThresholdPercentage)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimitWarningThresholdPercentage, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
