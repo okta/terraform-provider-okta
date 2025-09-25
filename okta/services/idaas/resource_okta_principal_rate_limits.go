@@ -120,7 +120,6 @@ func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateReq
 		"Create Not Supported",
 		"This resource cannot be created via Terraform.",
 	)
-	return
 }
 
 func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -171,7 +170,6 @@ func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteReq
 		"Delete Not Supported",
 		"This resource cannot be deleted via Terraform.",
 	)
-	return
 }
 
 func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRateLimitEntity {
