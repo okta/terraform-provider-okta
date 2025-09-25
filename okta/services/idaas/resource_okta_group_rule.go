@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/api"
+	"github.com/okta/terraform-provider-okta/okta/expression"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -59,9 +60,15 @@ the underlying rule resource and create a new rule resource.`,
 			"expression_value": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The expression value.",
+				Description: "The expression value. See https://developer.okta.com/reference/okta_expression_language",
 			},
 			"status": statusSchema,
+			"expression_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Whether to warn when we suspect the Okta Expression Language syntax of the rule is invalid. Defaults to 'false'.",
+			},
 			"remove_assigned_users": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -127,7 +134,7 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	_ = d.Set("name", g.Name)
 	_ = d.Set("status", g.Status)
-	// Just for the sake of safety, should never be nil
+	// Just for the sake of safety, Conditions should never be nil
 	if g.Conditions != nil {
 		if g.Conditions.Expression != nil {
 			_ = d.Set("expression_type", g.Conditions.Expression.Type)
@@ -143,6 +150,39 @@ func resourceGroupRuleRead(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.Errorf("failed to set group rule properties: %v", err)
 	}
+
+	diags := diag.Diagnostics{}
+
+	// groupAssignments := d.Get("group_assignments").(*schema.Set)
+	// if groupAssignments.Len() < 1 {
+	// 	diags = append(diags, diag.Diagnostic{
+	// 		Severity: diag.Error,
+	// 		Summary:  "No group assignments",
+	// 		Detail:   "group_assignments must contain at least one group",
+	// 	})
+	// }
+
+	if d.Get("expression_validation").(bool) {
+		if err := expression.ParseExpression(d.Get("expression_value").(string)); err != nil {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "Possible Invalid Expression",
+				Detail:   fmt.Sprintf("possible invalid expression:\n\n%v\n\nExpression validation is experimental; this warning may be a false-positive and will not block terraform apply.", err),
+			})
+		}
+	}
+	// usersExcluded := d.Get("users_excluded").(*schema.Set)
+	// if usersExcluded.Len() > 100 {
+	// 	diags = append(diags, diag.Diagnostic{
+	// 		Severity: diag.Error,
+	// 		Summary:  "Too many users excluded",
+	// 		Detail:   "users_excluded cannot contain more than 100 users",
+	// 	})
+	// }
+	if len(diags) > 0 {
+		return diags
+	}
+
 	return nil
 }
 
