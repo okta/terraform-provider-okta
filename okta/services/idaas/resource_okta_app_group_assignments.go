@@ -408,8 +408,8 @@ func deleteGroupAssignments(
 	assignments []*sdk.ApplicationGroupAssignment,
 ) error {
 	for i := range assignments {
-		_, err := delete(ctx, appID, assignments[i].Id)
-		if err != nil {
+		resp, err := delete(ctx, appID, assignments[i].Id)
+		if err := utils.SuppressErrorOn404(resp, err); err != nil {
 			return fmt.Errorf("could not delete assignment for group %s, to application %s: %w", assignments[i].Id, appID, err)
 		}
 	}
