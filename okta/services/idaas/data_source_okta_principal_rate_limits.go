@@ -43,7 +43,8 @@ func (d *principalRateLimitsDataSource) Schema(ctx context.Context, req datasour
 				Required: true,
 			},
 			"principal_id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The unique identifier of the principal. This is the ID of the API token or OAuth 2.0 app.",
 			},
 			"principal_type": schema.StringAttribute{
 				Computed: true,
@@ -53,27 +54,35 @@ func (d *principalRateLimitsDataSource) Schema(ctx context.Context, req datasour
 						"SSWS_TOKEN",
 					}...),
 				},
+				Description: "The type of principal, either an API token or an OAuth 2.0 app.",
 			},
 			"default_concurrency_percentage": schema.Int32Attribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The default percentage of a given concurrency limit threshold that the owning principal can consume.",
 			},
 			"default_percentage": schema.Int32Attribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The default percentage of a given rate limit threshold that the owning principal can consume.",
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The Okta user ID of the user who created the principle rate limit entity.",
 			},
 			"created_date": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The date and time the principle rate limit entity was created.",
 			},
 			"last_update": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The date and time the principle rate limit entity was last updated.",
 			},
 			"last_updated_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The Okta user ID of the user who last updated the principle rate limit entity.",
 			},
 			"org_id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The unique identifier of the Okta org.",
 			},
 		},
 	}
@@ -81,15 +90,15 @@ func (d *principalRateLimitsDataSource) Schema(ctx context.Context, req datasour
 
 type principalRateLimitsDataSourceModel struct {
 	Id                           types.String `tfsdk:"id"`
-	principalId                  types.String `tfsdk:"principal_id"`
-	principalType                types.String `tfsdk:"principal_type"`
-	defaultConcurrencyPercentage types.Int32  `tfsdk:"default_concurrency_percentage"`
-	defaultPercentage            types.Int32  `tfsdk:"default_percentage"`
-	createdBy                    types.String `tfsdk:"created_by"`
-	createdDate                  types.String `tfsdk:"created_date"`
-	lastUpdate                   types.String `tfsdk:"last_update"`
-	lastUpdatedBy                types.String `tfsdk:"last_updated_by"`
-	orgId                        types.String `tfsdk:"org_id"`
+	PrincipalId                  types.String `tfsdk:"principal_id"`
+	PrincipalType                types.String `tfsdk:"principal_type"`
+	DefaultConcurrencyPercentage types.Int32  `tfsdk:"default_concurrency_percentage"`
+	DefaultPercentage            types.Int32  `tfsdk:"default_percentage"`
+	CreatedBy                    types.String `tfsdk:"created_by"`
+	CreatedDate                  types.String `tfsdk:"created_date"`
+	LastUpdate                   types.String `tfsdk:"last_update"`
+	LastUpdatedBy                types.String `tfsdk:"last_updated_by"`
+	OrgId                        types.String `tfsdk:"org_id"`
 }
 
 func (d *principalRateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -109,15 +118,15 @@ func (d *principalRateLimitsDataSource) Read(ctx context.Context, req datasource
 	}
 
 	data.Id = types.StringValue(getPrincipalRateSettingsResp.GetId())
-	data.principalId = types.StringValue(getPrincipalRateSettingsResp.GetPrincipalId())
-	data.principalType = types.StringValue(getPrincipalRateSettingsResp.GetPrincipalType())
-	data.defaultConcurrencyPercentage = types.Int32Value(getPrincipalRateSettingsResp.GetDefaultConcurrencyPercentage())
-	data.defaultPercentage = types.Int32Value(getPrincipalRateSettingsResp.GetDefaultPercentage())
-	data.createdBy = types.StringValue(getPrincipalRateSettingsResp.GetCreatedBy())
-	data.createdDate = types.StringValue(getPrincipalRateSettingsResp.GetCreatedDate().Format(time.RFC3339))
-	data.lastUpdate = types.StringValue(getPrincipalRateSettingsResp.GetLastUpdate().Format(time.RFC3339))
-	data.lastUpdatedBy = types.StringValue(getPrincipalRateSettingsResp.GetLastUpdatedBy())
-	data.orgId = types.StringValue(getPrincipalRateSettingsResp.GetOrgId())
+	data.PrincipalId = types.StringValue(getPrincipalRateSettingsResp.GetPrincipalId())
+	data.PrincipalType = types.StringValue(getPrincipalRateSettingsResp.GetPrincipalType())
+	data.DefaultConcurrencyPercentage = types.Int32Value(getPrincipalRateSettingsResp.GetDefaultConcurrencyPercentage())
+	data.DefaultPercentage = types.Int32Value(getPrincipalRateSettingsResp.GetDefaultPercentage())
+	data.CreatedBy = types.StringValue(getPrincipalRateSettingsResp.GetCreatedBy())
+	data.CreatedDate = types.StringValue(getPrincipalRateSettingsResp.GetCreatedDate().Format(time.RFC3339))
+	data.LastUpdate = types.StringValue(getPrincipalRateSettingsResp.GetLastUpdate().Format(time.RFC3339))
+	data.LastUpdatedBy = types.StringValue(getPrincipalRateSettingsResp.GetLastUpdatedBy())
+	data.OrgId = types.StringValue(getPrincipalRateSettingsResp.GetOrgId())
 
 	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

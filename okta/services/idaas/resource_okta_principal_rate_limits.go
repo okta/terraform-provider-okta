@@ -2,7 +2,8 @@ package idaas
 
 import (
 	"context"
-	"fmt"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -13,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
-	"time"
 )
 
 var (
@@ -65,9 +65,11 @@ func (r *principalRateLimits) Schema(_ context.Context, _ resource.SchemaRequest
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
+				Description: "The unique identifier of the principle rate limit entity.",
 			},
 			"principal_id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: "The unique identifier of the principal. This is the ID of the API token or OAuth 2.0 app.",
 			},
 			"principal_type": schema.StringAttribute{
 				Required: true,
@@ -77,52 +79,48 @@ func (r *principalRateLimits) Schema(_ context.Context, _ resource.SchemaRequest
 						"SSWS_TOKEN",
 					}...),
 				},
+				Description: "The type of principal, either an API token or an OAuth 2.0 app.",
 			},
 			"default_concurrency_percentage": schema.Int32Attribute{
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: "The default percentage of a given concurrency limit threshold that the owning principal can consume.",
 			},
 			"default_percentage": schema.Int32Attribute{
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: "The default percentage of a given rate limit threshold that the owning principal can consume.",
 			},
 			"created_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The Okta user ID of the user who created the principle rate limit entity.",
 			},
 			"created_date": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The date and time the principle rate limit entity was created.",
 			},
 			"last_update": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The date and time the principle rate limit entity was last updated.",
 			},
 			"last_updated_by": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The Okta user ID of the user who last updated the principle rate limit entity.",
 			},
 			"org_id": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "The unique identifier of the Okta org.",
 			},
 		},
 	}
 }
 
 func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data principalRateLimitsModel
-
-	// Read Terraform plan Data into the model
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Create API call logic
-	principalRateLimitSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.CreatePrincipalRateLimitEntity(ctx).Entity(buildPrincipalRateLimits(data)).Execute()
-	if err != nil {
-		return
-	}
-
-	applyPrincipalRateSettingsToState(&data, principalRateLimitSettingsResp)
-
-	// Save Data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.AddError(
+		"Create Not Supported",
+		"This resource cannot be created via Terraform.",
+	)
+	return
 }
 
 func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -158,7 +156,6 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	// Update API call logic
-	fmt.Println("principal limit Id", data.Id.ValueString())
 	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
 	if err != nil {
 		return
@@ -170,10 +167,11 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 }
 
 func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	resp.Diagnostics.AddWarning(
+	resp.Diagnostics.AddError(
 		"Delete Not Supported",
 		"This resource cannot be deleted via Terraform.",
 	)
+	return
 }
 
 func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRateLimitEntity {

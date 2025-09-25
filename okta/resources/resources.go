@@ -97,6 +97,7 @@ const (
 	OktaIDaaSPolicyRuleSignOn                    = "okta_policy_rule_signon"
 	OktaIDaaSPolicySignOn                        = "okta_policy_signon"
 	OktaIDaaSProfileMapping                      = "okta_profile_mapping"
+	OktaIDaaSPrincipalRateLimits                 = "okta_principal_rate_limits"
 	OktaIDaaSRateLimiting                        = "okta_rate_limiting"
 	OktaIDaaSRateLimitAdminNotificationSettings  = "okta_rate_limit_admin_notification_settings"
 	OktaIDaaSRateLimitWarningThresholdPercentage = "okta_rate_limit_warning_threshold_percentage"
