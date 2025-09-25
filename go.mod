@@ -1,6 +1,6 @@
 module github.com/okta/terraform-provider-okta
 
-go 1.24.4
+go 1.24.0
 
 toolchain go1.24.7
 
@@ -78,9 +78,7 @@ require (
 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/iter v1.0.2 // indirect
-	github.com/lestrrat-go/jwx/v3 v3.0.11 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
-	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -95,7 +93,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/russellhaering/goxmldsig v1.5.0 // indirect
-	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
