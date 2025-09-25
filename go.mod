@@ -1,6 +1,8 @@
 module github.com/okta/terraform-provider-okta
 
-go 1.23.7
+go 1.24
+
+toolchain go1.24.7
 
 require (
 	github.com/BurntSushi/toml v1.5.0
@@ -28,7 +30,7 @@ require (
 	github.com/okta/okta-sdk-golang/v5 v5.0.6
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.11.1
-	gopkg.in/dnaeon/go-vcr.v4 v4.0.4
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.5
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -42,7 +44,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/beevik/etree v1.5.0 // indirect
+	github.com/beevik/etree v1.5.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.8.1 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
@@ -51,6 +53,7 @@ require (
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.4 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hashicorp/cli v1.1.7 // indirect
@@ -70,7 +73,7 @@ require (
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
-	github.com/jonboulle/clockwork v0.2.2 // indirect
+	github.com/jonboulle/clockwork v0.2.3 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
