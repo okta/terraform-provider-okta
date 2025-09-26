@@ -129,7 +129,7 @@ func (r *rateLimitWarningThresholdPercentage) Update(ctx context.Context, req re
 }
 
 func (r *rateLimitWarningThresholdPercentage) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	resp.Diagnostics.AddError(
+	resp.Diagnostics.AddWarning(
 		"Delete Not Supported",
 		"This resource cannot be deleted via Terraform.",
 	)

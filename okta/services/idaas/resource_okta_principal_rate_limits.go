@@ -166,7 +166,7 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 }
 
 func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	resp.Diagnostics.AddError(
+	resp.Diagnostics.AddWarning(
 		"Delete Not Supported",
 		"This resource cannot be deleted via Terraform.",
 	)
