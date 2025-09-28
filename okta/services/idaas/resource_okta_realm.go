@@ -52,7 +52,7 @@ func (r *realmResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description: "The name of the Okta Realm.",
 			},
 			"realm_type": schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Description: "The realm type. Valid values: `PARTNER` and `DEFAULT`",
 				Validators: []validator.String{
 					stringvalidator.OneOf("PARTNER", "DEFAULT"),
@@ -114,11 +114,6 @@ func (r *realmResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	realm, _, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading Okta realm ", err.Error())
-		return
-	}
-
-	if realm == nil {
-		resp.State.RemoveResource(ctx)
 		return
 	}
 
