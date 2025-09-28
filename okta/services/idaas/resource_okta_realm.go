@@ -188,7 +188,6 @@ func (r *realmResource) ImportState(ctx context.Context, req resource.ImportStat
 
 func mapRealmResourceToState(realmResource *v5okta.Realm, state *realmModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-
 	state.ID = types.StringPointerValue(realmResource.Id)
 	state.Name = types.StringValue(realmResource.Profile.Name)
 	state.IsDefault = types.BoolPointerValue(realmResource.IsDefault)
