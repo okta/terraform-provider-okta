@@ -9,8 +9,13 @@ orbs:
 jobs:
   reversing-labs:
     docker:
+<<<<<<< HEAD
       - image: cimg/go:1.23.0
     resource_class: large
+=======
+      - image: cimg/go:1.21.13
+    resource-size: large
+>>>>>>> 0b7e3bed (Fixing CI Reversing Labs failure)
     steps:
       - checkout
       - run:
