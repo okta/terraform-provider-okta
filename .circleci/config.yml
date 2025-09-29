@@ -10,6 +10,7 @@ jobs:
   reversing-labs:
     docker:
       - image: cimg/go:1.21.13
+    resource-size: large
     steps:
       - checkout 
       - run:
