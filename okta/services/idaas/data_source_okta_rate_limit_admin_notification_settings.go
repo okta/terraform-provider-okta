@@ -63,6 +63,10 @@ func (d *rateLimitAdminNotificationSettingsDataSource) Read(ctx context.Context,
 	// Read API call logic
 	getRateLimitAdminNotificationSettingsResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.GetRateLimitSettingsAdminNotifications(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read rate limit admin notification settings",
+			err.Error(),
+		)
 		return
 	}
 

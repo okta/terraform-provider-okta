@@ -135,6 +135,10 @@ func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest
 	// Read API call logic
 	getPrincipalRateSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.GetPrincipalRateLimitEntity(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read principal rate limit",
+			err.Error(),
+		)
 		return
 	}
 
@@ -157,10 +161,15 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 	// Update API call logic
 	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update principal rate limit",
+			err.Error(),
+		)
 		return
 	}
 
 	applyPrincipalRateSettingsToState(&data, updatePrincipalRateSettingsRespSettingsResp)
+
 	// Save updated Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

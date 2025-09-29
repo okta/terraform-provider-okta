@@ -50,7 +50,8 @@ func (r *rateLimitAdminNotificationSettingsResource) Schema(_ context.Context, _
 				Computed: true,
 			},
 			"notifications_enabled": schema.BoolAttribute{
-				Required: true,
+				Required:    true,
+				Description: "Enables or disables admin notifications for rate limiting events.",
 			},
 		},
 	}
@@ -72,8 +73,6 @@ func (r *rateLimitAdminNotificationSettingsResource) Create(ctx context.Context,
 		return
 	}
 
-	// Example Data value setting
-	//data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting_admin_notification")
 	data.NotificationsEnabled = types.BoolValue(rateLimitAdminNotificationSettingsResp.GetNotificationsEnabled())
 
@@ -94,6 +93,10 @@ func (r *rateLimitAdminNotificationSettingsResource) Read(ctx context.Context, r
 	// Read API call logic
 	getRateLimitAdminNotificationSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.GetRateLimitSettingsAdminNotifications(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read rate limit admin notification settings",
+			err.Error(),
+		)
 		return
 	}
 
@@ -117,11 +120,13 @@ func (r *rateLimitAdminNotificationSettingsResource) Update(ctx context.Context,
 	// Update API call logic
 	rateLimitAdminNotificationSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.ReplaceRateLimitSettingsAdminNotifications(ctx).RateLimitAdminNotifications(buildPerClientRateLimitAdminNotifications(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update rate limit admin notification settings",
+			err.Error(),
+		)
 		return
 	}
 
-	// Example Data value setting
-	//data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting_admin_notification")
 	data.NotificationsEnabled = types.BoolValue(rateLimitAdminNotificationSettingsResp.GetNotificationsEnabled())
 

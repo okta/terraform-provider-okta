@@ -114,6 +114,10 @@ func (d *principalRateLimitsDataSource) Read(ctx context.Context, req datasource
 	// Read API call logic
 	getPrincipalRateSettingsResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.GetPrincipalRateLimitEntity(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read principal rate limit",
+			err.Error(),
+		)
 		return
 	}
 

@@ -50,7 +50,8 @@ func (r *rateLimitWarningThresholdPercentage) Schema(_ context.Context, _ resour
 				Computed: true,
 			},
 			"warning_threshold": schema.Int32Attribute{
-				Required: true,
+				Required:    true,
+				Description: "The threshold value (percentage) of a rate limit that, when exceeded, triggers a warning notification. By default, this value is 90 for Workforce orgs and 60 for CIAM orgs.",
 			},
 		},
 	}
@@ -69,6 +70,10 @@ func (r *rateLimitWarningThresholdPercentage) Create(ctx context.Context, req re
 	// Create API call logic
 	rateLimitWarningThresholdPercentageResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.ReplaceRateLimitSettingsWarningThreshold(ctx).RateLimitWarningThreshold(buildPerClientRateLimitWarningThresholdPercentage(data)).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read rate limit warning threshold percentage",
+			err.Error(),
+		)
 		return
 	}
 
@@ -94,6 +99,10 @@ func (r *rateLimitWarningThresholdPercentage) Read(ctx context.Context, req reso
 	// Read API call logic
 	getRateLimitWarningThresholdResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.GetRateLimitSettingsWarningThreshold(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update rate limit warning threshold percentage",
+			err.Error(),
+		)
 		return
 	}
 

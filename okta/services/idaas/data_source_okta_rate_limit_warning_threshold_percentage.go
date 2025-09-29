@@ -63,6 +63,10 @@ func (d *rateLimitWarningThresholdPercentageDataSource) Read(ctx context.Context
 	// Read API call logic
 	getRateLimitWarningThresholdResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().RateLimitSettingsAPI.GetRateLimitSettingsWarningThreshold(ctx).Execute()
 	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read rate limit warning threshold percentage",
+			err.Error(),
+		)
 		return
 	}
 
