@@ -10,7 +10,7 @@ jobs:
   reversing-labs:
     docker:
       - image: cimg/go:1.23.0
-    resource_class: larges
+    resource_class: large
     steps:
       - checkout
       - run:
