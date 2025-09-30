@@ -12,7 +12,7 @@ jobs:
       - image: cimg/go:1.23.0
     resource-size: large
     steps:
-      - checkout 
+      - checkout
       - run:
           name: Install Python
           command: |
