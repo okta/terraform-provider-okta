@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.2.0 (September 23, 2025)
+
+### FEATURE
+* New resource and data source `okta_entitlement_bundle` to manager entitlement bundles [#2485](https://github.com/okta/terraform-provider-okta/pull/2485) by [aditya-okta](https://github.com/aditya-okta).
+* New data sources `okta_end_user_my_catalogs_entry`, `okta_end_user_my_catalogs_entry_request_fields`, `okta_end_user_my_catalogs_entry_user_request_fields` to request for catalog entries that you're allowed to request [#2491](https://github.com/okta/terraform-provider-okta/pull/2491) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
 ## 6.1.0 (September 19, 2025)
 
 ### FEATURE

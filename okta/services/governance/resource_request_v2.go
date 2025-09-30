@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -11,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-governance-sdk-golang/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
-	"time"
 )
 
 var (
