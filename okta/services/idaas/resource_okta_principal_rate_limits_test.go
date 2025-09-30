@@ -13,7 +13,6 @@ func TestAccResourceOktaPrincipalRateLimits_ru(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPrincipalRateLimits, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
-	//preventDelete := mgr.GetFixtures("prevent_delete.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
