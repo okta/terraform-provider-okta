@@ -9,9 +9,10 @@ orbs:
 jobs:
   reversing-labs:
     docker:
-      - image: cimg/go:1.21.13
+      - image: cimg/go:1.23.0
+    resource_class: large
     steps:
-      - checkout 
+      - checkout
       - run:
           name: Install Python
           command: |
