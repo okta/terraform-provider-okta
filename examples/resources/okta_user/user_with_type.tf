@@ -14,3 +14,4 @@ resource "okta_user" "test" {
     id = okta_user_type.test.id
   }
 }
+
