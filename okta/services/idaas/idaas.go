@@ -99,6 +99,8 @@ func FWProviderResources() []func() resource.Resource {
 		newFeaturesResource,
 		newRealmResource,
 		newRealmAssignmentResource,
+		newAPIServiceIntegrationResource,
+		newAPITokenResource,
 	}
 }
 
@@ -113,6 +115,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newFeaturesDataSource,
 		newRealmDataSource,
 		newRealmAssignmentDataSource,
+		newAPIServiceIntegrationDataSource,
+		newAPITokenDataSource,
 	}
 }
 
