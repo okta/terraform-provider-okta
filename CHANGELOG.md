@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.3.0 (October 6,2025)
+
+### FEATURE
+* New resource and data source `okta_principal_rate_limits`, `okta_rate_limit_admin_notification`, `okta_rate_limit_warning_threshold` to manager rate limits [#2496](https://github.com/okta/terraform-provider-okta/pull/2496) by [aditya-okta](https://github.com/aditya-okta).
+
+### BUG FIXES
+* Fix flaky diff for userVerificationMethods in authenticator [#2477](https://github.com/okta/terraform-provider-okta/pull/2477) by [tim-koehler](https://github.com/tim-koehler).
+* Fix error output while realm creation [#2499](https://github.com/okta/terraform-provider-okta/pull/2499) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix to return `source` field in `data_source_okta_groups` by [pranav-okta](https://github.com/pranav-okta).
+
 ## 6.2.0 (September 23, 2025)
 
 ### FEATURE
