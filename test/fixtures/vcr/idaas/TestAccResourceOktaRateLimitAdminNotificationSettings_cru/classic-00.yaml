@@ -6,10 +6,10 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 74
-        host: oie-00.dne-okta.com
+        content_length: 30
+        host: classic-00.dne-okta.com
         body: |
-            {"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}
+            {"notificationsEnabled":true}
         headers:
             Accept:
                 - application/json
@@ -17,7 +17,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/rate-limit-settings/per-client
+        url: https://classic-00.dne-okta.com/api/v1/rate-limit-settings/admin-notifications
         method: PUT
       response:
         proto: HTTP/2.0
@@ -25,32 +25,32 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}'
+        body: '{"notificationsEnabled":true}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 03 Sep 2025 06:48:31 GMT
+                - Fri, 26 Sep 2025 10:36:06 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.139687416s
+        duration: 1.180516042s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        host: oie-00.dne-okta.com
+        host: classic-00.dne-okta.com
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/rate-limit-settings/per-client
+        url: https://classic-00.dne-okta.com/api/v1/rate-limit-settings/admin-notifications
         method: GET
       response:
         proto: HTTP/2.0
@@ -58,16 +58,16 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}'
+        body: '{"notificationsEnabled":true}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 03 Sep 2025 06:48:32 GMT
+                - Fri, 26 Sep 2025 10:36:07 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.041536542s
+        duration: 1.048615834s

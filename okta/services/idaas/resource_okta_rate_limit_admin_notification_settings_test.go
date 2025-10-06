@@ -9,9 +9,9 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSRateLimiting)
-	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimiting, t.Name())
+func TestAccResourceOktaRateLimitAdminNotificationSettings_cru(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSRateLimitAdminNotificationSettings)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSRateLimitAdminNotificationSettings, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -23,8 +23,7 @@ func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "default_mode", "ENFORCE"),
-					resource.TestCheckResourceAttr(resourceName, "use_case_mode_overrides.login_page", "ENFORCE"),
+					resource.TestCheckResourceAttr(resourceName, "notifications_enabled", "true"),
 				),
 			},
 		},
