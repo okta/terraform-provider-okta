@@ -61,7 +61,7 @@ func (r *apiTokenResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed:    true,
+				Required:    true,
 				Description: "The ID of the API service integration",
 			},
 			"user_id": schema.StringAttribute{
@@ -143,12 +143,13 @@ func (r *apiTokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 }
 
 func (r *apiTokenResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data apiTokenResourceModel
+	var data, plan apiTokenResourceModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	upsertAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.UpsertApiToken(ctx, data.Id.ValueString()).ApiTokenUpdate(createTokenUpdate(data)).Execute()
+	upsertAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.UpsertApiToken(ctx, data.Id.ValueString()).ApiTokenUpdate(createTokenUpdate(plan)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in upserting API token",
@@ -178,19 +179,15 @@ func (r *apiTokenResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func createTokenUpdate(data apiTokenResourceModel) v5okta.ApiTokenUpdate {
-	x := v5okta.ApiTokenUpdate{
-		Name:   data.Name.ValueStringPointer(),
-		UserId: data.UserId.ValueStringPointer(),
-	}
+	x := v5okta.ApiTokenUpdate{}
 
 	var network v5okta.ApiTokenNetwork
 	network.Connection = data.Network.Connection.ValueStringPointer()
+	fmt.Println("Connection = ", network.Connection)
 	for _, inc := range data.Network.Include {
-		fmt.Println(inc.IP.ValueString())
 		network.Include = append(network.Include, inc.IP.ValueString())
 	}
 	for _, exc := range data.Network.Exclude {
-		fmt.Println(exc.IP.ValueString())
 		network.Exclude = append(network.Exclude, exc.IP.ValueString())
 	}
 	x.Network = &network

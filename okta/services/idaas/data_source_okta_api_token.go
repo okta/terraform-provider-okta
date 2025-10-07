@@ -18,7 +18,11 @@ type apiTokenDataSource struct {
 }
 
 func (d *apiTokenDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_service_integration"
+	resp.TypeName = req.ProviderTypeName + "_api_token"
+}
+
+func (d *apiTokenDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
 }
 
 func (d *apiTokenDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
