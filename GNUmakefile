@@ -129,15 +129,15 @@ lintx:
 
 tools:
 	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0
-	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
-	@which $(TFPROVIDERLINTX) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.30.0
-	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
+	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.31.0
+	@which $(TFPROVIDERLINTX) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.31.0
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
 
 tools-update:
 	@go install mvdan.cc/gofumpt@v0.7.0
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.30.0
-	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.30.0
-	@go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.31.0
+	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.31.0
+	@go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
