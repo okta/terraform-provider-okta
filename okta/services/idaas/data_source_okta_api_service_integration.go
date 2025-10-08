@@ -15,7 +15,7 @@ func newAPIServiceIntegrationDataSource() datasource.DataSource {
 	return &apiServiceIntegrationDataSource{}
 }
 
-type apiServiceIntegrationDataSoruceModel struct {
+type apiServiceIntegrationDataSourceModel struct {
 	Id             types.String    `tfsdk:"id"`
 	Type           types.String    `tfsdk:"type"`
 	Name           types.String    `tfsdk:"name"`
@@ -82,7 +82,7 @@ func (d *apiServiceIntegrationDataSource) Schema(ctx context.Context, req dataso
 }
 
 func (d *apiServiceIntegrationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data apiServiceIntegrationDataSoruceModel
+	var data apiServiceIntegrationDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
