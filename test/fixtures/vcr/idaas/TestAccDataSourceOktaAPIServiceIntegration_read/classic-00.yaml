@@ -1,0 +1,234 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 101
+        host: classic-00.dne-okta.com
+        body: |
+            {"grantedScopes":["okta.groups.read","okta.logs.read","okta.users.read"],"type":"anzennaapiservice"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","clientSecret":"dxHWCuRg59_lU8nn8YaU3c-QIAnWcv5tWEdDt_Woi4Ra9Z9_42sDfruVhLX7INxW","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.logs.read","okta.groups.read","okta.users.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.465603542s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.groups.read","okta.users.read","okta.logs.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.047952041s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.groups.read","okta.logs.read","okta.users.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.019292209s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.groups.read","okta.logs.read","okta.users.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.323733125s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.groups.read","okta.logs.read","okta.users.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.043775s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oaqrlbi6acWAQLGM1d7","type":"anzennaapiservice","name":"Anzenna","createdAt":"2025-10-08T10:11:10.000Z","createdBy":"00unkw1sfbTw08c0g1d7","configGuideUrl":"https://app.tango.us/app/workflow/Setup-Okta-Integration-in-Anzenna-via-Okta-Integration-Network-de0830961a114582b9a39bf6a0ecfe53","grantedScopes":["okta.users.read","okta.logs.read","okta.groups.read"],"properties":{},"_links":{"self":{"href":"https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET","DELETE"]}},"client":{"href":"https://classic-00.dne-okta.com/oauth2/v1/clients/0oaqrlbi6acWAQLGM1d7","hints":{"allow":["GET"]}},"logo":{"name":"medium","href":"https://op3static.oktacdn.com/fs/bcg/4/gfsg9anevm930UkAP1d7"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 08 Oct 2025 10:11:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.090259208s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/integrations/api/v1/api-services/0oaqrlbi6acWAQLGM1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 08 Oct 2025 10:11:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.186350917s
