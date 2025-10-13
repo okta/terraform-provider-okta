@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
@@ -183,6 +184,13 @@ other arguments that changed will be applied.`,
 				Sensitive:   true,
 				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
 			},
+			"client_secret_basic_wo": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				WriteOnly:   true,
+				Description: "Write-only version of client_basic_secret for Terraform 1.11+. The secret will not be stored in state when using this attribute.",
+			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -306,7 +314,7 @@ other arguments that changed will be applied.`,
 				Default:     "STATIC",
 				Description: "*Early Access Property* Refresh token rotation behavior, required with grant types refresh_token",
 			},
-			"refresh_token_leeway_changed": {
+			"refresh_token_leeway": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     0,
@@ -638,7 +646,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	if oauthClient.RefreshToken != nil {
 		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
 		if oauthClient.RefreshToken.LeewayPtr != nil {
-			_ = d.Set("refresh_token_leeway_changed", oauthClient.RefreshToken.LeewayPtr)
+			_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.LeewayPtr)
 		}
 	}
 	if oauthClient.Jwks != nil {
@@ -831,7 +839,11 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 	}
 	app.Credentials.OauthClient.PkceRequired = pkceRequired
 
-	if sec, ok := d.GetOk("client_basic_secret"); ok {
+	// Try to get write-only attribute first, fall back to regular attribute
+	woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_basic_wo"))
+	if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+		app.Credentials.OauthClient.ClientSecret = woVal.AsString()
+	} else if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
@@ -903,7 +915,7 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 		refresh.RotationType = rotate.(string)
 	}
 
-	leeway, ok := d.GetOk("refresh_token_leeway_changed")
+	leeway, ok := d.GetOk("refresh_token_leeway")
 	if ok {
 		refresh.LeewayPtr = utils.Int64Ptr(leeway.(int))
 	} else {
@@ -916,9 +928,9 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 
 	// TODO: need to put a warning
 	// if !hasRefresh && refresh != nil {
-	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway_changed exist in payload")
+	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway exist in payload")
 	// }
-	// TODO unset refresh_token_rotation, refresh_token_leeway_changed
+	// TODO unset refresh_token_rotation, refresh_token_leeway
 
 	app.Visibility = BuildAppVisibility(d)
 	app.Accessibility = BuildAppAccessibility(d)
