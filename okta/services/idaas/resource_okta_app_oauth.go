@@ -306,7 +306,7 @@ other arguments that changed will be applied.`,
 				Default:     "STATIC",
 				Description: "*Early Access Property* Refresh token rotation behavior, required with grant types refresh_token",
 			},
-			"refresh_token_leeway": {
+			"refresh_token_leeway_changed": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     0,
@@ -638,7 +638,7 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 	if oauthClient.RefreshToken != nil {
 		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
 		if oauthClient.RefreshToken.LeewayPtr != nil {
-			_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.LeewayPtr)
+			_ = d.Set("refresh_token_leeway_changed", oauthClient.RefreshToken.LeewayPtr)
 		}
 	}
 	if oauthClient.Jwks != nil {
@@ -903,7 +903,7 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 		refresh.RotationType = rotate.(string)
 	}
 
-	leeway, ok := d.GetOk("refresh_token_leeway")
+	leeway, ok := d.GetOk("refresh_token_leeway_changed")
 	if ok {
 		refresh.LeewayPtr = utils.Int64Ptr(leeway.(int))
 	} else {
@@ -916,9 +916,9 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 
 	// TODO: need to put a warning
 	// if !hasRefresh && refresh != nil {
-	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway exist in payload")
+	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway_changed exist in payload")
 	// }
-	// TODO unset refresh_token_rotation, refresh_token_leeway
+	// TODO unset refresh_token_rotation, refresh_token_leeway_changed
 
 	app.Visibility = BuildAppVisibility(d)
 	app.Accessibility = BuildAppAccessibility(d)
