@@ -187,22 +187,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	requestConditionReq, diags := createRequestCondition(data)
-	if diags.HasError() {
-		if diags.HasError() {
-			resp.Diagnostics.Append(diags...)
-			return
-		}
-	}
-	if requestConditionReq == nil {
-		resp.Diagnostics.AddError(
-			"Error creating Request conditions",
-			"Could not create Request conditions, unexpected error: requestConditionReq is nil",
-		)
-		return
-	}
-
-	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(*requestConditionReq).Execute()
+	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Request conditions",
@@ -211,7 +196,8 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	if applyRequestConditionToState(&data, requestConditionResp) {
+	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
@@ -239,7 +225,10 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	applyRequestConditionToState(&data, readRequestConditionResp)
+	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, readRequestConditionResp)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -258,15 +247,8 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	patch, diags := createRequestConditionPatch(data)
-	if diags.HasError() {
-		if diags.HasError() {
-			resp.Diagnostics.Append(diags...)
-			return
-		}
-	}
 	// Update API call logic
-	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(patch).Execute()
+	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Request conditions",
@@ -275,8 +257,12 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	applyRequestConditionToState(&data, updatedRequestCondition)
-	// Save updated Data into Terraform state
+	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, updatedRequestCondition)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -306,7 +292,8 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 }
 
-func applyRequestConditionToState(data *requestConditionResourceModel, requestConditionResp *governance.RequestConditionFull) bool {
+func applyRequestConditionToState(ctx context.Context, data *requestConditionResourceModel, requestConditionResp *governance.RequestConditionFull) diag.Diagnostics {
+	var diags diag.Diagnostics
 	data.Id = types.StringValue(requestConditionResp.GetId())
 	data.Name = types.StringValue(requestConditionResp.GetName())
 	if requestConditionResp.Description != nil {
@@ -322,7 +309,7 @@ func applyRequestConditionToState(data *requestConditionResourceModel, requestCo
 	data.RequesterSettings, _ = setRequesterSettings(requestConditionResp.GetRequesterSettings())
 	data.AccessScopeSettings, _ = setAccessScopeSettings(requestConditionResp.GetAccessScopeSettings())
 	data.AccessDurationSettings = setAccessDurationSettings(requestConditionResp.GetAccessDurationSettings())
-	return false
+	return diags
 }
 
 func setAccessDurationSettings(settings governance.AccessDurationSettingsFull) *AccessDurationSettings {
@@ -388,7 +375,7 @@ func setRequesterSettings(settings governance.RequesterSettingsFullRequesterSett
 	return &setting, nil
 }
 
-func createRequestCondition(data requestConditionResourceModel) (*governance.RequestConditionCreatable, diag.Diagnostics) {
+func createRequestCondition(data requestConditionResourceModel) governance.RequestConditionCreatable {
 	req := governance.RequestConditionCreatable{}
 	req.Name = data.Name.ValueString()
 	req.ApprovalSequenceId = data.ApprovalSequenceId.ValueString()
@@ -401,6 +388,10 @@ func createRequestCondition(data requestConditionResourceModel) (*governance.Req
 
 	accessScopeSettings := governance.AccessScopeSettingsCreatableAccessScopeSettings{}
 	if data.AccessScopeSettings.Type.ValueString() == "GROUPS" {
+		if accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings == nil {
+			accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings =
+				&governance.AccessScopeSettingsCreatableGroupAccessScopeSettings{}
+		}
 		accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings.Type = "GROUPS"
 		var groupsIds []governance.GroupsArrayCreatableInner
 		elems := data.AccessScopeSettings.Ids
@@ -413,6 +404,10 @@ func createRequestCondition(data requestConditionResourceModel) (*governance.Req
 		accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings.Groups = groupsIds
 		req.AccessScopeSettings = accessScopeSettings
 	} else if data.AccessScopeSettings.Type.ValueString() == "ENTITLEMENT_BUNDLES" {
+		if accessScopeSettings.AccessScopeSettingsCreatableEntitlementBundleAccessScopeSettings == nil {
+			accessScopeSettings.AccessScopeSettingsCreatableEntitlementBundleAccessScopeSettings =
+				&governance.AccessScopeSettingsCreatableEntitlementBundleAccessScopeSettings{}
+		}
 		accessScopeSettings.AccessScopeSettingsCreatableEntitlementBundleAccessScopeSettings.Type = "ENTITLEMENT_BUNDLES"
 		var entitlementBundles []governance.EntitlementBundlesArrayCreatableInner
 		elems := data.AccessScopeSettings.Ids
@@ -474,10 +469,10 @@ func createRequestCondition(data requestConditionResourceModel) (*governance.Req
 		}
 	}
 
-	return &req, nil
+	return req
 }
 
-func createRequestConditionPatch(data requestConditionResourceModel) (governance.RequestConditionPatchable, diag.Diagnostics) {
+func createRequestConditionPatch(data requestConditionResourceModel) governance.RequestConditionPatchable {
 	var patch governance.RequestConditionPatchable
 	patch.Name = data.Name.ValueStringPointer()
 	patch.ApprovalSequenceId = data.ApprovalSequenceId.ValueStringPointer()
@@ -567,5 +562,5 @@ func createRequestConditionPatch(data requestConditionResourceModel) (governance
 			patch.AccessDurationSettings.Set(&accessDurationSettings)
 		}
 	}
-	return patch, nil
+	return patch
 }
