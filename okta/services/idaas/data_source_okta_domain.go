@@ -114,18 +114,18 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 	d.Set("domain", domain.Domain)
 	d.Set("validation_status", domain.ValidationStatus)
 	d.Set("certificate_source_type", domain.CertificateSourceType)
-	// retrieve DNS records by calling api/v1/domains/{domainId}
-	_domain, _, err := getOktaV5ClientFromMetadata(meta).CustomDomainAPI.GetCustomDomain(ctx, domainID).Execute()
+	// retrieve DNS records by calling api/v1/domains/{domainId} and reassign domain to response of GetCustomDomain()
+	domain, _, err = getOktaV5ClientFromMetadata(meta).CustomDomainAPI.GetCustomDomain(ctx, domainID).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get domain to retrieve DNS records: %v", err)
 	}
-	arr := make([]map[string]interface{}, len(_domain.DnsRecords))
-	for i := range _domain.GetDnsRecords() {
+	arr := make([]map[string]interface{}, len(domain.DnsRecords))
+	for i := range domain.GetDnsRecords() {
 		arr[i] = map[string]interface{}{
-			"expiration":  _domain.DnsRecords[i].Expiration,
-			"fqdn":        _domain.DnsRecords[i].Fqdn,
-			"record_type": _domain.DnsRecords[i].RecordType,
-			"values":      utils.ConvertStringSliceToInterfaceSlice(_domain.DnsRecords[i].Values),
+			"expiration":  domain.DnsRecords[i].Expiration,
+			"fqdn":        domain.DnsRecords[i].Fqdn,
+			"record_type": domain.DnsRecords[i].RecordType,
+			"values":      utils.ConvertStringSliceToInterfaceSlice(domain.DnsRecords[i].Values),
 		}
 	}
 	err = utils.SetNonPrimitives(d, map[string]interface{}{"dns_records": arr})
