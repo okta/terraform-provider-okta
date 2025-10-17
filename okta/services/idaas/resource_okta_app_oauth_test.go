@@ -85,6 +85,36 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaAppOauth_clientBasicSecretWo tests the write-only client_basic_secret_wo attribute
+func TestAccResourceOktaAppOauth_clientBasicSecretWo(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	config := mgr.GetFixtures("client_basic_secret_wo.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					// client_basic_secret_wo should not be persisted in state
+					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret_wo"),
+					// Verify client_secret is not set when using write-only attribute
+					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+				),
+			},
+		},
+	})
+}
+
 // TestAccResourceOktaAppOauth_refreshToken enables refresh token for browser type oauth app
 func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 	// TODO: This is an "Early Access Feature" and needs to be enabled by Okta

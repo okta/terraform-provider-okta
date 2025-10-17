@@ -29,6 +29,19 @@ resource "okta_app_oauth" "example" {
   response_types = ["code"]
 }
 
+### With write-only client secret (Terraform 1.11+)
+### This secret will not be persisted in state, providing improved security.
+
+resource "okta_app_oauth" "example_with_wo_secret" {
+  label                   = "example"
+  type                    = "web"
+  grant_types             = ["authorization_code"]
+  redirect_uris           = ["https://example.com/"]
+  response_types          = ["code"]
+  client_basic_secret_wo  = var.oauth_client_secret  # From variable or secret manager
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
 ### With JWKS value
 ### See also [Advanced PEM secrets and JWKS example](#advanced-pem-and-jwks-example).
 
@@ -78,7 +91,8 @@ resource "okta_app_oauth" "example" {
 				UI.
 				See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object"
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
-- `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.
+- `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_basic_secret_wo` instead to avoid persisting secrets in state.
+- `client_basic_secret_wo` (String, Sensitive, Write-Only) The user provided write-only OAuth client secret key value for Terraform 1.11+. Unlike `client_basic_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.
 - `client_id` (String) OAuth client ID. If set during creation, app is created with this id.
 - `client_uri` (String) URI to a web page providing information about the client.
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED
