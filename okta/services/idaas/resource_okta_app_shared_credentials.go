@@ -145,11 +145,17 @@ func resourceAppSharedCredentialsUpdate(ctx context.Context, d *schema.ResourceD
 	if err != nil {
 		return diag.Errorf("failed to update SWA shared credentials application: %v", err)
 	}
-	if d.HasChange("logo") {
+	if d.HasChange("logo") || d.HasChange("logo_base64") {
 		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
-			o, _ := d.GetChange("logo")
-			_ = d.Set("logo", o)
+			if d.HasChange("logo") {
+				o, _ := d.GetChange("logo")
+				_ = d.Set("logo", o)
+			}
+			if d.HasChange("logo_base64") {
+				o, _ := d.GetChange("logo_base64")
+				_ = d.Set("logo_base64", o)
+			}
 			return diag.Errorf("failed to upload logo for SWA shared credentials application: %v", err)
 		}
 	}

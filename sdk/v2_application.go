@@ -4,6 +4,7 @@ package sdk
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -937,6 +938,48 @@ func (m *ApplicationResource) UploadApplicationLogo(ctx context.Context, appId, 
 	if err != nil {
 		return nil, err
 	}
+	_ = writer.Close()
+
+	req, err := rq.WithAccept("application/json").WithContentType(writer.FormDataContentType()).NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := m.client.requestExecutor.Do(ctx, req, nil)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
+}
+
+// UploadApplicationLogoFromBase64 uploads an application logo from base64-encoded data
+func (m *ApplicationResource) UploadApplicationLogoFromBase64(ctx context.Context, appId, base64Data string) (*Response, error) {
+	url := fmt.Sprintf("/api/v1/apps/%v/logo", appId)
+
+	rq := m.client.CloneRequestExecutor()
+
+	// Decode base64 data
+	decoded, err := base64.StdEncoding.DecodeString(base64Data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode base64 data: %w", err)
+	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// Create form file with generic filename
+	fw, err := writer.CreateFormFile("file", "logo")
+	if err != nil {
+		return nil, err
+	}
+
+	// Write decoded data
+	_, err = fw.Write(decoded)
+	if err != nil {
+		return nil, err
+	}
+
 	_ = writer.Close()
 
 	req, err := rq.WithAccept("application/json").WithContentType(writer.FormDataContentType()).NewRequest("POST", url, body)

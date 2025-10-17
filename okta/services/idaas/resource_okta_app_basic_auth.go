@@ -2,8 +2,9 @@ package idaas
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 	"time"
+
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -147,11 +148,17 @@ func resourceAppBasicAuthUpdate(ctx context.Context, d *schema.ResourceData, met
 	if err != nil {
 		return diag.Errorf("failed to update basic auth application: %v", err)
 	}
-	if d.HasChange("logo") {
+	if d.HasChange("logo") || d.HasChange("logo_base64") {
 		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
 		if err != nil {
-			o, _ := d.GetChange("logo")
-			_ = d.Set("logo", o)
+			if d.HasChange("logo") {
+				o, _ := d.GetChange("logo")
+				_ = d.Set("logo", o)
+			}
+			if d.HasChange("logo_base64") {
+				o, _ := d.GetChange("logo_base64")
+				_ = d.Set("logo_base64", o)
+			}
 			return diag.Errorf("failed to upload logo for basic auth application: %v", err)
 		}
 	}
