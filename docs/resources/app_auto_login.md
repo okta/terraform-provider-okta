@@ -60,6 +60,7 @@ JSON
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `preconfigured_app` (String) Tells Okta to use an existing application in their application catalog, as opposed to a custom application.
 - `reveal_password` (Boolean) Allow user to reveal password. Default is false. It can not be set to true if credentials_scheme is "ADMIN_SETS_CREDENTIALS", "SHARED_USERNAME_AND_PASSWORD" or "EXTERNAL_PASSWORD_SYNC".
 - `shared_password` (String) Shared password, required for certain schemes.

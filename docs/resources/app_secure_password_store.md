@@ -52,6 +52,7 @@ resource "okta_app_secure_password_store" "example" {
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `optional_field1` (String) Name of optional param in the login form
 - `optional_field1_value` (String) Name of optional value in login form
 - `optional_field2` (String) Name of optional param in the login form

@@ -62,6 +62,7 @@ resource "okta_app_shared_credentials" "example" {
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `password_field` (String) Login password field
 - `preconfigured_app` (String) Name of application from the Okta Integration Network, if not included a custom app will be created.
 - `redirect_url` (String) Secondary URL of the sign-in page for this app

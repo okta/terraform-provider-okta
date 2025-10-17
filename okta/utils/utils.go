@@ -767,6 +767,29 @@ func LogoFileIsValid() schema.SchemaValidateDiagFunc {
 	}
 }
 
+// LogoBase64IsValid validates base64-encoded logo data
+func LogoBase64IsValid() schema.SchemaValidateDiagFunc {
+	return func(i interface{}, k cty.Path) diag.Diagnostics {
+		v, ok := i.(string)
+		if !ok {
+			return diag.Errorf("expected type of %v to be string", k)
+		}
+		if v == "" {
+			return nil
+		}
+		// Validate base64 encoding
+		decoded, err := base64.StdEncoding.DecodeString(v)
+		if err != nil {
+			return diag.Errorf("invalid base64 encoding: %v", err)
+		}
+		// Check decoded size (should be less than 1 MB)
+		if len(decoded) > 1<<20 {
+			return diag.Errorf("decoded logo data should be less than 1 MB in size")
+		}
+		return nil
+	}
+}
+
 // NewExponentialBackOffWithContext helper to dry up creating a backoff object that is exponential and has context
 func NewExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.Duration) backoff.BackOffContext {
 	bOff := backoff.NewExponentialBackOff()

@@ -45,6 +45,7 @@ resource "okta_app_basic_auth" "example" {
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `status` (String) Status of application. By default, it is `ACTIVE`
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

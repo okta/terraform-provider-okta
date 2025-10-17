@@ -43,10 +43,21 @@ var (
 			Optional:         true,
 			ValidateDiagFunc: utils.LogoFileIsValid(),
 			Description:      "Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.",
+			ConflictsWith:    []string{"logo_base64"},
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 				return new == ""
 			},
 			StateFunc: utils.LocalFileStateFunc,
+		},
+		"logo_base64": {
+			Type:             schema.TypeString,
+			Optional:         true,
+			ValidateDiagFunc: utils.LogoBase64IsValid(),
+			Description:      "Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.",
+			ConflictsWith:    []string{"logo"},
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				return new == ""
+			},
 		},
 		"logo_url": {
 			Type:        schema.TypeString,
@@ -317,12 +328,21 @@ func listApplicationGroupAssignments(ctx context.Context, client *sdk.Client, id
 }
 
 func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
-	l, ok := d.GetOk("logo")
-	if !ok {
-		return nil
+	client := getOktaClientFromMetadata(m)
+
+	// Check for base64-encoded logo first
+	if logoBase64, ok := d.GetOk("logo_base64"); ok {
+		_, err := client.Application.UploadApplicationLogoFromBase64(ctx, appID, logoBase64.(string))
+		return err
 	}
-	_, err := getOktaClientFromMetadata(m).Application.UploadApplicationLogo(ctx, appID, l.(string))
-	return err
+
+	// Fall back to file path logo
+	if logo, ok := d.GetOk("logo"); ok {
+		_, err := client.Application.UploadApplicationLogo(ctx, appID, logo.(string))
+		return err
+	}
+
+	return nil
 }
 
 // setAppSettings available preconfigured SAML and OAuth applications vary wildly on potential app settings, thus

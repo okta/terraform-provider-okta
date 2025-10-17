@@ -90,6 +90,8 @@ resource "okta_app_oauth" "example" {
 - `implicit_assignment` (Boolean) *Early Access Property*. Enable Federation Broker Mode.
 - `issuer_mode` (String) *Early Access Property*. Indicates whether the Okta Authorization Server uses the original Okta org domain URL or a custom domain URL as the issuer of ID token for this client.
 - `jwks` (Block List) (see [below for nested schema](#nestedblock--jwks))
+- `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `jwks_uri` (String) URL reference to JWKS
 - `login_mode` (String) The type of Idp-Initiated login that the client supports, if any
 - `login_scopes` (Set of String) List of scopes to use for the request

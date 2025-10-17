@@ -212,6 +212,7 @@ resource "okta_app_saml" "test" {
 - `key_name` (String) Certificate name. This modulates the rotation of keys. New name == new key. Required to be set with `key_years_valid`
 - `key_years_valid` (Number) Number of years the certificate is valid (2 - 10 years).
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
+- `logo_base64` (String) Base64-encoded logo image. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size when decoded.
 - `preconfigured_app` (String) Name of application from the Okta Integration Network. For instance 'slack'. If not included a custom app will be created.  If not provided the following arguments are required:
 'sso_url'
 'recipient'
