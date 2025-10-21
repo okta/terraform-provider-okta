@@ -2,12 +2,13 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/hashicorp/go-cty/cty"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/stretchr/testify/assert"
@@ -525,6 +526,85 @@ func TestStrMaxLength(t *testing.T) {
 			}
 			if gotError != tt.expectError {
 				t.Errorf("expected error: %v, got: %v, input: %#v", tt.expectError, gotError, tt.input)
+			}
+		})
+	}
+}
+
+func TestNoChangeInObjectWithSortedSlicesFromUnmarshaledJSON(t *testing.T) {
+	testCases := []struct {
+		name     string
+		oldJSON  string
+		newJSON  string
+		expected bool
+	}{
+		{
+			name:     "there is no change - same same",
+			oldJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			newJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			expected: true,
+		},
+		{
+			name:     "there is no change - but different order",
+			oldJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			newJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["b","a","c"]}}`,
+			expected: true,
+		},
+		{
+			name:     "there is a change",
+			oldJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			newJSON:  `{"one":2,"some":[2,1],"foo":{"bar":["b","a","c"]}}`,
+			expected: false,
+		},
+		{
+			name:     "there is a type mismatch",
+			oldJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			newJSON:  `{"one":1,"some":["2","1"],"foo":{"bar":["b","a","c"]}}`,
+			expected: false,
+		},
+		{
+			name:     "there is a nil in between",
+			oldJSON:  `{"one":1,"some":[2,1],"foo":{"bar":["a","b","c"]}}`,
+			newJSON:  `{"one":2,"some":[null, 2],"foo":{"bar":["b",null,"c"]}}`,
+			expected: false,
+		},
+		{
+			name:     "there is a nil in between",
+			oldJSON:  `null`,
+			newJSON:  `null`,
+			expected: true,
+		},
+		{
+			name:     "equal numbers",
+			oldJSON:  `1`,
+			newJSON:  `1`,
+			expected: true,
+		},
+		{
+			name:     "equal floats",
+			oldJSON:  `13.3`,
+			newJSON:  `13.30`,
+			expected: true,
+		},
+		{
+			name:     "equal bool",
+			oldJSON:  `true`,
+			newJSON:  `true`,
+			expected: true,
+		},
+		{
+			name:     "equal bool",
+			oldJSON:  `[1,2,3]`,
+			newJSON:  `[2,3,1]`,
+			expected: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON("", tc.oldJSON, tc.newJSON, nil)
+			if tc.expected != result {
+				t.Errorf("expected %+v, got %+v", tc.expected, result)
 			}
 		})
 	}

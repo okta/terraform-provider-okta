@@ -6,51 +6,47 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 67
-        host: realm-support.dne-okta.com
-        body: |
-            {"profile":{"name":"TestAcc Example Realm","realmType":"DEFAULT"}}
+        content_length: 0
+        host: oie-00.dne-okta.com
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-            Content-Type:
-                - application/json
-        url: https://realm-support.dne-okta.com/api/v1/realms
-        method: POST
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"guotyyzbl1YWn63OB697","created":"2025-08-07T10:56:05.000Z","lastUpdated":"2025-08-07T10:56:05.000Z","profile":{"name":"TestAcc Example Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697","method":"GET"}}}'
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2025-09-25T15:04:26Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 07 Aug 2025 10:56:05 GMT
+                - Fri, 26 Sep 2025 10:33:25 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.061888292s
+        duration: 1.256660167s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        host: realm-support.dne-okta.com
+        host: oie-00.dne-okta.com
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -58,32 +54,32 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"guotyyzbl1YWn63OB697","created":"2025-08-07T10:56:05.000Z","lastUpdated":"2025-08-07T10:56:05.000Z","profile":{"name":"TestAcc Example Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697","method":"GET"}}}'
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2025-09-25T15:04:26Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 07 Aug 2025 10:56:06 GMT
+                - Fri, 26 Sep 2025 10:33:27 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 891.3495ms
+        duration: 1.016891792s
     - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        host: realm-support.dne-okta.com
+        host: oie-00.dne-okta.com
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -91,28 +87,61 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"guotyyzbl1YWn63OB697","created":"2025-08-07T10:56:05.000Z","lastUpdated":"2025-08-07T10:56:05.000Z","profile":{"name":"TestAcc Example Realm","realmType":"DEFAULT","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697","method":"GET"}}}'
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2025-09-25T15:04:26Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 07 Aug 2025 10:56:07 GMT
+                - Fri, 26 Sep 2025 10:33:28 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 876.239416ms
+        duration: 1.23166675s
     - id: 3
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 75
-        host: realm-support.dne-okta.com
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2025-09-25T15:04:26Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Sep 2025 10:33:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.357555875s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 125
+        host: oie-00.dne-okta.com
         body: |
-            {"profile":{"name":"TestAcc Example Realm Updated","realmType":"PARTNER"}}
+            {"defaultConcurrencyPercentage":85,"defaultPercentage":55,"principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN"}
         headers:
             Accept:
                 - application/json
@@ -120,7 +149,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
         method: PUT
       response:
         proto: HTTP/2.0
@@ -128,32 +157,32 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"guotyyzbl1YWn63OB697","created":"2025-08-07T10:56:05.000Z","lastUpdated":"2025-08-07T10:56:08.000Z","profile":{"name":"TestAcc Example Realm Updated","realmType":"PARTNER","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697","method":"GET"}}}'
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":55,"defaultConcurrencyPercentage":85,"lastUpdate":"2025-09-26T10:33:31Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 07 Aug 2025 10:56:08 GMT
+                - Fri, 26 Sep 2025 10:33:31 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 946.544667ms
-    - id: 4
+        duration: 1.127251125s
+    - id: 5
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        host: realm-support.dne-okta.com
+        host: oie-00.dne-okta.com
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697
+        url: https://oie-00.dne-okta.com/api/v1/principal-rate-limits/prlnpbzamkh0Z8xYo1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -161,46 +190,16 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"guotyyzbl1YWn63OB697","created":"2025-08-07T10:56:05.000Z","lastUpdated":"2025-08-07T10:56:08.000Z","profile":{"name":"TestAcc Example Realm Updated","realmType":"PARTNER","domains":[]},"isDefault":false,"_links":{"self":{"rel":"self","href":"https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697","method":"GET"}}}'
+        body: '{"id":"prlnpbzamkh0Z8xYo1d7","orgId":"00onkw1sbuAh3Q06I1d7","principalId":"00T1cuuokxSImd8ST1d7","principalType":"SSWS_TOKEN","defaultPercentage":55,"defaultConcurrencyPercentage":85,"lastUpdate":"2025-09-26T10:33:31Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7","createdDate":"2025-07-01T08:14:57Z","createdBy":"00unkw1sfbTw08c0g1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 07 Aug 2025 10:56:09 GMT
+                - Fri, 26 Sep 2025 10:33:32 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 909.665958ms
-    - id: 5
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: realm-support.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://realm-support.dne-okta.com/api/v1/realms/guotyyzbl1YWn63OB697
-        method: DELETE
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: 0
-        body: ""
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Date:
-                - Thu, 07 Aug 2025 10:56:10 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 204 No Content
-        code: 204
-        duration: 1.145766s
+        duration: 1.0880395s

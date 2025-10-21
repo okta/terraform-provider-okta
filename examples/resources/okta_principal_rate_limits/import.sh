@@ -1,0 +1,1 @@
+terraform import okta_principal_rate_limits.example <principal_rate_limits_id>

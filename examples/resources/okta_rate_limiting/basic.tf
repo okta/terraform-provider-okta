@@ -1,5 +1,6 @@
 resource "okta_rate_limiting" "example" {
-  login                  = "ENFORCE"
-  authorize              = "ENFORCE"
-  communications_enabled = true
+  default_mode = "ENFORCE"
+  use_case_mode_overrides{
+    login_page= "ENFORCE"
+  }
 }
