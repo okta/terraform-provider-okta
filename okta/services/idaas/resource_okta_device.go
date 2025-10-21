@@ -41,6 +41,7 @@ type deviceResourceModel struct {
 	Id           types.String `tfsdk:"id"`
 	Status       types.String `tfsdk:"status"`
 	ResourceType types.String `tfsdk:"resource_type"`
+	Action       types.String `tfsdk:"action"`
 }
 
 func (r *devicesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -51,12 +52,16 @@ func (r *devicesResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Description: "The ID of the device.",
 			},
 			"status": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: "The status of the device.",
 			},
 			"resource_type": schema.StringAttribute{
 				Computed:    true,
 				Description: "The resource type of the device.",
+			},
+			"action": schema.StringAttribute{
+				Optional:    true,
+				Description: "The action of the device.",
 			},
 		},
 	}
@@ -105,7 +110,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	if data.Status.ValueStringPointer() != nil && data.Status.ValueString() == "ACTIVATE" {
+	if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "ACTIVE" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.ActivateDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -114,7 +119,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Status.ValueString() == "DEACTIVATE" {
+	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "DEACTIVATED" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.DeactivateDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -123,7 +128,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Status.ValueString() == "SUSPEND" {
+	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "SUSPENDED" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.SuspendDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -132,7 +137,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Status.ValueString() == "UNSUSPEND" {
+	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "UNSUSPEND" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.UnsuspendDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -143,9 +148,21 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		}
 	}
 
-	data.Id = state.Id
-	data.ResourceType = state.ResourceType
+	getDeviceResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.GetDevice(ctx, state.Id.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading Device",
+			"Could not read Device with Id "+data.Id.ValueString()+": "+err.Error(),
+		)
+		return
+	}
 
+	resp.Diagnostics.Append(applyDevicesToState(getDeviceResp, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Save updated state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 

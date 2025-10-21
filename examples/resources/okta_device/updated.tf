@@ -1,3 +1,3 @@
 resource "okta_device" example{
-  action = "ACTIVE"
+  action = "DEACTIVATED"
 }
