@@ -41,10 +41,10 @@ data "okta_request_condition" "test" {
 ### Nested Schema for `access_scope_settings`
 Read-Only:
 - `type` (String) Enum: `RESOURCE_DEFAULT`, `GROUPS`, `ENTITLEMENT_BUNDLES`.
-- `id` (List of String) List of entitlement bundle ids/group ids.
+- `id` (Block List) Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID).
 
 <a id="nestedblock--requester_settings"></a>
 ### Nested Schema for `requester_settings`
 Read-Only:
 - `type` (String) Enum: `EVERYONE`, `TEAMS`, `GROUPS`.
-- `id` (List of String) List of group ids or team ids.
+- `id` (Block List) Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID).
