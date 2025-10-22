@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.4.0 (October 21, 2025)
+
+### BUG FIXES
+* Fix error when creating request condition [#2512](https://github.com/okta/terraform-provider-okta/pull/2512) by [aditya-okta](https://github.com/aditya-okta).
+* Fix empty `dns_records` issue in data source and resource `okta_domain` [#2513](https://github.com/okta/terraform-provider-okta/pull/2513) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix documentation bug for resource and data source `okta_request_v2` [#2530](https://github.com/okta/terraform-provider-okta/pull/2530) by [aditya-okta](https://github.com/aditya-okta).
+* Fix documentation bug for resource and data source `okta_request_condition` [#2531](https://github.com/okta/terraform-provider-okta/pull/2531) by [aditya-okta](https://github.com/aditya-okta).
+
+
 ## 6.3.0 (October 6,2025)
 
 ### FEATURE
