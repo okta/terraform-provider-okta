@@ -29,19 +29,6 @@ resource "okta_app_oauth" "example" {
   response_types = ["code"]
 }
 
-### With write-only client secret (Terraform 1.11+)
-### This secret will not be persisted in state, providing improved security.
-
-resource "okta_app_oauth" "example_with_wo_secret" {
-  label                   = "example"
-  type                    = "web"
-  grant_types             = ["authorization_code"]
-  redirect_uris           = ["https://example.com/"]
-  response_types          = ["code"]
-  client_basic_secret_wo  = var.oauth_client_secret  # From variable or secret manager
-  token_endpoint_auth_method = "client_secret_basic"
-}
-
 ### With JWKS value
 ### See also [Advanced PEM secrets and JWKS example](#advanced-pem-and-jwks-example).
 
