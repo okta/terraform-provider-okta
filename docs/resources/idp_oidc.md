@@ -60,7 +60,6 @@ resource "okta_idp_oidc" "example_with_wo_secret" {
 - `authorization_binding` (String) The method of making an authorization request. It can be set to `HTTP-POST` or `HTTP-REDIRECT`.
 - `authorization_url` (String) IdP Authorization Server (AS) endpoint to request consent from the user and obtain an authorization code grant.
 - `client_id` (String) Unique identifier issued by AS for the Okta IdP instance.
-- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state.
 - `issuer_url` (String) URI that identifies the issuer.
 - `jwks_binding` (String) The method of making a request for the OIDC JWKS. It can be set to `HTTP-POST` or `HTTP-REDIRECT`
 - `jwks_url` (String) Endpoint where the keys signer publishes its keys in a JWK Set.
@@ -73,7 +72,8 @@ resource "okta_idp_oidc" "example_with_wo_secret" {
 
 - `account_link_action` (String) Specifies the account linking action for an IdP user. Default: `AUTO`
 - `account_link_group_include` (Set of String) Group memberships to determine link candidates.
-- `client_secret_wo` (String, Sensitive, Write-Only) Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.
+- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state. Either `client_secret` or `client_secret_wo` must be specified, but not both.
+- `client_secret_wo` (String, Sensitive, Write-Only) Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher. Either `client_secret` or `client_secret_wo` must be specified, but not both.
 - `deprovisioned_action` (String) Action for a previously deprovisioned IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`
 - `groups_action` (String) Provisioning action for IdP user's group memberships. It can be `NONE`, `SYNC`, `APPEND`, or `ASSIGN`. Default: `NONE`
 - `groups_assignment` (Set of String) List of Okta Group IDs to add an IdP user as a member with the `ASSIGN` `groups_action`.
