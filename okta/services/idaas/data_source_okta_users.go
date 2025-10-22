@@ -57,6 +57,11 @@ func dataSourceUsers() *schema.Resource {
 								Type:     schema.TypeString,
 								Computed: true,
 							},
+							"realm_id": {
+								Type:        schema.TypeString,
+								Computed:    true,
+								Description: "The Realm ID associated with the user.",
+							},
 						}),
 				},
 			},
