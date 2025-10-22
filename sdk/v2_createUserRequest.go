@@ -6,4 +6,5 @@ type CreateUserRequest struct {
 	GroupIds    []string         `json:"groupIds,omitempty"`
 	Profile     *UserProfile     `json:"profile,omitempty"`
 	Type        *UserType        `json:"type,omitempty"`
+	RealmId     *string          `json:"realmId,omitempty"`
 }

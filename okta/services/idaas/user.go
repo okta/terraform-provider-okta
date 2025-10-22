@@ -403,6 +403,9 @@ func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]inte
 	}
 
 	attrs["status"] = mapStatus(u.Status)
+	if u.RealmId != nil {
+		attrs["realm_id"] = u.RealmId
+	}
 
 	data, _ := json.Marshal(customAttributes)
 	attrs["custom_profile_attributes"] = string(data)
