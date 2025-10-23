@@ -107,8 +107,8 @@ func TestAccResourceOktaAppOauth_clientBasicSecretWo(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					// client_basic_secret_wo should not be persisted in state
 					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret_wo"),
-					// Verify client_secret is not set when using write-only attribute
-					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+					// Verify client_basic_secret is not set when using write-only attribute
+					resource.TestCheckResourceAttr(resourceName, "client_basic_secret", ""),
 				),
 			},
 		},
