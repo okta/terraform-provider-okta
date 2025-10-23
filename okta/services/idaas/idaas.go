@@ -103,6 +103,8 @@ func FWProviderResources() []func() resource.Resource {
 		newRateLimitAdminNotificationSettingsResource,
 		newRateLimitWarningThresholdPercentageResource,
 		newPrincipalRateLimitsResource,
+		newUserLockoutSettingsResource,
+		newAuthenticatorSettingsResource,
 	}
 }
 
