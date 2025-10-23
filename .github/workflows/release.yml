@@ -28,7 +28,7 @@ jobs:
         name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.23"
+          go-version: "1.24.0"
 
       - name: Run VCR acceptance tests
         run: time make smoke-test-play-vcr-acc
