@@ -1,3 +1,3 @@
 data "okta_device" example{
-  id = "guoouwxd284CjPQ121d7"
+  id = "abcdefghi0123456789"
 }

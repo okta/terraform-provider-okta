@@ -2,10 +2,11 @@ package idaas_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"testing"
 )
 
 func TestAccDeviceResource_basic(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAccDeviceResource_basic(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_device.example",
-				ImportStateId:      "guonyww5f0MnWGsUX1d7",
+				ImportStateId:      "abcdefghi0123456789",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
