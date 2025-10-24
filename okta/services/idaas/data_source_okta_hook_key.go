@@ -2,14 +2,12 @@ package idaas
 
 import (
 	"context"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -20,15 +18,6 @@ var (
 
 type hookKeyDataSource struct {
 	*config.Config
-}
-
-type hookKeyDataSourceModel struct {
-	Id          types.String `tfsdk:"id"`
-	KeyId       types.String `tfsdk:"key_id"`
-	Name        types.String `tfsdk:"name"`
-	Created     types.String `tfsdk:"created"`
-	LastUpdated types.String `tfsdk:"last_updated"`
-	IsUsed      types.Bool   `tfsdk:"is_used"`
 }
 
 func newHookKeyDataSource() datasource.DataSource {
@@ -95,13 +84,4 @@ func (d *hookKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	}
 	applyHookKeyToState(&stateData, hookKey)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &stateData)...) // Save updated data into Terraform state
-}
-
-func applyHookKeyDataSourceToState(data *hookKeyDataSourceModel, hookKeyResp *HookKeyResponse) {
-	data.Id = types.StringValue(hookKeyResp.Id)
-	data.KeyId = types.StringValue(hookKeyResp.KeyId)
-	data.Name = types.StringValue(hookKeyResp.Name)
-	data.Created = types.StringValue(hookKeyResp.Created.Format(time.RFC3339))
-	data.LastUpdated = types.StringValue(hookKeyResp.LastUpdated.Format(time.RFC3339))
-	data.IsUsed = types.BoolValue(hookKeyResp.IsUsed == "true")
 }
