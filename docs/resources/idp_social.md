@@ -44,7 +44,8 @@ resource "okta_idp_social" "example" {
 - `apple_private_key` (String, Sensitive) The Key ID that you obtained from Apple when you created the private key for the client. PrivateKey is required when resource is first created. For all consecutive updates, it can be empty/omitted and keeps the existing value if it is empty/omitted. PrivateKey isn't returned when importing this resource.
 - `apple_team_id` (String) The Team ID associated with your Apple developer account
 - `client_id` (String) Unique identifier issued by AS for the Okta IdP instance.
-- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance.
+- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state.
+- `client_secret_wo` (String, Sensitive, Write-Only) Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.
 - `deprovisioned_action` (String) Action for a previously deprovisioned IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`
 - `groups_action` (String) Provisioning action for IdP user's group memberships. It can be `NONE`, `SYNC`, `APPEND`, or `ASSIGN`. Default: `NONE`
 - `groups_assignment` (Set of String) List of Okta Group IDs to add an IdP user as a member with the `ASSIGN` `groups_action`.
