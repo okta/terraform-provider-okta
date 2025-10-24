@@ -110,7 +110,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "ACTIVE" {
+	if data.Action.ValueStringPointer() != nil && data.Action.ValueString() == "ACTIVE" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.ActivateDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -119,7 +119,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "DEACTIVATED" {
+	} else if data.Action.ValueStringPointer() != nil && data.Action.ValueString() == "DEACTIVATED" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.DeactivateDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -128,7 +128,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "SUSPENDED" {
+	} else if data.Action.ValueStringPointer() != nil && data.Action.ValueString() == "SUSPENDED" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.SuspendDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
@@ -137,7 +137,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 			)
 			return
 		}
-	} else if data.Status.ValueStringPointer() != nil && data.Action.ValueString() == "UNSUSPEND" {
+	} else if data.Action.ValueStringPointer() != nil && data.Action.ValueString() == "UNSUSPEND" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV5().DeviceAPI.UnsuspendDevice(ctx, state.Id.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
