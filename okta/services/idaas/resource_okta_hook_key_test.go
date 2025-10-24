@@ -16,8 +16,9 @@ func TestAccResourceHookKey_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSHookKey, t.Name())
 	basic := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("basic_updated.tf", t)
-	resource.Test(t, resource.TestCase{
+	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
