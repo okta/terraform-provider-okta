@@ -6,7 +6,7 @@ description: |-
 
 # Data Source: okta_hook_key
 
-Get a Hook Key by ID. Hook Keys are public/private key pairs that are used to authenticate webhook requests from Okta to your application.
+Use Key Management to create and manage JSON Web Keys (JWKS) that support OAuth 2.0 client authentication. The key is composed of a public and private key pair. The private key signs the JSON Web Token (JWT) and the public key validates it on the client side.
 
 ## Example Usage
 
