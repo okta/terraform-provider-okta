@@ -5,11 +5,11 @@ resource "okta_user_type" "test" {
 }
 
 data "okta_user_type" "test-find-by-id" {
-  id = okta_user_type.test.id
+  id         = okta_user_type.test.id
   depends_on = [okta_user_type.test]
 }
 
 data "okta_user_type" "test-find-by-name" {
-  name = okta_user_type.test.name
+  name       = okta_user_type.test.name
   depends_on = [okta_user_type.test]
 }
