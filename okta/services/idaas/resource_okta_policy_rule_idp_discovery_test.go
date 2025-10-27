@@ -2,10 +2,11 @@ package idaas_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
