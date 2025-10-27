@@ -9,6 +9,7 @@ const (
 	OktaIDaaSAppAutoLogin                             = "okta_app_auto_login"
 	OktaIDaaSAppBasicAuth                             = "okta_app_basic_auth"
 	OktaIDaaSAppBookmark                              = "okta_app_bookmark"
+	OktaIDaaSAppConnection                            = "okta_app_connection"
 	OktaIDaaSAppGroupAssignment                       = "okta_app_group_assignment"
 	OktaIDaaSAppGroupAssignments                      = "okta_app_group_assignments"
 	OktaIDaaSAppMetadataSaml                          = "okta_app_metadata_saml"
