@@ -34,8 +34,6 @@ data "okta_security_events_provider" "example" {
 <a id="nestedobjatt--settings"></a>
 ### Nested Schema for `settings`
 
-Security Events Provider settings.
-
 Read-Only:
 
 - `well_known_url` (String) The published well-known URL of the Security Events Provider (the SSF transmitter).
