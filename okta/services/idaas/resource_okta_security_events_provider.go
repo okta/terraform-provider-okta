@@ -205,9 +205,9 @@ func applySecurityEventsProviderToState(resp *v5okta.SecurityEventsProviderRespo
 	s.IsEnabled = types.StringValue(resp.GetStatus())
 	settings := resp.GetSettings()
 	s.Settings = &settingsModel{}
-	if settings.HasWellKnownUrl() != false {
+	if settings.HasWellKnownUrl() {
 		s.Settings.WellKnownUrl = types.StringValue(settings.GetWellKnownUrl())
-	} else if settings.HasJwksUrl() != false && settings.HasIssuer() != false {
+	} else if settings.HasJwksUrl() && settings.HasIssuer() {
 		s.Settings.Issuer = types.StringValue(settings.GetIssuer())
 		s.Settings.JwksUrl = types.StringValue(settings.GetJwksUrl())
 	}
