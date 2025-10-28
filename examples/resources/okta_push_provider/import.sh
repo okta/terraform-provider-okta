@@ -1,0 +1,1 @@
+terraform import okta_push_provider.example <push_provider_id>
