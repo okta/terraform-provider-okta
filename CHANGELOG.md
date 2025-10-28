@@ -1,5 +1,45 @@
 # Changelog
 
+## 6.4.0 (October 28, 2025)
+
+### BUG FIXES
+* Fix error when creating request condition [#2512](https://github.com/okta/terraform-provider-okta/pull/2512) by [aditya-okta](https://github.com/aditya-okta).
+* Fix empty `dns_records` issue in data source and resource `okta_domain` [#2513](https://github.com/okta/terraform-provider-okta/pull/2513) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix documentation bug for resource and data source `okta_request_v2` [#2530](https://github.com/okta/terraform-provider-okta/pull/2530) by [aditya-okta](https://github.com/aditya-okta).
+* Fix documentation bug for resource and data source `okta_request_condition` [#2531](https://github.com/okta/terraform-provider-okta/pull/2531) by [aditya-okta](https://github.com/aditya-okta).
+
+
+## 6.3.0 (October 6,2025)
+
+### FEATURE
+* New resource and data source `okta_principal_rate_limits`, `okta_rate_limit_admin_notification`, `okta_rate_limit_warning_threshold` to manager rate limits [#2496](https://github.com/okta/terraform-provider-okta/pull/2496) by [aditya-okta](https://github.com/aditya-okta).
+
+### BUG FIXES
+* Fix flaky diff for userVerificationMethods in authenticator [#2477](https://github.com/okta/terraform-provider-okta/pull/2477) by [tim-koehler](https://github.com/tim-koehler).
+* Fix error output while realm creation [#2499](https://github.com/okta/terraform-provider-okta/pull/2499) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix to return `source` field in `data_source_okta_groups` by [pranav-okta](https://github.com/pranav-okta).
+
+## 6.2.0 (September 23, 2025)
+
+### FEATURE
+* New resource and data source `okta_entitlement_bundle` to manager entitlement bundles [#2485](https://github.com/okta/terraform-provider-okta/pull/2485) by [aditya-okta](https://github.com/aditya-okta).
+* New data sources `okta_end_user_my_catalogs_entry`, `okta_end_user_my_catalogs_entry_request_fields`, `okta_end_user_my_catalogs_entry_user_request_fields` to request for catalog entries that you're allowed to request [#2491](https://github.com/okta/terraform-provider-okta/pull/2491) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+## 6.1.0 (September 19, 2025)
+
+### FEATURE
+* New resource and data source `okta_reviews`, `okta_principal_entitlements`, `okta_request_conditions`, `okta_request_sequences`, `okta_request_settings`, `okta_request_v2`, `okta_catalog_entry_default`, `okta_catalog_entry_user_access_request_fields`, `okta_end_user_my_requests` Adds support for managing resources in Okta Internal Governance [#2483](https://github.com/okta/terraform-provider-okta/pull/2483) by [aditya-okta](https://github.com/aditya-okta) and [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+## 6.0.0 (September 9, 2025)
+
+### ANNOUNCEMENT
+This is a major release introducing expanded support for Okta Governance resources, including Campaigns and Entitlements.  
+Version 5.x of the provider will be deprecated soon.
+
+### FEATURE
+* New resource: `okta_campaign` Adds support for managing Campaigns in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+* New resource: `okta_entitlement` Adds support for managing Entitlements in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+
 ## 5.4.0 (September 3, 2025)
 
 ### BUG FIXES
@@ -27,6 +67,7 @@
 
 * Realm assignment support [#2293](https://github.com/okta/terraform-provider-okta/pull/2293) by [tim-koehler](https://github.com/tim-koehler)
 * Add support for `enrollmentSecurityLevel` and `userVerificationMethods` to `okta_authenticator` [#2409](https://github.com/okta/terraform-provider-okta/pull/2409) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 
 ## 5.2.0 (July 16, 2025)
 

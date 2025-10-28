@@ -1,0 +1,242 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.111956208s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.130475875s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 210
+        host: oie-00.dne-okta.com
+        body: |
+            {"requestOnBehalfOfSettings":{"allowed":true},"riskSettings":{"defaultSetting":{"accessDurationSettings":null,"approvalSequenceId":"68920b41386747a673869356","requestSubmissionType":"ALLOWED_WITH_OVERRIDES"}}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.362048917s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.282246333s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.291226208s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 108
+        host: oie-00.dne-okta.com
+        body: |
+            {"requestOnBehalfOfSettings":null,"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.149606292s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 17 Sep 2025 22:07:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 2.082233416s

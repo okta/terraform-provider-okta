@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceDomain() *schema.Resource {
@@ -86,23 +86,23 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 	did, _ := d.GetOk("domain_id_or_name")
 	domainID := did.(string)
 
-	domains, _, err := getOktaClientFromMetadata(meta).Domain.ListDomains(ctx)
+	domainList, _, err := getOktaV5ClientFromMetadata(meta).CustomDomainAPI.ListCustomDomains(ctx).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get domains: %v", err)
 	}
 
-	var domain *sdk.Domain
-	for _, _domain := range domains.Domains {
-		if _domain.Id == domainID {
-			domain = _domain
+	var domain *oktav5sdk.DomainResponse
+	for _, _domain := range domainList.Domains {
+		if _domain.GetId() == domainID {
+			domain = &_domain
 			break
 		}
-		if _domain.Domain == domainID {
-			domain = _domain
+		if _domain.GetDomain() == domainID {
+			domain = &_domain
 			break
 		}
-		if strings.EqualFold(_domain.Domain, domainID) {
-			domain = _domain
+		if strings.EqualFold(_domain.GetDomain(), domainID) {
+			domain = &_domain
 			break
 		}
 	}
@@ -110,12 +110,17 @@ func dataSourceDomainRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.Errorf("failed to find domain by id or name: %q", domainID)
 	}
 
-	d.SetId(domain.Id)
+	d.SetId(domain.GetId())
 	d.Set("domain", domain.Domain)
 	d.Set("validation_status", domain.ValidationStatus)
 	d.Set("certificate_source_type", domain.CertificateSourceType)
+	// retrieve DNS records by calling api/v1/domains/{domainId} and reassign domain to response of GetCustomDomain()
+	domain, _, err = getOktaV5ClientFromMetadata(meta).CustomDomainAPI.GetCustomDomain(ctx, domainID).Execute()
+	if err != nil {
+		return diag.Errorf("failed to get domain to retrieve DNS records: %v", err)
+	}
 	arr := make([]map[string]interface{}, len(domain.DnsRecords))
-	for i := range domain.DnsRecords {
+	for i := range domain.GetDnsRecords() {
 		arr[i] = map[string]interface{}{
 			"expiration":  domain.DnsRecords[i].Expiration,
 			"fqdn":        domain.DnsRecords[i].Fqdn,

@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
 
@@ -32,4 +32,8 @@ jobs:
         run: make test
 
       - name: Run VCR acceptance tests
-        run: time make test-play-vcr-acc
+        run: |
+          echo "Running IDaaS tests..."
+          time make test-play-vcr-acc
+          echo "Running Governance tests..."
+          time make test-play-vcr-acc-governance

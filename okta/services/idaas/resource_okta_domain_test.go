@@ -32,6 +32,9 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "certificate_source_type", "MANUAL"),
 					resource.TestCheckResourceAttr(resourceName, "validation_status", "NOT_STARTED"),
 					resource.TestCheckResourceAttr(resourceName, "dns_records.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.record_type", "CNAME"),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.expiration", ""),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.fqdn", domainName),
 				),
 			},
 			{
@@ -41,6 +44,9 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", domainName),
 					resource.TestCheckResourceAttr(resourceName, "certificate_source_type", "MANUAL"),
 					resource.TestCheckResourceAttr(resourceName, "dns_records.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.record_type", "CNAME"),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.expiration", ""),
+					resource.TestCheckResourceAttr(resourceName, "dns_records.1.fqdn", domainName),
 				),
 			},
 		},
@@ -48,9 +54,9 @@ func TestAccResourceOktaDomain_crud(t *testing.T) {
 }
 
 func domainExists(id string) (bool, error) {
-	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
-	domain, resp, err := client.Domain.GetDomain(context.Background(), id)
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV5()
+	domain, resp, err := client.CustomDomainAPI.GetCustomDomain(context.Background(), id).Execute()
+	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
 		return false, err
 	}
 	return domain != nil, nil

@@ -99,6 +99,10 @@ func FWProviderResources() []func() resource.Resource {
 		newFeaturesResource,
 		newRealmResource,
 		newRealmAssignmentResource,
+		newRateLimitResource,
+		newRateLimitAdminNotificationSettingsResource,
+		newRateLimitWarningThresholdPercentageResource,
+		newPrincipalRateLimitsResource,
 		newAppFeaturesResource,
 		newAppConnectionsResource,
 	}
@@ -115,6 +119,9 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newFeaturesDataSource,
 		newRealmDataSource,
 		newRealmAssignmentDataSource,
+		newRateLimitAdminNotificationSettingsDataSource,
+		newRateLimitWarningThresholdPercentageDataSource,
+		newPrincipalRateLimitsDataSource,
 		newAppSSODataSource,
 		newAppConnectionsDataSource,
 	}
@@ -196,7 +203,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
 		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
 		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
 		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
