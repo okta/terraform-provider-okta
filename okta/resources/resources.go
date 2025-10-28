@@ -122,6 +122,8 @@ const (
 	OktaIDaaSUserSchemaProperty                       = "okta_user_schema_property"
 	OktaIDaaSUserSecurityQuestions                    = "okta_user_security_questions"
 	OktaIDaaSUserType                                 = "okta_user_type"
+	OktaIDaaSSecurityEventsProvider                   = "okta_security_events_provider"
+	OktaIDaaSDevice                                   = "okta_device"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"

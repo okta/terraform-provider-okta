@@ -1,0 +1,1 @@
+ terraform import okta_security_events_provider.test <security_events_provider_id>
