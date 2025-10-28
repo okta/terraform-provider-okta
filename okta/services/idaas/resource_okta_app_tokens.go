@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -20,11 +19,6 @@ var _ resource.Resource = &appTokens{}
 
 type appTokens struct {
 	*config.Config
-}
-
-type rateLimitWarningThresholdPercentageModel struct {
-	Id               types.String `tfsdk:"id"`
-	WarningThreshold types.Int32  `tfsdk:"warning_threshold"`
 }
 
 func newAppTokensResource() resource.Resource {
@@ -133,13 +127,4 @@ func (r *appTokens) Delete(ctx context.Context, req resource.DeleteRequest, resp
 		"Delete Not Supported",
 		"This resource cannot be deleted via Terraform.",
 	)
-}
-
-func buildPerClientRateLimitWarningThresholdPercentage(data rateLimitWarningThresholdPercentageModel) v5okta.RateLimitWarningThresholdRequest {
-
-	rateLimitAdminNotificationSettings := v5okta.RateLimitWarningThresholdRequest{
-		WarningThreshold: data.WarningThreshold.ValueInt32(),
-	}
-
-	return rateLimitAdminNotificationSettings
 }
