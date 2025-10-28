@@ -31,7 +31,7 @@ func newAppConnectionsDataSource() datasource.DataSource {
 }
 
 func (r *appConnectionsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_app_connections"
+	resp.TypeName = req.ProviderTypeName + "_app_connection"
 }
 
 func (r *appConnectionsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -46,22 +46,26 @@ func (r *appConnectionsDataSource) Schema(ctx context.Context, req datasource.Sc
 				Required:    true,
 			},
 			"status": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: "Provisioning connection status.",
 			},
 			"auth_scheme": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: "A token is used to authenticate with the app. This property is only returned for the TOKEN authentication scheme.",
 			},
 			"base_url": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: "The base URL for the provisioning connection.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"profile": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"auth_scheme": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Defines the method of authentication",
 					},
 				},
 			},
