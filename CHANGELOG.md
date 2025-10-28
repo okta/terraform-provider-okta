@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.4.0 (October 21, 2025)
+## 6.4.0 (October 28, 2025)
 
 ### BUG FIXES
 * Fix error when creating request condition [#2512](https://github.com/okta/terraform-provider-okta/pull/2512) by [aditya-okta](https://github.com/aditya-okta).
