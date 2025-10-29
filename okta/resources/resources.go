@@ -35,7 +35,6 @@ const (
 	OktaIDaaSAuthServerClaimDefault                   = "okta_auth_server_claim_default"
 	OktaIDaaSAuthServerClaims                         = "okta_auth_server_claims"
 	OktaIDaaSAuthServerClients                        = "okta_auth_server_clients"
-	OktaIDaaSAuthServerKeys                           = "okta_auth_server_keys"
 	OktaIDaaSAuthServerDefault                        = "okta_auth_server_default"
 	OktaIDaaSAuthServerPolicy                         = "okta_auth_server_policy"
 	OktaIDaaSAuthServerPolicyRule                     = "okta_auth_server_policy_rule"
