@@ -60,7 +60,7 @@ func (d *authServerClientsDataSource) Schema(_ context.Context, _ datasource.Sch
 			},
 			"created": schema.StringAttribute{
 				Computed:    true,
-				Description: "The name of the OAuth 2.0 application.",
+				Description: "Timestamp when the object was created.",
 			},
 			"expires_at": schema.StringAttribute{
 				Computed:    true,
