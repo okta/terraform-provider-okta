@@ -29,7 +29,7 @@ data "okta_auth_server_clients" "example" {
 
 ### Read-Only
 
-- `created` (String) The name of the OAuth 2.0 application.
+- `created` (String) Timestamp when the object was created.
 - `expires_at` (String) Expiration time of the OAuth 2.0 Token.
 - `issuer` (String) The complete URL of the authorization server that issued the Token
 - `last_updated` (String) Timestamp when the object was last updated.
