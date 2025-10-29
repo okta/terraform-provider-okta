@@ -2,7 +2,6 @@ package idaas
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -142,7 +141,6 @@ func (d *pushProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 		data.LastUpdatedDate = types.StringValue(getPushProviderResp.APNSPushProvider.GetLastUpdatedDate())
 		conf := &ConfigurationDataSource{}
 		conf.ApnsConfiguration = &ApnsConfigurationDataSource{}
-		fmt.Println("key id = ", getPushProviderResp.APNSPushProvider.Configuration.GetKeyId())
 		conf.ApnsConfiguration.KeyId = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetKeyId())
 		conf.ApnsConfiguration.TeamId = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetTeamId())
 		conf.ApnsConfiguration.FileName = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetFileName())

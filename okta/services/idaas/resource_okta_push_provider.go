@@ -2,7 +2,6 @@ package idaas
 
 import (
 	"context"
-	"fmt"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
 
@@ -236,7 +235,6 @@ func (r *pushProviderResource) Create(ctx context.Context, req resource.CreateRe
 func applyPushProviderToState(resp *okta.ListPushProviders200ResponseInner, plan *pushProviderResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if resp.APNSPushProvider != nil {
-		fmt.Println("Inside APNS")
 		plan.ID = types.StringValue(resp.APNSPushProvider.GetId())
 		plan.Name = types.StringValue(resp.APNSPushProvider.GetName())
 		plan.ProviderType = types.StringValue(resp.APNSPushProvider.GetProviderType())
@@ -253,17 +251,6 @@ func applyPushProviderToState(resp *okta.ListPushProviders200ResponseInner, plan
 		plan.ID = types.StringValue(resp.FCMPushProvider.GetId())
 		plan.Name = types.StringValue(resp.FCMPushProvider.GetName())
 		plan.ProviderType = types.StringValue(resp.FCMPushProvider.GetProviderType())
-		////serviceAccountJsonBytes, _ := json.Marshal(resp.FCMPushProvider.Configuration.GetServiceAccountJson())
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.Type = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["type"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.ProjectId = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["project_id"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.PrivateKey = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["private_key"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientEmail = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["client_email"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientId = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["client_id"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthUri = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["auth_uri"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.TokenUri = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["token_uri"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthProviderX509CertUrl = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["auth_provider_x509_cert_url"].(types.String)
-		//plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientX509CertUrl = resp.FCMPushProvider.Configuration.GetServiceAccountJson()["client_x509_cert_url"].(types.String)
-
 		if resp.FCMPushProvider.GetLastUpdatedDate() != "" {
 			plan.LastUpdatedDate = types.StringValue(resp.FCMPushProvider.GetLastUpdatedDate())
 		}
@@ -361,7 +348,6 @@ func (r *pushProviderResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	fmt.Println("Updating Push Provider with ID", state.ID.ValueString())
 	// Update the push provider
 	pushProvider, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PushProviderAPI.ReplacePushProvider(ctx, state.ID.ValueString()).PushProvider(createPushProviderReq(plan)).Execute()
 	if err != nil {
