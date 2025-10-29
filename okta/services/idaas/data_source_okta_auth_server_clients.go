@@ -19,7 +19,7 @@ type authServerClientsDataSource struct {
 }
 
 type authServerClientsDataSourceModel struct {
-	TokenId      types.String `tfsdk:"token_id"`
+	Id           types.String `tfsdk:"id"`
 	AuthServerId types.String `tfsdk:"auth_server_id"`
 	ClientID     types.String `tfsdk:"client_id"`
 	Created      types.String `tfsdk:"created"`
@@ -46,7 +46,7 @@ func (d *authServerClientsDataSource) Configure(_ context.Context, req datasourc
 func (d *authServerClientsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"token_id": schema.StringAttribute{
+			"id": schema.StringAttribute{
 				Required:    true,
 				Description: "The ID of the token.",
 			},
@@ -103,7 +103,7 @@ func (d *authServerClientsDataSource) Read(ctx context.Context, req datasource.R
 	}
 
 	// Read API call logic - List clients to find our specific client
-	OAuth2RefreshToken, _, err := getOktaV5ClientFromMetadata(d.Config).AuthorizationServerClientsAPI.GetRefreshTokenForAuthorizationServerAndClient(ctx, data.AuthServerId.ValueString(), data.ClientID.ValueString(), data.TokenId.ValueString()).Execute()
+	OAuth2RefreshToken, _, err := getOktaV5ClientFromMetadata(d.Config).AuthorizationServerClientsAPI.GetRefreshTokenForAuthorizationServerAndClient(ctx, data.AuthServerId.ValueString(), data.ClientID.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read authorization server clients",
@@ -111,11 +111,10 @@ func (d *authServerClientsDataSource) Read(ctx context.Context, req datasource.R
 		)
 		return
 	}
-
 	data.ClientID = types.StringValue(OAuth2RefreshToken.GetClientId())
 	data.Created = types.StringValue(OAuth2RefreshToken.GetCreated().String())
 	data.ExpiresAt = types.StringValue(OAuth2RefreshToken.GetExpiresAt().String())
-	data.TokenId = types.StringValue(OAuth2RefreshToken.GetId())
+	data.Id = types.StringValue(OAuth2RefreshToken.GetId()) // Token ID
 	data.Issuer = types.StringValue(OAuth2RefreshToken.GetIssuer())
 	data.LastUpdated = types.StringValue(OAuth2RefreshToken.GetLastUpdated().String())
 	scopes, diags := types.ListValueFrom(ctx, types.StringType, OAuth2RefreshToken.GetScopes())
