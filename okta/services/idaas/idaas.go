@@ -109,6 +109,7 @@ func FWProviderResources() []func() resource.Resource {
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		newAuthServerClientsDataSource,
 		newOrgMetadataDataSource,
 		newDefaultSigninPageDataSource,
 		newLogStreamDataSource,
@@ -201,20 +202,20 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
-		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                   resourceTemplateSms(),
-		resources.OktaIDaaSTheme:                         resourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:         resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:                 resourceTrustedOrigin(),
-		resources.OktaIDaaSUser:                          resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                      resourceUserType(),
+		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
+		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
+		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
+		resources.OktaIDaaSTheme:                      resourceTheme(),
+		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
+		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
+		resources.OktaIDaaSUser:                       resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                   resourceUserType(),
 	}
 }
 
