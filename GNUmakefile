@@ -74,6 +74,9 @@ test:
 	echo $(UNIT_TESTS) | \
 		xargs -t -n4 go test $(TESTARGS) $(TEST_FILTER) -timeout=30s -parallel=4
 
+# Base acceptance test configuration
+ACC_TEST_BASE=TF_ACC=1 go test -tags unit -mod=readonly -timeout 120m $(TESTARGS) $(TEST_FILTER)
+
 testacc:
 	TF_ACC=1 go test $(ACC_TESTS) $(TESTARGS) $(TEST_FILTER) -timeout 120m
 
