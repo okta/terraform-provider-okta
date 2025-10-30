@@ -1,4 +1,9 @@
-# okta_app_features
+---
+page_title: "Data Source: okta_app_features"
+description: |-
+  Get an application of any kind from Okta.
+---
+# Data Source: okta_app_features
 
 Retrieves a Feature object for an app.
 

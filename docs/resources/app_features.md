@@ -1,4 +1,9 @@
-# okta_app_features
+---
+page_title: "Resource: okta_app_features"
+description: |-
+  Manages Okta application features. This resource allows you to configure provisioning capabilities for applications, including user provisioning (outbound) and inbound provisioning settings.
+---
+# Resource: okta_app_features
 
 Manages Okta application features. This resource allows you to configure provisioning capabilities for applications, including user provisioning (outbound) and inbound provisioning settings.
 
