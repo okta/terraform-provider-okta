@@ -1,4 +1,4 @@
-data "okta_entitlement" test{
+data "okta_entitlement" "test" {
 
 }
 

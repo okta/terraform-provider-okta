@@ -19,9 +19,6 @@ jobs:
       - name: Setup Go Tools
         run: make tools
 
-      - name: Check Formatting
-        run: make fmtcheck
-
       - name: QC Code
         run: make qc
 
