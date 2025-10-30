@@ -25,6 +25,7 @@ const (
 	OktaIDaaSAppSignOnPolicyRule                      = "okta_app_signon_policy_rule"
 	OktaIDaaSAppSwa                                   = "okta_app_swa"
 	OktaIDaaSAppThreeField                            = "okta_app_three_field"
+	OktaIDaaSAppToken                                 = "okta_app_token"
 	OktaIDaaSAppUser                                  = "okta_app_user"
 	OktaIDaaSAppUserAssignments                       = "okta_app_user_assignments"
 	OktaIDaaSAppUserBaseSchemaProperty                = "okta_app_user_base_schema_property"
