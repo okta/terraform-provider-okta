@@ -26,6 +26,7 @@ type User struct {
 	StatusChanged         *time.Time       `json:"statusChanged,omitempty"`
 	TransitioningToStatus string           `json:"transitioningToStatus,omitempty"`
 	Type                  *UserType        `json:"type,omitempty"`
+	RealmId               *string          `json:"realmId,omitempty"`
 }
 
 // Creates a new user in your Okta organization with or without credentials.
