@@ -16,11 +16,13 @@ jobs:
         with:
           go-version-file: "go.mod"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
       - name: Setup Go Tools
         run: make tools
-
-      - name: Check Formatting
-        run: make fmtcheck
 
       - name: QC Code
         run: make qc
