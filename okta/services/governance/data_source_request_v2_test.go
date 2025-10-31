@@ -1,10 +1,11 @@
 package governance_test
 
 import (
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"testing"
 )
 
 func TestAccDataSourceOktaRequestV2_read(t *testing.T) {

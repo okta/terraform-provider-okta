@@ -1,1 +1,1 @@
-data "okta_principal_access" "test"{}
+data "okta_principal_access" "test" {}

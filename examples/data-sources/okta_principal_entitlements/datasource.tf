@@ -1,4 +1,4 @@
-data "okta_principal_entitlements" "test"{
+data "okta_principal_entitlements" "test" {
   parent {
     external_id = "0oao01ardu8r8qUP91d7"
     type        = "APPLICATION"

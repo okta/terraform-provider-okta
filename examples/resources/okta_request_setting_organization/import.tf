@@ -1,1 +1,1 @@
-resource "okta_request_setting_organization" "test"{}
+resource "okta_request_setting_organization" "test" {}

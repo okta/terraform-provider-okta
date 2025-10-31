@@ -5,12 +5,12 @@ resource "okta_user" "test" {
   email      = "testAcc-replace_with_uuid@example.com"
 }
 
-resource "okta_review" test{
+resource "okta_review" "test" {
   campaign_id = "icizigd86iM9sOcbN1d6"
   reviewer_id = okta_user.test.id
   review_ids = [
     "icrztblxbBFiVKepb1d6"
   ]
-  reviewer_level="FIRST"
-  note = "John Smith is on leave for this month. His manager Tim will be the reviewer instead."
+  reviewer_level = "FIRST"
+  note           = "John Smith is on leave for this month. His manager Tim will be the reviewer instead."
 }
