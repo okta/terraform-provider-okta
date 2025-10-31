@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
@@ -140,6 +141,9 @@ func resourceAppOAuth() *schema.Resource {
 			}
 			return nil
 		},
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_basic_secret"), cty.GetAttrPath("client_basic_secret_wo")),
+		},
 		Description: `This resource allows you to create and configure an OIDC Application.
 -> During an apply if there is change in status the app will first be
 activated or deactivated in accordance with the status change. Then, all
@@ -181,7 +185,14 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Sensitive:   true,
-				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
+				Description: "The user provided OAuth client secret key value. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_basic_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_basic_secret_wo": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				WriteOnly:   true,
+				Description: "The user provided write-only OAuth client secret key value for Terraform 1.11+. Unlike `client_basic_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
 			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
@@ -831,7 +842,11 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 	}
 	app.Credentials.OauthClient.PkceRequired = pkceRequired
 
-	if sec, ok := d.GetOk("client_basic_secret"); ok {
+	// Try to get write-only attribute first, fall back to regular attribute
+	woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
+	if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+		app.Credentials.OauthClient.ClientSecret = woVal.AsString()
+	} else if sec, ok := d.GetOk("client_basic_secret"); ok {
 		app.Credentials.OauthClient.ClientSecret = sec.(string)
 	}
 
