@@ -44,6 +44,12 @@ other arguments that changed will be applied.`,
 				Computed:    true,
 				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
 			},
+			"skip_authentication_policy": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip authentication policy operations. When set to true, the provider will not attempt to create, update, or delete authentication policies for this application.",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -67,9 +73,11 @@ func resourceAppBookmarkCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
+		}
 	}
 	return resourceAppBookmarkRead(ctx, d, meta)
 }
@@ -84,7 +92,9 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, meta i
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, meta, d, app.Links)
+	if !d.Get("skip_authentication_policy").(bool) {
+		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	}
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
 	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
@@ -115,9 +125,11 @@ func resourceAppBookmarkUpdate(ctx context.Context, d *schema.ResourceData, meta
 			return diag.Errorf("failed to upload logo for bookmark application: %v", err)
 		}
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy for bookmark application: %v", err)
+		}
 	}
 	return resourceAppBookmarkRead(ctx, d, meta)
 }
