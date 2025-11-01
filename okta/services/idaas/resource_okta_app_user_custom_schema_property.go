@@ -178,6 +178,7 @@ func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceDa
 		}
 		return diag.Errorf("failed to get application user schema property: %v", err)
 	}
+
 	subschema := UserSchemaCustomAttribute(us, d.Get("index").(string))
 	if subschema == nil {
 		logger(meta).Info(
@@ -216,9 +217,8 @@ func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.Resource
 func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := BuildCustomUserSchema(d.Get("index").(string), nil)
 	retypeUserSchemaPropertyEnums(custom)
-	_, resp, err := getOktaClientFromMetadata(meta).UserSchema.
-		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	_, _, err := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+	if err != nil {
 		return diag.Errorf("failed to delete application user schema property: %v", err)
 	}
 	return nil
@@ -238,9 +238,9 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	retypeUserSchemaPropertyEnums(custom)
 	boc := utils.NewExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
-		_, resp, err := getOktaClientFromMetadata(meta).UserSchema.
-			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
-		if utils.SuppressErrorOn404(resp, err) == nil {
+		_, resp, err := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+		// if error is nil, we skip this check entirely since utils.SuppressErrorOn404 will return nil either when err is nil or when resp.StatusCode is 404.
+		if err != nil && utils.SuppressErrorOn404(resp, err) == nil {
 			logger(meta).Info(
 				"okta_app_user_schema_property update: 404 while updating; tainting resource",
 				"app_id", d.Get("app_id").(string),
