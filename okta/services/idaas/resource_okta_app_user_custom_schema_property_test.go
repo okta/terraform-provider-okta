@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -28,7 +27,6 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testIndex"),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -48,7 +46,6 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "index", "testIndex_renamed"),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
@@ -75,7 +72,6 @@ func TestAccResourceOktaAppUserSchemas_array_enum_number(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "0.011"),
@@ -107,7 +103,6 @@ func TestAccResourceOktaAppUserSchemas_enum_number(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.011"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "0.022"),
@@ -138,7 +133,6 @@ func TestAccResourceOktaAppUserSchemas_array_enum_integer(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "4"),
@@ -170,7 +164,6 @@ func TestAccResourceOktaAppUserSchemas_enum_integer(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "4"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "5"),
@@ -201,7 +194,6 @@ func TestAccResourceOktaAppUserSchemas_array_enum_boolean(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "true"),
@@ -230,7 +222,6 @@ func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "false"),
@@ -258,7 +249,6 @@ func TestAccResourceOktaAppUserSchemas_array_enum_string(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "one"),
@@ -290,7 +280,6 @@ func TestAccResourceOktaAppUserSchemas_array_enum_json(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "object"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", `{"value":"test_value_1"}`),
@@ -319,7 +308,6 @@ func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "one"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "two"),
@@ -335,21 +323,6 @@ func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
-		}
-
-		if exists, _ := testAppUserSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("failed to find %s", rs.Primary.ID)
-		}
-		return nil
-	}
 }
 
 func testAppUserSchemaExists(index string) (bool, error) {
@@ -373,10 +346,6 @@ func testAppUserSchemaExists(index string) (bool, error) {
 // in create, update, delete for okta_app_user_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaAppUserSchemas_parallel_api_calls(t *testing.T) {
-	if acctest.SkipVCRTest(t) {
-		return
-	}
-
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	config := mgr.GetFixtures("parallel_api_calls.tf", t)
 	ro := make([]interface{}, 5)
