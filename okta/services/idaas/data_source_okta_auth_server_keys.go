@@ -21,13 +21,12 @@ type authServerKeysDataSource struct {
 type authServerKeysDataSourceModel struct {
 	KeyId        types.String `tfsdk:"key_id"`
 	AuthServerId types.String `tfsdk:"auth_server_id"`
-	Created      types.String `tfsdk:"created"`
-	ExpiresAt    types.String `tfsdk:"expires_at"`
-	Issuer       types.String `tfsdk:"issuer"`
-	LastUpdated  types.String `tfsdk:"last_updated"`
-	Scopes       types.List   `tfsdk:"scopes"`
+	Alg          types.String `tfsdk:"alg"`
+	E            types.String `tfsdk:"e"`
+	Kid          types.String `tfsdk:"kid"`
+	N            types.String `tfsdk:"n"`
 	Status       types.String `tfsdk:"status"`
-	UserId       types.String `tfsdk:"user_id"`
+	Use          types.String `tfsdk:"use"`
 }
 
 func newAuthServerKeysDataSource() datasource.DataSource {
@@ -82,7 +81,6 @@ func (d *authServerKeysDataSource) Schema(_ context.Context, _ datasource.Schema
 }
 
 func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	// Retrieve a refresh token for a client
 	var data authServerKeysDataSourceModel
 
 	// Read Terraform configuration data into the model
@@ -93,7 +91,7 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Read API call logic - List keys to find our specific client
-	OAuth2RefreshToken, _, err := getOktaV6ClientFromMetadata(d.Config).AuthorizationServerKeysAPI.GetAuthorizationServerKey(ctx, data.AuthServerId.ValueString(), data.Id.ValueString()).Execute()
+	authServerJSONWebKey, _, err := getOktaV6ClientFromMetadata(d.Config).AuthorizationServerKeysAPI.GetAuthorizationServerKey(ctx, data.AuthServerId.ValueString(), data.KeyId.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read authorization server keys",
@@ -101,20 +99,13 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 		)
 		return
 	}
-	data.ClientID = types.StringValue(OAuth2RefreshToken.GetClientId())
-	data.Created = types.StringValue(OAuth2RefreshToken.GetCreated().String())
-	data.ExpiresAt = types.StringValue(OAuth2RefreshToken.GetExpiresAt().String())
-	data.Id = types.StringValue(OAuth2RefreshToken.GetId()) // Token ID
-	data.Issuer = types.StringValue(OAuth2RefreshToken.GetIssuer())
-	data.LastUpdated = types.StringValue(OAuth2RefreshToken.GetLastUpdated().String())
-	scopes, diags := types.ListValueFrom(ctx, types.StringType, OAuth2RefreshToken.GetScopes())
-	if diags.HasError() {
-		return
-	}
-	data.Scopes = scopes
-	data.Status = types.StringValue(OAuth2RefreshToken.GetStatus())
-	data.UserId = types.StringValue(OAuth2RefreshToken.GetUserId())
-
+	data.KeyId = types.StringValue(authServerJSONWebKey.GetKid())
+	data.Alg = types.StringValue(authServerJSONWebKey.GetAlg())
+	data.E = types.StringValue(authServerJSONWebKey.GetE())
+	data.Kid = types.StringValue(authServerJSONWebKey.GetKid())
+	data.N = types.StringValue(authServerJSONWebKey.GetN())
+	data.Status = types.StringValue(authServerJSONWebKey.GetStatus())
+	data.Use = types.StringValue(authServerJSONWebKey.GetUse())
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
