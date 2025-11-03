@@ -439,28 +439,55 @@ func (r *agentPoolUpdateResource) mapResponseToState(resp *v5okta.AgentPoolUpdat
 		for i, agent := range resp.Agents {
 			tfAgent := Agent{}
 
-			if agent.Id != nil {
-				tfAgent.Id = types.StringValue(*agent.Id)
+			if agent.IsHidden != nil {
+				tfAgent.IsHidden = types.BoolValue(*agent.IsHidden)
 			} else {
-				tfAgent.Id = types.StringNull()
+				tfAgent.IsHidden = types.BoolNull()
 			}
-
+			if agent.IsLatestGAedVersion != nil {
+				tfAgent.IsLatestGAVersion = types.BoolValue(*agent.IsLatestGAedVersion)
+			} else {
+				tfAgent.IsLatestGAVersion = types.BoolNull()
+			}
+			if agent.LastConnection != nil {
+				tfAgent.LastConnection = types.StringValue(agent.LastConnection.Format(time.RFC3339))
+			} else {
+				tfAgent.LastConnection = types.StringNull()
+			}
 			if agent.Name != nil {
 				tfAgent.Name = types.StringValue(*agent.Name)
 			} else {
 				tfAgent.Name = types.StringNull()
 			}
-
-			if agent.Status != nil {
-				tfAgent.Status = types.StringValue(*agent.Status)
+			if agent.PoolId != nil {
+				tfAgent.PoolId = types.StringValue(*agent.PoolId)
 			} else {
-				tfAgent.Status = types.StringNull()
+				tfAgent.PoolId = types.StringNull()
 			}
-
+			if agent.OperationalStatus != nil {
+				tfAgent.OperationalStatus = types.StringValue(*agent.OperationalStatus)
+			} else {
+				tfAgent.OperationalStatus = types.StringNull()
+			}
 			if agent.Type != nil {
 				tfAgent.Type = types.StringValue(*agent.Type)
 			} else {
 				tfAgent.Type = types.StringNull()
+			}
+			if agent.Version != nil {
+				tfAgent.Version = types.StringValue(*agent.Version)
+			} else {
+				tfAgent.Version = types.StringNull()
+			}
+			if agent.UpdateStatus != nil {
+				tfAgent.UpdateStatus = types.StringValue(*agent.UpdateStatus)
+			} else {
+				tfAgent.UpdateStatus = types.StringNull()
+			}
+			if agent.UpdateMessage != nil {
+				tfAgent.UpdateMessage = types.StringValue(*agent.UpdateMessage)
+			} else {
+				tfAgent.UpdateMessage = types.StringNull()
 			}
 
 			agents[i] = tfAgent
