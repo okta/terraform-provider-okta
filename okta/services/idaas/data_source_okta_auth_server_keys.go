@@ -1,0 +1,120 @@
+package idaas
+
+import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
+)
+
+var (
+	_ datasource.DataSource              = &authServerKeysDataSource{}
+	_ datasource.DataSourceWithConfigure = &authServerKeysDataSource{}
+)
+
+type authServerKeysDataSource struct {
+	*config.Config
+}
+
+type authServerKeysDataSourceModel struct {
+	KeyId        types.String `tfsdk:"key_id"`
+	AuthServerId types.String `tfsdk:"auth_server_id"`
+	Created      types.String `tfsdk:"created"`
+	ExpiresAt    types.String `tfsdk:"expires_at"`
+	Issuer       types.String `tfsdk:"issuer"`
+	LastUpdated  types.String `tfsdk:"last_updated"`
+	Scopes       types.List   `tfsdk:"scopes"`
+	Status       types.String `tfsdk:"status"`
+	UserId       types.String `tfsdk:"user_id"`
+}
+
+func newAuthServerKeysDataSource() datasource.DataSource {
+	return &authServerKeysDataSource{}
+}
+
+func (d *authServerKeysDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_auth_server_keys"
+}
+
+func (d *authServerKeysDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
+}
+
+func (d *authServerKeysDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"key_id": schema.StringAttribute{
+				Required:    true,
+				Description: "The ID of the certificate key.",
+			},
+			"auth_server_id": schema.StringAttribute{
+				Required:    true,
+				Description: "The ID of the authorization server.",
+			},
+			"alg": schema.StringAttribute{
+				Computed:    true,
+				Description: "The algorithm used with the Key. Valid value: RS256.",
+			},
+			"e": schema.StringAttribute{
+				Computed:    true,
+				Description: "RSA key value (public exponent) for Key binding.",
+			},
+			"kid": schema.StringAttribute{
+				Computed:    true,
+				Description: "Unique identifier for the key.",
+			},
+			"n": schema.StringAttribute{
+				Computed:    true,
+				Description: "RSA modulus value that is used by both the public and private keys and provides a link between them.",
+			},
+			"status": schema.StringAttribute{
+				Computed:    true,
+				Description: "An ACTIVE Key is used to sign tokens issued by the authorization server. Supported values: ACTIVE, NEXT, or EXPIRED. A NEXT Key is the next Key that the authorization server uses to sign tokens when Keys are rotated. The NEXT Key might not be listed if it hasn't been generated. An EXPIRED Key is the previous Key that the authorization server used to sign tokens. The EXPIRED Key might not be listed if no Key has expired or the expired Key was deleted.",
+			},
+			"use": schema.StringAttribute{
+				Computed:    true,
+				Description: "Acceptable use of the key. Valid value: sig.",
+			},
+		},
+	}
+}
+
+func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	// Retrieve a refresh token for a client
+	var data authServerKeysDataSourceModel
+
+	// Read Terraform configuration data into the model
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Read API call logic - List keys to find our specific client
+	OAuth2RefreshToken, _, err := getOktaV6ClientFromMetadata(d.Config).AuthorizationServerKeysAPI.GetAuthorizationServerKey(ctx, data.AuthServerId.ValueString(), data.Id.ValueString()).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to read authorization server keys",
+			err.Error(),
+		)
+		return
+	}
+	data.ClientID = types.StringValue(OAuth2RefreshToken.GetClientId())
+	data.Created = types.StringValue(OAuth2RefreshToken.GetCreated().String())
+	data.ExpiresAt = types.StringValue(OAuth2RefreshToken.GetExpiresAt().String())
+	data.Id = types.StringValue(OAuth2RefreshToken.GetId()) // Token ID
+	data.Issuer = types.StringValue(OAuth2RefreshToken.GetIssuer())
+	data.LastUpdated = types.StringValue(OAuth2RefreshToken.GetLastUpdated().String())
+	scopes, diags := types.ListValueFrom(ctx, types.StringType, OAuth2RefreshToken.GetScopes())
+	if diags.HasError() {
+		return
+	}
+	data.Scopes = scopes
+	data.Status = types.StringValue(OAuth2RefreshToken.GetStatus())
+	data.UserId = types.StringValue(OAuth2RefreshToken.GetUserId())
+
+	// Save data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
