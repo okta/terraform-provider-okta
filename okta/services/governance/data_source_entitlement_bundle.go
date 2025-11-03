@@ -2,12 +2,11 @@ package governance
 
 import (
 	"context"
-	"time"
-
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"time"
 )
 
 var _ datasource.DataSource = (*entitlementBundleDataSource)(nil)

@@ -4,8 +4,7 @@ ACC_TESTS=./okta/services/idaas
 TEST?=$$(go list ./... |grep -v 'vendor')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=./okta/services/idaas
-GOLANGCI_LINT := golangci-lint
-GOLANGCI_LINT_VERSION := v2.5.0
+GOFMT:=gofumpt
 TFPROVIDERLINT=tfproviderlint
 TFPROVIDERLINTX=tfproviderlintx
 STATICCHECK=staticcheck
@@ -90,17 +89,26 @@ smoke-test-play-vcr-acc:
 test-record-vcr-acc:
 	OKTA_VCR_TF_ACC=record TF_ACC=1 go test -tags unit -mod=readonly -test.v -timeout 120m $(ACC_TESTS)
 
-qc: fmt tf-fmt lint
+qc: fmtcheck vet staticcheck lint
 
-tf-fmt:
+vet:
+	@echo "==> Checking source code against go vet"
+	@go vet ./...
+
+staticcheck:
+	@echo "==> Checking source code against staticcheck"
+	@staticcheck ./...
+
+fmt: tools # Format the code
+	@echo "formatting the code with $(GOFMT)..."
+	@$(GOFMT) -l -w .
 	@terraform fmt -recursive ./examples/
 
-.PHONY: fmt
-fmt: check-golangci-lint
-	@$(GOLANGCI_LINT) fmt
+fmtcheck:
+	@gofumpt -d -l .
 
-check-golangci-lint:
-	@which $(GOLANGCI_LINT) > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_LINT_VERSION)
+errcheck:
+	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
@@ -120,12 +128,16 @@ lintx:
 	@$(TFPROVIDERLINTX) -c 1 ./...
 
 tools:
+	@which $(GOFMT) || go install mvdan.cc/gofumpt@v0.7.0
 	@which $(TFPROVIDERLINT) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.31.0
 	@which $(TFPROVIDERLINTX) || go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.31.0
+	@which $(STATICCHECK) || go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
 
 tools-update:
+	@go install mvdan.cc/gofumpt@v0.7.0
 	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlint@v0.31.0
 	@go install github.com/bflad/tfproviderlint/cmd/tfproviderlintx@v0.31.0
+	@go install honnef.co/go/tools/cmd/staticcheck@v0.6.1
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))

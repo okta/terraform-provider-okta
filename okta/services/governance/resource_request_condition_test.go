@@ -2,11 +2,10 @@ package governance_test
 
 import (
 	"fmt"
-	"testing"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
+	"testing"
 )
 
 func TestAccRequestConditionResource_basic(t *testing.T) {
