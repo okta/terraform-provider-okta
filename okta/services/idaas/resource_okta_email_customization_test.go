@@ -30,7 +30,7 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
+		CheckDestroy:             checkResourceEmailCustomizationDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
