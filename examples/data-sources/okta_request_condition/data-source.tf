@@ -1,1 +1,1 @@
-data "okta_request_condition" "test"{}
+data "okta_request_condition" "test" {}

@@ -1,1 +1,1 @@
-data "okta_principal_entitlements" "test"{}
+data "okta_principal_entitlements" "test" {}
