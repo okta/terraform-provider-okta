@@ -99,17 +99,6 @@ tf-fmt:
 fmt: check-golangci-lint
 	@$(GOLANGCI_LINT) fmt
 
-.PHONY: fmtcheck
-fmtcheck: check-golangci-lint
-	@echo "==> Checking that code complies with gofmt requirements..."
-	@gofmt_files=$$(gofmt -l $$(find . -name '*.go' | grep -v vendor)); \
-	if [ -n "$$gofmt_files" ]; then \
-		echo 'gofmt needs running on the following files:'; \
-		echo "$$gofmt_files"; \
-		echo "You can use the command: \`make fmt\` to reformat code."; \
-		exit 1; \
-	fi
-
 check-golangci-lint:
 	@which $(GOLANGCI_LINT) > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_LINT_VERSION)
 
@@ -152,4 +141,4 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build test testacc tf-fmt fmt fmtcheck test-compile website website-test
+.PHONY: build test testacc tf-fmt fmt test-compile website website-test
