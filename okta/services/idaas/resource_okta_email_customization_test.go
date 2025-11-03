@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -120,6 +121,11 @@ func TestAccResourceOktaEmailCustomization_crud(t *testing.T) {
 }
 
 func checkResourceEmailCustomizationDestroy(s *terraform.State) error {
+
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return nil
+	}
+
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != resources.OktaIDaaSEmailCustomization {
 			continue
