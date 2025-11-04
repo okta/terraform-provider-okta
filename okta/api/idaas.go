@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/okta/version"
@@ -32,6 +33,7 @@ type contextKey string
 const RetryOnStatusCodes contextKey = "retryOnStatusCodes"
 
 type OktaIDaaSClient interface {
+	OktaSDKClientV6() *v6okta.APIClient
 	OktaSDKClientV5() *v5okta.APIClient
 	OktaSDKClientV3() *okta.APIClient
 	OktaSDKClientV2() *sdk.Client
@@ -58,10 +60,15 @@ type OktaAPIConfig struct {
 }
 
 type iDaaSAPIClient struct {
+	oktaSDKClientV6         *v6okta.APIClient
 	oktaSDKClientV5         *v5okta.APIClient
 	oktaSDKClientV3         *okta.APIClient
 	oktaSDKClientV2         *sdk.Client
 	oktaSDKSupplementClient *sdk.APISupplement
+}
+
+func (c *iDaaSAPIClient) OktaSDKClientV6() *v6okta.APIClient {
+	return c.oktaSDKClientV6
 }
 
 func (c *iDaaSAPIClient) OktaSDKClientV5() *v5okta.APIClient {
@@ -81,6 +88,11 @@ func (c *iDaaSAPIClient) OktaSDKSupplementClient() *sdk.APISupplement {
 }
 
 func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error) {
+	v6client, err := oktaV6SDKClient(c)
+	if err != nil {
+		return
+	}
+
 	v5Client, err := oktaV5SDKClient(c)
 	if err != nil {
 		return
@@ -104,6 +116,7 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 	}
 
 	client = &iDaaSAPIClient{
+		oktaSDKClientV6:         v6client,
 		oktaSDKClientV5:         v5Client,
 		oktaSDKClientV3:         v3Client,
 		oktaSDKClientV2:         v2Client,
@@ -111,6 +124,15 @@ func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error)
 	}
 
 	return
+}
+
+func oktaV6SDKClient(c *OktaAPIConfig) (client *v6okta.APIClient, err error) {
+	config, apiClient, err := getV6ClientConfig(c)
+	if err != nil {
+		return apiClient, err
+	}
+	client = v6okta.NewAPIClient(config)
+	return client, nil
 }
 
 func oktaV5SDKClient(c *OktaAPIConfig) (client *v5okta.APIClient, err error) {
