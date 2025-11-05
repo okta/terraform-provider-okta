@@ -24,27 +24,6 @@ import (
 // oktaMutexKV is a global MutexKV for use within this plugin
 var oktaMutexKV = mutexkv.NewMutexKV()
 
-func listAppsV6(ctx context.Context, config *config.Config, filters *AppFilters, limit int64) ([]oktav6sdk.ListApplications200ResponseInner, error) {
-	req := config.OktaIDaaSClient.OktaSDKClientV6().ApplicationAPI.ListApplications(ctx).Limit(int32(limit))
-	if filters != nil {
-		req = req.Filter(filters.Status)
-		req = req.Q(filters.GetQ())
-	}
-	apps, resp, err := req.Execute()
-	if err != nil {
-		return nil, err
-	}
-	for resp.HasNextPage() {
-		var nextApps []oktav6sdk.ListApplications200ResponseInner
-		resp, err = resp.Next(&nextApps)
-		if err != nil {
-			return nil, err
-		}
-		apps = append(apps, nextApps...)
-	}
-	return apps, nil
-}
-
 func listAppsV5(ctx context.Context, config *config.Config, filters *AppFilters, limit int64) ([]oktav5sdk.ListApplications200ResponseInner, error) {
 	req := config.OktaIDaaSClient.OktaSDKClientV5().ApplicationAPI.ListApplications(ctx).Limit(int32(limit))
 	if filters != nil {
@@ -229,21 +208,20 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
-		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
-		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
-		resources.OktaIDaaSTheme:                      resourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
-		resources.OktaIDaaSUser:                       resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                   resourceUserType(),
+		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
+		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
+		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTemplateSms:                   resourceTemplateSms(),
+		resources.OktaIDaaSTheme:                         resourceTheme(),
+		resources.OktaIDaaSThreatInsightSettings:         resourceThreatInsightSettings(),
+		resources.OktaIDaaSTrustedOrigin:                 resourceTrustedOrigin(),
+		resources.OktaIDaaSUser:                          resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                      resourceUserType(),
 	}
 }
 

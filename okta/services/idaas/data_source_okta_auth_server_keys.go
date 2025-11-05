@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -19,6 +20,7 @@ type authServerKeysDataSource struct {
 }
 
 type authServerKeysDataSourceModel struct {
+	Id           types.String `tfsdk:"id"`
 	KeyId        types.String `tfsdk:"key_id"`
 	AuthServerId types.String `tfsdk:"auth_server_id"`
 	Alg          types.String `tfsdk:"alg"`
@@ -44,6 +46,10 @@ func (d *authServerKeysDataSource) Configure(_ context.Context, req datasource.C
 func (d *authServerKeysDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The internal identifier for this data source, required by Terraform to track state. This field does not exist in the Okta API response.",
+			},
 			"key_id": schema.StringAttribute{
 				Required:    true,
 				Description: "The ID of the certificate key.",
@@ -107,5 +113,6 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 	data.Status = types.StringValue(authServerJSONWebKey.GetStatus())
 	data.Use = types.StringValue(authServerJSONWebKey.GetUse())
 	// Save data into Terraform state
+	data.Id = types.StringValue(fmt.Sprintf("%s-%s", data.AuthServerId.ValueString(), data.KeyId.ValueString()))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
