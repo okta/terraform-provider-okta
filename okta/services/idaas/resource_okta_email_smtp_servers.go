@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"

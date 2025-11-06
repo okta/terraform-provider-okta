@@ -4,7 +4,7 @@ resource "okta_user_schema_property" "test" {
   type        = "string"
   description = "testing"
   master      = "PROFILE_MASTER"
-  enum       = ["", "one", "two", "three"]
+  enum        = ["", "one", "two", "three"]
   one_of {
     const = ""
     title = "(none)"
