@@ -11,7 +11,7 @@ Retrieves a Feature object for an app.
 
 ### Basic Usage
 
-```hcl
+```terraform
 data "okta_app_features" "example" {
   app_id = "0oarblaf7hWdLawNg1d7"
   name   = "INBOUND_PROVISIONING"
@@ -20,7 +20,7 @@ data "okta_app_features" "example" {
 
 ### User Provisioning Feature
 
-```hcl
+```terraform
 data "okta_app_features" "user_provisioning" {
   app_id = okta_app_saml.example.id
   name   = "USER_PROVISIONING"

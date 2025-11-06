@@ -13,7 +13,7 @@ Manages Okta application features. This resource allows you to configure provisi
 
 ### User Provisioning Feature
 
-```hcl
+```terraform
 resource "okta_app_features" "user_provisioning" {
   app_id = okta_app_saml.example.id
   name   = "USER_PROVISIONING"
@@ -47,7 +47,7 @@ resource "okta_app_features" "user_provisioning" {
 
 ### Inbound Provisioning Feature
 
-```hcl
+```terraform
 resource "okta_app_features" "inbound_provisioning" {
   app_id = okta_app_oauth.example.id
   name   = "INBOUND_PROVISIONING"
@@ -91,7 +91,7 @@ resource "okta_app_features" "inbound_provisioning" {
 
 ### Complete User Provisioning Configuration
 
-```hcl
+```terraform
 resource "okta_app_features" "complete_provisioning" {
   app_id = okta_app_saml.example.id
   name   = "USER_PROVISIONING"
