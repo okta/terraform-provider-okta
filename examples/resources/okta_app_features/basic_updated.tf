@@ -8,7 +8,7 @@ resource "okta_app_features" "example" {
       }
     }
     update {
-      lifecycle_delete {
+      lifecycle_deactivate {
         status = "ENABLED"
       }
       profile {

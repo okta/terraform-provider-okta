@@ -93,8 +93,8 @@ type Capabilities struct {
 }
 
 type appFeaturesModel struct {
-	Id           types.String  `tfsdk:"id"`
-	AppId        types.String  `tfsdk:"app_id"`
+	ID           types.String  `tfsdk:"id"`
+	AppID        types.String  `tfsdk:"app_id"`
 	Description  types.String  `tfsdk:"description"`
 	Name         types.String  `tfsdk:"name"`
 	Status       types.String  `tfsdk:"status"`
@@ -333,7 +333,7 @@ func (r *appFeatures) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 
 	// Create API call logic
-	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.AppId.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
+	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.AppID.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating app features",
@@ -369,7 +369,7 @@ func updateAppFeatureState(data *appFeaturesModel, updateAppFeatureResp *v5okta.
 	}
 
 	// Set ID
-	data.Id = types.StringValue(data.AppId.ValueString() + "/" + data.Name.ValueString())
+	data.ID = types.StringValue(data.AppID.ValueString() + "/" + data.Name.ValueString())
 
 	return diags
 }
@@ -595,7 +595,7 @@ func (r *appFeatures) Read(ctx context.Context, req resource.ReadRequest, resp *
 	}
 
 	// Read API call logic
-	getAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.GetFeatureForApplication(ctx, data.AppId.ValueString(), data.Name.ValueString()).Execute()
+	getAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.GetFeatureForApplication(ctx, data.AppID.ValueString(), data.Name.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading app features",
@@ -624,7 +624,7 @@ func (r *appFeatures) Update(ctx context.Context, req resource.UpdateRequest, re
 	}
 
 	// Update API call logic
-	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.AppId.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
+	updateAppFeatureResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.UpdateFeatureForApplication(ctx, data.AppID.ValueString(), data.Name.ValueString()).UpdateFeatureForApplicationRequest(buildUpdateAppFeature(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating app features",

@@ -4,10 +4,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -229,7 +228,7 @@ func (d *appFeatureDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	// Read API call logic
-	getAppFeatureResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.GetFeatureForApplication(ctx, data.AppId.ValueString(), data.Name.ValueString()).Execute()
+	getAppFeatureResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationFeaturesAPI.GetFeatureForApplication(ctx, data.AppID.ValueString(), data.Name.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading app features",
