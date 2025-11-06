@@ -1,3 +1,3 @@
-data "okta_entitlement_bundle" test{
+data "okta_entitlement_bundle" "test" {
 
 }

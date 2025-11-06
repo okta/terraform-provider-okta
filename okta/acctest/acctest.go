@@ -29,6 +29,7 @@ import (
 	"github.com/okta/okta-governance-sdk-golang/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
+	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/fwprovider"
@@ -667,6 +668,7 @@ type HttpClientHelper interface {
 }
 
 type vcrIDaaSTestClient struct {
+	sdkV6Client         *v6SdkOkta.APIClient
 	sdkV5Client         *v5SdkOkta.APIClient
 	sdkV3Client         *v4SdkOkta.APIClient
 	sdkV2Client         *oktaSdk.Client
@@ -687,6 +689,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
 	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
+	c.OktaIDaaSClient.OktaSDKClientV6().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient.Transport = tripper
 	re := c.OktaIDaaSClient.OktaSDKClientV2().CloneRequestExecutor()
@@ -696,6 +699,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
 		sdkV3Client:         c.OktaIDaaSClient.OktaSDKClientV3(),
 		sdkV2Client:         c.OktaIDaaSClient.OktaSDKClientV2(),
@@ -738,6 +742,7 @@ func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV3Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV2Client.GetConfig().HttpClient.Transport = rt
@@ -751,6 +756,10 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 func (c *vcrGovernanceTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 	c.oktaGovernanceSDKClient.GetConfig().HTTPClient.Transport = rt
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV6() *v6SdkOkta.APIClient {
+	return c.sdkV6Client
 }
 
 func (c *vcrIDaaSTestClient) OktaSDKClientV5() *v5SdkOkta.APIClient {
