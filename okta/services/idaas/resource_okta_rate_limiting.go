@@ -133,7 +133,6 @@ func (r *rateLimitResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Example Data value setting
-	// data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting")
 	data.DefaultMode = types.StringValue(clientRateLimitSettingsResp.GetDefaultMode())
 	overrides := clientRateLimitSettingsResp.GetUseCaseModeOverrides()
@@ -210,7 +209,6 @@ func (r *rateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Example Data value setting
-	// data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting")
 	data.DefaultMode = types.StringValue(clientRateLimitSettingsResp.GetDefaultMode())
 	overrides := clientRateLimitSettingsResp.GetUseCaseModeOverrides()

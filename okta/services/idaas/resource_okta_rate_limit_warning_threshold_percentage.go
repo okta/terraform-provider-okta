@@ -79,7 +79,6 @@ func (r *rateLimitWarningThresholdPercentage) Create(ctx context.Context, req re
 	}
 
 	// Example Data value setting
-	// data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting_warning_threshold_percentage")
 	data.WarningThreshold = types.Int32Value(rateLimitWarningThresholdPercentageResp.GetWarningThreshold())
 
