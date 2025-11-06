@@ -100,9 +100,7 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 
 			authenticator := &sdk.PolicyAuthenticator{}
 			authenticator.Key = key
-			if enroll != nil {
-				authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
-			}
+			authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
 			constraints := rawFactor["constraints"]
 			if constraints != nil {
 				c, ok := constraints.(string)

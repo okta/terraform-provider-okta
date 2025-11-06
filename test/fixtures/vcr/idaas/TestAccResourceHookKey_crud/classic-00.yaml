@@ -1,0 +1,204 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 25
+    host: classic-00.dne-okta.com
+    body: "{\"name\":\"test_hook_key\"}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"HKYr9arh1sIyIv5EI1d7\",\"keyId\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"name\":\"test_hook_key\",\"created\":\"2025-10-24T13:05:57.000Z\",\"lastUpdated\":\"2025-10-24T13:05:57.000Z\",\"isUsed\":false,\"_embedded\":{\"kty\":\"RSA\",\"alg\":\"RSA\",\"kid\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"use\":null,\"e\":\"AQAB\",\"n\":\"vgEiKuexQjQzoqyslxvzwLcHg-0u9fAmRNTAGCFeo1jtCLRtfSY2V7EKy4bTc2QlVns9XXjav-jn_L0WgFyV0u5CDlB1mM2Dcx5E8QYekqsGIpILKPcTNtVb_SwkPHkE1Og7mm6rGYUE260Ftwun6IZJjMOY9RPuS-w-US191WHmCMaoYOx3ErfaTtHxDCgSqwEDkJRtckOcPxc10dgs8CTMoOOARtiqlEmRXi3wClSD_FV-PLzNFVQ_6xXgD2Gt2wZ3bsm9EY1Pdx0V_3vijKamTyUJgtN740AO7jjhks7DeE4JUPu2sTdfmG9r-XFpEVbFWi5eRLZCyMTVZ4YrGQ\"}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 13:05:57 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.410386375s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys/HKYr9arh1sIyIv5EI1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"HKYr9arh1sIyIv5EI1d7\",\"keyId\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"name\":\"test_hook_key\",\"created\":\"2025-10-24T13:05:57.000Z\",\"lastUpdated\":\"2025-10-24T13:05:57.000Z\",\"isUsed\":false}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 13:05:58 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.019137209s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys/HKYr9arh1sIyIv5EI1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"HKYr9arh1sIyIv5EI1d7\",\"keyId\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"name\":\"test_hook_key\",\"created\":\"2025-10-24T13:05:57.000Z\",\"lastUpdated\":\"2025-10-24T13:05:57.000Z\",\"isUsed\":false}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 13:06:00 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.073619166s
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 33
+    host: classic-00.dne-okta.com
+    body: "{\"name\":\"test_hook_key_updated\"}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys/HKYr9arh1sIyIv5EI1d7
+    method: PUT
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"HKYr9arh1sIyIv5EI1d7\",\"keyId\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"name\":\"test_hook_key_updated\",\"created\":\"2025-10-24T13:05:57.000Z\",\"lastUpdated\":\"2025-10-24T13:06:01.000Z\",\"isUsed\":false,\"_embedded\":{\"kty\":\"RSA\",\"alg\":\"RSA\",\"kid\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"use\":null,\"e\":\"AQAB\",\"n\":\"vgEiKuexQjQzoqyslxvzwLcHg-0u9fAmRNTAGCFeo1jtCLRtfSY2V7EKy4bTc2QlVns9XXjav-jn_L0WgFyV0u5CDlB1mM2Dcx5E8QYekqsGIpILKPcTNtVb_SwkPHkE1Og7mm6rGYUE260Ftwun6IZJjMOY9RPuS-w-US191WHmCMaoYOx3ErfaTtHxDCgSqwEDkJRtckOcPxc10dgs8CTMoOOARtiqlEmRXi3wClSD_FV-PLzNFVQ_6xXgD2Gt2wZ3bsm9EY1Pdx0V_3vijKamTyUJgtN740AO7jjhks7DeE4JUPu2sTdfmG9r-XFpEVbFWi5eRLZCyMTVZ4YrGQ\"}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 13:06:01 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.198436292s
+- id: 4
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys/HKYr9arh1sIyIv5EI1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"HKYr9arh1sIyIv5EI1d7\",\"keyId\":\"e564c116-b8f5-442c-a173-a0a1661e277f\",\"name\":\"test_hook_key_updated\",\"created\":\"2025-10-24T13:05:57.000Z\",\"lastUpdated\":\"2025-10-24T13:06:01.000Z\",\"isUsed\":false}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 13:06:02 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.023206875s
+- id: 5
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/hook-keys/HKYr9arh1sIyIv5EI1d7
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Fri, 24 Oct 2025 13:06:03 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.092512833s

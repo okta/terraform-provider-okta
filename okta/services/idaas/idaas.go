@@ -104,6 +104,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRateLimitWarningThresholdPercentageResource,
 		newPrincipalRateLimitsResource,
 		newPushProvidersResource,
+		newHookKeyResource,
 	}
 }
 
@@ -122,6 +123,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRateLimitWarningThresholdPercentageDataSource,
 		newPrincipalRateLimitsDataSource,
 		newPushProviderDataSource,
+		newHookKeyDataSource,
 	}
 }
 

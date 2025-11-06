@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/okta/terraform-provider-okta/okta/config"
 
@@ -240,7 +241,6 @@ func applyPushProviderToState(resp *okta.ListPushProviders200ResponseInner, plan
 		plan.ProviderType = types.StringValue(resp.APNSPushProvider.GetProviderType())
 		plan.Configuration.ApnsConfigurationModel.KeyId = types.StringValue(resp.APNSPushProvider.Configuration.GetKeyId())
 		plan.Configuration.ApnsConfigurationModel.TeamId = types.StringValue(resp.APNSPushProvider.Configuration.GetTeamId())
-		//plan.Configuration.ApnsConfigurationModel.TokenSigningKey = types.StringValue(resp.APNSPushProvider.Configuration.GetTokenSigningKey())
 		if resp.APNSPushProvider.Configuration.GetFileName() != "" {
 			plan.Configuration.ApnsConfigurationModel.FileName = types.StringValue(resp.APNSPushProvider.Configuration.GetFileName())
 		}
@@ -281,7 +281,6 @@ func createPushProviderReq(plan pushProviderResourceModel) okta.ListPushProvider
 		}
 
 		data := map[string]interface{}{
-			//"fcm_configuration": map[string]interface{}{
 			"type":                        plan.Configuration.FcmConfiguration.ServiceAccountJson.Type.ValueString(),
 			"project_id":                  plan.Configuration.FcmConfiguration.ServiceAccountJson.ProjectId.ValueString(),
 			"private_key":                 plan.Configuration.FcmConfiguration.ServiceAccountJson.PrivateKey.ValueString(),
