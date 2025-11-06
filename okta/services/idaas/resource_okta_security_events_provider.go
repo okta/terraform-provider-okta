@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -43,14 +44,10 @@ type settingsModel struct {
 
 	// Fields for "Provider with well-known URL setting"
 	WellKnownUrl types.String `tfsdk:"well_known_url"`
-	Type         types.String `tfsdk:"type"` // Application type for the Well-known URL setting
 
 	// Fields for "Provider with issuer and JWKS settings"
 	Issuer  types.String `tfsdk:"issuer"`
 	JwksUrl types.String `tfsdk:"jwks_url"`
-	// Note: 'Type' might also apply to this setting, but based on the API description,
-	// it's only explicitly required with the 'well_known_url' input section.
-	// We include it with WellKnownUrl to match the input structure.
 }
 
 func (r *securityEventsProviderResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -215,24 +212,24 @@ func applySecurityEventsProviderToState(resp *v5okta.SecurityEventsProviderRespo
 }
 
 func createSecurityEventsProviderRequest(model securityEventsProviderModel) v5okta.SecurityEventsProviderRequest {
-	x := v5okta.SecurityEventsProviderRequest{
+	securityEventsProviderReq := v5okta.SecurityEventsProviderRequest{
 		Name: model.Name.ValueString(),
 		Type: model.Type.ValueString(),
 	}
 
-	y := v5okta.SecurityEventsProviderRequestSettings{}
+	securityEventsProviderRequestSettings := v5okta.SecurityEventsProviderRequestSettings{}
 
 	if model.Settings.WellKnownUrl.ValueStringPointer() != nil {
-		y.SecurityEventsProviderSettingsSSFCompliant = &v5okta.SecurityEventsProviderSettingsSSFCompliant{}
-		y.SecurityEventsProviderSettingsSSFCompliant.WellKnownUrl = model.Settings.WellKnownUrl.ValueString()
+		securityEventsProviderRequestSettings.SecurityEventsProviderSettingsSSFCompliant = &v5okta.SecurityEventsProviderSettingsSSFCompliant{}
+		securityEventsProviderRequestSettings.SecurityEventsProviderSettingsSSFCompliant.WellKnownUrl = model.Settings.WellKnownUrl.ValueString()
 	} else if model.Settings.Issuer.ValueStringPointer() != nil {
-		y.SecurityEventsProviderSettingsNonSSFCompliant = &v5okta.SecurityEventsProviderSettingsNonSSFCompliant{}
-		y.SecurityEventsProviderSettingsNonSSFCompliant.Issuer = model.Settings.Issuer.ValueString()
-		y.SecurityEventsProviderSettingsNonSSFCompliant.JwksUrl = model.Settings.JwksUrl.ValueString()
+		securityEventsProviderRequestSettings.SecurityEventsProviderSettingsNonSSFCompliant = &v5okta.SecurityEventsProviderSettingsNonSSFCompliant{}
+		securityEventsProviderRequestSettings.SecurityEventsProviderSettingsNonSSFCompliant.Issuer = model.Settings.Issuer.ValueString()
+		securityEventsProviderRequestSettings.SecurityEventsProviderSettingsNonSSFCompliant.JwksUrl = model.Settings.JwksUrl.ValueString()
 	}
 
-	x.Settings = y
-	return x
+	securityEventsProviderReq.Settings = securityEventsProviderRequestSettings
+	return securityEventsProviderReq
 }
 
 func (r *securityEventsProviderResource) ImportState(ctx context.Context, request resource.ImportStateRequest, response *resource.ImportStateResponse) {
@@ -281,31 +278,23 @@ func (r *securityEventsProviderResource) Schema(ctx context.Context, req resourc
 				Attributes: map[string]schema.Attribute{
 					// --- Well-Known URL Setting ---
 					"well_known_url": schema.StringAttribute{
-						Optional:    true, // Optional because it's part of a 'one-of'
+						Optional:    true,
 						Description: "The published well-known URL of the Security Events Provider (the SSF transmitter).",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(1000),
 						},
 					},
-					"type": schema.StringAttribute{
-						Optional:    true, // Optional because it's part of a 'one-of'
-						Description: "The application type of the Security Events Provider.",
-						Validators: []validator.String{
-							stringvalidator.LengthAtMost(255),
-						},
-					},
 
 					// --- Issuer and JWKS Settings ---
 					"issuer": schema.StringAttribute{
-						Optional:    true, // Optional because it's part of a 'one-of'
+						Optional:    true,
 						Description: "Issuer URL.",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(700),
-							// Optional: stringvalidator.IsURL(), // Assuming issuer is a URL
 						},
 					},
 					"jwks_url": schema.StringAttribute{
-						Optional:    true, // Optional because it's part of a 'one-of'
+						Optional:    true,
 						Description: "The public URL where the JWKS public key is uploaded.",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(1000),

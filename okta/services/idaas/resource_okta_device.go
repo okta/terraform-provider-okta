@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -97,7 +98,6 @@ func (r *devicesResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 	// Save updated state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
 }
 
 func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {

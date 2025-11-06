@@ -29,10 +29,21 @@ func (d *deviceDataSource) Configure(ctx context.Context, req datasource.Configu
 }
 
 type deviceProfileModel struct {
-	DisplayName        types.String `tfsdk:"display_name"`
-	Platform           types.String `tfsdk:"platform"`
-	Registered         types.Bool   `tfsdk:"registered"`
-	DiskEncryptionType types.String `tfsdk:"disk_encryption_type"`
+	DisplayName           types.String `tfsdk:"display_name"`
+	Platform              types.String `tfsdk:"platform"`
+	Registered            types.Bool   `tfsdk:"registered"`
+	DiskEncryptionType    types.String `tfsdk:"disk_encryption_type"`
+	Imei                  types.String `tfsdk:"imei"`
+	IntegrityJailBreak    types.Bool   `tfsdk:"integrity_jail_break"`
+	Manufacturer          types.String `tfsdk:"manufacturer"`
+	Meid                  types.String `tfsdk:"meid"`
+	Model                 types.String `tfsdk:"model"`
+	OsVersion             types.String `tfsdk:"os_version"`
+	SecureHardwarePresent types.Bool   `tfsdk:"secure_hardware_present"`
+	SerialNumber          types.String `tfsdk:"serial_number"`
+	Sid                   types.String `tfsdk:"sid"`
+	TpmPublicKeyHash      types.String `tfsdk:"tpm_public_key_hash"`
+	Udid                  types.String `tfsdk:"udid"`
 }
 
 type deviceResourceDisplayNameModel struct {
@@ -103,6 +114,50 @@ func (d *deviceDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						Computed:    true,
 						Description: "The disk encryption type of the device.",
 					},
+					"imei": schema.StringAttribute{
+						Computed:    true,
+						Description: "The International Mobile Equipment Identity (IMEI) of the device.",
+					},
+					"integrity_jail_break": schema.BoolAttribute{
+						Computed:    true,
+						Description: "Indicates if the device is jailbroken or rooted. Only applicable to IOS and ANDROID platforms.",
+					},
+					"manufacturer": schema.StringAttribute{
+						Computed:    true,
+						Description: "The manufacturer of the device.",
+					},
+					"meid": schema.StringAttribute{
+						Computed:    true,
+						Description: "Mobile equipment identifier of the device.",
+					},
+					"model": schema.StringAttribute{
+						Computed:    true,
+						Description: "The model of the device.",
+					},
+					"os_version": schema.StringAttribute{
+						Computed:    true,
+						Description: "The OS version of the device.",
+					},
+					"secure_hardware_present": schema.BoolAttribute{
+						Computed:    true,
+						Description: "Indicates if secure hardware is present on the device.",
+					},
+					"serial_number": schema.StringAttribute{
+						Computed:    true,
+						Description: "Serial number of the device.",
+					},
+					"sid": schema.StringAttribute{
+						Computed:    true,
+						Description: "Windows Security identifier of the device.",
+					},
+					"tpm_public_key_hash": schema.StringAttribute{
+						Computed:    true,
+						Description: "Windows Trusted Platform Module hash value.",
+					},
+					"udid": schema.StringAttribute{
+						Computed:    true,
+						Description: "MacOS Unique device identifier of the device.",
+					},
 				},
 			},
 			"resource_display_name": schema.SingleNestedBlock{
@@ -152,6 +207,17 @@ func (d *deviceDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	data.Profile.Platform = types.StringValue(profile.GetPlatform())
 	data.Profile.Registered = types.BoolValue(profile.GetRegistered())
 	data.Profile.DiskEncryptionType = types.StringValue(profile.GetDiskEncryptionType())
+	data.Profile.Imei = types.StringValue(profile.GetImei())
+	data.Profile.IntegrityJailBreak = types.BoolValue(profile.GetIntegrityJailbreak())
+	data.Profile.Manufacturer = types.StringValue(profile.GetManufacturer())
+	data.Profile.Meid = types.StringValue(profile.GetMeid())
+	data.Profile.Model = types.StringValue(profile.GetModel())
+	data.Profile.OsVersion = types.StringValue(profile.GetOsVersion())
+	data.Profile.SecureHardwarePresent = types.BoolValue(profile.GetSecureHardwarePresent())
+	data.Profile.SerialNumber = types.StringValue(profile.GetSerialNumber())
+	data.Profile.Sid = types.StringValue(profile.GetSid())
+	data.Profile.TpmPublicKeyHash = types.StringValue(profile.GetTpmPublicKeyHash())
+	data.Profile.Udid = types.StringValue(profile.GetUdid())
 	data.ResourceDisplayName = &deviceResourceDisplayNameModel{}
 	resourceDisplayName := getDeviceResp.GetResourceDisplayName()
 	data.ResourceDisplayName.Sensitive = types.BoolValue(resourceDisplayName.GetSensitive())

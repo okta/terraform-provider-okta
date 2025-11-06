@@ -182,7 +182,6 @@ func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRateLimitEntity {
-
 	principalRateSettings := v5okta.PrincipalRateLimitEntity{
 		PrincipalId:   data.PrincipalId.ValueString(),
 		PrincipalType: data.PrincipalType.ValueString(),

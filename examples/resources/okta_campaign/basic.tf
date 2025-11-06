@@ -6,8 +6,8 @@ resource "okta_user" "test" {
 }
 
 resource "okta_campaign" "test" {
-  name        = "Monthly access review of sales team"
-  description = "Multi app campaign"
+  name          = "Monthly access review of sales team"
+  description   = "Multi app campaign"
   campaign_type = "RESOURCE"
 
   schedule_settings {
@@ -36,14 +36,14 @@ resource "okta_campaign" "test" {
   }
 
   principal_scope_settings {
-    type                   = "USERS"
+    type                      = "USERS"
     include_only_active_users = false
   }
 
   reviewer_settings {
-    type                  = "USER"
-    reviewer_id           = okta_user.test.id
-    self_review_disabled  = true
+    type                   = "USER"
+    reviewer_id            = okta_user.test.id
+    self_review_disabled   = true
     justification_required = true
     bulk_decision_disabled = true
   }

@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -67,14 +68,6 @@ func (d *securityEventsProviderDataSource) Schema(ctx context.Context, req datas
 							stringvalidator.LengthAtMost(1000),
 						},
 					},
-					"type": schema.StringAttribute{
-						Computed:    true, // Optional because it's part of a 'one-of'
-						Description: "The application type of the Security Events Provider.",
-						Validators: []validator.String{
-							stringvalidator.LengthAtMost(255),
-						},
-					},
-
 					// --- Issuer and JWKS Settings ---
 					"issuer": schema.StringAttribute{
 						Computed:    true, // Optional because it's part of a 'one-of'

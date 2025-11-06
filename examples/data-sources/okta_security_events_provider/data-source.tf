@@ -1,2 +1,2 @@
-data "okta_security_events_provider" example{
+data "okta_security_events_provider" "example" {
 }

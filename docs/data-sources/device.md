@@ -43,6 +43,18 @@ Read-Only:
 - `platform` (String) The platform of the device.
 - `registered` (Boolean) Indicates if the device is registered at Okta.
 - `disk_encryption_type` (String) The disk encryption type of the device.
+- `imei` (String) The International Mobile Equipment Identity (IMEI) of the device.
+- `integrity_jail_break` (Boolean)Indicates if the device is jailbroken or rooted. Only applicable to IOS and ANDROID platforms.
+- `manufacturer` (String) The manufacturer of the device.
+- `meid` (String) The Mobile Equipment Identifier (MEID) of the device.
+- `model` (String) The model of the device.
+- `os_version` (String) The OS version of the device.
+- `secure_hardware_present` (Boolean) Indicates if secure hardware is present on the device.
+- `serial_number` (String) The serial number of the device.
+- `sid` (String) The Security Identifier (SID) of the device.
+- `tpm_present` (String) Windows Trusted Platform Module hash value.
+- `udid` (String) MacOS Unique device identifier of the device.
+- `management_agent` (String) The management agent of the device.
 
 <a id="nestedobjatt--resource--display--name"></a>
 ### Nested Schema for `resource_display_name`

@@ -426,8 +426,7 @@ func createRequestCondition(data requestConditionResourceModel) (*governance.Req
 		req.AccessScopeSettings = accessScopeSettings
 	} else if data.AccessScopeSettings.Type.ValueString() == "RESOURCE_DEFAULT" {
 		if accessScopeSettings.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings == nil {
-			accessScopeSettings.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings =
-				&governance.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings{}
+			accessScopeSettings.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings = &governance.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings{}
 		}
 		accessScopeSettings.AccessScopeSettingsCreatableResourceDefaultAccessScopeSettings.Type = "RESOURCE_DEFAULT"
 		req.AccessScopeSettings = accessScopeSettings

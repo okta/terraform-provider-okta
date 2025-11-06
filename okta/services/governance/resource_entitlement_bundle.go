@@ -167,7 +167,7 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	// Read API call logic
-	//s := []string{"full_entitlements"}
+	// s := []string{"full_entitlements"}
 	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -239,7 +239,6 @@ func (r *entitlementBundleResource) Delete(ctx context.Context, req resource.Del
 		)
 		return
 	}
-
 }
 
 func buildEntitlementBundleCreateBody(data entitlementBundleResourceModel) governance.EntitlementBundleCreatable {

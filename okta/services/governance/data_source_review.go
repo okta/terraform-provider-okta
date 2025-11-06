@@ -192,7 +192,7 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 								"group_type":  schema.StringAttribute{Computed: true},
 							},
 						},
-						//todo add links here
+						// todo add links here
 					},
 				},
 			},
@@ -320,7 +320,7 @@ func convertReviewerLevels(levels []governance.ReviewerLevelInfoFull) []reviewLe
 			ReviewerLevel: types.StringValue(string(l.ReviewerLevel)),
 			Decision:      types.StringValue(string(l.Decision)),
 			ReviewerType:  types.StringValue(string(l.ReviewerType)),
-			//ReviewerGroupResourceId: types.StringValue(l.ReviewerGroupResourceId),
+			// ReviewerGroupResourceId: types.StringValue(l.ReviewerGroupResourceId),
 			ReviewerProfile:      buildUserProfileModel(l.ReviewerProfile),
 			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile), // governance.NewReviewerGroupProfile(l.ReviewerGroupProfile.Name, l.ReviewerGroupProfile.GroupId, l.ReviewerGroupProfile.GroupType),
 		}

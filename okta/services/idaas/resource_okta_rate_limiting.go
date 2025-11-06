@@ -133,7 +133,7 @@ func (r *rateLimitResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Example Data value setting
-	//data.Id = types.StringValue("example-id")
+	// data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting")
 	data.DefaultMode = types.StringValue(clientRateLimitSettingsResp.GetDefaultMode())
 	overrides := clientRateLimitSettingsResp.GetUseCaseModeOverrides()
@@ -210,7 +210,7 @@ func (r *rateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Example Data value setting
-	//data.Id = types.StringValue("example-id")
+	// data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting")
 	data.DefaultMode = types.StringValue(clientRateLimitSettingsResp.GetDefaultMode())
 	overrides := clientRateLimitSettingsResp.GetUseCaseModeOverrides()
@@ -243,11 +243,10 @@ func (r *rateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func buildPerClientRateLimitSettings(data rateLimitResourceModel) v5okta.PerClientRateLimitSettings {
-
 	rateLimitSettings := v5okta.PerClientRateLimitSettings{
 		DefaultMode: data.DefaultMode.ValueString(),
 	}
-	var useCaseOverrides = &v5okta.PerClientRateLimitSettingsUseCaseModeOverrides{}
+	useCaseOverrides := &v5okta.PerClientRateLimitSettingsUseCaseModeOverrides{}
 	if data.UseCaseModeOverrides != nil {
 		if !data.UseCaseModeOverrides.LoginPage.IsNull() {
 			useCaseOverrides.LOGIN_PAGE = data.UseCaseModeOverrides.LoginPage.ValueStringPointer()
