@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -31,11 +32,11 @@ func (d *apiTokenDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Required:    true,
-				Description: "The ID of the API service integration",
+				Description: "The ID of the API token.",
 			},
 			"user_id": schema.StringAttribute{
 				Computed:    true,
-				Description: "The type of the API service integration",
+				Description: "The userId of the user who created the API Token.",
 			},
 			"name": schema.StringAttribute{
 				Computed:    true,
@@ -58,27 +59,17 @@ func (d *apiTokenDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						Computed:    true,
 						Description: "The connection type of the Network Condition.",
 					},
-				},
-				Blocks: map[string]schema.Block{
-					"exclude": schema.SetNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"ip": schema.StringAttribute{
-									Computed:    true,
-									Description: "The IP address the excluded zone.",
-								},
-							},
-						},
+					"exclude": schema.ListAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "The IP address the excluded zone.",
+						ElementType: types.StringType,
 					},
-					"include": schema.SetNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"ip": schema.StringAttribute{
-									Computed:    true,
-									Description: "The IP address the included zone.",
-								},
-							},
-						},
+					"include": schema.ListAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "The IP address the included zone.",
+						ElementType: types.StringType,
 					},
 				},
 			},
@@ -93,7 +84,7 @@ func (d *apiTokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	getAPITokenResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.GetApiToken(ctx, data.Id.ValueString()).Execute()
+	getAPITokenResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.GetApiToken(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in getting API token",
@@ -101,6 +92,6 @@ func (d *apiTokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		)
 		return
 	}
-	mapAPITokeToState(getAPITokenResp, &data)
+	mapAPITokenToState(ctx, getAPITokenResp, &data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

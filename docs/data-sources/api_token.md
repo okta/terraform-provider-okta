@@ -23,25 +23,13 @@ data "okta_api_token" "example" {
 - `client_name` (String) The name of the API token client. 
 - `created` (String) The date and time the API token was created. 
 - `name` (String) The name of the API token. 
-- `network` (Block, Max: 1) The network configuration of the API token. (see below for nested schema)
+- `network` (Block, Max: 1) The network configuration of the API token. (see [below for nested schema](#nestedblock--network))
 - `user_id` (String) The unique Okta ID of the user associated with this API token.
 
-- <a id="nestedblock--network"></a>
+<a id="nestedblock--network"></a>
 ### Nested Schema for network
 ### Read-Only:
 
 - `connection` (String) The connection type of the network condition. Possible values: ANYWHERE, ZONE. 
-- `exclude` (Block Set) Set of excluded network zones. (see below for nested schema)
-- `include` (Block Set) Set of included network zones. (see below for nested schema)
-
-<a id="nestedblock--network--exclude"></a>
-### Nested Schema for network.exclude
-### Read-Only:
-
-`ip` (String) The IP address or network zone ID of the excluded zone.
-
-<a id="nestedblock--network--include"></a>
-### Nested Schema for network.include
-### Read-Only:
-
-`ip` (String) The IP address or network zone ID of the included zone.
+- `exclude` (List) Set of excluded network zones.
+- `include` (List) Set of included network zones.

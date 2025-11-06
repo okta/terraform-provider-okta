@@ -46,12 +46,12 @@ type IPs struct {
 
 type NetworkModel struct {
 	Connection types.String `tfsdk:"connection"`
-	Include    []IPs        `tfsdk:"include"`
-	Exclude    []IPs        `tfsdk:"exclude"`
+	Include    types.List   `tfsdk:"include"`
+	Exclude    types.List   `tfsdk:"exclude"`
 }
 
 type apiTokenResourceModel struct {
-	Id         types.String  `tfsdk:"id"`
+	ID         types.String  `tfsdk:"id"`
 	Name       types.String  `tfsdk:"name"`
 	Network    *NetworkModel `tfsdk:"network"`
 	UserId     types.String  `tfsdk:"user_id"`
@@ -95,29 +95,17 @@ func (r *apiTokenResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 						Optional:    true,
 						Description: "The connection type of the Network Condition.",
 					},
-				},
-				Blocks: map[string]schema.Block{
-					"exclude": schema.SetNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"ip": schema.StringAttribute{
-									Optional:    true,
-									Computed:    true,
-									Description: "The IP address the excluded zone.",
-								},
-							},
-						},
+					"exclude": schema.ListAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "The IP address the excluded zone.",
+						ElementType: types.StringType,
 					},
-					"include": schema.SetNestedBlock{
-						NestedObject: schema.NestedBlockObject{
-							Attributes: map[string]schema.Attribute{
-								"ip": schema.StringAttribute{
-									Optional:    true,
-									Computed:    true,
-									Description: "The IP address the included zone.",
-								},
-							},
-						},
+					"include": schema.ListAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "The IP address the included zone.",
+						ElementType: types.StringType,
 					},
 				},
 			},
@@ -139,7 +127,7 @@ func (r *apiTokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	getAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.GetApiToken(ctx, data.Id.ValueString()).Execute()
+	getAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.GetApiToken(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in getting API token",
@@ -147,7 +135,7 @@ func (r *apiTokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		)
 		return
 	}
-	mapAPITokeToState(getAPITokenResp, &data)
+	mapAPITokenToState(ctx, getAPITokenResp, &data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -158,15 +146,20 @@ func (r *apiTokenResource) Update(ctx context.Context, req resource.UpdateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	upsertAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.UpsertApiToken(ctx, data.Id.ValueString()).ApiTokenUpdate(createTokenUpdate(plan, data.Created.ValueString())).Execute()
+	updateTokenReq, diags := createTokenUpdate(plan, data.Created.ValueString())
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	upsertAPITokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.UpsertApiToken(ctx, data.ID.ValueString()).ApiTokenUpdate(updateTokenReq).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"error in upserting API token",
+			"Error in upserting API token",
 			err.Error(),
 		)
 		return
 	}
-	mapAPITokeToState(upsertAPITokenResp, &data)
+	mapAPITokenToState(ctx, upsertAPITokenResp, &data)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -177,7 +170,7 @@ func (r *apiTokenResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.RevokeApiToken(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.RevokeApiToken(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in revoking API token",
@@ -187,75 +180,91 @@ func (r *apiTokenResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 }
 
-func createTokenUpdate(data apiTokenResourceModel, created string) v5okta.ApiTokenUpdate {
-	x := v5okta.ApiTokenUpdate{}
+func createTokenUpdate(data apiTokenResourceModel, created string) (v5okta.ApiTokenUpdate, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	apiTokenUpdateRequest := v5okta.ApiTokenUpdate{}
 
 	// Set basic fields
-	x.Name = data.Name.ValueStringPointer()
-	x.ClientName = data.ClientName.ValueStringPointer()
-	x.UserId = data.UserId.ValueStringPointer()
+	apiTokenUpdateRequest.SetName(data.Name.ValueString())
+	apiTokenUpdateRequest.SetClientName(data.ClientName.ValueString())
+	apiTokenUpdateRequest.SetUserId(data.UserId.ValueString())
 
 	// Handle Created field with proper null/error checking
 	if created != "" {
 		parsedTime, err := time.Parse(time.RFC3339, created)
 		if err != nil {
-			fmt.Printf("Warning: Could not parse created time '%s': %v\n", created, err)
+			diags.AddError(" Could not parse created time", fmt.Sprintf("created time:%s", created))
 		} else {
-			x.Created = &parsedTime
+			apiTokenUpdateRequest.SetCreated(parsedTime)
 		}
 	}
 
 	// Handle Network configuration
 	if data.Network != nil {
 		network := v5okta.ApiTokenNetwork{}
-		network.Connection = data.Network.Connection.ValueStringPointer()
-		network.Connection = data.Network.Connection.ValueStringPointer()
+		network.SetConnection(data.Network.Connection.ValueString())
 
 		// Handle Include IPs
-		for _, inc := range data.Network.Include {
-			if !inc.IP.IsNull() && !inc.IP.IsUnknown() {
-				network.Include = append(network.Include, inc.IP.ValueString())
+		var includedZones []string
+		if !data.Network.Include.IsNull() && !data.Network.Include.IsUnknown() {
+			var incl []types.String
+			diags := data.Network.Include.ElementsAs(context.Background(), &incl, false)
+			if diags.HasError() {
+				return apiTokenUpdateRequest, diags
+			}
+			for _, v := range incl {
+				if !v.IsNull() && !v.IsUnknown() {
+					includedZones = append(includedZones, v.ValueString())
+				}
 			}
 		}
+		fmt.Println("Included Zones:", includedZones)
+		network.SetInclude(includedZones)
 
 		// Handle Exclude IPs
-		for _, exc := range data.Network.Exclude {
-			if !exc.IP.IsNull() && !exc.IP.IsUnknown() {
-				network.Exclude = append(network.Exclude, exc.IP.ValueString())
+		var excludedZones []string
+		if !data.Network.Exclude.IsNull() && !data.Network.Exclude.IsUnknown() {
+			var excl []types.String
+			diags := data.Network.Exclude.ElementsAs(context.Background(), &excl, false)
+			if diags.HasError() {
+				return apiTokenUpdateRequest, diags
+			}
+			for _, v := range excl {
+				if !v.IsNull() && !v.IsUnknown() {
+					excludedZones = append(excludedZones, v.ValueString())
+				}
 			}
 		}
+		fmt.Println("Excluded Zones:", excludedZones)
+		network.SetExclude(excludedZones)
 
-		x.Network = &network
+		apiTokenUpdateRequest.SetNetwork(network)
 	}
-	return x
+	return apiTokenUpdateRequest, nil
 }
 
-func mapAPITokeToState(resp *v5okta.ApiToken, a *apiTokenResourceModel) diag.Diagnostics {
+func mapAPITokenToState(ctx context.Context, resp *v5okta.ApiToken, a *apiTokenResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	a.Id = types.StringValue(resp.GetId())
+	a.ID = types.StringValue(resp.GetId())
 	a.Name = types.StringValue(resp.GetName())
 	a.UserId = types.StringValue(resp.GetUserId())
 	a.ClientName = types.StringValue(resp.GetClientName())
 	a.Created = types.StringValue(resp.GetCreated().Format(time.RFC3339))
 	n := NetworkModel{
 		Connection: types.StringValue(resp.Network.GetConnection()),
-		Include:    []IPs{},
-		Exclude:    []IPs{},
 	}
 
-	if resp.Network != nil {
-		for _, inc := range resp.Network.Include {
-			n.Include = append(n.Include, IPs{
-				IP: types.StringValue(inc),
-			})
-		}
-		for _, exc := range resp.Network.Exclude {
-			n.Exclude = append(n.Exclude, IPs{
-				IP: types.StringValue(exc),
-			})
-		}
+	inc, diags := types.ListValueFrom(ctx, types.StringType, resp.Network.GetInclude())
+	if diags.HasError() {
+		return diags
 	}
+	n.Include = inc
 
+	excl, diags := types.ListValueFrom(ctx, types.StringType, resp.Network.GetExclude())
+	if diags.HasError() {
+		return diags
+	}
+	n.Exclude = excl
 	a.Network = &n
 
 	return diags
