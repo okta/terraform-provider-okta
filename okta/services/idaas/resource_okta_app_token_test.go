@@ -2,13 +2,14 @@ package idaas_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"testing"
 )
 
-func TestAccAppTokenResource_basic(t *testing.T) {
+func TestAccResourceOktaAppTokenResource_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppToken, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSAppToken)
@@ -22,7 +23,7 @@ func TestAccAppTokenResource_basic(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_app_token.example",
-				ImportStateId:      "0oardd5r32PWsF4421d7/oar1gr8axwIEe46pX1d7",
+				ImportStateId:      "0oardd5r32PWsF4421d7/oar1gyu6hmmw8bj6I1d7",
 				ImportStatePersist: true,
 				Config:             config,
 			},

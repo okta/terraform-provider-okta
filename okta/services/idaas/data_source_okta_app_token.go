@@ -2,12 +2,13 @@ package idaas
 
 import (
 	"context"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
-	"time"
 )
 
 var _ datasource.DataSource = &appTokenDataSource{}
@@ -21,9 +22,9 @@ type appTokenDataSource struct {
 }
 
 type appTokenDataSourceModel struct {
-	Id        types.String `tfsdk:"id"`
-	ClientId  types.String `tfsdk:"client_id"`
-	UserId    types.String `tfsdk:"user_id"`
+	ID        types.String `tfsdk:"id"`
+	ClientID  types.String `tfsdk:"client_id"`
+	UserID    types.String `tfsdk:"user_id"`
 	Status    types.String `tfsdk:"status"`
 	Created   types.String `tfsdk:"created"`
 	ExpiresAt types.String `tfsdk:"expires_at"`
@@ -36,11 +37,11 @@ func (d *appTokenDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Required:    true,
-				Description: "The unique Okta ID of this key record",
+				Description: "The unique ID of this key record",
 			},
 			"client_id": schema.StringAttribute{
 				Required:    true,
-				Description: "The unique Okta ID of the application associated with this token.",
+				Description: "The unique ID of the application associated with this token.",
 			},
 			"user_id": schema.StringAttribute{
 				Computed:    true,
@@ -87,15 +88,15 @@ func (d *appTokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	getAppTokenRes, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.GetOAuth2TokenForApplication(ctx, data.ClientId.ValueString(), data.Id.ValueString()).Execute()
+	getAppTokenRes, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.GetOAuth2TokenForApplication(ctx, data.ClientID.ValueString(), data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading application token", "Could not read application token, unexpected error: "+err.Error())
 		return
 	}
 
-	data.Id = types.StringValue(getAppTokenRes.GetId())
-	data.ClientId = types.StringValue(getAppTokenRes.GetClientId())
-	data.UserId = types.StringValue(getAppTokenRes.GetUserId())
+	data.ID = types.StringValue(getAppTokenRes.GetId())
+	data.ClientID = types.StringValue(getAppTokenRes.GetClientId())
+	data.UserID = types.StringValue(getAppTokenRes.GetUserId())
 	data.Status = types.StringValue(getAppTokenRes.GetStatus())
 	data.Created = types.StringValue(getAppTokenRes.GetCreated().Format(time.RFC3339))
 	data.ExpiresAt = types.StringValue(getAppTokenRes.GetExpiresAt().Format(time.RFC3339))

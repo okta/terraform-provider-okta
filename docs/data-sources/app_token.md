@@ -12,7 +12,7 @@ Retrieves a refresh token for the specified app.
 
 ### Basic Token Information
 
-```hcl
+```terraform
 data "okta_app_token" "example" {
   client_id = "0oardd5r32PWsF4421d7"
   id        = "oar1godmqw4QUiX4C1d7"

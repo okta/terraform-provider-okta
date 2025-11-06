@@ -44,9 +44,9 @@ func (r *appTokenResource) ImportState(ctx context.Context, req resource.ImportS
 }
 
 type appTokenModel struct {
-	Id       types.String `tfsdk:"id"`
-	ClientId types.String `tfsdk:"client_id"`
-	UserId   types.String `tfsdk:"user_id"`
+	ID       types.String `tfsdk:"id"`
+	ClientID types.String `tfsdk:"client_id"`
+	UserID   types.String `tfsdk:"user_id"`
 	Status   types.String `tfsdk:"status"`
 }
 
@@ -91,15 +91,15 @@ func (r *appTokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	getAppTokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.GetOAuth2TokenForApplication(ctx, data.ClientId.ValueString(), data.Id.ValueString()).Execute()
+	getAppTokenResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.GetOAuth2TokenForApplication(ctx, data.ClientID.ValueString(), data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading application token", "Could not read application token, unexpected error: "+err.Error())
 		return
 	}
 
-	data.Id = types.StringValue(getAppTokenResp.GetId())
-	data.ClientId = types.StringValue(getAppTokenResp.GetClientId())
-	data.UserId = types.StringValue(getAppTokenResp.GetUserId())
+	data.ID = types.StringValue(getAppTokenResp.GetId())
+	data.ClientID = types.StringValue(getAppTokenResp.GetClientId())
+	data.UserID = types.StringValue(getAppTokenResp.GetUserId())
 	data.Status = types.StringValue(getAppTokenResp.GetStatus())
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 
@@ -119,7 +119,7 @@ func (r *appTokenResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.RevokeOAuth2TokenForApplication(ctx, data.ClientId.ValueString(), data.Id.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationTokensAPI.RevokeOAuth2TokenForApplication(ctx, data.ClientID.ValueString(), data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error revoking application token", "Could not revoke application token, unexpected error: "+err.Error())
 		return

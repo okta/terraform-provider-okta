@@ -16,7 +16,7 @@ Resource to manage OAuth 2.0 tokens for an app.
 
 ### Import and Manage Existing Token
 
-```hcl
+```terraform
 # Import an existing refresh token
 resource "okta_app_token" "example" {
   client_id = "0oardd5r32PWsF4421d7"
