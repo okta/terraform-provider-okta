@@ -218,7 +218,6 @@ func createTokenUpdate(data apiTokenResourceModel, created string) (v5okta.ApiTo
 				}
 			}
 		}
-		fmt.Println("Included Zones:", includedZones)
 		network.SetInclude(includedZones)
 
 		// Handle Exclude IPs
@@ -235,7 +234,6 @@ func createTokenUpdate(data apiTokenResourceModel, created string) (v5okta.ApiTo
 				}
 			}
 		}
-		fmt.Println("Excluded Zones:", excludedZones)
 		network.SetExclude(excludedZones)
 
 		apiTokenUpdateRequest.SetNetwork(network)

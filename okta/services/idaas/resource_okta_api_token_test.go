@@ -24,7 +24,7 @@ func TestAccResourceAPITokenResource_basic(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_api_token.example",
-				ImportStateId:      "00T1gtq5lsLg3q4dh1d7",
+				ImportStateId:      "00T1gtr35t8ZbfBfV1d7",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
