@@ -2,10 +2,10 @@ package idaas
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -87,7 +87,7 @@ func (d *apiTokenDataSource) Read(ctx context.Context, req datasource.ReadReques
 	getAPITokenResp, _, err := d.OktaIDaaSClient.OktaSDKClientV5().ApiTokenAPI.GetApiToken(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"error in getting API token",
+			"Error in getting API token",
 			err.Error(),
 		)
 		return
