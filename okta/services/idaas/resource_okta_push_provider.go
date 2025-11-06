@@ -52,23 +52,23 @@ type pushProviderResourceModel struct {
 // pushProviderConfigurationModel describes the configuration block
 type apnsConfigurationModel struct {
 	// APNS Configuration
-	KeyId           types.String `tfsdk:"key_id"`
-	TeamId          types.String `tfsdk:"team_id"`
+	KeyID           types.String `tfsdk:"key_id"`
+	TeamID          types.String `tfsdk:"team_id"`
 	TokenSigningKey types.String `tfsdk:"token_signing_key"`
 	FileName        types.String `tfsdk:"file_name"`
 }
 
 type ServiceAccount struct {
 	Type                    types.String `tfsdk:"type"`
-	ProjectId               types.String `tfsdk:"project_id"`
-	PrivateKeyId            types.String `tfsdk:"private_key_id"`
+	ProjectID               types.String `tfsdk:"project_id"`
+	PrivateKeyID            types.String `tfsdk:"private_key_id"`
 	PrivateKey              types.String `tfsdk:"private_key"`
 	ClientEmail             types.String `tfsdk:"client_email"`
 	ClientId                types.String `tfsdk:"client_id"`
-	AuthUri                 types.String `tfsdk:"auth_uri"`
-	TokenUri                types.String `tfsdk:"token_uri"`
-	AuthProviderX509CertUrl types.String `tfsdk:"auth_provider_x509_cert_url"`
-	ClientX509CertUrl       types.String `tfsdk:"client_x509_cert_url"`
+	AuthURI                 types.String `tfsdk:"auth_uri"`
+	TokenURI                types.String `tfsdk:"token_uri"`
+	AuthProviderX509CertURL types.String `tfsdk:"auth_provider_x509_cert_url"`
+	ClientX509CertURL       types.String `tfsdk:"client_x509_cert_url"`
 	FileName                types.String `tfsdk:"file_name"`
 }
 
@@ -239,8 +239,8 @@ func applyPushProviderToState(resp *okta.ListPushProviders200ResponseInner, plan
 		plan.ID = types.StringValue(resp.APNSPushProvider.GetId())
 		plan.Name = types.StringValue(resp.APNSPushProvider.GetName())
 		plan.ProviderType = types.StringValue(resp.APNSPushProvider.GetProviderType())
-		plan.Configuration.ApnsConfigurationModel.KeyId = types.StringValue(resp.APNSPushProvider.Configuration.GetKeyId())
-		plan.Configuration.ApnsConfigurationModel.TeamId = types.StringValue(resp.APNSPushProvider.Configuration.GetTeamId())
+		plan.Configuration.ApnsConfigurationModel.KeyID = types.StringValue(resp.APNSPushProvider.Configuration.GetKeyId())
+		plan.Configuration.ApnsConfigurationModel.TeamID = types.StringValue(resp.APNSPushProvider.Configuration.GetTeamId())
 		if resp.APNSPushProvider.Configuration.GetFileName() != "" {
 			plan.Configuration.ApnsConfigurationModel.FileName = types.StringValue(resp.APNSPushProvider.Configuration.GetFileName())
 		}
@@ -266,8 +266,8 @@ func createPushProviderReq(plan pushProviderResourceModel) okta.ListPushProvider
 		}
 		apnsConfig := okta.APNSConfiguration{
 			FileName:        plan.Configuration.ApnsConfigurationModel.FileName.ValueStringPointer(),
-			KeyId:           plan.Configuration.ApnsConfigurationModel.KeyId.ValueStringPointer(),
-			TeamId:          plan.Configuration.ApnsConfigurationModel.TeamId.ValueStringPointer(),
+			KeyId:           plan.Configuration.ApnsConfigurationModel.KeyID.ValueStringPointer(),
+			TeamId:          plan.Configuration.ApnsConfigurationModel.TeamID.ValueStringPointer(),
 			TokenSigningKey: plan.Configuration.ApnsConfigurationModel.TokenSigningKey.ValueStringPointer(),
 		}
 		return okta.APNSPushProviderAsListPushProviders200ResponseInner(&okta.APNSPushProvider{
@@ -282,14 +282,15 @@ func createPushProviderReq(plan pushProviderResourceModel) okta.ListPushProvider
 
 		data := map[string]interface{}{
 			"type":                        plan.Configuration.FcmConfiguration.ServiceAccountJson.Type.ValueString(),
-			"project_id":                  plan.Configuration.FcmConfiguration.ServiceAccountJson.ProjectId.ValueString(),
+			"project_id":                  plan.Configuration.FcmConfiguration.ServiceAccountJson.ProjectID.ValueString(),
 			"private_key":                 plan.Configuration.FcmConfiguration.ServiceAccountJson.PrivateKey.ValueString(),
+			"private_key_id":              plan.Configuration.FcmConfiguration.ServiceAccountJson.PrivateKeyID.ValueString(),
 			"client_email":                plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientEmail.ValueString(),
 			"client_id":                   plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientId.ValueString(),
-			"auth_uri":                    plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthUri.ValueString(),
-			"token_uri":                   plan.Configuration.FcmConfiguration.ServiceAccountJson.TokenUri.ValueString(),
-			"auth_provider_x509_cert_url": plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthProviderX509CertUrl.ValueString(),
-			"client_x509_cert_url":        plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientX509CertUrl.ValueString(),
+			"auth_uri":                    plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthURI.ValueString(),
+			"token_uri":                   plan.Configuration.FcmConfiguration.ServiceAccountJson.TokenURI.ValueString(),
+			"auth_provider_x509_cert_url": plan.Configuration.FcmConfiguration.ServiceAccountJson.AuthProviderX509CertURL.ValueString(),
+			"client_x509_cert_url":        plan.Configuration.FcmConfiguration.ServiceAccountJson.ClientX509CertURL.ValueString(),
 		}
 
 		fcmConfig := okta.FCMConfiguration{

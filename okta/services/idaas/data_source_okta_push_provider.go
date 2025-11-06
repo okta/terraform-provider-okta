@@ -24,17 +24,17 @@ type pushProviderDataSource struct {
 }
 
 type ServiceAccountJsonDataSource struct {
-	ProjectId types.String `tfsdk:"project_id"`
+	ProjectID types.String `tfsdk:"project_id"`
 	FileName  types.String `tfsdk:"file_name"`
 }
 
 type FcmConfigurationDataSource struct {
-	ServiceAccountJson *ServiceAccountJsonDataSource `tfsdk:"service_account_json"`
+	ServiceAccountJSON *ServiceAccountJsonDataSource `tfsdk:"service_account_json"`
 }
 
 type ApnsConfigurationDataSource struct {
-	KeyId    types.String `tfsdk:"key_id"`
-	TeamId   types.String `tfsdk:"team_id"`
+	KeyID    types.String `tfsdk:"key_id"`
+	TeamID   types.String `tfsdk:"team_id"`
 	FileName types.String `tfsdk:"file_name"`
 }
 
@@ -142,8 +142,8 @@ func (d *pushProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 		data.LastUpdatedDate = types.StringValue(getPushProviderResp.APNSPushProvider.GetLastUpdatedDate())
 		conf := &ConfigurationDataSource{}
 		conf.ApnsConfiguration = &ApnsConfigurationDataSource{}
-		conf.ApnsConfiguration.KeyId = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetKeyId())
-		conf.ApnsConfiguration.TeamId = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetTeamId())
+		conf.ApnsConfiguration.KeyID = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetKeyId())
+		conf.ApnsConfiguration.TeamID = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetTeamId())
 		conf.ApnsConfiguration.FileName = types.StringValue(getPushProviderResp.APNSPushProvider.Configuration.GetFileName())
 		data.Configuration = conf
 	} else if getPushProviderResp.FCMPushProvider != nil {
@@ -153,9 +153,9 @@ func (d *pushProviderDataSource) Read(ctx context.Context, req datasource.ReadRe
 		data.LastUpdatedDate = types.StringValue(getPushProviderResp.FCMPushProvider.GetLastUpdatedDate())
 		conf := &ConfigurationDataSource{}
 		conf.FcmConfiguration = &FcmConfigurationDataSource{}
-		conf.FcmConfiguration.ServiceAccountJson = &ServiceAccountJsonDataSource{}
-		conf.FcmConfiguration.ServiceAccountJson.ProjectId = types.StringValue(getPushProviderResp.FCMPushProvider.Configuration.GetProjectId())
-		conf.FcmConfiguration.ServiceAccountJson.FileName = types.StringValue(getPushProviderResp.FCMPushProvider.Configuration.GetFileName())
+		conf.FcmConfiguration.ServiceAccountJSON = &ServiceAccountJsonDataSource{}
+		conf.FcmConfiguration.ServiceAccountJSON.ProjectID = types.StringValue(getPushProviderResp.FCMPushProvider.Configuration.GetProjectId())
+		conf.FcmConfiguration.ServiceAccountJSON.FileName = types.StringValue(getPushProviderResp.FCMPushProvider.Configuration.GetFileName())
 		data.Configuration = conf
 	}
 

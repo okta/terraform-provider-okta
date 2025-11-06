@@ -6,9 +6,9 @@ interactions:
     proto: HTTP/1.1
     proto_major: 1
     proto_minor: 1
-    content_length: 745
+    content_length: 771
     host: classic-00.dne-okta.com
-    body: "{\"configuration\":{\"serviceAccountJson\":{\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"client_email\":\"SERVICE_ACCOUNT_EMAIL\",\"client_id\":\"CLIENT_ID\",\"client_x509_cert_url\":\"https://www.googleapis.com/robot/v1/metadata/x509/SERVICE_ACCOUNT_EMAIL\",\"private_key\":\"-----BEGIN PRIVATE KEY-----MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkw\\ndwIBAQQgTrVNo3aKMlnSuvhhLttykBgUj80HY+/RXqiWjXlk5M+gCgYIKoZIzj0DAQehRANCAASTa2fP8SDHMiaQ7e+80LZxxBVxYmDb8w5e\\nIpHR0GZoSUgFASqU3L7VDqLs675+IbxRHXX0/lMeVKyA2oxSBpZk-----END PRIVATE KEY-----\",\"project_id\":\"PROJECT_ID\",\"token_uri\":\"https://oauth2.googleapis.com/token\",\"type\":\"service_account\"}},\"name\":\"example\",\"providerType\":\"FCM\"}\n"
+    body: "{\"configuration\":{\"serviceAccountJson\":{\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"client_email\":\"SERVICE_ACCOUNT_EMAIL\",\"client_id\":\"CLIENT_ID\",\"client_x509_cert_url\":\"https://www.googleapis.com/robot/v1/metadata/x509/SERVICE_ACCOUNT_EMAIL\",\"private_key\":\"-----BEGIN PRIVATE KEY-----MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkw\\ndwIBAQQgTrVNo3aKMlnSuvhhLttykBgUj80HY+/RXqiWjXlk5M+gCgYIKoZIzj0DAQehRANCAASTa2fP8SDHMiaQ7e+80LZxxBVxYmDb8w5e\\nIpHR0GZoSUgFASqU3L7VDqLs675+IbxRHXX0/lMeVKyA2oxSBpZk-----END PRIVATE KEY-----\",\"private_key_id\":\"KEY_ID\",\"project_id\":\"PROJECT_ID\",\"token_uri\":\"https://oauth2.googleapis.com/token\",\"type\":\"service_account\"}},\"name\":\"example\",\"providerType\":\"FCM\"}\n"
     headers:
       Accept:
       - application/json
@@ -24,19 +24,19 @@ interactions:
     proto_minor: 0
     content_length: -1
     uncompressed: true
-    body: "{\"id\":\"ppcrbwu0pgjjyzKB41d7\",\"providerType\":\"FCM\",\"name\":\"example\",\"lastUpdatedDate\":\"2025-10-27T18:49:58.000Z\",\"configuration\":{\"projectId\":\"PROJECT_ID\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/push-providers/ppcrbwu0pgjjyzKB41d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    body: "{\"id\":\"ppcrm8cjrl8TOqUZ21d7\",\"providerType\":\"FCM\",\"name\":\"example\",\"lastUpdatedDate\":\"2025-11-06T14:47:02.000Z\",\"configuration\":{\"projectId\":\"PROJECT_ID\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/push-providers/ppcrm8cjrl8TOqUZ21d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
     headers:
       Accept-Ch:
       - Sec-CH-UA-Platform-Version
       Content-Type:
       - application/json
       Date:
-      - Mon, 27 Oct 2025 18:49:58 GMT
+      - Thu, 06 Nov 2025 14:47:03 GMT
       Referrer-Policy:
       - strict-origin-when-cross-origin
     status: 200 OK
     code: 200
-    duration: 1.276694584s
+    duration: 1.425432959s
 - id: 1
   request:
     proto: HTTP/1.1
@@ -49,7 +49,7 @@ interactions:
       - application/json
       Authorization:
       - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/push-providers/ppcrbwu0pgjjyzKB41d7
+    url: https://classic-00.dne-okta.com/api/v1/push-providers/ppcrm8cjrl8TOqUZ21d7
     method: GET
   response:
     proto: HTTP/2.0
@@ -57,19 +57,19 @@ interactions:
     proto_minor: 0
     content_length: -1
     uncompressed: true
-    body: "{\"id\":\"ppcrbwu0pgjjyzKB41d7\",\"providerType\":\"FCM\",\"name\":\"example\",\"lastUpdatedDate\":\"2025-10-27T18:49:58.000Z\",\"configuration\":{\"projectId\":\"PROJECT_ID\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/push-providers/ppcrbwu0pgjjyzKB41d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    body: "{\"id\":\"ppcrm8cjrl8TOqUZ21d7\",\"providerType\":\"FCM\",\"name\":\"example\",\"lastUpdatedDate\":\"2025-11-06T14:47:02.000Z\",\"configuration\":{\"projectId\":\"PROJECT_ID\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/push-providers/ppcrm8cjrl8TOqUZ21d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
     headers:
       Accept-Ch:
       - Sec-CH-UA-Platform-Version
       Content-Type:
       - application/json
       Date:
-      - Mon, 27 Oct 2025 18:50:00 GMT
+      - Thu, 06 Nov 2025 14:47:04 GMT
       Referrer-Policy:
       - strict-origin-when-cross-origin
     status: 200 OK
     code: 200
-    duration: 1.311816625s
+    duration: 1.4036925s
 - id: 2
   request:
     proto: HTTP/1.1
@@ -82,7 +82,7 @@ interactions:
       - application/json
       Authorization:
       - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/push-providers/ppcrbwu0pgjjyzKB41d7
+    url: https://classic-00.dne-okta.com/api/v1/push-providers/ppcrm8cjrl8TOqUZ21d7
     method: DELETE
   response:
     proto: HTTP/2.0
@@ -94,9 +94,9 @@ interactions:
       Accept-Ch:
       - Sec-CH-UA-Platform-Version
       Date:
-      - Mon, 27 Oct 2025 18:50:01 GMT
+      - Thu, 06 Nov 2025 14:47:06 GMT
       Referrer-Policy:
       - strict-origin-when-cross-origin
     status: 204 No Content
     code: 204
-    duration: 1.241143625s
+    duration: 1.220957792s
