@@ -182,6 +182,11 @@ func (r *appSignOnPolicyResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
+	// When ID is set but required fields name, description aren't, it implies that the resource has been imported.
+	// The resource needn't be created from here on out, so the value for catch_all doesn't matter since it only has effect during Create
+	if !state.ID.IsNull() && state.Name.IsNull() && state.Description.IsNull() {
+		state.CatchAll = types.BoolValue(true)
+	}
 	accessPolicy, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PolicyAPI.GetPolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
