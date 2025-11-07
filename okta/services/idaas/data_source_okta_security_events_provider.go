@@ -74,7 +74,6 @@ func (d *securityEventsProviderDataSource) Schema(ctx context.Context, req datas
 						Description: "Issuer URL.",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(700),
-							// Optional: stringvalidator.IsURL(), // Assuming issuer is a URL
 						},
 					},
 					"jwks_url": schema.StringAttribute{
