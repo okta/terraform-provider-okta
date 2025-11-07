@@ -4,6 +4,6 @@ resource "okta_app_connection" "example" {
   action   = "activate"
   profile {
     auth_scheme = "TOKEN"
-    token       = "004Ah8sGzUBj_38FZRNwnikXgrxi33pu7yRrWII4DB"
+    token       = "<REDACTED>"
   }
 }
