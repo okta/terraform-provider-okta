@@ -38,7 +38,7 @@ The following arguments are required:
 
 In addition to all arguments above, the following attributes are exported:
 
-* `user_id` - The unique Okta ID of the user associated with this token.
+* `user_id` - The unique ID of the user associated with this token.
 * `status` - The current status of the token (e.g., `ACTIVE`, `REVOKED`).
 * `created` - Timestamp when the token was created, in RFC3339 format.
 * `expires_at` - Timestamp when the token expires, in RFC3339 format.

@@ -53,11 +53,11 @@ func (d *appTokenDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"created": schema.StringAttribute{
 				Computed:    true,
-				Description: "Timestamp when the object was created.",
+				Description: " Timestamp when the token was created, in RFC3339 format.",
 			},
 			"expires_at": schema.StringAttribute{
 				Computed:    true,
-				Description: "Timestamp when the object was expired.",
+				Description: "Timestamp when the token expires, in RFC3339 format.",
 			},
 			"scopes": schema.ListAttribute{
 				Computed:    true,
