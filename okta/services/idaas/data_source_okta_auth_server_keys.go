@@ -20,9 +20,9 @@ type authServerKeysDataSource struct {
 }
 
 type authServerKeysDataSourceModel struct {
-	Id           types.String `tfsdk:"id"`
-	KeyId        types.String `tfsdk:"key_id"`
-	AuthServerId types.String `tfsdk:"auth_server_id"`
+	ID           types.String `tfsdk:"id"`
+	KeyID        types.String `tfsdk:"key_id"`
+	AuthServerID types.String `tfsdk:"auth_server_id"`
 	Alg          types.String `tfsdk:"alg"`
 	E            types.String `tfsdk:"e"`
 	Kid          types.String `tfsdk:"kid"`
@@ -97,7 +97,7 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Read API call logic - List keys to find our specific client
-	authServerJSONWebKey, _, err := getOktaV6ClientFromMetadata(d.Config).AuthorizationServerKeysAPI.GetAuthorizationServerKey(ctx, data.AuthServerId.ValueString(), data.KeyId.ValueString()).Execute()
+	authServerJSONWebKey, _, err := getOktaV6ClientFromMetadata(d.Config).AuthorizationServerKeysAPI.GetAuthorizationServerKey(ctx, data.AuthServerID.ValueString(), data.KeyID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read authorization server keys",
@@ -105,7 +105,7 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 		)
 		return
 	}
-	data.KeyId = types.StringValue(authServerJSONWebKey.GetKid())
+	data.KeyID = types.StringValue(authServerJSONWebKey.GetKid())
 	data.Alg = types.StringValue(authServerJSONWebKey.GetAlg())
 	data.E = types.StringValue(authServerJSONWebKey.GetE())
 	data.Kid = types.StringValue(authServerJSONWebKey.GetKid())
@@ -113,6 +113,6 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 	data.Status = types.StringValue(authServerJSONWebKey.GetStatus())
 	data.Use = types.StringValue(authServerJSONWebKey.GetUse())
 	// Save data into Terraform state
-	data.Id = types.StringValue(fmt.Sprintf("%s-%s", data.AuthServerId.ValueString(), data.KeyId.ValueString()))
+	data.ID = types.StringValue(fmt.Sprintf("%s-%s", data.AuthServerID.ValueString(), data.KeyID.ValueString()))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
