@@ -24,7 +24,7 @@ type appConnectionsDataModel struct {
 	Profile    *ProfileDataModel `tfsdk:"profile"`
 	Status     types.String      `tfsdk:"status"`
 	AuthScheme types.String      `tfsdk:"auth_scheme"`
-	BaseUrl    types.String      `tfsdk:"base_url"`
+	BaseURL    types.String      `tfsdk:"base_url"`
 }
 
 func newAppConnectionsDataSource() datasource.DataSource {
@@ -100,7 +100,7 @@ func (r *appConnectionsDataSource) Read(ctx context.Context, req datasource.Read
 
 func mapProvisionConnectionToState(connResp *okta.ProvisioningConnectionResponse, state *appConnectionsDataModel) diag.Diagnostics {
 	var diags diag.Diagnostics
-	state.BaseUrl = types.StringValue(connResp.GetBaseUrl())
+	state.BaseURL = types.StringValue(connResp.GetBaseUrl())
 	state.Status = types.StringValue(connResp.GetStatus())
 	state.AuthScheme = types.StringValue(connResp.GetAuthScheme())
 	state.Profile = &ProfileDataModel{}
