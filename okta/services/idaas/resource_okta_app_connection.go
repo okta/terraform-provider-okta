@@ -40,14 +40,14 @@ type SettingsModel struct {
 type ProfileModel struct {
 	AuthScheme types.String   `tfsdk:"auth_scheme"`
 	Token      types.String   `tfsdk:"token"`
-	ClientId   types.String   `tfsdk:"client_id"`
+	ClientID   types.String   `tfsdk:"client_id"`
 	Signing    *SigningModel  `tfsdk:"signing"`
 	Settings   *SettingsModel `tfsdk:"settings"`
 }
 
 type AppConnectionsModel struct {
-	Id      types.String  `tfsdk:"id"`
-	BaseUrl types.String  `tfsdk:"base_url"`
+	ID      types.String  `tfsdk:"id"`
+	BaseURL types.String  `tfsdk:"base_url"`
 	Profile *ProfileModel `tfsdk:"profile"`
 	Status  types.String  `tfsdk:"status"`
 	Action  types.String  `tfsdk:"action"`
@@ -153,11 +153,11 @@ func (r *appConnections) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	// Create/Update the app connection
-	updateDefaultConnection, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.UpdateDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).UpdateDefaultProvisioningConnectionForApplicationRequest(buildDefaultProvisioningConnections(data)).Execute()
+	updateDefaultConnection, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.UpdateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).UpdateDefaultProvisioningConnectionForApplicationRequest(buildDefaultProvisioningConnections(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating App Connection",
-			"Could not create app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 		)
 		return
 	}
@@ -171,11 +171,11 @@ func (r *appConnections) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	if data.Action.ValueString() == "activate" {
-		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.ActivateDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).Execute()
+		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.ActivateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating App Connection",
-				"Could not create app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 			)
 			return
 		}
@@ -197,7 +197,7 @@ func updateAppConnectionState(data *AppConnectionsModel, response *v5okta.Provis
 	var diags diag.Diagnostics
 
 	// Update base URL
-	data.BaseUrl = types.StringValue(response.GetBaseUrl())
+	data.BaseURL = types.StringValue(response.GetBaseUrl())
 
 	// Initialize Profile if nil
 	if data.Profile == nil {
@@ -221,7 +221,7 @@ func buildDefaultProvisioningConnections(data AppConnectionsModel) v5okta.Update
 	switch authScheme {
 	case "TOKEN":
 		req.ProvisioningConnectionTokenRequest = &v5okta.ProvisioningConnectionTokenRequest{
-			BaseUrl: data.BaseUrl.ValueStringPointer(),
+			BaseUrl: data.BaseURL.ValueStringPointer(),
 			Profile: v5okta.ProvisioningConnectionTokenRequestProfile{
 				AuthScheme: authScheme,
 				Token:      data.Profile.Token.ValueStringPointer(),
@@ -232,7 +232,7 @@ func buildDefaultProvisioningConnections(data AppConnectionsModel) v5okta.Update
 		req.ProvisioningConnectionOauthRequest = &v5okta.ProvisioningConnectionOauthRequest{
 			Profile: v5okta.ProvisioningConnectionOauthRequestProfile{
 				AuthScheme: authScheme,
-				ClientId:   data.Profile.ClientId.ValueStringPointer(),
+				ClientId:   data.Profile.ClientID.ValueStringPointer(),
 			},
 		}
 
@@ -253,11 +253,11 @@ func (r *appConnections) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	readDefaultProvisioningConnections, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.GetDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).Execute()
+	readDefaultProvisioningConnections, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.GetDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading App Connection",
-			"Could not read app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not read app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 		)
 		return
 	}
@@ -265,7 +265,7 @@ func (r *appConnections) Read(ctx context.Context, req resource.ReadRequest, res
 	if readDefaultProvisioningConnections == nil {
 		resp.Diagnostics.AddError(
 			"App Connection Not Found",
-			"App connection not found for application ID "+data.Id.ValueString(),
+			"App connection not found for application ID "+data.ID.ValueString(),
 		)
 		return
 	}
@@ -319,11 +319,11 @@ func (r *appConnections) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	updateDefaultConnection, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.UpdateDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).UpdateDefaultProvisioningConnectionForApplicationRequest(buildDefaultProvisioningConnections(data)).Execute()
+	updateDefaultConnection, _, err := r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.UpdateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).UpdateDefaultProvisioningConnectionForApplicationRequest(buildDefaultProvisioningConnections(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating App Connection",
-			"Could not update app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not update app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 		)
 		return
 	}
@@ -337,22 +337,22 @@ func (r *appConnections) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	if data.Action.ValueString() == "activate" {
-		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.ActivateDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).Execute()
+		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.ActivateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating App Connection",
-				"Could not create app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 			)
 			return
 		}
 		data.Status = types.StringValue("ENABLED")
 		data.Action = types.StringValue("activate")
 	} else if data.Action.ValueString() == "deactivate" {
-		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.DeactivateDefaultProvisioningConnectionForApplication(ctx, data.Id.ValueString()).Execute()
+		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.DeactivateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Deactivating App Connection",
-				"Could not deactivate app connection for application ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not deactivate app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
 			)
 			return
 		}

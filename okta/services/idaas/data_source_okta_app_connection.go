@@ -43,7 +43,7 @@ func (r *appConnectionsDataSource) Schema(ctx context.Context, req datasource.Sc
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "Realm Assignment ID.",
+				Description: "The application ID.",
 				Required:    true,
 			},
 			"status": schema.StringAttribute{
