@@ -110,6 +110,7 @@ func FWProviderResources() []func() resource.Resource {
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		newAuthServerClientsDataSource,
 		newOrgMetadataDataSource,
 		newDefaultSigninPageDataSource,
 		newLogStreamDataSource,
