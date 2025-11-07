@@ -59,8 +59,8 @@ Optional:
 
 - `well_known_url` (String) The published well-known URL of the Security Events Provider (the SSF transmitter). Maximum length: 1000 characters.
 - `type` (String) The application type of the Security Events Provider. Maximum length: 255 characters.
-- `issuer` (String) Issuer URL. Maximum length: 700 characters.
-- `jwks_url` (String) The public URL where the JWKS public key is uploaded. Maximum length: 1000 characters.
+- `issuer` (String) Issuer URL. Maximum length: 700 characters. To be used along with `jwks_url`.
+- `jwks_url` (String) The public URL where the JWKS public key is uploaded. Maximum length: 1000 characters. To be used along with `issuer`.
 
 ## Import
 

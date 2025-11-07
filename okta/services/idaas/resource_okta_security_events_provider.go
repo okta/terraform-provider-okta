@@ -288,14 +288,14 @@ func (r *securityEventsProviderResource) Schema(ctx context.Context, req resourc
 					// --- Issuer and JWKS Settings ---
 					"issuer": schema.StringAttribute{
 						Optional:    true,
-						Description: "Issuer URL.",
+						Description: "Issuer URL. Use with jwks_url",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(700),
 						},
 					},
 					"jwks_url": schema.StringAttribute{
 						Optional:    true,
-						Description: "The public URL where the JWKS public key is uploaded.",
+						Description: "The public URL where the JWKS public key is uploaded. Use with issuer.",
 						Validators: []validator.String{
 							stringvalidator.LengthAtMost(1000),
 						},
