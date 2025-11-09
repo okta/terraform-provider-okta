@@ -14,6 +14,7 @@ import (
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 type (
@@ -254,6 +255,21 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.",
 			},
+			"participate_slo": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Allows the app to participate in front-channel Single Logout. Note: You can only enable participate_slo for web and browser application types.",
+			},
+			"frontchannel_logout_uri": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "*Early Access Property*. URL where Okta sends the logout request.",
+			},
+			"frontchannel_logout_session_required": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Determines whether Okta sends sid and iss in the logout request.",
+			},
 			"response_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
@@ -380,12 +396,12 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
-			// lintignore:S018
 			"groups_claim": {
 				Type:        schema.TypeSet,
 				MaxItems:    1,
-				Description: "Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials)",
 				Optional:    true,
+				Deprecated:  "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
+				Description: "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
 				Elem:        groupsClaimResource,
 			},
 			"app_settings_json": {
@@ -493,26 +509,55 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
-	// TODO: Migrate to v6 SDK - temporarily disabled
-	/*
-		c := meta.(*config.Config)
-		if c.IsOAuth20Auth() {
-			logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
-			return nil
-		}
+	raw, ok := d.GetOk("groups_claim")
+	if !ok {
+		return nil
+	}
 
-		raw, ok := d.GetOk("groups_claim")
-		if !ok {
-			return nil
-		}
-		// Groups claim functionality needs to be migrated to v6 SDK
-	*/
-	return nil
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
+	c := meta.(*config.Config)
+	if c.IsOAuth20Auth() {
+		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
+	// For now, keep the old behavior but with warnings
+	// TODO: Remove in future version - functionality temporarily maintained for backward compatibility
+	apiSupplement := getAPISupplementFromMetadata(meta)
+	appID := d.Id()
+
+	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+	gc := buildGroupsClaimFromResource(groupsClaim)
+
+	_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+	return err
 }
 
 func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
-	// TODO: Migrate to v6 SDK - temporarily disabled
-	return nil
+	if !d.HasChange("groups_claim") {
+		return nil
+	}
+
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
+	return setAppOauthGroupsClaim(ctx, d, meta)
+}
+
+func buildGroupsClaimFromResource(groupsClaim map[string]interface{}) *sdk.AppOauthGroupClaim {
+	gc := &sdk.AppOauthGroupClaim{
+		ValueType: groupsClaim["type"].(string),
+		Name:      groupsClaim["name"].(string),
+		Value:     groupsClaim["value"].(string),
+	}
+
+	if filterType, ok := groupsClaim["filter_type"]; ok && filterType.(string) != "" {
+		gc.GroupFilterType = filterType.(string)
+	}
+
+	return gc
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -593,6 +638,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	_ = d.Set("logo_url", utils.LinksValue(app.Links, "logo", "href"))
 	_ = d.Set("implicit_assignment", settings.GetImplicitAssignment())
 
+	// Handle groups_claim with deprecation warning
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
 		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
@@ -601,6 +647,9 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		if err != nil {
 			return diag.FromErr(err)
 		}
+		if gc.Len() > 0 {
+			logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+		}
 		_ = d.Set("groups_claim", gc)
 	}
 
@@ -608,8 +657,30 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) (*schema.Set, error) {
-	// TODO: Migrate to v6 SDK - temporarily disabled
-	return nil, nil
+	apiSupplement := getAPISupplementFromMetadata(meta)
+
+	gc, _, err := apiSupplement.GetAppOauthGroupsClaim(ctx, d.Id())
+	if err != nil {
+		// If groups claim doesn't exist, return empty set rather than error
+		return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{}), nil
+	}
+
+	if gc == nil || gc.Name == "" {
+		return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{}), nil
+	}
+
+	groupsClaimMap := map[string]interface{}{
+		"type":        gc.ValueType,
+		"name":        gc.Name,
+		"value":       gc.Value,
+		"issuer_mode": gc.IssuerMode,
+	}
+
+	if gc.GroupFilterType != "" {
+		groupsClaimMap["filter_type"] = gc.GroupFilterType
+	}
+
+	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{groupsClaimMap}), nil
 }
 
 func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
@@ -627,6 +698,9 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	_ = d.Set("wildcard_redirect", oauthClient.GetWildcardRedirect())
 	_ = d.Set("consent_method", oauthClient.GetConsentMethod())
 	_ = d.Set("issuer_mode", oauthClient.GetIssuerMode())
+	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
+	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
+	_ = d.Set("frontchannel_logout_session_required", oauthClient.GetFrontchannelLogoutSessionRequired())
 
 	if refreshToken := oauthClient.GetRefreshToken(); refreshToken.GetRotationType() != "" {
 		_ = d.Set("refresh_token_rotation", refreshToken.GetRotationType())
@@ -875,6 +949,15 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	if jwksUri := d.Get("jwks_uri").(string); jwksUri != "" {
 		oauthClientSettings.SetJwksUri(jwksUri)
 	}
+	if participateSlo, ok := d.GetOk("participate_slo"); ok {
+		oauthClientSettings.SetParticipateSlo(participateSlo.(bool))
+	}
+	if frontchannelLogoutUri := d.Get("frontchannel_logout_uri").(string); frontchannelLogoutUri != "" {
+		oauthClientSettings.SetFrontchannelLogoutUri(frontchannelLogoutUri)
+	}
+	if frontchannelLogoutSessionRequired, ok := d.GetOk("frontchannel_logout_session_required"); ok {
+		oauthClientSettings.SetFrontchannelLogoutSessionRequired(frontchannelLogoutSessionRequired.(bool))
+	}
 
 	// Handle IDP initiated login
 	if loginScopes := utils.ConvertInterfaceToStringSet(d.Get("login_scopes")); len(loginScopes) > 0 {
@@ -954,8 +1037,11 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
+	// Handle groups_claim validation with deprecation warning
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
+		logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
 		c := meta.(*config.Config)
 		if c.IsOAuth20Auth() {
 			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
