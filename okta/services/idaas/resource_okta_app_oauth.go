@@ -397,7 +397,7 @@ other arguments that changed will be applied.`,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
 				Deprecated:  "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
@@ -528,7 +528,7 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	apiSupplement := getAPISupplementFromMetadata(meta)
 	appID := d.Id()
 
-	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+	groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 	gc := buildGroupsClaimFromResource(groupsClaim)
 
 	_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
@@ -647,7 +647,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		if gc.Len() > 0 {
+		if len(gc) > 0 {
 			logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
 		}
 		_ = d.Set("groups_claim", gc)
@@ -656,17 +656,17 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	return setOAuthClientSettingsV6(d, settings.OauthClient)
 }
 
-func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) (*schema.Set, error) {
+func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
 	apiSupplement := getAPISupplementFromMetadata(meta)
 
 	gc, _, err := apiSupplement.GetAppOauthGroupsClaim(ctx, d.Id())
 	if err != nil {
-		// If groups claim doesn't exist, return empty set rather than error
-		return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{}), nil
+		// If groups claim doesn't exist, return empty list rather than error
+		return []interface{}{}, nil
 	}
 
 	if gc == nil || gc.Name == "" {
-		return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{}), nil
+		return []interface{}{}, nil
 	}
 
 	groupsClaimMap := map[string]interface{}{
@@ -680,7 +680,7 @@ func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interf
 		groupsClaimMap["filter_type"] = gc.GroupFilterType
 	}
 
-	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{groupsClaimMap}), nil
+	return []interface{}{groupsClaimMap}, nil
 }
 
 func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
@@ -862,8 +862,8 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	if autoRotate, ok := d.GetOk("auto_key_rotation"); ok {
 		oauthClient.SetAutoKeyRotation(autoRotate.(bool))
 	}
-	if clientId := d.Get("client_id").(string); clientId != "" {
-		oauthClient.SetClientId(clientId)
+	if clientID := d.Get("client_id").(string); clientID != "" {
+		oauthClient.SetClientId(clientID)
 	}
 	oauthClient.SetTokenEndpointAuthMethod(authMethod)
 	if clientSecret := d.Get("client_secret").(string); clientSecret != "" {
@@ -914,8 +914,8 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	oauthClientSettings.SetGrantTypes(v6GrantTypes)
 	oauthClientSettings.SetResponseTypes(v6ResponseTypes)
 
-	if clientUri := d.Get("client_uri").(string); clientUri != "" {
-		oauthClientSettings.SetClientUri(clientUri)
+	if clientURI := d.Get("client_uri").(string); clientURI != "" {
+		oauthClientSettings.SetClientUri(clientURI)
 	}
 	if consentMethod := d.Get("consent_method").(string); consentMethod != "" {
 		oauthClientSettings.SetConsentMethod(consentMethod)
@@ -929,17 +929,17 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 		oauthClientSettings.SetPostLogoutRedirectUris(postLogoutUris)
 	}
 
-	if loginUri := d.Get("login_uri").(string); loginUri != "" {
-		oauthClientSettings.SetInitiateLoginUri(loginUri)
+	if loginURI := d.Get("login_uri").(string); loginURI != "" {
+		oauthClientSettings.SetInitiateLoginUri(loginURI)
 	}
-	if logoUri := d.Get("logo_uri").(string); logoUri != "" {
-		oauthClientSettings.SetLogoUri(logoUri)
+	if logoURI := d.Get("logo_uri").(string); logoURI != "" {
+		oauthClientSettings.SetLogoUri(logoURI)
 	}
-	if policyUri := d.Get("policy_uri").(string); policyUri != "" {
-		oauthClientSettings.SetPolicyUri(policyUri)
+	if policyURI := d.Get("policy_uri").(string); policyURI != "" {
+		oauthClientSettings.SetPolicyUri(policyURI)
 	}
-	if tosUri := d.Get("tos_uri").(string); tosUri != "" {
-		oauthClientSettings.SetTosUri(tosUri)
+	if tosURI := d.Get("tos_uri").(string); tosURI != "" {
+		oauthClientSettings.SetTosUri(tosURI)
 	}
 	if issuerMode := d.Get("issuer_mode").(string); issuerMode != "" {
 		oauthClientSettings.SetIssuerMode(issuerMode)
@@ -947,14 +947,14 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	if wildcardRedirect := d.Get("wildcard_redirect").(string); wildcardRedirect != "" {
 		oauthClientSettings.SetWildcardRedirect(wildcardRedirect)
 	}
-	if jwksUri := d.Get("jwks_uri").(string); jwksUri != "" {
-		oauthClientSettings.SetJwksUri(jwksUri)
+	if jwksURI := d.Get("jwks_uri").(string); jwksURI != "" {
+		oauthClientSettings.SetJwksUri(jwksURI)
 	}
 	if participateSlo, ok := d.GetOk("participate_slo"); ok {
 		oauthClientSettings.SetParticipateSlo(participateSlo.(bool))
 	}
-	if frontchannelLogoutUri := d.Get("frontchannel_logout_uri").(string); frontchannelLogoutUri != "" {
-		oauthClientSettings.SetFrontchannelLogoutUri(frontchannelLogoutUri)
+	if frontchannelLogoutURI := d.Get("frontchannel_logout_uri").(string); frontchannelLogoutURI != "" {
+		oauthClientSettings.SetFrontchannelLogoutUri(frontchannelLogoutURI)
 	}
 	if frontchannelLogoutSessionRequired, ok := d.GetOk("frontchannel_logout_session_required"); ok {
 		oauthClientSettings.SetFrontchannelLogoutSessionRequired(frontchannelLogoutSessionRequired.(bool))
@@ -1080,7 +1080,7 @@ func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
 		if c.IsOAuth20Auth() {
 			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
 		} else {
-			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+			groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
 				return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
 			}
@@ -1136,7 +1136,6 @@ func verifyOidcAppTypeV6(app v6okta.ListApplications200ResponseInner) (*v6okta.O
 	return nil, fmt.Errorf("unexpected application response type from Okta - not an OpenIdConnectApplication")
 }
 
-// V6 helper functions
 func BuildUserNameTemplateV6(d *schema.ResourceData) *v6okta.ApplicationCredentialsUsernameTemplate {
 	template := v6okta.NewApplicationCredentialsUsernameTemplateWithDefaults()
 	if tmpl := d.Get("user_name_template").(string); tmpl != "" {
@@ -1159,11 +1158,11 @@ func BuildAppAccessibilityV6(d *schema.ResourceData) *v6okta.ApplicationAccessib
 	if selfService, ok := d.GetOk("accessibility_self_service"); ok {
 		accessibility.SetSelfService(selfService.(bool))
 	}
-	if errorUrl := d.Get("accessibility_error_redirect_url").(string); errorUrl != "" {
-		accessibility.SetErrorRedirectUrl(errorUrl)
+	if errorURL := d.Get("accessibility_error_redirect_url").(string); errorURL != "" {
+		accessibility.SetErrorRedirectUrl(errorURL)
 	}
-	if loginUrl := d.Get("accessibility_login_redirect_url").(string); loginUrl != "" {
-		accessibility.SetLoginRedirectUrl(loginUrl)
+	if loginURL := d.Get("accessibility_login_redirect_url").(string); loginURL != "" {
+		accessibility.SetLoginRedirectUrl(loginURL)
 	}
 	return accessibility
 }
