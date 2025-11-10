@@ -2,8 +2,6 @@ package governance
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -187,7 +185,6 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 func (r *entitlementBundleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data, state entitlementBundleResourceModel
 	// Read Terraform prior state Data into the model
-	fmt.Println("Inside update")
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -202,7 +199,6 @@ func (r *entitlementBundleResource) Update(ctx context.Context, req resource.Upd
 	data.TargetResourceOrn = state.TargetResourceOrn
 
 	// Update API call logic
-	fmt.Println("ID", data.Id.ValueString())
 	replaceEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.ReplaceEntitlementBundle(ctx, state.Id.ValueString()).EntitlementBundleUpdatable(buildEntitlementBundleUpdateBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
