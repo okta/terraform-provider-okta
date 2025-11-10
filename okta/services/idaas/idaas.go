@@ -108,6 +108,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRateLimitAdminNotificationSettingsResource,
 		newRateLimitWarningThresholdPercentageResource,
 		newPrincipalRateLimitsResource,
+		newAppFeaturesResource,
 		newHookKeyResource,
 		newAppTokenResource,
 	}
@@ -129,6 +130,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRateLimitAdminNotificationSettingsDataSource,
 		newRateLimitWarningThresholdPercentageDataSource,
 		newPrincipalRateLimitsDataSource,
+		newAppFeaturesDataSource,
 		newHookKeyDataSource,
 		newAppTokenDataSource,
 	}
