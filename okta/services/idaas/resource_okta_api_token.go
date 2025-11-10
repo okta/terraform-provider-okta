@@ -54,7 +54,7 @@ type apiTokenResourceModel struct {
 	ID         types.String  `tfsdk:"id"`
 	Name       types.String  `tfsdk:"name"`
 	Network    *NetworkModel `tfsdk:"network"`
-	UserId     types.String  `tfsdk:"user_id"`
+	UserID     types.String  `tfsdk:"user_id"`
 	Created    types.String  `tfsdk:"created"`
 	ClientName types.String  `tfsdk:"client_name"`
 }
@@ -69,7 +69,7 @@ func (r *apiTokenResource) Schema(_ context.Context, _ resource.SchemaRequest, r
 			"user_id": schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
-				Description: "The ID of the user that the API token will be used.",
+				Description: "The userId of the user who created the API Token.",
 			},
 			"name": schema.StringAttribute{
 				Optional:    true,
@@ -187,7 +187,7 @@ func createTokenUpdate(data apiTokenResourceModel, created string) (v5okta.ApiTo
 	// Set basic fields
 	apiTokenUpdateRequest.SetName(data.Name.ValueString())
 	apiTokenUpdateRequest.SetClientName(data.ClientName.ValueString())
-	apiTokenUpdateRequest.SetUserId(data.UserId.ValueString())
+	apiTokenUpdateRequest.SetUserId(data.UserID.ValueString())
 
 	// Handle Created field with proper null/error checking
 	if created != "" {
@@ -245,7 +245,7 @@ func mapAPITokenToState(ctx context.Context, resp *v5okta.ApiToken, a *apiTokenR
 	var diags diag.Diagnostics
 	a.ID = types.StringValue(resp.GetId())
 	a.Name = types.StringValue(resp.GetName())
-	a.UserId = types.StringValue(resp.GetUserId())
+	a.UserID = types.StringValue(resp.GetUserId())
 	a.ClientName = types.StringValue(resp.GetClientName())
 	a.Created = types.StringValue(resp.GetCreated().Format(time.RFC3339))
 	n := NetworkModel{

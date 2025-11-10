@@ -24,7 +24,7 @@ data "okta_api_token" "example" {
 - `created` (String) The date and time the API token was created. 
 - `name` (String) The name of the API token. 
 - `network` (Block, Max: 1) The network configuration of the API token. (see [below for nested schema](#nestedblock--network))
-- `user_id` (String) The unique Okta ID of the user associated with this API token.
+- `user_id` (String) The userId of the user who created the API Token.
 
 <a id="nestedblock--network"></a>
 ### Nested Schema for network

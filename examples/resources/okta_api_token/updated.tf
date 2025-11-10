@@ -4,7 +4,7 @@ resource "okta_api_token" "example" {
   user_id = "00unkw1sfbTw08c0g1d7"
   network {
     connection = "ZONE"
-    exclude=["nzonkw1sfwwiH9Hxt1d7"]
+    exclude    = ["nzonkw1sfwwiH9Hxt1d7"]
   }
   client_name = "Okta API"
 }
