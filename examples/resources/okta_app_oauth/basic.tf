@@ -9,6 +9,8 @@ resource "okta_app_oauth" "test" {
   token_endpoint_auth_method = "client_secret_basic"
   consent_method             = "TRUSTED"
   wildcard_redirect          = "DISABLED"
+  participate_slo            = true
+  frontchannel_logout_uri    = "http://d.com/logout"
   groups_claim {
     type  = "EXPRESSION"
     value = "aa"
