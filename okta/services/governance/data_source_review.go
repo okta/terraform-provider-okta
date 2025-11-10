@@ -320,7 +320,7 @@ func convertReviewerLevels(levels []governance.ReviewerLevelInfoFull) []reviewLe
 			Decision:             types.StringValue(string(l.Decision)),
 			ReviewerType:         types.StringValue(string(l.ReviewerType)),
 			ReviewerProfile:      buildUserProfileModel(l.ReviewerProfile),
-			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile), // governance.NewReviewerGroupProfile(l.ReviewerGroupProfile.Name, l.ReviewerGroupProfile.GroupId, l.ReviewerGroupProfile.GroupType),
+			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile),
 		}
 		result = append(result, level)
 	}
