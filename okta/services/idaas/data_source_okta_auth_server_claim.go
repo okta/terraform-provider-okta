@@ -108,5 +108,5 @@ func getAuthServerClaimByName(ctx context.Context, meta interface{}, authServerI
 			return claims[i], nil
 		}
 	}
-	return nil, fmt.Errorf("auth server claim with name '%s' does not exist", name)
+	return nil, fmt.Errorf("auth server claim with test name '%s' does not exist", name)
 }
