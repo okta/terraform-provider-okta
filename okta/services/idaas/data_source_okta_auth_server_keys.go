@@ -112,7 +112,7 @@ func (d *authServerKeysDataSource) Read(ctx context.Context, req datasource.Read
 	data.N = types.StringValue(authServerJSONWebKey.GetN())
 	data.Status = types.StringValue(authServerJSONWebKey.GetStatus())
 	data.Use = types.StringValue(authServerJSONWebKey.GetUse())
-	// Save data into Terraform state
 	data.ID = types.StringValue(fmt.Sprintf("%s-%s", data.AuthServerID.ValueString(), data.KeyID.ValueString()))
+	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
