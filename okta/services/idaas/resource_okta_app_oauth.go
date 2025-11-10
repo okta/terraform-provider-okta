@@ -258,12 +258,12 @@ other arguments that changed will be applied.`,
 			"participate_slo": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "*Early Access Property*. Allows the app to participate in front-channel Single Logout. Note: You can only enable participate_slo for web and browser application types.",
+				Description: "*Early Access Property*. Allows the app to participate in front-channel Single Logout. Note: You can only enable participate_slo for web and browser application types. When set to true, frontchannel_logout_uri must also be provided.",
 			},
 			"frontchannel_logout_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "*Early Access Property*. URL where Okta sends the logout request.",
+				Description: "*Early Access Property*. URL where Okta sends the logout request. Required when participate_slo is true.",
 			},
 			"frontchannel_logout_session_required": {
 				Type:        schema.TypeBool,
@@ -711,13 +711,13 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 
 	// Handle response and grant types
 	respTypes := make([]string, len(oauthClient.ResponseTypes))
-	for i, rt := range oauthClient.ResponseTypes {
-		respTypes[i] = string(rt)
+	for i, responseType := range oauthClient.ResponseTypes {
+		respTypes[i] = string(responseType)
 	}
 
 	grantTypes := make([]string, len(oauthClient.GrantTypes))
-	for i, gt := range oauthClient.GrantTypes {
-		grantTypes[i] = string(gt)
+	for i, grantType := range oauthClient.GrantTypes {
+		grantTypes[i] = string(grantType)
 	}
 
 	aggMap := map[string]interface{}{
@@ -854,6 +854,7 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 
 	app.SetLabel(d.Get("label").(string))
 	app.SetName("oidc_client")
+	app.SetSignOnMode("OPENID_CONNECT")
 
 	// Build credentials
 	authMethod := d.Get("token_endpoint_auth_method").(string)
@@ -957,6 +958,39 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	}
 	if frontchannelLogoutSessionRequired, ok := d.GetOk("frontchannel_logout_session_required"); ok {
 		oauthClientSettings.SetFrontchannelLogoutSessionRequired(frontchannelLogoutSessionRequired.(bool))
+	}
+
+	// Handle JWKS if provided
+	if jwksList, ok := d.GetOk("jwks"); ok {
+		jwksData := jwksList.([]interface{})
+		if len(jwksData) > 0 {
+			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
+
+			var keyData []interface{}
+			for _, jwk := range jwksData {
+				jwkMap := jwk.(map[string]interface{})
+				key := map[string]interface{}{
+					"kid": jwkMap["kid"].(string),
+					"kty": jwkMap["kty"].(string),
+				}
+				if e, ok := jwkMap["e"]; ok && e.(string) != "" {
+					key["e"] = e.(string)
+				}
+				if n, ok := jwkMap["n"]; ok && n.(string) != "" {
+					key["n"] = n.(string)
+				}
+				if x, ok := jwkMap["x"]; ok && x.(string) != "" {
+					key["x"] = x.(string)
+				}
+				if y, ok := jwkMap["y"]; ok && y.(string) != "" {
+					key["y"] = y.(string)
+				}
+				keyData = append(keyData, key)
+			}
+
+			jwks.AdditionalProperties = map[string]interface{}{"keys": keyData}
+			oauthClientSettings.SetJwks(*jwks)
+		}
 	}
 
 	// Handle IDP initiated login
