@@ -79,7 +79,6 @@ func (r *rateLimitWarningThresholdPercentage) Create(ctx context.Context, req re
 	}
 
 	// Example Data value setting
-	//data.Id = types.StringValue("example-id")
 	data.Id = types.StringValue("rate_limiting_warning_threshold_percentage")
 	data.WarningThreshold = types.Int32Value(rateLimitWarningThresholdPercentageResp.GetWarningThreshold())
 
@@ -146,7 +145,6 @@ func (r *rateLimitWarningThresholdPercentage) Delete(ctx context.Context, req re
 }
 
 func buildPerClientRateLimitWarningThresholdPercentage(data rateLimitWarningThresholdPercentageModel) v5okta.RateLimitWarningThresholdRequest {
-
 	rateLimitAdminNotificationSettings := v5okta.RateLimitWarningThresholdRequest{
 		WarningThreshold: data.WarningThreshold.ValueInt32(),
 	}
