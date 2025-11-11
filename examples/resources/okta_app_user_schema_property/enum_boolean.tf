@@ -1,5 +1,5 @@
 resource "okta_app_oauth" "test" {
-  label          = "testLabel"
+  label          = "testAcc_replace_with_uuid"
   type           = "native"
   grant_types    = ["authorization_code"]
   redirect_uris  = ["http://d.com/"]
@@ -8,34 +8,20 @@ resource "okta_app_oauth" "test" {
 
 resource "okta_app_user_schema_property" "test" {
   app_id      = okta_app_oauth.test.id
-  index       = "testIndex"
+  index       = "testAcc_replace_with_uuid"
   title       = "terraform acceptance test"
   type        = "string"
-  description = "terraform acceptance test"
+  description = "testing"
   required    = false
-  min_length  = 1
-  max_length  = 50
   permissions = "READ_ONLY"
   master      = "PROFILE_MASTER"
-  enum        = ["S", "M", "L", "XL"]
-
+  enum        = ["true", "false"]
   one_of {
-    const = "S"
-    title = "Small"
+    title = "boolean True"
+    const = "true"
   }
-
   one_of {
-    const = "M"
-    title = "Medium"
-  }
-
-  one_of {
-    const = "L"
-    title = "Large"
-  }
-
-  one_of {
-    const = "XL"
-    title = "Extra Large"
+    title = "boolean False"
+    const = "false"
   }
 }
