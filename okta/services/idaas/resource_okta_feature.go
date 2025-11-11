@@ -225,7 +225,6 @@ func (r *featuresResource) Delete(ctx context.Context, req resource.DeleteReques
 		resp.Diagnostics.AddError("failed to disabled feature", err.Error())
 		return
 	}
-
 }
 
 func (r *featuresResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

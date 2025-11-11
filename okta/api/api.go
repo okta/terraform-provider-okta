@@ -21,12 +21,6 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/okta/version"
 	"github.com/okta/terraform-provider-okta/sdk"
-	"net/http"
-	"net/url"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClient, error) {

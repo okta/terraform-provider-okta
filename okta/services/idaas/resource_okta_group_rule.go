@@ -17,9 +17,11 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
-const statusInvalid = "INVALID"
-const maxRetries = 3
-const retryDelay = 60 * time.Second
+const (
+	statusInvalid = "INVALID"
+	maxRetries    = 3
+	retryDelay    = 60 * time.Second
+)
 
 func resourceGroupRule() *schema.Resource {
 	return &schema.Resource{

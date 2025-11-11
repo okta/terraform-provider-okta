@@ -1,0 +1,1 @@
+terraform import okta_app_token.test2 <client_id>/<id>
