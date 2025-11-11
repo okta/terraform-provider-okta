@@ -110,6 +110,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPrincipalRateLimitsResource,
 		newAppFeaturesResource,
 		newHookKeyResource,
+		newAPITokenResource,
 		newAppTokenResource,
 	}
 }
@@ -132,6 +133,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPrincipalRateLimitsDataSource,
 		newAppFeaturesDataSource,
 		newHookKeyDataSource,
+		newAPITokenDataSource,
 		newAppTokenDataSource,
 	}
 }

@@ -1,6 +1,7 @@
 package resources
 
 const (
+	OktaIDaaSAPIToken                                 = "okta_api_token"
 	OktaIDaaSAdminRoleCustom                          = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments               = "okta_admin_role_custom_assignments"
 	OktaIDaaSAdminRoleTargets                         = "okta_admin_role_targets"
