@@ -115,6 +115,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAPIServiceIntegrationResource,
 		newAPITokenResource,
 		newAppTokenResource,
+		newAppConnectionsResource,
 	}
 }
 
@@ -141,6 +142,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAPIServiceIntegrationDataSource,
 		newAPITokenDataSource,
 		newAppTokenDataSource,
+		newAppConnectionsDataSource,
 	}
 }
 
