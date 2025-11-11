@@ -112,6 +112,7 @@ func FWProviderResources() []func() resource.Resource {
 		newDevicesResource,
 		newAppFeaturesResource,
 		newHookKeyResource,
+		newAPIServiceIntegrationResource,
 		newAPITokenResource,
 		newAppTokenResource,
 	}
@@ -137,6 +138,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newDeviceDataSource,
 		newAppFeaturesDataSource,
 		newHookKeyDataSource,
+		newAPIServiceIntegrationDataSource,
 		newAPITokenDataSource,
 		newAppTokenDataSource,
 	}

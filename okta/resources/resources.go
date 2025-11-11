@@ -124,6 +124,7 @@ const (
 	OktaIDaaSUserGroupMemberships                     = "okta_user_group_memberships"
 	OktaIDaaSUserProfileMappingSource                 = "okta_user_profile_mapping_source"
 	OktaIDaaSUsers                                    = "okta_users"
+	OktaIDaaSAPIServiceIntegration                    = "okta_api_service_integration"
 	OktaIDaaSUserSchemaProperty                       = "okta_user_schema_property"
 	OktaIDaaSUserSecurityQuestions                    = "okta_user_security_questions"
 	OktaIDaaSUserType                                 = "okta_user_type"
