@@ -445,7 +445,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSignOnPolicyRule_ReauthenticationFrequency(t *testing.T) {
-
 	resourceName1 := fmt.Sprintf("%s.test_with_reauthenticate_in_chains_only", resources.OktaIDaaSAppSignOnPolicyRule)
 	resourceName2 := fmt.Sprintf("%s.test_with_re_authentication_frequency_only", resources.OktaIDaaSAppSignOnPolicyRule)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())

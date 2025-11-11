@@ -1,7 +1,6 @@
-package governance_test
+package idaas_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -9,22 +8,20 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccReviewResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaGovernanceReview, t.Name())
-	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceReview)
+func TestAccDataSourceOktaSecurityEventsProvider_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", resources.OktaIDaaSSecurityEventsProvider, t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair(
-						resourceName, "reviewer_id", "okta_user.test", "id",
-					),
+					resource.TestCheckResourceAttrSet("data.okta_security_events_provider.example", "id"),
+					resource.TestCheckResourceAttr("data.okta_security_events_provider.example", "name", "Security Events Provider"),
 				),
 			},
 		},
