@@ -192,7 +192,6 @@ func (d *reviewDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 								"group_type":  schema.StringAttribute{Computed: true},
 							},
 						},
-						//todo add links here
 					},
 				},
 			},
@@ -312,17 +311,16 @@ func convertReviewerLevels(levels []governance.ReviewerLevelInfoFull) []reviewLe
 	for _, l := range levels {
 
 		level := reviewLevelModel{
-			Id:            types.StringValue(l.Id),
-			CreatedBy:     types.StringValue(l.CreatedBy),
-			Created:       types.StringValue(l.Created.Format(time.RFC3339)),
-			LastUpdated:   types.StringValue(l.LastUpdated.Format(time.RFC3339)),
-			LastUpdatedBy: types.StringValue(l.LastUpdatedBy),
-			ReviewerLevel: types.StringValue(string(l.ReviewerLevel)),
-			Decision:      types.StringValue(string(l.Decision)),
-			ReviewerType:  types.StringValue(string(l.ReviewerType)),
-			//ReviewerGroupResourceId: types.StringValue(l.ReviewerGroupResourceId),
+			Id:                   types.StringValue(l.Id),
+			CreatedBy:            types.StringValue(l.CreatedBy),
+			Created:              types.StringValue(l.Created.Format(time.RFC3339)),
+			LastUpdated:          types.StringValue(l.LastUpdated.Format(time.RFC3339)),
+			LastUpdatedBy:        types.StringValue(l.LastUpdatedBy),
+			ReviewerLevel:        types.StringValue(string(l.ReviewerLevel)),
+			Decision:             types.StringValue(string(l.Decision)),
+			ReviewerType:         types.StringValue(string(l.ReviewerType)),
 			ReviewerProfile:      buildUserProfileModel(l.ReviewerProfile),
-			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile), // governance.NewReviewerGroupProfile(l.ReviewerGroupProfile.Name, l.ReviewerGroupProfile.GroupId, l.ReviewerGroupProfile.GroupType),
+			ReviewerGroupProfile: buildReviewerGroupProfile(l.ReviewerGroupProfile),
 		}
 		result = append(result, level)
 	}

@@ -1,4 +1,4 @@
-package governance_test
+package idaas_test
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccRequestSettingResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestSettingResource, t.Name())
+func TestAccDeviceResource_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSDevice, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("updated.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceRequestSettingResource)
+	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSDevice)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -23,8 +23,8 @@ func TestAccRequestSettingResource_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ImportState:        true,
-				ResourceName:       "okta_request_setting_resource.test",
-				ImportStateId:      "0oaoum6j3cElINe1z1d7",
+				ResourceName:       "okta_device.example",
+				ImportStateId:      "abcdefghi0123456789",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
@@ -32,14 +32,13 @@ func TestAccRequestSettingResource_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.approval_sequence_id", "68920b41386747a673869356"),
-					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.request_submission_type", "ALLOWED_WITH_OVERRIDES"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.request_submission_type", "RESTRICTED"),
+					resource.TestCheckResourceAttr(resourceName, "action", "DEACTIVATED"),
 				),
 			},
 		},

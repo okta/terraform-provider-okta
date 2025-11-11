@@ -1,0 +1,324 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"ACTIVE\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T14:58:32.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"resourceAlternateId\":null,\"_links\":{\"suspend\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/suspend\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"PATCH\",\"PUT\"]}},\"users\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/users\",\"hints\":{\"allow\":[\"GET\"]}},\"deactivate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:26 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.090821375s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"ACTIVE\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T14:58:32.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceAlternateId\":null,\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"_links\":{\"suspend\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/suspend\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"PATCH\",\"PUT\"]}},\"users\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/users\",\"hints\":{\"allow\":[\"GET\"]}},\"deactivate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:27 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.048150792s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/activate
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Fri, 24 Oct 2025 15:41:29 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.205779833s
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"ACTIVE\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T14:58:32.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"resourceAlternateId\":null,\"_links\":{\"suspend\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/suspend\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"PATCH\",\"PUT\"]}},\"users\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/users\",\"hints\":{\"allow\":[\"GET\"]}},\"deactivate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:30 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.064617708s
+- id: 4
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"ACTIVE\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T14:58:32.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceAlternateId\":null,\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"_links\":{\"suspend\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/suspend\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"PATCH\",\"PUT\"]}},\"users\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/users\",\"hints\":{\"allow\":[\"GET\"]}},\"deactivate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:31 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.06081475s
+- id: 5
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"ACTIVE\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T14:58:32.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"resourceAlternateId\":null,\"_links\":{\"suspend\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/suspend\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"PATCH\",\"PUT\"]}},\"users\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/users\",\"hints\":{\"allow\":[\"GET\"]}},\"deactivate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:32 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.061676417s
+- id: 6
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/deactivate
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Fri, 24 Oct 2025 15:41:34 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.340893333s
+- id: 7
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"DEACTIVATED\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T15:41:34.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"resourceAlternateId\":null,\"_links\":{\"activate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/activate\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:35 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.163956083s
+- id: 8
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"abcdefghi0123456789\",\"status\":\"DEACTIVATED\",\"created\":\"2025-10-24T14:58:32.000Z\",\"lastUpdated\":\"2025-10-24T15:41:34.000Z\",\"profile\":{\"displayName\":\"Personal Phone\",\"platform\":\"ANDROID\",\"manufacturer\":\"samsung\",\"model\":\"SM-S921B\",\"osVersion\":\"16:2025-09-01\",\"registered\":true,\"secureHardwarePresent\":true,\"diskEncryptionType\":\"USER\"},\"resourceType\":\"UDDevice\",\"resourceDisplayName\":{\"value\":\"Personal Phone\",\"sensitive\":false},\"resourceId\":\"abcdefghi0123456789\",\"resourceAlternateId\":null,\"_links\":{\"activate\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789/lifecycle/activate\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}}},\"_embedded\":{\"originatedFrom\":[{\"id\":\"autnkw1sgntSDQThR1d7\",\"name\":\"Okta Verify\",\"key\":\"okta_verify\"}]}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 24 Oct 2025 15:41:36 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.043715292s
+- id: 9
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/devices/abcdefghi0123456789
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Fri, 24 Oct 2025 15:41:38 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.227783125s

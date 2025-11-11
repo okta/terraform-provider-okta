@@ -1,4 +1,4 @@
-package governance_test
+package idaas_test
 
 import (
 	"fmt"
@@ -9,10 +9,11 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccReviewResource_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaGovernanceReview, t.Name())
+func TestAccSecurityEventsResource_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSSecurityEventsProvider, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceReview)
+	resourceName := fmt.Sprintf("%s.example", resources.OktaIDaaSSecurityEventsProvider)
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -22,9 +23,8 @@ func TestAccReviewResource_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrPair(
-						resourceName, "reviewer_id", "okta_user.test", "id",
-					),
+					resource.TestCheckResourceAttr(resourceName, "name", "Security Events Provider with well-known URL"),
+					resource.TestCheckResourceAttr(resourceName, "type", "okta"),
 				),
 			},
 		},
