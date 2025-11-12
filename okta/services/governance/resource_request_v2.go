@@ -278,7 +278,6 @@ func (r *requestV2Resource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	//cannot use the applyToState func since the type of response is different
 	data.Id = types.StringValue(getRequestV2Resp.GetId())
 	data.Created = types.StringValue(getRequestV2Resp.GetCreated().Format(time.RFC3339))
 	data.CreatedBy = types.StringValue(getRequestV2Resp.GetCreatedBy())

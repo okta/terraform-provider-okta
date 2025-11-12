@@ -259,7 +259,7 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
-	//getOktaV5ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, d.Get("policy_id").(string)).PolicyRule()
+	// getOktaV5ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, d.Get("policy_id").(string)).PolicyRule()
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}

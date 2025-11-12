@@ -2,7 +2,6 @@ package governance
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -115,7 +114,6 @@ func (r *reviewResource) Create(ctx context.Context, req resource.CreateRequest,
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
 		Execute()
-
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reassigning reviews",
@@ -191,7 +189,6 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
 		Execute()
-
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reassigning reviews",
@@ -201,7 +198,6 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	review := reassignedReview.Data[0]
-	fmt.Println("Final reveiwerID", review.ReviewerProfile.Id)
 	data.Id = types.StringValue(review.Id)
 	data.ReviewerId = types.StringValue(review.ReviewerProfile.Id)
 	data.CampaignId = types.StringValue(review.CampaignId)

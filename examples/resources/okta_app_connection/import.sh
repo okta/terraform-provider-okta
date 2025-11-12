@@ -1,0 +1,1 @@
+terraform import okta_app_connection.test <app_id>

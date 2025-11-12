@@ -2,10 +2,11 @@ package governance_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"testing"
 )
 
 func TestAccRequestSettingOrganization_basic(t *testing.T) {
@@ -35,7 +36,6 @@ func TestAccRequestSettingOrganization_basic(t *testing.T) {
 				),
 			},
 			{
-				//todo :update this to false if this is a bug in the API
 				Config: mgr.ConfigReplace(updatedConfig),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "subprocessors_acknowledged", "true"),

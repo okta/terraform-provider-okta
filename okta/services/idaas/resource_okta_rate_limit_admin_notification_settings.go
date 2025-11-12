@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -142,7 +143,6 @@ func (r *rateLimitAdminNotificationSettingsResource) Delete(ctx context.Context,
 }
 
 func buildPerClientRateLimitAdminNotifications(data rateLimitAdminNotificationSettingsModel) v5okta.RateLimitAdminNotifications {
-
 	rateLimitAdminNotificationSettings := v5okta.RateLimitAdminNotifications{
 		NotificationsEnabled: data.NotificationsEnabled.ValueBool(),
 	}

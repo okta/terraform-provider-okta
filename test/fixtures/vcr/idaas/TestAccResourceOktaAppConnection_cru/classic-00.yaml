@@ -1,0 +1,102 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 142
+    host: classic-00.dne-okta.com
+    body: "{\"baseUrl\":\"https://integrator-8357679-admin.okta.com\",\"profile\":{\"authScheme\":\"TOKEN\",\"token\":\"<REDACTED>\"}}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"authScheme\":\"TOKEN\",\"status\":\"DISABLED\",\"baseUrl\":\"https://integrator-8357679-admin.okta.com\",\"profile\":{\"authScheme\":\"TOKEN\"},\"_links\":{\"activate\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default/lifecycle/activate\",\"hints\":{\"allow\":[\"POST\"]}},\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default\",\"hints\":{\"allow\":[\"POST\",\"GET\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 28 Oct 2025 20:15:49 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 2.922737708s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default/lifecycle/activate
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Tue, 28 Oct 2025 20:15:52 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 3.175774833s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"authScheme\":\"TOKEN\",\"status\":\"ENABLED\",\"baseUrl\":\"https://integrator-8357679-admin.okta.com\",\"profile\":{\"authScheme\":\"TOKEN\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default\",\"hints\":{\"allow\":[\"POST\",\"GET\"]}},\"deactivate\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/apps/0oarblaf7hWdLawNg1d7/connections/default/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 28 Oct 2025 20:15:54 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.100648416s
