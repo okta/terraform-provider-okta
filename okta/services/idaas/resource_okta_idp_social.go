@@ -3,8 +3,10 @@ package idaas
 import (
 	"context"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -19,6 +21,9 @@ func resourceIdpSocial() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: "Creates a Social Identity Provider. This resource allows you to create and configure a Social Identity Provider.",
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_secret"), cty.GetAttrPath("client_secret_wo")),
+		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"authorization_url": {
 				Type:        schema.TypeString,
@@ -63,10 +68,19 @@ func resourceIdpSocial() *schema.Resource {
 				Description: "Unique identifier issued by AS for the Okta IdP instance.",
 			},
 			"client_secret": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Sensitive:   true,
-				Description: "Client secret issued by AS for the Okta IdP instance.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"client_secret_wo"},
+				Description:   "Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_secret_wo": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				WriteOnly:     true,
+				ConflictsWith: []string{"client_secret"},
+				Description:   "Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
 			},
 			"max_clock_skew": {
 				Type:        schema.TypeInt,
@@ -164,7 +178,17 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta int
 	_ = d.Set("protocol_type", idp.Protocol.Type)
 	if idp.Protocol.Credentials.Client != nil {
 		_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-		_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+
+		// Only set client_secret if client_secret_wo was not used in the config
+		// Check if client_secret_wo is configured (not null in raw config)
+		woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+		if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+			// client_secret_wo is being used, so don't persist client_secret in state
+			_ = d.Set("client_secret", "")
+		} else {
+			// client_secret is being used, persist it in state
+			_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+		}
 	}
 	if idp.Protocol.Credentials.Trust != nil {
 		_ = d.Set("trust_issuer", idp.Protocol.Credentials.Trust.Issuer)
@@ -241,10 +265,7 @@ func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
 			Scopes: utils.ConvertInterfaceToStringSet(d.Get("scopes")),
 			Type:   d.Get("protocol_type").(string),
 			Credentials: &sdk.IdentityProviderCredentials{
-				Client: &sdk.IdentityProviderCredentialsClient{
-					ClientId:     d.Get("client_id").(string),
-					ClientSecret: d.Get("client_secret").(string),
-				},
+				Client: buildClientCredentials(d),
 			},
 		},
 	}
@@ -262,4 +283,20 @@ func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
 		idp.Status = d.Get("status").(string)
 	}
 	return idp
+}
+
+func buildClientCredentials(d *schema.ResourceData) *sdk.IdentityProviderCredentialsClient {
+	// Try to get write-only attribute first, fall back to regular attribute
+	var clientSecret string
+	woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+	if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+		clientSecret = woVal.AsString()
+	} else {
+		clientSecret = d.Get("client_secret").(string)
+	}
+
+	return &sdk.IdentityProviderCredentialsClient{
+		ClientId:     d.Get("client_id").(string),
+		ClientSecret: clientSecret,
+	}
 }
