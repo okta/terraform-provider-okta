@@ -36,7 +36,6 @@ func TestAccRequestSettingOrganization_basic(t *testing.T) {
 				),
 			},
 			{
-				//todo :update this to false if this is a bug in the API
 				Config: mgr.ConfigReplace(updatedConfig),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "subprocessors_acknowledged", "true"),
