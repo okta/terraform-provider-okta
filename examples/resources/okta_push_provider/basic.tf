@@ -7,7 +7,7 @@ resource "okta_push_provider" "example" {
         type                        = "service_account"
         project_id                  = "PROJECT_ID"
         private_key_id              = "KEY_ID"
-        private_key                 = "-----BEGIN PRIVATE KEY-----MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkw\ndwIBAQQgTrVNo3aKMlnSuvhhLttykBgUj80HY+/RXqiWjXlk5M+gCgYIKoZIzj0DAQehRANCAASTa2fP8SDHMiaQ7e+80LZxxBVxYmDb8w5e\nIpHR0GZoSUgFASqU3L7VDqLs675+IbxRHXX0/lMeVKyA2oxSBpZk-----END PRIVATE KEY-----"
+        private_key                 = "-----BEGIN PRIVATE KEY-----REDACTED-----END PRIVATE KEY-----"
         client_email                = "SERVICE_ACCOUNT_EMAIL"
         client_id                   = "CLIENT_ID"
         auth_uri                    = "https://accounts.google.com/o/oauth2/auth"

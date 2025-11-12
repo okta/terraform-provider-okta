@@ -44,24 +44,6 @@ output "fcm_project_id" {
 }
 ```
 
-### Use in another resource
-
-```terraform
-data "okta_push_provider" "existing" {
-  id = "ppc1234567890abcdef"
-}
-
-# Reference the push provider in an authenticator
-resource "okta_authenticator" "push_auth" {
-  name = "Mobile Push Auth"
-  key  = "custom_push"
-  
-  settings = jsonencode({
-    push_provider_id = data.okta_push_provider.existing.id
-  })
-}
-```
-
 ## Schema
 
 ### Required
