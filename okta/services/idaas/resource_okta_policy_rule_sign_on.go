@@ -311,8 +311,6 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{Level: riskLevel.(string)}
 	} else if riscLevelExists {
 		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{Level: riscLevel.(string)}
-	} else {
-		template.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{Level: "ANY"}
 	}
 
 	template.Actions = sdk.SdkPolicyRuleActions{
