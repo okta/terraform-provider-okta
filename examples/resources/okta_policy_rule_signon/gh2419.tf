@@ -37,3 +37,4 @@ resource "okta_policy_rule_signon" "test_BOTH" {
   risk_level = "LOW"
   risc_level = "HIGH"
 }
+
