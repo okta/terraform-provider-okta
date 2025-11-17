@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"sync"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -372,7 +373,9 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
-
+	//lock := getPolicyRuleLock(d.Get("policy_id").(string))
+	//lock.Lock()
+	//defer lock.Unlock()
 	rule := buildAppSignOnPolicyRule(d)
 	if utils.BoolFromBoolPtr(rule.System) {
 		// Conditions can't be set on the default/system rule
@@ -394,6 +397,12 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		}
 	}
 	return resourceAppSignOnPolicyRuleRead(ctx, d, meta)
+}
+
+var policyLocks sync.Map // map[string]*sync.Mutex
+func getPolicyRuleLock(policyID any) *sync.Mutex {
+	muIface, _ := policyLocks.LoadOrStore(policyID, &sync.Mutex{})
+	return muIface.(*sync.Mutex)
 }
 
 func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
