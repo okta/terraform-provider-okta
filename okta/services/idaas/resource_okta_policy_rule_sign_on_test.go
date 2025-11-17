@@ -36,7 +36,6 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test_risk_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName2 := fmt.Sprintf("%s.test_risc_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName3 := fmt.Sprintf("%s.test_BOTH", resources.OktaIDaaSPolicyRuleSignOn)
-	resourceName4 := fmt.Sprintf("%s.test_NEITHER", resources.OktaIDaaSPolicyRuleSignOn)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -50,13 +49,10 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName4, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "risk_level", "ANY"),
 					resource.TestCheckResourceAttr(resourceName2, "risc_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName3, "risk_level", "LOW"),
 					resource.TestCheckResourceAttr(resourceName3, "risc_level", "HIGH"),
-					resource.TestCheckNoResourceAttr(resourceName4, "risc_level"),
-					resource.TestCheckNoResourceAttr(resourceName4, "risk_level"),
 				),
 			},
 			{
@@ -65,13 +61,42 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName4, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "risk_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName2, "risc_level", "HIGH"),
 					resource.TestCheckResourceAttr(resourceName3, "risk_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName3, "risc_level", "HIGH"),
-					resource.TestCheckNoResourceAttr(resourceName4, "risk_level"),
-					resource.TestCheckNoResourceAttr(resourceName4, "risc_level"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaPolicyRuleSignon_GH2494(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleSignOn, t.Name())
+	config := mgr.GetFixtures("gh2494.tf", t)
+	updatedConfig := mgr.GetFixtures("gh2494_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test_NEITHER", resources.OktaIDaaSPolicyRuleSignOn)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleSignOn),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckNoResourceAttr(resourceName, "risc_level"),
+					resource.TestCheckNoResourceAttr(resourceName, "risk_level"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckNoResourceAttr(resourceName, "risk_level"),
+					resource.TestCheckNoResourceAttr(resourceName, "risc_level"),
 				),
 			},
 		},
