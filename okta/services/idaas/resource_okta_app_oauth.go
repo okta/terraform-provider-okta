@@ -471,7 +471,10 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err := validateAppOAuth(d, meta); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuthV6(d, true)
+	app, err := buildAppOAuthV6(d, true)
+	if err != nil {
+		return diag.Errorf("failed to build OAuth application: %v", err)
+	}
 	activate := d.Get("status").(string) == StatusActive
 
 	appResp, _, err := client.ApplicationAPI.CreateApplication(ctx).Application(app).Activate(activate).Execute()
@@ -772,14 +775,17 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	client := getOktaV6ClientFromMetadata(meta)
-	if err := validateGrantTypes(d); err != nil {
+	if err = validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d, meta); err != nil {
+	if err = validateAppOAuth(d, meta); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
 
-	app := buildAppOAuthV6(d, false)
+	app, err := buildAppOAuthV6(d, false)
+	if err != nil {
+		return diag.Errorf("failed to build OAuth application: %v", err)
+	}
 
 	// When omit_secret is true on update, we make sure that do not include
 	// the client secret value in the api call.
@@ -844,7 +850,7 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications200ResponseInner {
+func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplications200ResponseInner, error) {
 	app := v6okta.NewOpenIdConnectApplicationWithDefaults()
 	appType := d.Get("type").(string)
 	grantTypes := utils.ConvertInterfaceToStringSet(d.Get("grant_types"))
@@ -990,36 +996,36 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 			// For now, temporarily disable inline JWKS due to v6 SDK schema conflicts
 			// This is a known limitation with the v6 SDK JWKS unmarshalling
 			// Users should use jwks_uri instead for v6 SDK compatibility
-			
+
 			// TODO: Re-enable when v6 SDK JWKS schema conflict is resolved
 			// For now, we'll skip setting JWKS to avoid the unmarshalling error
 			/*
-			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
+				jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
 
-			var keyData []interface{}
-			for _, jwk := range jwksData {
-				jwkMap := jwk.(map[string]interface{})
-				key := map[string]interface{}{
-					"kid": jwkMap["kid"].(string),
-					"kty": jwkMap["kty"].(string),
+				var keyData []interface{}
+				for _, jwk := range jwksData {
+					jwkMap := jwk.(map[string]interface{})
+					key := map[string]interface{}{
+						"kid": jwkMap["kid"].(string),
+						"kty": jwkMap["kty"].(string),
+					}
+					if e, ok := jwkMap["e"]; ok && e.(string) != "" {
+						key["e"] = e.(string)
+					}
+					if n, ok := jwkMap["n"]; ok && n.(string) != "" {
+						key["n"] = n.(string)
+					}
+					if x, ok := jwkMap["x"]; ok && x.(string) != "" {
+						key["x"] = x.(string)
+					}
+					if y, ok := jwkMap["y"]; ok && y.(string) != "" {
+						key["y"] = y.(string)
+					}
+					keyData = append(keyData, key)
 				}
-				if e, ok := jwkMap["e"]; ok && e.(string) != "" {
-					key["e"] = e.(string)
-				}
-				if n, ok := jwkMap["n"]; ok && n.(string) != "" {
-					key["n"] = n.(string)
-				}
-				if x, ok := jwkMap["x"]; ok && x.(string) != "" {
-					key["x"] = x.(string)
-				}
-				if y, ok := jwkMap["y"]; ok && y.(string) != "" {
-					key["y"] = y.(string)
-				}
-				keyData = append(keyData, key)
-			}
 
-			jwks.AdditionalProperties = map[string]interface{}{"keys": keyData}
-			oauthClientSettings.SetJwks(*jwks)
+				jwks.AdditionalProperties = map[string]interface{}{"keys": keyData}
+				oauthClientSettings.SetJwks(*jwks)
 			*/
 		}
 	}
@@ -1067,23 +1073,31 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) v6okta.ListApplications
 	// Handle app settings
 	if appSettingsJSON, ok := d.GetOk("app_settings_json"); ok {
 		var appSettings map[string]interface{}
-		_ = json.Unmarshal([]byte(appSettingsJSON.(string)), &appSettings)
+		if err := json.Unmarshal([]byte(appSettingsJSON.(string)), &appSettings); err != nil {
+			return v6okta.ListApplications200ResponseInner{}, fmt.Errorf("failed to unmarshal app_settings_json: %w", err)
+		}
 		settings.AdditionalProperties = appSettings
 	}
 
 	app.SetSettings(*settings)
-	app.SetVisibility(*BuildAppVisibilityV6(d))
+	visibility, err := BuildAppVisibilityV6(d)
+	if err != nil {
+		return v6okta.ListApplications200ResponseInner{}, err
+	}
+	app.SetVisibility(*visibility)
 	app.SetAccessibility(*BuildAppAccessibilityV6(d))
 
 	// Handle profile
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
-		_ = json.Unmarshal([]byte(str), &attrs)
+		if err := json.Unmarshal([]byte(str), &attrs); err != nil {
+			return v6okta.ListApplications200ResponseInner{}, fmt.Errorf("failed to unmarshal profile: %w", err)
+		}
 		app.SetProfile(attrs)
 	}
 
-	return v6okta.OpenIdConnectApplicationAsListApplications200ResponseInner(app)
+	return v6okta.OpenIdConnectApplicationAsListApplications200ResponseInner(app), nil
 }
 
 func validateGrantTypes(d *schema.ResourceData) error {
@@ -1198,7 +1212,7 @@ func BuildAppAccessibilityV6(d *schema.ResourceData) *v6okta.ApplicationAccessib
 	return accessibility
 }
 
-func BuildAppVisibilityV6(d *schema.ResourceData) *v6okta.ApplicationVisibility {
+func BuildAppVisibilityV6(d *schema.ResourceData) (*v6okta.ApplicationVisibility, error) {
 	visibility := v6okta.NewApplicationVisibilityWithDefaults()
 	if autoSubmit, ok := d.GetOk("auto_submit_toolbar"); ok {
 		visibility.SetAutoSubmitToolbar(autoSubmit.(bool))
@@ -1215,10 +1229,12 @@ func BuildAppVisibilityV6(d *schema.ResourceData) *v6okta.ApplicationVisibility 
 
 	if appLinks, ok := d.GetOk("app_links_json"); ok {
 		var links map[string]bool
-		_ = json.Unmarshal([]byte(appLinks.(string)), &links)
+		if err := json.Unmarshal([]byte(appLinks.(string)), &links); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal app_links_json: %w", err)
+		}
 		visibility.SetAppLinks(links)
 	}
-	return visibility
+	return visibility, nil
 }
 
 func BuildAppNotesV6(d *schema.ResourceData) *v6okta.ApplicationSettingsNotes {
