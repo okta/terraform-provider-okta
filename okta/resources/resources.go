@@ -134,6 +134,7 @@ const (
 	OktaIDaaSDevice                                   = "okta_device"
 	OktaIDaaSHookKey                                  = "okta_hook_key"
 	OktaGovernanceCampaign                            = "okta_campaign"
+	OktaGovernanceCollection                          = "okta_collection"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
 	OktaGovernanceReview                              = "okta_review"

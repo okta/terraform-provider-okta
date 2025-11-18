@@ -11,7 +11,11 @@ import (
 func FWProviderResources() []func() resource.Resource {
 	return []func() resource.Resource{
 		newCampaignResource,
+		newCollectionResource,
+		newCollectionResourceResource,
+		newCollectionAssignmentResource,
 		newEntitlementResource,
+		newGrantResource,
 		newReviewResource,
 		newRequestConditionResource,
 		newRequestSequenceResource,
@@ -26,8 +30,12 @@ func FWProviderResources() []func() resource.Resource {
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		newCampaignDataSource,
+		newCollectionDataSource,
+		newCollectionResourceDataSource,
+		newCollectionAssignmentDataSource,
 		newReviewDataSource,
 		newEntitlementDataSource,
+		newGrantDataSource,
 		newPrincipalEntitlementsDataSource,
 		newRequestConditionDataSource,
 		newRequestSequencesDataSource,
