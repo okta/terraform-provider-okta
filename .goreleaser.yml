@@ -7,7 +7,6 @@ before:
     # this is just an example and not a requirement for provider building/publishing
     - go mod tidy
 
-# Limit parallelism to avoid resource exhaustion
 project_name: terraform-provider-okta
 
 builds:
@@ -37,7 +36,8 @@ builds:
         goarch: '386'
     binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
-  - format: zip
+  - formats:
+      - zip
     name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
     files:
       - none*
