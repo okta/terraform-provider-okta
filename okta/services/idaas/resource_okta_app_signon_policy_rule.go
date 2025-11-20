@@ -36,7 +36,8 @@ This resource allows you to create and configure a sign-on policy rule for the a
 A default or 'Catch-all Rule' sign-on policy rule can be imported and managed as a custom rule.
 The only difference is that these fields are immutable and can not be managed: 'network_connection', 'network_excludes', 
 'network_includes', 'platform_include', 'custom_expression', 'device_is_registered', 'device_is_managed', 'users_excluded',
-'users_included', 'groups_excluded', 'groups_included', 'user_types_excluded' and 'user_types_included'.`,
+'users_included', 'groups_excluded', 'groups_included', 'user_types_excluded' and 'user_types_included'.
+~> This resource is concurrency safe. However, when creating/updating/deleting multiple rules belonging to a policy, the Terraform meta argument 'depends_on' should be added to each rule chaining them all in sequence. Base the sequence on the 'priority' property in ascending value.`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
@@ -254,6 +255,10 @@ The only difference is that these fields are immutable and can not be managed: '
 //return appSignOnPolicyRule, resp, nil
 
 func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// See - https://github.com/okta/terraform-provider-okta/pull/1248
+	oktaMutexKV.Lock(resources.OktaIDaaSAppSignOnPolicyRule)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSAppSignOnPolicyRule)
+
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
@@ -369,6 +374,9 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 }
 
 func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	oktaMutexKV.Lock(resources.OktaIDaaSAppSignOnPolicyRule)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSAppSignOnPolicyRule)
+
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
@@ -400,6 +408,9 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
+
+	oktaMutexKV.Lock(resources.OktaIDaaSAppSignOnPolicyRule)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSAppSignOnPolicyRule)
 
 	if d.Get("name") == "Catch-all Rule" {
 		// You cannot delete a default rule in a policy
