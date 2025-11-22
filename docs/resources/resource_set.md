@@ -44,8 +44,8 @@ resource "okta_resource_set" "test" {
 data "okta_org_metadata" "_" {}
 locals {
   org_url = try(
-    data.okta_org_metadata._.alternate,
-    data.okta_org_metadata._.organization
+    data.okta_org_metadata._.domains.alternate,
+    data.okta_org_metadata._.domains.organization
   )
 }
 resource "okta_resource_set" "example" {
