@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.5.1 (November 25, 2025)
+
+**BUG FIXES** 
+* Use mutex locks in okta_app_signon_policy_rule to address intermittent HTTP 500 errors [#2571](https://github.com/okta/terraform-provider-okta/pull/2571) by [pranav-okta](https://github.com/pranav-okta).
+* Fixed error during import of okta_group_owner [#2454](https://github.com/okta/terraform-provider-okta/pull/2454) by [exitcode0](https://github.com/exitcode0).
+* Added frontchannel_logout_uri, participate_slo attributes to okta_app_oauth [#2557](https://github.com/okta/terraform-provider-okta/pull/2557) by [pranav-okta](https://github.com/pranav-okta).
+* risk_level, risc_level will not be set to default value if neither of the fields are specified in Terraform configuration [#2494](https://github.com/okta/terraform-provider-okta/pull/2494) by [ohookins](https://github.com/ohookins).
+* Updated app_features.md to document okta_app_features is only supported on a limited subset of OIN applications [#2565](https://github.com/okta/terraform-provider-okta/pull/2565) by [exitcode0](https://github.com/exitcode0).
+
 ## 6.5.0 (November 13, 2025)
 
 ### FEATURE
