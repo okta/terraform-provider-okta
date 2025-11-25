@@ -9,6 +9,8 @@ Manages Okta application features. This resource allows you to configure provisi
 
 ~> **NOTE:** This resource cannot be deleted via Terraform. Application features are managed by Okta and can only be updated or read.
 
+~> **NOTE:** This resource is only supported with a limited subset of OIN applications, see the [api docs](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/ApplicationFeatures/) for more details.
+
 ## Example Usage
 
 ### User Provisioning Feature
