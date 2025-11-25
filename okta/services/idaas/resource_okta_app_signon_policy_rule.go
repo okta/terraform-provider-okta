@@ -37,7 +37,7 @@ A default or 'Catch-all Rule' sign-on policy rule can be imported and managed as
 The only difference is that these fields are immutable and can not be managed: 'network_connection', 'network_excludes', 
 'network_includes', 'platform_include', 'custom_expression', 'device_is_registered', 'device_is_managed', 'users_excluded',
 'users_included', 'groups_excluded', 'groups_included', 'user_types_excluded' and 'user_types_included'.
-~> This resource is concurrency safe. However, when creating/updating/deleting multiple rules belonging to a policy, the Terraform meta argument 'depends_on' should be added to each rule chaining them all in sequence. Base the sequence on the 'priority' property in ascending value.`,
+~> **PRIORITY MANAGEMENT:** The Okta API automatically shifts rule priorities when conflicts occur. If you assign a rule to a priority already taken by another rule, the existing rule shifts to the next priority. This means directly swapping priorities between rules will cause drift. Use a two-step approach: first move rules to temporary high priorities (100+), apply, then move to final priorities. Always use 'depends_on' to chain rules sequentially based on priority order (ascending).`,
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
