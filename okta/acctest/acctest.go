@@ -381,7 +381,39 @@ func (m *vcrManager) getCassettes(files []os.DirEntry, cassettes []string) []str
 		parts := strings.Split(file.Name(), ".")
 		cassettes = append(cassettes, parts[0])
 	}
+
+	// Apply filtering only when in play mode
+	if m.IsPlaying() {
+		cassettes = m.filterCassettesByPattern(cassettes)
+	}
+
 	return cassettes
+}
+
+// filterCassettesByPattern filters cassettes based on the OKTA_VCR_CASSETTE_PATTERN environment variable.
+// This allows users to specify a prefix pattern to include only certain cassettes during VCR playback.
+// For example, setting OKTA_VCR_CASSETTE_PATTERN=oie would only include cassettes starting with "oie".
+// Setting OKTA_VCR_CASSETTE_PATTERN=classic would only include cassettes starting with "classic".
+func (m *vcrManager) filterCassettesByPattern(cassettes []string) []string {
+	pattern := os.Getenv("OKTA_VCR_CASSETTE_PATTERN")
+	if pattern == "" {
+		return cassettes
+	}
+
+	filtered := []string{}
+	for _, cassette := range cassettes {
+		if strings.HasPrefix(cassette, pattern) {
+			filtered = append(filtered, cassette)
+		}
+	}
+
+	if len(filtered) == 0 {
+		// If no cassettes match the pattern, return all cassettes to avoid breaking tests
+		// This provides a fallback behavior when the pattern doesn't match any existing cassettes
+		return cassettes
+	}
+
+	return filtered
 }
 
 func firstHeaderValue(name string, headers http.Header) (string, bool) {
