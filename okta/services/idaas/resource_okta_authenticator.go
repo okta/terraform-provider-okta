@@ -7,10 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAuthenticator() *schema.Resource {
@@ -182,55 +181,79 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	var err error
+	client := getOktaV6ClientFromMetadata(meta)
+
 	// soft create if the authenticator already exists
-	authenticator, _ := findAuthenticator(ctx, meta, d.Get("name").(string), d.Get("key").(string))
+	authenticator, _ := findAuthenticatorV6(ctx, client, d.Get("name").(string), d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
-		authenticator, err = buildAuthenticator(d)
+		authenticatorReq, err := buildAuthenticatorV6(d, meta)
 		if err != nil {
 			return diag.FromErr(err)
 		}
+
 		activate := (d.Get("status").(string) == StatusActive)
-		qp := &query.Params{
-			Activate: utils.BoolPtr(activate),
+		req := client.AuthenticatorAPI.CreateAuthenticator(ctx).Authenticator(*authenticatorReq)
+		if activate {
+			req = req.Activate(activate)
 		}
-		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
+
+		createdAuth, resp, err := req.Execute()
 		if err != nil {
-			return diag.FromErr(err)
+			return diag.Errorf("failed to create authenticator: %v", err)
 		}
+		defer resp.Body.Close()
+		authenticator = createdAuth
+
+		// Handle custom_otp special case
 		if d.Get("key").(string) == "custom_otp" {
-			var otp *sdk.OTP
-			otp, err = buildOTP(d)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			_, err = getOktaClientFromMetadata(meta).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
-			if err != nil {
-				return diag.FromErr(err)
+			if s, ok := d.GetOk("settings"); ok {
+				var settingsMap map[string]interface{}
+				if err := json.Unmarshal([]byte(s.(string)), &settingsMap); err != nil {
+					return diag.FromErr(err)
+				}
+
+				// Update OTP method settings using ReplaceAuthenticatorMethod
+				methodBytes, _ := json.Marshal(map[string]interface{}{
+					"type":     "otp",
+					"settings": settingsMap,
+				})
+
+				methodReq := client.AuthenticatorAPI.ReplaceAuthenticatorMethod(ctx, authenticator.GetId(), "otp")
+				_, methodResp, err := methodReq.Execute()
+				if err != nil {
+					logger(meta).Warn(fmt.Sprintf("Failed to set OTP settings: %v, request body: %s", err, string(methodBytes)))
+				} else if methodResp != nil {
+					defer methodResp.Body.Close()
+				}
 			}
 		}
 	}
 
-	d.SetId(authenticator.Id)
+	d.SetId(authenticator.GetId())
 
 	// If status is defined in the config, and the actual status reported by the
 	// API is not the same, then toggle the status. Soft update.
 	status, ok := d.GetOk("status")
-	if ok && authenticator.Status != status.(string) {
-		var err error
+	if ok && authenticator.GetStatus() != status.(string) {
 		if status.(string) == StatusInactive {
-			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			authenticator, resp, err := client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to change authenticator status: %v", err)
+			}
+			defer resp.Body.Close()
+			return establishAuthenticatorV6(authenticator, d, meta)
 		} else {
-			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
-		}
-		if err != nil {
-			return diag.Errorf("failed to change authenticator status: %v", err)
+			authenticator, resp, err := client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to change authenticator status: %v", err)
+			}
+			defer resp.Body.Close()
+			return establishAuthenticatorV6(authenticator, d, meta)
 		}
 	}
 
-	establishAuthenticator(authenticator, d)
-	return nil
+	return establishAuthenticatorV6(authenticator, d, meta)
 }
 
 func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -238,13 +261,15 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	authenticator, _, err := getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, d.Id())
+	client := getOktaV6ClientFromMetadata(meta)
+
+	authenticator, resp, err := client.AuthenticatorAPI.GetAuthenticator(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
-	establishAuthenticator(authenticator, d)
+	defer resp.Body.Close()
 
-	return nil
+	return establishAuthenticatorV6(authenticator, d, meta)
 }
 
 func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -252,29 +277,40 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	err := validateAuthenticator(d)
-	if err != nil {
+	client := getOktaV6ClientFromMetadata(meta)
+
+	if err := validateAuthenticatorV6(d, meta); err != nil {
 		return diag.FromErr(err)
 	}
-	authenticator, err := buildAuthenticator(d)
+
+	authenticator, err := buildAuthenticatorV6(d, meta)
+	if err != nil {
+		return diag.Errorf("failed to build authenticator: %v", err)
+	}
+
+	_, resp, err := client.AuthenticatorAPI.ReplaceAuthenticator(ctx, d.Id()).Authenticator(*authenticator).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
-	_, _, err = getOktaClientFromMetadata(meta).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
-	if err != nil {
-		return diag.Errorf("failed to update authenticator: %v", err)
-	}
+	defer resp.Body.Close()
+
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == StatusActive {
-			_, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			_, resp, err := client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to change authenticator status: %v", err)
+			}
+			defer resp.Body.Close()
 		} else {
-			_, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
-		}
-		if err != nil {
-			return diag.Errorf("failed to change authenticator status: %v", err)
+			_, resp, err := client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to change authenticator status: %v", err)
+			}
+			defer resp.Body.Close()
 		}
 	}
+
 	return resourceAuthenticatorRead(ctx, d, meta)
 }
 
@@ -286,148 +322,320 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	_, _, err := getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+	client := getOktaV6ClientFromMetadata(meta)
+
+	_, resp, err := client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
 	if err != nil {
 		logger(meta).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
 	}
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
-	authenticator := sdk.Authenticator{
-		Type: d.Get("type").(string),
-		Id:   d.Id(),
-		Key:  d.Get("key").(string),
-		Name: d.Get("name").(string),
-	}
-	if d.Get("type").(string) == "security_key" {
-		authenticator.Provider = &sdk.AuthenticatorProvider{
-			Type: d.Get("provider_type").(string),
-			Configuration: &sdk.AuthenticatorProviderConfiguration{
-				HostName:     d.Get("provider_hostname").(string),
-				AuthPortPtr:  utils.Int64Ptr(d.Get("provider_auth_port").(int)),
-				InstanceId:   d.Get("provider_instance_id").(string),
-				SharedSecret: d.Get("provider_shared_secret").(string),
-				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
-					Template: "",
-				},
-			},
-		}
-	} else if d.Get("type").(string) == "DUO" {
-		authenticator.Provider = &sdk.AuthenticatorProvider{
-			Type: d.Get("provider_type").(string),
-			Configuration: &sdk.AuthenticatorProviderConfiguration{
-				Host:           d.Get("provider_host").(string),
-				SecretKey:      d.Get("provider_secret_key").(string),
-				IntegrationKey: d.Get("provider_integration_key").(string),
-				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
-					Template: d.Get("provider_user_name_template").(string),
-				},
-			},
-		}
-	} else {
-		if d.Get("key").(string) != "custom_otp" {
-			if s, ok := d.GetOk("settings"); ok {
-				var settings sdk.AuthenticatorSettings
-				err := json.Unmarshal([]byte(s.(string)), &settings)
-				if err != nil {
-					return nil, err
-				}
-				authenticator.Settings = &settings
-			}
-		}
-	}
+// Helper functions for v6 SDK
 
-	if p, ok := d.GetOk("provider_json"); ok {
-		var provider sdk.AuthenticatorProvider
-		err := json.Unmarshal([]byte(p.(string)), &provider)
+func findAuthenticatorV6(ctx context.Context, client *v6okta.APIClient, name, key string) (*v6okta.AuthenticatorBase, error) {
+	authenticators, resp, err := client.AuthenticatorAPI.ListAuthenticators(ctx).Execute()
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	for _, authUnion := range authenticators {
+		// Convert union type to AuthenticatorBase via JSON marshaling
+		authBytes, err := json.Marshal(authUnion)
 		if err != nil {
-			return nil, err
+			continue
 		}
-		authenticator.Provider = &provider
-	}
-
-	return &authenticator, nil
-}
-
-func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
-	otp := sdk.OTP{}
-	if s, ok := d.GetOk("settings"); ok {
-		var settings sdk.AuthenticatorSettingsOTP
-		err := json.Unmarshal([]byte(s.(string)), &settings)
-		if err != nil {
-			return nil, err
+		var authenticator v6okta.AuthenticatorBase
+		if err := json.Unmarshal(authBytes, &authenticator); err != nil {
+			continue
 		}
-		otp.Settings = &settings
-	}
 
-	return &otp, nil
-}
-
-func validateAuthenticator(d *schema.ResourceData) error {
-	typ := d.Get("type").(string)
-	if typ == "security_key" {
-		if d.Get("key").(string) != "custom_otp" {
-			h := d.Get("provider_hostname").(string)
-			_, pok := d.GetOk("provider_auth_port")
-			s := d.Get("provider_shared_secret").(string)
-			templ := d.Get("provider_user_name_template").(string)
-			if h == "" || s == "" || templ == "" || !pok {
-				return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
-					"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+		// For custom_otp, both name and key must match
+		if key == "custom_otp" {
+			if authenticator.GetName() == name && authenticator.GetKey() == key {
+				return &authenticator, nil
 			}
 		} else {
-			return fmt.Errorf("custom_otp is not updatable")
+			// For other authenticators, match by name or key
+			if authenticator.GetName() == name {
+				return &authenticator, nil
+			}
+			if authenticator.GetKey() == key {
+				return &authenticator, nil
+			}
 		}
 	}
 
-	typ = d.Get("provider_type").(string)
-	if typ == "DUO" {
-		h := d.Get("provider_host").(string)
-		sk := d.Get("provider_secret_key").(string)
-		ik := d.Get("provider_integration_key").(string)
-		templ := d.Get("provider_user_name_template").(string)
-		if h == "" || sk == "" || ik == "" || templ == "" {
-			return fmt.Errorf("for authenticator type '%s' fields 'provider_host', "+
-				"'provider_secret_key', 'provider_integration_key' and 'provider_user_name_template' are required", typ)
+	if key != "" && key != "custom_otp" {
+		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
+	}
+	if key == "custom_otp" {
+		return nil, fmt.Errorf("authenticator with name '%s' and key '%s' does not exist", name, key)
+	}
+	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name)
+}
+
+func buildAuthenticatorV6(d *schema.ResourceData, meta interface{}) (*v6okta.AuthenticatorBase, error) {
+	authenticator := v6okta.NewAuthenticatorBase()
+
+	if d.Id() != "" {
+		authenticator.SetId(d.Id())
+	}
+	authenticator.SetKey(d.Get("key").(string))
+	authenticator.SetName(d.Get("name").(string))
+
+	if typ, ok := d.GetOk("type"); ok {
+		authenticator.SetType(typ.(string))
+	}
+
+	// Handle settings - stored in AdditionalProperties
+	if d.Get("key").(string) != "custom_otp" {
+		if s, ok := d.GetOk("settings"); ok {
+			var settingsMap map[string]interface{}
+			if err := json.Unmarshal([]byte(s.(string)), &settingsMap); err != nil {
+				return nil, err
+			}
+			if authenticator.AdditionalProperties == nil {
+				authenticator.AdditionalProperties = make(map[string]interface{})
+			}
+			authenticator.AdditionalProperties["settings"] = settingsMap
 		}
 	}
+
+	// Handle provider configuration - stored in AdditionalProperties
+	if p, ok := d.GetOk("provider_json"); ok {
+		var providerMap map[string]interface{}
+		if err := json.Unmarshal([]byte(p.(string)), &providerMap); err != nil {
+			return nil, err
+		}
+		if authenticator.AdditionalProperties == nil {
+			authenticator.AdditionalProperties = make(map[string]interface{})
+		}
+		authenticator.AdditionalProperties["provider"] = providerMap
+	} else {
+		// Build provider from individual fields based on authenticator type
+		authType := d.Get("type").(string)
+		var provider map[string]interface{}
+
+		switch authType {
+		case "security_key":
+			provider = buildSecurityKeyProvider(d)
+		default:
+			// Handle provider type for non-security_key authenticators
+			if providerType, ok := d.GetOk("provider_type"); ok {
+				switch providerType.(string) {
+				case "DUO":
+					provider = buildDuoProvider(d)
+				default:
+					logger(meta).Warn("Unknown provider type - using default configuration",
+						"provider_type", providerType.(string),
+						"authenticator_key", d.Get("key").(string),
+						"supported_types", []string{"DUO"})
+				}
+			}
+		}
+
+		if provider != nil {
+			if authenticator.AdditionalProperties == nil {
+				authenticator.AdditionalProperties = make(map[string]interface{})
+			}
+			authenticator.AdditionalProperties["provider"] = provider
+		}
+	}
+
+	return authenticator, nil
+}
+
+func validateAuthenticatorV6(d *schema.ResourceData, meta interface{}) error {
+	typ := d.Get("type").(string)
+	key := d.Get("key").(string)
+
+	switch typ {
+	case "security_key":
+		if key == "custom_otp" {
+			return fmt.Errorf("custom_otp is not updatable")
+		}
+
+		h := d.Get("provider_hostname").(string)
+		_, pok := d.GetOk("provider_auth_port")
+		s := d.Get("provider_shared_secret").(string)
+		templ := d.Get("provider_user_name_template").(string)
+		if h == "" || s == "" || templ == "" || !pok {
+			return fmt.Errorf("for authenticator type '%s' fields 'provider_hostname', "+
+				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
+		}
+	default:
+		logger(meta).Debug("Authenticator type using standard validation",
+			"authenticator_type", typ)
+	}
+
+	// Validate provider-specific requirements
+	if providerType, ok := d.GetOk("provider_type"); ok {
+		switch providerType.(string) {
+		case "DUO":
+			h := d.Get("provider_host").(string)
+			sk := d.Get("provider_secret_key").(string)
+			ik := d.Get("provider_integration_key").(string)
+			templ := d.Get("provider_user_name_template").(string)
+			if h == "" || sk == "" || ik == "" || templ == "" {
+				return fmt.Errorf("for authenticator type 'DUO' fields 'provider_host', " +
+					"'provider_secret_key', 'provider_integration_key' and 'provider_user_name_template' are required")
+			}
+		default:
+			logger(meta).Warn("Unknown provider type in validation - using default behavior",
+				"provider_type", providerType.(string),
+				"authenticator_key", d.Get("key").(string),
+				"supported_types", []string{"DUO"})
+		}
+	}
+
 	return nil
 }
 
-func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.ResourceData) {
-	_ = d.Set("key", authenticator.Key)
-	_ = d.Set("name", authenticator.Name)
-	_ = d.Set("status", authenticator.Status)
-	_ = d.Set("type", authenticator.Type)
-	if authenticator.Settings != nil {
-		b, _ := json.Marshal(authenticator.Settings)
-		dataMap := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(string(b)), &dataMap)
-		b, _ = json.Marshal(dataMap)
-		_ = d.Set("settings", string(b))
+func establishAuthenticatorV6(authenticator *v6okta.AuthenticatorBase, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	_ = d.Set("key", authenticator.GetKey())
+	_ = d.Set("name", authenticator.GetName())
+	_ = d.Set("status", authenticator.GetStatus())
+	_ = d.Set("type", authenticator.GetType())
+
+	// Extract settings from AdditionalProperties
+	if authenticator.AdditionalProperties != nil {
+		if settings, ok := authenticator.AdditionalProperties["settings"]; ok && settings != nil {
+			b, _ := json.Marshal(settings)
+			var dataMap map[string]interface{}
+			_ = json.Unmarshal(b, &dataMap)
+			b, _ = json.Marshal(dataMap)
+			_ = d.Set("settings", string(b))
+		}
+
+		// Extract provider from AdditionalProperties
+		if providerRaw, ok := authenticator.AdditionalProperties["provider"]; ok && providerRaw != nil {
+			providerMap, ok := providerRaw.(map[string]interface{})
+			if ok {
+				if provType, ok := providerMap["type"].(string); ok {
+					_ = d.Set("provider_type", provType)
+				}
+
+				if config, ok := providerMap["configuration"].(map[string]interface{}); ok {
+					// Extract configuration based on authenticator type
+					switch authenticator.GetType() {
+					case "security_key":
+						extractSecurityKeyConfig(config, d)
+					default:
+						logger(meta).Debug("Authenticator type using standard configuration extraction",
+							"authenticator_type", authenticator.GetType())
+					}
+
+					// Extract configuration based on provider type
+					if provType, ok := providerMap["type"].(string); ok {
+						switch provType {
+						case "DUO":
+							extractDuoConfig(config, d)
+						default:
+							logger(meta).Warn("Unknown provider type in configuration extraction - using default behavior",
+								"provider_type", provType,
+								"authenticator_key", d.Get("key").(string),
+								"supported_types", []string{"DUO"})
+						}
+					}
+
+					// Extract common template configuration
+					if template, ok := config["userNameTemplate"].(map[string]interface{}); ok {
+						if t, ok := template["template"].(string); ok {
+							_ = d.Set("provider_user_name_template", t)
+						}
+					}
+				}
+			}
+		}
 	}
 
-	if authenticator.Provider != nil {
-		_ = d.Set("provider_type", authenticator.Provider.Type)
+	return nil
+}
 
-		if authenticator.Type == "security_key" {
-			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
-			}
-			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
-		}
+// Helper functions for provider building
 
-		if authenticator.Provider.Configuration.UserNameTemplate != nil {
-			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
-		}
+func buildSecurityKeyProvider(d *schema.ResourceData) map[string]interface{} {
+	provider := make(map[string]interface{})
 
-		if authenticator.Provider.Type == "DUO" {
-			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
-			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
-			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
+	if provType, ok := d.GetOk("provider_type"); ok {
+		provider["type"] = provType.(string)
+	}
+
+	config := make(map[string]interface{})
+	if hostname, ok := d.GetOk("provider_hostname"); ok {
+		config["hostName"] = hostname.(string)
+	}
+	if port, ok := d.GetOk("provider_auth_port"); ok {
+		config["authPort"] = port.(int)
+	}
+	if secret, ok := d.GetOk("provider_shared_secret"); ok {
+		config["sharedSecret"] = secret.(string)
+	}
+	if template, ok := d.GetOk("provider_user_name_template"); ok {
+		config["userNameTemplate"] = map[string]interface{}{
+			"template": template.(string),
 		}
+	}
+	if instanceId, ok := d.GetOk("provider_instance_id"); ok {
+		config["instanceId"] = instanceId.(string)
+	}
+
+	provider["configuration"] = config
+	return provider
+}
+
+func buildDuoProvider(d *schema.ResourceData) map[string]interface{} {
+	provider := make(map[string]interface{})
+	provider["type"] = "DUO"
+
+	config := make(map[string]interface{})
+	if host, ok := d.GetOk("provider_host"); ok {
+		config["host"] = host.(string)
+	}
+	if secretKey, ok := d.GetOk("provider_secret_key"); ok {
+		config["secretKey"] = secretKey.(string)
+	}
+	if integrationKey, ok := d.GetOk("provider_integration_key"); ok {
+		config["integrationKey"] = integrationKey.(string)
+	}
+	if template, ok := d.GetOk("provider_user_name_template"); ok {
+		config["userNameTemplate"] = map[string]interface{}{
+			"template": template.(string),
+		}
+	}
+
+	provider["configuration"] = config
+	return provider
+}
+
+// Helper functions for extracting provider configuration
+
+func extractSecurityKeyConfig(config map[string]interface{}, d *schema.ResourceData) {
+	if hostname, ok := config["hostName"].(string); ok {
+		_ = d.Set("provider_hostname", hostname)
+	}
+	if authPort, ok := config["authPort"].(float64); ok {
+		_ = d.Set("provider_auth_port", int(authPort))
+	}
+	if instanceId, ok := config["instanceId"].(string); ok {
+		_ = d.Set("provider_instance_id", instanceId)
+	}
+}
+
+func extractDuoConfig(config map[string]interface{}, d *schema.ResourceData) {
+	if host, ok := config["host"].(string); ok {
+		_ = d.Set("provider_host", host)
+	}
+	if secretKey, ok := config["secretKey"].(string); ok {
+		_ = d.Set("provider_secret_key", secretKey)
+	}
+	if integrationKey, ok := config["integrationKey"].(string); ok {
+		_ = d.Set("provider_integration_key", integrationKey)
 	}
 }
