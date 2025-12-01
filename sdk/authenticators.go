@@ -7,6 +7,7 @@ var AuthenticatorProviders = []string{
 	DuoFactor,
 	ExternalIdpFactor,
 	GoogleOtpFactor,
+	CustomOtpFactor,
 	OktaEmailFactor,
 	OktaPasswordFactor, // NOTE: Not configurable in OIE policies (Handle downstream as necessary)
 	OktaVerifyFactor,

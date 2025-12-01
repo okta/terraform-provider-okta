@@ -86,6 +86,7 @@ resource "okta_policy_mfa" "oie_example" {
 
 ### Optional
 
+- `custom_otp` (Map of String)
 - `description` (String) Policy Description
 - `duo` (Map of String)
 - `external_idp` (Map of String, Deprecated)
