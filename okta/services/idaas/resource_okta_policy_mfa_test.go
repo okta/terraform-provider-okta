@@ -54,32 +54,7 @@ func TestAccResourceOktaMfaPolicy_crud(t *testing.T) {
 // https://github.com/okta/terraform-provider-okta/pull/1210
 func TestAccResourceOktaMfaPolicy_PR_1210(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
-	config := `
-data "okta_group" "all" {
-  name = "Everyone"
-}
-resource "okta_policy_mfa" "test" {
-  name        = "testAcc_replace_with_uuid"
-  status = "ACTIVE"
-  description = "Terraform Acceptance Test MFA Policy"
-  priority = 1
-  is_oie  = true
-
-  okta_password = {
-    enroll = "REQUIRED"
-  }
-
-  okta_email = {
-    enroll = "NOT_ALLOWED"
-  }
-
-  fido_webauthn = {
-    enroll = "REQUIRED"
-  }
-
-  groups_included = [data.okta_group.all.id]
-}
-	`
+	config := mgr.GetFixtures("pr_1210.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -89,7 +64,7 @@ resource "okta_policy_mfa" "test" {
 		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config),
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
@@ -109,31 +84,7 @@ resource "okta_policy_mfa" "test" {
 // Which is similar to PRs 1427/1210
 func TestAccResourceOktaMfaPolicy_Issue_1176(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
-	config := `
-data "okta_group" "all" {
-  name = "Everyone"
-}
-resource "okta_policy_mfa" "test" {
-    name        = "testAcc_replace_with_uuid"
-    status      = "ACTIVE"
-    description = "Terraform Acceptance Test MFA Policy"
-    is_oie      = true
-    okta_otp = {
-      enroll = "OPTIONAL"
-    }
-    #phone_number = {
-    #  enroll = "OPTIONAL"
-    #}
-    okta_password = {
-      enroll = "REQUIRED"
-    }
-    okta_email = {
-      enroll = "OPTIONAL"
-    }
-
-    groups_included = [data.okta_group.all.id]
-}
-	`
+	config := mgr.GetFixtures("issue_1176.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -143,7 +94,7 @@ resource "okta_policy_mfa" "test" {
 		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(config),
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
@@ -162,24 +113,8 @@ resource "okta_policy_mfa" "test" {
 
 func TestAccResourceOktaMfaPolicy_Issue_2139_yubikey_token(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
-	config := `
-data "okta_group" "all" {
-  name = "Everyone"
-}
-resource "okta_policy_mfa" "test" {
-    name        = "testAcc_replace_with_uuid"
-    description = "Terraform Acceptance Test MFA Policy Yubikey Token"
-    status      = "ACTIVE"
-    is_oie      = true
-    groups_included = [data.okta_group.all.id]
-    okta_password = {
-      enroll = "REQUIRED"
-    }
-    yubikey_token = {
-      enroll = "%s"
-    }
-}
-	`
+	config := mgr.GetFixtures("issue_2139_yubikey_token.tf", t)
+	configRequired := mgr.GetFixtures("issue_2139_yubikey_token_required.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -189,7 +124,7 @@ resource "okta_policy_mfa" "test" {
 		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
 		Steps: []resource.TestStep{
 			{
-				Config: mgr.ConfigReplace(fmt.Sprintf(config, "OPTIONAL")),
+				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
@@ -200,7 +135,7 @@ resource "okta_policy_mfa" "test" {
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(fmt.Sprintf(config, "REQUIRED")),
+				Config: configRequired,
 				Check: resource.ComposeTestCheckFunc(
 					ensurePolicyExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
@@ -208,6 +143,54 @@ resource "okta_policy_mfa" "test" {
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Yubikey Token"),
 					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "yubikey_token.enroll", "REQUIRED"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaMfaPolicy_custom_app(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
+	config := mgr.GetFixtures("custom_app.tf", t)
+	configModified := mgr.GetFixtures("custom_app_modified.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy with Specific Custom Apps"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "security_question.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", "aut1234567890abcdefg"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", "aut1234567890hijklmn"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.enroll", "OPTIONAL"),
+				),
+			},
+			{
+				Config: configModified,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy with Specific Custom Apps"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "security_question.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", "aut1234567890abcdefg"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.enroll", "NOT_ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", "aut1234567890hijklmn"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.2.id", "aut1234567890opqrstu"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.2.enroll", "OPTIONAL"),
 				),
 			},
 		},
