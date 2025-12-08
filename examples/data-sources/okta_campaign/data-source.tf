@@ -1,3 +1,3 @@
-data "okta_campaign" test{
+data "okta_campaign" "test" {
 
 }

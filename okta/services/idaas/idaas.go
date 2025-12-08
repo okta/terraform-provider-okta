@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -54,6 +55,10 @@ func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
 
 func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
+}
+
+func getOktaV6ClientFromMetadata(meta interface{}) *v6okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV6()
 }
 
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
@@ -103,12 +108,23 @@ func FWProviderResources() []func() resource.Resource {
 		newRateLimitAdminNotificationSettingsResource,
 		newRateLimitWarningThresholdPercentageResource,
 		newPrincipalRateLimitsResource,
+		newSecurityEventsProviderResource,
+		newDevicesResource,
+		newAppFeaturesResource,
+		newPushProvidersResource,
+		newHookKeyResource,
+		newAPIServiceIntegrationResource,
+		newAPITokenResource,
+		newAppTokenResource,
+		newAppConnectionsResource,
 		newUISchemaResource,
 	}
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		newAuthServerClientsDataSource,
+		newAuthServerKeysDataSource,
 		newOrgMetadataDataSource,
 		newDefaultSigninPageDataSource,
 		newLogStreamDataSource,
@@ -121,6 +137,15 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newRateLimitAdminNotificationSettingsDataSource,
 		newRateLimitWarningThresholdPercentageDataSource,
 		newPrincipalRateLimitsDataSource,
+		newSecurityEventsProviderDataSource,
+		newDeviceDataSource,
+		newAppFeaturesDataSource,
+		newPushProviderDataSource,
+		newHookKeyDataSource,
+		newAPIServiceIntegrationDataSource,
+		newAPITokenDataSource,
+		newAppTokenDataSource,
+		newAppConnectionsDataSource,
 	}
 }
 

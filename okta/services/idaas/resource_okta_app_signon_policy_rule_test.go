@@ -445,7 +445,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
 }
 
 func TestAccResourceOktaAppSignOnPolicyRule_ReauthenticationFrequency(t *testing.T) {
-
 	resourceName1 := fmt.Sprintf("%s.test_with_reauthenticate_in_chains_only", resources.OktaIDaaSAppSignOnPolicyRule)
 	resourceName2 := fmt.Sprintf("%s.test_with_re_authentication_frequency_only", resources.OktaIDaaSAppSignOnPolicyRule)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
@@ -467,6 +466,65 @@ func TestAccResourceOktaAppSignOnPolicyRule_ReauthenticationFrequency(t *testing
 			},
 		},
 	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_priority_concurrency is a test to
+// verify that the policy-specific mutex locking prevents concurrent modification
+// issues when creating/updating multiple rules with priorities. This test ensures
+// that the Okta API's automatic priority shifting behavior works correctly with
+// the provider's mutex implementation.
+func TestAccResourceOktaAppSignOnPolicyRule_priority_concurrency(t *testing.T) {
+	numRules := 10
+	testPolicyRules := make([]string, numRules)
+	// Test setup makes each policy rule dependent on the one before it.
+	for i := 0; i < numRules; i++ {
+		dependsOn := i - 1
+		testPolicyRules[i] = testAppSignOnPolicyRule(i, dependsOn)
+	}
+	config := fmt.Sprintf(`
+resource "okta_app_signon_policy" "test" {
+	name        = "testAcc_replace_with_uuid"
+	description = "Test App Signon Policy for Priority Concurrency"
+}
+%s`, strings.Join(testPolicyRules, ""))
+
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	acctest.OktaResourceTest(
+		t, resource.TestCase{
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+			Steps: []resource.TestStep{
+				{
+					Config: mgr.ConfigReplace(config),
+					Check: resource.ComposeTestCheckFunc(
+						// Check if all rules were created successfully without 500 errors
+						resource.TestCheckResourceAttr("okta_app_signon_policy_rule.test_00", "name", "Test App Sign On Policy Rule 00"),
+						resource.TestCheckResourceAttr("okta_app_signon_policy_rule.test_00", "priority", "1"),
+						resource.TestCheckResourceAttr("okta_app_signon_policy_rule.test_09", "name", "Test App Sign On Policy Rule 09"),
+						resource.TestCheckResourceAttr("okta_app_signon_policy_rule.test_09", "priority", "10"),
+					),
+				},
+			},
+		})
+}
+
+// Helper function to generate app sign-on policy rule configurations
+func testAppSignOnPolicyRule(num, dependsOn int) string {
+	var dependsOnStr string
+	if dependsOn >= 0 {
+		dependsOnStr = fmt.Sprintf("depends_on = [okta_app_signon_policy_rule.test_%02d]", dependsOn)
+	}
+	return fmt.Sprintf(`
+resource "okta_app_signon_policy_rule" "test_%02d" {
+	policy_id = okta_app_signon_policy.test.id
+	name      = "Test App Sign On Policy Rule %02d"
+	priority  = %d
+	access    = "ALLOW"
+	%s
+}`,
+		num, num, num+1, dependsOnStr)
 }
 
 func checkReauthenticateInChains(value string) error {

@@ -1,4 +1,48 @@
-issues:
-  exclude:
-    - 'not declared by package utf8'
-    - 'unicode/utf8/utf8.go'
+# https://golangci-lint.run/usage/configuration
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+  concurrency: 4
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - revive
+    - ineffassign
+    - unused
+    - unparam
+    - misspell
+    - nakedret
+    - bodyclose
+    - gocritic
+    - makezero
+    - gosec
+  settings:
+    staticcheck:
+      checks:
+        - all
+        - "-QF1008" # Allow embedded structs to be referenced by field
+        - "-ST1000" # Do not require package comments
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+output:
+  formats:
+    text:
+      print-linter-name: true
+      print-issued-lines: true

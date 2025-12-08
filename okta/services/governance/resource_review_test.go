@@ -29,5 +29,4 @@ func TestAccReviewResource_basic(t *testing.T) {
 			},
 		},
 	})
-
 }
