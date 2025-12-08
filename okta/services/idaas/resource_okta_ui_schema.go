@@ -2,7 +2,8 @@ package idaas
 
 import (
 	"context"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
+
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -130,7 +131,7 @@ func (r *uiSchemaResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Create API call logic
-	createUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().UISchemaAPI.CreateUISchema(ctx).Uischemabody(createUISchemaBody(data)).Execute()
+	createUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().UISchemaAPI.CreateUISchema(ctx).Uischemabody(createUISchemaBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating UISchema",
@@ -147,21 +148,35 @@ func (r *uiSchemaResource) Create(ctx context.Context, req resource.CreateReques
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func applyUISchemaToState(resp *v5okta.UISchemasResponseObject, data *uiSchemaResourceModel) diag.Diagnostics {
+func applyUISchemaToState(resp *v6okta.UISchemasResponseObject, data *uiSchemaResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	data.Id = types.StringValue(resp.GetId())
-	data.UiSchema.ButtonLabel = types.StringValue(resp.UiSchema.GetButtonLabel())
-	data.UiSchema.Label = types.StringValue(resp.UiSchema.GetLabel())
-	data.UiSchema.Type = types.StringValue(resp.UiSchema.GetType())
+	data.UiSchema = &uiSchema{}
+	if resp.UiSchema.ButtonLabel != nil {
+		data.UiSchema.ButtonLabel = types.StringValue(resp.UiSchema.GetButtonLabel())
+	}
+	if resp.UiSchema.Label != nil {
+		data.UiSchema.Label = types.StringValue(resp.UiSchema.GetLabel())
+	}
+
+	if resp.UiSchema.Type != nil && resp.UiSchema.GetType() != "" {
+		data.UiSchema.Type = types.StringValue(resp.UiSchema.GetType())
+	}
+
 	if resp.UiSchema.Elements != nil {
-		data.UiSchema.Elements[0] = elements{}
-		data.UiSchema.Elements[0].Label = types.StringValue(resp.UiSchema.Elements.GetLabel())
-		data.UiSchema.Elements[0].Scope = types.StringValue(resp.UiSchema.Elements.GetScope())
-		data.UiSchema.Elements[0].Type = types.StringValue(resp.UiSchema.Elements.GetType())
-		if resp.UiSchema.Elements.Options != nil {
-			data.UiSchema.Elements[0].Options = &options{}
-			data.UiSchema.Elements[0].Options.Format = types.StringValue(resp.UiSchema.Elements.Options.GetFormat())
+		var elems []elements
+		for _, elem := range resp.UiSchema.Elements {
+			e := elements{}
+			e.Label = types.StringValue(elem.GetLabel())
+			e.Scope = types.StringValue(elem.GetScope())
+			e.Type = types.StringValue(elem.GetType())
+			if elem.Options != nil {
+				e.Options = &options{}
+				e.Options.Format = types.StringValue(elem.Options.GetFormat())
+			}
+			elems = append(elems, e)
 		}
+		data.UiSchema.Elements = elems
 	}
 	return diags
 }
@@ -177,11 +192,11 @@ func (r *uiSchemaResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	// Read API call logic
-	readUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().UISchemaAPI.GetUISchema(ctx, data.Id.ValueString()).Execute()
+	readUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().UISchemaAPI.GetUISchema(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading Entitlement",
-			"Could not create Entitlement, unexpected error: "+err.Error(),
+			"Error reading UISchema",
+			"Could not read UISchema, unexpected error: "+err.Error(),
 		)
 		return
 	}
@@ -206,7 +221,7 @@ func (r *uiSchemaResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 	data.Id = state.Id
 	// Update API call logic
-	updateUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().UISchemaAPI.ReplaceUISchemas(ctx, state.Id.ValueString()).UpdateUISchemaBody(updateUISchemaBody(data)).Execute()
+	updateUISchemaResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().UISchemaAPI.ReplaceUISchemas(ctx, state.Id.ValueString()).UpdateUISchemaBody(updateUISchemaBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating UISchema",
@@ -234,7 +249,7 @@ func (r *uiSchemaResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Delete API call logic
-	_, err := r.OktaIDaaSClient.OktaSDKClientV5().UISchemaAPI.DeleteUISchemas(ctx, data.Id.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV6().UISchemaAPI.DeleteUISchemas(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting UISchema",
@@ -244,40 +259,50 @@ func (r *uiSchemaResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 }
 
-func updateUISchemaBody(data uiSchemaResourceModel) v5okta.UpdateUISchema {
-	uiSchema := &v5okta.UISchemaObject{
+func updateUISchemaBody(data uiSchemaResourceModel) v6okta.UpdateUISchema {
+	uiSchema := &v6okta.UISchemaObject{
 		ButtonLabel: data.UiSchema.ButtonLabel.ValueStringPointer(),
 		Label:       data.UiSchema.Label.ValueStringPointer(),
 		Type:        data.UiSchema.Type.ValueStringPointer(),
 	}
-	options := v5okta.UIElementOptions{}
-	options.Format = data.UiSchema.ButtonLabel.ValueStringPointer()
-	elements := &v5okta.UIElement{}
-	elements.Label = data.UiSchema.Label.ValueStringPointer()
-	elements.Scope = data.UiSchema.Elements[0].Scope.ValueStringPointer()
-	elements.Type = data.UiSchema.Elements[0].Type.ValueStringPointer()
-	elements.Options = &options
+	var elements []v6okta.UIElement
+	for _, elem := range data.UiSchema.Elements {
+		options := v6okta.UIElementOptions{}
+		options.Format = elem.Options.Format.ValueStringPointer()
+		element := v6okta.UIElement{}
+		element.Label = elem.Label.ValueStringPointer()
+		element.Scope = elem.Scope.ValueStringPointer()
+		element.Type = elem.Type.ValueStringPointer()
+		element.Options = &options
+		elements = append(elements, element)
+	}
+
 	uiSchema.Elements = elements
 
-	return v5okta.UpdateUISchema{UiSchema: uiSchema}
+	return v6okta.UpdateUISchema{UiSchema: uiSchema}
 }
 
-func createUISchemaBody(data uiSchemaResourceModel) v5okta.CreateUISchema {
-	uiSchema := &v5okta.UISchemaObject{
+func createUISchemaBody(data uiSchemaResourceModel) v6okta.CreateUISchema {
+	uiSchema := &v6okta.UISchemaObject{
 		ButtonLabel: data.UiSchema.ButtonLabel.ValueStringPointer(),
 		Label:       data.UiSchema.Label.ValueStringPointer(),
 		Type:        data.UiSchema.Type.ValueStringPointer(),
 	}
-	options := v5okta.UIElementOptions{}
-	options.Format = data.UiSchema.ButtonLabel.ValueStringPointer()
-	elements := &v5okta.UIElement{}
-	elements.Label = data.UiSchema.Label.ValueStringPointer()
-	elements.Scope = data.UiSchema.Elements[0].Scope.ValueStringPointer()
-	elements.Type = data.UiSchema.Elements[0].Type.ValueStringPointer()
-	elements.Options = &options
+	var elements []v6okta.UIElement
+	for _, elem := range data.UiSchema.Elements {
+		options := v6okta.UIElementOptions{}
+		options.Format = elem.Options.Format.ValueStringPointer()
+		element := v6okta.UIElement{}
+		element.Label = elem.Label.ValueStringPointer()
+		element.Scope = elem.Scope.ValueStringPointer()
+		element.Type = elem.Type.ValueStringPointer()
+		element.Options = &options
+		elements = append(elements, element)
+	}
+
 	uiSchema.Elements = elements
 
-	return v5okta.CreateUISchema{
+	return v6okta.CreateUISchema{
 		UiSchema: uiSchema,
 	}
 }

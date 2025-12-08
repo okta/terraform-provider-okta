@@ -146,6 +146,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAPITokenDataSource,
 		newAppTokenDataSource,
 		newAppConnectionsDataSource,
+		newUISchemaDataSource,
 	}
 }
 
