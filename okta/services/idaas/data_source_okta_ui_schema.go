@@ -24,7 +24,7 @@ type uiSchemaDataSourceModel struct {
 	ID          types.String `tfsdk:"id"`
 	Created     types.String `tfsdk:"created"`
 	LastUpdated types.String `tfsdk:"last_updated"`
-	UiSchema    *uiSchema    `tfsdk:"ui_schema"`
+	UISchema    *uiSchema    `tfsdk:"ui_schema"`
 }
 
 func (d *UISchemaDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -127,18 +127,18 @@ func (d *UISchemaDataSource) Read(ctx context.Context, req datasource.ReadReques
 		ID:          types.StringValue(readUISchemaResp.GetId()),
 		Created:     types.StringValue(readUISchemaResp.GetCreated().Format(time.RFC3339)),
 		LastUpdated: types.StringValue(readUISchemaResp.GetLastUpdated().Format(time.RFC3339)),
-		UiSchema:    &uiSchema{},
+		UISchema:    &uiSchema{},
 	}
 
 	if readUISchemaResp.UiSchema.ButtonLabel != nil {
-		data.UiSchema.ButtonLabel = types.StringValue(readUISchemaResp.UiSchema.GetButtonLabel())
+		data.UISchema.ButtonLabel = types.StringValue(readUISchemaResp.UiSchema.GetButtonLabel())
 	}
 	if readUISchemaResp.UiSchema.Label != nil {
-		data.UiSchema.Label = types.StringValue(readUISchemaResp.UiSchema.GetLabel())
+		data.UISchema.Label = types.StringValue(readUISchemaResp.UiSchema.GetLabel())
 	}
 
 	if readUISchemaResp.UiSchema.Type != nil {
-		data.UiSchema.Type = types.StringValue(readUISchemaResp.UiSchema.GetType())
+		data.UISchema.Type = types.StringValue(readUISchemaResp.UiSchema.GetType())
 	}
 	if readUISchemaResp.UiSchema.Elements != nil {
 		var elems []elements
@@ -153,7 +153,7 @@ func (d *UISchemaDataSource) Read(ctx context.Context, req datasource.ReadReques
 			}
 			elems = append(elems, e)
 		}
-		data.UiSchema.Elements = elems
+		data.UISchema.Elements = elems
 	}
 
 	// Save updated data into Terraform state
