@@ -162,6 +162,7 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 			Hotp:         buildFactorProvider(d, sdk.HotpFactor),
 			OktaCall:     buildFactorProvider(d, sdk.OktaCallFactor),
 			OktaOtp:      buildFactorProvider(d, sdk.OktaOtpFactor),
+			CustomOtp:    buildFactorProvider(d, sdk.CustomOtpFactor),
 			OktaPassword: buildFactorProvider(d, sdk.OktaPasswordFactor),
 			OktaPush:     buildFactorProvider(d, sdk.OktaPushFactor),
 			OktaQuestion: buildFactorProvider(d, sdk.OktaQuestionFactor),
@@ -212,6 +213,7 @@ func syncSettings(d *schema.ResourceData, settings *sdk.SdkPolicySettings) {
 		syncFactor(d, sdk.GoogleOtpFactor, settings.Factors.GoogleOtp)
 		syncFactor(d, sdk.OktaCallFactor, settings.Factors.OktaCall)
 		syncFactor(d, sdk.OktaOtpFactor, settings.Factors.OktaOtp)
+		syncFactor(d, sdk.CustomOtpFactor, settings.Factors.CustomOtp)
 		syncFactor(d, sdk.OktaPasswordFactor, settings.Factors.OktaPassword)
 		syncFactor(d, sdk.OktaPushFactor, settings.Factors.OktaPush)
 		syncFactor(d, sdk.OktaQuestionFactor, settings.Factors.OktaQuestion)

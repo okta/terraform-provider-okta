@@ -213,3 +213,58 @@ resource "okta_policy_mfa" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaMfaPolicy_custom_otp(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
+	config := `
+data "okta_group" "all" {
+  name = "Everyone"
+}
+
+resource "okta_policy_mfa" "test" {
+    name        = "testAcc_replace_with_uuid"
+    description = "Terraform Acceptance Test MFA Policy Custom OTP"
+    status      = "ACTIVE"
+    is_oie      = true
+    groups_included = [data.okta_group.all.id]
+    okta_password = {
+      enroll = "REQUIRED"
+    }
+    custom_otp = {
+      enroll = "%s"
+    }
+}
+	`
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, "NOT_ALLOWED")),
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Custom OTP"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "custom_otp.enroll", "NOT_ALLOWED"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, "OPTIONAL")),
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Custom OTP"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "custom_otp.enroll", "OPTIONAL"),
+				),
+			},
+		},
+	})
+}

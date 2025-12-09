@@ -25,6 +25,7 @@ const (
 	OktaCallFactor         = "okta_call"
 	OktaEmailFactor        = "okta_email"
 	OktaOtpFactor          = "okta_otp"
+	CustomOtpFactor        = "custom_otp"
 	OktaPasswordFactor     = "okta_password" // Not configurable for OIE
 	OktaPushFactor         = "okta_push"
 	OktaQuestionFactor     = "okta_question"
@@ -50,6 +51,7 @@ var FactorProviders = []string{
 	OktaCallFactor,
 	OktaEmailFactor,
 	OktaOtpFactor,
+	CustomOtpFactor,
 	OktaPasswordFactor,
 	OktaPushFactor,
 	OktaQuestionFactor,
