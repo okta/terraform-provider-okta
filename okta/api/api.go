@@ -25,20 +25,34 @@ import (
 
 func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClient, error) {
 	var httpClient *http.Client
+	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
+	debugHTTPRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
 	if c.Backoff {
 		retryableClient := retryablehttp.NewClient()
 		retryableClient.RetryWaitMin = time.Second * time.Duration(c.MinWait)
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.MaxWait)
 		retryableClient.RetryMax = c.RetryCount
 		retryableClient.Logger = c.Logger
-		retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		if debugHTTPRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		} else {
+			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		}
 		retryableClient.ErrorHandler = errHandler
 		retryableClient.CheckRetry = checkRetry
 		httpClient = retryableClient.StandardClient()
 		c.Logger.Info(fmt.Sprintf("v6 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
-		httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		if debugHTTPRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode onlyhttpClienthttpClient
+			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		} else {
+			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		}
 		c.Logger.Info("v6 running with default http client")
 	}
 
