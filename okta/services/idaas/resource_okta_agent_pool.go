@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -11,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -42,19 +42,19 @@ func (r *agentPoolUpdateResource) ImportState(ctx context.Context, req resource.
 }
 
 type Agent struct {
-	IsHidden          types.Bool   `tfsdk:"is_hidden"`
-	IsLatestGAVersion types.Bool   `tfsdk:"is_latest_ga_version"`
-	LastConnection    types.String `tfsdk:"last_connection"`
-	Name              types.String `tfsdk:"name"`
-	OperationalStatus types.String `tfsdk:"operational_status"`
-	PoolId            types.String `tfsdk:"pool_id"`
-	Type              types.String `tfsdk:"type"`
-	UpdateMessage     types.String `tfsdk:"update_message"`
-	UpdateStatus      types.String `tfsdk:"update_status"`
-	Version           types.String `tfsdk:"version"`
+	IsHidden            types.Bool   `tfsdk:"is_hidden"`
+	IsLatestGAedVersion types.Bool   `tfsdk:"is_latest_ga_version"`
+	LastConnection      types.String `tfsdk:"last_connection"`
+	Name                types.String `tfsdk:"name"`
+	OperationalStatus   types.String `tfsdk:"operational_status"`
+	PoolId              types.String `tfsdk:"pool_id"`
+	Type                types.String `tfsdk:"type"`
+	UpdateMessage       types.String `tfsdk:"update_message"`
+	UpdateStatus        types.String `tfsdk:"update_status"`
+	Version             types.String `tfsdk:"version"`
 }
 
-type Schedule struct {
+type UpdateSchedule struct {
 	Cron        types.String `tfsdk:"cron"`
 	Delay       types.Int64  `tfsdk:"delay"`
 	Duration    types.Int64  `tfsdk:"duration"`
@@ -63,18 +63,18 @@ type Schedule struct {
 }
 
 type agentPoolUpdateResourceModel struct {
-	Id            types.String `tfsdk:"id"`
-	PoolId        types.String `tfsdk:"pool_id"`
-	Name          types.String `tfsdk:"name"`
-	AgentType     types.String `tfsdk:"agent_type"`
-	Enabled       types.Bool   `tfsdk:"enabled"`
-	NotifyAdmins  types.Bool   `tfsdk:"notify_admins"`
-	Reason        types.String `tfsdk:"reason"`
-	Schedule      *Schedule    `tfsdk:"schedule"`
-	SortOrder     types.Int64  `tfsdk:"sort_order"`
-	TargetVersion types.String `tfsdk:"target_version"`
-	Status        types.String `tfsdk:"status"`
-	Agents        []Agent      `tfsdk:"agents"`
+	ID            types.String    `tfsdk:"id"`
+	PoolID        types.String    `tfsdk:"pool_id"`
+	Name          types.String    `tfsdk:"name"`
+	AgentType     types.String    `tfsdk:"agent_type"`
+	Enabled       types.Bool      `tfsdk:"enabled"`
+	NotifyAdmins  types.Bool      `tfsdk:"notify_admins"`
+	Reason        types.String    `tfsdk:"reason"`
+	Schedule      *UpdateSchedule `tfsdk:"schedule"`
+	SortOrder     types.Int64     `tfsdk:"sort_order"`
+	TargetVersion types.String    `tfsdk:"target_version"`
+	Status        types.String    `tfsdk:"status"`
+	Agents        []Agent         `tfsdk:"agents"`
 }
 
 func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -128,6 +128,83 @@ func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaReq
 				Description: "Whether to send notifications when the update completes.",
 			},
 		},
+		Blocks: map[string]schema.Block{
+			"schedule": schema.SingleNestedBlock{
+				Description: "The schedule configuration for the agent pool update.",
+				Attributes: map[string]schema.Attribute{
+					"cron": schema.StringAttribute{
+						Optional:    true,
+						Description: "The schedule of the update in cron format.",
+					},
+					"delay": schema.Int64Attribute{
+						Optional:    true,
+						Description: "Delay in days.",
+					},
+					"duration": schema.Int64Attribute{
+						Optional:    true,
+						Description: "Duration in minutes.",
+					},
+					"last_updated": schema.StringAttribute{
+						Optional:    true,
+						Description: "Timestamp when the update finished (only for a successful or failed update, not for a cancelled update). Null is returned if the job hasn't finished once yet.",
+					},
+					"timezone": schema.StringAttribute{
+						Optional:    true,
+						Description: "Timezone of where the scheduled job takes place.",
+					},
+				},
+			},
+			"agents": schema.SetNestedBlock{
+				Description: "The agents associated with the agent pool update.",
+				NestedObject: schema.NestedBlockObject{
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed: true,
+						},
+						"is_hidden": schema.BoolAttribute{
+							Optional:    true,
+							Description: "Determines if an agent is hidden from the Admin Console.",
+						},
+						"is_latest_gaed_version": schema.BoolAttribute{
+							Optional:    true,
+							Description: "Determines if the agent is on the latest generally available version.",
+						},
+						"last_connection": schema.StringAttribute{
+							Optional:    true,
+							Description: "Timestamp when the agent last connected to Okta.",
+						},
+						"name": schema.StringAttribute{
+							Optional:    true,
+							Description: "The name of the agent pool update.",
+						},
+						"operational_status": schema.StringAttribute{
+							Optional:    true,
+							Description: "Operational status of a given agent.",
+						},
+						"pool_id": schema.StringAttribute{
+							Required:    true,
+							Description: "Pool ID.",
+						},
+						"type": schema.StringAttribute{
+							Optional:    true,
+							Description: "Agent types that are being monitored.",
+						},
+						"update_message": schema.StringAttribute{
+							Optional:    true,
+							Description: "Status message of the agent.",
+						},
+						"update_status": schema.StringAttribute{
+							Optional:    true,
+							Description: "Status for one agent regarding the status to auto-update that agent.",
+						},
+						"version": schema.StringAttribute{
+							Optional:    true,
+							Description: "Agent version number.",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -138,11 +215,11 @@ func (r *agentPoolUpdateResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	createReq := r.buildCreateRequest(plan)
+	createReq := buildCreateRequest(plan)
 
-	createResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().AgentPoolsAPI.CreateAgentPoolsUpdate(
+	createAgentPoolUpdateResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().AgentPoolsAPI.CreateAgentPoolsUpdate(
 		ctx,
-		plan.PoolId.ValueString(),
+		plan.PoolID.ValueString(),
 	).AgentPoolUpdate(createReq).Execute()
 
 	if err != nil {
@@ -153,7 +230,7 @@ func (r *agentPoolUpdateResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	r.mapResponseToState(createResp, &plan)
+	mapResponseToState(createAgentPoolUpdateResp, &plan)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
@@ -164,21 +241,21 @@ func (r *agentPoolUpdateResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	getResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().AgentPoolsAPI.GetAgentPoolsUpdateInstance(
+	getAgentPoolsUpdateResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().AgentPoolsAPI.GetAgentPoolsUpdateInstance(
 		ctx,
-		state.PoolId.ValueString(),
-		state.Id.ValueString(),
+		state.PoolID.ValueString(),
+		state.ID.ValueString(),
 	).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading agent pool update",
-			fmt.Sprintf("Could not read agent pool update %s: %s", state.Id.ValueString(), err.Error()),
+			fmt.Sprintf("Could not read agent pool update %s: %s", state.ID.ValueString(), err.Error()),
 		)
 		return
 	}
 
-	r.mapResponseToState(getResp, &state)
+	mapResponseToState(getAgentPoolsUpdateResp, &state)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
@@ -190,23 +267,23 @@ func (r *agentPoolUpdateResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	updateReq := r.buildUpdateRequest(plan)
+	updateReq := buildUpdateRequest(plan)
 
-	updateResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().AgentPoolsAPI.UpdateAgentPoolsUpdate(
+	updateAgentPoolsUpdateResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().AgentPoolsAPI.UpdateAgentPoolsUpdate(
 		ctx,
-		state.PoolId.ValueString(),
-		state.Id.ValueString(),
+		state.PoolID.ValueString(),
+		state.ID.ValueString(),
 	).AgentPoolUpdate(updateReq).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating agent pool update",
-			fmt.Sprintf("Could not update agent pool update %s: %s", state.Id.ValueString(), err.Error()),
+			fmt.Sprintf("Could not update agent pool update %s: %s", state.ID.ValueString(), err.Error()),
 		)
 		return
 	}
 
-	r.mapResponseToState(updateResp, &plan)
+	mapResponseToState(updateAgentPoolsUpdateResp, &plan)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
@@ -219,21 +296,21 @@ func (r *agentPoolUpdateResource) Delete(ctx context.Context, req resource.Delet
 
 	_, err := r.OktaIDaaSClient.OktaSDKClientV5().AgentPoolsAPI.DeleteAgentPoolsUpdate(
 		ctx,
-		state.PoolId.ValueString(),
-		state.Id.ValueString(),
+		state.PoolID.ValueString(),
+		state.ID.ValueString(),
 	).Execute()
 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting agent pool update",
-			fmt.Sprintf("Could not delete agent pool update %s: %s", state.Id.ValueString(), err.Error()),
+			fmt.Sprintf("Could not delete agent pool update %s: %s", state.ID.ValueString(), err.Error()),
 		)
 		return
 	}
 }
 
-func (r *agentPoolUpdateResource) buildCreateRequest(plan agentPoolUpdateResourceModel) v5okta.AgentPoolUpdate {
-	req := v5okta.AgentPoolUpdate{}
+func buildCreateRequest(plan agentPoolUpdateResourceModel) v6okta.AgentPoolUpdate {
+	req := v6okta.AgentPoolUpdate{}
 
 	if !plan.Name.IsNull() {
 		req.Name = plan.Name.ValueStringPointer()
@@ -266,7 +343,7 @@ func (r *agentPoolUpdateResource) buildCreateRequest(plan agentPoolUpdateResourc
 
 	// Handle Schedule
 	if plan.Schedule != nil {
-		schedule := v5okta.AutoUpdateSchedule{}
+		schedule := v6okta.AutoUpdateSchedule{}
 
 		if !plan.Schedule.Cron.IsNull() {
 			schedule.Cron = plan.Schedule.Cron.ValueStringPointer()
@@ -291,9 +368,9 @@ func (r *agentPoolUpdateResource) buildCreateRequest(plan agentPoolUpdateResourc
 
 	// Handle Agents - convert from plan to API format
 	if len(plan.Agents) > 0 {
-		agents := make([]v5okta.Agent, len(plan.Agents))
+		agents := make([]v6okta.Agent, len(plan.Agents))
 		for i, agent := range plan.Agents {
-			apiAgent := v5okta.Agent{}
+			apiAgent := v6okta.Agent{}
 			if !agent.Name.IsNull() {
 				apiAgent.Name = agent.Name.ValueStringPointer()
 			}
@@ -315,8 +392,8 @@ func (r *agentPoolUpdateResource) buildCreateRequest(plan agentPoolUpdateResourc
 			if !agent.OperationalStatus.IsNull() {
 				apiAgent.OperationalStatus = agent.OperationalStatus.ValueStringPointer()
 			}
-			if !agent.IsLatestGAVersion.IsNull() {
-				apiAgent.IsLatestGAedVersion = agent.IsLatestGAVersion.ValueBoolPointer()
+			if !agent.IsLatestGAedVersion.IsNull() {
+				apiAgent.IsLatestGAedVersion = agent.IsLatestGAedVersion.ValueBoolPointer()
 			}
 			if !agent.IsHidden.IsNull() {
 				apiAgent.IsHidden = agent.IsHidden.ValueBoolPointer()
@@ -336,14 +413,14 @@ func (r *agentPoolUpdateResource) buildCreateRequest(plan agentPoolUpdateResourc
 	return req
 }
 
-func (r *agentPoolUpdateResource) buildUpdateRequest(plan agentPoolUpdateResourceModel) v5okta.AgentPoolUpdate {
+func buildUpdateRequest(plan agentPoolUpdateResourceModel) v6okta.AgentPoolUpdate {
 	// Same as create request for this resource
-	return r.buildCreateRequest(plan)
+	return buildCreateRequest(plan)
 }
 
-func (r *agentPoolUpdateResource) mapResponseToState(resp *v5okta.AgentPoolUpdate, state *agentPoolUpdateResourceModel) {
+func mapResponseToState(resp *v6okta.AgentPoolUpdate, state *agentPoolUpdateResourceModel) {
 	if resp.Id != nil {
-		state.Id = types.StringValue(*resp.Id)
+		state.ID = types.StringValue(*resp.Id)
 	}
 
 	if resp.Name != nil {
@@ -396,7 +473,7 @@ func (r *agentPoolUpdateResource) mapResponseToState(resp *v5okta.AgentPoolUpdat
 
 	// Handle Schedule
 	if resp.Schedule != nil {
-		schedule := &Schedule{}
+		schedule := &UpdateSchedule{}
 
 		if resp.Schedule.Cron != nil {
 			schedule.Cron = types.StringValue(*resp.Schedule.Cron)
@@ -445,9 +522,9 @@ func (r *agentPoolUpdateResource) mapResponseToState(resp *v5okta.AgentPoolUpdat
 				tfAgent.IsHidden = types.BoolNull()
 			}
 			if agent.IsLatestGAedVersion != nil {
-				tfAgent.IsLatestGAVersion = types.BoolValue(*agent.IsLatestGAedVersion)
+				tfAgent.IsLatestGAedVersion = types.BoolValue(*agent.IsLatestGAedVersion)
 			} else {
-				tfAgent.IsLatestGAVersion = types.BoolNull()
+				tfAgent.IsLatestGAedVersion = types.BoolNull()
 			}
 			if agent.LastConnection != nil {
 				tfAgent.LastConnection = types.StringValue(agent.LastConnection.Format(time.RFC3339))
