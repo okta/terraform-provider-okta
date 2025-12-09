@@ -32,5 +32,4 @@ func TestAccRequestV2Resource_basic(t *testing.T) {
 			},
 		},
 	})
-
 }

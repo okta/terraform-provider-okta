@@ -44,5 +44,4 @@ func TestAccRequestSettingResource_basic(t *testing.T) {
 			},
 		},
 	})
-
 }

@@ -143,7 +143,6 @@ func (r *rateLimitAdminNotificationSettingsResource) Delete(ctx context.Context,
 }
 
 func buildPerClientRateLimitAdminNotifications(data rateLimitAdminNotificationSettingsModel) v5okta.RateLimitAdminNotifications {
-
 	rateLimitAdminNotificationSettings := v5okta.RateLimitAdminNotifications{
 		NotificationsEnabled: data.NotificationsEnabled.ValueBool(),
 	}
