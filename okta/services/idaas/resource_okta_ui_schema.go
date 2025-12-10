@@ -67,23 +67,23 @@ func (r *uiSchemaResource) Schema(ctx context.Context, req resource.SchemaReques
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
-				Description: "The id property of an entitlement.",
+				Description: "The id property of an UI Schema.",
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"ui_schema": schema.SingleNestedBlock{
 				Attributes: map[string]schema.Attribute{
 					"button_label": schema.StringAttribute{
-						Required:    true,
-						Description: "The Okta app.id of the resource.",
+						Optional:    true,
+						Description: "Specifies the button label for the Submit button at the bottom of the enrollment form.",
 					},
 					"type": schema.StringAttribute{
-						Required:    true,
-						Description: "The type of resource.",
+						Optional:    true,
+						Description: "Specifies the type of layout.",
 					},
 					"label": schema.StringAttribute{
-						Required:    true,
-						Description: "The type of resource.",
+						Optional:    true,
+						Description: "Specifies the label at the top of the enrollment form under the logo.",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -91,32 +91,33 @@ func (r *uiSchemaResource) Schema(ctx context.Context, req resource.SchemaReques
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"label": schema.StringAttribute{
-									Required:    true,
-									Description: "The label of the element.",
+									Optional:    true,
+									Description: "Label name for the UI element.",
 								},
 								"scope": schema.StringAttribute{
 									Required:    true,
-									Description: "The scope of the element.",
+									Description: "Specifies the property bound to the input field. It must follow the format #/properties/PROPERTY_NAME where PROPERTY_NAME is a variable name for an attribute in profile editor.",
 								},
 								"type": schema.StringAttribute{
-									Required:    true,
-									Description: "The type of the element.",
+									Optional:    true,
+									Description: "Specifies the relationship between this input element and scope. The Control value specifies that this input controls the value represented by scope.",
 								},
 							},
 							Blocks: map[string]schema.Block{
 								"options": schema.SingleNestedBlock{
 									Attributes: map[string]schema.Attribute{
 										"format": schema.StringAttribute{
-											Required:    true,
-											Description: "The format of the option.",
+											Optional:    true,
+											Description: "Specifies how the input appears.",
 										},
 									},
+									Description: "UI Schema element options object.",
 								},
 							},
 						},
 					},
 				},
-				Description: "Representation of a resource.",
+				Description: "Properties of the UI schema.",
 			},
 		},
 	}
@@ -167,9 +168,15 @@ func applyUISchemaToState(resp *v6okta.UISchemasResponseObject, data *uiSchemaRe
 		var elems []elements
 		for _, elem := range resp.UiSchema.Elements {
 			e := elements{}
-			e.Label = types.StringValue(elem.GetLabel())
-			e.Scope = types.StringValue(elem.GetScope())
-			e.Type = types.StringValue(elem.GetType())
+			if elem.Label != nil {
+				e.Label = types.StringValue(elem.GetLabel())
+			}
+			if elem.Type != nil {
+				e.Type = types.StringValue(elem.GetType())
+			}
+			if elem.Scope != nil {
+				e.Scope = types.StringValue(elem.GetScope())
+			}
 			if elem.Options != nil {
 				e.Options = &options{}
 				e.Options.Format = types.StringValue(elem.Options.GetFormat())
@@ -270,7 +277,15 @@ func updateUISchemaBody(data uiSchemaResourceModel) v6okta.UpdateUISchema {
 		options := v6okta.UIElementOptions{}
 		options.Format = elem.Options.Format.ValueStringPointer()
 		element := v6okta.UIElement{}
-		element.Label = elem.Label.ValueStringPointer()
+		if elem.Label.ValueStringPointer() != nil {
+			element.Label = elem.Label.ValueStringPointer()
+		}
+		if elem.Type.ValueStringPointer() != nil {
+			element.Type = elem.Type.ValueStringPointer()
+		}
+		if elem.Scope.ValueStringPointer() != nil {
+			element.Scope = elem.Scope.ValueStringPointer()
+		}
 		element.Scope = elem.Scope.ValueStringPointer()
 		element.Type = elem.Type.ValueStringPointer()
 		element.Options = &options
@@ -290,13 +305,15 @@ func createUISchemaBody(data uiSchemaResourceModel) v6okta.CreateUISchema {
 	}
 	var elements []v6okta.UIElement
 	for _, elem := range data.UISchema.Elements {
-		options := v6okta.UIElementOptions{}
-		options.Format = elem.Options.Format.ValueStringPointer()
 		element := v6okta.UIElement{}
+		if elem.Options != nil {
+			options := v6okta.UIElementOptions{}
+			options.Format = elem.Options.Format.ValueStringPointer()
+			element.Options = &options
+		}
 		element.Label = elem.Label.ValueStringPointer()
 		element.Scope = elem.Scope.ValueStringPointer()
 		element.Type = elem.Type.ValueStringPointer()
-		element.Options = &options
 		elements = append(elements, element)
 	}
 

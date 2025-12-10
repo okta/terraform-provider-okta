@@ -30,21 +30,21 @@ data "okta_ui_schema" "example" {
 
 <a id="nestedblock--ui_schema"></a>
 ### Nested Schema for `ui_schema`
-- `button_label` (String) The Okta app.id of the resource.
-- `type` (String) The type of resource.
-- `label` (String) The type of resource.
+- `button_label` (String) Specifies the button label for the Submit button at the bottom of the enrollment form.
+- `type` (String) Specifies the type of layout.
+- `label` (String) Specifies the label at the top of the enrollment form under the logo.
 - `elements` (List of Object) List of UI schema elements.(see [below for nested schema](#nestedblock--elements))
 
 
 <a id="nestedblock--elements"></a>
 ### Nested Schema for `elements`
 
-- `label` (String) The label of the element.
-- `scope` (String) The scope of the element.
-- `type` (String) The type of the element.
-- `options` (Object) Element options configuration. (see [below for nested schema](#nestedblock--options))
+- `label` (String) Label name for the UI element.
+- `scope` (String) Specifies the property bound to the input field. It must follow the format #/properties/PROPERTY_NAME where PROPERTY_NAME is a variable name for an attribute in profile editor..
+- `type` (String) Specifies the relationship between this input element and scope. The Control value specifies that this input controls the value represented by scope..
+- `options` (Object) UI Schema element options object.. (see [below for nested schema](#nestedblock--options))
 
 
 <a id="nestedblock--options"></a>
 ### Nested Schema for `options`
-- `format` (String) The format of the option.
+- `format` (String) Specifies how the input appears.

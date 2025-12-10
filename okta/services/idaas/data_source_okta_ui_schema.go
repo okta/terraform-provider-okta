@@ -56,15 +56,15 @@ func (d *UISchemaDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				Attributes: map[string]schema.Attribute{
 					"button_label": schema.StringAttribute{
 						Computed:    true,
-						Description: "The Okta app.id of the resource.",
+						Description: "Specifies the button label for the Submit button at the bottom of the enrollment form.",
 					},
 					"type": schema.StringAttribute{
 						Computed:    true,
-						Description: "The type of resource.",
+						Description: "Specifies the type of layout.",
 					},
 					"label": schema.StringAttribute{
 						Computed:    true,
-						Description: "The type of resource.",
+						Description: "Specifies the label at the top of the enrollment form under the logo.",
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -73,15 +73,15 @@ func (d *UISchemaDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 							Attributes: map[string]schema.Attribute{
 								"label": schema.StringAttribute{
 									Computed:    true,
-									Description: "The label of the element.",
+									Description: "Label name for the UI element.",
 								},
 								"scope": schema.StringAttribute{
 									Computed:    true,
-									Description: "The scope of the element.",
+									Description: "Specifies the property bound to the input field. It must follow the format #/properties/PROPERTY_NAME where PROPERTY_NAME is a variable name for an attribute in profile editor.",
 								},
 								"type": schema.StringAttribute{
 									Computed:    true,
-									Description: "The type of the element.",
+									Description: "Specifies the relationship between this input element and scope. The Control value specifies that this input controls the value represented by scope.",
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -89,15 +89,16 @@ func (d *UISchemaDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 									Attributes: map[string]schema.Attribute{
 										"format": schema.StringAttribute{
 											Computed:    true,
-											Description: "The format of the option.",
+											Description: "Specifies how the input appears.",
 										},
 									},
+									Description: "UI Schema element options object.",
 								},
 							},
 						},
 					},
 				},
-				Description: "Representation of a resource.",
+				Description: "Properties of the UI schema.",
 			},
 		},
 	}
