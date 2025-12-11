@@ -60,3 +60,41 @@ func TestAccRequestConditionResource_Issue2510(t *testing.T) {
 		},
 	})
 }
+
+func TestAccRequestConditionResource_Status(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	configActive := mgr.GetFixtures("status_active.tf", t)
+	configInactive := mgr.GetFixtures("status_inactive.tf", t)
+	configReactivated := mgr.GetFixtures("status_active.tf", t)
+	resourceName := fmt.Sprintf("%s.test_status", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: configActive,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-status"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+			{
+				Config: configInactive,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-status"),
+					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+				),
+			},
+			{
+				Config: configReactivated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-status"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+				),
+			},
+		},
+	})
+}
