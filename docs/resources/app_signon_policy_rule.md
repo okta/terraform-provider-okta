@@ -13,7 +13,11 @@ description: |-
 # Resource: okta_app_signon_policy_rule
 
 Manages a sign-on policy rules for the application.
+
 ~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
+~> **WARNING:** When managing multiple `okta_app_signon_policy_rule` resources with concurrent operations, the Okta API may encounter concurrency issues. While this provider implements internal locking to prevent conflicts within a single Terraform process, you should use explicit `depends_on` references between rules to ensure proper sequencing, especially when managing rule priorities.
+
 This resource allows you to create and configure a sign-on policy rule for the application.
 A default or 'Catch-all Rule' sign-on policy rule can be imported and managed as a custom rule.
 The only difference is that these fields are immutable and can not be managed: 'network_connection', 'network_excludes', 

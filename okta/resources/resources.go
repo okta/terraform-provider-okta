@@ -1,6 +1,7 @@
 package resources
 
 const (
+	OktaIDaaSAPIToken                                 = "okta_api_token"
 	OktaIDaaSAdminRoleCustom                          = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments               = "okta_admin_role_custom_assignments"
 	OktaIDaaSAdminRoleTargets                         = "okta_admin_role_targets"
@@ -9,6 +10,7 @@ const (
 	OktaIDaaSAppAutoLogin                             = "okta_app_auto_login"
 	OktaIDaaSAppBasicAuth                             = "okta_app_basic_auth"
 	OktaIDaaSAppBookmark                              = "okta_app_bookmark"
+	OktaIDaaSAppConnection                            = "okta_app_connection"
 	OktaIDaaSAppFeatures                              = "okta_app_features"
 	OktaIDaaSAppGroupAssignment                       = "okta_app_group_assignment"
 	OktaIDaaSAppGroupAssignments                      = "okta_app_group_assignments"
@@ -102,6 +104,7 @@ const (
 	OktaIDaaSPolicySignOn                             = "okta_policy_signon"
 	OktaIDaaSProfileMapping                           = "okta_profile_mapping"
 	OktaIDaaSPrincipalRateLimits                      = "okta_principal_rate_limits"
+	OktaIDaaSPushProvider                             = "okta_push_provider"
 	OktaIDaaSRateLimiting                             = "okta_rate_limiting"
 	OktaIDaaSRateLimitAdminNotificationSettings       = "okta_rate_limit_admin_notification_settings"
 	OktaIDaaSRateLimitWarningThresholdPercentage      = "okta_rate_limit_warning_threshold_percentage"
@@ -123,10 +126,14 @@ const (
 	OktaIDaaSUserGroupMemberships                     = "okta_user_group_memberships"
 	OktaIDaaSUserProfileMappingSource                 = "okta_user_profile_mapping_source"
 	OktaIDaaSUsers                                    = "okta_users"
+	OktaIDaaSAPIServiceIntegration                    = "okta_api_service_integration"
 	OktaIDaaSUserSchemaProperty                       = "okta_user_schema_property"
 	OktaIDaaSUserSecurityQuestions                    = "okta_user_security_questions"
 	OktaIDaaSUserType                                 = "okta_user_type"
+	OktaIDaaSSecurityEventsProvider                   = "okta_security_events_provider"
+	OktaIDaaSDevice                                   = "okta_device"
 	OktaIDaaSHookKey                                  = "okta_hook_key"
+	OktaIDaaSUISchema                                 = "okta_ui_schema"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"

@@ -114,7 +114,6 @@ func (r *reviewResource) Create(ctx context.Context, req resource.CreateRequest,
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
 		Execute()
-
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reassigning reviews",
@@ -190,7 +189,6 @@ func (r *reviewResource) Update(ctx context.Context, req resource.UpdateRequest,
 		ReassignReviews(ctx, data.CampaignId.ValueString()).
 		ReviewsReassign(request).
 		Execute()
-
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reassigning reviews",

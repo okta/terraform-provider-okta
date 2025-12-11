@@ -1,5 +1,42 @@
 # Changelog
 
+## 6.5.2 (December 09, 2025)
+
+### BUG FIXES
+* Fix creating new DPoP tokens in every retries [#2585](https://github.com/okta/terraform-provider-okta/pull/2585) by [pranav-okta](https://github.com/pranav-okta)
+
+## 6.5.1 (November 25, 2025)
+
+**BUG FIXES** 
+* Use mutex locks in okta_app_signon_policy_rule to address intermittent HTTP 500 errors [#2571](https://github.com/okta/terraform-provider-okta/pull/2571) by [pranav-okta](https://github.com/pranav-okta).
+* Fixed error during import of okta_group_owner [#2454](https://github.com/okta/terraform-provider-okta/pull/2454) by [exitcode0](https://github.com/exitcode0).
+* Added frontchannel_logout_uri, participate_slo attributes to okta_app_oauth [#2557](https://github.com/okta/terraform-provider-okta/pull/2557) by [pranav-okta](https://github.com/pranav-okta).
+* risk_level, risc_level will not be set to default value if neither of the fields are specified in Terraform configuration [#2494](https://github.com/okta/terraform-provider-okta/pull/2494) by [ohookins](https://github.com/ohookins).
+* Updated app_features.md to document okta_app_features is only supported on a limited subset of OIN applications [#2565](https://github.com/okta/terraform-provider-okta/pull/2565) by [exitcode0](https://github.com/exitcode0).
+
+## 6.5.0 (November 13, 2025)
+
+### FEATURE
+* New resource and data source `okta_device` to manage devices [#2533](https://github.com/okta/terraform-provider-okta/pull/2533) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_security_events_provider` to manage SSF Receiver [#2533](https://github.com/okta/terraform-provider-okta/pull/2533) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_hook_key` to manage JSON Web Keys (JWK) used with other parts of the application [#2537](https://github.com/okta/terraform-provider-okta/pull/2537) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* New resource and data source `okta_push_provider` to manage push provider configurations [#2538](https://github.com/okta/terraform-provider-okta/pull/2538) by [aditya-okta](https://github.com/aditya-okta).
+* New data source `okta_auth_server_clients` to manage tokens issued by an authorization server for a particular client [#2540](https://github.com/okta/terraform-provider-okta/pull/2540) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* New resource and data source `okta_app_connection` to configure connections to an app [#2542](https://github.com/okta/terraform-provider-okta/pull/2542) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_app_token` manage OAuth 2.0 tokens for an app [#2546](https://github.com/okta/terraform-provider-okta/pull/2546) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_app_feature` to configure app provisioning feature settings [#2549](https://github.com/okta/terraform-provider-okta/pull/2549) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_api_token` to manage SSWS API tokens for your organisation [#2250](https://github.com/okta/terraform-provider-okta/pull/2550) by [aditya-okta](https://github.com/aditya-okta).
+* New data source `okta_auth_server_keys` to retrieve JSON Web Key credentials for the given authServerId [#2551](https://github.com/okta/terraform-provider-okta/pull/2551) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Add support for Okta SDK Golang V6.0.0 [#2553](https://github.com/okta/terraform-provider-okta/pull/2553) by [pranav-okta](https://github.com/pranav-okta).
+
+
+### BUG FIXES
+* Fix error when creating attributes in resource `okta_app_user_schema_property` [#2548](https://github.com/okta/terraform-provider-okta/pull/2548) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix bogus changes getting reported when importing `okta_app_signon_policy` [#2554](https://github.com/okta/terraform-provider-okta/pull/2554) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix typo in document file for data source `catalog_entry_user_access_request_fields` [#2560](https://github.com/okta/terraform-provider-okta/pull/2560) by [exitcode0](https://github.com/exitcode0).
+* Fix the title of data source`okta_features` documentation [#2480](https://github.com/okta/terraform-provider-okta/pull/2480) by[teads-sylvain](https://github.com/teads-sylvain).  
+
+
 ## 6.4.0 (October 28, 2025)
 
 ### BUG FIXES

@@ -762,7 +762,7 @@ func (re *RequestExecutor) doWithRetries(ctx context.Context, req *http.Request)
 		}
 
 		// Re-authorize the request to create a new DPoP JWT and access token
-		if re.config.Okta.Client.AuthorizationMode == "PrivateKey" || re.config.Okta.Client.AuthorizationMode == "JWT" {
+		if bOff.retryCount > 0 && re.config.Okta.Client.AuthorizationMode == "PrivateKey" || re.config.Okta.Client.AuthorizationMode == "JWT" {
 			// Clear the token cache to force fresh authorization
 			// This will get a new access token and potentially a new nonce
 			re.tokenCache.Delete(AccessTokenCacheKey)
