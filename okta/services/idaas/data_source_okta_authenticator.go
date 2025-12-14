@@ -78,6 +78,30 @@ func dataSourceAuthenticator() *schema.Resource {
 				Computed:    true,
 				Description: "Username template expected by the provider.",
 			},
+			"method": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "Method-level configuration for authenticators that support it (phone_number, okta_verify, custom_otp).",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The authentication method type.",
+						},
+						"status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The method status: ACTIVE or INACTIVE.",
+						},
+						"settings": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Method-specific settings as a JSON string.",
+						},
+					},
+				},
+			},
 		},
 		Description: "Get an authenticator by key, name of ID.",
 	}
@@ -184,6 +208,18 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 			}
 		}
 	}
+
+	// Fetch and set method information for supported authenticators
+	authKey := authenticator.GetKey()
+	if supportsAuthenticatorMethods(authKey) {
+		methods, methodsErr := listAuthenticatorMethodsV6(ctx, client, d.Id(), meta)
+		if methodsErr != nil {
+			logger(meta).Warn("Failed to list authenticator methods for data source", "authenticator_id", d.Id(), "error", methodsErr)
+		} else {
+			_ = d.Set("method", flattenAuthenticatorMethods(methods))
+		}
+	}
+
 	return nil
 }
 

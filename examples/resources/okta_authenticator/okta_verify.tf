@@ -12,5 +12,16 @@ resource "okta_authenticator" "okta_verify" {
     "userVerificationMethods" : ["BIOMETRICS"]
   })
   status = "ACTIVE"
+
+  # Optional: Control specific authentication methods
+  method {
+    type   = "push"
+    status = "ACTIVE"
+  }
+
+  method {
+    type   = "totp"
+    status = "ACTIVE"
+  }
 }
 
