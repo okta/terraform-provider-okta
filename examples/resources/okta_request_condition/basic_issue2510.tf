@@ -4,8 +4,8 @@ resource "okta_group" "requester" {
 }
 
 resource "okta_request_condition" "test" {
-  resource_id          = "0oaqgxmg2n2FjHLzw1d7"
-  approval_sequence_id = "68d224058c0cff364ca377e8"
+  resource_id          = "0oasp3g29b1hqkcYE1d7"
+  approval_sequence_id = "69251ae704a4d0a7fcdb870f"
   name                 = "issue-2510"
 
   access_scope_settings {

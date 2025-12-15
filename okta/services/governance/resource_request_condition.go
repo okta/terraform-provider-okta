@@ -337,6 +337,22 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	// If the request condition is active, attempt to deactivate it first.
+	// Request conditions must be INACTIVE before they can be deleted.
+	if !state.Status.IsNull() && state.Status.ValueString() == "ACTIVE" {
+		_, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.DeactivateResourceRequestConditionV2(ctx,
+			state.ResourceId.ValueString(),
+			state.Id.ValueString()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error deactivating Request condition before deletion",
+				"Could not deactivate Request condition: "+err.Error(),
+			)
+			return
+		}
+	}
+
 	// Delete API call logic
 	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
