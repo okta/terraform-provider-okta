@@ -1,6 +1,6 @@
 resource "okta_authenticator" "test1" {
 key    = "custom_app"
-name =  "TestCustomApp"
+name =  "VCRTestCustomAppAuth"
 status = "ACTIVE"
 agree_to_terms = "true"
 legacy_ignore_name = false
