@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +21,9 @@ func resourceAuthenticator() *schema.Resource {
 		UpdateContext: resourceAuthenticatorUpdate,
 		DeleteContext: resourceAuthenticatorDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceAuthenticatorImport,
 		},
+
 		Description: `~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 
 This resource allows you to configure different authenticators.
@@ -63,7 +66,7 @@ deactivated if it's not in use by any other policy.`,
 				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key`",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        utils.NormalizeDataJSON,
-				DiffSuppressFunc: utils.NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON,
+				DiffSuppressFunc: jsonSettingsDiffSuppressConfiguredFields,
 			},
 			"provider_json": {
 				Type:             schema.TypeString,
@@ -169,9 +172,9 @@ deactivated if it's not in use by any other policy.`,
 				Description: "Name does not trigger change detection (legacy behavior)",
 			},
 			"method": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Configuration block for authenticator methods. Only applicable for authenticators that support multiple methods (e.g., `phone_number`, `okta_verify`)",
+				Description: "Configuration block for authenticator methods. Only applicable for authenticators that support multiple methods (e.g., `phone_number`, `okta_verify`). Each method type can only be specified once.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
@@ -190,15 +193,9 @@ deactivated if it's not in use by any other policy.`,
 							Optional:         true,
 							Description:      "Method-specific settings in JSON format. Required settings vary by method type. See Okta API documentation for details",
 							ValidateDiagFunc: stringIsJSON,
-							StateFunc:        utils.NormalizeDataJSON,
-							DiffSuppressFunc: utils.NoChangeInObjectFromUnmarshaledJSON,
+							DiffSuppressFunc: methodSettingsDiffSuppress,
 						},
 					},
-				},
-				Set: func(i interface{}) int {
-					// Hash function for TypeSet - use method type as unique identifier
-					m := i.(map[string]interface{})
-					return schema.HashString(m["type"].(string))
 				},
 			},
 		},
@@ -289,7 +286,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 	// Manage authenticator methods if specified and supported
 	if supportsAuthenticatorMethods(d.Get("key").(string)) {
 		if _, ok := d.GetOk("method"); ok {
-			desiredMethods := getMethodsFromSchema(d)
+			desiredMethods := getMethodsFromSchema(d, meta)
 			if len(desiredMethods) > 0 {
 				if err := syncAuthenticatorMethods(ctx, client, d.Id(), desiredMethods, meta); err != nil {
 					return diag.Errorf("failed to sync authenticator methods: %v", err)
@@ -314,14 +311,18 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 	defer resp.Body.Close()
 
-	// Read authenticator methods if supported
+	// Read authenticator methods if supported and configured
 	if supportsAuthenticatorMethods(authenticator.GetKey()) {
-		methods, err := listAuthenticatorMethodsV6(ctx, client, d.Id(), meta)
-		if err != nil {
-			logger(meta).Warn(fmt.Sprintf("Failed to list authenticator methods: %v", err))
-		} else if len(methods) > 0 {
-			if err := d.Set("method", flattenAuthenticatorMethods(methods)); err != nil {
-				return diag.Errorf("failed to set method: %v", err)
+		// Only read methods if they are configured in the schema
+		if _, ok := d.GetOk("method"); ok {
+			methods, err := listAuthenticatorMethodsV6(ctx, client, d.Id(), meta)
+			if err != nil {
+				logger(meta).Warn(fmt.Sprintf("Failed to list authenticator methods: %v", err))
+			} else if len(methods) > 0 {
+				methodList := flattenAuthenticatorMethods(methods)
+				if err := d.Set("method", methodList); err != nil {
+					return diag.Errorf("failed to set method: %v", err)
+				}
 			}
 		}
 	}
@@ -368,12 +369,13 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, me
 		}
 	}
 
-	// Handle method changes if supported
-	if d.HasChange("method") && supportsAuthenticatorMethods(d.Get("key").(string)) {
-		desiredMethods := getMethodsFromSchema(d)
+	// Sync authenticator methods if they changed
+	// TypeList properly detects changes to nested properties (unlike TypeSet)
+	if supportsAuthenticatorMethods(d.Get("key").(string)) && d.HasChange("method") {
+		desiredMethods := getMethodsFromSchema(d, meta)
 		if len(desiredMethods) > 0 {
 			if err := syncAuthenticatorMethods(ctx, client, d.Id(), desiredMethods, meta); err != nil {
-				return diag.Errorf("failed to sync authenticator methods during update: %v", err)
+				return diag.Errorf("failed to sync authenticator methods: %v", err)
 			}
 		}
 	}
@@ -400,6 +402,69 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	return nil
+}
+
+// jsonSettingsDiffSuppressConfiguredFields compares JSON settings but only validates fields present in the config (new value).
+// This allows the API to return additional fields without causing a diff.
+// If settings are not configured (newJSON is empty), API-returned settings are ignored.
+func jsonSettingsDiffSuppressConfiguredFields(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	// If settings not configured, ignore whatever API returns
+	if newJSON == "" {
+		return true
+	}
+
+	// If settings configured but API returns nothing, that's a problem
+	if oldJSON == "" {
+		return false
+	}
+
+	var oldObj map[string]interface{}
+	var newObj map[string]interface{}
+
+	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
+		return false
+	}
+
+	// Compare only fields that exist in newObj (config)
+	for key, newValue := range newObj {
+		oldValue, exists := oldObj[key]
+		if !exists {
+			return false // Config has a field that API doesn't
+		}
+		if !reflect.DeepEqual(oldValue, newValue) {
+			return false // Values differ
+		}
+	}
+
+	return true
+}
+
+// methodSettingsDiffSuppress is an alias for method-level settings
+func methodSettingsDiffSuppress(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	return jsonSettingsDiffSuppressConfiguredFields(k, oldJSON, newJSON, d)
+}
+
+func resourceAuthenticatorImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// During import, we need to read the authenticator and its methods
+	// Set a temporary marker to indicate we're importing - use a dummy method
+	dummyMethod := map[string]interface{}{
+		"type":   "_import_",
+		"status": "ACTIVE",
+	}
+	if err := d.Set("method", []interface{}{dummyMethod}); err != nil {
+		return nil, err
+	}
+
+	// Call the standard Read function
+	diags := resourceAuthenticatorRead(ctx, d, meta)
+	if diags.HasError() {
+		return nil, fmt.Errorf("failed to read authenticator: %v", diags)
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func findAuthenticatorV6(ctx context.Context, client *v6okta.APIClient, name, key string) (*v6okta.AuthenticatorBase, error) {
@@ -535,8 +600,7 @@ func validateAuthenticatorV6(d *schema.ResourceData, meta interface{}) error {
 				"'provider_auth_port', 'provider_shared_secret' and 'provider_user_name_template' are required", typ)
 		}
 	default:
-		logger(meta).Debug("Authenticator type using standard validation",
-			"authenticator_type", typ)
+		// Standard validation - no special handling needed
 	}
 
 	// Validate provider-specific requirements
@@ -597,8 +661,7 @@ func establishAuthenticatorV6(authenticator *v6okta.AuthenticatorBase, d *schema
 					case "security_key":
 						extractSecurityKeyConfig(config, d)
 					default:
-						logger(meta).Debug("Authenticator type using standard configuration extraction",
-							"authenticator_type", authenticator.GetType())
+						// Standard configuration extraction - no special handling needed
 					}
 
 					// Extract configuration based on provider type
@@ -724,15 +787,26 @@ func supportsAuthenticatorMethods(key string) bool {
 }
 
 // getMethodsFromSchema extracts method blocks from Terraform schema
-func getMethodsFromSchema(d *schema.ResourceData) []authenticatorMethod {
+func getMethodsFromSchema(d *schema.ResourceData, meta interface{}) []authenticatorMethod {
 	var methods []authenticatorMethod
 
-	if methodSet, ok := d.GetOk("method"); ok {
-		for _, m := range methodSet.(*schema.Set).List() {
+	if methodList, ok := d.GetOk("method"); ok {
+		methodSlice := methodList.([]interface{})
+
+		for _, m := range methodSlice {
 			methodMap := m.(map[string]interface{})
+			methodType := methodMap["type"].(string)
+
+			// Skip methods with empty type
+			if methodType == "" {
+				continue
+			}
+
+			status := methodMap["status"].(string)
+
 			method := authenticatorMethod{
-				Type:   methodMap["type"].(string),
-				Status: methodMap["status"].(string),
+				Type:   methodType,
+				Status: status,
 			}
 
 			// Parse settings if present
@@ -781,6 +855,8 @@ func listAuthenticatorMethodsV6(ctx context.Context, client *v6okta.APIClient, a
 			method.Status = s
 		}
 		if settings, ok := methodMap["settings"].(map[string]interface{}); ok {
+			// Normalize certain API values to match validation expectations
+			normalizeMethodSettings(settings)
 			method.Settings = settings
 		}
 
@@ -788,6 +864,19 @@ func listAuthenticatorMethodsV6(ctx context.Context, client *v6okta.APIClient, a
 	}
 
 	return methods, nil
+}
+
+// normalizeMethodSettings normalizes API response values to match validation expectations
+func normalizeMethodSettings(settings map[string]interface{}) {
+	// Normalize encoding to lowercase (API may return "Base32" but validation expects "base32")
+	if encoding, ok := settings["encoding"].(string); ok {
+		settings["encoding"] = strings.ToLower(encoding)
+	}
+
+	// Normalize protocol to uppercase (for consistency)
+	if protocol, ok := settings["protocol"].(string); ok {
+		settings["protocol"] = strings.ToUpper(protocol)
+	}
 }
 
 // syncAuthenticatorMethods manages method activation/deactivation and settings
@@ -802,11 +891,6 @@ func syncAuthenticatorMethods(ctx context.Context, client *v6okta.APIClient, aut
 	currentMethodMap := make(map[string]authenticatorMethod)
 	for _, m := range currentMethods {
 		currentMethodMap[m.Type] = m
-	}
-
-	desiredMethodMap := make(map[string]authenticatorMethod)
-	for _, m := range desiredMethods {
-		desiredMethodMap[m.Type] = m
 	}
 
 	// Process each desired method
@@ -863,7 +947,6 @@ func activateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClient
 	}
 	defer resp.Body.Close()
 
-	logger(meta).Info(fmt.Sprintf("Activated method %s for authenticator %s", methodType, authenticatorId))
 	return nil
 }
 
@@ -875,7 +958,6 @@ func deactivateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClie
 	}
 	defer resp.Body.Close()
 
-	logger(meta).Info(fmt.Sprintf("Deactivated method %s for authenticator %s", methodType, authenticatorId))
 	return nil
 }
 
@@ -895,7 +977,6 @@ func updateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClient, 
 	}
 	defer resp.Body.Close()
 
-	logger(meta).Info(fmt.Sprintf("Updated settings for method %s on authenticator %s", methodType, authenticatorId))
 	return nil
 }
 
@@ -908,6 +989,8 @@ func flattenAuthenticatorMethods(methods []authenticatorMethod) []interface{} {
 		m["type"] = method.Type
 		m["status"] = method.Status
 
+		// Only include settings if they exist and are non-empty
+		// This prevents the API from adding default settings that weren't configured
 		if method.Settings != nil && len(method.Settings) > 0 {
 			settingsBytes, err := json.Marshal(method.Settings)
 			if err == nil {
@@ -923,7 +1006,7 @@ func flattenAuthenticatorMethods(methods []authenticatorMethod) []interface{} {
 
 // validateAuthenticatorMethods validates method blocks for an authenticator
 func validateAuthenticatorMethods(d *schema.ResourceData, key string, meta interface{}) error {
-	methodSet, ok := d.GetOk("method")
+	methodList, ok := d.GetOk("method")
 	if !ok {
 		// No methods defined, validation passes
 		return nil
@@ -934,9 +1017,9 @@ func validateAuthenticatorMethods(d *schema.ResourceData, key string, meta inter
 		return fmt.Errorf("authenticator with key '%s' does not support method blocks. Only 'phone_number', 'okta_verify', and 'custom_otp' authenticators support methods", key)
 	}
 
-	methods := methodSet.(*schema.Set).List()
+	methods := methodList.([]interface{})
 	if len(methods) == 0 {
-		// Empty method set, validation passes
+		// Empty method list, validation passes
 		return nil
 	}
 
@@ -960,7 +1043,12 @@ func validateAuthenticatorMethods(d *schema.ResourceData, key string, meta inter
 		methodType := methodMap["type"].(string)
 		methodStatus := methodMap["status"].(string)
 
-		// Check for duplicate method types (should be prevented by Set, but double-check)
+		// Skip empty types (can happen during TypeSet diff operations when hash function includes status)
+		if methodType == "" {
+			continue
+		}
+
+		// Check for duplicate method types (TypeList allows duplicates, so we need to validate)
 		if seenTypes[methodType] {
 			return fmt.Errorf("duplicate method type '%s' found. Each method type can only be specified once", methodType)
 		}
@@ -1072,7 +1160,6 @@ func validateMethodSettings(authenticatorKey, methodType string, settings map[st
 
 	case "phone_number":
 		// Phone methods (sms, voice) typically don't have complex settings to validate
-		logger(meta).Debug(fmt.Sprintf("No specific settings validation for phone method '%s'", methodType))
 	}
 
 	return nil

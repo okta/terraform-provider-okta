@@ -1,6 +1,6 @@
 # Phone authenticator with method-level control
-resource "okta_authenticator" "phone" {
-  name = "Phone Authentication"
+resource "okta_authenticator" "test" {
+  name = "Phone"
   key  = "phone_number"
 
   # Enable SMS method

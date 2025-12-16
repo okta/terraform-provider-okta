@@ -1,5 +1,5 @@
 # Okta Verify with specific methods enabled
-resource "okta_authenticator" "okta_verify" {
+resource "okta_authenticator" "test" {
   name = "Okta Verify"
   key  = "okta_verify"
 
@@ -15,13 +15,13 @@ resource "okta_authenticator" "okta_verify" {
     status = "ACTIVE"
   }
 
-  # Disable signed nonce with specific settings
+  # Enable signed nonce with specific settings
   method {
     type   = "signed_nonce"
-    status = "INACTIVE"
+    status = "ACTIVE"
     settings = jsonencode({
-      "algorithms" : ["ES256", "ES384", "RS256"],
-      "keyProtection" : "HARDWARE"
+      "algorithms" : ["ES256", "RS256"],
+      "keyProtection" : "ANY"
     })
   }
 }
