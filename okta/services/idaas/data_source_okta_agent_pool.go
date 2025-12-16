@@ -2,8 +2,6 @@ package idaas
 
 import (
 	"context"
-	"time"
-
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -191,16 +189,17 @@ func (d *agentPoolDataSource) Read(ctx context.Context, req datasource.ReadReque
 			ID: types.StringValue(agentItem.GetId()),
 		}
 		agent.Agent = Agent{}
-		agent.Agent.IsHidden = types.BoolValue(agentItem.GetIsHidden())
-		agent.Agent.IsLatestGAedVersion = types.BoolValue(agentItem.GetIsLatestGAedVersion())
-		agent.Agent.LastConnection = types.StringValue(agentItem.GetLastConnection().Format(time.RFC3339))
-		agent.Agent.Name = types.StringValue(agentItem.GetName())
-		agent.Agent.OperationalStatus = types.StringValue(agentItem.GetOperationalStatus())
+		//agent.Agent.IsHidden = types.BoolValue(agentItem.GetIsHidden())
+		//agent.Agent.IsLatestGAedVersion = types.BoolValue(agentItem.GetIsLatestGAedVersion())
+		//agent.Agent.LastConnection = types.StringValue(agentItem.GetLastConnection().Format(time.RFC3339))
+		//agent.Agent.Name = types.StringValue(agentItem.GetName())
+		//agent.Agent.OperationalStatus = types.StringValue(agentItem.GetOperationalStatus())
 		agent.Agent.PoolId = types.StringValue(agentItem.GetPoolId())
-		agent.Agent.Type = types.StringValue(agentItem.GetType())
-		agent.Agent.UpdateMessage = types.StringValue(agentItem.GetUpdateMessage())
-		agent.Agent.UpdateStatus = types.StringValue(agentItem.GetUpdateStatus())
-		agent.Agent.Version = types.StringValue(agentItem.GetVersion())
+		agent.ID = types.StringValue(agentItem.GetId())
+		//agent.Agent.Type = types.StringValue(agentItem.GetType())
+		//agent.Agent.UpdateMessage = types.StringValue(agentItem.GetUpdateMessage())
+		//agent.Agent.UpdateStatus = types.StringValue(agentItem.GetUpdateStatus())
+		//agent.Agent.Version = types.StringValue(agentItem.GetVersion())
 
 		agents = append(agents, agent)
 	}
