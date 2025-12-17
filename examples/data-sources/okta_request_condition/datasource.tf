@@ -11,5 +11,5 @@ resource "okta_request_condition" "test" {
 }
 data "okta_request_condition" "test" {
   id          = okta_request_condition.test.id
-  resource_id          = "0oasp3g29b1hqkcYE1d7"
+  resource_id = "0oasp3g29b1hqkcYE1d7"
 }

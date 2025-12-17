@@ -49,13 +49,43 @@ func resourceDataForTest(t *testing.T, s map[string]*schema_sdk.Schema) *schema_
 	emptyConfigMap := map[string]interface{}{}
 	d := schema_sdk.TestResourceDataRaw(t, s, emptyConfigMap)
 
-	if len(configValues) > 0 {
-		for k, v := range configValues {
-			if err := d.Set(k, v); err != nil {
-				t.Fatalf("Failed to set %s: %v", k, err)
-			}
+	// Set each config value explicitly with string literal keys (required by tfproviderlint R001)
+	if v, ok := configValues["org_name"]; ok {
+		if err := d.Set("org_name", v); err != nil {
+			t.Fatalf("Failed to set org_name: %v", err)
 		}
 	}
+	if v, ok := configValues["base_url"]; ok {
+		if err := d.Set("base_url", v); err != nil {
+			t.Fatalf("Failed to set base_url: %v", err)
+		}
+	}
+	if v, ok := configValues["api_token"]; ok {
+		if err := d.Set("api_token", v); err != nil {
+			t.Fatalf("Failed to set api_token: %v", err)
+		}
+	}
+	if v, ok := configValues["client_id"]; ok {
+		if err := d.Set("client_id", v); err != nil {
+			t.Fatalf("Failed to set client_id: %v", err)
+		}
+	}
+	if v, ok := configValues["scopes"]; ok {
+		if err := d.Set("scopes", v); err != nil {
+			t.Fatalf("Failed to set scopes: %v", err)
+		}
+	}
+	if v, ok := configValues["private_key"]; ok {
+		if err := d.Set("private_key", v); err != nil {
+			t.Fatalf("Failed to set private_key: %v", err)
+		}
+	}
+	if v, ok := configValues["private_key_id"]; ok {
+		if err := d.Set("private_key_id", v); err != nil {
+			t.Fatalf("Failed to set private_key_id: %v", err)
+		}
+	}
+
 	return d
 }
 
