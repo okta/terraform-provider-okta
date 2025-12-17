@@ -114,7 +114,14 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 			"created_by":      schema.StringAttribute{Computed: true, Description: "The id of the Okta user who created the resource."},
 			"last_updated":    schema.StringAttribute{Computed: true, Description: "The ISO 8601 formatted date and time when the object was last updated."},
 			"last_updated_by": schema.StringAttribute{Computed: true, Description: "The id of the Okta user who last updated the object."},
-			"status":          schema.StringAttribute{Computed: true, Description: "Status indicates if this condition is active or not. Default status is INACTIVE"},
+			"status": schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Status of the condition. Valid values: ACTIVE, INACTIVE. Default is INACTIVE.",
+				Validators: []validator.String{
+					stringvalidator.OneOf("ACTIVE", "INACTIVE"),
+				},
+			},
 		},
 		Blocks: map[string]schema.Block{
 			"access_scope_settings": schema.SingleNestedBlock{
@@ -196,6 +203,21 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// Activate the condition if status is set to ACTIVE
+	if !data.Status.IsNull() && data.Status.ValueString() == "ACTIVE" {
+		requestConditionResp, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.ActivateResourceRequestConditionV2(ctx,
+			data.ResourceId.ValueString(),
+			requestConditionResp.GetId()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error activating Request condition",
+				"Could not activate Request condition after creation: "+err.Error(),
+			)
+			return
+		}
+	}
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -257,6 +279,40 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	// Handle status changes
+	if !data.Status.IsNull() && !state.Status.IsNull() {
+		oldStatus := state.Status.ValueString()
+		newStatus := data.Status.ValueString()
+
+		if oldStatus != newStatus {
+			if newStatus == "ACTIVE" {
+				updatedRequestCondition, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
+					RequestConditionsAPI.ActivateResourceRequestConditionV2(ctx,
+					data.ResourceId.ValueString(),
+					state.Id.ValueString()).Execute()
+				if err != nil {
+					resp.Diagnostics.AddError(
+						"Error activating Request condition",
+						"Could not activate Request condition: "+err.Error(),
+					)
+					return
+				}
+			} else if newStatus == "INACTIVE" {
+				updatedRequestCondition, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
+					RequestConditionsAPI.DeactivateResourceRequestConditionV2(ctx,
+					data.ResourceId.ValueString(),
+					state.Id.ValueString()).Execute()
+				if err != nil {
+					resp.Diagnostics.AddError(
+						"Error deactivating Request condition",
+						"Could not deactivate Request condition: "+err.Error(),
+					)
+					return
+				}
+			}
+		}
+	}
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, updatedRequestCondition)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -279,6 +335,22 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	// If the request condition is active, attempt to deactivate it first.
+	// Request conditions must be INACTIVE before they can be deleted.
+	if !state.Status.IsNull() && state.Status.ValueString() == "ACTIVE" {
+		_, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.DeactivateResourceRequestConditionV2(ctx,
+			state.ResourceId.ValueString(),
+			state.Id.ValueString()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error deactivating Request condition before deletion",
+				"Could not deactivate Request condition: "+err.Error(),
+			)
+			return
+		}
 	}
 
 	// Delete API call logic
