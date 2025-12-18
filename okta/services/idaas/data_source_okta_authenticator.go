@@ -239,7 +239,11 @@ func findAuthenticatorDataSource(ctx context.Context, client *v6okta.APIClient, 
 			continue
 		}
 
-		if key != "custom_otp" {
+		if key == "custom_app" {
+			if authenticator.GetName() == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
+				return &authenticator, nil // TODO: update condition to include custom_otp as there can be more than 1 custom_otp type authenticator.
+			}
+		} else if key != "custom_otp" {
 			if authenticator.GetName() == name {
 				return &authenticator, nil
 			}
@@ -257,5 +261,5 @@ func findAuthenticatorDataSource(ctx context.Context, client *v6okta.APIClient, 
 	if key != "" {
 		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
 	}
-	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name)
+	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name) // authenticator names must be unique.
 }
