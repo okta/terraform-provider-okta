@@ -245,13 +245,22 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 					return diag.FromErr(err)
 				}
 
-				// Update OTP method settings using ReplaceAuthenticatorMethod
-				methodBytes, _ := json.Marshal(map[string]interface{}{
+				// Build method payload with type and settings
+				methodPayload := map[string]interface{}{
 					"type":     "otp",
 					"settings": settingsMap,
-				})
+				}
 
-				methodReq := client.AuthenticatorAPI.ReplaceAuthenticatorMethod(ctx, authenticator.GetId(), "otp")
+				// Marshal to JSON and unmarshal into the union type
+				methodBytes, _ := json.Marshal(methodPayload)
+				var methodUnion v6okta.ListAuthenticatorMethods200ResponseInner
+				if err := json.Unmarshal(methodBytes, &methodUnion); err != nil {
+					return diag.FromErr(err)
+				}
+
+				// Update OTP method settings using ReplaceAuthenticatorMethod
+				methodReq := client.AuthenticatorAPI.ReplaceAuthenticatorMethod(ctx, authenticator.GetId(), "otp").
+					ListAuthenticatorMethods200ResponseInner(methodUnion)
 				_, methodResp, err := methodReq.Execute()
 				if err != nil {
 					logger(meta).Warn(fmt.Sprintf("Failed to set OTP settings: %v, request body: %s", err, string(methodBytes)))
@@ -319,7 +328,7 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 			if err != nil {
 				logger(meta).Warn(fmt.Sprintf("Failed to list authenticator methods: %v", err))
 			} else if len(methods) > 0 {
-				methodList := flattenAuthenticatorMethods(methods)
+				methodList := flattenAuthenticatorMethods(methods, d)
 				if err := d.Set("method", methodList); err != nil {
 					return diag.Errorf("failed to set method: %v", err)
 				}
@@ -877,6 +886,11 @@ func normalizeMethodSettings(settings map[string]interface{}) {
 	if protocol, ok := settings["protocol"].(string); ok {
 		settings["protocol"] = strings.ToUpper(protocol)
 	}
+
+	// Normalize algorithm to uppercase (API may return different casing)
+	if algorithm, ok := settings["algorithm"].(string); ok {
+		settings["algorithm"] = strings.ToUpper(algorithm)
+	}
 }
 
 // syncAuthenticatorMethods manages method activation/deactivation and settings
@@ -963,16 +977,30 @@ func deactivateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClie
 
 // updateAuthenticatorMethodV6 updates method settings
 func updateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClient, authenticatorId, methodType string, settings map[string]interface{}, meta interface{}) error {
-	// Build the method payload
+	// Build the method payload with type and settings
 	methodPayload := map[string]interface{}{
 		"type":     methodType,
 		"settings": settings,
 	}
 
-	methodReq := client.AuthenticatorAPI.ReplaceAuthenticatorMethod(ctx, authenticatorId, methodType)
+	// Marshal to JSON and unmarshal into the union type
+	// The SDK will automatically pick the right type based on the "type" discriminator
+	methodBytes, err := json.Marshal(methodPayload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal method payload: %v", err)
+	}
+
+	var methodUnion v6okta.ListAuthenticatorMethods200ResponseInner
+	if err := json.Unmarshal(methodBytes, &methodUnion); err != nil {
+		return fmt.Errorf("failed to unmarshal method payload: %v", err)
+	}
+
+	// Send the request with the properly typed payload
+	methodReq := client.AuthenticatorAPI.ReplaceAuthenticatorMethod(ctx, authenticatorId, methodType).
+		ListAuthenticatorMethods200ResponseInner(methodUnion)
+
 	_, resp, err := methodReq.Execute()
 	if err != nil {
-		methodBytes, _ := json.Marshal(methodPayload)
 		return fmt.Errorf("failed to update method %s settings: %v, payload: %s", methodType, err, string(methodBytes))
 	}
 	defer resp.Body.Close()
@@ -981,17 +1009,32 @@ func updateAuthenticatorMethodV6(ctx context.Context, client *v6okta.APIClient, 
 }
 
 // flattenAuthenticatorMethods converts API methods to Terraform state format
-func flattenAuthenticatorMethods(methods []authenticatorMethod) []interface{} {
+func flattenAuthenticatorMethods(methods []authenticatorMethod, d *schema.ResourceData) []interface{} {
 	result := make([]interface{}, 0, len(methods))
+
+	// Build a map of which methods have settings configured
+	configuredMethodSettings := make(map[string]bool)
+	if methodList, ok := d.GetOk("method"); ok {
+		for _, m := range methodList.([]interface{}) {
+			methodMap := m.(map[string]interface{})
+			methodType := methodMap["type"].(string)
+
+			// Check if this method has non-empty settings configured
+			if settingsStr, hasSettings := methodMap["settings"].(string); hasSettings && settingsStr != "" {
+				configuredMethodSettings[methodType] = true
+			}
+		}
+	}
 
 	for _, method := range methods {
 		m := make(map[string]interface{})
 		m["type"] = method.Type
 		m["status"] = method.Status
 
-		// Only include settings if they exist and are non-empty
-		// This prevents the API from adding default settings that weren't configured
-		if method.Settings != nil && len(method.Settings) > 0 {
+		// Only include settings if:
+		// 1. They were explicitly configured in the Terraform config, AND
+		// 2. They exist in the API response
+		if configuredMethodSettings[method.Type] && method.Settings != nil && len(method.Settings) > 0 {
 			settingsBytes, err := json.Marshal(method.Settings)
 			if err == nil {
 				m["settings"] = string(settingsBytes)

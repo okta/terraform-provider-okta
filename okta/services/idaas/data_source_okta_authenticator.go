@@ -216,7 +216,7 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 		if methodsErr != nil {
 			logger(meta).Warn("Failed to list authenticator methods for data source", "authenticator_id", d.Id(), "error", methodsErr)
 		} else {
-			_ = d.Set("method", flattenAuthenticatorMethods(methods))
+			_ = d.Set("method", flattenAuthenticatorMethods(methods, d))
 		}
 	}
 
