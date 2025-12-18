@@ -85,6 +85,11 @@ func dataSourceUser() *schema.Resource {
 				Default:     false,
 				Description: "Do not populate user roles information (prevents additional API call)",
 			},
+			"realm_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The Realm ID associated with the user.",
+			},
 		}),
 		Description: "Get a single users from Okta.",
 	}
