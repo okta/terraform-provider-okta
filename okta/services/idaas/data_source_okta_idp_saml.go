@@ -114,15 +114,27 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta int
 	d.SetId(idp.Id)
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
-	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
-	_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
-	_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
-	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
-	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
-	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
-	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+	e := idp.Protocol.Endpoints
+	if e != nil {
+		if e.Acs != nil {
+			_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+			_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+		}
+		if e.Sso != nil {
+			_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
+			_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
+			_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
+		}
+	}
+	t := idp.Protocol.Credentials.Trust
+	if t != nil {
+		_ = d.Set("kid", t.Kid)
+		_ = d.Set("issuer", t.Issuer)
+		_ = d.Set("audience", t.Audience)
+	}
+	if idp.Policy.Subject != nil {
+		_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
+	}
 	if idp.IssuerMode != "" {
 		_ = d.Set("issuer_mode", idp.IssuerMode)
 	}
