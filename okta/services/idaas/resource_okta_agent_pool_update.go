@@ -3,6 +3,9 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -11,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
-	"strings"
 )
 
 var (
@@ -37,7 +39,6 @@ func (r *agentPoolUpdateResource) Metadata(_ context.Context, req resource.Metad
 }
 
 func (r *agentPoolUpdateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	//resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 	parts := strings.Split(req.ID, "/")
 	if len(parts) != 2 {
@@ -52,25 +53,16 @@ func (r *agentPoolUpdateResource) ImportState(ctx context.Context, req resource.
 }
 
 type Agent struct {
-	ID types.String `tfsdk:"id"`
-	//IsHidden            types.Bool   `tfsdk:"is_hidden"`
-	//IsLatestGAedVersion types.Bool   `tfsdk:"is_latest_gaed_version"`
-	//LastConnection      types.String `tfsdk:"last_connection"`
-	//Name                types.String `tfsdk:"name"`
-	//OperationalStatus   types.String `tfsdk:"operational_status"`
+	ID     types.String `tfsdk:"id"`
 	PoolId types.String `tfsdk:"pool_id"`
-	//Type                types.String `tfsdk:"type"`
-	//UpdateMessage       types.String `tfsdk:"update_message"`
-	//UpdateStatus        types.String `tfsdk:"update_status"`
-	//Version             types.String `tfsdk:"version"`
 }
 
 type UpdateSchedule struct {
-	Cron     types.String `tfsdk:"cron"`
-	Delay    types.Int64  `tfsdk:"delay"`
-	Duration types.Int64  `tfsdk:"duration"`
-	//LastUpdated types.String `tfsdk:"last_updated"`
-	Timezone types.String `tfsdk:"timezone"`
+	Cron        types.String `tfsdk:"cron"`
+	Delay       types.Int32  `tfsdk:"delay"`
+	Duration    types.Int32  `tfsdk:"duration"`
+	LastUpdated types.String `tfsdk:"last_updated"`
+	Timezone    types.String `tfsdk:"timezone"`
 }
 
 type agentPoolUpdateResourceModel struct {
@@ -113,18 +105,22 @@ func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaReq
 			},
 			"enabled": schema.BoolAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"notify_admins": schema.BoolAttribute{
 				Optional: true,
 			},
 			"sort_order": schema.Int64Attribute{
 				Optional: true,
+				Computed: true,
 			},
 			"target_version": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"reason": schema.StringAttribute{
 				Optional: true,
+				Computed: true,
 			},
 			"name": schema.StringAttribute{
 				Optional:    true,
@@ -151,71 +147,39 @@ func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaReq
 						Optional:    true,
 						Description: "The schedule of the update in cron format.",
 					},
-					"delay": schema.Int64Attribute{
+					"delay": schema.Int32Attribute{
 						Optional:    true,
 						Description: "Delay in days.",
 					},
-					"duration": schema.Int64Attribute{
+					"duration": schema.Int32Attribute{
 						Optional:    true,
 						Description: "Duration in minutes.",
 					},
-					//"last_updated": schema.StringAttribute{
-					//	Optional:    true,
-					//	Description: "Timestamp when the update finished (only for a successful or failed update, not for a cancelled update). Null is returned if the job hasn't finished once yet.",
-					//},
+					"last_updated": schema.StringAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "Timestamp when the update finished (only for a successful or failed update, not for a cancelled update). Null is returned if the job hasn't finished once yet.",
+					},
 					"timezone": schema.StringAttribute{
 						Optional:    true,
 						Description: "Timezone of where the scheduled job takes place.",
 					},
 				},
 			},
-			"agents": schema.SetNestedBlock{
+			"agents": schema.ListNestedBlock{
 				Description: "The agents associated with the agent pool update.",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Required: true,
+							Optional:    true,
+							Computed:    true,
+							Description: "The unique identifier of the agent.",
 						},
-						//"is_hidden": schema.BoolAttribute{
-						//	Optional:    true,
-						//	Description: "Determines if an agent is hidden from the Admin Console.",
-						//},
-						//"is_latest_gaed_version": schema.BoolAttribute{
-						//	Optional:    true,
-						//	Description: "Determines if the agent is on the latest generally available version.",
-						//},
-						//"last_connection": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Timestamp when the agent last connected to Okta.",
-						//},
-						//"name": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "The name of the agent pool update.",
-						//},
-						//"operational_status": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Operational status of a given agent.",
-						//},
 						"pool_id": schema.StringAttribute{
-							Required:    true,
+							Optional:    true,
+							Computed:    true,
 							Description: "Pool ID.",
 						},
-						//"type": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Agent types that are being monitored.",
-						//},
-						//"update_message": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Status message of the agent.",
-						//},
-						//"update_status": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Status for one agent regarding the status to auto-update that agent.",
-						//},
-						//"version": schema.StringAttribute{
-						//	Optional:    true,
-						//	Description: "Agent version number.",
-						//},
 					},
 				},
 			},
@@ -365,12 +329,12 @@ func buildCreateRequest(plan agentPoolUpdateResourceModel) v6okta.AgentPoolUpdat
 		}
 
 		if !plan.Schedule.Delay.IsNull() {
-			delay := int32(plan.Schedule.Delay.ValueInt64())
+			delay := int32(plan.Schedule.Delay.ValueInt32())
 			schedule.Delay = &delay
 		}
 
 		if !plan.Schedule.Duration.IsNull() {
-			duration := int32(plan.Schedule.Duration.ValueInt64())
+			duration := int32(plan.Schedule.Duration.ValueInt32())
 			schedule.Duration = &duration
 		}
 
@@ -388,40 +352,6 @@ func buildCreateRequest(plan agentPoolUpdateResourceModel) v6okta.AgentPoolUpdat
 			apiAgent := v6okta.Agent{}
 			apiAgent.Id = agent.ID.ValueStringPointer()
 			apiAgent.PoolId = agent.PoolId.ValueStringPointer()
-			//if !agent.Name.IsNull() {
-			//	apiAgent.Name = agent.Name.ValueStringPointer()
-			//}
-			//if !agent.Type.IsNull() {
-			//	apiAgent.Type = agent.Type.ValueStringPointer()
-			//}
-			//if !agent.PoolId.IsNull() {
-			//	apiAgent.PoolId = agent.PoolId.ValueStringPointer()
-			//}
-			//if !agent.Version.IsNull() {
-			//	apiAgent.Version = agent.Version.ValueStringPointer()
-			//}
-			//if !agent.UpdateStatus.IsNull() {
-			//	apiAgent.UpdateStatus = agent.UpdateStatus.ValueStringPointer()
-			//}
-			//if !agent.UpdateMessage.IsNull() {
-			//	apiAgent.UpdateMessage = agent.UpdateMessage.ValueStringPointer()
-			//}
-			//if !agent.OperationalStatus.IsNull() {
-			//	apiAgent.OperationalStatus = agent.OperationalStatus.ValueStringPointer()
-			//}
-			//if !agent.IsLatestGAedVersion.IsNull() {
-			//	apiAgent.IsLatestGAedVersion = agent.IsLatestGAedVersion.ValueBoolPointer()
-			//}
-			//if !agent.IsHidden.IsNull() {
-			//	apiAgent.IsHidden = agent.IsHidden.ValueBoolPointer()
-			//}
-			//if !agent.LastConnection.IsNull() && !agent.LastConnection.IsUnknown() {
-			//	t, err := time.Parse(time.RFC3339, agent.LastConnection.ValueString())
-			//	if err == nil {
-			//		apiAgent.LastConnection = &t
-			//	}
-			//}
-
 			agents[i] = apiAgent
 		}
 		req.Agents = agents
@@ -439,20 +369,20 @@ func mapResponseToState(resp *v6okta.AgentPoolUpdate, state *agentPoolUpdateReso
 	state.ID = types.StringValue(resp.GetId())
 	state.Name = types.StringValue(resp.GetName())
 	state.AgentType = types.StringValue(resp.GetAgentType())
-	//state.Enabled = types.BoolValue(resp.GetEnabled())
+	state.Enabled = types.BoolValue(resp.GetEnabled())
 	state.NotifyAdmins = types.BoolValue(resp.GetNotifyAdmin())
-	//state.Reason = types.StringValue(resp.GetReason())
-	//state.SortOrder = types.Int64Value(int64(resp.GetSortOrder()))
-	//state.TargetVersion = types.StringValue(resp.GetTargetVersion())
+	state.Reason = types.StringValue(resp.GetReason())
+	state.SortOrder = types.Int64Value(int64(resp.GetSortOrder()))
+	state.TargetVersion = types.StringValue(resp.GetTargetVersion())
 	state.Status = types.StringValue(resp.GetStatus())
 
 	// Handle Schedule
 	if resp.Schedule != nil {
 		schedule := &UpdateSchedule{}
 		schedule.Cron = types.StringValue(resp.Schedule.GetCron())
-		schedule.Delay = types.Int64Value(int64(resp.Schedule.GetDelay()))
-		schedule.Duration = types.Int64Value(int64(resp.Schedule.GetDuration()))
-		//schedule.LastUpdated = types.StringValue(resp.Schedule.GetLastUpdated().Format(time.RFC3339))
+		schedule.Delay = types.Int32Value((resp.Schedule.GetDelay()))
+		schedule.Duration = types.Int32Value((resp.Schedule.GetDuration()))
+		schedule.LastUpdated = types.StringValue(resp.Schedule.GetLastUpdated().Format(time.RFC3339))
 		schedule.Timezone = types.StringValue(resp.Schedule.GetTimezone())
 		state.Schedule = schedule
 	}
@@ -463,20 +393,9 @@ func mapResponseToState(resp *v6okta.AgentPoolUpdate, state *agentPoolUpdateReso
 		for i, agent := range resp.Agents {
 			tfAgent := Agent{}
 			tfAgent.ID = types.StringValue(agent.GetId())
-			//tfAgent.IsHidden = types.BoolValue(agent.GetIsHidden())
-			//tfAgent.IsLatestGAedVersion = types.BoolValue(agent.GetIsLatestGAedVersion())
-			//tfAgent.LastConnection = types.StringValue(agent.GetLastConnection().Format(time.RFC3339))
-			//tfAgent.Name = types.StringValue(agent.GetName())
 			tfAgent.PoolId = types.StringValue(agent.GetPoolId())
-			//tfAgent.OperationalStatus = types.StringValue(agent.GetOperationalStatus())
-			//tfAgent.Type = types.StringValue(agent.GetType())
-			//tfAgent.Version = types.StringValue(agent.GetVersion())
-			//tfAgent.UpdateStatus = types.StringValue(agent.GetUpdateStatus())
-			//tfAgent.UpdateMessage = types.StringValue(agent.GetUpdateMessage())
 			agents[i] = tfAgent
 		}
 		state.Agents = agents
-	} else {
-		state.Agents = []Agent{}
 	}
 }

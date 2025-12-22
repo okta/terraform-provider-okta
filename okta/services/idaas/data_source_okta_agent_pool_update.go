@@ -2,6 +2,8 @@ package idaas
 
 import (
 	"context"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -19,7 +21,7 @@ type agentPoolDataSource struct {
 }
 
 func (d *agentPoolDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_agent_pool"
+	resp.TypeName = req.ProviderTypeName + "_agent_pool_update"
 }
 
 func (d *agentPoolDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -32,23 +34,32 @@ type AgentPoolUpdateDataSourceModel struct {
 	Name          types.String           `tfsdk:"name"`
 	AgentType     types.String           `tfsdk:"agent_type"`
 	Enabled       types.Bool             `tfsdk:"enabled"`
-	NotifyAdmins  types.Bool             `tfsdk:"notify_admins"`
+	NotifyAdmin   types.Bool             `tfsdk:"notify_admin"`
 	Reason        types.String           `tfsdk:"reason"`
-	Schedule      *UpdateSchedule        `tfsdk:"schedule"`
 	SortOrder     types.Int64            `tfsdk:"sort_order"`
-	TargetVersion types.String           `tfsdk:"target_version"`
 	Status        types.String           `tfsdk:"status"`
+	TargetVersion types.String           `tfsdk:"target_version"`
+	Schedule      *UpdateSchedule        `tfsdk:"schedule"`
 	Agents        []AgentDataSourceModel `tfsdk:"agents"`
 }
 
 type AgentDataSourceModel struct {
-	ID    types.String `tfsdk:"id"`
-	Agent Agent        `tfsdk:"agent"`
+	ID                  types.String `tfsdk:"id"`
+	IsHidden            types.Bool   `tfsdk:"is_hidden"`
+	IsLatestGAedVersion types.Bool   `tfsdk:"is_latest_gaed_version"`
+	LastConnection      types.Int64  `tfsdk:"last_connection"`
+	Name                types.String `tfsdk:"name"`
+	OperationalStatus   types.String `tfsdk:"operational_status"`
+	PoolId              types.String `tfsdk:"pool_id"`
+	Type                types.String `tfsdk:"type"`
+	UpdateMessage       types.String `tfsdk:"update_message"`
+	UpdateStatus        types.String `tfsdk:"update_status"`
+	Version             types.String `tfsdk:"version"`
 }
 
 func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages an Okta Agent Pool Update. Agent pool updates allow you to schedule and manage updates for agent pools.",
+		Description: "Retrieves an Okta Agent Pool Update. Agent pool updates allow you to schedule and manage updates for agent pools.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Required:    true,
@@ -56,43 +67,39 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			},
 			"pool_id": schema.StringAttribute{
 				Required:    true,
-				Description: "The unique identifier of the agent pool to update.",
+				Description: "The unique identifier of the agent pool.",
 			},
 			"name": schema.StringAttribute{
-				Optional:    true,
 				Computed:    true,
 				Description: "The name of the agent pool update.",
 			},
-			"description": schema.StringAttribute{
-				Optional:    true,
+			"agent_type": schema.StringAttribute{
 				Computed:    true,
-				Description: "The description of the agent pool update.",
+				Description: "Agent types that are being monitored.",
+			},
+			"enabled": schema.BoolAttribute{
+				Computed:    true,
+				Description: "Indicates if auto-update is enabled for the agent pool.",
+			},
+			"notify_admin": schema.BoolAttribute{
+				Computed:    true,
+				Description: "Indicates if the admin is notified about the update.",
+			},
+			"reason": schema.StringAttribute{
+				Computed:    true,
+				Description: "Reason for the update.",
+			},
+			"sort_order": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Specifies the sort order.",
 			},
 			"status": schema.StringAttribute{
 				Computed:    true,
-				Description: "The status of the agent pool update (e.g., SCHEDULED, IN_PROGRESS, COMPLETED, FAILED).",
+				Description: "Overall state for the auto-update job from the admin perspective.",
 			},
-			"completed_date": schema.StringAttribute{
+			"target_version": schema.StringAttribute{
 				Computed:    true,
-				Description: "The date and time when the update was completed, in RFC3339 format.",
-			},
-			"scheduled_date": schema.StringAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "The date and time when the update should be executed, in RFC3339 format.",
-			},
-			"created_date": schema.StringAttribute{
-				Computed:    true,
-				Description: "The date and time when the update was created, in RFC3339 format.",
-			},
-			"last_updated": schema.StringAttribute{
-				Computed:    true,
-				Description: "The date and time when the update was last modified, in RFC3339 format.",
-			},
-			"notify_on_completion": schema.BoolAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "Whether to send notifications when the update completes.",
+				Description: "The agent version to update to.",
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -102,10 +109,10 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 					"cron": schema.StringAttribute{
 						Computed: true,
 					},
-					"delay": schema.Int64Attribute{
+					"delay": schema.Int32Attribute{
 						Computed: true,
 					},
-					"duration": schema.Int64Attribute{
+					"duration": schema.Int32Attribute{
 						Computed: true,
 					},
 					"last_updated": schema.StringAttribute{
@@ -129,7 +136,7 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 						"is_latest_gaed_version": schema.BoolAttribute{
 							Computed: true,
 						},
-						"last_connection": schema.StringAttribute{
+						"last_connection": schema.Int64Attribute{
 							Computed: true,
 						},
 						"name": schema.StringAttribute{
@@ -178,29 +185,39 @@ func (d *agentPoolDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	data.Name = types.StringValue(getAgentPoolUpdateResp.GetName())
 	data.Enabled = types.BoolValue(getAgentPoolUpdateResp.GetEnabled())
+	data.NotifyAdmin = types.BoolValue(getAgentPoolUpdateResp.GetNotifyAdmin())
 	data.Reason = types.StringValue(getAgentPoolUpdateResp.GetReason())
 	data.AgentType = types.StringValue(getAgentPoolUpdateResp.GetAgentType())
 	data.SortOrder = types.Int64Value(int64(getAgentPoolUpdateResp.GetSortOrder()))
 	data.TargetVersion = types.StringValue(getAgentPoolUpdateResp.GetTargetVersion())
 	data.Status = types.StringValue(getAgentPoolUpdateResp.GetStatus())
+	data.Schedule = &UpdateSchedule{}
+	if getAgentPoolUpdateResp.Schedule != nil {
+		data.Schedule.Delay = types.Int32Value(getAgentPoolUpdateResp.Schedule.GetDelay())
+		data.Schedule.Duration = types.Int32Value(getAgentPoolUpdateResp.Schedule.GetDuration())
+		data.Schedule.Cron = types.StringValue(getAgentPoolUpdateResp.Schedule.GetCron())
+		data.Schedule.Timezone = types.StringValue(getAgentPoolUpdateResp.Schedule.GetTimezone())
+		data.Schedule.LastUpdated = types.StringValue(getAgentPoolUpdateResp.Schedule.GetLastUpdated().Format(time.RFC3339))
+	}
+
 	var agents []AgentDataSourceModel
 	for _, agentItem := range getAgentPoolUpdateResp.GetAgents() {
 		agent := AgentDataSourceModel{
 			ID: types.StringValue(agentItem.GetId()),
 		}
-		agent.Agent = Agent{}
-		//agent.Agent.IsHidden = types.BoolValue(agentItem.GetIsHidden())
-		//agent.Agent.IsLatestGAedVersion = types.BoolValue(agentItem.GetIsLatestGAedVersion())
-		//agent.Agent.LastConnection = types.StringValue(agentItem.GetLastConnection().Format(time.RFC3339))
-		//agent.Agent.Name = types.StringValue(agentItem.GetName())
-		//agent.Agent.OperationalStatus = types.StringValue(agentItem.GetOperationalStatus())
-		agent.Agent.PoolId = types.StringValue(agentItem.GetPoolId())
-		agent.ID = types.StringValue(agentItem.GetId())
-		//agent.Agent.Type = types.StringValue(agentItem.GetType())
-		//agent.Agent.UpdateMessage = types.StringValue(agentItem.GetUpdateMessage())
-		//agent.Agent.UpdateStatus = types.StringValue(agentItem.GetUpdateStatus())
-		//agent.Agent.Version = types.StringValue(agentItem.GetVersion())
-
+		agent.PoolId = types.StringValue(agentItem.GetPoolId())
+		agent.Name = types.StringValue(agentItem.GetName())
+		agent.Type = types.StringValue(agentItem.GetType())
+		agent.Version = types.StringValue(agentItem.GetVersion())
+		agent.OperationalStatus = types.StringValue(agentItem.GetOperationalStatus())
+		agent.UpdateStatus = types.StringValue(agentItem.GetUpdateStatus())
+		agent.UpdateMessage = types.StringValue(agentItem.GetUpdateMessage())
+		agent.LastConnection = types.Int64Value(agentItem.GetLastConnection())
+		agent.IsHidden = types.BoolValue(agentItem.GetIsHidden())
+		agent.IsLatestGAedVersion = types.BoolValue(agentItem.GetIsLatestGAedVersion())
 		agents = append(agents, agent)
 	}
+	data.Agents = agents
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
