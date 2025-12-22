@@ -240,7 +240,6 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 		if err != nil {
 			return diag.FromErr(err)
 		}
-
 		activate := (d.Get("status").(string) == StatusActive)
 		req := client.AuthenticatorAPI.CreateAuthenticator(ctx).Authenticator(*authenticatorReq)
 		if activate {
@@ -511,8 +510,11 @@ func findAuthenticatorV6(ctx context.Context, client *v6okta.APIClient, name, ke
 			continue
 		}
 
-		// For custom_otp, both name and key must match
-		if key == "custom_otp" {
+		if key == "custom_app" {
+			if authenticator.GetName() == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
+				return &authenticator, nil // TODO: update condition to include custom_otp as there can be more than 1 custom_otp type authenticator.
+			}
+		} else if key == "custom_otp" { // For custom_otp, both name and key must match
 			if authenticator.GetName() == name && authenticator.GetKey() == key {
 				return &authenticator, nil
 			}
@@ -551,6 +553,17 @@ func buildAuthenticatorV6(d *schema.ResourceData, meta interface{}) (*v6okta.Aut
 
 	// Handle agree_to_terms for custom_app authenticators
 	if d.Get("key").(string) == "custom_app" {
+		var settingsMap map[string]interface{}
+		if s, ok := d.GetOk("settings"); ok {
+			if err := json.Unmarshal([]byte(s.(string)), &settingsMap); err != nil {
+				return nil, err
+			}
+			if authenticator.AdditionalProperties == nil {
+				authenticator.AdditionalProperties = make(map[string]interface{})
+			}
+			authenticator.AdditionalProperties["settings"] = settingsMap
+		}
+
 		if agreeToTerms, ok := d.GetOk("agree_to_terms"); ok {
 			if authenticator.AdditionalProperties == nil {
 				authenticator.AdditionalProperties = make(map[string]interface{})
@@ -560,7 +573,7 @@ func buildAuthenticatorV6(d *schema.ResourceData, meta interface{}) (*v6okta.Aut
 	}
 
 	// Handle settings - stored in AdditionalProperties
-	if d.Get("key").(string) != "custom_otp" {
+	if d.Get("key").(string) != "custom_otp" && d.Get("key").(string) != "custom_app" {
 		if s, ok := d.GetOk("settings"); ok {
 			var settingsMap map[string]interface{}
 			if err := json.Unmarshal([]byte(s.(string)), &settingsMap); err != nil {
