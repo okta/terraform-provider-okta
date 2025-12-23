@@ -22,6 +22,18 @@ func resourceAuthenticator() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
+				keyAttrExists := !req.RawConfig.GetAttr("key").IsNull()
+				legacyIgnoreNameAttrExists := !req.RawConfig.GetAttr("legacy_ignore_name").IsNull()
+				if keyAttrExists && req.RawConfig.GetAttr("key").AsString() == "custom_app" {
+					if !legacyIgnoreNameAttrExists || legacyIgnoreNameAttrExists && req.RawConfig.GetAttr("legacy_ignore_name").True() {
+						resp.Diagnostics = append(resp.Diagnostics, diag.Errorf("legacy_ignore_name must be false when creating a custom_app type authenticator")...)
+					}
+				}
+			},
+		},
+
 		Description: `~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 
 This resource allows you to configure different authenticators.
@@ -32,7 +44,7 @@ create the authenticator (hard create) will be performed. Thereafter, that
 authenticator is never deleted, it is only deactivated (soft delete). Therefore,
 if the authenticator already exists create is just a soft import of an existing
 authenticator. This does not apply to custom_otp authenticator. There can be 
-multiple custom_otp authenticator. To create new custom_otp authenticator, a new 
+multiple custom_otp authenticator. To create new custom_otp authenticator, 
 name and key = custom_otp is required. If an old name is used, it will simply 
 reactivate the old custom_otp authenticator
 
@@ -166,6 +178,11 @@ deactivated if it's not in use by any other policy.`,
 				Optional:    true,
 				Default:     true,
 				Description: "Name does not trigger change detection (legacy behavior)",
+			},
+			"agree_to_terms": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "A value of true indicates that the administrator accepts the terms for creating a new authenticator. Okta requires that you accept the terms when creating a new custom_app authenticator. Other authenticators don't require this field.",
 			},
 		},
 	}
@@ -326,16 +343,32 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				},
 			},
 		}
-	} else {
-		if d.Get("key").(string) != "custom_otp" {
-			if s, ok := d.GetOk("settings"); ok {
-				var settings sdk.AuthenticatorSettings
-				err := json.Unmarshal([]byte(s.(string)), &settings)
-				if err != nil {
-					return nil, err
-				}
-				authenticator.Settings = &settings
+	} else if d.Get("key").(string) == "custom_app" {
+		agreeToTerms, ok := d.Get("agree_to_terms").(bool)
+		if !ok {
+			return nil, fmt.Errorf("unable to parse agree_to_terms as a boolean value, valid values are true/false")
+		}
+
+		authenticator.AgreeToTerms = agreeToTerms
+		if s, ok := d.GetOk("settings"); ok {
+			var settings sdk.AuthenticatorSettings
+			err := json.Unmarshal([]byte(s.(string)), &settings)
+			if err != nil {
+				return nil, err
 			}
+			authenticator.Settings = &settings
+		}
+		authenticator.Provider = &sdk.AuthenticatorProvider{
+			Type: d.Get("provider_type").(string),
+		}
+	} else if d.Get("key").(string) != "custom_otp" { // does not include custom_app
+		if s, ok := d.GetOk("settings"); ok {
+			var settings sdk.AuthenticatorSettings
+			err := json.Unmarshal([]byte(s.(string)), &settings)
+			if err != nil {
+				return nil, err
+			}
+			authenticator.Settings = &settings
 		}
 	}
 

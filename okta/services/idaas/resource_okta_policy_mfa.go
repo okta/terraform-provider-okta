@@ -92,6 +92,9 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 		authenticators := []*sdk.PolicyAuthenticator{}
 
 		for _, key := range sdk.AuthenticatorProviders {
+			if key == "custom_app" {
+				continue
+			}
 			rawFactor := d.Get(key).(map[string]interface{})
 			enroll := rawFactor["enroll"]
 			if enroll == nil {
@@ -134,6 +137,40 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 					},
 				}
 				constraints := rawExternalIDP["constraints"]
+				if constraints != nil {
+					c, ok := constraints.(string)
+					if ok {
+						slice := strings.Split(c, ",")
+						sort.Strings(slice)
+						authenticator.Constraints = &sdk.PolicyAuthenticatorConstraints{AaguidGroups: slice}
+					}
+				}
+				authenticators = append(authenticators, authenticator)
+			}
+		}
+
+		if rawCustomApps, ok := d.Get("custom_app").([]interface{}); ok {
+			for _, rawCustomApp := range rawCustomApps {
+				if rawCustomApp == nil { // empty entry
+					continue
+				}
+				customApp := rawCustomApp.(map[string]interface{})
+				enroll := customApp["enroll"]
+				if enroll == nil {
+					continue
+				}
+				id := customApp["id"]
+				if id == nil {
+					continue
+				}
+				authenticator := &sdk.PolicyAuthenticator{
+					Key: "custom_app",
+					ID:  id.(string),
+					Enroll: &sdk.Enroll{
+						Self: enroll.(string),
+					},
+				}
+				constraints := customApp["constraints"]
 				if constraints != nil {
 					c, ok := constraints.(string)
 					if ok {
@@ -237,7 +274,7 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 	externalIdps := make([]interface{}, 0)
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			if k != "external_idp" {
+			if k != "external_idp" && k != "custom_app" {
 				if authenticator.Constraints != nil {
 					slice := authenticator.Constraints.AaguidGroups
 					sort.Strings(slice)
@@ -304,6 +341,19 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 					return strings.HasSuffix(k, ".%") || new == ""
 				},
 				ConflictsWith: []string{"external_idps"},
+			}
+		} else if key == "custom_app" {
+			res[key] = &schema.Schema{
+				Description: "List of custom authenticators, specify entry like {\"enroll\": \"OPTIONAL\", \"id\": \"<id_of_custom_app>\"} to mark specific custom app optional, list must contain at least 1 entry.",
+				Optional:    true,
+				Type:        schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeMap,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+				},
+				DiffSuppressFunc: structure.SuppressJsonDiff,
 			}
 		} else {
 			res[key] = &schema.Schema{

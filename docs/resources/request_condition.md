@@ -10,8 +10,27 @@ Manages request conditions. This resource allows you to create and configure an 
 
 ## Example Usage
 
+### Basic Example
+
 ```terraform
 resource "okta_request_condition" "example" {
+  resource_id="<resource_id>"
+  approval_sequence_id="<approval_sequence_id>"
+  name="<name>"
+  access_scope_settings{
+    type="RESOURCE_DEFAULT"
+  }
+  requester_settings{
+    type="EVERYONE"
+  }
+}
+```
+
+### Example with Active Status
+
+```terraform
+resource "okta_request_condition" "example_active" {
+  status="ACTIVE"
   resource_id="<resource_id>"
   approval_sequence_id="<approval_sequence_id>"
   name="<name>"
@@ -41,6 +60,7 @@ resource "okta_request_condition" "example" {
 - `priority` (int) The priority of the request condition. Lower numbers indicate higher priority.
 - `access_duration_settings` (Block Set) The access duration settings for the request condition (see [below for nested schema](#nestedblock--access_duration_settings))
 - `priority` (int) The priority of the request condition. Lower numbers indicate higher priority.
+- `status` (String) Status of the condition. Valid values: `ACTIVE`, `INACTIVE`. Default is `INACTIVE`. Note: `DELETED` and `INVALID` statuses are system-managed and cannot be set directly.
 
 
 ### Read-Only
@@ -50,7 +70,6 @@ resource "okta_request_condition" "example" {
 - `last_updated` (String) The date and time when the request condition was last updated.
 - `created_by` (String) The id of the user who created the request condition.
 - `last_updated_by` (String) The id of the user who last updated the request condition.
-- `status` (String) Status indicates if this condition is active or not. Default status is INACTIVE. Enum: `ACTIVE`, `INACTIVE`, `DELETED`, `INVALID`.
 
 <a id="nestedblock--access_scope_settings"></a>
 ### Nested Schema for `access_scope_settings`

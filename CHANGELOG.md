@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.5.2 (December 09, 2025)
+
+### BUG FIXES
+* Fix creating new DPoP tokens in every retries [#2585](https://github.com/okta/terraform-provider-okta/pull/2585) by [pranav-okta](https://github.com/pranav-okta)
+
 ## 6.5.1 (November 25, 2025)
 
 **BUG FIXES** 

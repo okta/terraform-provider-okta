@@ -118,6 +118,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAppTokenResource,
 		newAppConnectionsResource,
 		newAgentPoolUpdateResource,
+		newUISchemaResource,
 	}
 }
 
@@ -147,6 +148,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAppTokenDataSource,
 		newAppConnectionsDataSource,
 		newAgentPoolDataSource,
+		newUISchemaDataSource,
 	}
 }
 
