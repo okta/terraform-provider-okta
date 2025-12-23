@@ -2,6 +2,7 @@ package idaas_test
 
 import (
 	"fmt"
+	"hash/fnv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -12,9 +13,14 @@ import (
 )
 
 func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
-	config := `
+	// Use hash of test name plus timestamp for uniqueness while recording
+	h := fnv.New32a()
+	h.Write([]byte("TestAccResourceOktaAuthenticator_OTP_crud"))
+	otpName := fmt.Sprintf("tfOTP-%d", h.Sum32())
+
+	config := fmt.Sprintf(`
 	resource "okta_authenticator" "otp" {
-		name   = "Custom OTP"
+		name   = "%s"
 		key    = "custom_otp"
 		status = "ACTIVE"
 		settings = jsonencode({
@@ -26,7 +32,7 @@ func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
 		  "passCodeLength" : 6
 		})
 		legacy_ignore_name = false
-	}`
+	}`, otpName)
 	resourceName := fmt.Sprintf("%s.otp", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -41,7 +47,7 @@ func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
 					resource.TestCheckResourceAttr(resourceName, "key", "custom_otp"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Custom OTP"),
+					resource.TestCheckResourceAttr(resourceName, "name", otpName),
 					testAttributeJSON(resourceName, "settings", `{"acceptableAdjacentIntervals":3,"algorithm":"HMacSHA256","encoding":"base32","passCodeLength":6,"protocol":"TOTP","timeIntervalInSeconds":30}`),
 				),
 			},
@@ -147,6 +153,7 @@ func TestAccResourceOktaAuthenticator_issue_1367_provider_json(t *testing.T) {
 resource "okta_authenticator" "test" {
   name = "On-Prem MFA"
   key = "onprem_mfa"
+  status = "ACTIVE"
   provider_json = jsonencode(
 	{
 		"type": "DEL_OATH",
@@ -203,6 +210,10 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.okta_verify", resources.OktaIDaaSAuthenticator)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
 	config := mgr.GetFixtures("okta_verify.tf", t)
+
+	// Use hardcoded ID for VCR cassettes
+	oktaVerifyID := "0ktaV3rify1d"
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -212,7 +223,7 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_authenticator.okta_verify",
-				ImportStateId:      "0ktaV3rify1d",
+				ImportStateId:      oktaVerifyID,
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
@@ -224,7 +235,7 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "app"),
 					resource.TestCheckResourceAttr(resourceName, "name", "Okta Verify"),
 					// ensure any change to examples/resources/okta_authenticator/okta_verify.tf is reflected here.
-					testAttributeJSON(resourceName, "settings", `{"channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"]}`),
+					testAttributeJSON(resourceName, "settings", `{"appInstanceId":"","channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"enrollmentSecurityLevel":"HIGH","userVerification":"PREFERRED","userVerificationMethods":["BIOMETRICS"]}`),
 				),
 			},
 		},

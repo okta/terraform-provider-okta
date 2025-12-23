@@ -4,6 +4,9 @@ go 1.24.0
 
 toolchain go1.24.7
 
+exclude google.golang.org/genproto v0.0.0-20200825200019-8632dd797987
+replace google.golang.org/genproto => google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7
+
 require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/cenkalti/backoff v2.2.1+incompatible
