@@ -180,7 +180,7 @@ resource "okta_authenticator" "custom_app" {
 - `id` (String) The ID of this resource.
 - `provider_instance_id` (String) App Instance ID.
 - `provider_type` (String) Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`
-- `type` (String) he type of Authenticator. Values include: `password`, `security_question`, `phone`, `email`, `app`, `federated`, and `security_key`.
+- `type` (String) The type of Authenticator. Values include: `password`, `security_question`, `phone`, `email`, `app`, `federated`, and `security_key`.
 
 <a id="nestedblock--method"></a>
 ### Nested Schema for `method`
@@ -199,7 +199,7 @@ Optional:
   - For `otp` method (custom_otp authenticator):
     - `protocol` (String) - Protocol type: `TOTP` or `HOTP`
     - `encoding` (String) - Encoding format: `base32` or `base64`
-    - `algorithm` (String) - Hash algorithm: `HMacSHA1`, `HMacSHA256`, or `HMacSHA512`
+    - `algorithm` (String) - Hash algorithm: `HMACSHA1`, `HMACSHA256`, or `HMACSHA512`
     - `timeIntervalInSeconds` (Number) - Time step in seconds (TOTP only)
     - `passCodeLength` (Number) - Length of the OTP code
     - `acceptableAdjacentIntervals` (Number) - Number of adjacent time intervals to accept

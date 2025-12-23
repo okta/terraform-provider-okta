@@ -23,5 +23,10 @@ resource "okta_authenticator" "okta_verify" {
     type   = "totp"
     status = "ACTIVE"
   }
+
+  method {
+    type   = "signed_nonce"
+    status = "ACTIVE"
+  }
 }
 

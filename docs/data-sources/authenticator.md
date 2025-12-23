@@ -51,7 +51,7 @@ data "okta_authenticator" "test_1" {
 
 Read-Only:
 
-- `type` (String) The authentication method type.
+- `type` (String) The type of authenticator method.
 - `status` (String) The method status: ACTIVE or INACTIVE.
 - `settings` (String) Method-specific settings as a JSON string.
 

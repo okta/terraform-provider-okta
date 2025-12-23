@@ -69,6 +69,11 @@ deactivated if it's not in use by any other policy.`,
 				Required:    true,
 				Description: "Display name of the Authenticator",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Never suppress during creation - name is required
+					if d.Id() == "" {
+						return false
+					}
+					// Only suppress during updates if legacy_ignore_name is true
 					return d.Get("legacy_ignore_name").(bool)
 				},
 			},
@@ -279,7 +284,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 					ListAuthenticatorMethods200ResponseInner(methodUnion)
 				_, methodResp, err := methodReq.Execute()
 				if err != nil {
-					logger(meta).Warn(fmt.Sprintf("Failed to set OTP settings: %v, request body: %s", err, string(methodBytes)))
+					logger(meta).Error(fmt.Sprintf("Failed to set OTP settings: %v, request body: %s", err, string(methodBytes)))
 				} else if methodResp != nil {
 					defer methodResp.Body.Close()
 				}
@@ -294,17 +299,15 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 	status, ok := d.GetOk("status")
 	if ok && authenticator.GetStatus() != status.(string) {
 		if status.(string) == StatusInactive {
-			_, resp, err := client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
+			_, _, err := client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
 			if err != nil {
 				return diag.Errorf("failed to change authenticator status: %v", err)
 			}
-			defer resp.Body.Close()
 		} else {
-			_, resp, err := client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
+			_, _, err := client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
 			if err != nil {
 				return diag.Errorf("failed to change authenticator status: %v", err)
 			}
-			defer resp.Body.Close()
 		}
 	}
 
@@ -573,7 +576,8 @@ func buildAuthenticatorV6(d *schema.ResourceData, meta interface{}) (*v6okta.Aut
 	}
 
 	// Handle settings - stored in AdditionalProperties
-	if d.Get("key").(string) != "custom_otp" && d.Get("key").(string) != "custom_app" {
+	// Note: custom_app is handled separately above with special logic for agreeToTerms
+	if d.Get("key").(string) != "custom_app" {
 		if s, ok := d.GetOk("settings"); ok {
 			var settingsMap map[string]interface{}
 			if err := json.Unmarshal([]byte(s.(string)), &settingsMap); err != nil {
@@ -956,12 +960,8 @@ func syncAuthenticatorMethods(ctx context.Context, client *v6okta.APIClient, aut
 		if !exists {
 			needsUpdate = true
 		} else {
-			// Check if status changed
-			if current.Status != desired.Status {
-				needsUpdate = true
-			}
-			// Check if settings changed (if settings are provided)
-			if desired.Settings != nil {
+			// Check if status changed or settings changed (if settings are provided)
+			if (current.Status != desired.Status) || (desired.Settings != nil) {
 				needsUpdate = true
 			}
 		}
