@@ -101,26 +101,32 @@ func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaReq
 				},
 			},
 			"agent_type": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Agent types that are being monitored (e.g. AD, LDAP, IWA, RADIUS).",
 			},
 			"enabled": schema.BoolAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "Indicates if auto-update is enabled for the agent pool.",
 			},
 			"notify_admins": schema.BoolAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: "Indicates if the admin is notified about the update.",
 			},
 			"sort_order": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "Specifies the sort order.",
 			},
 			"target_version": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "The agent version to update to.",
 			},
 			"reason": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
+				Description: "Reason for the update.",
 			},
 			"name": schema.StringAttribute{
 				Optional:    true,
@@ -329,12 +335,12 @@ func buildCreateRequest(plan agentPoolUpdateResourceModel) v6okta.AgentPoolUpdat
 		}
 
 		if !plan.Schedule.Delay.IsNull() {
-			delay := int32(plan.Schedule.Delay.ValueInt32())
+			delay := plan.Schedule.Delay.ValueInt32()
 			schedule.Delay = &delay
 		}
 
 		if !plan.Schedule.Duration.IsNull() {
-			duration := int32(plan.Schedule.Duration.ValueInt32())
+			duration := plan.Schedule.Duration.ValueInt32()
 			schedule.Duration = &duration
 		}
 
@@ -377,13 +383,14 @@ func mapResponseToState(resp *v6okta.AgentPoolUpdate, state *agentPoolUpdateReso
 	state.Status = types.StringValue(resp.GetStatus())
 
 	// Handle Schedule
-	if resp.Schedule != nil {
+	s := resp.Schedule
+	if s != nil {
 		schedule := &UpdateSchedule{}
-		schedule.Cron = types.StringValue(resp.Schedule.GetCron())
-		schedule.Delay = types.Int32Value((resp.Schedule.GetDelay()))
-		schedule.Duration = types.Int32Value((resp.Schedule.GetDuration()))
-		schedule.LastUpdated = types.StringValue(resp.Schedule.GetLastUpdated().Format(time.RFC3339))
-		schedule.Timezone = types.StringValue(resp.Schedule.GetTimezone())
+		schedule.Cron = types.StringValue(s.GetCron())
+		schedule.Delay = types.Int32Value((s.GetDelay()))
+		schedule.Duration = types.Int32Value((s.GetDuration()))
+		schedule.LastUpdated = types.StringValue(s.GetLastUpdated().Format(time.RFC3339))
+		schedule.Timezone = types.StringValue(s.GetTimezone())
 		state.Schedule = schedule
 	}
 

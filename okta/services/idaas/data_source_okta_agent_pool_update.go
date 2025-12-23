@@ -107,19 +107,24 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "The schedule configuration for the agent pool update.",
 				Attributes: map[string]schema.Attribute{
 					"cron": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "The schedule of the update in cron format.",
 					},
 					"delay": schema.Int32Attribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Delay in days.",
 					},
 					"duration": schema.Int32Attribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Duration in minutes.",
 					},
 					"last_updated": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Timestamp when the update finished.",
 					},
 					"timezone": schema.StringAttribute{
-						Computed: true,
+						Computed:    true,
+						Description: "Timezone of where the scheduled job takes place.",
 					},
 				},
 			},
@@ -128,37 +133,48 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The unique identifier of the agent.",
 						},
 						"is_hidden": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Determines if an agent is hidden from the Admin Console.",
 						},
 						"is_latest_gaed_version": schema.BoolAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Determines if the agent is on the latest generally available version.",
 						},
 						"last_connection": schema.Int64Attribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Timestamp when the agent last connected to Okta.",
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "The name of the agent.",
 						},
 						"operational_status": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Operational status of a given agent (e.g. DEGRADED, DISRUPTED, INACTIVE, OPERATIONAL).",
 						},
 						"pool_id": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Pool ID.",
 						},
 						"type": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Agent types that are being monitored.",
 						},
 						"update_message": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Status message of the agent.",
 						},
 						"update_status": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Status for one agent regarding the status to auto-update that agent.",
 						},
 						"version": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: "Agent version number.",
 						},
 					},
 				},
@@ -192,12 +208,13 @@ func (d *agentPoolDataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.TargetVersion = types.StringValue(getAgentPoolUpdateResp.GetTargetVersion())
 	data.Status = types.StringValue(getAgentPoolUpdateResp.GetStatus())
 	data.Schedule = &UpdateSchedule{}
+	s := getAgentPoolUpdateResp.Schedule
 	if getAgentPoolUpdateResp.Schedule != nil {
-		data.Schedule.Delay = types.Int32Value(getAgentPoolUpdateResp.Schedule.GetDelay())
-		data.Schedule.Duration = types.Int32Value(getAgentPoolUpdateResp.Schedule.GetDuration())
-		data.Schedule.Cron = types.StringValue(getAgentPoolUpdateResp.Schedule.GetCron())
-		data.Schedule.Timezone = types.StringValue(getAgentPoolUpdateResp.Schedule.GetTimezone())
-		data.Schedule.LastUpdated = types.StringValue(getAgentPoolUpdateResp.Schedule.GetLastUpdated().Format(time.RFC3339))
+		data.Schedule.Delay = types.Int32Value(s.GetDelay())
+		data.Schedule.Duration = types.Int32Value(s.GetDuration())
+		data.Schedule.Cron = types.StringValue(s.GetCron())
+		data.Schedule.Timezone = types.StringValue(s.GetTimezone())
+		data.Schedule.LastUpdated = types.StringValue(s.GetLastUpdated().Format(time.RFC3339))
 	}
 
 	var agents []AgentDataSourceModel
