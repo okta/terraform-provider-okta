@@ -1,18 +1,18 @@
 resource "okta_authenticator" "test1" {
 key    = "custom_app"
-name =  "VCRTestCustomAppAuth"
+name =  "VCRTestCustomAppAuthNew"
 status = "ACTIVE"
 agree_to_terms = "true"
 legacy_ignore_name = false
 settings = jsonencode({
     "userVerification": "REQUIRED",
-    "appInstanceId": "0oaspABCDEF12345678"
+    "appInstanceId": "0oa12345678ABCDEFG"
     })
 provider_json = jsonencode({
     "type": "PUSH",
     "configuration": {
         "fcm": {
-            "id": "ppcrb12345678ABCDEF"
+            "id": "ppcABCDEFGH12345678"
             }
         }      
     })
