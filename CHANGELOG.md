@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 6.5.3 (December 24, 2025)
+
+### FEATURE
+
+### BUG FIXES
+
 ## 6.5.2 (December 09, 2025)
 
 ### BUG FIXES
