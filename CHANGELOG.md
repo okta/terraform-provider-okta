@@ -4,8 +4,11 @@
 ## 6.5.3 (December 24, 2025)
 
 ### FEATURE
-
-### BUG FIXES
+* GH-2437 | Introduces support for custom_app Authenticator For Resource okta_policy_mfa [32584](https://github.com/okta/terraform-provider-okta/pull/2584) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* New resource and data source okta_ui_schema to manage UI Schema [#2589](https://github.com/terraform-provider-okta/pull/2589) by [aditya-okta](https://github.com/aditya-okta)
+* Adding Support For custom_app Authenticator [#2592](https://github.com/terraform-provider-okta/pull/2592) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Add support for status management for request conditions [#2562](https://github.com/terraform-provider-okta/pull/2562) by [exitcode0](https://github.com/exitcode0)
+* Add support for realm_id in okta_user resource and data source [#2535](https://github.com/terraform-provider-okta/pull/2535) by [tim-koehler](https://github.com/tim-koehler)
 
 ## 6.5.2 (December 09, 2025)
 
