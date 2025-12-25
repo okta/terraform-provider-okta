@@ -5,6 +5,7 @@ const (
 	OktaIDaaSAdminRoleCustom                          = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments               = "okta_admin_role_custom_assignments"
 	OktaIDaaSAdminRoleTargets                         = "okta_admin_role_targets"
+	OktaIDaaSAgentPoolUpdate                          = "okta_agent_pool_update"
 	OktaIDaaSApp                                      = "okta_app"
 	OktaIDaaSApps                                     = "okta_apps"
 	OktaIDaaSAppAutoLogin                             = "okta_app_auto_login"
