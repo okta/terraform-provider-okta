@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -30,6 +31,14 @@ func (r *customizedSigninPageResource) Metadata(_ context.Context, req resource.
 
 func (r *customizedSigninPageResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	newSchema := resourceSignInSchema
+	pageContentAttribute := newSchema.Attributes["page_content"].(resourceSchema.StringAttribute)
+	pageContentAttribute.Required = false
+	pageContentAttribute.Optional = true
+	newSchema.Attributes["page_content"] = pageContentAttribute
+	widgetVersionAttribute := newSchema.Attributes["widget_version"].(resourceSchema.StringAttribute)
+	widgetVersionAttribute.Required = false
+	widgetVersionAttribute.Optional = true
+	newSchema.Attributes["widget_version"] = widgetVersionAttribute
 	newSchema.Description = "Manage the customized signin page of a brand"
 	resp.Schema = newSchema
 }
