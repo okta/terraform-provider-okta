@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -49,6 +50,10 @@ func (r *customizedSigninPageResource) Configure(_ context.Context, req resource
 }
 
 func (r *customizedSigninPageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+
+	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+
 	var state signinPageModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -112,6 +117,10 @@ func (r *customizedSigninPageResource) Read(ctx context.Context, req resource.Re
 }
 
 func (r *customizedSigninPageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+
+	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+
 	var state signinPageModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -129,6 +138,10 @@ func (r *customizedSigninPageResource) Delete(ctx context.Context, req resource.
 }
 
 func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+
+	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+
 	var state signinPageModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
