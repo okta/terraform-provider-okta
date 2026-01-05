@@ -31,6 +31,10 @@ func (r *customizedSigninPageResource) Metadata(_ context.Context, req resource.
 }
 
 func (r *customizedSigninPageResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+
+	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+
 	newSchema := resourceSignInSchema
 	pageContentAttribute := newSchema.Attributes["page_content"].(resourceSchema.StringAttribute)
 	pageContentAttribute.Required = false
@@ -51,9 +55,9 @@ func (r *customizedSigninPageResource) Configure(_ context.Context, req resource
 
 func (r *customizedSigninPageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 
-	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
-	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
-
+	// oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	// defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+	// DUMMY CHANGE
 	var state signinPageModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
