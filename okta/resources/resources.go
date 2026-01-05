@@ -135,6 +135,7 @@ const (
 	OktaIDaaSDevice                                   = "okta_device"
 	OktaIDaaSHookKey                                  = "okta_hook_key"
 	OktaIDaaSUISchema                                 = "okta_ui_schema"
+	OktaIDaaSCustomizedSignInPage                     = "okta_customized_signin_page"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
