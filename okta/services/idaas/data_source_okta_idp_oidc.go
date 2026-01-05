@@ -139,10 +139,16 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta int
 	syncEndpoint("token", oidc.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", oidc.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", oidc.Protocol.Endpoints.Jwks, d)
-	_ = d.Set("protocol_type", oidc.Protocol.Type)
-	_ = d.Set("client_secret", oidc.Protocol.Credentials.Client.ClientSecret)
-	_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
-	_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
+	if oidc.Protocol != nil {
+		_ = d.Set("protocol_type", oidc.Protocol.Type)
+		if oidc.Protocol.Credentials != nil && oidc.Protocol.Credentials.Client != nil {
+			_ = d.Set("client_secret", oidc.Protocol.Credentials.Client.ClientSecret)
+			_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
+		}
+		if oidc.Protocol.Issuer != nil {
+			_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
+		}
+	}
 	if oidc.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", oidc.Policy.MaxClockSkewPtr)
 	}
