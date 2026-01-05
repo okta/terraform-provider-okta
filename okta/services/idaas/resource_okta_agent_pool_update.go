@@ -102,7 +102,7 @@ func (r *agentPoolUpdateResource) Schema(_ context.Context, _ resource.SchemaReq
 			},
 			"agent_type": schema.StringAttribute{
 				Optional:    true,
-				Description: "Agent types that are being monitored (e.g. AD, LDAP, IWA, RADIUS).",
+				Description: "Agent types that are being monitored (e.g. AD, IWA, LDAP, MFA, OPP, RUM, Radius).",
 			},
 			"enabled": schema.BoolAttribute{
 				Optional:    true,
@@ -389,7 +389,10 @@ func mapResponseToState(resp *v6okta.AgentPoolUpdate, state *agentPoolUpdateReso
 		schedule.Cron = types.StringValue(s.GetCron())
 		schedule.Delay = types.Int32Value((s.GetDelay()))
 		schedule.Duration = types.Int32Value((s.GetDuration()))
-		schedule.LastUpdated = types.StringValue(s.GetLastUpdated().Format(time.RFC3339))
+		getLastUpdated, ok := s.GetLastUpdatedOk()
+		if ok {
+			schedule.LastUpdated = types.StringValue(getLastUpdated.Format(time.RFC3339))
+		}
 		schedule.Timezone = types.StringValue(s.GetTimezone())
 		state.Schedule = schedule
 	}

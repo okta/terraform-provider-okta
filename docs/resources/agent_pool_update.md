@@ -40,7 +40,7 @@ resource "okta_agent_pool_update" "example" {
 
 ### Optional
 
-- `agent_type` (String) Agent types that are being monitored (e.g., AD, LDAP, IWA, RADIUS).
+- `agent_type` (String) Agent types that are being monitored (e.g., AD, IWA, LDAP, MFA, OPP, RUM, Radius).
 - `agents` (Block List) The agents associated with the agent pool update. (see [below for nested schema](#nestedblock--agents))
 - `description` (String) The description of the agent pool update.
 - `enabled` (Boolean) Whether auto-update is enabled for the agent pool.

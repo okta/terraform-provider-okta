@@ -75,7 +75,7 @@ func (d *agentPoolDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			},
 			"agent_type": schema.StringAttribute{
 				Computed:    true,
-				Description: "Agent types that are being monitored.",
+				Description: "Agent types that are being monitored.(e.g., AD, LDAP, IWA, RADIUS, MFA, OPP, RUM, Radius)",
 			},
 			"enabled": schema.BoolAttribute{
 				Computed:    true,
@@ -208,13 +208,16 @@ func (d *agentPoolDataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.TargetVersion = types.StringValue(getAgentPoolUpdateResp.GetTargetVersion())
 	data.Status = types.StringValue(getAgentPoolUpdateResp.GetStatus())
 	data.Schedule = &UpdateSchedule{}
-	s := getAgentPoolUpdateResp.Schedule
+	schedule := getAgentPoolUpdateResp.Schedule
 	if getAgentPoolUpdateResp.Schedule != nil {
-		data.Schedule.Delay = types.Int32Value(s.GetDelay())
-		data.Schedule.Duration = types.Int32Value(s.GetDuration())
-		data.Schedule.Cron = types.StringValue(s.GetCron())
-		data.Schedule.Timezone = types.StringValue(s.GetTimezone())
-		data.Schedule.LastUpdated = types.StringValue(s.GetLastUpdated().Format(time.RFC3339))
+		data.Schedule.Delay = types.Int32Value(schedule.GetDelay())
+		data.Schedule.Duration = types.Int32Value(schedule.GetDuration())
+		data.Schedule.Cron = types.StringValue(schedule.GetCron())
+		data.Schedule.Timezone = types.StringValue(schedule.GetTimezone())
+		lastUpdated, ok := schedule.GetLastUpdatedOk()
+		if ok {
+			data.Schedule.LastUpdated = types.StringValue(lastUpdated.Format(time.RFC3339))
+		}
 	}
 
 	var agents []AgentDataSourceModel
