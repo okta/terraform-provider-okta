@@ -1,0 +1,234 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 289
+    host: oie-00.dne-okta.com
+    body: "{\"agentType\":\"AD\",\"agents\":[{\"id\":\"a53slzqkptH2xEJ1r1d7\",\"poolId\":\"0oaspf3cfatE1nDO31d7\"}],\"enabled\":false,\"name\":\"update_schedule_test\",\"notifyAdmin\":true,\"reason\":\"\",\"schedule\":{\"cron\":\"0 3 * * WED\",\"delay\":0,\"duration\":1020,\"timezone\":\"Asia/Calcutta\"},\"sortOrder\":0,\"targetVersion\":\"\"}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:33 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.202306833s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:34 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.111479292s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:36 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.180574042s
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:37 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.097628542s
+- id: 4
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:38 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.132850708s
+- id: 5
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"ajdsynuuk3FKF0c1k1d7\",\"name\":\"update_schedule_test\",\"agentType\":\"AD\",\"agents\":[{\"latestGAedVersion\":true,\"id\":\"a53slzqkptH2xEJ1r1d7\",\"type\":\"AD\",\"operationalStatus\":\"OPERATIONAL\",\"updateStatus\":\"Scheduled\",\"updateMessage\":\"Queued for update.\",\"version\":\"3.22.0\",\"lastConnection\":1766430781000,\"isLatestGAedVersion\":true,\"poolId\":\"0oaspf3cfatE1nDO31d7\",\"name\":\"EC2AMAZ-5CEDHJG\",\"isHidden\":false}],\"enabled\":false,\"schedule\":{\"cron\":\"0 3 * * WED\",\"timezone\":\"Asia/Calcutta\",\"duration\":1020},\"notifyAdmin\":true,\"status\":\"Scheduled\",\"targetVersion\":\"3.22.0\",\"_links\":{}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 22 Dec 2025 19:13:39 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.139785458s
+- id: 6
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/agentPools/0oaspf3cfatE1nDO31d7/updates/ajdsynuuk3FKF0c1k1d7
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Mon, 22 Dec 2025 19:13:40 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.072540125s
