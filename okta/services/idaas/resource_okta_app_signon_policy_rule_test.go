@@ -533,3 +533,37 @@ func checkReauthenticateInChains(value string) error {
 	}
 	return fmt.Errorf("chains does not contain expected value")
 }
+
+func TestAccResourceOktaAppSignOnPolicyRule_issue_1059814(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("external_idp_authenticator.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-rule"),
+					resource.TestCheckResourceAttr(resourceName, "constraints.#", "1"),
+					resource.TestCheckResourceAttrWith(resourceName, "constraints.0", checkExternalIdpAuthenticatorInConstraint("auttixlvpvfch3xmO1d7", "external_idp")),
+				),
+			},
+		},
+	})
+}
+
+func checkExternalIdpAuthenticatorInConstraint(expectedID, expectedKey string) func(value string) error {
+	return func(value string) error {
+		if strings.Contains(value, fmt.Sprintf(`"id":"%s"`, expectedID)) &&
+			strings.Contains(value, fmt.Sprintf(`"key":"%s"`, expectedKey)) {
+			return nil
+		}
+		return fmt.Errorf("constraint does not contain expected external_idp authenticator with id=%q and key=%q, got: %s", expectedID, expectedKey, value)
+	}
+}
