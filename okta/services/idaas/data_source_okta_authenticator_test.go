@@ -58,3 +58,65 @@ func TestAccDataSourceOktaAuthenticator_read(t *testing.T) {
 		},
 	})
 }
+
+// TestAccDataSourceOktaAuthenticator_WithMethods tests data source reading of authenticators with methods
+func TestAccDataSourceOktaAuthenticator_WithMethods(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
+	dataSourceName := fmt.Sprintf("data.%s.test", resources.OktaIDaaSAuthenticator)
+	config := `
+resource "okta_authenticator" "test" {
+  name   = "Phone"
+  key    = "phone_number"
+  status = "ACTIVE"
+
+  method {
+    type   = "sms"
+    status = "ACTIVE"
+  }
+
+  method {
+    type   = "voice"
+    status = "INACTIVE"
+  }
+}
+
+data "okta_authenticator" "test" {
+  key = okta_authenticator.test.key
+  depends_on = [okta_authenticator.test]
+}
+`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					// Verify resource was created
+					resource.TestCheckResourceAttr(resourceName, "key", "phone_number"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Phone"),
+					resource.TestCheckResourceAttr(resourceName, "method.#", "2"),
+
+					// Verify data source reads the methods correctly
+					resource.TestCheckResourceAttr(dataSourceName, "key", "phone_number"),
+					resource.TestCheckResourceAttr(dataSourceName, "name", "Phone"),
+					resource.TestCheckResourceAttr(dataSourceName, "type", "phone"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "status"),
+					resource.TestCheckResourceAttr(dataSourceName, "method.#", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs(dataSourceName, "method.*", map[string]string{
+						"type":   "sms",
+						"status": "ACTIVE",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(dataSourceName, "method.*", map[string]string{
+						"type":   "voice",
+						"status": "INACTIVE",
+					}),
+				),
+			},
+		},
+	})
+}
