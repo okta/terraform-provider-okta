@@ -279,3 +279,51 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAuthenticator_webauthn_crud
+// Tests that webauthn authenticator can be created/updated without RADIUS configuration
+// Regression test for bug where webauthn was incorrectly validated as requiring RADIUS fields
+func TestAccResourceOktaAuthenticator_webauthn_crud(t *testing.T) {
+	config := `
+resource "okta_authenticator" "webauthn" {
+	name   = "Security Key or Biometric"
+	key    = "webauthn"
+	status = "INACTIVE"
+}
+`
+	updatedConfig := `
+resource "okta_authenticator" "webauthn" {
+	name   = "Security Key or Biometric"
+	key    = "webauthn"
+	status = "ACTIVE"
+}
+`
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Security Key or Biometric"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Security Key or Biometric"),
+				),
+			},
+		},
+	})
+}
