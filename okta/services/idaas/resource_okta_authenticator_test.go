@@ -284,13 +284,8 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 // TestAccResourceOktaAuthenticator_webauthn_minimal
 // Tests that webauthn authenticator can be created with only name and key
 func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
-	config := `
-resource "okta_authenticator" "webauthn" {
-	name   = "WebAuthn"
-	key    = "webauthn"
-	status = "ACTIVE"
-}
-`
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_minimal.tf", t)
 	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -315,14 +310,8 @@ resource "okta_authenticator" "webauthn" {
 // TestAccResourceOktaAuthenticator_webauthn_with_provider_fails
 // Tests that webauthn authenticator fails when provider configuration is included
 func TestAccResourceOktaAuthenticator_webauthn_with_provider_fails(t *testing.T) {
-	config := `
-resource "okta_authenticator" "webauthn" {
-	name              = "WebAuthn"
-	key               = "webauthn"
-	status            = "ACTIVE"
-	provider_hostname = "localhost"
-}
-`
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_with_provider.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -340,17 +329,8 @@ resource "okta_authenticator" "webauthn" {
 // TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails
 // Tests that webauthn authenticator fails when provider_json is included
 func TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails(t *testing.T) {
-	config := `
-resource "okta_authenticator" "webauthn" {
-	name   = "WebAuthn"
-	key    = "webauthn"
-	status = "ACTIVE"
-	provider_json = jsonencode({
-		"type": "FIDO",
-		"configuration": {}
-	})
-}
-`
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_with_provider_json.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -368,22 +348,11 @@ resource "okta_authenticator" "webauthn" {
 // TestAccResourceOktaAuthenticator_webauthn_lifecycle
 // Tests webauthn authenticator lifecycle (create, update status, deactivate)
 func TestAccResourceOktaAuthenticator_webauthn_lifecycle(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	configActive := mgr.GetFixtures("webauthn_lifecycle_active.tf", t)
+	configInactive := mgr.GetFixtures("webauthn_lifecycle_inactive.tf", t)
 	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
 
-	configActive := `
-resource "okta_authenticator" "webauthn" {
-	name   = "WebAuthn"
-	key    = "webauthn"
-	status = "ACTIVE"
-}
-`
-	configInactive := `
-resource "okta_authenticator" "webauthn" {
-	name   = "WebAuthn"
-	key    = "webauthn"
-	status = "INACTIVE"
-}
-`
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
