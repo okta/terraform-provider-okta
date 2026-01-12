@@ -831,12 +831,13 @@ type authenticatorMethod struct {
 
 // supportsAuthenticatorMethods checks if the authenticator supports method-level configuration
 func supportsAuthenticatorMethods(key string) bool {
-	supportedKeys := map[string]bool{
-		"phone_number": true,
-		"okta_verify":  true,
-		"custom_otp":   true,
+	supportedKeys := map[string]struct{}{
+		"phone_number": {},
+		"okta_verify":  {},
+		"custom_otp":   {},
 	}
-	return supportedKeys[key]
+	_, exists := supportedKeys[key]
+	return exists
 }
 
 // getMethodsFromSchema extracts method blocks from Terraform schema
@@ -1053,7 +1054,7 @@ func flattenAuthenticatorMethods(methods []authenticatorMethod, d *schema.Resour
 	result := make([]interface{}, 0, len(methods))
 
 	// Build a map of which methods have settings configured
-	configuredMethodSettings := make(map[string]bool)
+	configuredMethodSettings := make(map[string]struct{})
 	if methodList, ok := d.GetOk("method"); ok {
 		for _, m := range methodList.([]interface{}) {
 			methodMap := m.(map[string]interface{})
@@ -1061,7 +1062,7 @@ func flattenAuthenticatorMethods(methods []authenticatorMethod, d *schema.Resour
 
 			// Check if this method has non-empty settings configured
 			if settingsStr, hasSettings := methodMap["settings"].(string); hasSettings && settingsStr != "" {
-				configuredMethodSettings[methodType] = true
+				configuredMethodSettings[methodType] = struct{}{}
 			}
 		}
 	}
@@ -1074,7 +1075,7 @@ func flattenAuthenticatorMethods(methods []authenticatorMethod, d *schema.Resour
 		// Only include settings if:
 		// 1. They were explicitly configured in the Terraform config, AND
 		// 2. They exist in the API response
-		if configuredMethodSettings[method.Type] && method.Settings != nil && len(method.Settings) > 0 {
+		if _, configured := configuredMethodSettings[method.Type]; configured && method.Settings != nil && len(method.Settings) > 0 {
 			settingsBytes, err := json.Marshal(method.Settings)
 			if err == nil {
 				m["settings"] = string(settingsBytes)
@@ -1120,7 +1121,7 @@ func validateAuthenticatorMethods(d *schema.ResourceData, key string, meta inter
 	}
 
 	// Validate each method
-	seenTypes := make(map[string]bool)
+	seenTypes := make(map[string]struct{})
 	for _, m := range methods {
 		methodMap := m.(map[string]interface{})
 		methodType := methodMap["type"].(string)
@@ -1132,10 +1133,10 @@ func validateAuthenticatorMethods(d *schema.ResourceData, key string, meta inter
 		}
 
 		// Check for duplicate method types (TypeList allows duplicates, so we need to validate)
-		if seenTypes[methodType] {
+		if _, seen := seenTypes[methodType]; seen {
 			return fmt.Errorf("duplicate method type '%s' found. Each method type can only be specified once", methodType)
 		}
-		seenTypes[methodType] = true
+		seenTypes[methodType] = struct{}{}
 
 		// Validate method type is allowed for this authenticator
 		validType := false
@@ -1186,10 +1187,13 @@ func validateMethodSettings(authenticatorKey, methodType string, settings map[st
 				if !ok {
 					return fmt.Errorf("'algorithms' in method '%s' settings must be an array", methodType)
 				}
-				validAlgorithms := map[string]bool{"ES256": true, "RS256": true, "ES384": true, "ES512": true, "RS384": true, "RS512": true, "EdDSA": true}
+				validAlgorithms := map[string]struct{}{"ES256": {}, "RS256": {}, "ES384": {}, "ES512": {}, "RS384": {}, "RS512": {}, "EdDSA": {}}
 				for _, alg := range algList {
 					algStr, ok := alg.(string)
-					if !ok || !validAlgorithms[algStr] {
+					if !ok {
+						return fmt.Errorf("invalid algorithm '%v' in method '%s'. Valid algorithms: ES256, RS256, ES384, ES512, RS384, RS512, EdDSA", alg, methodType)
+					}
+					if _, valid := validAlgorithms[algStr]; !valid {
 						return fmt.Errorf("invalid algorithm '%v' in method '%s'. Valid algorithms: ES256, RS256, ES384, ES512, RS384, RS512, EdDSA", alg, methodType)
 					}
 				}
@@ -1201,8 +1205,8 @@ func validateMethodSettings(authenticatorKey, methodType string, settings map[st
 				if !ok {
 					return fmt.Errorf("'keyProtection' in method '%s' settings must be a string", methodType)
 				}
-				validKeyProtection := map[string]bool{"ANY": true, "SOFTWARE": true, "HARDWARE": true}
-				if !validKeyProtection[kpStr] {
+				validKeyProtection := map[string]struct{}{"ANY": {}, "SOFTWARE": {}, "HARDWARE": {}}
+				if _, valid := validKeyProtection[kpStr]; !valid {
 					return fmt.Errorf("invalid keyProtection '%s' in method '%s'. Valid values: ANY, SOFTWARE, HARDWARE", kpStr, methodType)
 				}
 			}
@@ -1219,8 +1223,8 @@ func validateMethodSettings(authenticatorKey, methodType string, settings map[st
 				if !ok {
 					return fmt.Errorf("'encoding' in method '%s' settings must be a string", methodType)
 				}
-				validEncodings := map[string]bool{"base32": true, "base64": true}
-				if !validEncodings[encodingStr] {
+				validEncodings := map[string]struct{}{"base32": {}, "base64": {}}
+				if _, valid := validEncodings[encodingStr]; !valid {
 					return fmt.Errorf("invalid encoding '%s' in method '%s'. Valid values: base32, base64", encodingStr, methodType)
 				}
 			}
@@ -1234,8 +1238,8 @@ func validateMethodSettings(authenticatorKey, methodType string, settings map[st
 				if !ok {
 					return fmt.Errorf("'protocol' in method '%s' settings must be a string", methodType)
 				}
-				validProtocols := map[string]bool{"TOTP": true, "HOTP": true}
-				if !validProtocols[protocolStr] {
+				validProtocols := map[string]struct{}{"TOTP": {}, "HOTP": {}}
+				if _, valid := validProtocols[protocolStr]; !valid {
 					return fmt.Errorf("invalid protocol '%s' in method '%s'. Valid values: TOTP, HOTP", protocolStr, methodType)
 				}
 			}
