@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/resources"
-	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 func dataSourceAuthenticator() *schema.Resource {
@@ -78,6 +78,30 @@ func dataSourceAuthenticator() *schema.Resource {
 				Computed:    true,
 				Description: "Username template expected by the provider.",
 			},
+			"method": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "Method-level configuration for authenticators that support it (phone_number, okta_verify, custom_otp).",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"type": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The authentication method type.",
+						},
+						"status": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The method status: ACTIVE or INACTIVE.",
+						},
+						"settings": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Method-specific settings as a JSON string.",
+						},
+					},
+				},
+			},
 		},
 		Description: "Get an authenticator by key, name of ID.",
 	}
@@ -88,6 +112,8 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 		return datasourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
+	client := getOktaV6ClientFromMetadata(meta)
+
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	key := d.Get("key").(string)
@@ -95,76 +121,138 @@ func dataSourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, me
 		return diag.Errorf("config must provide either 'id', 'name' or 'key' to retrieve the authenticator")
 	}
 	var (
-		authenticator *sdk.Authenticator
+		authenticator *v6okta.AuthenticatorBase
 		err           error
 	)
 	if id != "" {
-		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, id)
+		authenticator, _, err = client.AuthenticatorAPI.GetAuthenticator(ctx, id).Execute()
 	} else {
-		authenticator, err = findAuthenticator(ctx, meta, name, key)
+		authenticator, err = findAuthenticatorDataSource(ctx, client, name, key)
 	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(authenticator.Id)
-	_ = d.Set("key", authenticator.Key)
-	_ = d.Set("name", authenticator.Name)
-	_ = d.Set("status", authenticator.Status)
-	_ = d.Set("type", authenticator.Type)
-	if authenticator.Settings != nil {
-		b, _ := json.Marshal(authenticator.Settings)
-		_ = d.Set("settings", string(b))
-	}
-	if authenticator.Provider != nil {
-		b, _ := json.Marshal(authenticator.Provider)
-		dataMap := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(string(b)), &dataMap)
-		b, _ = json.Marshal(dataMap)
-		_ = d.Set("provider_json", string(b))
+	d.SetId(authenticator.GetId())
+	_ = d.Set("key", authenticator.GetKey())
+	_ = d.Set("name", authenticator.GetName())
+	_ = d.Set("status", authenticator.GetStatus())
+	_ = d.Set("type", authenticator.GetType())
 
-		_ = d.Set("provider_type", authenticator.Provider.Type)
+	// Extract settings from AdditionalProperties
+	if authenticator.AdditionalProperties != nil {
+		if settings, ok := authenticator.AdditionalProperties["settings"]; ok && settings != nil {
+			b, _ := json.Marshal(settings)
+			_ = d.Set("settings", string(b))
+		}
 
-		if authenticator.Type == "security_key" {
-			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
+		// Extract provider from AdditionalProperties
+		if providerRaw, ok := authenticator.AdditionalProperties["provider"]; ok && providerRaw != nil {
+			providerMap, ok := providerRaw.(map[string]interface{})
+			if ok {
+				b, _ := json.Marshal(providerMap)
+				dataMap := map[string]interface{}{}
+				_ = json.Unmarshal([]byte(string(b)), &dataMap)
+				b, _ = json.Marshal(dataMap)
+				_ = d.Set("provider_json", string(b))
+
+				if provType, ok := providerMap["type"].(string); ok {
+					_ = d.Set("provider_type", provType)
+				}
+
+				if config, ok := providerMap["configuration"].(map[string]interface{}); ok {
+					// Extract configuration based on authenticator type
+					switch authenticator.GetType() {
+					case "security_key":
+						if hostname, ok := config["hostName"].(string); ok {
+							_ = d.Set("provider_hostname", hostname)
+						}
+						if authPort, ok := config["authPort"].(float64); ok {
+							_ = d.Set("provider_auth_port", int(authPort))
+						}
+						if instanceId, ok := config["instanceId"].(string); ok {
+							_ = d.Set("provider_instance_id", instanceId)
+						}
+					default:
+						logger(meta).Debug("Authenticator type using standard data source configuration",
+							"authenticator_type", authenticator.GetType())
+					}
+
+					// Extract configuration based on provider type
+					if provType, ok := providerMap["type"].(string); ok {
+						switch provType {
+						case "DUO":
+							if host, ok := config["host"].(string); ok {
+								_ = d.Set("provider_host", host)
+							}
+							if secretKey, ok := config["secretKey"].(string); ok {
+								_ = d.Set("provider_secret_key", secretKey)
+							}
+							if integrationKey, ok := config["integrationKey"].(string); ok {
+								_ = d.Set("provider_integration_key", integrationKey)
+							}
+						default:
+							logger(meta).Debug("Unknown provider type in data source - using default behavior",
+								"provider_type", provType,
+								"authenticator_key", authenticator.GetKey(),
+								"supported_types", []string{"DUO"})
+						}
+					}
+
+					// Extract common template configuration
+					if template, ok := config["userNameTemplate"].(map[string]interface{}); ok {
+						if t, ok := template["template"].(string); ok {
+							_ = d.Set("provider_user_name_template", t)
+						}
+					}
+				}
 			}
-			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
-		}
-
-		if authenticator.Provider.Type == "DUO" {
-			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
-			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
-			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
-		}
-
-		if authenticator.Provider.Configuration.UserNameTemplate != nil {
-			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
 		}
 	}
+
+	// Fetch and set method information for supported authenticators
+	authKey := authenticator.GetKey()
+	if supportsAuthenticatorMethods(authKey) {
+		methods, methodsErr := listAuthenticatorMethodsV6(ctx, client, d.Id(), meta)
+		if methodsErr != nil {
+			logger(meta).Warn("Failed to list authenticator methods for data source", "authenticator_id", d.Id(), "error", methodsErr)
+		} else {
+			_ = d.Set("method", flattenAuthenticatorMethods(methods, d))
+		}
+	}
+
 	return nil
 }
 
-func findAuthenticator(ctx context.Context, meta interface{}, name, key string) (*sdk.Authenticator, error) {
-	authenticators, _, err := getOktaClientFromMetadata(meta).Authenticator.ListAuthenticators(ctx)
+func findAuthenticatorDataSource(ctx context.Context, client *v6okta.APIClient, name, key string) (*v6okta.AuthenticatorBase, error) {
+	authenticators, _, err := client.AuthenticatorAPI.ListAuthenticators(ctx).Execute()
 	if err != nil {
 		return nil, err
 	}
-	for _, authenticator := range authenticators {
+	for _, authUnion := range authenticators {
+		// Convert union type to AuthenticatorBase via JSON marshaling
+		authBytes, err := json.Marshal(authUnion)
+		if err != nil {
+			continue
+		}
+		var authenticator v6okta.AuthenticatorBase
+		if err := json.Unmarshal(authBytes, &authenticator); err != nil {
+			continue
+		}
+
 		if key == "custom_app" {
-			if authenticator.Name == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
-				return authenticator, nil // TODO: update condition to include custom_otp as there can be more than 1 custom_otp type authenticator.
+			if authenticator.GetName() == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
+				return &authenticator, nil // TODO: update condition to include custom_otp as there can be more than 1 custom_otp type authenticator.
 			}
 		} else if key != "custom_otp" {
-			if authenticator.Name == name {
-				return authenticator, nil
+			if authenticator.GetName() == name {
+				return &authenticator, nil
 			}
-			if authenticator.Key == key {
-				return authenticator, nil
+			if authenticator.GetKey() == key {
+				return &authenticator, nil
 			}
 		} else {
-			if authenticator.Name == name && authenticator.Key == key {
-				return authenticator, nil
+			if authenticator.GetName() == name && authenticator.GetKey() == key {
+				return &authenticator, nil
 			} else {
 				return nil, fmt.Errorf("authenticator with name '%s' and/or key '%s' does not exist", name, key)
 			}
