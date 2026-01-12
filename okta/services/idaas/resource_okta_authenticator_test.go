@@ -2,6 +2,7 @@ package idaas_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -274,6 +275,138 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName1, "legacy_ignore_name", "false"),
 					testAttributeJSON(resourceName1, "settings", `{"appInstanceId":"0oaspGHIJKL12345678","userVerification":"PREFERRED"}`),
 					testAttributeJSON(resourceName1, "provider_json", `{"configuration":{"fcm":{"id":"ppcrb12345678ABCDEF"}},"type":"PUSH"}`),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_minimal
+// Tests that webauthn authenticator can be created with only name and key
+func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
+	config := `
+resource "okta_authenticator" "webauthn" {
+	name   = "WebAuthn"
+	key    = "webauthn"
+	status = "ACTIVE"
+}
+`
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+					resource.TestCheckResourceAttr(resourceName, "name", "WebAuthn"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_fails
+// Tests that webauthn authenticator fails when provider configuration is included
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_fails(t *testing.T) {
+	config := `
+resource "okta_authenticator" "webauthn" {
+	name              = "WebAuthn"
+	key               = "webauthn"
+	status            = "ACTIVE"
+	provider_hostname = "localhost"
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile("webauthn authenticators do not support provider configuration"),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails
+// Tests that webauthn authenticator fails when provider_json is included
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails(t *testing.T) {
+	config := `
+resource "okta_authenticator" "webauthn" {
+	name   = "WebAuthn"
+	key    = "webauthn"
+	status = "ACTIVE"
+	provider_json = jsonencode({
+		"type": "FIDO",
+		"configuration": {}
+	})
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile("webauthn authenticators do not support provider configuration"),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_lifecycle
+// Tests webauthn authenticator lifecycle (create, update status, deactivate)
+func TestAccResourceOktaAuthenticator_webauthn_lifecycle(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	configActive := `
+resource "okta_authenticator" "webauthn" {
+	name   = "WebAuthn"
+	key    = "webauthn"
+	status = "ACTIVE"
+}
+`
+	configInactive := `
+resource "okta_authenticator" "webauthn" {
+	name   = "WebAuthn"
+	key    = "webauthn"
+	status = "INACTIVE"
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: configActive,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+			{
+				Config: configInactive,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
+				),
+			},
+			{
+				Config: configActive,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 				),
 			},
 		},
