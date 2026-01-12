@@ -300,7 +300,7 @@ func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
 					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
-					resource.TestCheckResourceAttr(resourceName, "name", "WebAuthn"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Security Key or Biometric"),
 				),
 			},
 		},
@@ -376,6 +376,36 @@ func TestAccResourceOktaAuthenticator_webauthn_lifecycle(t *testing.T) {
 				Config: configActive,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_onprem_mfa_minimal
+// Tests that onprem_mfa authenticator can be created with minimal provider configuration
+func TestAccResourceOktaAuthenticator_onprem_mfa_minimal(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("on_prem_minimal.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "onprem_mfa"),
+					resource.TestCheckResourceAttr(resourceName, "name", "On-Prem MFA"),
+					resource.TestCheckResourceAttr(resourceName, "provider_type", "DEL_OATH"),
+					resource.TestCheckResourceAttr(resourceName, "provider_hostname", "localhost"),
+					resource.TestCheckResourceAttr(resourceName, "provider_auth_port", "999"),
+					resource.TestCheckResourceAttr(resourceName, "provider_user_name_template", "global.assign.userName.login"),
 				),
 			},
 		},
