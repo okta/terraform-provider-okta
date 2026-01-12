@@ -1,5 +1,5 @@
 resource "okta_authenticator" "webauthn" {
-  name   = "WebAuthn"
+  name   = "Security Key or Biometric"
   key    = "webauthn"
   status = "ACTIVE"
   provider_json = jsonencode({
