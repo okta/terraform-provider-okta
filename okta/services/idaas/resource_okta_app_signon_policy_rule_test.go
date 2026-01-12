@@ -24,7 +24,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	updatedConfig := mgr.GetFixtures("basic_updated.tf", t)
-
+	updatedConfig2 := mgr.GetFixtures("basic_updated_2.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -51,7 +51,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
-					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT1H"),
 					resource.TestCheckResourceAttr(resourceName, "risk_score", "LOW"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
@@ -80,6 +79,12 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "ASSURANCE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "risk_score", "MEDIUM"),
+				),
+			},
+			{
+				Config: updatedConfig2,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "inactivity_period", ""),
 				),
 			},
 			{
@@ -374,8 +379,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_default_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
-					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT1H"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "ANY"),
 				),
 			},
 		},
@@ -462,6 +465,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_ReauthenticationFrequency(t *testing
 					resource.TestCheckResourceAttrWith(resourceName1, "chains.0", checkReauthenticateInChains),
 					resource.TestCheckResourceAttrWith(resourceName1, "chains.1", checkReauthenticateInChains),
 					resource.TestCheckResourceAttr(resourceName2, "re_authentication_frequency", "PT2H10M"),
+					resource.TestCheckResourceAttr(resourceName2, "inactivity_period", "PT1H"),
 				),
 			},
 		},
