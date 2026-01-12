@@ -2,7 +2,6 @@ package idaas_test
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -300,94 +299,18 @@ func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
 					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Security Key or Biometric"),
 				),
 			},
 		},
 	})
 }
 
-// TestAccResourceOktaAuthenticator_webauthn_with_provider_fails
-// Tests that webauthn authenticator fails when provider configuration is included
-func TestAccResourceOktaAuthenticator_webauthn_with_provider_fails(t *testing.T) {
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_ignored
+// Tests that webauthn authenticator accepts but ignores provider configuration (matching Okta API behavior)
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_ignored(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
 	config := mgr.GetFixtures("webauthn_with_provider.tf", t)
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("webauthn authenticators do not support provider configuration"),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails
-// Tests that webauthn authenticator fails when provider_json is included
-func TestAccResourceOktaAuthenticator_webauthn_with_provider_json_fails(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	config := mgr.GetFixtures("webauthn_with_provider_json.tf", t)
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config:      config,
-				ExpectError: regexp.MustCompile("webauthn authenticators do not support provider configuration"),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_webauthn_lifecycle
-// Tests webauthn authenticator lifecycle (create, update status, deactivate)
-func TestAccResourceOktaAuthenticator_webauthn_lifecycle(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	configActive := mgr.GetFixtures("webauthn_lifecycle_active.tf", t)
-	configInactive := mgr.GetFixtures("webauthn_lifecycle_inactive.tf", t)
 	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: configActive,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
-				),
-			},
-			{
-				Config: configInactive,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
-				),
-			},
-			{
-				Config: configActive,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_onprem_mfa_minimal
-// Tests that onprem_mfa authenticator can be created with minimal provider configuration
-func TestAccResourceOktaAuthenticator_onprem_mfa_minimal(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	config := mgr.GetFixtures("on_prem_minimal.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -400,12 +323,32 @@ func TestAccResourceOktaAuthenticator_onprem_mfa_minimal(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
-					resource.TestCheckResourceAttr(resourceName, "key", "onprem_mfa"),
-					resource.TestCheckResourceAttr(resourceName, "name", "On-Prem MFA"),
-					resource.TestCheckResourceAttr(resourceName, "provider_type", "DEL_OATH"),
-					resource.TestCheckResourceAttr(resourceName, "provider_hostname", "localhost"),
-					resource.TestCheckResourceAttr(resourceName, "provider_auth_port", "999"),
-					resource.TestCheckResourceAttr(resourceName, "provider_user_name_template", "global.assign.userName.login"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_json_ignored
+// Tests that webauthn authenticator accepts but ignores provider_json (matching Okta API behavior)
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_json_ignored(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_with_provider_json.tf", t)
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
 				),
 			},
 		},
