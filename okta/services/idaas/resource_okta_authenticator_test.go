@@ -285,6 +285,7 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
 	config := mgr.GetFixtures("webauthn_minimal.tf", t)
+	updatedConfig := mgr.GetFixtures("webauthn_minimal_inactive.tf", t)
 	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -299,6 +300,11 @@ func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
 					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+			{ Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
 				),
 			},
 		},

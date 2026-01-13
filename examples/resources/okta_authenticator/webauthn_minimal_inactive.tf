@@ -1,7 +1,7 @@
 resource "okta_authenticator" "webauthn" {
   name   = "Security Key or Biometric"
   key    = "webauthn"
-  status = "ACTIVE"
+  status = "INACTIVE"
   depends_on = [ okta_policy_mfa_default.default_policy ]
 }
 
@@ -10,7 +10,7 @@ resource "okta_policy_mfa_default" "default_policy" {
     enroll = "NOT_ALLOWED"
   }
   fido_webauthn = {
-    enroll = "OPTIONAL"
+    enroll = "NOT_ALLOWED"
   }
   okta_password = {
     enroll = "REQUIRED"
