@@ -31,6 +31,10 @@ func (r *customizedSigninPageResource) Metadata(_ context.Context, req resource.
 }
 
 func (r *customizedSigninPageResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+
+	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
+	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
+
 	newSchema := resourceSignInSchema
 	pageContentAttribute := newSchema.Attributes["page_content"].(resourceSchema.StringAttribute)
 	pageContentAttribute.Required = false
