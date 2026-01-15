@@ -35,7 +35,6 @@ data "okta_authenticator" "test_1" {
 
 ### Read-Only
 
-- `method` (Set of Object) Method-level configuration for authenticators that support it (phone_number, okta_verify, custom_otp). (see [below for nested schema](#nestedatt--method))
 - `provider_auth_port` (Number) The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured
 - `provider_hostname` (String) Server host name or IP address
 - `provider_instance_id` (String) (Specific to `security_key`) App Instance ID.
@@ -45,14 +44,5 @@ data "okta_authenticator" "test_1" {
 - `settings` (String) Authenticator settings in JSON format
 - `status` (String) Status of the Authenticator.
 - `type` (String) Type of the authenticator
-
-<a id="nestedatt--method"></a>
-### Nested Schema for `method`
-
-Read-Only:
-
-- `type` (String) The type of authenticator method.
-- `status` (String) The method status: ACTIVE or INACTIVE.
-- `settings` (String) Method-specific settings as a JSON string.
 
 
