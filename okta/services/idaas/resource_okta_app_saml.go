@@ -531,9 +531,11 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 		desc := metadataRoot.IDPSSODescriptors[0]
 		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
 		uri := metadataRoot.EntityID
-		key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
+		if app.Settings.SignOn != nil {
+			key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
+			_ = d.Set("entity_key", key)
+		}
 		_ = d.Set("entity_url", uri)
-		_ = d.Set("entity_key", key)
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
 
