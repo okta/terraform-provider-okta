@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.5.4 (January 13, 2025)
+### FEATURE
+* Add AgentPools resource [#2603](https://github.com/okta/terraform-provider-okta/pull/2603) by [aditya-okta](https://github.com/aditya-okta)
+* Add nil checks when accessing fields for resources and data sources `okta_idp_saml`, `okta_idp_oidc` and resource `okta_idp_social` [#2601](https://github.com/okta/terraform-provider-okta/pull/2601) by [aditya-okta](https://github.com/aditya-okta)
+* Changes To Update Okta Default Brand's `help_url` [#2607](https://github.com/okta/terraform-provider-okta/pull/2607) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Adds support for `ID` field in `AuthenticationMethodObject` [#2609](https://github.com/okta/terraform-provider-okta/pull/2609) by [aditya-okta](https://github.com/aditya-okta)
+
 
 ## 6.5.3 (December 24, 2025)
 
