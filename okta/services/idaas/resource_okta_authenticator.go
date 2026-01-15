@@ -27,7 +27,7 @@ func resourceAuthenticator() *schema.Resource {
 			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
 				keyAttrExists := !req.RawConfig.GetAttr("key").IsNull()
 				legacyIgnoreNameAttrExists := !req.RawConfig.GetAttr("legacy_ignore_name").IsNull()
-				if keyAttrExists && req.RawConfig.GetAttr("key").AsString() == "custom_app" {
+				if keyAttrExists && req.RawConfig.GetAttr("key").IsKnown() && req.RawConfig.GetAttr("key").AsString() == "custom_app" {
 					if !legacyIgnoreNameAttrExists || legacyIgnoreNameAttrExists && req.RawConfig.GetAttr("legacy_ignore_name").True() {
 						resp.Diagnostics = append(resp.Diagnostics, diag.Errorf("legacy_ignore_name must be false when creating a custom_app type authenticator")...)
 					}
