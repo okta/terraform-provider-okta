@@ -70,66 +70,6 @@ resource "okta_authenticator" "otp" {
   legacy_ignore_name = false
 }
 
-# Phone authenticator with method-level control
-resource "okta_authenticator" "phone" {
-  name = "Phone Authentication"
-  key  = "phone_number"
-  
-  # Enable SMS method
-  method {
-    type   = "sms"
-    status = "ACTIVE"
-  }
-  
-  # Disable voice method
-  method {
-    type   = "voice"
-    status = "INACTIVE"
-  }
-}
-
-# Okta Verify with specific methods enabled
-resource "okta_authenticator" "okta_verify" {
-  name = "Okta Verify"
-  key  = "okta_verify"
-  
-  method {
-    type   = "push"
-    status = "ACTIVE"
-  }
-  
-  method {
-    type   = "totp"
-    status = "ACTIVE"
-  }
-  
-  method {
-    type   = "signed_nonce"
-    status = "INACTIVE"
-  }
-}
-
-# Custom OTP with method settings
-resource "okta_authenticator" "custom_otp_with_method" {
-  name   = "Custom OTP Authenticator"
-  key    = "custom_otp"
-  status = "ACTIVE"
-  legacy_ignore_name = false
-  
-  method {
-    type   = "otp"
-    status = "ACTIVE"
-    settings = jsonencode({
-      "protocol" : "TOTP",
-      "encoding" : "base32",
-      "algorithm" : "HMacSHA256",
-      "timeIntervalInSeconds" : 30,
-      "passCodeLength" : 6,
-      "acceptableAdjacentIntervals" : 3
-    })
-  }
-}
-
 resource "okta_authenticator" "custom_app" {
   key                = "custom_app"
   name               = "Custom Push Auth"
@@ -161,7 +101,6 @@ resource "okta_authenticator" "custom_app" {
 
 ### Optional
 
-- `method` (Block Set) Method-level configuration for authenticators. Only supported for authenticators with key `phone_number`, `okta_verify`, or `custom_otp`. (see [below for nested schema](#nestedblock--method))
 - `agree_to_terms` (Boolean) A value of true indicates that the administrator accepts the terms for creating a new authenticator. Okta requires that you accept the terms when creating a new custom_app authenticator. Other authenticators don't require this field.
 - `legacy_ignore_name` (Boolean) Name does not trigger change detection (legacy behavior). Must be set to false for custom_app authenticators.
 - `provider_auth_port` (Number) The RADIUS server port (for example 1812). This is defined when the On-Prem RADIUS server is configured. Used only for authenticators with type `security_key`.  Conflicts with `provider_json` argument.
@@ -180,32 +119,7 @@ resource "okta_authenticator" "custom_app" {
 - `id` (String) The ID of this resource.
 - `provider_instance_id` (String) App Instance ID.
 - `provider_type` (String) Provider type. Supported value for Duo: `DUO`. Supported value for Custom App: `PUSH`
-- `type` (String) The type of Authenticator. Values include: `password`, `security_question`, `phone`, `email`, `app`, `federated`, and `security_key`.
-
-<a id="nestedblock--method"></a>
-### Nested Schema for `method`
-
-Required:
-
-- `type` (String) The method type. Supported values depend on the authenticator key:
-  - For `phone_number`: `sms`, `voice`
-  - For `okta_verify`: `push`, `totp`, `signed_nonce`
-  - For `custom_otp`: `otp`
-
-Optional:
-
-- `status` (String) The method status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
-- `settings` (String) Method-specific settings as a JSON string. Settings vary by method type:
-  - For `otp` method (custom_otp authenticator):
-    - `protocol` (String) - Protocol type: `TOTP` or `HOTP`
-    - `encoding` (String) - Encoding format: `base32` or `base64`
-    - `algorithm` (String) - Hash algorithm: `HMACSHA1`, `HMACSHA256`, or `HMACSHA512`
-    - `timeIntervalInSeconds` (Number) - Time step in seconds (TOTP only)
-    - `passCodeLength` (Number) - Length of the OTP code
-    - `acceptableAdjacentIntervals` (Number) - Number of adjacent time intervals to accept
-  - For `signed_nonce` method (okta_verify authenticator):
-    - `algorithms` (Array) - Supported algorithms: `ES256`, `ES384`, `ES512`, `RS256`, `RS384`, `RS512`, `EdDSA`
-    - `keyProtection` (String) - Key protection level: `ANY`, `SOFTWARE`, or `HARDWARE`
+- `type` (String) he type of Authenticator. Values include: `password`, `security_question`, `phone`, `email`, `app`, `federated`, and `security_key`.
 
 ## Import
 

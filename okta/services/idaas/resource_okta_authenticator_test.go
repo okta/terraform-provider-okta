@@ -2,7 +2,6 @@ package idaas_test
 
 import (
 	"fmt"
-	"hash/fnv"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -13,14 +12,9 @@ import (
 )
 
 func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
-	// Use hash of test name plus timestamp for uniqueness while recording
-	h := fnv.New32a()
-	h.Write([]byte("TestAccResourceOktaAuthenticator_OTP_crud"))
-	otpName := fmt.Sprintf("tfOTP-%d", h.Sum32())
-
-	config := fmt.Sprintf(`
+	config := `
 	resource "okta_authenticator" "otp" {
-		name   = "%s"
+		name   = "Custom OTP"
 		key    = "custom_otp"
 		status = "ACTIVE"
 		settings = jsonencode({
@@ -32,7 +26,7 @@ func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
 		  "passCodeLength" : 6
 		})
 		legacy_ignore_name = false
-	}`, otpName)
+	}`
 	resourceName := fmt.Sprintf("%s.otp", resources.OktaIDaaSAuthenticator)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -47,7 +41,7 @@ func TestAccResourceOktaAuthenticator_OTP_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
 					resource.TestCheckResourceAttr(resourceName, "key", "custom_otp"),
-					resource.TestCheckResourceAttr(resourceName, "name", otpName),
+					resource.TestCheckResourceAttr(resourceName, "name", "Custom OTP"),
 					testAttributeJSON(resourceName, "settings", `{"acceptableAdjacentIntervals":3,"algorithm":"HMacSHA256","encoding":"base32","passCodeLength":6,"protocol":"TOTP","timeIntervalInSeconds":30}`),
 				),
 			},
@@ -153,7 +147,6 @@ func TestAccResourceOktaAuthenticator_issue_1367_provider_json(t *testing.T) {
 resource "okta_authenticator" "test" {
   name = "On-Prem MFA"
   key = "onprem_mfa"
-  status = "ACTIVE"
   provider_json = jsonencode(
 	{
 		"type": "DEL_OATH",
@@ -210,10 +203,6 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.okta_verify", resources.OktaIDaaSAuthenticator)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
 	config := mgr.GetFixtures("okta_verify.tf", t)
-
-	// Use hardcoded ID for VCR cassettes
-	oktaVerifyID := "0ktaV3rify1d"
-
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -223,7 +212,7 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_authenticator.okta_verify",
-				ImportStateId:      oktaVerifyID,
+				ImportStateId:      "0ktaV3rify1d",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
@@ -235,223 +224,8 @@ func TestAccResourceOktaAuthenticator_OktaVerifyCRUD(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "app"),
 					resource.TestCheckResourceAttr(resourceName, "name", "Okta Verify"),
 					// ensure any change to examples/resources/okta_authenticator/okta_verify.tf is reflected here.
-					testAttributeJSON(resourceName, "settings", `{"appInstanceId":"","channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"enrollmentSecurityLevel":"HIGH","userVerification":"PREFERRED","userVerificationMethods":["BIOMETRICS"]}`),
+					testAttributeJSON(resourceName, "settings", `{"channelBinding":{"required":"ALWAYS","style":"NUMBER_CHALLENGE"},"compliance":{"fips":"OPTIONAL"},"userVerification":"PREFERRED","enrollmentSecurityLevel":"HIGH","userVerificationMethods":["BIOMETRICS"]}`),
 				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_PhoneWithMethods_crud tests CRUD operations on phone authenticator with method blocks
-func TestAccResourceOktaAuthenticator_PhoneWithMethods_crud(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	config := mgr.GetFixtures("phone_with_methods.tf", t)
-	configUpdated := mgr.GetFixtures("phone_with_methods_updated.tf", t)
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "type", "phone"),
-					resource.TestCheckResourceAttr(resourceName, "key", "phone_number"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Phone"),
-					resource.TestCheckResourceAttr(resourceName, "method.#", "2"),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "sms",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "voice",
-						"status": "INACTIVE",
-					}),
-				),
-			},
-			{
-				Config: configUpdated,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "type", "phone"),
-					resource.TestCheckResourceAttr(resourceName, "key", "phone_number"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Phone"),
-					resource.TestCheckResourceAttr(resourceName, "method.#", "2"),
-					// Both methods now ACTIVE (API may not allow deactivating all methods)
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "sms",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "voice",
-						"status": "ACTIVE",
-					}),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_OktaVerifyWithMethods_crud tests CRUD operations on Okta Verify with multiple methods and settings
-func TestAccResourceOktaAuthenticator_OktaVerifyWithMethods_crud(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	config := mgr.GetFixtures("okta_verify_with_methods.tf", t)
-	configUpdated := mgr.GetFixtures("okta_verify_methods_updated.tf", t)
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "type", "app"),
-					resource.TestCheckResourceAttr(resourceName, "key", "okta_verify"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Okta Verify"),
-					resource.TestCheckResourceAttr(resourceName, "method.#", "3"),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "push",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "totp",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "signed_nonce",
-						"status": "ACTIVE",
-					}),
-				),
-			},
-			{
-				Config: configUpdated,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "type", "app"),
-					resource.TestCheckResourceAttr(resourceName, "key", "okta_verify"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Okta Verify"),
-					resource.TestCheckResourceAttr(resourceName, "method.#", "3"),
-					// All methods remain ACTIVE, we're just testing settings updates
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "push",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "totp",
-						"status": "ACTIVE",
-					}),
-					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "method.*", map[string]string{
-						"type":   "signed_nonce",
-						"status": "ACTIVE",
-					}),
-					// Verify that settings were updated - API may add extra fields like appInstanceId and compliance
-					resource.TestCheckResourceAttrSet(resourceName, "settings"),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_PhoneMethodsNoConfig tests phone authenticator works without explicit method blocks
-func TestAccResourceOktaAuthenticator_PhoneMethodsNoConfig(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
-	config := `
-resource "okta_authenticator" "test" {
-  name = "Phone"
-  key  = "phone_number"
-}
-`
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "type", "phone"),
-					resource.TestCheckResourceAttr(resourceName, "key", "phone_number"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Phone"),
-					// Method blocks are optional - authenticator should still work
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "status"),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_MethodsOptional tests backward compatibility - authenticators without method blocks
-func TestAccResourceOktaAuthenticator_MethodsOptional(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
-	config := `
-resource "okta_authenticator" "test" {
-	name   = "Security Question"
-	key    = "security_question"
-	status = "ACTIVE"
-	settings = jsonencode({
-		"allowedFor" : "recovery"
-	})
-}
-`
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "type", "security_question"),
-					resource.TestCheckResourceAttr(resourceName, "key", "security_question"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Security Question"),
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					// Verify that method blocks are optional - should have 0 methods when not specified
-					resource.TestCheckResourceAttr(resourceName, "method.#", "0"),
-					testAttributeJSON(resourceName, "settings", `{"allowedFor":"recovery"}`),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAuthenticator_MethodsImportStateVerify tests that method blocks
-// are correctly verified during ImportStateVerify
-func TestAccResourceOktaAuthenticator_MethodsImportStateVerify(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAuthenticator)
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
-	config := mgr.GetFixtures("phone_with_methods.tf", t)
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"legacy_ignore_name",
-					"provider_hostname",
-					"provider_user_name_template",
-				},
 			},
 		},
 	})
@@ -484,10 +258,10 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName1, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName1, "type", "app"),
 					resource.TestCheckResourceAttr(resourceName1, "key", "custom_app"),
-					resource.TestCheckResourceAttr(resourceName1, "name", "VCRTestCustomAppAuthNew"),
+					resource.TestCheckResourceAttr(resourceName1, "name", "VCRTestCustomAppAuth"),
 					resource.TestCheckResourceAttr(resourceName1, "legacy_ignore_name", "false"),
-					testAttributeJSON(resourceName1, "settings", `{"appInstanceId":"0oa12345678ABCDEFG","oauthClientId":"0oa12345678ABCDEFG","userVerification":"REQUIRED"}`),
-					testAttributeJSON(resourceName1, "provider_json", `{"configuration":{"fcm":{"id":"ppcABCDEFGH12345678"}},"type":"PUSH"}`),
+					testAttributeJSON(resourceName1, "settings", `{"appInstanceId":"0oaspABCDEF12345678","userVerification":"REQUIRED"}`),
+					testAttributeJSON(resourceName1, "provider_json", `{"configuration":{"fcm":{"id":"ppcrb12345678ABCDEF"}},"type":"PUSH"}`),
 				),
 			},
 			{
@@ -496,10 +270,10 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName1, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName1, "type", "app"),
 					resource.TestCheckResourceAttr(resourceName1, "key", "custom_app"),
-					resource.TestCheckResourceAttr(resourceName1, "name", "VCRTestCustomAppAuthNewRenamed"),
+					resource.TestCheckResourceAttr(resourceName1, "name", "VCRTestCustomAppAuthRenamed"),
 					resource.TestCheckResourceAttr(resourceName1, "legacy_ignore_name", "false"),
-					testAttributeJSON(resourceName1, "settings", `{"appInstanceId":"0oa12345678ABCDEFG","oauthClientId":"0oa12345678ABCDEFG","userVerification":"PREFERRED"}`),
-					testAttributeJSON(resourceName1, "provider_json", `{"configuration":{"fcm":{"id":"ppcABCDEFGH12345678"}},"type":"PUSH"}`),
+					testAttributeJSON(resourceName1, "settings", `{"appInstanceId":"0oaspGHIJKL12345678","userVerification":"PREFERRED"}`),
+					testAttributeJSON(resourceName1, "provider_json", `{"configuration":{"fcm":{"id":"ppcrb12345678ABCDEF"}},"type":"PUSH"}`),
 				),
 			},
 		},
