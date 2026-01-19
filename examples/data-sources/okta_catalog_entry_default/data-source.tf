@@ -1,0 +1,1 @@
+data "okta_catalog_entry_default" "test" {}

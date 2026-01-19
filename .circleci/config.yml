@@ -2,15 +2,17 @@ version: 2.1
 
 orbs:
   platform-helpers: okta/platform-helpers@1
+  general-platform-helpers: okta/general-platform-helpers@1.9.4
   python: circleci/python@2.0.3
   aws-cli: circleci/aws-cli@5.1
 
 jobs:
   reversing-labs:
     docker:
-      - image: cimg/go:1.21.13
+      - image: cimg/go:1.24.0
+    resource_class: large
     steps:
-      - checkout 
+      - checkout
       - run:
           name: Install Python
           command: |
@@ -37,7 +39,7 @@ jobs:
           name: Build binary to scan
           command: |
             go mod vendor
-            go build
+            go install ./...
       - run:
           name: Run Reversing Labs Wrapper Scanner
           command: |
@@ -50,12 +52,27 @@ jobs:
               --build-env "circleci" \
               --suppress_output
 
+  snyk-scan:
+    docker:
+      - image: cimg/go:1.24.0
+    steps:
+      - checkout
+      - general-platform-helpers/step-load-dependencies
+      - general-platform-helpers/step-run-snyk-monitor:
+          scan-all-projects: false
+          skip-unresolved: false
+          run-on-non-main: true
+
 workflows:
   # See OKTA-634442
   semgrep:
     jobs:
       - platform-helpers/job-semgrep-scan:
           name: "Scan with Semgrep"
+          context:
+            - static-analysis
+      - snyk-scan:
+          name: execute-snyk
           context:
             - static-analysis
   "Malware Scanner":

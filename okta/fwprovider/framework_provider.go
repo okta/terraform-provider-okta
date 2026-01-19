@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/services/governance"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
@@ -215,10 +216,19 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return idaas.FWProviderDataSources()
+	var sources []func() datasource.DataSource
+	sources = append(sources, idaas.FWProviderDataSources()...)
+	sources = append(sources, governance.FWProviderDataSources()...)
+	return sources
 }
 
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	return idaas.FWProviderResources()
+	var resources []func() resource.Resource
+
+	// Append resources from various modules
+	resources = append(resources, idaas.FWProviderResources()...)
+	resources = append(resources, governance.FWProviderResources()...)
+
+	return resources
 }

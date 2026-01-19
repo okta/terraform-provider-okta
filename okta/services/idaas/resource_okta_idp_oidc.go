@@ -165,21 +165,43 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	}
 	_ = d.Set("name", idp.Name)
 	_ = d.Set("type", idp.Type)
-	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
+	if idp.Policy != nil {
+		if idp.Policy.MaxClockSkewPtr != nil {
+			_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
+		}
+		if idp.Policy.Provisioning != nil {
+			_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
+			if idp.Policy.Provisioning.Conditions != nil {
+				if idp.Policy.Provisioning.Conditions.Deprovisioned != nil {
+					_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+				}
+				if idp.Policy.Provisioning.Conditions.Suspended != nil {
+					_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+				}
+			}
+			if idp.Policy.Provisioning.ProfileMaster != nil {
+				_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
+			}
+		}
+		if idp.Policy.Subject != nil {
+			_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+			_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+			_ = d.Set("filter", idp.Policy.Subject.Filter)
+		}
 	}
-	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	_ = d.Set("filter", idp.Policy.Subject.Filter)
-	_ = d.Set("issuer_url", idp.Protocol.Issuer.Url)
-	_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
-	_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-	if idp.Protocol.Credentials.Client.PKCERequired != nil {
-		_ = d.Set("pkce_required", idp.Protocol.Credentials.Client.PKCERequired)
+	if idp.Protocol != nil {
+		if idp.Protocol.Issuer != nil {
+			_ = d.Set("issuer_url", idp.Protocol.Issuer.Url)
+		}
+		if idp.Protocol.Credentials != nil {
+			if idp.Protocol.Credentials.Client != nil {
+				_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
+				_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+				if idp.Protocol.Credentials.Client.PKCERequired != nil {
+					_ = d.Set("pkce_required", idp.Protocol.Credentials.Client.PKCERequired)
+				}
+			}
+		}
 	}
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
