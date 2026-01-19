@@ -9,18 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.4"
+
       - name: Setup Go Tools
         run: make tools
-
-      - name: Check Formatting
-        run: make fmtcheck
 
       - name: QC Code
         run: make qc
@@ -32,4 +34,8 @@ jobs:
         run: make test
 
       - name: Run VCR acceptance tests
-        run: time make test-play-vcr-acc
+        run: |
+          echo "Running IDaaS tests..."
+          time make test-play-vcr-acc
+          echo "Running Governance tests..."
+          time make test-play-vcr-acc-governance

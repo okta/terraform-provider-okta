@@ -13,7 +13,11 @@ description: |-
 # Resource: okta_app_signon_policy_rule
 
 Manages a sign-on policy rules for the application.
+
 ~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
+
+~> **WARNING:** When managing multiple `okta_app_signon_policy_rule` resources with concurrent operations, the Okta API may encounter concurrency issues. While this provider implements internal locking to prevent conflicts within a single Terraform process, you should use explicit `depends_on` references between rules to ensure proper sequencing, especially when managing rule priorities.
+
 This resource allows you to create and configure a sign-on policy rule for the application.
 A default or 'Catch-all Rule' sign-on policy rule can be imported and managed as a custom rule.
 The only difference is that these fields are immutable and can not be managed: 'network_connection', 'network_excludes', 
@@ -343,7 +347,7 @@ resource "okta_app_signon_policy_rule" "test" {
 - `network_includes` (List of String) The zones to include
 - `platform_include` (Block Set) (see [below for nested schema](#nestedblock--platform_include))
 - `priority` (Number) Priority of the rule.
-- `re_authentication_frequency` (String) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session
+- `re_authentication_frequency` (String) The duration after which the end user must re-authenticate, regardless of user activity. Use the ISO 8601 Period format for recurring time intervals. PT0S - Every sign-in attempt, PT43800H - Once per session. Cannot be set if reauthenticateIn is set in one or more entries of chains.
 - `risk_score` (String) The risk score specifies a particular level of risk to match on: ANY, LOW, MEDIUM, HIGH
 - `status` (String) Status of the rule
 - `type` (String) The Verification Method type

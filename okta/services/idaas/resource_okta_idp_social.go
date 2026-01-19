@@ -149,30 +149,45 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	_ = d.Set("type", idp.Type)
 	_ = d.Set("name", idp.Name)
-	if idp.Policy.MaxClockSkewPtr != nil {
-		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
+	p := idp.Policy
+	if p != nil {
+		if p.MaxClockSkewPtr != nil {
+			_ = d.Set("max_clock_skew", p.MaxClockSkewPtr)
+		}
+		if p.Provisioning != nil {
+			_ = d.Set("provisioning_action", p.Provisioning.Action)
+			if p.Provisioning.Conditions != nil {
+				if p.Provisioning.Conditions.Deprovisioned != nil {
+					_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+				}
+				if p.Provisioning.Conditions.Suspended != nil {
+					_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+				}
+			}
+			_ = d.Set("profile_master", p.Provisioning.ProfileMaster)
+		}
+		if p.Subject != nil {
+			_ = d.Set("subject_match_type", p.Subject.MatchType)
+			_ = d.Set("subject_match_attribute", p.Subject.MatchAttribute)
+			if p.Subject.UserNameTemplate != nil {
+				_ = d.Set("username_template", p.Subject.UserNameTemplate.Template)
+			}
+		}
 	}
-	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	if idp.Policy.Provisioning.Conditions != nil {
-		_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-		_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	}
-	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
-	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
 	_ = d.Set("protocol_type", idp.Protocol.Type)
-	if idp.Protocol.Credentials.Client != nil {
-		_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-		_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+	c := idp.Protocol.Credentials.Client
+	if c != nil {
+		_ = d.Set("client_id", c.ClientId)
+		_ = d.Set("client_secret", c.ClientSecret)
 	}
-	if idp.Protocol.Credentials.Trust != nil {
-		_ = d.Set("trust_issuer", idp.Protocol.Credentials.Trust.Issuer)
-		_ = d.Set("trust_audience", idp.Protocol.Credentials.Trust.Audience)
-		_ = d.Set("trust_kid", idp.Protocol.Credentials.Trust.Kid)
-		_ = d.Set("trust_revocation", idp.Protocol.Credentials.Trust.Revocation)
-		if idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr != nil {
-			_ = d.Set("trust_revocation_cache_lifetime", idp.Protocol.Credentials.Trust.RevocationCacheLifetimePtr)
+	t := idp.Protocol.Credentials.Trust
+	if t != nil {
+		_ = d.Set("trust_issuer", t.Issuer)
+		_ = d.Set("trust_audience", t.Audience)
+		_ = d.Set("trust_kid", t.Kid)
+		_ = d.Set("trust_revocation", t.Revocation)
+		if t.RevocationCacheLifetimePtr != nil {
+			_ = d.Set("trust_revocation_cache_lifetime", t.RevocationCacheLifetimePtr)
 		}
 	}
 	if idp.Type == "APPLE" {

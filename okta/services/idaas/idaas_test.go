@@ -353,16 +353,25 @@ func sweepAuthServers(client api.OktaIDaaSClient) error {
 
 func sweepBehaviors(client api.OktaIDaaSClient) error {
 	var errorList []error
-	behaviors, _, err := client.OktaSDKSupplementClient().ListBehaviors(context.Background(), &query.Params{Q: acctest.ResourcePrefixForTest})
+	listBehaviorDetectionRules := client.OktaSDKClientV5().BehaviorAPI.ListBehaviorDetectionRules(context.Background())
+	behaviors, _, err := listBehaviorDetectionRules.Execute()
 	if err != nil {
 		return err
 	}
-	for _, b := range behaviors {
-		if _, err := client.OktaSDKSupplementClient().DeleteBehavior(context.Background(), b.ID); err != nil {
+	for _, behavior := range behaviors {
+		type iBehavior interface {
+			GetId() string
+			GetName() string
+		}
+		ctx := context.Background()
+		b := behavior.GetActualInstance().(iBehavior)
+		deleteBehaviorDetectionRuleRequest := client.OktaSDKClientV5().BehaviorAPI.DeleteBehaviorDetectionRule(ctx, b.GetId())
+		_, err := deleteBehaviorDetectionRuleRequest.Execute()
+		if err != nil {
 			errorList = append(errorList, err)
 			continue
 		}
-		logSweptResource("behavior", b.ID, b.Name)
+		logSweptResource("behavior", b.GetId(), b.GetName())
 	}
 	return condenseError(errorList)
 }

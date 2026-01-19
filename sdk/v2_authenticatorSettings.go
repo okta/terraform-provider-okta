@@ -11,6 +11,8 @@ type AuthenticatorSettings struct {
 	TokenLifetimeInMinutes    int64           `json:"-"`
 	TokenLifetimeInMinutesPtr *int64          `json:"tokenLifetimeInMinutes,omitempty"`
 	UserVerification          string          `json:"userVerification,omitempty"`
+	EnrollmentSecurityLevel   string          `json:"enrollmentSecurityLevel,omitempty"`
+	UserVerificationMethods   []string        `json:"userVerificationMethods,omitempty"`
 }
 
 func (a *AuthenticatorSettings) MarshalJSON() ([]byte, error) {

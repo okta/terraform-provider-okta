@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -51,7 +52,8 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
-	_, err = getAPISupplementFromMetadata(meta).CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string), *cr)
+	client := getOktaV5ClientFromMetadata(meta)
+	_, _, err = client.ResourceSetAPI.CreateResourceSetBinding(ctx, d.Get("resource_set_id").(string)).Instance(*cr).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create custom admin role assignment: %v", err)
 	}
@@ -60,15 +62,17 @@ func resourceAdminRoleCustomAssignmentsCreate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	members, resp, err := listResourceSetBindingMembers(ctx, getAPISupplementFromMetadata(meta), d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to list members assigned to the custom role: %v", err)
+	client := getOktaV5ClientFromMetadata(meta)
+	members, _, err := client.ResourceSetAPI.ListMembersOfBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string)).Execute()
+	if err != nil {
+		return diag.Errorf("failed to list custom admin role assignment: %v", err)
 	}
 	if members == nil {
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("members", flattenAdminRoleCustomAssignments(members))
+
+	_ = d.Set("members", flattenAdminRoleCustomAssignments(members.Members))
 	return nil
 }
 
@@ -94,16 +98,27 @@ func resourceAdminRoleCustomAssignmentsUpdate(ctx context.Context, d *schema.Res
 }
 
 func resourceAdminRoleCustomAssignmentsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	resp, err := getAPISupplementFromMetadata(meta).DeleteResourceSetBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string))
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to delete admin custom role assignment: %v", err)
+	client := getOktaV5ClientFromMetadata(meta)
+	members, _, _ := client.ResourceSetAPI.ListMembersOfBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string)).Execute()
+	existingMembers := d.Get("members").(*schema.Set).List()
+	for _, member := range members.Members {
+		mem := member.Links.Self.GetHref()
+		for _, v := range existingMembers {
+			if mem == v {
+				_, err := client.ResourceSetAPI.UnassignMemberFromBinding(ctx, d.Get("resource_set_id").(string), d.Get("custom_role_id").(string), member.GetId()).Execute()
+				if err != nil {
+					return diag.Errorf("failed to unassign member with id %s from binding with error: %v", member.GetId(), err)
+				}
+			}
+		}
 	}
 	return nil
 }
 
-func buildAdminRoleCustomAssignment(d *schema.ResourceData) (*sdk.CreateCustomRoleBindingRequest, error) {
-	rb := &sdk.CreateCustomRoleBindingRequest{
-		Role:    d.Get("custom_role_id").(string),
+func buildAdminRoleCustomAssignment(d *schema.ResourceData) (*okta.ResourceSetBindingCreateRequest, error) {
+	customRoleId := d.Get("custom_role_id").(string)
+	rb := &okta.ResourceSetBindingCreateRequest{
+		Role:    &customRoleId,
 		Members: utils.ConvertInterfaceToStringSetNullable(d.Get("members")),
 	}
 	if len(rb.Members) == 0 {
@@ -112,19 +127,14 @@ func buildAdminRoleCustomAssignment(d *schema.ResourceData) (*sdk.CreateCustomRo
 	return rb, nil
 }
 
-func flattenAdminRoleCustomAssignments(members []*sdk.CustomRoleBindingMember) *schema.Set {
+func flattenAdminRoleCustomAssignments(members []okta.ResourceSetBindingMember) *schema.Set {
 	var arr []interface{}
 	for _, member := range members {
-		links := member.Links.(map[string]interface{})
-		var url string
-		for _, v := range links {
-			for _, link := range v.(map[string]interface{}) {
-				url = link.(string)
-				break
-			}
-		}
-		arr = append(arr, url)
+		// Extract the URL from the links structure
+		link := member.Links.Self.GetHref()
+		arr = append(arr, link)
 	}
+
 	return schema.NewSet(schema.HashString, arr)
 }
 

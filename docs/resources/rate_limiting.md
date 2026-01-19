@@ -3,16 +3,14 @@ page_title: "Resource: okta_rate_limiting"
 description: |-
   Manages rate limiting.
   This resource allows you to configure the client-based rate limit and rate limiting communications settings.
-  ~> WARNING: This resource is available only when using a SSWS API token in the provider config, it is incompatible with OAuth 2.0 authentication.
-  ~> WARNING: This resource makes use of an internal/private Okta API endpoint that could change without notice rendering this resource inoperable.
+  ~> WARNING: This resource is deprecated and will be removed in a future release. A new resource to manage rate limiting settings will be implemented in the future.
 ---
 
 # Resource: okta_rate_limiting
 
 Manages rate limiting.
 This resource allows you to configure the client-based rate limit and rate limiting communications settings.
-~> **WARNING:** This resource is available only when using a SSWS API token in the provider config, it is incompatible with OAuth 2.0 authentication.
-~> **WARNING:** This resource makes use of an internal/private Okta API endpoint that could change without notice rendering this resource inoperable.
+~> **WARNING:** This resource is deprecated and will be removed in a future release. A new resource to manage rate limiting settings will be implemented in the future.
 
 ## Example Usage
 

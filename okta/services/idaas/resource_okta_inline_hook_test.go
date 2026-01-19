@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -109,42 +110,12 @@ func TestAccResourceOktaInlineHook_crud(t *testing.T) {
 func TestAccResourceOktaInlineHook_com_okta_saml_tokens_transform(t *testing.T) {
 	resourceName := "okta_inline_hook.test"
 	mgr := newFixtureManager("resources", resources.OktaIDaaSInlineHook, t.Name())
-
 	name1 := "One"
 	name2 := "Two"
-	config := `
-resource "okta_inline_hook" "test" {
-  name    = "testAcc_replace_with_uuid_%s"
-  type     = "com.okta.saml.tokens.transform"
-  version  = "1.0.2"
-  status   = "ACTIVE"
-  channel_json = <<JSON
-{
-        "type": "OAUTH",
-        "version": "1.0.0",
-        "config": {
-            "headers": [
-                {
-                    "key": "Field 1",
-                    "value": "Value 1"
-                },
-                {
-                    "key": "Field 2",
-                    "value": "Value 2"
-                }
-            ],
-            "method": "POST",
-            "authType": "client_secret_post",
-            "uri": "https://example.com/service",
-            "clientId": "abc123",
-            "clientSecret": "def456",
-            "tokenUrl": "https://example.com/token",
-            "scope": "api"
-        }
-}
-JSON
-}
-	`
+	secret := secretHolder{"def456"}
+	updatedSecret := secretHolder{"def456_UPDATED"}
+	config := mgr.GetFixtures("okta_inline_hook_saml_clientsecret.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_inline_hook_saml_clientsecret_updated.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -161,12 +132,13 @@ JSON
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", secret.CheckSecret),
 					resource.TestCheckNoResourceAttr(resourceName, "channel"),
 					resource.TestCheckNoResourceAttr(resourceName, "auth"),
 				),
 			},
 			{
-				Config: mgr.ConfigReplace(fmt.Sprintf(config, name2)),
+				Config: mgr.ConfigReplace(fmt.Sprintf(updatedConfig, name2)),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, inlineHookExists),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)+"_Two"),
@@ -174,8 +146,148 @@ JSON
 					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
 					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
 					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", updatedSecret.CheckSecret),
 					resource.TestCheckNoResourceAttr(resourceName, "channel"),
 					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(updatedConfig, name2)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)+"_Two"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.saml.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.2"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", updatedSecret.CheckSecret),
+					resource.TestCheckNoResourceAttr(resourceName, "channel"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaInlineHook_token_channeljson(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.token_channeljson", resources.OktaIDaaSInlineHook)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSInlineHook, t.Name())
+	config := mgr.GetFixtures("okta_inline_hook_token_channeljson.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_inline_hook_token_channeljson_updated.tf", t)
+	secret := secretHolder{"some_secret"}
+	updatedSecret := secretHolder{"some_secret_UPDATED"}
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSInlineHook, inlineHookExists),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel JSON"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", secret.CheckSecret),
+					resource.TestCheckNoResourceAttr(resourceName, "channel.version"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel JSON"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", updatedSecret.CheckSecret),
+					resource.TestCheckNoResourceAttr(resourceName, "channel.version"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+			{ // No change whatsoever, this is akin to running 'terraform plan' with no changes planned
+				Config: updatedConfig, // same as previous step with no changes
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel JSON"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "channel_json"),
+					resource.TestCheckResourceAttrWith(resourceName, "channel_json", updatedSecret.CheckSecret),
+					resource.TestCheckNoResourceAttr(resourceName, "channel.version"),
+					resource.TestCheckNoResourceAttr(resourceName, "auth"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaInlineHook_token_channel_auth(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.token_channel_auth", resources.OktaIDaaSInlineHook)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSInlineHook, t.Name())
+	config := mgr.GetFixtures("okta_inline_hook_token_channel_auth.tf", t)
+	updatedConfig := mgr.GetFixtures("okta_inline_hook_token_channel_auth_updated.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSInlineHook, inlineHookExists),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel Auth"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
+					resource.TestCheckResourceAttr(resourceName, "auth.key", "Authorization"),
+					resource.TestCheckResourceAttr(resourceName, "auth.type", "HEADER"),
+					resource.TestCheckResourceAttr(resourceName, "auth.value", "secret"),
+					resource.TestCheckNoResourceAttr(resourceName, "channel_json"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel Auth"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
+					resource.TestCheckResourceAttr(resourceName, "auth.key", "Authorization"),
+					resource.TestCheckResourceAttr(resourceName, "auth.type", "HEADER"),
+					resource.TestCheckResourceAttr(resourceName, "auth.value", "secret_UPDATED"),
+					resource.TestCheckNoResourceAttr(resourceName, "channel_json"),
+				),
+			},
+			{ // No change whatsoever, this is akin to running 'terraform plan' with no changes planned
+				Config: updatedConfig, // same as previous step with no changes
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, inlineHookExists),
+					resource.TestCheckResourceAttr(resourceName, "name", "Inline Hook Channel Auth"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "com.okta.oauth2.tokens.transform"),
+					resource.TestCheckResourceAttr(resourceName, "version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.version", "1.0.0"),
+					resource.TestCheckResourceAttr(resourceName, "channel.uri", "https://example.com/test"),
+					resource.TestCheckResourceAttr(resourceName, "channel.method", "POST"),
+					resource.TestCheckResourceAttr(resourceName, "auth.key", "Authorization"),
+					resource.TestCheckResourceAttr(resourceName, "auth.type", "HEADER"),
+					resource.TestCheckResourceAttr(resourceName, "auth.value", "secret_UPDATED"),
+					resource.TestCheckNoResourceAttr(resourceName, "channel_json"),
 				),
 			},
 		},
@@ -189,4 +301,15 @@ func inlineHookExists(id string) (bool, error) {
 		return false, err
 	}
 	return resp.StatusCode != http.StatusNotFound, nil
+}
+
+type secretHolder struct {
+	secret string
+}
+
+func (s *secretHolder) CheckSecret(value string) error {
+	if strings.Contains(value, s.secret) {
+		return nil
+	}
+	return fmt.Errorf("%v doesn't seem to match expected value of %v", value, s.secret)
 }

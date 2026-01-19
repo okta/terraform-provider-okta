@@ -1,0 +1,1 @@
+data "okta_principal_entitlements" "test" {}
