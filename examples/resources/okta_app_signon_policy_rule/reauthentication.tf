@@ -1,5 +1,5 @@
 resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only" {
-  policy_id          = "rstpbfm3a3IBq00o11d7"
+  policy_id          = "rsttqnoz5vo4GIoAD1d7"
   name               = "test_with_reauthenticate_in_chains_only"
   type               = "AUTH_METHOD_CHAIN"
   priority           = 3
@@ -62,7 +62,7 @@ resource "okta_app_signon_policy_rule" "test_with_reauthenticate_in_chains_only"
 
 
 resource "okta_app_signon_policy_rule" "test_with_re_authentication_frequency_only" {
-  policy_id                   = "rstpbfm3a3IBq00o11d7"
+  policy_id                   = "rsttqnoz5vo4GIoAD1d7"
   name                        = "test_with_re_authentication_frequency_only"
   type                        = "AUTH_METHOD_CHAIN"
   priority                    = 4
@@ -70,6 +70,7 @@ resource "okta_app_signon_policy_rule" "test_with_re_authentication_frequency_on
   access                      = "ALLOW"
   factor_mode                 = "2FA"
   re_authentication_frequency = "PT2H10M"
+  inactivity_period           = "PT1H"
   chains = [
     jsonencode({
       "authenticationMethods" : [
