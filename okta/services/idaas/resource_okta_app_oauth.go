@@ -1031,8 +1031,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	}
 
 	// Handle IDP initiated login
-	if loginScopes := utils.ConvertInterfaceToStringSet(d.Get("login_scopes")); len(loginScopes) > 0 {
-		idpLogin := v6okta.NewOpenIdConnectApplicationIdpInitiatedLoginWithDefaults()
+	loginScopes := utils.ConvertInterfaceToStringSet(d.Get("login_scopes"))
+	idpLogin := v6okta.NewOpenIdConnectApplicationIdpInitiatedLoginWithDefaults()
+	if loginScopes != nil {
 		idpLogin.SetDefaultScope(loginScopes)
 		if loginMode := d.Get("login_mode").(string); loginMode != "" {
 			idpLogin.SetMode(loginMode)
