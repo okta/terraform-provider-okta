@@ -119,6 +119,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAppConnectionsResource,
 		newAgentPoolUpdateResource,
 		newUISchemaResource,
+		newAppGroupPushMappingResource,
 	}
 }
 

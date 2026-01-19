@@ -15,6 +15,7 @@ const (
 	OktaIDaaSAppFeatures                              = "okta_app_features"
 	OktaIDaaSAppGroupAssignment                       = "okta_app_group_assignment"
 	OktaIDaaSAppGroupAssignments                      = "okta_app_group_assignments"
+	OktaIDaaSAppGroupPushMapping                      = "okta_app_group_push_mapping"
 	OktaIDaaSAppMetadataSaml                          = "okta_app_metadata_saml"
 	OktaIDaaSAppOAuth                                 = "okta_app_oauth"
 	OktaIDaaSAppOAuthAPIScope                         = "okta_app_oauth_api_scope"
