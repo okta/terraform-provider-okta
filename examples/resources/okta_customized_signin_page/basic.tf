@@ -14,7 +14,7 @@ resource "okta_customized_signin_page" "test" {
 
 
 resource "okta_customized_signin_page" "test-2" {
-  brand_id       = "bndnkw1sc3flIOTF51d7"
+  brand_id = "bndnkw1sc3flIOTF51d7"
   widget_customizations {
     widget_generation = "G3"
     help_url          = "https://helpurltest.com"

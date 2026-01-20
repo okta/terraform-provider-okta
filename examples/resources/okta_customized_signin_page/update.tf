@@ -19,12 +19,12 @@ resource "okta_customized_signin_page" "test" {
 
 
 resource "okta_customized_signin_page" "test-2" {
-  brand_id       = "bndnkw1sc3flIOTF51d7"
+  brand_id = "bndnkw1sc3flIOTF51d7"
   widget_customizations {
-    widget_generation = "G3"
-    help_url          = "https://helpurltestupdated.com"
-    help_label        = "Help URL Test Updated"
-    custom_link_1_url = "https://customlink1url.com"
+    widget_generation   = "G3"
+    help_url            = "https://helpurltestupdated.com"
+    help_label          = "Help URL Test Updated"
+    custom_link_1_url   = "https://customlink1url.com"
     custom_link_1_label = "Custom Link 1 URL"
   }
 }
