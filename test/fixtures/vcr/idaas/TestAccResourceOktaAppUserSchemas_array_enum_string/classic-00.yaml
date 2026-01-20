@@ -1,506 +1,509 @@
 ---
 version: 2
 interactions:
-- id: 0
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 622
-    host: classic-00.dne-okta.com
-    body: "{\"accessibility\":{},\"credentials\":{\"oauthClient\":{\"autoKeyRotation\":true,\"pkce_required\":true,\"token_endpoint_auth_method\":\"client_secret_basic\"},\"userNameTemplate\":{\"template\":\"${source.login}\",\"type\":\"BUILT_IN\"}},\"label\":\"testAcc_3927300029\",\"name\":\"oidc_client\",\"settings\":{\"notes\":{},\"oauthClient\":{\"application_type\":\"native\",\"consent_method\":\"TRUSTED\",\"dpop_bound_access_tokens\":false,\"grant_types\":[\"authorization_code\"],\"issuer_mode\":\"ORG_URL\",\"redirect_uris\":[\"http://d.com/\"],\"response_types\":[\"code\"],\"wildcard_redirect\":\"DISABLED\"}},\"signOnMode\":\"OPENID_CONNECT\",\"visibility\":{\"hide\":{\"iOS\":true,\"web\":true}}}\n"
-    form:
-      activate:
-      - "true"
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-    url: https://classic-00.dne-okta.com/api/v1/apps?activate=true
-    method: POST
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"0oarqn71xoP0qvbN51d7\",\"orn\":\"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oarqn71xoP0qvbN51d7\",\"name\":\"oidc_client\",\"label\":\"testAcc_3927300029\",\"status\":\"ACTIVE\",\"lastUpdated\":\"2025-11-11T07:10:22.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"accessibility\":{\"selfService\":false,\"errorRedirectUrl\":null,\"loginRedirectUrl\":null},\"visibility\":{\"autoLaunch\":false,\"autoSubmitToolbar\":false,\"hide\":{\"iOS\":true,\"web\":true},\"appLinks\":{\"oidc_client_link\":true}},\"features\":[],\"signOnMode\":\"OPENID_CONNECT\",\"credentials\":{\"userNameTemplate\":{\"template\":\"${source.login}\",\"type\":\"BUILT_IN\"},\"signing\":{\"kid\":\"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo\"},\"oauthClient\":{\"autoKeyRotation\":true,\"client_id\":\"0oarqn71xoP0qvbN51d7\",\"client_secret\":\"rWr1Ac_3s6HDWxTiAsbFhW4qB8_wJf9pCWQ-6PTFd_2FC8F_MzV5WyX7C8L1XIyU\",\"token_endpoint_auth_method\":\"client_secret_basic\",\"pkce_required\":true}},\"universalLogout\":{\"status\":\"DISABLED\",\"supportType\":\"FULL\",\"identityStack\":\"NOT_SHARED\",\"protocol\":\"GLOBAL_TOKEN_REVOCATION\"},\"settings\":{\"app\":{},\"notifications\":{\"vpn\":{\"network\":{\"connection\":\"DISABLED\"},\"message\":null,\"helpUrl\":null}},\"manualProvisioning\":false,\"implicitAssignment\":false,\"emOptInStatus\":\"NONE\",\"notes\":{\"admin\":null,\"enduser\":null},\"oauthClient\":{\"client_uri\":null,\"logo_uri\":null,\"redirect_uris\":[\"http://d.com/\"],\"response_types\":[\"code\"],\"grant_types\":[\"authorization_code\"],\"application_type\":\"native\",\"consent_method\":\"TRUSTED\",\"issuer_mode\":\"ORG_URL\",\"idp_initiated_login\":{\"mode\":\"DISABLED\",\"default_scope\":[]},\"wildcard_redirect\":\"DISABLED\",\"dpop_bound_access_tokens\":false,\"participate_slo\":false}},\"_links\":{\"uploadLogo\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/logo\",\"hints\":{\"allow\":[\"POST\"]}},\"appLinks\":[{\"name\":\"oidc_client_link\",\"href\":\"https://classic-00/home/oidc_client/0oarqn71xoP0qvbN51d7/aln177a159h7Zf52X0g8\",\"type\":\"text/html\"}],\"profileEnrollment\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgzCwhJaUs1d7\"},\"policies\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/policies\",\"hints\":{\"allow\":[\"PUT\"]}},\"groups\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/groups\"},\"logo\":[{\"name\":\"medium\",\"href\":\"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png\",\"type\":\"image/png\"}],\"clientCredentials\":[{\"name\":\"secrets\",\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/credentials/secrets\"}],\"accessPolicy\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgxfqkDUtx1d7\"},\"users\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/users\"},\"deactivate\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/lifecycle/deactivate\"}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:22 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 2.575585708s
-- id: 1
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/.well-known/okta-organization
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    body: "{\"id\":\"00onkw1sbuAh3Q06I1d7\",\"cell\":\"op3\",\"_links\":{\"organization\":{\"href\":\"https://classic-00\"}},\"pipeline\":\"idx\",\"settings\":{\"analyticsCollectionEnabled\":false,\"bugReportingEnabled\":true,\"omEnabled\":false,\"pssoEnabled\":true,\"desktopMFAEnabled\":true,\"itpEnabled\":true}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:23 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.030950834s
-- id: 2
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    form:
-      type:
-      - ACCESS_POLICY
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "[{\"id\":\"rstnkw1sg2fWHAvjK1d7\",\"status\":\"ACTIVE\",\"name\":\"Okta Admin Console\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-06-26T15:51:39.000Z\",\"lastUpdated\":\"2025-06-26T15:51:39.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg2fWHAvjK1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg2fWHAvjK1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg2fWHAvjK1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg2fWHAvjK1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstnkw1sg9IQmPCLu1d7\",\"status\":\"ACTIVE\",\"name\":\"Okta Dashboard\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-06-26T15:51:39.000Z\",\"lastUpdated\":\"2025-06-26T15:51:39.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg9IQmPCLu1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg9IQmPCLu1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg9IQmPCLu1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sg9IQmPCLu1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstnkw1sgcakRr6vG1d7\",\"status\":\"ACTIVE\",\"name\":\"Okta Browser Plugin\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-06-26T15:51:39.000Z\",\"lastUpdated\":\"2025-06-26T15:51:39.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgcakRr6vG1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgcakRr6vG1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgcakRr6vG1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgcakRr6vG1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstnkw1sgxfqkDUtx1d7\",\"status\":\"ACTIVE\",\"name\":\"Any two factors\",\"description\":\"Require two factors to access.\",\"priority\":1,\"system\":true,\"conditions\":null,\"created\":\"2025-06-26T15:51:39.000Z\",\"lastUpdated\":\"2025-06-26T15:51:39.000Z\",\"_links\":{\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgxfqkDUtx1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgxfqkDUtx1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstnkwe1vlzSvyOpb1d7\",\"status\":\"ACTIVE\",\"name\":\"Okta Account Management Policy\",\"description\":\"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-06-26T15:51:41.000Z\",\"lastUpdated\":\"2025-06-26T15:51:41.000Z\",\"_links\":{\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstnkwe1vlzSvyOpb1d7\",\"hints\":{\"allow\":[\"GET\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstnkwe1vlzSvyOpb1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}}},\"_embedded\":{\"resourceType\":\"END_USER_ACCOUNT_MANAGEMENT\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstpbfm3a3IBq00o11d7\",\"status\":\"ACTIVE\",\"name\":\"app\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-08-20T15:15:14.000Z\",\"lastUpdated\":\"2025-11-05T16:55:28.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstpbfm3a3IBq00o11d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstpbfm3a3IBq00o11d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstpbfm3a3IBq00o11d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstpbfm3a3IBq00o11d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstptcolp9oveKe3d1d7\",\"status\":\"ACTIVE\",\"name\":\"tf-test\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-09-05T03:40:53.000Z\",\"lastUpdated\":\"2025-09-05T03:40:53.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstptcolp9oveKe3d1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstptcolp9oveKe3d1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstptcolp9oveKe3d1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstptcolp9oveKe3d1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstqx747x9rjXYwjj1d7\",\"status\":\"ACTIVE\",\"name\":\"OKTA-1010693-1\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-10-13T08:06:10.000Z\",\"lastUpdated\":\"2025-10-13T08:06:10.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstqx747x9rjXYwjj1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstqx747x9rjXYwjj1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstqx747x9rjXYwjj1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstqx747x9rjXYwjj1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstrdletj1K80Nggt1d7\",\"status\":\"ACTIVE\",\"name\":\"Partner Admin Portal\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-10-29T10:04:13.000Z\",\"lastUpdated\":\"2025-10-29T10:04:13.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstrdletj1K80Nggt1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstrdletj1K80Nggt1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstrdletj1K80Nggt1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstrdletj1K80Nggt1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstrjnmxgxO1EDrOd1d7\",\"status\":\"ACTIVE\",\"name\":\"dhiwakar_example\",\"description\":\"Authentication Policy to be used on my app.\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-11-04T08:56:28.000Z\",\"lastUpdated\":\"2025-11-06T09:39:15.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstrjnmxgxO1EDrOd1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstrjnmxgxO1EDrOd1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstrjnmxgxO1EDrOd1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstrjnmxgxO1EDrOd1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstrm0wvxsAZerwOW1d7\",\"status\":\"ACTIVE\",\"name\":\"dhiwakar_example_002\",\"description\":\"Authentication Policy to be used on my app.\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-11-06T09:53:07.000Z\",\"lastUpdated\":\"2025-11-06T09:53:07.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstrm0wvxsAZerwOW1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstrm0wvxsAZerwOW1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstrm0wvxsAZerwOW1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstrm0wvxsAZerwOW1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"},{\"id\":\"rstrpm0angvCFmYaN1d7\",\"status\":\"ACTIVE\",\"name\":\"TF - AMichaels Test-4\",\"description\":\"Test Policy.\",\"priority\":1,\"system\":false,\"conditions\":null,\"created\":\"2025-11-10T08:48:58.000Z\",\"lastUpdated\":\"2025-11-10T08:50:12.000Z\",\"_links\":{\"mappings\":{\"href\":\"https://classic-00/api/v1/policies/rstrpm0angvCFmYaN1d7/mappings\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"self\":{\"href\":\"https://classic-00/api/v1/policies/rstrpm0angvCFmYaN1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"rules\":{\"href\":\"https://classic-00/api/v1/policies/rstrpm0angvCFmYaN1d7/rules\",\"hints\":{\"allow\":[\"GET\",\"POST\"]}},\"deactivate\":{\"href\":\"https://classic-00/api/v1/policies/rstrpm0angvCFmYaN1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}},\"_embedded\":{\"resourceType\":\"APP\"},\"type\":\"ACCESS_POLICY\"}]"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:24 GMT
-      Link:
-      - <https://dcp-testing-oig-2025-06-26.oktapreview.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.053275625s
-- id: 3
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/apps/0oarqn71xoP0qvbN51d7/policies/rstnkw1sgxfqkDUtx1d7
-    method: PUT
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: 0
-    body: ""
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Date:
-      - Tue, 11 Nov 2025 07:10:25 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 204 No Content
-    code: 204
-    duration: 1.108671208s
-- id: 4
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/apps/0oarqn71xoP0qvbN51d7
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"0oarqn71xoP0qvbN51d7\",\"orn\":\"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oarqn71xoP0qvbN51d7\",\"name\":\"oidc_client\",\"label\":\"testAcc_3927300029\",\"status\":\"ACTIVE\",\"lastUpdated\":\"2025-11-11T07:10:22.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"accessibility\":{\"selfService\":false,\"errorRedirectUrl\":null,\"loginRedirectUrl\":null},\"visibility\":{\"autoLaunch\":false,\"autoSubmitToolbar\":false,\"hide\":{\"iOS\":true,\"web\":true},\"appLinks\":{\"oidc_client_link\":true}},\"features\":[],\"signOnMode\":\"OPENID_CONNECT\",\"credentials\":{\"userNameTemplate\":{\"template\":\"${source.login}\",\"type\":\"BUILT_IN\"},\"signing\":{\"kid\":\"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo\"},\"oauthClient\":{\"autoKeyRotation\":true,\"client_id\":\"0oarqn71xoP0qvbN51d7\",\"token_endpoint_auth_method\":\"client_secret_basic\",\"pkce_required\":true}},\"universalLogout\":{\"status\":\"DISABLED\",\"supportType\":\"FULL\",\"identityStack\":\"NOT_SHARED\",\"protocol\":\"GLOBAL_TOKEN_REVOCATION\"},\"settings\":{\"app\":{},\"notifications\":{\"vpn\":{\"network\":{\"connection\":\"DISABLED\"},\"message\":null,\"helpUrl\":null}},\"manualProvisioning\":false,\"implicitAssignment\":false,\"emOptInStatus\":\"NONE\",\"notes\":{\"admin\":null,\"enduser\":null},\"oauthClient\":{\"client_uri\":null,\"logo_uri\":null,\"redirect_uris\":[\"http://d.com/\"],\"response_types\":[\"code\"],\"grant_types\":[\"authorization_code\"],\"application_type\":\"native\",\"consent_method\":\"TRUSTED\",\"issuer_mode\":\"ORG_URL\",\"idp_initiated_login\":{\"mode\":\"DISABLED\",\"default_scope\":[]},\"wildcard_redirect\":\"DISABLED\",\"dpop_bound_access_tokens\":false,\"participate_slo\":false}},\"_links\":{\"uploadLogo\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/logo\",\"hints\":{\"allow\":[\"POST\"]}},\"appLinks\":[{\"name\":\"oidc_client_link\",\"href\":\"https://classic-00/home/oidc_client/0oarqn71xoP0qvbN51d7/aln177a159h7Zf52X0g8\",\"type\":\"text/html\"}],\"profileEnrollment\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgzCwhJaUs1d7\"},\"policies\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/policies\",\"hints\":{\"allow\":[\"PUT\"]}},\"groups\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/groups\"},\"logo\":[{\"name\":\"medium\",\"href\":\"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png\",\"type\":\"image/png\"}],\"clientCredentials\":[{\"name\":\"secrets\",\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/credentials/secrets\"}],\"accessPolicy\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgxfqkDUtx1d7\"},\"users\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/users\"},\"deactivate\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/lifecycle/deactivate\"}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:26 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.200838917s
-- id: 5
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oarqn71xoP0qvbN51d7/settings/oauth/idToken
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    body: "{\"issuer\":\"https://classic-00\",\"orgUrl\":null,\"customUrl\":null,\"audience\":\"0oarqn71xoP0qvbN51d7\",\"issuerMode\":\"ORG_URL\"}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:27 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.026115167s
-- id: 6
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 496
-    host: classic-00.dne-okta.com
-    body: "{\"definitions\":{\"custom\":{\"id\":\"#custom\",\"properties\":{\"testAcc_3927300029\":{\"description\":\"testing\",\"items\":{\"enum\":[\"one\",\"two\",\"three\"],\"oneOf\":[{\"const\":\"one\",\"title\":\"string One\"},{\"const\":\"two\",\"title\":\"string Two\"},{\"const\":\"three\",\"title\":\"string Three\"}],\"type\":\"string\"},\"master\":{\"type\":\"PROFILE_MASTER\"},\"permissions\":[{\"action\":\"READ_ONLY\",\"principal\":\"SELF\"}],\"required\":false,\"scope\":\"NONE\",\"title\":\"terraform acceptance test\",\"type\":\"array\",\"union\":\"DISABLE\"}},\"type\":\"object\"}}}\n"
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-    url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default
-    method: POST
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"https://classic-00/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default\",\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"oidc_client_d5d6ea4\",\"title\":\"testAcc_3927300029 User\",\"lastUpdated\":\"2025-11-11T07:10:28.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"definitions\":{\"custom\":{\"id\":\"#custom\",\"type\":\"object\",\"properties\":{\"testAcc_3927300029\":{\"title\":\"terraform acceptance test\",\"description\":\"testing\",\"type\":\"array\",\"scope\":\"NONE\",\"items\":{\"type\":\"string\",\"enum\":[\"one\",\"two\",\"three\"],\"oneOf\":[{\"const\":\"one\",\"title\":\"string One\"},{\"const\":\"two\",\"title\":\"string Two\"},{\"const\":\"three\",\"title\":\"string Three\"}]},\"union\":\"DISABLE\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[]},\"base\":{\"id\":\"#base\",\"type\":\"object\",\"properties\":{\"userName\":{\"title\":\"Username\",\"type\":\"string\",\"required\":true,\"externalName\":\"preferred_username\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"name\":{\"title\":\"Name\",\"description\":\"End-User's full name in displayable form.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"nickname\":{\"title\":\"Nickname\",\"description\":\"Casual name of the End-User (may or may not be the same as the given_name)\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"given_name\":{\"title\":\"Given Name\",\"description\":\"Given name or first name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"middle_name\":{\"title\":\"Middle Name\",\"description\":\"Middle name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"family_name\":{\"title\":\"Family Name\",\"description\":\"Surname or last name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"email\":{\"title\":\"Email\",\"description\":\"End-User's preferred e-mail address.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"profile\":{\"title\":\"Profile URL\",\"description\":\"URL of the End-User's profile page.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"picture\":{\"title\":\"Picture URL\",\"description\":\"URL of the End-User's profile picture.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"website\":{\"title\":\"Website\",\"description\":\"URL of the End-User's Web page or blog.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"gender\":{\"title\":\"Gender\",\"description\":\"End-User's gender.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"birthdate\":{\"title\":\"Birthdate\",\"description\":\"End-User's birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"zoneinfo\":{\"title\":\"Time Zone\",\"description\":\"String representing the End-User's time zone.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locale\":{\"title\":\"Locale Name\",\"description\":\"ISO3166‑1 country code in uppercase, separated by a dash (e.g. 'en-US')\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"phone_number\":{\"title\":\"Phone Number\",\"description\":\"End-User's preferred telephone number in E.164 format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"street_address\":{\"title\":\"Street Address\",\"description\":\"Full street address component.\",\"type\":\"string\",\"externalName\":\"address.street_address\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locality\":{\"title\":\"Locality\",\"description\":\"City or locality component.\",\"type\":\"string\",\"externalName\":\"address.locality\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"region\":{\"title\":\"Region\",\"description\":\"State, province, prefecture, or region component.\",\"type\":\"string\",\"externalName\":\"address.region\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"postal_code\":{\"title\":\"Postal Code\",\"description\":\"Zip code or postal code component.\",\"type\":\"string\",\"externalName\":\"address.postal_code\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"country\":{\"title\":\"Country\",\"description\":\"Country name component.\",\"type\":\"string\",\"externalName\":\"address.country\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"formatted\":{\"title\":\"Formatted\",\"description\":\"Full mailing address, formatted for display.\",\"type\":\"string\",\"externalName\":\"address.formatted\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[\"userName\"]}},\"type\":\"object\",\"properties\":{\"profile\":{\"allOf\":[{\"$ref\":\"#/definitions/custom\"},{\"$ref\":\"#/definitions/base\"}]}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:28 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.08732275s
-- id: 7
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"https://classic-00/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default\",\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"oidc_client_d5d6ea4\",\"title\":\"testAcc_3927300029 User\",\"lastUpdated\":\"2025-11-11T07:10:28.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"definitions\":{\"custom\":{\"id\":\"#custom\",\"type\":\"object\",\"properties\":{\"testAcc_3927300029\":{\"title\":\"terraform acceptance test\",\"description\":\"testing\",\"type\":\"array\",\"scope\":\"NONE\",\"items\":{\"type\":\"string\",\"enum\":[\"one\",\"two\",\"three\"],\"oneOf\":[{\"const\":\"one\",\"title\":\"string One\"},{\"const\":\"two\",\"title\":\"string Two\"},{\"const\":\"three\",\"title\":\"string Three\"}]},\"union\":\"DISABLE\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[]},\"base\":{\"id\":\"#base\",\"type\":\"object\",\"properties\":{\"userName\":{\"title\":\"Username\",\"type\":\"string\",\"required\":true,\"externalName\":\"preferred_username\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"name\":{\"title\":\"Name\",\"description\":\"End-User's full name in displayable form.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"nickname\":{\"title\":\"Nickname\",\"description\":\"Casual name of the End-User (may or may not be the same as the given_name)\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"given_name\":{\"title\":\"Given Name\",\"description\":\"Given name or first name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"middle_name\":{\"title\":\"Middle Name\",\"description\":\"Middle name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"family_name\":{\"title\":\"Family Name\",\"description\":\"Surname or last name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"email\":{\"title\":\"Email\",\"description\":\"End-User's preferred e-mail address.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"profile\":{\"title\":\"Profile URL\",\"description\":\"URL of the End-User's profile page.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"picture\":{\"title\":\"Picture URL\",\"description\":\"URL of the End-User's profile picture.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"website\":{\"title\":\"Website\",\"description\":\"URL of the End-User's Web page or blog.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"gender\":{\"title\":\"Gender\",\"description\":\"End-User's gender.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"birthdate\":{\"title\":\"Birthdate\",\"description\":\"End-User's birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"zoneinfo\":{\"title\":\"Time Zone\",\"description\":\"String representing the End-User's time zone.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locale\":{\"title\":\"Locale Name\",\"description\":\"ISO3166‑1 country code in uppercase, separated by a dash (e.g. 'en-US')\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"phone_number\":{\"title\":\"Phone Number\",\"description\":\"End-User's preferred telephone number in E.164 format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"street_address\":{\"title\":\"Street Address\",\"description\":\"Full street address component.\",\"type\":\"string\",\"externalName\":\"address.street_address\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locality\":{\"title\":\"Locality\",\"description\":\"City or locality component.\",\"type\":\"string\",\"externalName\":\"address.locality\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"region\":{\"title\":\"Region\",\"description\":\"State, province, prefecture, or region component.\",\"type\":\"string\",\"externalName\":\"address.region\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"postal_code\":{\"title\":\"Postal Code\",\"description\":\"Zip code or postal code component.\",\"type\":\"string\",\"externalName\":\"address.postal_code\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"country\":{\"title\":\"Country\",\"description\":\"Country name component.\",\"type\":\"string\",\"externalName\":\"address.country\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"formatted\":{\"title\":\"Formatted\",\"description\":\"Full mailing address, formatted for display.\",\"type\":\"string\",\"externalName\":\"address.formatted\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[\"userName\"]}},\"type\":\"object\",\"properties\":{\"profile\":{\"allOf\":[{\"$ref\":\"#/definitions/custom\"},{\"$ref\":\"#/definitions/base\"}]}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:29 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.016411875s
-- id: 8
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"https://classic-00/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default\",\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"oidc_client_d5d6ea4\",\"title\":\"testAcc_3927300029 User\",\"lastUpdated\":\"2025-11-11T07:10:28.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"definitions\":{\"custom\":{\"id\":\"#custom\",\"type\":\"object\",\"properties\":{\"testAcc_3927300029\":{\"title\":\"terraform acceptance test\",\"description\":\"testing\",\"type\":\"array\",\"scope\":\"NONE\",\"items\":{\"type\":\"string\",\"enum\":[\"one\",\"two\",\"three\"],\"oneOf\":[{\"const\":\"one\",\"title\":\"string One\"},{\"const\":\"two\",\"title\":\"string Two\"},{\"const\":\"three\",\"title\":\"string Three\"}]},\"union\":\"DISABLE\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[]},\"base\":{\"id\":\"#base\",\"type\":\"object\",\"properties\":{\"userName\":{\"title\":\"Username\",\"type\":\"string\",\"required\":true,\"externalName\":\"preferred_username\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"name\":{\"title\":\"Name\",\"description\":\"End-User's full name in displayable form.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"nickname\":{\"title\":\"Nickname\",\"description\":\"Casual name of the End-User (may or may not be the same as the given_name)\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"given_name\":{\"title\":\"Given Name\",\"description\":\"Given name or first name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"middle_name\":{\"title\":\"Middle Name\",\"description\":\"Middle name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"family_name\":{\"title\":\"Family Name\",\"description\":\"Surname or last name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"email\":{\"title\":\"Email\",\"description\":\"End-User's preferred e-mail address.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"profile\":{\"title\":\"Profile URL\",\"description\":\"URL of the End-User's profile page.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"picture\":{\"title\":\"Picture URL\",\"description\":\"URL of the End-User's profile picture.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"website\":{\"title\":\"Website\",\"description\":\"URL of the End-User's Web page or blog.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"gender\":{\"title\":\"Gender\",\"description\":\"End-User's gender.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"birthdate\":{\"title\":\"Birthdate\",\"description\":\"End-User's birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"zoneinfo\":{\"title\":\"Time Zone\",\"description\":\"String representing the End-User's time zone.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locale\":{\"title\":\"Locale Name\",\"description\":\"ISO3166‑1 country code in uppercase, separated by a dash (e.g. 'en-US')\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"phone_number\":{\"title\":\"Phone Number\",\"description\":\"End-User's preferred telephone number in E.164 format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"street_address\":{\"title\":\"Street Address\",\"description\":\"Full street address component.\",\"type\":\"string\",\"externalName\":\"address.street_address\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locality\":{\"title\":\"Locality\",\"description\":\"City or locality component.\",\"type\":\"string\",\"externalName\":\"address.locality\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"region\":{\"title\":\"Region\",\"description\":\"State, province, prefecture, or region component.\",\"type\":\"string\",\"externalName\":\"address.region\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"postal_code\":{\"title\":\"Postal Code\",\"description\":\"Zip code or postal code component.\",\"type\":\"string\",\"externalName\":\"address.postal_code\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"country\":{\"title\":\"Country\",\"description\":\"Country name component.\",\"type\":\"string\",\"externalName\":\"address.country\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"formatted\":{\"title\":\"Formatted\",\"description\":\"Full mailing address, formatted for display.\",\"type\":\"string\",\"externalName\":\"address.formatted\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[\"userName\"]}},\"type\":\"object\",\"properties\":{\"profile\":{\"allOf\":[{\"$ref\":\"#/definitions/custom\"},{\"$ref\":\"#/definitions/base\"}]}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:31 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.147335167s
-- id: 9
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/apps/0oarqn71xoP0qvbN51d7
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"0oarqn71xoP0qvbN51d7\",\"orn\":\"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oarqn71xoP0qvbN51d7\",\"name\":\"oidc_client\",\"label\":\"testAcc_3927300029\",\"status\":\"ACTIVE\",\"lastUpdated\":\"2025-11-11T07:10:22.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"accessibility\":{\"selfService\":false,\"errorRedirectUrl\":null,\"loginRedirectUrl\":null},\"visibility\":{\"autoLaunch\":false,\"autoSubmitToolbar\":false,\"hide\":{\"iOS\":true,\"web\":true},\"appLinks\":{\"oidc_client_link\":true}},\"features\":[],\"signOnMode\":\"OPENID_CONNECT\",\"credentials\":{\"userNameTemplate\":{\"template\":\"${source.login}\",\"type\":\"BUILT_IN\"},\"signing\":{\"kid\":\"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo\"},\"oauthClient\":{\"autoKeyRotation\":true,\"client_id\":\"0oarqn71xoP0qvbN51d7\",\"token_endpoint_auth_method\":\"client_secret_basic\",\"pkce_required\":true}},\"universalLogout\":{\"status\":\"DISABLED\",\"supportType\":\"FULL\",\"identityStack\":\"NOT_SHARED\",\"protocol\":\"GLOBAL_TOKEN_REVOCATION\"},\"settings\":{\"app\":{},\"notifications\":{\"vpn\":{\"network\":{\"connection\":\"DISABLED\"},\"message\":null,\"helpUrl\":null}},\"manualProvisioning\":false,\"implicitAssignment\":false,\"emOptInStatus\":\"NONE\",\"notes\":{\"admin\":null,\"enduser\":null},\"oauthClient\":{\"client_uri\":null,\"logo_uri\":null,\"redirect_uris\":[\"http://d.com/\"],\"response_types\":[\"code\"],\"grant_types\":[\"authorization_code\"],\"application_type\":\"native\",\"consent_method\":\"TRUSTED\",\"issuer_mode\":\"ORG_URL\",\"idp_initiated_login\":{\"mode\":\"DISABLED\",\"default_scope\":[]},\"wildcard_redirect\":\"DISABLED\",\"dpop_bound_access_tokens\":false,\"participate_slo\":false}},\"_links\":{\"uploadLogo\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/logo\",\"hints\":{\"allow\":[\"POST\"]}},\"appLinks\":[{\"name\":\"oidc_client_link\",\"href\":\"https://classic-00/home/oidc_client/0oarqn71xoP0qvbN51d7/aln177a159h7Zf52X0g8\",\"type\":\"text/html\"}],\"profileEnrollment\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgzCwhJaUs1d7\"},\"policies\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/policies\",\"hints\":{\"allow\":[\"PUT\"]}},\"groups\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/groups\"},\"logo\":[{\"name\":\"medium\",\"href\":\"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png\",\"type\":\"image/png\"}],\"clientCredentials\":[{\"name\":\"secrets\",\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/credentials/secrets\"}],\"accessPolicy\":{\"href\":\"https://classic-00/api/v1/policies/rstnkw1sgxfqkDUtx1d7\"},\"users\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/users\"},\"deactivate\":{\"href\":\"https://classic-00/api/v1/apps/0oarqn71xoP0qvbN51d7/lifecycle/deactivate\"}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:34 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 2.316524667s
-- id: 10
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oarqn71xoP0qvbN51d7/settings/oauth/idToken
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    body: "{\"issuer\":\"https://classic-00\",\"orgUrl\":null,\"customUrl\":null,\"audience\":\"0oarqn71xoP0qvbN51d7\",\"issuerMode\":\"ORG_URL\"}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:35 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.10918825s
-- id: 11
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default
-    method: GET
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"https://classic-00/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default\",\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"oidc_client_d5d6ea4\",\"title\":\"testAcc_3927300029 User\",\"lastUpdated\":\"2025-11-11T07:10:28.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"definitions\":{\"custom\":{\"id\":\"#custom\",\"type\":\"object\",\"properties\":{\"testAcc_3927300029\":{\"title\":\"terraform acceptance test\",\"description\":\"testing\",\"type\":\"array\",\"scope\":\"NONE\",\"items\":{\"type\":\"string\",\"enum\":[\"one\",\"two\",\"three\"],\"oneOf\":[{\"const\":\"one\",\"title\":\"string One\"},{\"const\":\"two\",\"title\":\"string Two\"},{\"const\":\"three\",\"title\":\"string Three\"}]},\"union\":\"DISABLE\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[]},\"base\":{\"id\":\"#base\",\"type\":\"object\",\"properties\":{\"userName\":{\"title\":\"Username\",\"type\":\"string\",\"required\":true,\"externalName\":\"preferred_username\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"name\":{\"title\":\"Name\",\"description\":\"End-User's full name in displayable form.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"nickname\":{\"title\":\"Nickname\",\"description\":\"Casual name of the End-User (may or may not be the same as the given_name)\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"given_name\":{\"title\":\"Given Name\",\"description\":\"Given name or first name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"middle_name\":{\"title\":\"Middle Name\",\"description\":\"Middle name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"family_name\":{\"title\":\"Family Name\",\"description\":\"Surname or last name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"email\":{\"title\":\"Email\",\"description\":\"End-User's preferred e-mail address.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"profile\":{\"title\":\"Profile URL\",\"description\":\"URL of the End-User's profile page.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"picture\":{\"title\":\"Picture URL\",\"description\":\"URL of the End-User's profile picture.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"website\":{\"title\":\"Website\",\"description\":\"URL of the End-User's Web page or blog.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"gender\":{\"title\":\"Gender\",\"description\":\"End-User's gender.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"birthdate\":{\"title\":\"Birthdate\",\"description\":\"End-User's birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"zoneinfo\":{\"title\":\"Time Zone\",\"description\":\"String representing the End-User's time zone.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locale\":{\"title\":\"Locale Name\",\"description\":\"ISO3166‑1 country code in uppercase, separated by a dash (e.g. 'en-US')\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"phone_number\":{\"title\":\"Phone Number\",\"description\":\"End-User's preferred telephone number in E.164 format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"street_address\":{\"title\":\"Street Address\",\"description\":\"Full street address component.\",\"type\":\"string\",\"externalName\":\"address.street_address\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locality\":{\"title\":\"Locality\",\"description\":\"City or locality component.\",\"type\":\"string\",\"externalName\":\"address.locality\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"region\":{\"title\":\"Region\",\"description\":\"State, province, prefecture, or region component.\",\"type\":\"string\",\"externalName\":\"address.region\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"postal_code\":{\"title\":\"Postal Code\",\"description\":\"Zip code or postal code component.\",\"type\":\"string\",\"externalName\":\"address.postal_code\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"country\":{\"title\":\"Country\",\"description\":\"Country name component.\",\"type\":\"string\",\"externalName\":\"address.country\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"formatted\":{\"title\":\"Formatted\",\"description\":\"Full mailing address, formatted for display.\",\"type\":\"string\",\"externalName\":\"address.formatted\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[\"userName\"]}},\"type\":\"object\",\"properties\":{\"profile\":{\"allOf\":[{\"$ref\":\"#/definitions/custom\"},{\"$ref\":\"#/definitions/base\"}]}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:36 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.049304625s
-- id: 12
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 101
-    host: classic-00.dne-okta.com
-    body: "{\"definitions\":{\"custom\":{\"id\":\"#custom\",\"properties\":{\"testAcc_3927300029\":null},\"type\":\"object\"}}}\n"
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-      Content-Type:
-      - application/json
-    url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default
-    method: POST
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{\"id\":\"https://classic-00/meta/schemas/apps/0oarqn71xoP0qvbN51d7/default\",\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"oidc_client_d5d6ea4\",\"title\":\"testAcc_3927300029 User\",\"lastUpdated\":\"2025-11-11T07:10:39.000Z\",\"created\":\"2025-11-11T07:10:21.000Z\",\"definitions\":{\"custom\":{\"id\":\"#custom\",\"type\":\"object\",\"properties\":{}},\"base\":{\"id\":\"#base\",\"type\":\"object\",\"properties\":{\"userName\":{\"title\":\"Username\",\"type\":\"string\",\"required\":true,\"externalName\":\"preferred_username\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"name\":{\"title\":\"Name\",\"description\":\"End-User's full name in displayable form.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"nickname\":{\"title\":\"Nickname\",\"description\":\"Casual name of the End-User (may or may not be the same as the given_name)\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"given_name\":{\"title\":\"Given Name\",\"description\":\"Given name or first name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"middle_name\":{\"title\":\"Middle Name\",\"description\":\"Middle name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"family_name\":{\"title\":\"Family Name\",\"description\":\"Surname or last name of the End-User.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"email\":{\"title\":\"Email\",\"description\":\"End-User's preferred e-mail address.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"profile\":{\"title\":\"Profile URL\",\"description\":\"URL of the End-User's profile page.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"picture\":{\"title\":\"Picture URL\",\"description\":\"URL of the End-User's profile picture.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"website\":{\"title\":\"Website\",\"description\":\"URL of the End-User's Web page or blog.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"gender\":{\"title\":\"Gender\",\"description\":\"End-User's gender.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"birthdate\":{\"title\":\"Birthdate\",\"description\":\"End-User's birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"zoneinfo\":{\"title\":\"Time Zone\",\"description\":\"String representing the End-User's time zone.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locale\":{\"title\":\"Locale Name\",\"description\":\"ISO3166‑1 country code in uppercase, separated by a dash (e.g. 'en-US')\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"phone_number\":{\"title\":\"Phone Number\",\"description\":\"End-User's preferred telephone number in E.164 format.\",\"type\":\"string\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"street_address\":{\"title\":\"Street Address\",\"description\":\"Full street address component.\",\"type\":\"string\",\"externalName\":\"address.street_address\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"locality\":{\"title\":\"Locality\",\"description\":\"City or locality component.\",\"type\":\"string\",\"externalName\":\"address.locality\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"region\":{\"title\":\"Region\",\"description\":\"State, province, prefecture, or region component.\",\"type\":\"string\",\"externalName\":\"address.region\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"postal_code\":{\"title\":\"Postal Code\",\"description\":\"Zip code or postal code component.\",\"type\":\"string\",\"externalName\":\"address.postal_code\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"country\":{\"title\":\"Country\",\"description\":\"Country name component.\",\"type\":\"string\",\"externalName\":\"address.country\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}},\"formatted\":{\"title\":\"Formatted\",\"description\":\"Full mailing address, formatted for display.\",\"type\":\"string\",\"externalName\":\"address.formatted\",\"scope\":\"SELF\",\"master\":{\"type\":\"PROFILE_MASTER\"}}},\"required\":[\"userName\"]}},\"type\":\"object\",\"properties\":{\"profile\":{\"allOf\":[{\"$ref\":\"#/definitions/custom\"},{\"$ref\":\"#/definitions/base\"}]}}}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:39 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.105303375s
-- id: 13
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/apps/0oarqn71xoP0qvbN51d7/lifecycle/deactivate
-    method: POST
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: -1
-    uncompressed: true
-    body: "{}"
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Content-Type:
-      - application/json
-      Date:
-      - Tue, 11 Nov 2025 07:10:40 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 200 OK
-    code: 200
-    duration: 1.097730958s
-- id: 14
-  request:
-    proto: HTTP/1.1
-    proto_major: 1
-    proto_minor: 1
-    content_length: 0
-    host: classic-00.dne-okta.com
-    headers:
-      Accept:
-      - application/json
-      Authorization:
-      - SSWS REDACTED
-    url: https://classic-00.dne-okta.com/api/v1/apps/0oarqn71xoP0qvbN51d7
-    method: DELETE
-  response:
-    proto: HTTP/2.0
-    proto_major: 2
-    proto_minor: 0
-    content_length: 0
-    body: ""
-    headers:
-      Accept-Ch:
-      - Sec-CH-UA-Platform-Version
-      Date:
-      - Tue, 11 Nov 2025 07:10:42 GMT
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-    status: 204 No Content
-    code: 204
-    duration: 1.634128125s
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 683
+        host: classic-00.dne-okta.com
+        body: |
+            {"accessibility":{},"credentials":{"oauthClient":{"autoKeyRotation":true,"pkce_required":true,"token_endpoint_auth_method":"client_secret_basic"},"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_3927300029","name":"oidc_client","settings":{"notes":{},"oauthClient":{"application_type":"native","consent_method":"TRUSTED","dpop_bound_access_tokens":false,"grant_types":["authorization_code"],"idp_initiated_login":{"default_scope":[],"mode":"DISABLED"},"issuer_mode":"ORG_URL","redirect_uris":["http://d.com/"],"response_types":["code"],"wildcard_redirect":"DISABLED"}},"signOnMode":"OPENID_CONNECT","visibility":{"hide":{"iOS":true,"web":true}}}
+        form:
+            activate:
+                - "true"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oau0iruz35oODGt61d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oau0iruz35oODGt61d7","name":"oidc_client","label":"testAcc_3927300029","status":"ACTIVE","lastUpdated":"2026-01-20T17:46:54.000Z","created":"2026-01-20T17:46:54.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oau0iruz35oODGt61d7","client_secret":"CCYZw2jcNgz-eSNPzzQoenMLZtAetfGsmVOA3IxEn8XozxtFgPbau2da5ivm_lhp","token_endpoint_auth_method":"client_secret_basic","pkce_required":true}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code"],"grant_types":["authorization_code"],"application_type":"native","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.dne-okta.com/home/oidc_client/0oau0iruz35oODGt61d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/credentials/secrets"}],"accessPolicy":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/users"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:46:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.640342417s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"00otivnuq1X5554yc1d7","cell":"op3","_links":{"organization":{"href":"https://classic-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":false}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:46:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.13102225s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rsttivnuus97Z2Ua81d7","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuuz4MSxGin1d7","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuv2yDnkaOF1d7","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuwgnZVG5Un1d7","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:39.000Z","lastUpdated":"2026-01-06T09:19:39.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7","hints":{"allow":["GET"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rsttiw5aaeJ48m2Zv1d7","status":"ACTIVE","name":"Case-OKTA-1059814-1","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:27:38.000Z","lastUpdated":"2026-01-06T09:27:38.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttmdzj9uWJqn1Ci1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-01-08T05:12:17.000Z","lastUpdated":"2026-01-08T05:12:17.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttns08bchudC1Wi1d7","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2026-01-09T03:44:43.000Z","lastUpdated":"2026-01-09T03:44:43.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvifqwwqHh7gPr1d7","status":"ACTIVE","name":"TF - AMichaels Test","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-01-16T07:33:53.000Z","lastUpdated":"2026-01-16T07:33:53.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvno3t8GBjwDxN1d7","status":"ACTIVE","name":"MFA enroll policy","priority":1,"system":false,"conditions":null,"created":"2026-01-16T10:51:35.000Z","lastUpdated":"2026-01-16T10:51:35.000Z","_links":{"mappings":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:46:57 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.12186525s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/policies/rsttivnuvg01CxhjA1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 20 Jan 2026 17:46:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.203156958s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oau0iruz35oODGt61d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oau0iruz35oODGt61d7","name":"oidc_client","label":"testAcc_3927300029","status":"ACTIVE","lastUpdated":"2026-01-20T17:46:54.000Z","created":"2026-01-20T17:46:54.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oau0iruz35oODGt61d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":true}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code"],"grant_types":["authorization_code"],"application_type":"native","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.dne-okta.com/home/oidc_client/0oau0iruz35oODGt61d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/credentials/secrets"}],"accessPolicy":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/users"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:46:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.075666667s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oau0iruz35oODGt61d7/settings/oauth/idToken
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oau0iruz35oODGt61d7","issuerMode":"ORG_URL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.049601375s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 496
+        host: classic-00.dne-okta.com
+        body: |
+            {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_3927300029":{"description":"testing","items":{"enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}],"type":"string"},"master":{"type":"PROFILE_MASTER"},"permissions":[{"action":"READ_ONLY","principal":"SELF"}],"required":false,"scope":"NONE","title":"terraform acceptance test","type":"array","union":"DISABLE"}},"type":"object"}}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oau0iruz35oODGt61d7/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.dne-okta.com/meta/schemas/apps/0oau0iruz35oODGt61d7/default","$schema":"http://json-schema.org/draft-04/schema#","name":"oidc_client_guo3031","title":"testAcc_3927300029 User","lastUpdated":"2026-01-20T17:47:01.000Z","created":"2026-01-20T17:46:54.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_3927300029":{"title":"terraform acceptance test","description":"testing","type":"array","scope":"NONE","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"union":"DISABLE"}},"required":[]},"base":{"id":"#base","type":"object","properties":{"userName":{"title":"Username","type":"string","required":true,"externalName":"preferred_username","scope":"SELF"},"name":{"title":"Name","description":"End-User''s full name in displayable form.","type":"string","scope":"SELF"},"nickname":{"title":"Nickname","description":"Casual name of the End-User (may or may not be the same as the given_name)","type":"string","scope":"SELF"},"given_name":{"title":"Given Name","description":"Given name or first name of the End-User.","type":"string","scope":"SELF"},"middle_name":{"title":"Middle Name","description":"Middle name of the End-User.","type":"string","scope":"SELF"},"family_name":{"title":"Family Name","description":"Surname or last name of the End-User.","type":"string","scope":"SELF"},"email":{"title":"Email","description":"End-User''s preferred e-mail address.","type":"string","scope":"SELF"},"profile":{"title":"Profile URL","description":"URL of the End-User''s profile page.","type":"string","scope":"SELF"},"picture":{"title":"Picture URL","description":"URL of the End-User''s profile picture.","type":"string","scope":"SELF"},"website":{"title":"Website","description":"URL of the End-User''s Web page or blog.","type":"string","scope":"SELF"},"gender":{"title":"Gender","description":"End-User''s gender.","type":"string","scope":"SELF"},"birthdate":{"title":"Birthdate","description":"End-User''s birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.","type":"string","scope":"SELF"},"zoneinfo":{"title":"Time Zone","description":"String representing the End-User''s time zone.","type":"string","scope":"SELF"},"locale":{"title":"Locale Name","description":"ISO3166‑1 country code in uppercase, separated by a dash (e.g. ''en-US'')","type":"string","scope":"SELF"},"phone_number":{"title":"Phone Number","description":"End-User''s preferred telephone number in E.164 format.","type":"string","scope":"SELF"},"street_address":{"title":"Street Address","description":"Full street address component.","type":"string","externalName":"address.street_address","scope":"SELF"},"locality":{"title":"Locality","description":"City or locality component.","type":"string","externalName":"address.locality","scope":"SELF"},"region":{"title":"Region","description":"State, province, prefecture, or region component.","type":"string","externalName":"address.region","scope":"SELF"},"postal_code":{"title":"Postal Code","description":"Zip code or postal code component.","type":"string","externalName":"address.postal_code","scope":"SELF"},"country":{"title":"Country","description":"Country name component.","type":"string","externalName":"address.country","scope":"SELF"},"formatted":{"title":"Formatted","description":"Full mailing address, formatted for display.","type":"string","externalName":"address.formatted","scope":"SELF"}},"required":["userName"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:01 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.084268375s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oau0iruz35oODGt61d7/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.dne-okta.com/meta/schemas/apps/0oau0iruz35oODGt61d7/default","$schema":"http://json-schema.org/draft-04/schema#","name":"oidc_client_guo3031","title":"testAcc_3927300029 User","lastUpdated":"2026-01-20T17:47:01.000Z","created":"2026-01-20T17:46:54.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_3927300029":{"title":"terraform acceptance test","description":"testing","type":"array","scope":"NONE","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"union":"DISABLE"}},"required":[]},"base":{"id":"#base","type":"object","properties":{"userName":{"title":"Username","type":"string","required":true,"externalName":"preferred_username","scope":"SELF"},"name":{"title":"Name","description":"End-User''s full name in displayable form.","type":"string","scope":"SELF"},"nickname":{"title":"Nickname","description":"Casual name of the End-User (may or may not be the same as the given_name)","type":"string","scope":"SELF"},"given_name":{"title":"Given Name","description":"Given name or first name of the End-User.","type":"string","scope":"SELF"},"middle_name":{"title":"Middle Name","description":"Middle name of the End-User.","type":"string","scope":"SELF"},"family_name":{"title":"Family Name","description":"Surname or last name of the End-User.","type":"string","scope":"SELF"},"email":{"title":"Email","description":"End-User''s preferred e-mail address.","type":"string","scope":"SELF"},"profile":{"title":"Profile URL","description":"URL of the End-User''s profile page.","type":"string","scope":"SELF"},"picture":{"title":"Picture URL","description":"URL of the End-User''s profile picture.","type":"string","scope":"SELF"},"website":{"title":"Website","description":"URL of the End-User''s Web page or blog.","type":"string","scope":"SELF"},"gender":{"title":"Gender","description":"End-User''s gender.","type":"string","scope":"SELF"},"birthdate":{"title":"Birthdate","description":"End-User''s birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.","type":"string","scope":"SELF"},"zoneinfo":{"title":"Time Zone","description":"String representing the End-User''s time zone.","type":"string","scope":"SELF"},"locale":{"title":"Locale Name","description":"ISO3166‑1 country code in uppercase, separated by a dash (e.g. ''en-US'')","type":"string","scope":"SELF"},"phone_number":{"title":"Phone Number","description":"End-User''s preferred telephone number in E.164 format.","type":"string","scope":"SELF"},"street_address":{"title":"Street Address","description":"Full street address component.","type":"string","externalName":"address.street_address","scope":"SELF"},"locality":{"title":"Locality","description":"City or locality component.","type":"string","externalName":"address.locality","scope":"SELF"},"region":{"title":"Region","description":"State, province, prefecture, or region component.","type":"string","externalName":"address.region","scope":"SELF"},"postal_code":{"title":"Postal Code","description":"Zip code or postal code component.","type":"string","externalName":"address.postal_code","scope":"SELF"},"country":{"title":"Country","description":"Country name component.","type":"string","externalName":"address.country","scope":"SELF"},"formatted":{"title":"Formatted","description":"Full mailing address, formatted for display.","type":"string","externalName":"address.formatted","scope":"SELF"}},"required":["userName"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.059874458s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oau0iruz35oODGt61d7/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.dne-okta.com/meta/schemas/apps/0oau0iruz35oODGt61d7/default","$schema":"http://json-schema.org/draft-04/schema#","name":"oidc_client_guo3031","title":"testAcc_3927300029 User","lastUpdated":"2026-01-20T17:47:01.000Z","created":"2026-01-20T17:46:54.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_3927300029":{"title":"terraform acceptance test","description":"testing","type":"array","scope":"NONE","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"union":"DISABLE"}},"required":[]},"base":{"id":"#base","type":"object","properties":{"userName":{"title":"Username","type":"string","required":true,"externalName":"preferred_username","scope":"SELF"},"name":{"title":"Name","description":"End-User''s full name in displayable form.","type":"string","scope":"SELF"},"nickname":{"title":"Nickname","description":"Casual name of the End-User (may or may not be the same as the given_name)","type":"string","scope":"SELF"},"given_name":{"title":"Given Name","description":"Given name or first name of the End-User.","type":"string","scope":"SELF"},"middle_name":{"title":"Middle Name","description":"Middle name of the End-User.","type":"string","scope":"SELF"},"family_name":{"title":"Family Name","description":"Surname or last name of the End-User.","type":"string","scope":"SELF"},"email":{"title":"Email","description":"End-User''s preferred e-mail address.","type":"string","scope":"SELF"},"profile":{"title":"Profile URL","description":"URL of the End-User''s profile page.","type":"string","scope":"SELF"},"picture":{"title":"Picture URL","description":"URL of the End-User''s profile picture.","type":"string","scope":"SELF"},"website":{"title":"Website","description":"URL of the End-User''s Web page or blog.","type":"string","scope":"SELF"},"gender":{"title":"Gender","description":"End-User''s gender.","type":"string","scope":"SELF"},"birthdate":{"title":"Birthdate","description":"End-User''s birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.","type":"string","scope":"SELF"},"zoneinfo":{"title":"Time Zone","description":"String representing the End-User''s time zone.","type":"string","scope":"SELF"},"locale":{"title":"Locale Name","description":"ISO3166‑1 country code in uppercase, separated by a dash (e.g. ''en-US'')","type":"string","scope":"SELF"},"phone_number":{"title":"Phone Number","description":"End-User''s preferred telephone number in E.164 format.","type":"string","scope":"SELF"},"street_address":{"title":"Street Address","description":"Full street address component.","type":"string","externalName":"address.street_address","scope":"SELF"},"locality":{"title":"Locality","description":"City or locality component.","type":"string","externalName":"address.locality","scope":"SELF"},"region":{"title":"Region","description":"State, province, prefecture, or region component.","type":"string","externalName":"address.region","scope":"SELF"},"postal_code":{"title":"Postal Code","description":"Zip code or postal code component.","type":"string","externalName":"address.postal_code","scope":"SELF"},"country":{"title":"Country","description":"Country name component.","type":"string","externalName":"address.country","scope":"SELF"},"formatted":{"title":"Formatted","description":"Full mailing address, formatted for display.","type":"string","externalName":"address.formatted","scope":"SELF"}},"required":["userName"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.040503416s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oau0iruz35oODGt61d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oau0iruz35oODGt61d7","name":"oidc_client","label":"testAcc_3927300029","status":"ACTIVE","lastUpdated":"2026-01-20T17:46:54.000Z","created":"2026-01-20T17:46:54.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oau0iruz35oODGt61d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":true}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code"],"grant_types":["authorization_code"],"application_type":"native","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false}},"_links":{"uploadLogo":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://classic-00.dne-okta.com/home/oidc_client/0oau0iruz35oODGt61d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/credentials/secrets"}],"accessPolicy":{"href":"https://classic-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/users"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.058910916s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/internal/apps/0oau0iruz35oODGt61d7/settings/oauth/idToken
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oau0iruz35oODGt61d7","issuerMode":"ORG_URL"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:05 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0472835s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oau0iruz35oODGt61d7/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.dne-okta.com/meta/schemas/apps/0oau0iruz35oODGt61d7/default","$schema":"http://json-schema.org/draft-04/schema#","name":"oidc_client_guo3031","title":"testAcc_3927300029 User","lastUpdated":"2026-01-20T17:47:01.000Z","created":"2026-01-20T17:46:54.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{"testAcc_3927300029":{"title":"terraform acceptance test","description":"testing","type":"array","scope":"NONE","items":{"type":"string","enum":["one","two","three"],"oneOf":[{"const":"one","title":"string One"},{"const":"two","title":"string Two"},{"const":"three","title":"string Three"}]},"union":"DISABLE"}},"required":[]},"base":{"id":"#base","type":"object","properties":{"userName":{"title":"Username","type":"string","required":true,"externalName":"preferred_username","scope":"SELF"},"name":{"title":"Name","description":"End-User''s full name in displayable form.","type":"string","scope":"SELF"},"nickname":{"title":"Nickname","description":"Casual name of the End-User (may or may not be the same as the given_name)","type":"string","scope":"SELF"},"given_name":{"title":"Given Name","description":"Given name or first name of the End-User.","type":"string","scope":"SELF"},"middle_name":{"title":"Middle Name","description":"Middle name of the End-User.","type":"string","scope":"SELF"},"family_name":{"title":"Family Name","description":"Surname or last name of the End-User.","type":"string","scope":"SELF"},"email":{"title":"Email","description":"End-User''s preferred e-mail address.","type":"string","scope":"SELF"},"profile":{"title":"Profile URL","description":"URL of the End-User''s profile page.","type":"string","scope":"SELF"},"picture":{"title":"Picture URL","description":"URL of the End-User''s profile picture.","type":"string","scope":"SELF"},"website":{"title":"Website","description":"URL of the End-User''s Web page or blog.","type":"string","scope":"SELF"},"gender":{"title":"Gender","description":"End-User''s gender.","type":"string","scope":"SELF"},"birthdate":{"title":"Birthdate","description":"End-User''s birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.","type":"string","scope":"SELF"},"zoneinfo":{"title":"Time Zone","description":"String representing the End-User''s time zone.","type":"string","scope":"SELF"},"locale":{"title":"Locale Name","description":"ISO3166‑1 country code in uppercase, separated by a dash (e.g. ''en-US'')","type":"string","scope":"SELF"},"phone_number":{"title":"Phone Number","description":"End-User''s preferred telephone number in E.164 format.","type":"string","scope":"SELF"},"street_address":{"title":"Street Address","description":"Full street address component.","type":"string","externalName":"address.street_address","scope":"SELF"},"locality":{"title":"Locality","description":"City or locality component.","type":"string","externalName":"address.locality","scope":"SELF"},"region":{"title":"Region","description":"State, province, prefecture, or region component.","type":"string","externalName":"address.region","scope":"SELF"},"postal_code":{"title":"Postal Code","description":"Zip code or postal code component.","type":"string","externalName":"address.postal_code","scope":"SELF"},"country":{"title":"Country","description":"Country name component.","type":"string","externalName":"address.country","scope":"SELF"},"formatted":{"title":"Formatted","description":"Full mailing address, formatted for display.","type":"string","externalName":"address.formatted","scope":"SELF"}},"required":["userName"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05122s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 101
+        host: classic-00.dne-okta.com
+        body: |
+            {"definitions":{"custom":{"id":"#custom","properties":{"testAcc_3927300029":null},"type":"object"}}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/meta/schemas/apps/0oau0iruz35oODGt61d7/default
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"https://classic-00.dne-okta.com/meta/schemas/apps/0oau0iruz35oODGt61d7/default","$schema":"http://json-schema.org/draft-04/schema#","name":"oidc_client_guo3031","title":"testAcc_3927300029 User","lastUpdated":"2026-01-20T17:47:08.000Z","created":"2026-01-20T17:46:54.000Z","definitions":{"custom":{"id":"#custom","type":"object","properties":{}},"base":{"id":"#base","type":"object","properties":{"userName":{"title":"Username","type":"string","required":true,"externalName":"preferred_username","scope":"SELF"},"name":{"title":"Name","description":"End-User''s full name in displayable form.","type":"string","scope":"SELF"},"nickname":{"title":"Nickname","description":"Casual name of the End-User (may or may not be the same as the given_name)","type":"string","scope":"SELF"},"given_name":{"title":"Given Name","description":"Given name or first name of the End-User.","type":"string","scope":"SELF"},"middle_name":{"title":"Middle Name","description":"Middle name of the End-User.","type":"string","scope":"SELF"},"family_name":{"title":"Family Name","description":"Surname or last name of the End-User.","type":"string","scope":"SELF"},"email":{"title":"Email","description":"End-User''s preferred e-mail address.","type":"string","scope":"SELF"},"profile":{"title":"Profile URL","description":"URL of the End-User''s profile page.","type":"string","scope":"SELF"},"picture":{"title":"Picture URL","description":"URL of the End-User''s profile picture.","type":"string","scope":"SELF"},"website":{"title":"Website","description":"URL of the End-User''s Web page or blog.","type":"string","scope":"SELF"},"gender":{"title":"Gender","description":"End-User''s gender.","type":"string","scope":"SELF"},"birthdate":{"title":"Birthdate","description":"End-User''s birthday, represented as an ISO 8601:2004 YYYY-MM-DD format.","type":"string","scope":"SELF"},"zoneinfo":{"title":"Time Zone","description":"String representing the End-User''s time zone.","type":"string","scope":"SELF"},"locale":{"title":"Locale Name","description":"ISO3166‑1 country code in uppercase, separated by a dash (e.g. ''en-US'')","type":"string","scope":"SELF"},"phone_number":{"title":"Phone Number","description":"End-User''s preferred telephone number in E.164 format.","type":"string","scope":"SELF"},"street_address":{"title":"Street Address","description":"Full street address component.","type":"string","externalName":"address.street_address","scope":"SELF"},"locality":{"title":"Locality","description":"City or locality component.","type":"string","externalName":"address.locality","scope":"SELF"},"region":{"title":"Region","description":"State, province, prefecture, or region component.","type":"string","externalName":"address.region","scope":"SELF"},"postal_code":{"title":"Postal Code","description":"Zip code or postal code component.","type":"string","externalName":"address.postal_code","scope":"SELF"},"country":{"title":"Country","description":"Country name component.","type":"string","externalName":"address.country","scope":"SELF"},"formatted":{"title":"Formatted","description":"Full mailing address, formatted for display.","type":"string","externalName":"address.formatted","scope":"SELF"}},"required":["userName"]}},"type":"object","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.10760625s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 17:47:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.09413025s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/apps/0oau0iruz35oODGt61d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 20 Jan 2026 17:47:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.3217995s
