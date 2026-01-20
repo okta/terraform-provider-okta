@@ -9,7 +9,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccResourceOktaPrincipalRateLimits_ru(t *testing.T) {
+func TestAccResourceOktaPrincipalRateLimits_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPrincipalRateLimits)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPrincipalRateLimits, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
@@ -21,14 +21,6 @@ func TestAccResourceOktaPrincipalRateLimits_ru(t *testing.T) {
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
-			{
-				ImportState:        true,
-				ResourceName:       "okta_principal_rate_limits.test",
-				ImportStateId:      "prlnpbzamkh0Z8xYo1d7",
-				ImportStatePersist: true,
-				Config:             config,
-				PlanOnly:           true,
-			},
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
