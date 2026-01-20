@@ -208,7 +208,6 @@ The only difference is that these fields are immutable and can not be managed: '
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.",
-				Default:     "PT1H",
 			},
 			"constraints": {
 				Type: schema.TypeList,
@@ -311,8 +310,6 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 			_ = d.Set("re_authentication_frequency", rule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn)
 			if rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod != "" {
 				_ = d.Set("inactivity_period", rule.Actions.AppSignOn.VerificationMethod.InactivityPeriod)
-			} else {
-				_ = d.Set("inactivity_period", "PT1H")
 			}
 			constraintArr := make([]interface{}, len(rule.Actions.AppSignOn.VerificationMethod.Constraints))
 			for i := range rule.Actions.AppSignOn.VerificationMethod.Constraints {
