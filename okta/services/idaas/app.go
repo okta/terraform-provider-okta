@@ -439,7 +439,15 @@ func isACSEndpointSequential(acsEndpointsObj []*sdk.AcsEndpoint) bool {
 func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{}) error {
 	client := getOktaClientFromMetadata(m)
 	if d.Get("status").(string) == StatusActive {
-		_, err := client.Application.DeactivateApplication(ctx, d.Id())
+		// Okta Core can have eventual consistency issues, use backoff for deactivation as well
+		boc := utils.NewExponentialBackOffWithContext(ctx, 20*time.Second)
+		err := backoff.Retry(func() error {
+			_, err := client.Application.DeactivateApplication(ctx, d.Id())
+			if doNotRetry(m, err) {
+				return backoff.Permanent(err)
+			}
+			return err
+		}, boc)
 		if err != nil {
 			return err
 		}
@@ -447,7 +455,7 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 
 	// Okta Core can have eventual consistency issues when deactivating an app
 	// which is required before deleting the app.
-	boc := utils.NewExponentialBackOffWithContext(ctx, 5*time.Second)
+	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
 		_, err := client.Application.DeleteApplication(ctx, d.Id())
 		if doNotRetry(m, err) {
