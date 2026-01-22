@@ -21,6 +21,8 @@ import (
 	"time"
 	"unicode"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -385,6 +387,13 @@ func SuppressErrorOn404_V5(resp *v5okta.APIResponse, err error) error {
 	return ResponseErr_V5(resp, err)
 }
 
+func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return ResponseErr_V6(resp, err)
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
 func SuppressErrorOn401(what string, meta interface{}, resp *sdk.Response, err error) error {
@@ -495,6 +504,17 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to responseErr when migration complete
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+func ResponseErr_V6(resp *v6okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {

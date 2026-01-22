@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 func dataSourceNetworkZone() *schema.Resource {
@@ -100,17 +101,17 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 	var (
 		err  error
-		zone *v5okta.ListNetworkZones200ResponseInner
+		zone *v6okta.ListNetworkZones200ResponseInner
 	)
 	if id != "" {
-		zone, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
+		zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, id).Execute()
 	} else {
 		zone, err = findNetworkZoneByName(ctx, meta, name)
 	}
 	if err != nil {
 		return diag.Errorf("failed to find network zone: %v", err)
 	}
-	nzID, err := concreteNetworkzoneID(zone)
+	nzID, err := concreteNetworkZoneID(zone)
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
@@ -123,8 +124,8 @@ func dataSourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (*v5okta.ListNetworkZones200ResponseInner, error) {
-	client := getOktaV5ClientFromMetadata(meta)
+func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (*v6okta.ListNetworkZones200ResponseInner, error) {
+	client := getOktaV6ClientFromMetadata(meta)
 	zones, resp, err := client.NetworkZoneAPI.ListNetworkZones(ctx).Execute()
 	if err != nil {
 		return nil, err
@@ -135,7 +136,7 @@ func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (
 		}
 	}
 	for {
-		var moreZones []v5okta.ListNetworkZones200ResponseInner
+		var moreZones []v6okta.ListNetworkZones200ResponseInner
 		if resp.HasNextPage() {
 			resp, err = resp.Next(&moreZones)
 			if err != nil {
@@ -153,15 +154,15 @@ func findNetworkZoneByName(ctx context.Context, meta interface{}, name string) (
 	return nil, fmt.Errorf("network zone with name '%s' does not exist", name)
 }
 
-func getNetworkZoneName(data v5okta.ListNetworkZones200ResponseInner) string {
+func getNetworkZoneName(data v6okta.ListNetworkZones200ResponseInner) string {
 	var name string
 	nz := data.GetActualInstance()
 	switch v := nz.(type) {
-	case *v5okta.DynamicNetworkZone:
+	case *v6okta.DynamicNetworkZone:
 		name = v.GetName()
-	case *v5okta.EnhancedDynamicNetworkZone:
+	case *v6okta.EnhancedDynamicNetworkZone:
 		name = v.GetName()
-	case *v5okta.IPNetworkZone:
+	case *v6okta.IPNetworkZone:
 		name = v.GetName()
 	}
 	return name
