@@ -722,7 +722,11 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	_ = d.Set("login_uri", oauthClient.GetInitiateLoginUri())
 	_ = d.Set("jwks_uri", oauthClient.GetJwksUri())
 	_ = d.Set("wildcard_redirect", oauthClient.GetWildcardRedirect())
-	_ = d.Set("consent_method", oauthClient.GetConsentMethod())
+	// Some orgs/APIs omit this value in responses, which can cause perpetual diffs
+	// if we overwrite state with an empty string. Only set when present.
+	if consentMethod := oauthClient.GetConsentMethod(); consentMethod != "" {
+		_ = d.Set("consent_method", consentMethod)
+	}
 	_ = d.Set("issuer_mode", oauthClient.GetIssuerMode())
 	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
 	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
