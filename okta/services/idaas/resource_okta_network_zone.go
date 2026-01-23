@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"strings"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
@@ -108,21 +109,32 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	zone, _, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
+	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
-	nzID, err := concreteNetworkzoneID(zone)
+	nzID, err := concreteNetworkZoneID(zone)
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
 	}
 	d.SetId(nzID)
+	if d.Get("status").(string) == "ACTIVE" {
+		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+		if err != nil {
+			return diag.Errorf("failed to activate network zone: %v", err)
+		}
+	} else {
+		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+		if err != nil {
+			return diag.Errorf("failed to deactivate network zone: %v", err)
+		}
+	}
 	return resourceNetworkZoneRead(ctx, d, meta)
 }
 
 func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	zone, resp, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, d.Id()).Execute()
-	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
+	zone, resp, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.GetNetworkZone(ctx, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to get network zone: %v", err)
 	}
 	if zone == nil {
@@ -151,31 +163,42 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+	_, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
+	}
+	if d.Get("status").(string) == "ACTIVE" {
+		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+		if err != nil {
+			return diag.Errorf("failed to activate network zone: %v", err)
+		}
+	} else {
+		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+		if err != nil {
+			return diag.Errorf("failed to deactivate network zone: %v", err)
+		}
 	}
 	return resourceNetworkZoneRead(ctx, d, meta)
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	_, resp, err := getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
-	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
+	_, resp, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate network zone: %v", err)
 	}
-	resp, err = getOktaV5ClientFromMetadata(meta).NetworkZoneAPI.DeleteNetworkZone(ctx, d.Id()).Execute()
-	if err := utils.SuppressErrorOn404_V5(resp, err); err != nil {
+	resp, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeleteNetworkZone(ctx, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to delete network zone: %v", err)
 	}
 	return nil
 }
 
-func buildNetworkZone(d *schema.ResourceData) (v5okta.ListNetworkZones200ResponseInner, error) {
-	var resp v5okta.ListNetworkZones200ResponseInner
+func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200ResponseInner, error) {
+	var resp v6okta.ListNetworkZones200ResponseInner
 	zoneType := d.Get("type").(string)
 	switch zoneType {
 	case "IP":
-		ipnz := v5okta.IPNetworkZone{}
+		ipnz := v6okta.IPNetworkZone{}
 		ipnz.SetName(d.Get("name").(string))
 		ipnz.SetType(zoneType)
 		ipnz.SetUsage(d.Get("usage").(string))
@@ -191,13 +214,13 @@ func buildNetworkZone(d *schema.ResourceData) (v5okta.ListNetworkZones200Respons
 		resp.IPNetworkZone = &ipnz
 		return resp, nil
 	case "DYNAMIC":
-		dynz := v5okta.DynamicNetworkZone{}
+		dynz := v6okta.DynamicNetworkZone{}
 		dynz.SetName(d.Get("name").(string))
 		dynz.SetType(zoneType)
 		dynz.SetUsage(d.Get("usage").(string))
 		dynz.SetProxyType(d.Get("dynamic_proxy_type").(string))
 		dynz.SetAsns(utils.ConvertInterfaceToStringSetNullable(d.Get("asns")))
-		var locationsList []v5okta.NetworkZoneLocation
+		var locationsList []v6okta.NetworkZoneLocation
 		if values, ok := d.GetOk("dynamic_locations"); ok {
 			locationsList = buildLocationList(values.(*schema.Set))
 		}
@@ -208,24 +231,24 @@ func buildNetworkZone(d *schema.ResourceData) (v5okta.ListNetworkZones200Respons
 		resp.DynamicNetworkZone = &dynz
 		return resp, nil
 	case "DYNAMIC_V2":
-		dyv2nz := v5okta.EnhancedDynamicNetworkZone{}
+		dyv2nz := v6okta.EnhancedDynamicNetworkZone{}
 		dyv2nz.SetName(d.Get("name").(string))
 		dyv2nz.SetType(zoneType)
 		dyv2nz.SetUsage(d.Get("usage").(string))
-		asns := v5okta.EnhancedDynamicNetworkZoneAllOfAsns{Include: utils.ConvertInterfaceToStringSetNullable(d.Get("asns"))}
+		asns := v6okta.EnhancedDynamicNetworkZoneAllOfAsns{Include: utils.ConvertInterfaceToStringSetNullable(d.Get("asns"))}
 		dyv2nz.SetAsns(asns)
-		var locationsListInclude []v5okta.NetworkZoneLocation
+		var locationsListInclude []v6okta.NetworkZoneLocation
 		if values, ok := d.GetOk("dynamic_locations"); ok {
 			locationsListInclude = buildLocationList(values.(*schema.Set))
 		}
-		var locationsListExclude []v5okta.NetworkZoneLocation
+		var locationsListExclude []v6okta.NetworkZoneLocation
 		if values, ok := d.GetOk("dynamic_locations_exclude"); ok {
 			locationsListExclude = buildLocationList(values.(*schema.Set))
 		}
-		locations := v5okta.EnhancedDynamicNetworkZoneAllOfLocations{Include: locationsListInclude, Exclude: locationsListExclude}
+		locations := v6okta.EnhancedDynamicNetworkZoneAllOfLocations{Include: locationsListInclude, Exclude: locationsListExclude}
 		dyv2nz.SetLocations(locations)
 
-		ipService := v5okta.EnhancedDynamicNetworkZoneAllOfIpServiceCategories{Include: utils.ConvertInterfaceToStringSetNullable(d.Get("ip_service_categories_include")), Exclude: utils.ConvertInterfaceToStringSetNullable(d.Get("ip_service_categories_exclude"))}
+		ipService := v6okta.EnhancedDynamicNetworkZoneAllOfIpServiceCategories{Include: utils.ConvertInterfaceToStringSetNullable(d.Get("ip_service_categories_include")), Exclude: utils.ConvertInterfaceToStringSetNullable(d.Get("ip_service_categories_exclude"))}
 		dyv2nz.SetIpServiceCategories(ipService)
 		if status, ok := d.GetOk("status"); ok {
 			dyv2nz.SetStatus(status.(string))
@@ -237,16 +260,16 @@ func buildNetworkZone(d *schema.ResourceData) (v5okta.ListNetworkZones200Respons
 	}
 }
 
-func buildAddressObjList(values *schema.Set) []v5okta.NetworkZoneAddress {
+func buildAddressObjList(values *schema.Set) []v6okta.NetworkZoneAddress {
 	var addressType string
-	var addressObjList []v5okta.NetworkZoneAddress
+	var addressObjList []v6okta.NetworkZoneAddress
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "/") {
 			addressType = "CIDR"
 		} else {
 			addressType = "RANGE"
 		}
-		obj := v5okta.NetworkZoneAddress{}
+		obj := v6okta.NetworkZoneAddress{}
 		obj.SetType(addressType)
 		obj.SetValue(value.(string))
 		addressObjList = append(addressObjList, obj)
@@ -254,16 +277,16 @@ func buildAddressObjList(values *schema.Set) []v5okta.NetworkZoneAddress {
 	return addressObjList
 }
 
-func buildLocationList(values *schema.Set) []v5okta.NetworkZoneLocation {
-	var locationsList []v5okta.NetworkZoneLocation
+func buildLocationList(values *schema.Set) []v6okta.NetworkZoneLocation {
+	var locationsList []v6okta.NetworkZoneLocation
 	for _, value := range values.List() {
 		if strings.Contains(value.(string), "-") {
-			obj := v5okta.NetworkZoneLocation{}
+			obj := v6okta.NetworkZoneLocation{}
 			obj.SetCountry(strings.Split(value.(string), "-")[0])
 			obj.SetRegion(value.(string))
 			locationsList = append(locationsList, obj)
 		} else {
-			obj := v5okta.NetworkZoneLocation{}
+			obj := v6okta.NetworkZoneLocation{}
 			obj.SetCountry(value.(string))
 			locationsList = append(locationsList, obj)
 		}
@@ -271,7 +294,7 @@ func buildLocationList(values *schema.Set) []v5okta.NetworkZoneLocation {
 	return locationsList
 }
 
-func flattenAddresses(gateways []v5okta.NetworkZoneAddress) interface{} {
+func flattenAddresses(gateways []v6okta.NetworkZoneAddress) interface{} {
 	if len(gateways) == 0 {
 		return nil
 	}
@@ -282,7 +305,7 @@ func flattenAddresses(gateways []v5okta.NetworkZoneAddress) interface{} {
 	return schema.NewSet(schema.HashString, arr)
 }
 
-func flattenDynamicLocations(locations []v5okta.NetworkZoneLocation) interface{} {
+func flattenDynamicLocations(locations []v6okta.NetworkZoneLocation) interface{} {
 	if len(locations) == 0 {
 		return nil
 	}
@@ -320,7 +343,7 @@ func updateDefaultEnhancedDynamicZone(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func concreteNetworkzoneID(src *v5okta.ListNetworkZones200ResponseInner) (id string, err error) {
+func concreteNetworkZoneID(src *v6okta.ListNetworkZones200ResponseInner) (id string, err error) {
 	if src == nil {
 		return "", errors.New("list network zone response is nil")
 	}
@@ -329,11 +352,11 @@ func concreteNetworkzoneID(src *v5okta.ListNetworkZones200ResponseInner) (id str
 		return "", errors.New("okta list network zone response does not contain a concrete type")
 	}
 	switch v := nz.(type) {
-	case *v5okta.DynamicNetworkZone:
+	case *v6okta.DynamicNetworkZone:
 		id = v.GetId()
-	case *v5okta.EnhancedDynamicNetworkZone:
+	case *v6okta.EnhancedDynamicNetworkZone:
 		id = v.GetId()
-	case *v5okta.IPNetworkZone:
+	case *v6okta.IPNetworkZone:
 		id = v.GetId()
 	}
 	if id == "" {
@@ -342,7 +365,7 @@ func concreteNetworkzoneID(src *v5okta.ListNetworkZones200ResponseInner) (id str
 	return
 }
 
-func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones200ResponseInner) error {
+func mapNetworkZoneToState(d *schema.ResourceData, data *v6okta.ListNetworkZones200ResponseInner) error {
 	if data == nil {
 		return errors.New("list network zone response is nil")
 	}
@@ -352,7 +375,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 	}
 	var err error
 	switch v := nz.(type) {
-	case *v5okta.DynamicNetworkZone:
+	case *v6okta.DynamicNetworkZone:
 		_ = d.Set("name", v.GetName())
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
@@ -362,7 +385,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"dynamic_locations": flattenDynamicLocations(v.GetLocations()),
 		})
-	case *v5okta.EnhancedDynamicNetworkZone:
+	case *v6okta.EnhancedDynamicNetworkZone:
 		_ = d.Set("name", v.GetName())
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
@@ -384,7 +407,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v5okta.ListNetworkZones
 				"ip_service_categories_exclude": utils.ConvertStringSliceToSetNullable(ips.GetExclude()),
 			})
 		}
-	case *v5okta.IPNetworkZone:
+	case *v6okta.IPNetworkZone:
 		_ = d.Set("name", v.GetName())
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
