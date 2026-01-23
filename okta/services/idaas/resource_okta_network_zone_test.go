@@ -70,6 +70,43 @@ func TestAccResourceOktaNetworkZone_crud(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaNetworkZone_issue_2578(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	config := mgr.GetFixtures("basic_issue_2578.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_issue_2578_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.ip_network_zone_example", resources.OktaIDaaSNetworkZone)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSNetworkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(resourceName, "status", "INACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "IP"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+				),
+			},
+		},
+	})
+}
+
 func doesNetworkZoneExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
