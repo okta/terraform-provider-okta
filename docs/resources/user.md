@@ -95,6 +95,7 @@ resource "okta_user" "test2" {
 - `preferred_language` (String) User preferred language
 - `primary_phone` (String) User primary phone number
 - `profile_url` (String) User online profile (web page)
+- `realm_id` (String) The Realm ID to associate the user with
 - `recovery_answer` (String, Sensitive) User Password Recovery Answer
 - `recovery_question` (String) User Password Recovery Question
 - `second_email` (String) User secondary email address, used for account recovery
