@@ -32,6 +32,7 @@ func resourceNetworkZone() *schema.Resource {
 				Optional:    true,
 				Description: "Array of locations ISO-3166-1(2) included. Format code: countryCode OR countryCode-regionCode. Use with type `DYNAMIC` or `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				MaxItems:    75,
 			},
 			"dynamic_locations_exclude": {
 				Type:        schema.TypeSet,
