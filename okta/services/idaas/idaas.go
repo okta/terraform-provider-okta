@@ -119,6 +119,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAppConnectionsResource,
 		newAgentPoolUpdateResource,
 		newUISchemaResource,
+		newAppFederatedClaimResource,
 	}
 }
 
@@ -149,6 +150,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAppConnectionsDataSource,
 		newAgentPoolDataSource,
 		newUISchemaDataSource,
+		newAppFederatedClaimDataSource,
 	}
 }
 

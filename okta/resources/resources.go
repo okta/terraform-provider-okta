@@ -13,6 +13,7 @@ const (
 	OktaIDaaSAppBookmark                              = "okta_app_bookmark"
 	OktaIDaaSAppConnection                            = "okta_app_connection"
 	OktaIDaaSAppFeatures                              = "okta_app_features"
+	OktaIDaaSAppFederatedClaim                        = "okta_app_federated_claim"
 	OktaIDaaSAppGroupAssignment                       = "okta_app_group_assignment"
 	OktaIDaaSAppGroupAssignments                      = "okta_app_group_assignments"
 	OktaIDaaSAppMetadataSaml                          = "okta_app_metadata_saml"
