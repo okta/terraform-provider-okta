@@ -2,7 +2,10 @@ package idaas
 
 import (
 	"context"
+	"fmt"
 	"time"
+
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
@@ -12,7 +15,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -61,6 +63,7 @@ func (r *principalRateLimits) Schema(_ context.Context, _ resource.SchemaRequest
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
+				Optional: true,
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
@@ -116,10 +119,45 @@ func (r *principalRateLimits) Schema(_ context.Context, _ resource.SchemaRequest
 }
 
 func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	resp.Diagnostics.AddError(
-		"Create Not Supported",
-		"This resource cannot be created via Terraform.",
-	)
+	var data principalRateLimitsModel
+	// Read Terraform plan Data into the model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	filter := fmt.Sprintf("principalType eq \"%s\" and principalId eq \"%s\"", data.PrincipalType.ValueString(), data.PrincipalId.ValueString())
+	getPrincipalRateLimit, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PrincipalRateLimitAPI.ListPrincipalRateLimitEntities(ctx).Filter(filter).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to get principal rate limit",
+			err.Error(),
+		)
+		return
+	}
+
+	if len(getPrincipalRateLimit) == 0 {
+		resp.Diagnostics.AddError(
+			"principal rate limit not found",
+			"No principal rate limit entity found with the specified principal type and principal ID.",
+		)
+		return
+	}
+	data.Id = types.StringValue(getPrincipalRateLimit[0].GetId())
+	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update principal rate limit",
+			err.Error(),
+		)
+		return
+	}
+
+	applyPrincipalRateSettingsToState(&data, updatePrincipalRateSettingsRespSettingsResp)
+
+	// Save updated Data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -133,7 +171,7 @@ func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	// Read API call logic
-	getPrincipalRateSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.GetPrincipalRateLimitEntity(ctx, data.Id.ValueString()).Execute()
+	getPrincipalRateSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PrincipalRateLimitAPI.GetPrincipalRateLimitEntity(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read principal rate limit",
@@ -159,7 +197,7 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	// Update API call logic
-	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV5().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
+	updatePrincipalRateSettingsRespSettingsResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(buildPrincipalRateLimits(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update principal rate limit",
@@ -175,14 +213,28 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 }
 
 func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	resp.Diagnostics.AddWarning(
-		"Delete Not Supported",
-		"This resource cannot be deleted via Terraform.",
-	)
+	// There is no delete API for this resource. The delete function just restores back to default rate limits. Values are not updated back into state since this is a delete call.
+	var data principalRateLimitsModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	defaultRateLimit := int32(50)
+	rateLimitBody := buildPrincipalRateLimits(data)
+	rateLimitBody.DefaultConcurrencyPercentage = &defaultRateLimit
+	rateLimitBody.DefaultPercentage = &defaultRateLimit
+	_, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PrincipalRateLimitAPI.ReplacePrincipalRateLimitEntity(ctx, data.Id.ValueString()).Entity(rateLimitBody).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"failed to update principal rate limit",
+			err.Error(),
+		)
+		return
+	}
 }
 
-func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRateLimitEntity {
-	principalRateSettings := v5okta.PrincipalRateLimitEntity{
+func buildPrincipalRateLimits(data principalRateLimitsModel) v6okta.PrincipalRateLimitEntity {
+	principalRateSettings := v6okta.PrincipalRateLimitEntity{
 		PrincipalId:   data.PrincipalId.ValueString(),
 		PrincipalType: data.PrincipalType.ValueString(),
 	}
@@ -198,7 +250,7 @@ func buildPrincipalRateLimits(data principalRateLimitsModel) v5okta.PrincipalRat
 	return principalRateSettings
 }
 
-func applyPrincipalRateSettingsToState(data *principalRateLimitsModel, principalRateLimitSettingsResp *v5okta.PrincipalRateLimitEntity) {
+func applyPrincipalRateSettingsToState(data *principalRateLimitsModel, principalRateLimitSettingsResp *v6okta.PrincipalRateLimitEntity) {
 	data.Id = types.StringValue(principalRateLimitSettingsResp.GetId())
 	data.PrincipalId = types.StringValue(principalRateLimitSettingsResp.GetPrincipalId())
 	data.PrincipalType = types.StringValue(principalRateLimitSettingsResp.GetPrincipalType())
