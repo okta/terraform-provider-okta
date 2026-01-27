@@ -1,0 +1,249 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        form:
+            filter:
+                - principalType eq "OAUTH_CLIENT" and principalId eq "0oatyx4ukmqlnSQ0P1d7"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits?filter=principalType+eq+%22OAUTH_CLIENT%22+and+principalId+eq+%220oatyx4ukmqlnSQ0P1d7%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":50,"defaultConcurrencyPercentage":50,"lastUpdate":"2026-01-20T10:42:22Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.092123625s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 127
+        host: classic-00.dne-okta.com
+        body: |
+            {"defaultConcurrencyPercentage":75,"defaultPercentage":49,"principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2026-01-20T10:42:39Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.040362458s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2026-01-20T10:42:39Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05427625s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":49,"defaultConcurrencyPercentage":75,"lastUpdate":"2026-01-20T10:42:39Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.032471666s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 127
+        host: classic-00.dne-okta.com
+        body: |
+            {"defaultConcurrencyPercentage":85,"defaultPercentage":55,"principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":55,"defaultConcurrencyPercentage":85,"lastUpdate":"2026-01-20T10:42:43Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.119301334s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":55,"defaultConcurrencyPercentage":85,"lastUpdate":"2026-01-20T10:42:43Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:44 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.029161208s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 127
+        host: classic-00.dne-okta.com
+        body: |
+            {"defaultConcurrencyPercentage":50,"defaultPercentage":50,"principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/principal-rate-limits/prltyx4ul24C7vAmm1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"prltyx4ul24C7vAmm1d7","orgId":"00otivnuq1X5554yc1d7","principalId":"0oatyx4ukmqlnSQ0P1d7","principalType":"OAUTH_CLIENT","defaultPercentage":50,"defaultConcurrencyPercentage":50,"lastUpdate":"2026-01-20T10:42:46Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","createdDate":"2026-01-19T18:37:11Z","createdBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 20 Jan 2026 10:42:46 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.063357791s

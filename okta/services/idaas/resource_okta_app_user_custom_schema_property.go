@@ -114,11 +114,15 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 }
 
 func resourceAppUserSchemaPropertyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	err := setAppUserSchemaProperty(ctx, d, meta)
-	if err != nil {
+	// Set the ID before calling set..., so if we taint in set... we won't overwrite it here.
+	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
+	if err := setAppUserSchemaProperty(ctx, d, meta); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
+	if d.Id() == "" {
+		// Tainted (parent or resource missing)
+		return nil
+	}
 	return resourceAppUserSchemaPropertyRead(ctx, d, meta)
 }
 
@@ -139,7 +143,16 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, meta 
 			return err
 		}
 		us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
-		if err := utils.SuppressErrorOn404(resp, err); err != nil {
+		if err != nil {
+			if utils.SuppressErrorOn404(resp, err) == nil {
+				logger(meta).Info(
+					"okta_app_user_schema_property set: 404 from parent app schema; tainting resource",
+					"app_id", d.Get("app_id").(string),
+					"index", d.Get("index").(string),
+				)
+				d.SetId("")
+				return nil
+			}
 			return err
 		}
 		subSchema := UserSchemaCustomAttribute(us, d.Get("index").(string))
@@ -153,11 +166,26 @@ func setAppUserSchemaProperty(ctx context.Context, d *schema.ResourceData, meta 
 
 func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	us, resp, err := getOktaClientFromMetadata(meta).UserSchema.GetApplicationUserSchema(ctx, d.Get("app_id").(string))
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	if err != nil {
+		if utils.SuppressErrorOn404(resp, err) == nil {
+			logger(meta).Info(
+				"okta_app_user_schema_property read: 404 from parent app schema; tainting resource",
+				"app_id", d.Get("app_id").(string),
+				"index", d.Get("index").(string),
+			)
+			d.SetId("")
+			return nil
+		}
 		return diag.Errorf("failed to get application user schema property: %v", err)
 	}
+
 	subschema := UserSchemaCustomAttribute(us, d.Get("index").(string))
 	if subschema == nil {
+		logger(meta).Info(
+			"okta_app_user_schema_property read: property missing under parent schema; tainting resource",
+			"app_id", d.Get("app_id").(string),
+			"index", d.Get("index").(string),
+		)
 		d.SetId("")
 		return nil
 	}
@@ -176,9 +204,12 @@ func resourceAppUserSchemaPropertyRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	err := setAppUserSchemaProperty(ctx, d, meta)
-	if err != nil {
+	if err := setAppUserSchemaProperty(ctx, d, meta); err != nil {
 		return diag.FromErr(err)
+	}
+	if d.Id() == "" {
+		// Tainted during update (parent or resource missing)
+		return nil
 	}
 	return resourceAppUserSchemaPropertyRead(ctx, d, meta)
 }
@@ -186,8 +217,7 @@ func resourceAppUserSchemaPropertyUpdate(ctx context.Context, d *schema.Resource
 func resourceAppUserSchemaPropertyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	custom := BuildCustomUserSchema(d.Get("index").(string), nil)
 	retypeUserSchemaPropertyEnums(custom)
-	_, _, err := getOktaClientFromMetadata(meta).UserSchema.
-		UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+	_, _, err := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
 	if err != nil {
 		return diag.Errorf("failed to delete application user schema property: %v", err)
 	}
@@ -208,8 +238,17 @@ func updateAppUserSubSchemaProperty(ctx context.Context, d *schema.ResourceData,
 	retypeUserSchemaPropertyEnums(custom)
 	boc := utils.NewExponentialBackOffWithContext(ctx, 10*time.Second)
 	err = backoff.Retry(func() error {
-		_, _, err := getOktaClientFromMetadata(meta).UserSchema.
-			UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+		_, resp, err := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, d.Get("app_id").(string), *custom)
+		// if error is nil, we skip this check entirely since utils.SuppressErrorOn404 will return nil either when err is nil or when resp.StatusCode is 404.
+		if err != nil && utils.SuppressErrorOn404(resp, err) == nil {
+			logger(meta).Info(
+				"okta_app_user_schema_property update: 404 while updating; tainting resource",
+				"app_id", d.Get("app_id").(string),
+				"index", d.Get("index").(string),
+			)
+			d.SetId("")
+			return nil
+		}
 		if doNotRetry(meta, err) {
 			return backoff.Permanent(err)
 		}

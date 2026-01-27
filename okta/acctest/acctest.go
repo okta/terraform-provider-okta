@@ -26,8 +26,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
+	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/fwprovider"
@@ -81,8 +83,13 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 	// sdk client clients are set up in provider factories for test
 	if mgr.IsPlaying() {
-		if !mgr.HasCassettesToPlay() {
-			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.CassettesPath)
+		if !mgr.HasIdaasCassettesToPlay() {
+			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.IdaaSCassettesPath)
+			return
+		}
+
+		if !mgr.HasGovernanceCassettesToPlay() {
+			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.GovernanceCassettesPath)
 			return
 		}
 
@@ -128,31 +135,37 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 		}
 		// we disable check destroy when recording/playing vcr tests
 		c.CheckDestroy = nil
-		fmt.Printf("=== VCR RECORD CASSETTE %q for %s\n", mgr.CurrentCassette, t.Name())
 		resource.Test(t, c)
 		return
 	}
 }
 
 type vcrManager struct {
-	Name            string
-	FixturesHome    string
-	CassettesPath   string
-	CurrentCassette string
-	VCRModeName     string
+	Name                    string
+	IdaasFixturesHome       string
+	IdaaSCassettesPath      string
+	GovernanceFixturesHome  string
+	GovernanceCassettesPath string
+	CurrentCassette         string
+	VCRModeName             string
 }
 
 // newVCRManager Returns a vcr manager
 func newVCRManager(testName string) *vcrManager {
 	dir, _ := os.Getwd()
-	vcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/idaas")
-	cassettesPath := path.Join(vcrFixturesHome, testName)
+	idaasVcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/idaas")
+	idaasCassettesPath := path.Join(idaasVcrFixturesHome, testName)
+	governanceVcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/governance")
+	governanceCassettesPath := path.Join(governanceVcrFixturesHome, testName)
+
 	return &vcrManager{
-		Name:            testName,
-		FixturesHome:    vcrFixturesHome,
-		CassettesPath:   cassettesPath,
-		CurrentCassette: os.Getenv("OKTA_VCR_CASSETTE"),
-		VCRModeName:     os.Getenv("OKTA_VCR_TF_ACC"),
+		Name:                    testName,
+		IdaasFixturesHome:       idaasVcrFixturesHome,
+		IdaaSCassettesPath:      idaasCassettesPath,
+		GovernanceFixturesHome:  governanceVcrFixturesHome,
+		GovernanceCassettesPath: governanceCassettesPath,
+		CurrentCassette:         os.Getenv("OKTA_VCR_CASSETTE"),
+		VCRModeName:             os.Getenv("OKTA_VCR_TF_ACC"),
 	}
 }
 
@@ -185,14 +198,24 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
 
 	idaasTestClient := NewVcrIDaaSClient(d)
-	cfg.SetAPIClient(idaasTestClient)
+	cfg.SetIdaasAPIClient(idaasTestClient)
 
-	rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
+	idaaSRec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	rt := http.RoundTripper(rec)
-	idaasTestClient.SetTransport(rt)
+	idaaSRt := http.RoundTripper(idaaSRec)
+	idaasTestClient.SetTransport(idaaSRt)
+
+	governanceTestClient := NewVcrGovernanceClient(d)
+	cfg.SetGovernanceAPIClient(governanceTestClient)
+
+	governanceRec, err := newVCRRecorder(mgr, governanceTestClient.Transport())
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+	governanceRt := http.RoundTripper(governanceRec)
+	governanceTestClient.SetTransport(governanceRt)
 
 	providerConfigsLock.Lock()
 	providerConfigs[mgr.TestAndCassetteNameKey()] = cfg
@@ -221,16 +244,25 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 	config, ok := providerConfigs[vcr.TestAndCassetteNameKey()]
 	providerConfigsLock.RUnlock()
 	if ok {
-		// don't record failing test runs
-		if !t.Failed() {
+		// don't record failing test runs (unless explicitly allowed for error response testing)
+		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// If a test succeeds, write new seed/yaml to files
-			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
-			rt := rtHelper.Transport()
-			err := rt.(*recorder.Recorder).Stop()
-			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
-			if err != nil {
-				t.Error(err)
+			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
+				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
+				rt := rtIDaasHelper.Transport()
+				err := rt.(*recorder.Recorder).Stop()
+				if err != nil {
+					t.Error(err)
+				}
+			} else {
+				rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
+				rtGovernance := rtGovernanceHelper.Transport()
+				err := rtGovernance.(*recorder.Recorder).Stop()
+				if err != nil {
+					t.Error(err)
+				}
 			}
+			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
 		}
 		// Clean up test config
 		providerConfigsLock.Lock()
@@ -261,9 +293,19 @@ func (m *vcrManager) ValidMode() bool {
 	return m.VCRModeName == "play" || m.VCRModeName == "record"
 }
 
-// HasCassettesToPlay VCR is in play mode and there are cassette files to play.
-func (m *vcrManager) HasCassettesToPlay() bool {
-	cassetteDir := filepath.Dir(m.CassettesPath)
+// HasIdaasCassettesToPlay VCR is in play mode and there are cassette files to play.
+func (m *vcrManager) HasIdaasCassettesToPlay() bool {
+	cassetteDir := filepath.Dir(m.IdaaSCassettesPath)
+	files, err := os.ReadDir(cassetteDir)
+	if err != nil {
+		return false
+	}
+	return m.VCRModeName == "play" && len(files) > 0
+}
+
+// HasGovernanceCassettesToPlay VCR is in play mode and there are cassette files to play.
+func (m *vcrManager) HasGovernanceCassettesToPlay() bool {
+	cassetteDir := filepath.Dir(m.GovernanceCassettesPath)
 	files, err := os.ReadDir(cassetteDir)
 	if err != nil {
 		return false
@@ -273,7 +315,11 @@ func (m *vcrManager) HasCassettesToPlay() bool {
 
 // CassettePath the path to what would be the current cassette.
 func (m *vcrManager) CassettePath() string {
-	return path.Join(m.CassettesPath, m.CurrentCassette)
+	wd, _ := os.Getwd()
+	if strings.Contains(strings.ToLower(wd), "governance") {
+		return path.Join(m.GovernanceCassettesPath, m.CurrentCassette)
+	}
+	return path.Join(m.IdaaSCassettesPath, m.CurrentCassette)
 }
 
 // AttemptedWriteOfExistingCassette given a vcr mode of record the current
@@ -314,10 +360,20 @@ func (m *vcrManager) Cassettes() []string {
 	}
 
 	cassettes := []string{}
-	files, err := os.ReadDir(path.Join(m.CassettesPath))
+	idaasFiles, err := os.ReadDir(path.Join(m.IdaaSCassettesPath))
 	if err != nil {
 		return cassettes
 	}
+	cassettes = append(cassettes, m.getCassettes(idaasFiles, cassettes)...)
+	governanceFiles, err := os.ReadDir(path.Join(m.GovernanceCassettesPath))
+	if err != nil {
+		return cassettes
+	}
+	cassettes = append(cassettes, m.getCassettes(governanceFiles, cassettes)...)
+	return cassettes
+}
+
+func (m *vcrManager) getCassettes(files []os.DirEntry, cassettes []string) []string {
 	for _, file := range files {
 		if strings.HasPrefix(file.Name(), ".") {
 			continue
@@ -581,7 +637,6 @@ func (p *frameworkTestProvider) Configure(ctx context.Context, req provider.Conf
 func GetPluginSDKProvider(testName string) *schema_sdk.Provider {
 	vcrMgr := currentVCRManager(testName)
 	oktaProvider := okta_provider.Provider()
-
 	if vcrMgr.IsVcrEnabled() {
 		oldConfigureContextFunc := oktaProvider.ConfigureContextFunc
 		oktaProvider.ConfigureContextFunc = func(ctx context.Context, d *schema_sdk.ResourceData) (interface{}, diag.Diagnostics) {
@@ -601,8 +656,10 @@ func SkipVCRTest(t *testing.T) bool {
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ api.OktaIDaaSClient = &vcrIDaaSTestClient{}
-	_ HttpClientHelper    = &vcrIDaaSTestClient{}
+	_ api.OktaIDaaSClient      = &vcrIDaaSTestClient{}
+	_ HttpClientHelper         = &vcrIDaaSTestClient{}
+	_ api.OktaGovernanceClient = &vcrGovernanceTestClient{}
+	_ HttpClientHelper         = &vcrGovernanceTestClient{}
 )
 
 type HttpClientHelper interface {
@@ -611,11 +668,17 @@ type HttpClientHelper interface {
 }
 
 type vcrIDaaSTestClient struct {
+	sdkV6Client         *v6SdkOkta.APIClient
 	sdkV5Client         *v5SdkOkta.APIClient
 	sdkV3Client         *v4SdkOkta.APIClient
 	sdkV2Client         *oktaSdk.Client
 	sdkSupplementClient *oktaSdk.APISupplement
 	transport           http.RoundTripper
+}
+
+type vcrGovernanceTestClient struct {
+	oktaGovernanceSDKClient *governance.OktaGovernanceAPIClient
+	transport               http.RoundTripper
 }
 
 func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
@@ -626,6 +689,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
 	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
+	c.OktaIDaaSClient.OktaSDKClientV6().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient.Transport = tripper
 	re := c.OktaIDaaSClient.OktaSDKClientV2().CloneRequestExecutor()
@@ -635,6 +699,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
 		sdkV3Client:         c.OktaIDaaSClient.OktaSDKClientV3(),
 		sdkV2Client:         c.OktaIDaaSClient.OktaSDKClientV2(),
@@ -645,13 +710,39 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	return client
 }
 
+func NewVcrGovernanceClient(d *schema_sdk.ResourceData) *vcrGovernanceTestClient {
+	c := config.NewConfig(d)
+	c.Backoff = false
+	err := c.LoadAPIClient()
+	if err != nil {
+		fmt.Printf("Error loading API client: %v", err)
+		return nil
+	}
+
+	// force all the API clients on a new config to use the same round tripper
+	// for VCR recording/playback
+	tripper := c.OktaGovernanceClient.OktaGovernanceSDKClient().GetConfig().HTTPClient.Transport
+
+	client := &vcrGovernanceTestClient{
+		oktaGovernanceSDKClient: c.OktaGovernanceClient.OktaGovernanceSDKClient(),
+		transport:               tripper,
+	}
+
+	return client
+}
+
 func (c *vcrIDaaSTestClient) Transport() http.RoundTripper {
+	return c.transport
+}
+
+func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 	return c.transport
 }
 
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV3Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV2Client.GetConfig().HttpClient.Transport = rt
@@ -660,6 +751,15 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.sdkSupplementClient = &oktaSdk.APISupplement{
 		RequestExecutor: re,
 	}
+}
+
+func (c *vcrGovernanceTestClient) SetTransport(rt http.RoundTripper) {
+	c.transport = rt
+	c.oktaGovernanceSDKClient.GetConfig().HTTPClient.Transport = rt
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV6() *v6SdkOkta.APIClient {
+	return c.sdkV6Client
 }
 
 func (c *vcrIDaaSTestClient) OktaSDKClientV5() *v5SdkOkta.APIClient {
@@ -676,6 +776,10 @@ func (c *vcrIDaaSTestClient) OktaSDKClientV2() *oktaSdk.Client {
 
 func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
+}
+
+func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.OktaGovernanceAPIClient {
+	return c.oktaGovernanceSDKClient
 }
 
 func currentVCRManager(name string) *vcrManager {

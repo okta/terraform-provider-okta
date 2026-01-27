@@ -12,6 +12,7 @@ type KnowledgeConstraint struct {
 
 type AuthenticationMethodObject struct {
 	Key    string `json:"key,omitempty"`
+	Id     string `json:"id,omitempty"`
 	Method string `json:"method,omitempty"`
 }
 

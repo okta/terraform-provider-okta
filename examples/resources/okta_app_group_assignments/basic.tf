@@ -36,7 +36,7 @@ resource "okta_app_group_assignments" "test" {
   }
   timeouts {
     create = "60m"
-    read = "2h"
+    read   = "2h"
     update = "30m"
   }
 }

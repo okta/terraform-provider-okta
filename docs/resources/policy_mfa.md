@@ -43,6 +43,12 @@ resource "okta_policy_mfa" "oie_example" {
     enroll = "REQUIRED"
   }
 
+  # "aut123456789abcdef", "aut123456789ghijkl" are custom app IDs
+  custom_app = [
+    { "enroll" : "OPTIONAL", "id" : "aut123456789abcdef" },
+    { "enroll" : "OPTIONAL", "id" : "aut123456789ghijkl" }
+  ]
+
   groups_included = ["${data.okta_group.everyone.id}"]
 }
 
@@ -114,6 +120,7 @@ resource "okta_policy_mfa" "oie_example" {
 - `symantec_vip` (Map of String)
 - `webauthn` (Map of String)
 - `yubikey_token` (Map of String)
+- `custom_app` (List of Map of String)
 
 ### Read-Only
 

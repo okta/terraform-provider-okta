@@ -302,6 +302,12 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password Recovery Answer",
 			},
+			"realm_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "The Realm ID to associate the user with",
+			},
 			// lintignore:S018
 			"password_hash": {
 				Type:        schema.TypeSet,
@@ -432,6 +438,11 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		Profile:     profile,
 		Credentials: uc,
 	}
+
+	if realmId, ok := d.GetOk("realm_id"); ok {
+		userBody.RealmId = utils.StringPtr(realmId.(string))
+	}
+
 	client := getOktaClientFromMetadata(meta)
 	user, _, err := client.User.CreateUser(ctx, userBody, qp)
 	if err != nil {
@@ -495,6 +506,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
 	userChange := hasProfileChange(d)
+	realmChange := d.HasChange("realm_id")
 	passwordChange := d.HasChange("password")
 	passwordHashChange := d.HasChange("password_hash")
 	passwordHookChange := d.HasChange("password_inline_hook")
@@ -527,7 +539,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.Errorf("Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
-	if userChange || passwordHashChange || passwordHookChange {
+	if userChange || realmChange || passwordHashChange || passwordHookChange {
 		profile := populateUserProfile(d)
 		userBody := sdk.User{
 			Profile: profile,
@@ -549,6 +561,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 				},
 			}
 		}
+
+		if realmId, ok := d.GetOk("realm_id"); ok {
+			userBody.RealmId = utils.StringPtr(realmId.(string))
+		}
+
 		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
 			return diag.Errorf("failed to update user: %v", err)

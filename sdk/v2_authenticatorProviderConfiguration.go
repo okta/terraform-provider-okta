@@ -13,6 +13,8 @@ type AuthenticatorProviderConfiguration struct {
 	SecretKey        string                                           `json:"secretKey,omitempty"`
 	SharedSecret     string                                           `json:"sharedSecret,omitempty"`
 	UserNameTemplate *AuthenticatorProviderConfigurationUserNamePlate `json:"userNameTemplate,omitempty"`
+	APNS             *APNS                                            `json:"apns,omitempty"`
+	FCM              *FCM                                             `json:"fcm,omitempty"`
 }
 
 func (a *AuthenticatorProviderConfiguration) MarshalJSON() ([]byte, error) {

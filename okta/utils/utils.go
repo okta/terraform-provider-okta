@@ -15,10 +15,13 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-cty/cty"
@@ -384,6 +387,13 @@ func SuppressErrorOn404_V5(resp *v5okta.APIResponse, err error) error {
 	return ResponseErr_V5(resp, err)
 }
 
+func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
+	if resp != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return ResponseErr_V6(resp, err)
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
 // have permission to access a feature.
 func SuppressErrorOn401(what string, meta interface{}, resp *sdk.Response, err error) error {
@@ -494,6 +504,17 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to responseErr when migration complete
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+func ResponseErr_V6(resp *v6okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil {
@@ -647,6 +668,79 @@ func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 	}
 
 	return reflect.DeepEqual(oldObj, newObj)
+}
+
+// NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
+// returns true if old and new JSONs are equivalent object representations no matter the order of any slices...
+// It is true, there is no change!  Edge chase if newJSON is blank, will also
+// return true which cover the new resource case.
+func NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
+	if newJSON == "" {
+		return true
+	}
+
+	var oldObj any
+	var newObj any
+
+	if err := json.Unmarshal([]byte(oldJSON), &oldObj); err != nil {
+		return false
+	}
+	if err := json.Unmarshal([]byte(newJSON), &newObj); err != nil {
+		return false
+	}
+
+	oldObj = sortSlices(oldObj)
+	newObj = sortSlices(newObj)
+
+	return reflect.DeepEqual(oldObj, newObj)
+}
+
+func sortSlices(obj any) any {
+	switch v := obj.(type) {
+	case []any:
+		for i := range v {
+			v[i] = sortSlices(v[i])
+		}
+		sort.SliceStable(v, func(i, j int) bool {
+			return less(v[i], v[j])
+		})
+		return v
+	case map[string]any:
+		for key, val := range v {
+			v[key] = sortSlices(val)
+		}
+		return v
+	default:
+		return v
+	}
+}
+
+func less(a, b any) bool {
+	// Unmarshaled JSON into any can only have string, float64, bool, nil, []any, map[string]any
+	switch aTyped := a.(type) {
+	case string:
+		if bTyped, ok := b.(string); ok {
+			return aTyped < bTyped
+		}
+	case float64:
+		if bTyped, ok := b.(float64); ok {
+			return aTyped < bTyped
+		}
+	case bool:
+		if bTyped, ok := b.(bool); ok {
+			return !aTyped && bTyped
+		}
+	}
+
+	if a == nil {
+		return true
+	}
+	if b == nil {
+		return false
+	}
+
+	// Fallback: use type name as last resort to ensure consistency
+	return reflect.TypeOf(a).String() < reflect.TypeOf(b).String()
 }
 
 func Intersection(old, new []string) (intersection, exclusiveOld, exclusiveNew []string) {

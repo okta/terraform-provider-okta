@@ -150,6 +150,14 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 		arr[i]["type"] = okta_groups[i].Type
 		arr[i]["description"] = okta_groups[i].Profile.Description
 
+		additionalProperties := okta_groups[i].AdditionalProperties
+		src, ok := additionalProperties["source"].(map[string]any)
+		if ok && src["id"] != nil {
+			arr[i]["source"] = src["id"].(string)
+		}
+
+		delete(additionalProperties, "source")
+
 		// Use Profile.AdditionalProperties for custom profile attributes
 		customProfileMap := okta_groups[i].Profile.AdditionalProperties
 		customProfile, err := json.Marshal(customProfileMap)

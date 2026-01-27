@@ -1,5 +1,115 @@
 # Changelog
 
+## 6.5.4 (January 15, 2025)
+### FEATURE
+* Add AgentPools resource [#2603](https://github.com/okta/terraform-provider-okta/pull/2603) by [aditya-okta](https://github.com/aditya-okta)
+* Add nil checks when accessing fields for resources and data sources `okta_idp_saml`, `okta_idp_oidc` and resource `okta_idp_social` [#2601](https://github.com/okta/terraform-provider-okta/pull/2601) by [aditya-okta](https://github.com/aditya-okta)
+* Changes To Update Okta Default Brand's `help_url` [#2607](https://github.com/okta/terraform-provider-okta/pull/2607) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Adds support for `ID` field in `AuthenticationMethodObject` [#2609](https://github.com/okta/terraform-provider-okta/pull/2609) by [aditya-okta](https://github.com/aditya-okta)
+
+
+## 6.5.3 (December 24, 2025)
+
+### FEATURE
+* GH-2437 | Introduces support for custom_app Authenticator For Resource okta_policy_mfa [32584](https://github.com/okta/terraform-provider-okta/pull/2584) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* New resource and data source okta_ui_schema to manage UI Schema [#2589](https://github.com/terraform-provider-okta/pull/2589) by [aditya-okta](https://github.com/aditya-okta)
+* Adding Support For custom_app Authenticator [#2592](https://github.com/terraform-provider-okta/pull/2592) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Add support for status management for request conditions [#2562](https://github.com/terraform-provider-okta/pull/2562) by [exitcode0](https://github.com/exitcode0)
+* Add support for realm_id in okta_user resource and data source [#2535](https://github.com/terraform-provider-okta/pull/2535) by [tim-koehler](https://github.com/tim-koehler)
+
+## 6.5.2 (December 09, 2025)
+
+### BUG FIXES
+* Fix creating new DPoP tokens in every retries [#2585](https://github.com/okta/terraform-provider-okta/pull/2585) by [pranav-okta](https://github.com/pranav-okta)
+
+## 6.5.1 (November 25, 2025)
+
+**BUG FIXES** 
+* Use mutex locks in okta_app_signon_policy_rule to address intermittent HTTP 500 errors [#2571](https://github.com/okta/terraform-provider-okta/pull/2571) by [pranav-okta](https://github.com/pranav-okta).
+* Fixed error during import of okta_group_owner [#2454](https://github.com/okta/terraform-provider-okta/pull/2454) by [exitcode0](https://github.com/exitcode0).
+* Added frontchannel_logout_uri, participate_slo attributes to okta_app_oauth [#2557](https://github.com/okta/terraform-provider-okta/pull/2557) by [pranav-okta](https://github.com/pranav-okta).
+* risk_level, risc_level will not be set to default value if neither of the fields are specified in Terraform configuration [#2494](https://github.com/okta/terraform-provider-okta/pull/2494) by [ohookins](https://github.com/ohookins).
+* Updated app_features.md to document okta_app_features is only supported on a limited subset of OIN applications [#2565](https://github.com/okta/terraform-provider-okta/pull/2565) by [exitcode0](https://github.com/exitcode0).
+
+## 6.5.0 (November 13, 2025)
+
+### FEATURE
+* New resource and data source `okta_device` to manage devices [#2533](https://github.com/okta/terraform-provider-okta/pull/2533) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_security_events_provider` to manage SSF Receiver [#2533](https://github.com/okta/terraform-provider-okta/pull/2533) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_hook_key` to manage JSON Web Keys (JWK) used with other parts of the application [#2537](https://github.com/okta/terraform-provider-okta/pull/2537) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* New resource and data source `okta_push_provider` to manage push provider configurations [#2538](https://github.com/okta/terraform-provider-okta/pull/2538) by [aditya-okta](https://github.com/aditya-okta).
+* New data source `okta_auth_server_clients` to manage tokens issued by an authorization server for a particular client [#2540](https://github.com/okta/terraform-provider-okta/pull/2540) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* New resource and data source `okta_app_connection` to configure connections to an app [#2542](https://github.com/okta/terraform-provider-okta/pull/2542) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_app_token` manage OAuth 2.0 tokens for an app [#2546](https://github.com/okta/terraform-provider-okta/pull/2546) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_app_feature` to configure app provisioning feature settings [#2549](https://github.com/okta/terraform-provider-okta/pull/2549) by [aditya-okta](https://github.com/aditya-okta).
+* New resource and data source `okta_api_token` to manage SSWS API tokens for your organisation [#2250](https://github.com/okta/terraform-provider-okta/pull/2550) by [aditya-okta](https://github.com/aditya-okta).
+* New data source `okta_auth_server_keys` to retrieve JSON Web Key credentials for the given authServerId [#2551](https://github.com/okta/terraform-provider-okta/pull/2551) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Add support for Okta SDK Golang V6.0.0 [#2553](https://github.com/okta/terraform-provider-okta/pull/2553) by [pranav-okta](https://github.com/pranav-okta).
+
+
+### BUG FIXES
+* Fix error when creating attributes in resource `okta_app_user_schema_property` [#2548](https://github.com/okta/terraform-provider-okta/pull/2548) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix bogus changes getting reported when importing `okta_app_signon_policy` [#2554](https://github.com/okta/terraform-provider-okta/pull/2554) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix typo in document file for data source `catalog_entry_user_access_request_fields` [#2560](https://github.com/okta/terraform-provider-okta/pull/2560) by [exitcode0](https://github.com/exitcode0).
+* Fix the title of data source`okta_features` documentation [#2480](https://github.com/okta/terraform-provider-okta/pull/2480) by[teads-sylvain](https://github.com/teads-sylvain).  
+
+
+## 6.4.0 (October 28, 2025)
+
+### BUG FIXES
+* Fix error when creating request condition [#2512](https://github.com/okta/terraform-provider-okta/pull/2512) by [aditya-okta](https://github.com/aditya-okta).
+* Fix empty `dns_records` issue in data source and resource `okta_domain` [#2513](https://github.com/okta/terraform-provider-okta/pull/2513) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix documentation bug for resource and data source `okta_request_v2` [#2530](https://github.com/okta/terraform-provider-okta/pull/2530) by [aditya-okta](https://github.com/aditya-okta).
+* Fix documentation bug for resource and data source `okta_request_condition` [#2531](https://github.com/okta/terraform-provider-okta/pull/2531) by [aditya-okta](https://github.com/aditya-okta).
+
+
+## 6.3.0 (October 6,2025)
+
+### FEATURE
+* New resource and data source `okta_principal_rate_limits`, `okta_rate_limit_admin_notification`, `okta_rate_limit_warning_threshold` to manager rate limits [#2496](https://github.com/okta/terraform-provider-okta/pull/2496) by [aditya-okta](https://github.com/aditya-okta).
+
+### BUG FIXES
+* Fix flaky diff for userVerificationMethods in authenticator [#2477](https://github.com/okta/terraform-provider-okta/pull/2477) by [tim-koehler](https://github.com/tim-koehler).
+* Fix error output while realm creation [#2499](https://github.com/okta/terraform-provider-okta/pull/2499) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix to return `source` field in `data_source_okta_groups` by [pranav-okta](https://github.com/pranav-okta).
+
+## 6.2.0 (September 23, 2025)
+
+### FEATURE
+* New resource and data source `okta_entitlement_bundle` to manager entitlement bundles [#2485](https://github.com/okta/terraform-provider-okta/pull/2485) by [aditya-okta](https://github.com/aditya-okta).
+* New data sources `okta_end_user_my_catalogs_entry`, `okta_end_user_my_catalogs_entry_request_fields`, `okta_end_user_my_catalogs_entry_user_request_fields` to request for catalog entries that you're allowed to request [#2491](https://github.com/okta/terraform-provider-okta/pull/2491) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+## 6.1.0 (September 19, 2025)
+
+### FEATURE
+* New resource and data source `okta_reviews`, `okta_principal_entitlements`, `okta_request_conditions`, `okta_request_sequences`, `okta_request_settings`, `okta_request_v2`, `okta_catalog_entry_default`, `okta_catalog_entry_user_access_request_fields`, `okta_end_user_my_requests` Adds support for managing resources in Okta Internal Governance [#2483](https://github.com/okta/terraform-provider-okta/pull/2483) by [aditya-okta](https://github.com/aditya-okta) and [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+## 6.0.0 (September 9, 2025)
+
+### ANNOUNCEMENT
+This is a major release introducing expanded support for Okta Governance resources, including Campaigns and Entitlements.  
+Version 5.x of the provider will be deprecated soon.
+
+### FEATURE
+* New resource: `okta_campaign` Adds support for managing Campaigns in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+* New resource: `okta_entitlement` Adds support for managing Entitlements in Okta Internal Governance [#2424](https://github.com/okta/terraform-provider-okta/pull/2424) by [aditya-okta](https://github.com/aditya-okta).
+
+## 5.4.0 (September 3, 2025)
+
+### BUG FIXES
+
+* Fix documentation error for `risk_level` for resource `okta_policy_rule_signon` [#2436](https://github.com/okta/terraform-provider-okta/pull/2436) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+* Fix documentation for `resource_okta_email_smtp_server` [#2456](https://github.com/okta/terraform-provider-okta/pull/2456) by [aditya-okta](https://github.com/aditya-okta).
+* Added handling for missing reauthenticateIn field for resource `okta_app_signon_policy_rule` [#2443](https://github.com/okta/terraform-provider-okta/pull/2443) by [dhiwakar-okta](https://github.com/dhiwakar-okta).
+
+### IMPROVEMENTS
+
+* Replace usage of the sdk API with okta-sdk-golang API for `resource_okta_behavior` and `data_source_behavior` [#2429](https://github.com/okta/terraform-provider-okta/pull/2429) by [dhiwakar-okta](https://github.com/dhiwakar-okta). 
+* Add documentation for `resource_okta_realm` , `resource_okta_realm_assignment`, `data_source_okta_realm_assignment`, and `data_source_okta_realm_assignment` [#2440](https://github.com/okta/terraform-provider-okta/pull/2440) by [tim-koehler](https://github.com/tim-koehler)
+* Add deprecation warning msg to `resource_okta_rate_limiting` [#2455](https://github.com/okta/terraform-provider-okta/pull/2455)  by [pranav-okta](https://github.com/pranav-okta).
+* Make HTTP 423 retryable for resource `okta_group_rule` [#2258](https://github.com/okta/terraform-provider-okta/pull/2258) by [exitcode0](https://github.com/exitcode0).
+* Replaced delete binding with removing binding for resource `okta_admin_role_custom_assignments` [#2458](https://github.com/okta/terraform-provider-okta/pull/2458) by [aditya-okta](https://github.com/aditya-okta).
+
 ## 5.3.0 (August 12, 2025)
 
 ### BUG FIXES
@@ -11,6 +121,7 @@
 
 * Realm assignment support [#2293](https://github.com/okta/terraform-provider-okta/pull/2293) by [tim-koehler](https://github.com/tim-koehler)
 * Add support for `enrollmentSecurityLevel` and `userVerificationMethods` to `okta_authenticator` [#2409](https://github.com/okta/terraform-provider-okta/pull/2409) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 
 ## 5.2.0 (July 16, 2025)
 

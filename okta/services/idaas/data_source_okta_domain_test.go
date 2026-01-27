@@ -1,7 +1,6 @@
 package idaas_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -12,9 +11,6 @@ import (
 func TestAccDataSourceOktaDomain_read(t *testing.T) {
 	mgr := newFixtureManager("data-sources", resources.OktaIDaaSDomain, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-
-	testAccDomain := fmt.Sprintf("testacc-%d.example.com", mgr.Seed)
-	testAccDowncaseDomain := fmt.Sprintf("downcase-testacc-%d.example.com", mgr.Seed)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -24,11 +20,10 @@ func TestAccDataSourceOktaDomain_read(t *testing.T) {
 				Config:  config,
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
-					// Note Okta API down cases DNS names
-					resource.TestCheckResourceAttr("data.okta_domain.by-id", "domain", testAccDomain),
-					resource.TestCheckResourceAttr("data.okta_domain.by-name", "domain", testAccDomain),
-					resource.TestCheckResourceAttr("data.okta_domain.by-id-downcase", "domain", testAccDowncaseDomain),
-					resource.TestCheckResourceAttr("data.okta_domain.by-name-downcase", "domain", testAccDowncaseDomain),
+					resource.TestCheckResourceAttr("data.okta_domain.by-id-downcase", "domain", "testdowncase.example.com"),
+					resource.TestCheckResourceAttr("data.okta_domain.by-id-downcase", "dns_records.1.record_type", "CNAME"),
+					resource.TestCheckResourceAttr("data.okta_domain.by-id-downcase", "dns_records.1.expiration", ""),
+					resource.TestCheckResourceAttr("data.okta_domain.by-id-downcase", "dns_records.1.fqdn", "testdowncase.example.com"),
 				),
 			},
 		},

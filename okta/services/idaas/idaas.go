@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -54,6 +55,10 @@ func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
 
 func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
+}
+
+func getOktaV6ClientFromMetadata(meta interface{}) *v6okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV6()
 }
 
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
@@ -100,11 +105,28 @@ func FWProviderResources() []func() resource.Resource {
 		newFeaturesResource,
 		newRealmResource,
 		newRealmAssignmentResource,
+		newRateLimitResource,
+		newRateLimitAdminNotificationSettingsResource,
+		newRateLimitWarningThresholdPercentageResource,
+		newPrincipalRateLimitsResource,
+		newSecurityEventsProviderResource,
+		newDevicesResource,
+		newAppFeaturesResource,
+		newPushProvidersResource,
+		newHookKeyResource,
+		newAPIServiceIntegrationResource,
+		newAPITokenResource,
+		newAppTokenResource,
+		newAppConnectionsResource,
+		newAgentPoolUpdateResource,
+		newUISchemaResource,
 	}
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		newAuthServerClientsDataSource,
+		newAuthServerKeysDataSource,
 		newOrgMetadataDataSource,
 		newDefaultSigninPageDataSource,
 		newLogStreamDataSource,
@@ -114,6 +136,20 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newFeaturesDataSource,
 		newRealmDataSource,
 		newRealmAssignmentDataSource,
+		newRateLimitAdminNotificationSettingsDataSource,
+		newRateLimitWarningThresholdPercentageDataSource,
+		newPrincipalRateLimitsDataSource,
+		newSecurityEventsProviderDataSource,
+		newDeviceDataSource,
+		newAppFeaturesDataSource,
+		newPushProviderDataSource,
+		newHookKeyDataSource,
+		newAPIServiceIntegrationDataSource,
+		newAPITokenDataSource,
+		newAppTokenDataSource,
+		newAppConnectionsDataSource,
+		newAgentPoolDataSource,
+		newUISchemaDataSource,
 	}
 }
 
@@ -193,21 +229,21 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
-		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
-		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                   resourceTemplateSms(),
-		resources.OktaIDaaSTheme:                         resourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:         resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:                 resourceTrustedOrigin(),
-		resources.OktaIDaaSUser:                          resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                      resourceUserType(),
+		//resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
+		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
+		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
+		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
+		resources.OktaIDaaSTheme:                      resourceTheme(),
+		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
+		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
+		resources.OktaIDaaSUser:                       resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                   resourceUserType(),
 	}
 }
 

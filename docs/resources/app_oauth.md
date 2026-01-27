@@ -81,7 +81,7 @@ resource "okta_app_oauth" "example" {
 - `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.
 - `client_id` (String) OAuth client ID. If set during creation, app is created with this id.
 - `client_uri` (String) URI to a web page providing information about the client.
-- `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED
+- `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.
 - `enduser_note` (String) Application notes for end users.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
 - `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials) (see [below for nested schema](#nestedblock--groups_claim))
@@ -113,7 +113,11 @@ resource "okta_app_oauth" "example" {
 - `user_name_template_push_status` (String) Push username on update. Valid values: `PUSH` and `DONT_PUSH`
 - `user_name_template_suffix` (String) Username template suffix
 - `user_name_template_type` (String) Username template type. Default: `BUILT_IN`
-- `wildcard_redirect` (String) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris
+- `wildcard_redirect` (String) *Early Access Property*. Indicates if the client is allowed to use wildcard matching of redirect_uris.
+- `participate_slo` (Boolean) *Early Access Property*. Allows the app to participate in front-channel Single Logout. Note: You can only enable participate_slo for web and browser application types. When set to true, frontchannel_logout_uri must also be provided. Enable `SINGLE_LOGOUT_SUPPORT` feature flag in your org to use this property.
+- `frontchannel_logout_uri` (String) *Early Access Property*. URL where Okta sends the logout request. Required when participate_slo is true.
+- `frontchannel_logout_session_required` (Boolean) *Early Access Property*. Determines whether Okta sends sid and iss in the logout request.
+
 
 ### Read-Only
 

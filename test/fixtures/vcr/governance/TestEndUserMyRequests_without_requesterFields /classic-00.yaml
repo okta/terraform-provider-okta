@@ -1,0 +1,107 @@
+---
+version: 2
+interactions:
+  - id: 0
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 3
+      host: classic-00.dne-okta.com
+      body: |
+        {}
+      headers:
+        Accept:
+          - application/json
+        Authorization:
+          - SSWS REDACTED
+        Content-Type:
+          - application/json
+      url: https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests
+      method: POST
+    response:
+      proto: HTTP/2.0
+      proto_major: 2
+      proto_minor: 0
+      content_length: 889
+      body: '{"id":"req10c7gu5SJEjpSh1d7","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-12T18:24:04Z","lastUpdated":"2025-08-12T18:24:04Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345","hints":{}},"self":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests/req10c7gu5SJEjpSh1d7","hints":{}}},"status":"SUBMITTED","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"ce5678abcdefghi12345","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"requesterFieldValues":[]}'
+      headers:
+        Accept-Ch:
+          - Sec-CH-UA-Platform-Version
+        Content-Length:
+          - "889"
+        Content-Type:
+          - application/json
+        Date:
+          - Tue, 12 Aug 2025 18:24:04 GMT
+        Referrer-Policy:
+          - strict-origin-when-cross-origin
+      status: 202 Accepted
+      code: 202
+      duration: 1.351136292s
+  - id: 1
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: classic-00.dne-okta.com
+      headers:
+        Accept:
+          - application/json
+        Authorization:
+          - SSWS REDACTED
+      url: https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests/req10c7gu5SJEjpSh1d7
+      method: GET
+    response:
+      proto: HTTP/2.0
+      proto_major: 2
+      proto_minor: 0
+      content_length: -1
+      uncompressed: true
+      body: '{"id":"req10c7gu5SJEjpSh1d7","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-12T18:24:04Z","lastUpdated":"2025-08-12T18:24:05Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345","hints":{}},"self":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests/req10c7gu5SJEjpSh1d7","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"ce5678abcdefghi12345","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+      headers:
+        Accept-Ch:
+          - Sec-CH-UA-Platform-Version
+        Content-Type:
+          - application/json
+        Date:
+          - Tue, 12 Aug 2025 18:24:05 GMT
+        Referrer-Policy:
+          - strict-origin-when-cross-origin
+      status: 200 OK
+      code: 200
+      duration: 1.190120583s
+  - id: 2
+    request:
+      proto: HTTP/1.1
+      proto_major: 1
+      proto_minor: 1
+      content_length: 0
+      host: classic-00.dne-okta.com
+      headers:
+        Accept:
+          - application/json
+        Authorization:
+          - SSWS REDACTED
+      url: https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests/req10c7gu5SJEjpSh1d7
+      method: GET
+    response:
+      proto: HTTP/2.0
+      proto_major: 2
+      proto_minor: 0
+      content_length: -1
+      uncompressed: true
+      body: '{"id":"req10c7gu5SJEjpSh1d7","createdBy":"00uonmvbfznIufFS61d7","created":"2025-08-12T18:24:04Z","lastUpdated":"2025-08-12T18:24:05Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"catalogEntry":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345","hints":{}},"self":{"href":"https://classic-00.dne-okta.com/governance/api/v2/my/catalogs/default/entries/ce5678abcdefghi12345/requests/req10c7gu5SJEjpSh1d7","hints":{}}},"status":"PENDING","requestedBy":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requestedFor":{"externalId":"00uonmvbfznIufFS61d7","type":"OKTA_USER"},"requested":{"entryId":"ce5678abcdefghi12345","resourceId":"0oaoum6j3cElINe1z1d7","resourceType":"APPLICATION","accessScopeId":"0oaoum6j3cElINe1z1d7","accessScopeType":"APPLICATION"},"accessDuration":"P30D","requesterFieldValues":[],"riskAssessment":{"requestSubmissionType":"ALLOWED_WITH_NO_OVERRIDES","riskRules":[]}}'
+      headers:
+        Accept-Ch:
+          - Sec-CH-UA-Platform-Version
+        Content-Type:
+          - application/json
+        Date:
+          - Tue, 12 Aug 2025 18:24:07 GMT
+        Referrer-Policy:
+          - strict-origin-when-cross-origin
+      status: 200 OK
+      code: 200
+      duration: 1.164938959s

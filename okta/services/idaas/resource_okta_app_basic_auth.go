@@ -2,8 +2,9 @@ package idaas
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 	"time"
+
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
