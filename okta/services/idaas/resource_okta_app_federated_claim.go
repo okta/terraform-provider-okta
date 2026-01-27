@@ -110,13 +110,6 @@ func updateAppFederatedClaimToState(a *appFederatedClaimModel, resp *v6okta.Fede
 	return diags
 }
 
-func buildFederatedClaimRequestBody(data appFederatedClaimModel) v6okta.FederatedClaimRequestBody {
-	return v6okta.FederatedClaimRequestBody{
-		Expression: data.Expression.ValueStringPointer(),
-		Name:       data.Name.ValueStringPointer(),
-	}
-}
-
 func (r *appFederatedClaim) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data appFederatedClaimModel
 
@@ -144,13 +137,6 @@ func (r *appFederatedClaim) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func updateReadAppFederatedClaimToState(a *appFederatedClaimModel, resp *v6okta.FederatedClaimRequestBody) diag.Diagnostics {
-	var diags diag.Diagnostics
-	a.Expression = types.StringValue(resp.GetExpression())
-	a.Name = types.StringValue(resp.GetName())
-	return diags
-}
-
 func (r *appFederatedClaim) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state, data appFederatedClaimModel
 
@@ -164,8 +150,8 @@ func (r *appFederatedClaim) Update(ctx context.Context, req resource.UpdateReque
 	updateAppFederatedClaimResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().ApplicationSSOFederatedClaimsAPI.ReplaceFederatedClaim(ctx, data.AppID.ValueString(), state.ID.ValueString()).FederatedClaim(updateFederatedClaimBody(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading app federated claim",
-			"Could not read app federated claim, unexpected error: "+err.Error(),
+			"Error updating app federated claim",
+			"Could not update app federated claim, unexpected error: "+err.Error(),
 		)
 		return
 	}
@@ -174,13 +160,6 @@ func (r *appFederatedClaim) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func updateFederatedClaimBody(data appFederatedClaimModel) v6okta.FederatedClaim {
-	return v6okta.FederatedClaim{
-		Expression: data.Expression.ValueStringPointer(),
-		Name:       data.Name.ValueStringPointer(),
-	}
 }
 
 func (r *appFederatedClaim) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -198,4 +177,25 @@ func (r *appFederatedClaim) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
+}
+
+func buildFederatedClaimRequestBody(data appFederatedClaimModel) v6okta.FederatedClaimRequestBody {
+	return v6okta.FederatedClaimRequestBody{
+		Expression: data.Expression.ValueStringPointer(),
+		Name:       data.Name.ValueStringPointer(),
+	}
+}
+
+func updateFederatedClaimBody(data appFederatedClaimModel) v6okta.FederatedClaim {
+	return v6okta.FederatedClaim{
+		Expression: data.Expression.ValueStringPointer(),
+		Name:       data.Name.ValueStringPointer(),
+	}
+}
+
+func updateReadAppFederatedClaimToState(a *appFederatedClaimModel, resp *v6okta.FederatedClaimRequestBody) diag.Diagnostics {
+	var diags diag.Diagnostics
+	a.Expression = types.StringValue(resp.GetExpression())
+	a.Name = types.StringValue(resp.GetName())
+	return diags
 }
