@@ -38,7 +38,7 @@ func (r *appFederatedClaim) ImportState(ctx context.Context, req resource.Import
 	if len(parts) != 2 {
 		resp.Diagnostics.AddError(
 			"Invalid import ID",
-			"Expected format: resource_id/sequence_id",
+			"Expected format: app_id/id",
 		)
 		return
 	}
