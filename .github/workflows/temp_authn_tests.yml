@@ -1,0 +1,23 @@
+
+name: Temp Authn tests
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: "go.mod"
+
+      - name: Run VCR tests
+        env:
+          OKTA_VCR_TF_ACC: play
+          TF_ACC: 1 
+        run: |
+          go test -tags unit -mod=readonly -test.v -timeout 120m ./okta/services/idaas -run ^TestAccResourceOktaAuthenticator

@@ -312,12 +312,20 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 }
 
 func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
+	key := d.Get("key").(string)
+	
 	authenticator := sdk.Authenticator{
 		Type: d.Get("type").(string),
 		Id:   d.Id(),
-		Key:  d.Get("key").(string),
+		Key:  key,
 		Name: d.Get("name").(string),
 	}
+	
+	// WebAuthn authenticators don't need provider configuration
+	if key == "webauthn" {
+		return &authenticator, nil
+	}
+	
 	if d.Get("type").(string) == "security_key" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
@@ -343,7 +351,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				},
 			},
 		}
-	} else if d.Get("key").(string) == "custom_app" {
+	} else if key == "custom_app" {
 		agreeToTerms, ok := d.Get("agree_to_terms").(bool)
 		if !ok {
 			return nil, fmt.Errorf("unable to parse agree_to_terms as a boolean value, valid values are true/false")
@@ -361,7 +369,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 		}
-	} else if d.Get("key").(string) != "custom_otp" { // does not include custom_app
+	} else if key != "custom_otp" { // does not include custom_app
 		if s, ok := d.GetOk("settings"); ok {
 			var settings sdk.AuthenticatorSettings
 			err := json.Unmarshal([]byte(s.(string)), &settings)
@@ -399,6 +407,18 @@ func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
 }
 
 func validateAuthenticator(d *schema.ResourceData) error {
+	key := d.Get("key").(string)
+	
+	// WebAuthn authenticators don't use provider configuration (API ignores it)
+	if key == "webauthn" {
+		return nil
+	}
+	
+	// Custom OTP cannot be updated
+	if key == "custom_otp" && d.Id() != "" {
+		return fmt.Errorf("custom_otp is not updatable")
+	}
+	
 	typ := d.Get("type").(string)
 	if typ == "security_key" {
 		if d.Get("key").(string) != "custom_otp" {
