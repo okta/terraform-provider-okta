@@ -766,6 +766,52 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
+
+	jwk, ok := oauthClient.GetJwksOk()
+	if ok {
+		jwks := jwk.Keys
+		arr := make([]map[string]interface{}, len(jwks))
+		for i, j := range jwks {
+			// Encryption key response (use=enc)
+			if j.OAuth2ClientJsonEncryptionKeyResponse != nil {
+				arr[i] = map[string]interface{}{
+					"kty": j.OAuth2ClientJsonEncryptionKeyResponse.Kty,
+					"kid": j.OAuth2ClientJsonEncryptionKeyResponse.Kid.Get(),
+					"e":   j.OAuth2ClientJsonEncryptionKeyResponse.E,
+					"n":   j.OAuth2ClientJsonEncryptionKeyResponse.N,
+					"use": j.OAuth2ClientJsonEncryptionKeyResponse.Use,
+				}
+			}
+			// Signing key response (RSA or EC)
+			if j.OAuth2ClientJsonSigningKeyResponse != nil {
+				signingKey := j.OAuth2ClientJsonSigningKeyResponse
+				// RSA Signing key
+				if signingKey.OAuth2ClientJsonWebKeyRsaResponse != nil {
+					rsaKey := signingKey.OAuth2ClientJsonWebKeyRsaResponse
+					arr[i] = map[string]interface{}{
+						"kty": rsaKey.Kty,
+						"kid": rsaKey.Kid.Get(),
+						"e":   rsaKey.E,
+						"n":   rsaKey.N,
+					}
+				}
+				// EC Signing key
+				if signingKey.OAuth2ClientJsonWebKeyECResponse != nil {
+					ecKey := signingKey.OAuth2ClientJsonWebKeyECResponse
+					arr[i] = map[string]interface{}{
+						"kty": ecKey.Kty,
+						"kid": ecKey.Kid.Get(),
+						"x":   ecKey.X,
+						"y":   ecKey.Y,
+					}
+				}
+			}
+		}
+		err := utils.SetNonPrimitives(d, map[string]interface{}{"jwks": arr})
+		if err != nil {
+			return diag.Errorf("failed to set OAuth application properties: %v", err)
+		}
+	}
 	return nil
 }
 
@@ -997,40 +1043,78 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	if jwksList, ok := d.GetOk("jwks"); ok {
 		jwksData := jwksList.([]interface{})
 		if len(jwksData) > 0 {
-			// For now, temporarily disable inline JWKS due to v6 SDK schema conflicts
-			// This is a known limitation with the v6 SDK JWKS unmarshalling
-			// Users should use jwks_uri instead for v6 SDK compatibility
 
-			// TODO: Re-enable when v6 SDK JWKS schema conflict is resolved
-			// For now, we'll skip setting JWKS to avoid the unmarshalling error
-			/*
-				jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
+			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
 
-				var keyData []interface{}
-				for _, jwk := range jwksData {
-					jwkMap := jwk.(map[string]interface{})
-					key := map[string]interface{}{
-						"kid": jwkMap["kid"].(string),
-						"kty": jwkMap["kty"].(string),
-					}
-					if e, ok := jwkMap["e"]; ok && e.(string) != "" {
-						key["e"] = e.(string)
-					}
-					if n, ok := jwkMap["n"]; ok && n.(string) != "" {
-						key["n"] = n.(string)
-					}
-					if x, ok := jwkMap["x"]; ok && x.(string) != "" {
-						key["x"] = x.(string)
-					}
-					if y, ok := jwkMap["y"]; ok && y.(string) != "" {
-						key["y"] = y.(string)
-					}
-					keyData = append(keyData, key)
+			var keyData []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
+			for _, jwk := range jwksData {
+				jwkMap := jwk.(map[string]interface{})
+				var k v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
+
+				kty := jwkMap["kty"].(string)
+				use := ""
+				if jwkMap["use"] != nil {
+					use = jwkMap["use"].(string)
 				}
 
-				jwks.AdditionalProperties = map[string]interface{}{"keys": keyData}
-				oauthClientSettings.SetJwks(*jwks)
-			*/
+				// Determine key type based on kty and use
+				if use == "enc" {
+					// Encryption key (RSA only for encryption)
+					// Fields: e, kty, n, use, kid, status
+					key := v6okta.NewOAuth2ClientJsonEncryptionKeyResponseWithDefaults()
+					if e, ok := jwkMap["e"].(string); ok {
+						key.SetE(e)
+					}
+					if n, ok := jwkMap["n"].(string); ok {
+						key.SetN(n)
+					}
+					key.SetKty(kty)
+					key.SetUse("enc")
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(key)
+				} else if kty == "RSA" {
+					// RSA Signing key
+					// Fields: e, kty, n, kid, status (NO use, NO alg)
+					key := v6okta.NewOAuth2ClientJsonWebKeyRsaResponseWithDefaults()
+					if e, ok := jwkMap["e"].(string); ok {
+						key.SetE(e)
+					}
+					if n, ok := jwkMap["n"].(string); ok {
+						key.SetN(n)
+					}
+					key.SetKty(kty)
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					// Wrap RSA key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
+					signingKey := v6okta.OAuth2ClientJsonWebKeyRsaResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
+				} else if kty == "EC" {
+					// EC Signing key
+					// Fields: kty, x, y, kid, status (NO crv, NO use, NO alg)
+					key := v6okta.NewOAuth2ClientJsonWebKeyECResponseWithDefaults()
+					if x, ok := jwkMap["x"].(string); ok {
+						key.SetX(x)
+					}
+					if y, ok := jwkMap["y"].(string); ok {
+						key.SetY(y)
+					}
+					key.SetKty(kty)
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					// Wrap EC key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
+					signingKey := v6okta.OAuth2ClientJsonWebKeyECResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
+				}
+
+				keyData = append(keyData, k)
+			}
+			jwks.SetKeys(keyData)
+			oauthClientSettings.SetJwks(*jwks)
+
 		}
 	}
 
