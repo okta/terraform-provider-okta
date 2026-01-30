@@ -1,5 +1,23 @@
 # Changelog
 
+## 6.5.5 (January 30, 2026)
+### FEATURES
+* New resource and data source `okta_app_federated_claim` to manage federated claims for applications [#2640](https://github.com/okta/terraform-provider-okta/pull/2640) by [aditya-okta](https://github.com/aditya-okta) 
+* Add create and delete functionalities for `okta_principal_rate_limit` resource [#2628](https://github.com/okta/terraform-provider-okta/pull/2628) by [aditya-okta](https://github.com/aditya-okta) 
+* Add support for activating/deactivating network zones and upgrade `okta_network_zone` resource and data source to use V6 SDK [#2636](https://github.com/okta/terraform-provider-okta/pull/2636) by [aditya-okta](https://github.com/aditya-okta)
+
+### BUG FIXES 
+* Fix JWKS configuration for OAuth applications - properly implement V6 SDK types for inline JWKS keys [#2639](https://github.com/okta/terraform-provider-okta/pull/2639) by [aditya-okta](https://github.com/aditya-okta) 
+* Fix persistent diff issue in okta_app_oauth resource [#2634](https://github.com/okta/terraform-provider-okta/pull/2634) by [aditya-okta](https://github.com/aditya-okta) 
+* Fix `inactivity_period` cannot be set to null in `okta_app_signon_policy_rule` [#2614](https://github.com/okta/terraform-provider-okta/pull/2614) by [dhiwakar-okta](https://github.com/dhiwakar-okta) 
+* Remove unnecessary len>0 check for login_scopes in OAuth apps [#2624](https://github.com/okta/terraform-provider-okta/pull/2624) by [aditya-okta](https://github.com/aditya-okta) 
+* Add nil checks for `app.Settings` and `app.Settings.SignOn` to prevent panics [#2621](https://github.com/okta/terraform-provider-okta/pull/2621) by [aditya-okta](https://github.com/aditya-okta)
+
+### IMPROVEMENTS 
+* Add warning regarding resource being deleted and re-created when updating certain properties [#2638]() by [aditya-okta](https://github.com/aditya-okta) 
+* Set max items for dynamic_locations in `okta_network_zone` [#2501]() by [Rose Security](https://github.com/RoseSecurity)
+* Add missing documentation for realm_id attributes [#2632]() by [tim-koehler](https://github.com/tim-koehler)
+
 ## 6.5.4 (January 15, 2025)
 ### FEATURE
 * Add AgentPools resource [#2603](https://github.com/okta/terraform-provider-okta/pull/2603) by [aditya-okta](https://github.com/aditya-okta)
