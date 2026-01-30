@@ -278,7 +278,6 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
-	t.Skip("Skipping JWKS test due to v6 SDK schema conflicts. Use jwks_uri instead of inline jwks configuration.")
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	config := mgr.GetFixtures("service_with_jwks.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
