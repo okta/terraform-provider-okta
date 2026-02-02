@@ -22,6 +22,21 @@ func (m *APISupplement) CreateAppSignOnPolicyRule(ctx context.Context, policyID 
 	return appSignOnPolicyRule, resp, nil
 }
 
+// ListAppSignOnPolicyRules lists all policy rules for an app sign-on policy.
+func (m *APISupplement) ListAppSignOnPolicyRules(ctx context.Context, policyID string) ([]*AccessPolicyRule, *Response, error) {
+	url := fmt.Sprintf("/api/v1/policies/%v/rules", policyID)
+	req, err := m.RequestExecutor.WithAccept("application/json").WithContentType("application/json").NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	var appSignOnPolicyRules []*AccessPolicyRule
+	resp, err := m.RequestExecutor.Do(ctx, req, &appSignOnPolicyRules)
+	if err != nil {
+		return nil, resp, err
+	}
+	return appSignOnPolicyRules, resp, nil
+}
+
 // GetAppSignOnPolicyRule gets a policy rule.
 func (m *APISupplement) GetAppSignOnPolicyRule(ctx context.Context, policyID, ruleId string) (*AccessPolicyRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%v/rules/%v", policyID, ruleId)

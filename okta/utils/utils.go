@@ -10,6 +10,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/cenkalti/backoff"
 	"io"
 	"log"
 	"net/http"
@@ -23,7 +24,7 @@ import (
 
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 
-	"github.com/cenkalti/backoff"
+	bOffV5 "github.com/cenkalti/backoff/v5"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -795,6 +796,14 @@ func NewExponentialBackOffWithContext(ctx context.Context, maxElapsedTime time.D
 	// NOTE: backoff.BackOffContext is an interface that embeds backoff.Backoff
 	// so the greater context is considered on backoff.Retry
 	return backoff.WithContext(bOff, ctx)
+}
+
+// RetryWithBackoffV5 retries an operation using backoff v5 with exponential backoff.
+// The operation function should return (T, error) where T is the result type.
+// Use backoff.Permanent(err) to stop retrying on non-retryable errors.
+func RetryWithBackoffV5[T any](ctx context.Context, maxElapsedTime time.Duration, operation func() (T, error)) (T, error) {
+	bOff := bOffV5.NewExponentialBackOff()
+	return bOffV5.Retry(ctx, operation, bOffV5.WithBackOff(bOff), bOffV5.WithMaxElapsedTime(maxElapsedTime))
 }
 
 func Int64Ptr(what int) *int64 {
