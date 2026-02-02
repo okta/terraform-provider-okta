@@ -554,7 +554,6 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 	gc := buildGroupsClaimFromResource(groupsClaim)
 
-	fmt.Println("groups claim is", gc)
 	// Set issuer mode from the resource data for groups_claim API compatibility
 	if issuerMode := d.Get("issuer_mode").(string); issuerMode != "" {
 		gc.IssuerMode = issuerMode
