@@ -82,6 +82,11 @@ func resourceIdpSocial() *schema.Resource {
 				ConflictsWith: []string{"client_secret"},
 				Description:   "Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
 			},
+			"client_secret_wo_version": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Version number for the write-only client secret. Increment this value to trigger an update when changing `client_secret_wo`.",
+			},
 			"max_clock_skew": {
 				Type:        schema.TypeInt,
 				Optional:    true,
