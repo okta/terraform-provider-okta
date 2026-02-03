@@ -279,3 +279,84 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAuthenticator_webauthn_minimal
+// Tests that webauthn authenticator can be created with only name and key
+func TestAccResourceOktaAuthenticator_webauthn_minimal(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_minimal.tf", t)
+	updatedConfig := mgr.GetFixtures("webauthn_minimal_inactive.tf", t)
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+			{ Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_ignored
+// Tests that webauthn authenticator accepts but ignores provider configuration (matching Okta API behavior)
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_ignored(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_with_provider.tf", t)
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAuthenticator_webauthn_with_provider_json_ignored
+// Tests that webauthn authenticator accepts but ignores provider_json (matching Okta API behavior)
+func TestAccResourceOktaAuthenticator_webauthn_with_provider_json_ignored(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("webauthn_with_provider_json.tf", t)
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+				),
+			},
+		},
+	})
+}
