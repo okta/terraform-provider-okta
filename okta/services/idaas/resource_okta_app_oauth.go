@@ -514,7 +514,28 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
+	apiSupplement := getAPISupplementFromMetadata(meta)
+	appID := d.Id()
 	if !ok {
+		gc := &sdk.AppOauthGroupClaim{
+			Name:      "",
+			Value:     "",
+			ValueType: "",
+		}
+		if d.Get("issuer_mode") != nil {
+			if d.Get("issuer_mode").(string) != "" {
+				gc.IssuerMode = d.Get("issuer_mode").(string)
+			} else {
+				return errors.New("issuer_mode must be set when issuer_mode is set")
+			}
+		} else {
+			return errors.New("issuer_mode must be set when issuer_mode is set")
+		}
+
+		_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+		if err != nil {
+			return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+		}
 		return nil
 	}
 
@@ -529,8 +550,6 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 
 	// For now, keep the old behavior but with warnings
 	// TODO: Remove in future version - functionality temporarily maintained for backward compatibility
-	apiSupplement := getAPISupplementFromMetadata(meta)
-	appID := d.Id()
 
 	groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 	gc := buildGroupsClaimFromResource(groupsClaim)
