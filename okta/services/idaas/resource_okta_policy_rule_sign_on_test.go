@@ -36,6 +36,7 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test_risk_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName2 := fmt.Sprintf("%s.test_risc_ONLY", resources.OktaIDaaSPolicyRuleSignOn)
 	resourceName3 := fmt.Sprintf("%s.test_BOTH", resources.OktaIDaaSPolicyRuleSignOn)
+	resourceName4 := fmt.Sprintf("%s.test_NEITHER", resources.OktaIDaaSPolicyRuleSignOn)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -49,10 +50,13 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName4, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "risk_level", "ANY"),
 					resource.TestCheckResourceAttr(resourceName2, "risc_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName3, "risk_level", "LOW"),
 					resource.TestCheckResourceAttr(resourceName3, "risc_level", "HIGH"),
+					resource.TestCheckNoResourceAttr(resourceName4, "risc_level"),
+					resource.TestCheckNoResourceAttr(resourceName4, "risk_level"),
 				),
 			},
 			{
@@ -61,10 +65,13 @@ func TestAccResourceOktaPolicyRuleSignon_GH2419(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName2, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName3, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName4, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "risk_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName2, "risc_level", "HIGH"),
 					resource.TestCheckResourceAttr(resourceName3, "risk_level", "MEDIUM"),
 					resource.TestCheckResourceAttr(resourceName3, "risc_level", "HIGH"),
+					resource.TestCheckNoResourceAttr(resourceName4, "risk_level"),
+					resource.TestCheckNoResourceAttr(resourceName4, "risc_level"),
 				),
 			},
 		},
