@@ -126,8 +126,8 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 		Blocks: map[string]schema.Block{
 			"access_scope_settings": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
-					"ids": schema.ListNestedBlock{
-						Description: "Block list of groups/entitlement bundles ids.",
+					"ids": schema.SetNestedBlock{
+						Description: "Block set of groups/entitlement bundles ids.",
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
@@ -146,8 +146,8 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 			},
 			"requester_settings": schema.SingleNestedBlock{
 				Blocks: map[string]schema.Block{
-					"ids": schema.ListNestedBlock{
-						Description: "Block list of teams/groups ids.",
+					"ids": schema.SetNestedBlock{
+						Description: "Block set of teams/groups ids.",
 						NestedObject: schema.NestedBlockObject{
 							Attributes: map[string]schema.Attribute{
 								"id": schema.StringAttribute{
