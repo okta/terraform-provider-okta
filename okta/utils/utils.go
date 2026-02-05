@@ -810,29 +810,50 @@ func LinksValue(links interface{}, keys ...string) string {
 	if links == nil {
 		return ""
 	}
-	sl, ok := links.([]interface{})
-	if ok {
-		if len(sl) == 0 {
-			links = map[string]interface{}{}
-		} else {
-			links = sl[0]
-		}
-	}
-	if len(keys) == 0 {
-		v, ok := links.(string)
-		if !ok {
+
+	val := reflect.Indirect(reflect.ValueOf(links))
+
+	if val.Kind() == reflect.Slice {
+		if val.Len() == 0 {
 			return ""
 		}
-		return v
+		return LinksValue(val.Index(0).Interface(), keys...)
 	}
-	l, ok := links.(map[string]interface{})
-	if !ok {
+
+	if len(keys) == 0 {
+		if val.Kind() == reflect.String {
+			return val.String()
+		}
 		return ""
 	}
-	if len(keys) == 1 {
-		return LinksValue(l[keys[0]])
+
+	var nextVal interface{}
+	key := keys[0]
+
+	switch val.Kind() {
+	case reflect.Map:
+		mapVal := val.MapIndex(reflect.ValueOf(key))
+		if !mapVal.IsValid() {
+			return ""
+		}
+		nextVal = mapVal.Interface()
+
+	case reflect.Struct:
+		field := val.FieldByName(key)
+		if !field.IsValid() {
+			field = val.FieldByName(strings.Title(key))
+		}
+
+		if !field.IsValid() {
+			return ""
+		}
+		nextVal = field.Interface()
+
+	default:
+		return ""
 	}
-	return LinksValue(l[keys[0]], keys[1:]...)
+
+	return LinksValue(nextVal, keys[1:]...)
 }
 
 // StrMaxLength validates that the string is not longer than the specified maximum length.
