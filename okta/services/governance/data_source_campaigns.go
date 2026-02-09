@@ -24,7 +24,6 @@ type campaignsDataSource struct {
 }
 
 type campaignsDataSourceModel struct {
-	Id        types.String `tfsdk:"id"`
 	Campaigns types.List   `tfsdk:"campaigns"`
 	Filter    types.String `tfsdk:"filter"`
 	Limit     types.Int64  `tfsdk:"limit"`
@@ -43,10 +42,6 @@ func (d *campaignsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	resp.Schema = schema.Schema{
 		Description: "Lists all or a subset of campaigns in your organization. Use the `filter` parameter to narrow results by name, status, scheduleType, reviewerType, and recurringCampaignId. Use `order_by` to sort by name, created, startDate, endDate, or status.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: "Unique identifier for the data source state (based on filter/limit/order_by).",
-			},
 			"filter": schema.StringAttribute{
 				Optional:    true,
 				Description: "Filter expression to narrow results. Supported campaign properties: name, status, scheduleType, reviewerType, recurringCampaignId.",
@@ -141,15 +136,18 @@ func (d *campaignsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		apiReq = apiReq.Limit(int32(data.Limit.ValueInt64()))
 	}
 	if !data.OrderBy.IsNull() && !data.OrderBy.IsUnknown() {
-		orderBy := make([]string, 0, len(data.OrderBy.Elements()))
-		for _, e := range data.OrderBy.Elements() {
-			if s, ok := e.(types.String); ok {
+		var orderByElems []types.String
+		resp.Diagnostics.Append(data.OrderBy.ElementsAs(ctx, &orderByElems, false)...)
+		if !resp.Diagnostics.HasError() && len(orderByElems) > 0 {
+			orderBy := make([]string, 0, len(orderByElems))
+			for _, s := range orderByElems {
 				orderBy = append(orderBy, s.ValueString())
 			}
-		}
-		if len(orderBy) > 0 {
 			apiReq = apiReq.OrderBy(orderBy)
 		}
+	}
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	var allCampaigns []governance.CampaignSparse
@@ -173,10 +171,6 @@ func (d *campaignsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		page := list.GetData()
 		allCampaigns = append(allCampaigns, page...)
 
-		if data.Limit.ValueInt64() > 0 {
-			// User set a limit; do not paginate beyond first page
-			break
-		}
 		if len(page) == 0 {
 			break
 		}
@@ -200,26 +194,18 @@ func (d *campaignsDataSource) Read(ctx context.Context, req datasource.ReadReque
 		attrs := map[string]attr.Value{
 			"id":              types.StringValue(c.GetId()),
 			"name":            types.StringValue(c.GetName()),
-			"start_date":      types.StringValue(c.GetStartDate().Format(time.RFC3339)),
-			"end_date":        types.StringValue(c.GetEndDate().Format(time.RFC3339)),
 			"schedule_type":   types.StringValue(string(c.GetScheduleType())),
 			"reviewer_type":   types.StringValue(string(c.GetReviewerType())),
 			"status":          types.StringValue(string(c.GetStatus())),
-			"created":         types.StringValue(c.GetCreated().Format(time.RFC3339)),
 			"created_by":      types.StringValue(c.GetCreatedBy()),
-			"last_updated":    types.StringValue(c.GetLastUpdated().Format(time.RFC3339)),
 			"last_updated_by": types.StringValue(c.GetLastUpdatedBy()),
 		}
-		if c.HasDescription() {
-			attrs["description"] = types.StringValue(c.GetDescription())
-		} else {
-			attrs["description"] = types.StringNull()
-		}
-		if c.HasRecurringCampaignId() {
-			attrs["recurring_campaign_id"] = types.StringValue(c.GetRecurringCampaignId())
-		} else {
-			attrs["recurring_campaign_id"] = types.StringNull()
-		}
+		attrs["start_date"] = timeToAttrValue(c.GetStartDateOk())
+		attrs["end_date"] = timeToAttrValue(c.GetEndDateOk())
+		attrs["created"] = timeToAttrValue(c.GetCreatedOk())
+		attrs["last_updated"] = timeToAttrValue(c.GetLastUpdatedOk())
+		attrs["description"] = optionalStringToAttrValue(c.GetDescription(), c.HasDescription())
+		attrs["recurring_campaign_id"] = optionalStringToAttrValue(c.GetRecurringCampaignId(), c.HasRecurringCampaignId())
 		obj, diags := types.ObjectValue(objType.AttrTypes, attrs)
 		if diags.HasError() {
 			resp.Diagnostics.Append(diags...)
@@ -235,9 +221,26 @@ func (d *campaignsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	data.Campaigns = campaignsList
-	data.Id = types.StringValue("okta_campaigns")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// timeToAttrValue converts an optional API time (e.g. from GetStartDateOk()) to a
+// Terraform attribute value: RFC3339 string when present, null when absent.
+func timeToAttrValue(t *time.Time, ok bool) attr.Value {
+	if !ok || t == nil {
+		return types.StringNull()
+	}
+	return types.StringValue(t.Format(time.RFC3339))
+}
+
+// optionalStringToAttrValue converts an optional API string (e.g. from GetDescription() + HasDescription()) to a
+// Terraform attribute value: string when present, null when absent.
+func optionalStringToAttrValue(value string, ok bool) attr.Value {
+	if !ok {
+		return types.StringNull()
+	}
+	return types.StringValue(value)
 }
 
 // parseAfterFromURL extracts the "after" query parameter from a next-page href.
