@@ -37,7 +37,6 @@ data "okta_campaigns" "recent" {
 
 ### Read-Only
 
-- `id` (String) Unique identifier for the data source state (based on filter/limit/order_by).
 - `campaigns` (List of Object) List of campaigns (see [nested schema](#nestedatt--campaigns)).
 
 <a id="nestedatt--campaigns"></a>
