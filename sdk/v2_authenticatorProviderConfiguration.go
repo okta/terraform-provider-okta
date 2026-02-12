@@ -1,7 +1,9 @@
 // DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type AuthenticatorProviderConfiguration struct {
 	AuthPort         int64                                            `json:"-"`
@@ -12,6 +14,7 @@ type AuthenticatorProviderConfiguration struct {
 	IntegrationKey   string                                           `json:"integrationKey,omitempty"`
 	SecretKey        string                                           `json:"secretKey,omitempty"`
 	SharedSecret     string                                           `json:"sharedSecret,omitempty"`
+	IdpId            string                                           `json:"idpId,omitempty"`
 	UserNameTemplate *AuthenticatorProviderConfigurationUserNamePlate `json:"userNameTemplate,omitempty"`
 	APNS             *APNS                                            `json:"apns,omitempty"`
 	FCM              *FCM                                             `json:"fcm,omitempty"`
