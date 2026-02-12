@@ -957,9 +957,17 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	// Build credentials
 	authMethod := d.Get("token_endpoint_auth_method").(string)
 	oauthClient := v6okta.NewApplicationCredentialsOAuthClientWithDefaults()
-	if autoRotate, ok := d.GetOk("auto_key_rotation"); ok {
-		oauthClient.SetAutoKeyRotation(autoRotate.(bool))
+
+	// Use GetRawConfig to distinguish: not in config (default true) vs explicit true/false.
+	// GetOk cannot distinguish explicit false from unset, so false would never be sent if we used it.
+	var autoKeyRotation bool
+	if attr := d.GetRawConfig().GetAttr("auto_key_rotation"); attr.IsNull() {
+		autoKeyRotation = true // schema default when attribute is omitted
+	} else {
+		autoKeyRotation = attr.True()
 	}
+	oauthClient.SetAutoKeyRotation(autoKeyRotation)
+
 	if clientID := d.Get("client_id").(string); clientID != "" {
 		oauthClient.SetClientId(clientID)
 	}
