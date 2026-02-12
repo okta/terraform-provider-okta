@@ -747,6 +747,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 		c.RemediationSettings.NoResponse = types.StringValue(string(resp.RemediationSettings.GetNoResponse()))
 	}
 	if autoRemediationSettings, ok := resp.RemediationSettings.GetAutoRemediationSettingsOk(); ok {
+		c.RemediationSettings.AutoRemediationSettings = &autoRemediationSettingsModel{}
 		c.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments = types.BoolValue(autoRemediationSettings.GetIncludeAllIndirectAssignments())
 		for _, includeOnly := range autoRemediationSettings.GetIncludeOnly() {
 			targetResource := targetResourceModel{
