@@ -232,7 +232,10 @@ func (c *Config) LoadAPIClient() (err error) {
 		Scopes:         c.Scopes,
 	}
 
-	idaasClient, _ := api.NewOktaIDaaSAPIClient(iDaaSConfig)
+	idaasClient, err := api.NewOktaIDaaSAPIClient(iDaaSConfig)
+	if err != nil {
+		return fmt.Errorf("failed to initialize IDaaS API client: %v", err)
+	}
 	governanceClient, err := api.NewOktaGovernanceAPIClient(iDaaSConfig)
 	if err != nil {
 		return err
@@ -252,9 +255,20 @@ func (c *Config) SetGovernanceAPIClient(client api.OktaGovernanceClient) {
 }
 
 func (c *Config) VerifyCredentials(ctx context.Context) error {
-	// NOTE: validate credentials during initial config with a call to
-	// GET /api/v1/users/me
-	// only for SSWS API token. Should we keep doing this?
+	// Verify that at least one form of authentication is configured.
+	// Without credentials, SDK clients may be nil or non-functional,
+	// leading to nil pointer dereference panics at runtime.
+	if c.ApiToken == "" && c.AccessToken == "" && c.PrivateKey == "" {
+		return fmt.Errorf(
+			"no Okta credentials configured. Please set one of the following:\n" +
+				"  - OKTA_API_TOKEN environment variable (or 'api_token' in provider config) for SSWS token auth\n" +
+				"  - OKTA_ACCESS_TOKEN environment variable (or 'access_token' in provider config) for Bearer token auth\n" +
+				"  - OKTA_API_PRIVATE_KEY environment variable (or 'private_key' in provider config) with OKTA_API_CLIENT_ID for OAuth 2.0 auth\n" +
+				"See: https://registry.terraform.io/providers/okta/okta/latest/docs#authentication")
+	}
+
+	// Validate credentials during initial config with a call to
+	// GET /api/v1/users/me for SSWS API token.
 	if c.ApiToken != "" {
 		if _, _, err := c.OktaIDaaSClient.OktaSDKClientV3().UserAPI.GetUser(ctx, "me").Execute(); err != nil {
 			return fmt.Errorf("error with v3 SDK client: %v", err)

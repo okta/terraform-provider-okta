@@ -47,8 +47,15 @@ func init() {
 			os.Setenv("OKTA_ORG_NAME", os.Getenv("OKTA_VCR_CASSETTE"))
 		}
 	}
-	t := &testing.T{}
-	iDaaSAPIClientForTestUtil = IDaaSClientForTest(t)
+
+	// Initialize the shared IDaaS client only when running acceptance
+	// tests (TF_ACC=1). In unit-test or CI-lint runs where no Okta
+	// credentials are available, skip initialization to avoid a panic from
+	// calling Fatalf on a bare testing.T{}.
+	if os.Getenv("TF_ACC") != "" {
+		t := &testing.T{}
+		iDaaSAPIClientForTestUtil = IDaaSClientForTest(t)
+	}
 }
 
 // TestMain overridden main testing function. Package level BeforeAll and AfterAll.
