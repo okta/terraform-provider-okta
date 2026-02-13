@@ -648,7 +648,7 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Campaign",
-			"Could not create Campaign, unexpected error: "+err.Error(),
+			"Could not create Campaign, unexpected error: "+APIErrorMessage(err),
 		)
 		return
 	}
@@ -674,8 +674,8 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 	getCampaignResponse, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().CampaignsAPI.GetCampaign(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading campaign",
-			"Could not read Campaign, unexpected error: "+err.Error(),
+			"Error reading Campaign",
+			"Could not read Campaign, unexpected error: "+APIErrorMessage(err),
 		)
 		return
 	}
@@ -723,7 +723,7 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Campaign",
-			"Could not delete Campaign with ID"+data.Id.ValueString()+" unexpected error: "+err.Error(),
+			"Could not delete Campaign with ID "+data.Id.ValueString()+", unexpected error: "+APIErrorMessage(err),
 		)
 		return
 	}
