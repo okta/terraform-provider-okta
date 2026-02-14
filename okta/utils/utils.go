@@ -30,6 +30,8 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const DefaultPaginationLimit int64 = 200
@@ -841,7 +843,7 @@ func LinksValue(links interface{}, keys ...string) string {
 	case reflect.Struct:
 		field := val.FieldByName(key)
 		if !field.IsValid() {
-			field = val.FieldByName(strings.Title(key))
+			field = val.FieldByName(cases.Title(language.Und, cases.NoLower).String(key))
 		}
 
 		if !field.IsValid() {
