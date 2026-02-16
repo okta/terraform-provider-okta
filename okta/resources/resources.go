@@ -34,6 +34,7 @@ const (
 	OktaIDaaSAppUser                                  = "okta_app_user"
 	OktaIDaaSAppUserAssignments                       = "okta_app_user_assignments"
 	OktaIDaaSAppUserBaseSchemaProperty                = "okta_app_user_base_schema_property"
+	OktaIDaaSAppUserSchema                            = "okta_app_user_schema"
 	OktaIDaaSAppUserSchemaProperty                    = "okta_app_user_schema_property"
 	OktaIDaaSAuthenticator                            = "okta_authenticator"
 	OktaIDaaSAuthServer                               = "okta_auth_server"

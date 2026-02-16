@@ -114,8 +114,11 @@ func resourceAppUserSchemaResourceV0() *schema.Resource {
 }
 
 func resourceAppUserSchemaPropertyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	appId := d.Get("app_id").(string)
+	index := d.Get("index").(string)
+
 	// Set the ID before calling set..., so if we taint in set... we won't overwrite it here.
-	d.SetId(fmt.Sprintf("%s/%s", d.Get("app_id").(string), d.Get("index").(string)))
+	d.SetId(fmt.Sprintf("%s/%s", appId, index))
 	if err := setAppUserSchemaProperty(ctx, d, meta); err != nil {
 		return diag.FromErr(err)
 	}
