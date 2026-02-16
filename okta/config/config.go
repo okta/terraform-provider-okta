@@ -232,7 +232,10 @@ func (c *Config) LoadAPIClient() (err error) {
 		Scopes:         c.Scopes,
 	}
 
-	idaasClient, _ := api.NewOktaIDaaSAPIClient(iDaaSConfig)
+	idaasClient, err := api.NewOktaIDaaSAPIClient(iDaaSConfig)
+	if err != nil {
+		return fmt.Errorf("failed to initialize IDaaS API client: %v", err)
+	}
 	governanceClient, err := api.NewOktaGovernanceAPIClient(iDaaSConfig)
 	if err != nil {
 		return err
