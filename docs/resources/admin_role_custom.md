@@ -69,7 +69,7 @@ resource "okta_admin_role_custom" "example" {
 				"okta.identityProviders.read",
 				"okta.identityProviders.manage",
 				"okta.workflows.read",
-				"okta.workflows.invoke".
+				"okta.workflows.invoke",
 				"okta.governance.accessCertifications.manage",
 				"okta.governance.accessRequests.manage",
 				"okta.apps.manageFirstPartyApps",
@@ -87,7 +87,7 @@ resource "okta_admin_role_custom" "example" {
 				"okta.devices.lifecycle.delete",
 				"okta.devices.read",
 				"okta.iam.read",
-				"okta.support.cases.manage".,
+				"okta.support.cases.manage",
 
 ### Read-Only
 
