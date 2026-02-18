@@ -107,6 +107,57 @@ func TestAccResourceOktaNetworkZone_issue_2578(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaNetworkZone_issue_2271(t *testing.T) {
+	// Look up the DefaultExemptIpZone ID dynamically — it's a built-in zone
+	// whose ID varies per org.
+	testClient := IDaaSClientForTest(t)
+	v6Client := testClient.OktaSDKClientV6()
+	zones, _, err := v6Client.NetworkZoneAPI.ListNetworkZones(context.Background()).Execute()
+	if err != nil {
+		t.Fatalf("failed to list network zones: %v", err)
+	}
+	var defaultExemptZoneID string
+	for _, z := range zones {
+		if z.IPNetworkZone != nil && z.IPNetworkZone.GetName() == "DefaultExemptIpZone" {
+			defaultExemptZoneID = z.IPNetworkZone.GetId()
+			break
+		}
+	}
+	if defaultExemptZoneID == "" {
+		t.Skip("DefaultExemptIpZone not found on this org, skipping test")
+	}
+
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	config := mgr.GetFixtures("basic_issue_2271.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSNetworkZone, doesNetworkZoneExist),
+		Steps: []resource.TestStep{
+			{
+				ImportState:        true,
+				ResourceName:       "okta_network_zone.default",
+				ImportStateId:      defaultExemptZoneID,
+				ImportStatePersist: true,
+				Config:             config,
+				PlanOnly:           true,
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_network_zone.default", "name", "DefaultExemptIpZone"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "type", "IP"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "usage", "POLICY"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "set_usage_as_exempt_list", "true"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "gateways.#", "2"),
+				),
+			},
+		},
+	})
+}
+
 func doesNetworkZoneExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
