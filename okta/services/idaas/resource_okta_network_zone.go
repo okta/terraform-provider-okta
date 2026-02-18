@@ -100,7 +100,7 @@ func resourceNetworkZone() *schema.Resource {
 			"set_usage_as_exempt_list": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Whether to set usage as exempt list. If true, the network zone will be used as an exempt list for policy evaluation. Only applicable to `IP` type zones (specifically `DefaultExemptIpZone`). To manage the built-in `DefaultExemptIpZone`, first import it using `terraform import`.",
+				Description: "Set this parameter to true in your request when you update the DefaultExemptIpZone to allow IPs through the blocklist.",
 			},
 		},
 	}
@@ -177,25 +177,25 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	updateNZResp, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
 	if d.Get("name").(string) != "DefaultExemptIpZone" {
 		if d.Get("status").(string) == "ACTIVE" {
-			updateNZResp, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
 			if err != nil {
 				return diag.Errorf("failed to activate network zone: %v", err)
 			}
 		} else {
-			updateNZResp, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 			if err != nil {
 				return diag.Errorf("failed to deactivate network zone: %v", err)
 			}
 		}
 	}
 	// Read the zone state from the API
-	err = mapNetworkZoneToState(d, updateNZResp)
+	err = mapNetworkZoneToState(d, zone)
 	if err != nil {
 		return diag.FromErr(err)
 	}
