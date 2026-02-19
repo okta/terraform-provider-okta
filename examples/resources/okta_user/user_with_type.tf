@@ -1,21 +1,21 @@
 # Example of okta_user with user type
 
 # First create a user type
-resource "okta_user_type" "example" {
-  name         = "contractor"
+resource "okta_user_type" "test" {
+  name         = "testAcc_replace_with_uuid"
   display_name = "Contractor"
   description  = "A contractor user type"
 }
 
 # Create a user with the user type
-resource "okta_user" "example" {
-  first_name = "John"
-  last_name  = "Doe"
-  login      = "john.doe@example.com"
-  email      = "john.doe@example.com"
+resource "okta_user" "test" {
+  first_name = "TestAcc"
+  last_name  = "Smith"
+  login      = "testAcc-replace_with_uuid@example.com"
+  email      = "testAcc-replace_with_uuid@example.com"
 
   type {
-    id = okta_user_type.example.id
+    id = okta_user_type.test.id
   }
 }
 
