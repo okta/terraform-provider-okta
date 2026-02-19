@@ -176,5 +176,6 @@ func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.
 }
 
 func (r *customizedSigninPageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("brand_id"), req.ID)...)
 }
