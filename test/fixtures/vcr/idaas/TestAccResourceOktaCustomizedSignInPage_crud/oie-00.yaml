@@ -6,10 +6,10 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 179
+        content_length: 22
         host: oie-00.dne-okta.com
         body: |
-            {"widgetCustomizations":{"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G3"}}
+            {"name":"testBrand2"}
         headers:
             Accept:
                 - application/json
@@ -17,27 +17,26 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
-        method: PUT
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        uncompressed: true
-        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3"}}'
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:23 GMT
+                - Thu, 19 Feb 2026 09:27:10 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.221538583s
+        status: 201 Created
+        code: 201
+        duration: 1.116641208s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -61,19 +60,19 @@ interactions:
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:23 GMT
+                - Thu, 19 Feb 2026 09:27:10 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 201 Created
         code: 201
-        duration: 1.300452667s
+        duration: 1.130650083s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -90,7 +89,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
         method: PUT
       response:
         proto: HTTP/2.0
@@ -98,20 +97,57 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:24 GMT
+                - Thu, 19 Feb 2026 09:27:11 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.110861375s
+        duration: 1.077048125s
     - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 143
+        host: oie-00.dne-okta.com
+        body: |
+            {"agreeToCustomPrivacyPolicy":false,"customPrivacyPolicyUrl":"","defaultApp":{},"locale":"en","name":"testBrand2","removePoweredByOkta":false}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.100122333s
+    - id: 4
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -123,7 +159,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -131,20 +167,53 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:25 GMT
+                - Thu, 19 Feb 2026 09:27:12 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.063145125s
-    - id: 4
+        duration: 1.1143035s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.112099125s
+    - id: 6
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -160,7 +229,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
         method: PUT
       response:
         proto: HTTP/2.0
@@ -175,111 +244,49 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:27 GMT
+                - Thu, 19 Feb 2026 09:27:13 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.15001225s
-    - id: 5
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 01 Jan 2026 17:28:28 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.051789458s
-    - id: 6
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: -1
-        uncompressed: true
-        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":"string","subtitle":"string","acceptButtonText":"string","rejectButtonText":"string"}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 01 Jan 2026 17:28:28 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.066837542s
+        duration: 1.277007083s
     - id: 7
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 0
+        content_length: 179
         host: oie-00.dne-okta.com
+        body: |
+            {"widgetCustomizations":{"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G3"}}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
-        method: GET
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
+        method: PUT
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3"}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:29 GMT
+                - Thu, 19 Feb 2026 09:27:14 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.069641625s
+        duration: 1.253145625s
     - id: 8
       request:
         proto: HTTP/1.1
@@ -292,7 +299,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -300,19 +307,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:30 GMT
+                - Thu, 19 Feb 2026 09:27:16 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.107107458s
+        duration: 1.037073417s
     - id: 9
       request:
         proto: HTTP/1.1
@@ -325,7 +332,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -333,19 +340,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":"string","subtitle":"string","acceptButtonText":"string","rejectButtonText":"string"}}}'
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:30 GMT
+                - Thu, 19 Feb 2026 09:27:16 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.129477583s
+        duration: 1.037971583s
     - id: 10
       request:
         proto: HTTP/1.1
@@ -358,7 +365,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
         method: GET
       response:
         proto: HTTP/2.0
@@ -373,13 +380,178 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:31 GMT
+                - Thu, 19 Feb 2026 09:27:17 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.05151825s
+        duration: 1.036954459s
     - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.062827958s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.026926084s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0495025s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.189301583s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Feb 2026 09:27:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.925639875s
+    - id: 16
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -395,7 +567,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
         method: PUT
       response:
         proto: HTTP/2.0
@@ -410,13 +582,13 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:33 GMT
+                - Thu, 19 Feb 2026 09:27:21 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.07792225s
-    - id: 12
+        duration: 1.212267666s
+    - id: 17
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -432,7 +604,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
         method: PUT
       response:
         proto: HTTP/2.0
@@ -447,13 +619,13 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:33 GMT
+                - Thu, 19 Feb 2026 09:27:23 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.1851325s
-    - id: 13
+        duration: 1.517864042s
+    - id: 18
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -465,7 +637,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -473,20 +645,20 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test Updated","helpUrl":"https://helpurltestupdated.com","customLink1Label":"Custom Link 1 URL","customLink1Url":"https://customlink1url.com","customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":"string","subtitle":"string","acceptButtonText":"string","rejectButtonText":"string"}}}'
+        body: '{"id":"bndv6t53qiz8PCqUd1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:34 GMT
+                - Thu, 19 Feb 2026 09:27:24 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.069451542s
-    - id: 14
+        duration: 1.040828083s
+    - id: 19
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -498,7 +670,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -506,20 +678,20 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndtc0w2i7UyaqOq11d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndv6t9g5qbe4BuiY1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:34 GMT
+                - Thu, 19 Feb 2026 09:27:24 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.074998542s
-    - id: 15
+        duration: 1.043506541s
+    - id: 20
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -531,7 +703,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
         method: GET
       response:
         proto: HTTP/2.0
@@ -546,13 +718,13 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:35 GMT
+                - Thu, 19 Feb 2026 09:27:25 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.178817709s
-    - id: 16
+        duration: 1.046070167s
+    - id: 21
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -564,25 +736,28 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7/pages/sign-in/customized
-        method: DELETE
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 0
-        body: ""
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test Updated","helpUrl":"https://helpurltestupdated.com","customLink1Label":"Custom Link 1 URL","customLink1Url":"https://customlink1url.com","customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:36 GMT
+                - Thu, 19 Feb 2026 09:27:25 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 204 No Content
-        code: 204
-        duration: 1.046583125s
-    - id: 17
+        status: 200 OK
+        code: 200
+        duration: 1.06813675s
+    - id: 22
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -594,25 +769,28 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7/pages/sign-in/customized
-        method: DELETE
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 0
-        body: ""
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
             Date:
-                - Thu, 01 Jan 2026 17:28:36 GMT
+                - Thu, 19 Feb 2026 09:27:26 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 204 No Content
-        code: 204
-        duration: 1.103843375s
-    - id: 18
+        status: 200 OK
+        code: 200
+        duration: 1.046860292s
+    - id: 23
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -624,7 +802,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndtc0w2i7UyaqOq11d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7/pages/sign-in/customized
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -636,9 +814,99 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Thu, 01 Jan 2026 17:28:38 GMT
+                - Thu, 19 Feb 2026 09:27:28 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.189506875s
+        duration: 1.155035791s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t9g5qbe4BuiY1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 19 Feb 2026 09:27:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.061569167s
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7/pages/sign-in/customized
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 19 Feb 2026 09:27:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.075414208s
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndv6t53qiz8PCqUd1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 19 Feb 2026 09:27:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.047823833s
