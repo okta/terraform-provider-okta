@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -389,8 +390,14 @@ func applyLogStreamToState(ctx context.Context, ls *providerLogStream, m *logStr
 	m.Status = types.StringValue(ls.Status)
 	m.Type = types.StringValue(ls.Type)
 
-	settings := &logStreamSettingsModel{}
-	m.Settings.As(ctx, settings, basetypes.ObjectAsOptions{})
+	// Read the prior settings from state so we can preserve write-only
+	// sensitive values (e.g. token) that the API does not return.
+	var priorSettings logStreamSettingsModel
+	if !m.Settings.IsNull() && !m.Settings.IsUnknown() {
+		m.Settings.As(ctx, &priorSettings, basetypes.ObjectAsOptions{})
+	}
+
+	settings := logStreamSettingsModel{}
 
 	if ls.Settings.AccountID != "" {
 		settings.AccountID = types.StringValue(ls.Settings.AccountID)
@@ -409,7 +416,26 @@ func applyLogStreamToState(ctx context.Context, ls *providerLogStream, m *logStr
 	}
 	if ls.Settings.Token != "" {
 		settings.Token = types.StringValue(ls.Settings.Token)
+	} else if !priorSettings.Token.IsNull() && !priorSettings.Token.IsUnknown() {
+		// The API never returns the Splunk HEC token (it's write-only).
+		// Preserve the value from plan/state to avoid "inconsistent values
+		// for sensitive attribute" errors.
+		settings.Token = priorSettings.Token
 	}
+
+	settingsObj, diags := types.ObjectValueFrom(ctx, m.Settings.AttributeTypes(ctx), settings)
+	if diags.HasError() {
+		// If settings object is null/unknown (e.g. during import), build attribute types from schema
+		settingsObj, _ = types.ObjectValueFrom(ctx, map[string]attr.Type{
+			"account_id":        types.StringType,
+			"event_source_name": types.StringType,
+			"region":            types.StringType,
+			"edition":           types.StringType,
+			"host":              types.StringType,
+			"token":             types.StringType,
+		}, settings)
+	}
+	m.Settings = settingsObj
 }
 
 func buildLogStreamCreateBody(ctx context.Context, m *logStreamModel) *okta.ListLogStreams200ResponseInner {
