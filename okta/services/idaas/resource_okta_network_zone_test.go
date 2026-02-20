@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -101,6 +103,41 @@ func TestAccResourceOktaNetworkZone_issue_2578(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "proxies.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "gateways.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "usage", "POLICY"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaNetworkZone_issue_2271(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	config := mgr.GetFixtures("basic_issue_2271.tf", t)
+	// DefaultExemptIpZone is a built-in zone; we don't want CheckDestroy to
+	// fail when it still exists after the test, so use a no-op.
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy: func(state *terraform.State) error {
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				ImportState:        true,
+				ResourceName:       "okta_network_zone.default",
+				ImportStateId:      "nzotivlj3iItmtmnC1d7",
+				ImportStatePersist: true,
+				Config:             config,
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_network_zone.default", "name", "DefaultExemptIpZone"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "type", "IP"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "usage", "POLICY"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "set_usage_as_exempt_list", "true"),
+					resource.TestCheckResourceAttr("okta_network_zone.default", "gateways.#", "2"),
 				),
 			},
 		},
