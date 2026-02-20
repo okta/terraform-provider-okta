@@ -113,6 +113,8 @@ const (
 	OktaIDaaSRealm                                    = "okta_realm"
 	OktaIDaaSRealmAssignment                          = "okta_realm_assignment"
 	OktaIDaaSResourceSet                              = "okta_resource_set"
+	OktaIDaaSResourceSets                             = "okta_resource_sets"
+	OktaIDaaSResourceSetResources                     = "okta_resource_set_resources"
 	OktaIDaaSRoleSubscription                         = "okta_role_subscription"
 	OktaIDaaSSecurityNotificationEmails               = "okta_security_notification_emails"
 	OktaIDaaSTemplateSms                              = "okta_template_sms"
