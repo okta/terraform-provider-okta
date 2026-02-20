@@ -1138,7 +1138,7 @@ ENHANCEMENTS:
 
 PROJECT IMPROVEMENTS:
 
-* Added a GH CI workflow to protect master branch [#948](https://github.com/okta/terraform-provider-okta/pull/948). Thanks, [@ymylei](https://github.com/ymylei)!
+* Added a GH CI workflow to protect default branch [#948](https://github.com/okta/terraform-provider-okta/pull/948). Thanks, [@ymylei](https://github.com/ymylei)!
 
 BUGS:
 
