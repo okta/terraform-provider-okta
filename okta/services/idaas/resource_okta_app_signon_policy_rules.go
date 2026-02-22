@@ -209,11 +209,26 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 	policyID := plan.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
 
+	// Pre-fetch any rules that already exist in Okta for this policy.
+	// This recovers from a previous interrupted apply where some rules were
+	// created but state was never written. Without this, re-running apply
+	// would hit 409 name conflicts on the already-created rules.
+	existingByName, diags := r.fetchExistingRulesByName(ctx, client, policyID)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	// Process rules in priority order to ensure correct ordering in Okta.
 	sortedRules := r.sortRulesByPriority(plan.Rules)
 	createdRules := make([]policyRuleModel, 0, len(sortedRules))
 
 	for _, rule := range sortedRules {
+		// If an existing rule was found by name, inject its ID so createOrAdoptRule
+		// will update it rather than attempting to create a duplicate.
+		if existingID, found := existingByName[rule.Name.ValueString()]; found && rule.ID.IsNull() {
+			rule.ID = types.StringValue(existingID)
+		}
 		resultRule, diags := r.createOrAdoptRule(ctx, client, policyID, rule)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
@@ -624,6 +639,27 @@ func (r *appSignOnPolicyRulesResource) buildPlannedNameByID(rules []policyRuleMo
 		}
 	}
 	return m
+}
+
+// fetchExistingRulesByName lists all non-system rules currently in Okta for the policy
+// and returns a map of rule name → rule ID. This is used in Create to detect rules
+// that were partially created by an interrupted previous apply.
+func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Context, client *sdk.APISupplement, policyID string) (map[string]string, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	sdkRules, _, err := client.ListPolicyRules(ctx, policyID)
+	if err != nil {
+		diags.AddError("Error listing existing policy rules",
+			fmt.Sprintf("Could not list rules for policy '%s': %s", policyID, err.Error()))
+		return nil, diags
+	}
+	byName := make(map[string]string, len(sdkRules))
+	for _, rule := range sdkRules {
+		if rule.System != nil && *rule.System {
+			continue // Never adopt system rules.
+		}
+		byName[rule.Name] = rule.Id
+	}
+	return byName, diags
 }
 
 // createOrAdoptRule creates a new rule or adopts an existing one if ID is specified.

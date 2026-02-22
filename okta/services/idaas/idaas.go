@@ -121,6 +121,8 @@ func FWProviderResources() []func() resource.Resource {
 		newUISchemaResource,
 		newAppFederatedClaimResource,
 		newAppSignOnPolicyRulesResource,
+		newIdpDiscoveryPolicyRulesResource,
+		newAuthServerPolicyRulesResource,
 	}
 }
 
