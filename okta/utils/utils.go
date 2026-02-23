@@ -656,6 +656,11 @@ func CertNormalize(certContents string) (*x509.Certificate, error) {
 // returns true if old and new JSONs are equivalent object representations ...
 // It is true, there is no change!  Edge chase if newJSON is blank, will also
 // return true which cover the new resource case.
+//
+// Note: the Okta API echoes back "required": false on constraint sub-objects
+// even when the field was never set by the caller. To avoid a perpetual diff,
+// false boolean values are stripped from both sides before comparing so that
+// an absent key and an explicit false are treated as semantically equivalent.
 func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
 	if newJSON == "" {
 		return true
@@ -669,7 +674,26 @@ func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 		return false
 	}
 
+	stripFalseBools(oldObj)
+	stripFalseBools(newObj)
+
 	return reflect.DeepEqual(oldObj, newObj)
+}
+
+// stripFalseBools recursively removes all map keys whose value is the boolean
+// false. This normalises API responses that echo back zero-value bools against
+// configs that simply omit those keys.
+func stripFalseBools(m map[string]any) {
+	for k, v := range m {
+		switch val := v.(type) {
+		case bool:
+			if !val {
+				delete(m, k)
+			}
+		case map[string]any:
+			stripFalseBools(val)
+		}
+	}
 }
 
 // NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
