@@ -488,7 +488,8 @@ func TestAccResourceOktaUser_addUserTypeLater(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
-					resource.TestCheckResourceAttr(resourceName, "type.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "type.0.id"),
 				),
 			},
 			{

@@ -354,6 +354,7 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed:    true,
 				Description: "User type. When specified, the user will be assigned to the specified user type.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
