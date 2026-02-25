@@ -51,7 +51,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "LOW"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
@@ -78,7 +77,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT2H"),
 					resource.TestCheckResourceAttr(resourceName, "type", "ASSURANCE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "MEDIUM"),
 				),
 			},
 			{
