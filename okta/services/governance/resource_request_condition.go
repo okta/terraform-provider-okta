@@ -96,10 +96,12 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 			"approval_sequence_id": schema.StringAttribute{
 				Required:    true,
 				Description: "The ID of the approval sequence.",
+				Validators:  []validator.String{stringvalidator.LengthAtLeast(1)},
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: "The name of the request condition.",
+				Validators:  []validator.String{stringvalidator.LengthAtLeast(1)},
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,

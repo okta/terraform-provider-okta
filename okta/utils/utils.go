@@ -67,6 +67,20 @@ func CamelCaseToUnderscore(s string) string {
 	return s
 }
 
+// UnderscoreToCamelCase converts underscore separated strings to camel case
+// (ie. first_name becomes firstName)
+func UnderscoreToCamelCase(s string) string {
+	parts := strings.Split(s, "_")
+	for i := 1; i < len(parts); i++ {
+		if len(parts[i]) > 0 {
+			runes := []rune(parts[i])
+			runes[0] = unicode.ToUpper(runes[0])
+			parts[i] = string(runes)
+		}
+	}
+	return strings.Join(parts, "")
+}
+
 func ConditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
 	var missing []string
 
@@ -354,6 +368,32 @@ func DoesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) 
 	b, err := io.ReadAll(response.Body)
 	if err != nil {
 		return false, ResponseErr_V5(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func DoesResourceExistV6(response *v6okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, ResponseErr_V6(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, ResponseErr_V6(response, err)
 	}
 	// some of the API response can be 200 and return an empty object or list meaning nothing was found
 	body := string(b)
@@ -656,6 +696,11 @@ func CertNormalize(certContents string) (*x509.Certificate, error) {
 // returns true if old and new JSONs are equivalent object representations ...
 // It is true, there is no change!  Edge chase if newJSON is blank, will also
 // return true which cover the new resource case.
+//
+// Note: the Okta API echoes back "required": false on constraint sub-objects
+// even when the field was never set by the caller. To avoid a perpetual diff,
+// false boolean values are stripped from both sides before comparing so that
+// an absent key and an explicit false are treated as semantically equivalent.
 func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
 	if newJSON == "" {
 		return true
@@ -669,7 +714,26 @@ func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 		return false
 	}
 
+	stripFalseBools(oldObj)
+	stripFalseBools(newObj)
+
 	return reflect.DeepEqual(oldObj, newObj)
+}
+
+// stripFalseBools recursively removes all map keys whose value is the boolean
+// false. This normalises API responses that echo back zero-value bools against
+// configs that simply omit those keys.
+func stripFalseBools(m map[string]any) {
+	for k, v := range m {
+		switch val := v.(type) {
+		case bool:
+			if !val {
+				delete(m, k)
+			}
+		case map[string]any:
+			stripFalseBools(val)
+		}
+	}
 }
 
 // NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
