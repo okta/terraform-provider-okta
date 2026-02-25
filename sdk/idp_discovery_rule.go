@@ -87,29 +87,6 @@ type (
 	}
 )
 
-func (m *APISupplement) ListIdpDiscoveryRules(ctx context.Context, policyID string) ([]*IdpDiscoveryRule, *Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%s/rules", policyID)
-	req, err := m.RequestExecutor.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	var rules []*IdpDiscoveryRule
-	resp, err := m.RequestExecutor.Do(ctx, req, &rules)
-	if err != nil {
-		return nil, resp, err
-	}
-	return rules, resp, nil
-}
-
-func (m *APISupplement) DeleteIdpDiscoveryRule(ctx context.Context, policyID, id string) (*Response, error) {
-	url := fmt.Sprintf("/api/v1/policies/%s/rules/%s", policyID, id)
-	req, err := m.RequestExecutor.NewRequest(http.MethodDelete, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	return m.RequestExecutor.Do(ctx, req, nil)
-}
-
 func (m *APISupplement) CreateIdpDiscoveryRule(ctx context.Context, policyID string, body IdpDiscoveryRule, qp *query.Params) (*IdpDiscoveryRule, *Response, error) {
 	url := fmt.Sprintf("/api/v1/policies/%s/rules", policyID)
 	if qp != nil {
