@@ -226,7 +226,9 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 	for _, rule := range sortedRules {
 		// If an existing rule was found by name, inject its ID so createOrAdoptRule
 		// will update it rather than attempting to create a duplicate.
-		if existingID, found := existingByName[rule.Name.ValueString()]; found && rule.ID.IsNull() {
+		// Check both IsNull() and IsUnknown() because during a fresh Create (no prior state),
+		// Computed attributes come through as Unknown, not Null.
+		if existingID, found := existingByName[rule.Name.ValueString()]; found && (rule.ID.IsNull() || rule.ID.IsUnknown()) {
 			rule.ID = types.StringValue(existingID)
 		}
 		resultRule, diags := r.createOrAdoptRule(ctx, client, policyID, rule)
