@@ -32,6 +32,7 @@ require (
 	github.com/okta/okta-sdk-golang/v6 v6.0.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/text v0.33.0
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -49,7 +50,7 @@ require (
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.9.1 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
-	github.com/cloudflare/circl v1.6.1 // indirect
+	github.com/cloudflare/circl v1.6.3 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
@@ -115,7 +116,6 @@ require (
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
 	golang.org/x/tools v0.40.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
