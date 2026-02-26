@@ -410,6 +410,15 @@ func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]inte
 	data, _ := json.Marshal(customAttributes)
 	attrs["custom_profile_attributes"] = string(data)
 
+	// Add user type if present
+	if u.Type != nil {
+		attrs["type"] = []interface{}{
+			map[string]interface{}{
+				"id": u.Type.Id,
+			},
+		}
+	}
+
 	return attrs
 }
 

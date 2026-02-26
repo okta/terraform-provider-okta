@@ -356,6 +356,22 @@ func resourceUser() *schema.Resource {
 					},
 				},
 			},
+			"type": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Description: "User type. When specified, the user will be assigned to the specified user type.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "User type ID",
+						},
+					},
+				},
+			},
 		},
 
 		CustomizeDiff: func(ctx context.Context, d *schema.ResourceDiff, v interface{}) error {
@@ -437,6 +453,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 	userBody := sdk.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
+		Type:        buildUserTypeFromBlock(d),
 	}
 
 	if realmId, ok := d.GetOk("realm_id"); ok {
@@ -543,6 +560,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		profile := populateUserProfile(d)
 		userBody := sdk.User{
 			Profile: profile,
+			Type:    buildUserTypeFromBlock(d),
 		}
 		if passwordHashChange {
 			userBody.Credentials = &sdk.UserCredentials{
@@ -657,6 +675,33 @@ func buildPasswordCredentialHash(rawPasswordHash interface{}) *sdk.PasswordCrede
 	return h
 }
 
+func buildUserTypeFromBlock(d *schema.ResourceData) *sdk.UserType {
+	if rawType, ok := d.GetOk("type"); ok {
+		typeList := rawType.([]interface{})
+		if len(typeList) > 0 {
+			typeMap := typeList[0].(map[string]interface{})
+			if id, exists := typeMap["id"]; exists && id.(string) != "" {
+				return &sdk.UserType{
+					Id: id.(string),
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func flattenUserType(userType *sdk.UserType) []interface{} {
+	if userType == nil || userType.Id == "" {
+		return []interface{}{}
+	}
+
+	return []interface{}{
+		map[string]interface{}{
+			"id": userType.Id,
+		},
+	}
+}
+
 // Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
 // to give a sensible user readable error when they attempt to update a DEPROVISIONED user. Previously
 // this error always occurred when you set a user's status to DEPROVISIONED.
@@ -665,6 +710,10 @@ func hasProfileChange(d *schema.ResourceData) bool {
 		if d.HasChange(k) {
 			return true
 		}
+	}
+	// Check if type block has changed
+	if d.HasChange("type") {
+		return true
 	}
 	return false
 }
