@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -53,6 +54,7 @@ func resourceAppSaml() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: appImporter,
 		},
+		CustomizeDiff: customAppSamlRequiredFieldsWarning,
 		Description: `This resource allows you to create and configure a SAML Application.
 -> During an apply if there is change in 'status' the app will first be
 activated or deactivated in accordance with the 'status' change. Then, all
@@ -296,7 +298,7 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 			"authn_context_class_ref": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Identifies the SAML authentication context class for the assertion’s authentication statement",
+				Description: "Identifies the SAML authentication context class for the assertion's authentication statement",
 			},
 			"features": {
 				Type:        schema.TypeSet,
@@ -817,6 +819,27 @@ func validateAppSaml(d *schema.ResourceData) error {
 		if objType == "GROUP" &&
 			len(utils.ConvertInterfaceToStringArrNullable(d.Get(fmt.Sprintf("attribute_statements.%d.values", i)))) > 0 {
 			return errors.New("invalid 'attribute_statements': when setting 'values', 'type' should be set to 'EXPRESSION'")
+		}
+	}
+	return nil
+}
+
+// Add this function to surface a warning if required fields are missing for custom SAML apps
+func customAppSamlRequiredFieldsWarning(ctx context.Context, d *schema.ResourceDiff, meta interface{}) error {
+	preconfigured, ok := d.GetOk("preconfigured_app")
+	if !ok || preconfigured == "" {
+		missing := []string{}
+		for _, field := range customAppSamlRequiredFields {
+			if v, ok := d.GetOk(field); !ok || v == "" {
+				missing = append(missing, field)
+			}
+		}
+		if len(missing) > 0 {
+			return fmt.Errorf(
+				"custom saml applications must have the following fields set: %s. missing: %s",
+				strings.Join(customAppSamlRequiredFields, ", "),
+				strings.Join(missing, ", "),
+			)
 		}
 	}
 	return nil
