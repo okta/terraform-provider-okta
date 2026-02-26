@@ -14,7 +14,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-governance-sdk-golang/governance"
@@ -188,10 +193,16 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the campaign. Maintain some uniqueness when naming the campaign as it helps to identify and filter for campaigns when needed.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"campaign_tier": schema.StringAttribute{
 				Optional:    true,
 				Description: "Indicates the minimum required SKU to manage the campaign. Values can be `BASIC` and `PREMIUM`.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"campaign_type": schema.StringAttribute{
 				Optional:    true,
@@ -200,14 +211,23 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Validators: []validator.String{
 					stringvalidator.OneOf("RESOURCE", "USER"),
 				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
 				Description: "Description about the campaign.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"skip_remediation": schema.BoolAttribute{
 				Optional:    true,
 				Description: "If true, skip remediation when ending the campaign (only applicable if remediationSetting.noResponse=DENY).",
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -216,14 +236,23 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					"access_approved": schema.StringAttribute{
 						Required:    true,
 						Description: "Specifies the action by default if the reviewer approves access. NO_ACTION indicates there is no remediation action and the user retains access.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"access_revoked": schema.StringAttribute{
 						Required:    true,
 						Description: "Specifies the action if the reviewer revokes access. NO_ACTION indicates the user retains the same access. DENY indicates the user will have their access revoked as long as they are not assigned to a group through Group Rules.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"no_response": schema.StringAttribute{
 						Required:    true,
 						Description: "Specifies the action if the reviewer doesn't respond to the request or if the campaign is closed before an action is taken.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -232,6 +261,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 							"include_all_indirect_assignments": schema.BoolAttribute{
 								Optional:    true,
 								Description: "If true, all indirect assignments will be included in the campaign. If false, only direct assignments will be included.",
+								PlanModifiers: []planmodifier.Bool{
+									boolplanmodifier.RequiresReplace(),
+								},
 							},
 						},
 						Blocks: map[string]schema.Block{
@@ -241,10 +273,16 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 										"resource_id": schema.StringAttribute{
 											Optional:    true,
 											Description: "The ID of the resource to include in the campaign.",
+											PlanModifiers: []planmodifier.String{
+												stringplanmodifier.RequiresReplace(),
+											},
 										},
 										"resource_type": schema.StringAttribute{
 											Optional:    true,
 											Description: "The type of the resource to include in the campaign. Valid values are 'APPLICATION', 'GROUP', 'ENTITLEMENT', 'ENTITLEMENT_BUNDLE'.",
+											PlanModifiers: []planmodifier.String{
+												stringplanmodifier.RequiresReplace(),
+											},
 										},
 									},
 								},
@@ -262,36 +300,54 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						Validators: []validator.String{
 							stringvalidator.OneOf("APPLICATION", "APPLICATION_AND_GROUP", "GROUP"),
 						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"include_admin_roles": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Description: "Include admin roles.",
 						Default:     booldefault.StaticBool(false),
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"include_entitlements": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "Include entitlements for this application. This property is only applicable if resource_type = APPLICATION and Entitlement Management is enabled.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"individually_assigned_apps_only": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "Only include individually assigned apps. This is only applicable if campaign type is USER.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"individually_assigned_groups_only": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "Only include individually assigned groups. This is only applicable if campaign type is USER.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"only_include_out_of_policy_entitlements": schema.BoolAttribute{
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "Only include out-of-policy entitlements. Only applicable if resource_type = APPLICATION and Entitlement Management is enabled.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -301,12 +357,18 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 								"resource_id": schema.StringAttribute{
 									Optional:    true,
 									Description: "The ID of the resource to exclude in the campaign.",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"resource_type": schema.StringAttribute{
 									Optional:    true,
 									Description: "The type of resource to exclude in the campaign.",
 									Validators: []validator.String{
 										stringvalidator.OneOf("APPLICATION", "GROUP"),
+									},
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
 									},
 								},
 							},
@@ -319,6 +381,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 								"resource_id": schema.StringAttribute{
 									Required:    true,
 									Description: "The resource ID that is being reviewed.",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"resource_type": schema.StringAttribute{
 									Required:    true,
@@ -326,11 +391,17 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									Validators: []validator.String{
 										stringvalidator.OneOf("APPLICATION", "GROUP"),
 									},
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"include_all_entitlements_and_bundles": schema.BoolAttribute{
 									Optional:    true,
 									Computed:    true,
 									Description: "Include all entitlements and entitlement bundles for this application. Only applicable if the resourcetype = APPLICATION and Entitlement Management is enabled.",
+									PlanModifiers: []planmodifier.Bool{
+										boolplanmodifier.RequiresReplace(),
+									},
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -340,6 +411,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 											"id": schema.StringAttribute{
 												Required:    true,
 												Description: "The ID of the entitlement bundle.",
+												PlanModifiers: []planmodifier.String{
+													stringplanmodifier.RequiresReplace(),
+												},
 											},
 										},
 									},
@@ -351,10 +425,16 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 											"id": schema.StringAttribute{
 												Required:    true,
 												Description: "The entitlement id.",
+												PlanModifiers: []planmodifier.String{
+													stringplanmodifier.RequiresReplace(),
+												},
 											},
 											"include_all_values": schema.BoolAttribute{
 												Optional:    true,
 												Description: "Whether to include all entitlement values. If false we must provide the values property.",
+												PlanModifiers: []planmodifier.Bool{
+													boolplanmodifier.RequiresReplace(),
+												},
 											},
 										},
 										Blocks: map[string]schema.Block{
@@ -364,6 +444,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 														"id": schema.StringAttribute{
 															Required:    true,
 															Description: "The entitlement value id.",
+															PlanModifiers: []planmodifier.String{
+																stringplanmodifier.RequiresReplace(),
+															},
 														},
 													},
 												},
@@ -387,44 +470,71 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						Validators: []validator.String{
 							stringvalidator.OneOf("GROUP", "MULTI_LEVEL", "RESOURCE_OWNER", "REVIEWER_EXPRESSION", "USER"),
 						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"bulk_decision_disabled": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "When approving or revoking review items, bulk actions are disabled if true.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"fallback_reviewer_id": schema.StringAttribute{
 						Optional:    true,
 						Description: "The ID of the fallback reviewer. Required when the type=`REVIEWER_EXPRESSION` or type=`RESOURCE_OWNER`",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"justification_required": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Description: "When approving or revoking review items, a justification is required if true.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"reassignment_disabled": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "Reassignment is disabled for reviewers if true.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"self_review_disabled": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "This property is required to be true for resource-centric campaigns when the Okta Admin Console is one of the resources.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"reviewer_group_id": schema.StringAttribute{
 						Optional:    true,
 						Description: "The ID of the reviewer group to which the reviewer is assigned.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"reviewer_id": schema.StringAttribute{
 						Optional: true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"reviewer_scope_expression": schema.StringAttribute{
 						Optional:    true,
 						Description: "This property is required when type=`USER`",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -437,30 +547,48 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									Validators: []validator.String{
 										stringvalidator.OneOf("GROUP", "RESOURCE_OWNER", "REVIEWER_EXPRESSION", "USER"),
 									},
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"fallback_reviewer_id": schema.StringAttribute{
 									Computed:    true,
 									Optional:    true,
 									Description: "Required when the type=`REVIEWER_EXPRESSION` or type=`RESOURCE_OWNER`",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"reviewer_group_id": schema.StringAttribute{
 									Computed:    true,
 									Optional:    true,
 									Description: "The ID of the reviewer group to which the reviewer is assigned.This property is required when type=`GROUP`",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"reviewer_id": schema.StringAttribute{
 									Optional:    true,
 									Description: "The ID of the reviewer to which the reviewer is assigned.This property is required when type=`USER`.",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"reviewer_scope_expression": schema.StringAttribute{
 									Optional:    true,
 									Computed:    true,
 									Description: "This property is required when type=`REVIEWER_EXPRESSION`",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"self_review_disabled": schema.BoolAttribute{
 									Computed:    true,
 									Optional:    true,
 									Description: "This property is used to prevent self review.",
+									PlanModifiers: []planmodifier.Bool{
+										boolplanmodifier.RequiresReplace(),
+									},
 								},
 							},
 							Blocks: map[string]schema.Block{
@@ -472,11 +600,17 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 												Optional:    true,
 												Default:     int32default.StaticInt32(0),
 												Description: "The day of the campaign when the review starts. 0 means the first day of the campaign.",
+												PlanModifiers: []planmodifier.Int32{
+													int32planmodifier.RequiresReplace(),
+												},
 											},
 											"when": schema.StringAttribute{
 												Computed:    true,
 												Optional:    true,
 												Description: "The condition for which, the lower level reviews will move to that level for further review.",
+												PlanModifiers: []planmodifier.String{
+													stringplanmodifier.RequiresReplace(),
+												},
 											},
 										},
 									},
@@ -500,14 +634,23 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					"start_date": schema.StringAttribute{
 						Required:    true,
 						Description: "The date on which the campaign is supposed to start. Accepts date in ISO 8601 format.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"duration_in_days": schema.Int32Attribute{
 						Required:    true,
 						Description: "The duration (in days) that the campaign is active.",
+						PlanModifiers: []planmodifier.Int32{
+							int32planmodifier.RequiresReplace(),
+						},
 					},
 					"time_zone": schema.StringAttribute{
 						Required:    true,
 						Description: "The time zone in which the campaign is active.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -515,9 +658,15 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						Validators: []validator.String{
 							stringvalidator.OneOf("ONE_OFF", "RECURRING"),
 						},
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"end_date": schema.StringAttribute{
 						Optional: true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -527,16 +676,25 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 								"interval": schema.StringAttribute{
 									Required:    true,
 									Description: "Recurrence interval specified according to ISO8061 notation for durations.",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"ends": schema.StringAttribute{
 									Optional:    true,
 									Description: "Specifies when the recurring schedule can have an end.",
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
+									},
 								},
 								"repeat_on_type": schema.StringAttribute{
 									Optional:    true,
 									Description: "Specifies when the recurring schedule can have an end.",
 									Validators: []validator.String{
 										stringvalidator.OneOf("LAST_WEEKDAY_AS_START_DATE", "SAME_DAY_AS_START_DATE", "SAME_WEEKDAY_AS_START_DATE"),
+									},
+									PlanModifiers: []planmodifier.String{
+										stringplanmodifier.RequiresReplace(),
 									},
 								},
 							},
@@ -550,28 +708,46 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
 						Required:    true,
 						Description: "To indicate whether a notification should be sent to the reviewers when campaign has come to an end.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"notify_reviewer_during_midpoint_of_review": schema.BoolAttribute{
 						Required:    true,
 						Description: "To indicate whether a notification should be sent to the reviewer during the midpoint of the review process.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"notify_reviewer_when_overdue": schema.BoolAttribute{
 						Required:    true,
 						Description: "To indicate whether a notification should be sent to the reviewer when the review is overdue.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"notify_reviewer_when_review_assigned": schema.BoolAttribute{
 						Required:    true,
 						Description: "To indicate whether a notification should be sent to the reviewer when actionable reviews are assigned.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"notify_review_period_end": schema.BoolAttribute{
 						Required:    true,
 						Description: "To indicate whether a notification should be sent to the reviewer when a given reviewer level period is about to end.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"reminders_reviewer_before_campaign_close_in_secs": schema.ListAttribute{
 						Optional:    true,
 						Computed:    true,
 						ElementType: types.Int64Type,
 						Description: "Specifies times (in seconds) to send reminders to reviewers before the campaign closes. Max 3 values. Example: [86400, 172800, 604800]",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 			},
@@ -580,37 +756,58 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					"type": schema.StringAttribute{
 						Required:    true,
 						Description: "Specifies the type for principal_scope_settings.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"excluded_user_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
 						Description: "An array of Okta user IDs excluded from access certification or the campaign. This field is optional. A maximum of 50 users can be specified in the array.",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
 					},
 					"group_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
 						Description: "An array of Okta group IDs included from access certification or the campaign. userIds, groupIds or userScopeExpression is required if campaign type is USER. A maximum of 5 groups can be specified in the array.",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
 					},
 					"include_only_active_users": schema.BoolAttribute{
 						Computed:    true,
 						Optional:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "If set to true, only active Okta users are included in the campaign.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"only_include_users_with_sod_conflicts": schema.BoolAttribute{
 						Optional:    true,
 						Computed:    true,
 						Default:     booldefault.StaticBool(false),
 						Description: "If set to true, only includes users that have at least one SOD conflict that was caused due to entitlement(s) within Campaign scope.",
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplace(),
+						},
 					},
 					"user_ids": schema.ListAttribute{
 						Optional:    true,
 						ElementType: types.StringType,
 						Description: "An array of Okta user IDs included from access certification or the campaign. userIds, groupIds or userScopeExpression is required if campaign type is USER. A maximum of 100 users can be specified in the array.",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
 					},
 					"user_scope_expression": schema.StringAttribute{
 						Optional:    true,
 						Description: "The Okta expression language user expression on the resourceSettings to include users in the campaign.",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -623,6 +820,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 									Validators: []validator.Int32{
 										int32validator.AtLeast(30),
 										int32validator.AtMost(365),
+									},
+									PlanModifiers: []planmodifier.Int32{
+										int32planmodifier.RequiresReplace(),
 									},
 								},
 							},
@@ -693,20 +893,14 @@ func (r *campaignResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 func (r *campaignResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data campaignResourceModel
-	var state campaignResourceModel
 
-	// Load both planned and current state
+	// All attributes use RequiresReplace, so in-place API updates are not used.
+	// If Update is called (e.g. provider-driven refresh), persist plan to state.
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	resp.Diagnostics.AddError(
-		"Update Not Supported",
-		"No other fields other than launch_campaign and end_campaign are updatable for this resource. Terraform will retain the existing state.",
-	)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
