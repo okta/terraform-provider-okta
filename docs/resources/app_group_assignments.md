@@ -2,14 +2,42 @@
 page_title: "Resource: okta_app_group_assignments"
 description: |-
   Assigns groups to an application. This resource allows you to create multiple App Group assignments.
-  Important: Do not use in conjunction with for_each
+  Important: Do not use `for_each` on this resource to iterate over groups for the same `app_id`. Use `dynamic` blocks inside a single resource instance instead.
 ---
 
 # Resource: okta_app_group_assignments
 
 Assigns groups to an application. This resource allows you to create multiple App Group assignments.
 
-**Important**: Do not use in conjunction with for_each
+**Important**: Do not use `for_each` on this resource to iterate over groups for the same `app_id`. This resource's Read implementation fetches **all** groups currently assigned to the app from the Okta API — not just the ones declared in config. When multiple instances share the same `app_id`, the following infinite loop occurs on every apply:
+
+1. Each instance's update deletes the groups it does not own from Okta.
+2. Each instance's Read (called at the end of update) re-fetches all groups from the API and absorbs the other instance's groups back into state as drift.
+3. State after apply is identical to state before apply — the plan never converges and the same diff reappears on every `terraform plan`.
+
+Since this resource natively supports multiple `group` blocks, use a [`dynamic` block](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks) instead:
+
+**Bad** — creates two conflicting resource instances for the same app:
+```terraform
+resource "okta_app_group_assignments" "this" {
+  for_each = toset(["group-a", "group-b"])
+  app_id   = okta_app_bookmark.this.id
+  group { id = each.value }
+}
+```
+
+**Good** — a single resource instance manages all groups for the app:
+```terraform
+resource "okta_app_group_assignments" "this" {
+  app_id = okta_app_bookmark.this.id
+  dynamic "group" {
+    for_each = toset(["group-a", "group-b"])
+    content { id = group.value }
+  }
+}
+```
+
+> **Note:** Using `for_each` on this resource is safe when each instance targets a **different** `app_id`, for example when assigning the same group to multiple applications.
 
 ## Example Usage
 
