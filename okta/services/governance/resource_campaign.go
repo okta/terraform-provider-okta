@@ -500,6 +500,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 					"start_date": schema.StringAttribute{
 						Required:    true,
 						Description: "The date on which the campaign is supposed to start. Accepts date in ISO 8601 format.",
+						Validators: []validator.String{
+							dateNotMoreThanFiveYearsInFuture{},
+						},
 					},
 					"duration_in_days": schema.Int32Attribute{
 						Required:    true,
