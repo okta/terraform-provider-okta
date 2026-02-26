@@ -113,7 +113,8 @@ func resourceAppGroupAssignmentsRead(ctx context.Context, d *schema.ResourceData
 		return diag.Errorf("failed to fetch group assignments: %v", err)
 	}
 	if currentGroupAssignments == nil {
-		d.SetId("")
+		// if there are no groups assigned to the Okta app, create the resource in TF state and return
+		// Required to explicitly manage that no groups should be assigned to an Okta application
 		return nil
 	}
 	g, ok := d.GetOk("group")
