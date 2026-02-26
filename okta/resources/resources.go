@@ -138,6 +138,7 @@ const (
 	OktaIDaaSUISchema                                 = "okta_ui_schema"
 	OktaIDaaSCustomizedSignInPage                     = "okta_customized_signin_page"
 	OktaGovernanceCampaign                            = "okta_campaign"
+	OktaGovernanceCampaigns                           = "okta_campaigns"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
 	OktaGovernanceReview                              = "okta_review"
