@@ -30,6 +30,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newEntitlementDataSource,
 		newPrincipalEntitlementsDataSource,
 		newRequestConditionDataSource,
+		newRequestConditionsDataSource,
 		newRequestSequencesDataSource,
 		newRequestSettingOrganizationDataSource,
 		newRequestSettingResourceDataSource,
