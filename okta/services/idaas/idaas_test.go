@@ -675,7 +675,7 @@ func sweepResourceSets(client api.OktaIDaaSClient) error {
 		return err
 	}
 	for _, b := range resourceSets.ResourceSets {
-		if !strings.HasPrefix(b.Label, "testAcc_") {
+		if strings.HasPrefix(b.Label, "testAcc_") {
 			if _, err := client.OktaSDKSupplementClient().DeleteResourceSet(context.Background(), b.Id); err != nil {
 				errorList = append(errorList, err)
 				continue

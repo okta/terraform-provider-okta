@@ -229,6 +229,7 @@ func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder
 	vcrOpts := []recorder.Option{
 		recorder.WithMatcher(vcrMatcher()),
 		recorder.WithHook(vcrHook(mgr), recorder.AfterCaptureHook),
+		recorder.WithHook(vcrSaveHook(mgr), recorder.BeforeSaveHook),
 		recorder.WithMode(mgr.VCRMode()),
 		recorder.WithSkipRequestLatency(true),
 		recorder.WithRealTransport(transport),
@@ -399,12 +400,105 @@ func replaceHeaderValues(currentValues []string, oldValue, newValue string) []st
 	return result
 }
 
+// compareJSONWithUnorderedArrays compares two JSON objects, treating arrays as unordered
+// when they contain primitive values (strings, numbers, booleans)
+func compareJSONWithUnorderedArrays(reqJson, cassetteJson interface{}) bool {
+	switch req := reqJson.(type) {
+	case map[string]interface{}:
+		cassette, ok := cassetteJson.(map[string]interface{})
+		if !ok {
+			return false
+		}
+
+		// Check if all keys in request exist in cassette
+		for key, reqValue := range req {
+			cassetteValue, exists := cassette[key]
+			if !exists {
+				return false
+			}
+			if !compareJSONWithUnorderedArrays(reqValue, cassetteValue) {
+				return false
+			}
+		}
+
+		// Check if all keys in cassette exist in request
+		for key := range cassette {
+			if _, exists := req[key]; !exists {
+				return false
+			}
+		}
+		return true
+
+	case []interface{}:
+		cassette, ok := cassetteJson.([]interface{})
+		if !ok {
+			return false
+		}
+
+		if len(req) != len(cassette) {
+			return false
+		}
+
+		// If all elements are primitive types, treat as unordered
+		if isPrimitiveArray(req) && isPrimitiveArray(cassette) {
+			return compareUnorderedArrays(req, cassette)
+		}
+
+		// Otherwise, compare in order
+		for i, reqValue := range req {
+			if !compareJSONWithUnorderedArrays(reqValue, cassette[i]) {
+				return false
+			}
+		}
+		return true
+
+	default:
+		return reflect.DeepEqual(reqJson, cassetteJson)
+	}
+}
+
+// isPrimitiveArray checks if all elements in the array are primitive types
+func isPrimitiveArray(arr []interface{}) bool {
+	for _, item := range arr {
+		switch item.(type) {
+		case string, float64, int, int64, bool, nil:
+			continue
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// compareUnorderedArrays compares two arrays as unordered sets
+func compareUnorderedArrays(req, cassette []interface{}) bool {
+	if len(req) != len(cassette) {
+		return false
+	}
+
+	// Convert to sets for comparison
+	reqSet := make(map[string]bool)
+	cassetteSet := make(map[string]bool)
+
+	for _, item := range req {
+		reqSet[fmt.Sprintf("%v", item)] = true
+	}
+
+	for _, item := range cassette {
+		cassetteSet[fmt.Sprintf("%v", item)] = true
+	}
+
+	return reflect.DeepEqual(reqSet, cassetteSet)
+}
+
 func vcrMatcher() func(*http.Request, cassette.Request) bool {
 	return func(r *http.Request, i cassette.Request) bool {
 		if r.Method != i.Method {
+			log.Printf("[DEBUG] VCR matcher: method mismatch - request: %s, cassette: %s", r.Method, i.Method)
 			return false
 		}
 		if r.URL.String() != i.URL {
+			log.Printf("[DEBUG] VCR matcher: URL mismatch - request: %s, cassette: %s", r.URL.String(), i.URL)
 			return false
 		}
 		// TODO: there might be header information we could inspect to make this more precise
@@ -436,10 +530,21 @@ func vcrMatcher() func(*http.Request, cassette.Request) bool {
 				log.Printf("[DEBUG] Failed to unmarshall cassette json: %v", err)
 				return false
 			}
-			return reflect.DeepEqual(reqJson, cassetteJson)
+			if reflect.DeepEqual(reqJson, cassetteJson) {
+				return true
+			}
+
+			// Try comparing with unordered array handling
+			if compareJSONWithUnorderedArrays(reqJson, cassetteJson) {
+				return true
+			}
+
+			log.Printf("[DEBUG] VCR matcher: JSON body mismatch - request: %s, cassette: %s", reqBody, i.Body)
+			return false
 		}
 
-		return true
+		log.Printf("[DEBUG] VCR matcher: body mismatch - request: %s, cassette: %s", reqBody, i.Body)
+		return false
 	}
 }
 
@@ -528,6 +633,37 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		// %s/example/test/
 		i.Request.Body = strings.ReplaceAll(i.Request.Body, orgName, vcrOrgName)
 
+		// Note: Response body and header sanitization is now handled in vcrSaveHook
+		// to avoid causing Terraform drift detection during recording.
+
+		return nil
+	}
+}
+
+// vcrSaveHook sanitizes response bodies before saving the cassette to disk.
+// This ensures that sensitive domain information is replaced with sanitized values
+// while preserving the original response during the test execution.
+func vcrSaveHook(mgr *vcrManager) func(*cassette.Interaction) error {
+	return func(i *cassette.Interaction) error {
+		// test-admin.dne-okta.com
+		vcrAdminHostname := fmt.Sprintf("%s-admin.%s", mgr.CurrentCassette, TestDomainName)
+		// test.dne-okta.com
+		vcrHostname := fmt.Sprintf("%s.%s", mgr.CurrentCassette, TestDomainName)
+		// example-admin.okta.com
+		orgAdminHostname := fmt.Sprintf("%s-admin.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+		// example.okta.com
+		orgHostname := fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+
+		// test-admin
+		vcrAdminOrgName := fmt.Sprintf("%s-admin", mgr.CurrentCassette)
+		// test
+		vcrOrgName := mgr.CurrentCassette
+		// example-admin
+		adminOrgName := fmt.Sprintf("%s-admin", os.Getenv("OKTA_ORG_NAME"))
+		// example
+		orgName := os.Getenv("OKTA_ORG_NAME")
+
+		// Sanitize response body - replace real domain names with sanitized ones
 		// %s/example-admin.okta.com/test-admin.dne-okta.com/
 		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgAdminHostname, vcrAdminHostname)
 		// %s/example.okta.com/test.dne-okta.com/
@@ -538,6 +674,7 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		// %s/example/test/
 		i.Response.Body = strings.ReplaceAll(i.Response.Body, orgName, vcrOrgName)
 
+		// Sanitize response headers that might contain domain information
 		// %s/example-admin.okta.com/test-admin.dne-okta.com/
 		headerLinks := replaceHeaderValues(i.Response.Headers["Link"], orgAdminHostname, vcrAdminHostname)
 		// %s/example.okta.com/test.dne-okta.com/
