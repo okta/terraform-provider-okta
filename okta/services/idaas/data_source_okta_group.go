@@ -96,6 +96,11 @@ func findGroup(ctx context.Context, name string, d *schema.ResourceData, meta in
 		// Currently, Okta API enforces unique names on all groups regardless of
 		// type so type is essentially a meaningless parameter in OIE.  There
 		// may be a case where imported groups allow duplicate names.
+		//
+		// As of Dec 2025 - Okta only enfoces unique names for groups with type `OKTA_GROUP`
+		// groups imported from external systems are given type `APP_GROUP`
+		// `APP_GROUP` can have the same name as an `OKTA_GROUP` or `APP_GROUP` from other import sources
+		// e.g. a google group and a salesforce group can have the same name and will still be imported to Okta successfully
 		t, okType := d.GetOk("type")
 		if okType {
 			searchParams.Filter = fmt.Sprintf("type eq \"%s\"", t.(string))
