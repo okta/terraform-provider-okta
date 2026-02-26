@@ -547,6 +547,16 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 			i.Response.Headers.Add("Link", val)
 		}
 
+		// Sanitize Location header (used in 201 Created responses)
+		// %s/example-admin.okta.com/test-admin.dne-okta.com/
+		headerLocations := replaceHeaderValues(i.Response.Headers["Location"], orgAdminHostname, vcrAdminHostname)
+		// %s/example.okta.com/test.dne-okta.com/
+		headerLocations = replaceHeaderValues(headerLocations, orgHostname, vcrHostname)
+		i.Response.Headers.Del("Location")
+		for _, val := range headerLocations {
+			i.Response.Headers.Add("Location", val)
+		}
+
 		return nil
 	}
 }
