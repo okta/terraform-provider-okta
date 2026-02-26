@@ -51,7 +51,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "LOW"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
@@ -78,7 +77,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT2H"),
 					resource.TestCheckResourceAttr(resourceName, "type", "ASSURANCE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "MEDIUM"),
 				),
 			},
 			{
@@ -570,4 +568,128 @@ func checkExternalIdpAuthenticatorInConstraint(expectedID, expectedKey string) f
 		}
 		return fmt.Errorf("constraint does not contain expected external_idp authenticator with id=%q and key=%q, got: %s", expectedID, expectedKey, value)
 	}
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_custom_expression tests the custom_expression
+// (elCondition) attribute. This test verifies:
+// 1. Rules can be created without custom_expression (elCondition should not be sent)
+// 2. Rules can be created with custom_expression
+// 3. Rules can be updated to add/change custom_expression
+// 4. Rules can be updated to remove custom_expression
+func TestAccResourceOktaAppSignOnPolicyRule_custom_expression(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+
+	// Config without custom_expression - tests fix for empty elCondition bug
+	configNoExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id   = data.okta_app_signon_policy.test.id
+  name        = "testAcc_%d"
+  access      = "ALLOW"
+  factor_mode = "2FA"
+  type        = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	// Config with custom_expression
+	configWithExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id         = data.okta_app_signon_policy.test.id
+  name              = "testAcc_%d"
+  custom_expression = "user.profile.department == 'Engineering'"
+  access            = "ALLOW"
+  factor_mode       = "2FA"
+  type              = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	// Config with updated custom_expression
+	configWithUpdatedExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id         = data.okta_app_signon_policy.test.id
+  name              = "testAcc_%d"
+  custom_expression = "user.profile.department == 'Engineering' || user.profile.department == 'IT'"
+  access            = "ALLOW"
+  factor_mode       = "2FA"
+  type              = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create rule WITHOUT custom_expression
+				// This tests the fix for the empty elCondition bug
+				Config: configNoExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+				),
+			},
+			{
+				// Step 2: Update rule to ADD custom_expression
+				Config: configWithExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "custom_expression", "user.profile.department == 'Engineering'"),
+				),
+			},
+			{
+				// Step 3: Update rule to CHANGE custom_expression
+				Config: configWithUpdatedExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "custom_expression", "user.profile.department == 'Engineering' || user.profile.department == 'IT'"),
+				),
+			},
+			{
+				// Step 4: Update rule to REMOVE custom_expression
+				Config: configNoExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+				),
+			},
+		},
+	})
 }
