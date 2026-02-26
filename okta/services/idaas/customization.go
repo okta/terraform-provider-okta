@@ -7,6 +7,8 @@ import (
 	datasourceSchema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/okta/okta-sdk-golang/v4/okta"
@@ -321,6 +323,9 @@ var resourceSignInSchema = resourceSchema.Schema{
 		"id": resourceSchema.StringAttribute{
 			Description: "placeholder id",
 			Computed:    true,
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
 		},
 		"brand_id": resourceSchema.StringAttribute{
 			Description: "brand id of the preview signin page",
