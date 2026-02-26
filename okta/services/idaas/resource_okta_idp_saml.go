@@ -222,7 +222,7 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 	if idp.Policy.AccountLink != nil {
 		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
-		if idp.Policy.AccountLink.Filter != nil {
+		if idp.Policy.AccountLink.Filter != nil && idp.Policy.AccountLink.Filter.Groups != nil {
 			setMap["account_link_group_include"] = utils.ConvertStringSliceToSet(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
