@@ -11,7 +11,6 @@ import (
 
 	"github.com/cenkalti/backoff/v5"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -27,7 +26,7 @@ import (
 
 const (
 	// apiRetryTimeout is the maximum time to wait for API operations with retries.
-	apiRetryTimeout = 10 * time.Second
+	apiRetryTimeout = 30 * time.Second
 
 	// ruleTypeAccessPolicy is the Okta API type for access policy rules.
 	ruleTypeAccessPolicy = "ACCESS_POLICY"
@@ -38,14 +37,13 @@ const (
 
 // Validation values for rule attributes.
 var (
-	validStatuses             = []string{"ACTIVE", "INACTIVE"}
-	validNetworkConnections   = []string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}
-	validAccessTypes          = []string{"ALLOW", "DENY"}
-	validFactorModes          = []string{"1FA", "2FA"}
-	validRiskScores           = []string{"ANY", "LOW", "MEDIUM", "HIGH"}
-	validPlatformTypes        = []string{"ANY", "MOBILE", "DESKTOP"}
-	validOSTypes              = []string{"ANY", "IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER"}
-	validOffice365ClientTypes = []string{"WEB", "MODERN_AUTH", "EXCHANGE_ACTIVE_SYNC", "AAD_JOIN"}
+	validStatuses           = []string{"ACTIVE", "INACTIVE"}
+	validNetworkConnections = []string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}
+	validAccessTypes        = []string{"ALLOW", "DENY"}
+	validFactorModes        = []string{"1FA", "2FA"}
+	validRiskScores         = []string{"ANY", "LOW", "MEDIUM", "HIGH"}
+	validPlatformTypes      = []string{"ANY", "MOBILE", "DESKTOP"}
+	validOSTypes            = []string{"ANY", "IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER"}
 )
 
 var (
@@ -103,7 +101,6 @@ type policyRuleModel struct {
 	Constraints               types.List             `tfsdk:"constraints"`
 	RiskScore                 types.String           `tfsdk:"risk_score"`
 	PlatformInclude           []platformIncludeModel `tfsdk:"platform_include"`
-	Office365ClientInclude    types.Set              `tfsdk:"office365_client_include"`
 }
 
 // platformIncludeModel represents platform conditions in the rule.
@@ -294,9 +291,10 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 	stateIndex := newRuleIndex(state.Rules)
 	nameTracker := newNameTracker(state.Rules)
 	plannedNames := r.buildPlannedNamesSet(plan.Rules)
+	plannedIDs := r.buildPlannedIDsSet(plan.Rules)
 
 	// Delete rules removed from plan.
-	resp.Diagnostics.Append(r.deleteRemovedRules(ctx, client, policyID, state.Rules, plannedNames)...)
+	resp.Diagnostics.Append(r.deleteRemovedRules(ctx, client, policyID, state.Rules, plannedNames, plannedIDs)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -553,11 +551,6 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH.",
 			Validators:  []validator.String{stringvalidator.OneOf(validRiskScores...)},
 		},
-		"office365_client_include": schema.SetAttribute{
-			Optional:    true,
-			ElementType: types.StringType,
-			Description: "Office 365 client types to include. Valid values: WEB, MODERN_AUTH, EXCHANGE_ACTIVE_SYNC, AAD_JOIN. This condition is specific to Office 365 applications.",
-		},
 	}
 }
 
@@ -790,17 +783,35 @@ func (r *appSignOnPolicyRulesResource) renameRuleToTemp(ctx context.Context, cli
 	return err
 }
 
+// buildPlannedIDsSet creates a set of rule IDs from the plan.
+func (r *appSignOnPolicyRulesResource) buildPlannedIDsSet(rules []policyRuleModel) map[string]bool {
+	ids := make(map[string]bool, len(rules))
+	for _, rule := range rules {
+		if !rule.ID.IsNull() && !rule.ID.IsUnknown() && rule.ID.ValueString() != "" {
+			ids[rule.ID.ValueString()] = true
+		}
+	}
+	return ids
+}
+
 // deleteRemovedRules deletes rules that are in state but not in plan.
+// It checks both name and ID to avoid deleting rules that are being renamed.
 func (r *appSignOnPolicyRulesResource) deleteRemovedRules(
 	ctx context.Context,
 	client *sdk.APISupplement,
 	policyID string,
 	stateRules []policyRuleModel,
 	plannedNames map[string]bool,
+	plannedIDs map[string]bool,
 ) diag.Diagnostics {
 	var diags diag.Diagnostics
 	for _, rule := range stateRules {
-		if plannedNames[rule.Name.ValueString()] || rule.System.ValueBool() || rule.ID.IsNull() {
+		if rule.System.ValueBool() || rule.ID.IsNull() {
+			continue
+		}
+		// Keep the rule if its name is still in the plan OR if its ID is
+		// referenced by a planned rule (i.e. it's being renamed, not removed).
+		if plannedNames[rule.Name.ValueString()] || plannedIDs[rule.ID.ValueString()] {
 			continue
 		}
 		if err := r.deleteRule(ctx, client, policyID, rule.ID.ValueString()); err != nil {
@@ -816,8 +827,8 @@ func (r *appSignOnPolicyRulesResource) createRuleInAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		created, apiResp, err := client.CreateAppSignOnPolicyRule(ctx, policyID, rule)
 		if err != nil {
-			if apiResp != nil && apiResp.StatusCode == http.StatusConflict {
-				return nil, err // Retry on conflict.
+			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+				return nil, err
 			}
 			return nil, backoff.Permanent(err)
 		}
@@ -829,8 +840,8 @@ func (r *appSignOnPolicyRulesResource) readRuleFromAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		rule, apiResp, err := client.GetAppSignOnPolicyRule(ctx, policyID, ruleID)
 		if err != nil {
-			if apiResp != nil && apiResp.StatusCode == http.StatusConflict {
-				return nil, err // Retry on conflict.
+			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+				return nil, err
 			}
 			return nil, backoff.Permanent(err)
 		}
@@ -842,8 +853,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleInAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		updated, apiResp, err := client.UpdateAppSignOnPolicyRule(ctx, policyID, ruleID, rule)
 		if err != nil {
-			if apiResp != nil && apiResp.StatusCode == http.StatusConflict {
-				return nil, err // Retry on conflict.
+			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+				return nil, err
 			}
 			return nil, backoff.Permanent(err)
 		}
@@ -855,8 +866,8 @@ func (r *appSignOnPolicyRulesResource) deleteRule(ctx context.Context, client *s
 	_, err := backoff.Retry(ctx, func() (struct{}, error) {
 		apiResp, err := client.DeleteAppSignOnPolicyRule(ctx, policyID, ruleID)
 		if err != nil {
-			if apiResp != nil && apiResp.StatusCode == http.StatusConflict {
-				return struct{}{}, err // Retry on conflict.
+			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+				return struct{}{}, err
 			}
 			if apiResp != nil && apiResp.StatusCode == http.StatusNotFound {
 				return struct{}{}, nil // Already deleted.
@@ -866,6 +877,13 @@ func (r *appSignOnPolicyRulesResource) deleteRule(ctx context.Context, client *s
 		return struct{}{}, nil
 	}, backoff.WithMaxElapsedTime(apiRetryTimeout))
 	return err
+}
+
+// isRetryableStatusCode returns true for HTTP status codes that should trigger a retry.
+func isRetryableStatusCode(statusCode int) bool {
+	return statusCode == http.StatusConflict ||
+		statusCode == http.StatusTooManyRequests ||
+		statusCode == http.StatusServiceUnavailable
 }
 
 // buildAPIRuleFromModel converts a Terraform model to an Okta API rule.
@@ -896,7 +914,6 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIDeviceConditions(ctx, &apiRule, rule)
 	r.setAPIPeopleConditions(ctx, &apiRule, rule)
 	r.setAPIUserTypeConditions(ctx, &apiRule, rule)
-	r.setAPIOffice365ClientConditions(ctx, &apiRule, rule)
 
 	return apiRule
 }
@@ -990,30 +1007,25 @@ func (r *appSignOnPolicyRulesResource) setAPIRiskScore(apiRule *sdk.AccessPolicy
 	}
 }
 
-func (r *appSignOnPolicyRulesResource) setAPIOffice365ClientConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
-	// office365_client_include is tracked in state but the Okta API AccessPolicyRuleConditions
-	// struct does not currently expose an Office365Client field. This is a no-op placeholder
-	// until the SDK type is added.
-}
-
 func (r *appSignOnPolicyRulesResource) setAPIDeviceConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
-	hasDeviceCondition := (!rule.DeviceIsRegistered.IsNull() && rule.DeviceIsRegistered.ValueBool()) ||
-		(!rule.DeviceAssurancesIncluded.IsNull() && !rule.DeviceAssurancesIncluded.IsUnknown())
+	hasRegistered := !rule.DeviceIsRegistered.IsNull() && !rule.DeviceIsRegistered.IsUnknown()
+	hasManaged := !rule.DeviceIsManaged.IsNull() && !rule.DeviceIsManaged.IsUnknown()
+	hasAssurances := !rule.DeviceAssurancesIncluded.IsNull() && !rule.DeviceAssurancesIncluded.IsUnknown()
 
-	if !hasDeviceCondition {
+	if !hasRegistered && !hasManaged && !hasAssurances {
 		return
 	}
 
 	apiRule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{}
 
-	if !rule.DeviceIsRegistered.IsNull() && rule.DeviceIsRegistered.ValueBool() {
-		apiRule.Conditions.Device.Registered = utils.BoolPtr(true)
-		if !rule.DeviceIsManaged.IsNull() {
-			apiRule.Conditions.Device.Managed = utils.BoolPtr(rule.DeviceIsManaged.ValueBool())
-		}
+	if hasRegistered {
+		apiRule.Conditions.Device.Registered = utils.BoolPtr(rule.DeviceIsRegistered.ValueBool())
+	}
+	if hasManaged {
+		apiRule.Conditions.Device.Managed = utils.BoolPtr(rule.DeviceIsManaged.ValueBool())
 	}
 
-	if !rule.DeviceAssurancesIncluded.IsNull() && !rule.DeviceAssurancesIncluded.IsUnknown() {
+	if hasAssurances {
 		var assurances []string
 		rule.DeviceAssurancesIncluded.ElementsAs(ctx, &assurances, false)
 		apiRule.Conditions.Device.Assurance = &sdk.DeviceAssurancePolicyRuleCondition{Include: assurances}
@@ -1131,9 +1143,13 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 		rule.NetworkConnection = types.StringValue(c.Network.Connection)
 		if len(c.Network.Include) > 0 {
 			rule.NetworkIncludes, _ = types.ListValueFrom(ctx, types.StringType, c.Network.Include)
+		} else if !rule.NetworkIncludes.IsNull() {
+			rule.NetworkIncludes, _ = types.ListValueFrom(ctx, types.StringType, []string{})
 		}
 		if len(c.Network.Exclude) > 0 {
 			rule.NetworkExcludes, _ = types.ListValueFrom(ctx, types.StringType, c.Network.Exclude)
+		} else if !rule.NetworkExcludes.IsNull() {
+			rule.NetworkExcludes, _ = types.ListValueFrom(ctx, types.StringType, []string{})
 		}
 	}
 
@@ -1145,6 +1161,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
 		rule.CustomExpression = types.StringValue(c.ElCondition.Condition)
+	} else if !rule.CustomExpression.IsNull() {
+		rule.CustomExpression = types.StringNull()
 	}
 
 	// Device conditions
@@ -1157,6 +1175,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 		}
 		if c.Device.Assurance != nil && len(c.Device.Assurance.Include) > 0 {
 			rule.DeviceAssurancesIncluded, _ = types.SetValueFrom(ctx, types.StringType, c.Device.Assurance.Include)
+		} else if !rule.DeviceAssurancesIncluded.IsNull() {
+			rule.DeviceAssurancesIncluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 		}
 	}
 
@@ -1165,17 +1185,25 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 		if c.People.Users != nil {
 			if len(c.People.Users.Include) > 0 {
 				rule.UsersIncluded, _ = types.SetValueFrom(ctx, types.StringType, c.People.Users.Include)
+			} else if !rule.UsersIncluded.IsNull() {
+				rule.UsersIncluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 			}
 			if len(c.People.Users.Exclude) > 0 {
 				rule.UsersExcluded, _ = types.SetValueFrom(ctx, types.StringType, c.People.Users.Exclude)
+			} else if !rule.UsersExcluded.IsNull() {
+				rule.UsersExcluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 			}
 		}
 		if c.People.Groups != nil {
 			if len(c.People.Groups.Include) > 0 {
 				rule.GroupsIncluded, _ = types.SetValueFrom(ctx, types.StringType, c.People.Groups.Include)
+			} else if !rule.GroupsIncluded.IsNull() {
+				rule.GroupsIncluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 			}
 			if len(c.People.Groups.Exclude) > 0 {
 				rule.GroupsExcluded, _ = types.SetValueFrom(ctx, types.StringType, c.People.Groups.Exclude)
+			} else if !rule.GroupsExcluded.IsNull() {
+				rule.GroupsExcluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 			}
 		}
 	}
@@ -1184,9 +1212,13 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 	if c.UserType != nil {
 		if len(c.UserType.Include) > 0 {
 			rule.UserTypesIncluded, _ = types.SetValueFrom(ctx, types.StringType, c.UserType.Include)
+		} else if !rule.UserTypesIncluded.IsNull() {
+			rule.UserTypesIncluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 		}
 		if len(c.UserType.Exclude) > 0 {
 			rule.UserTypesExcluded, _ = types.SetValueFrom(ctx, types.StringType, c.UserType.Exclude)
+		} else if !rule.UserTypesExcluded.IsNull() {
+			rule.UserTypesExcluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 		}
 	}
 
@@ -1204,6 +1236,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 			platforms = append(platforms, platform)
 		}
 		rule.PlatformInclude = platforms
+	} else if len(rule.PlatformInclude) > 0 {
+		rule.PlatformInclude = nil
 	}
 }
 
@@ -1225,7 +1259,6 @@ func (r *appSignOnPolicyRulesResource) convertAPIRuleToModel(ctx context.Context
 		DeviceAssurancesIncluded: emptySet,
 		UserTypesIncluded:        emptySet,
 		UserTypesExcluded:        emptySet,
-		Office365ClientInclude:   emptySet,
 		NetworkIncludes:          emptyList,
 		NetworkExcludes:          emptyList,
 		Constraints:              emptyList,
@@ -1358,15 +1391,5 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 			platforms = append(platforms, platform)
 		}
 		rule.PlatformInclude = platforms
-	}
-}
-
-// platformIncludeAttrTypes returns the attribute types for platform_include blocks.
-// This is used for Terraform Framework type conversions.
-func platformIncludeAttrTypes() map[string]attr.Type {
-	return map[string]attr.Type{
-		"type":          types.StringType,
-		"os_type":       types.StringType,
-		"os_expression": types.StringType,
 	}
 }
