@@ -47,9 +47,10 @@ var (
 )
 
 var (
-	_ resource.Resource                = &appSignOnPolicyRulesResource{}
-	_ resource.ResourceWithConfigure   = &appSignOnPolicyRulesResource{}
-	_ resource.ResourceWithImportState = &appSignOnPolicyRulesResource{}
+	_ resource.Resource                   = &appSignOnPolicyRulesResource{}
+	_ resource.ResourceWithConfigure      = &appSignOnPolicyRulesResource{}
+	_ resource.ResourceWithImportState    = &appSignOnPolicyRulesResource{}
+	_ resource.ResourceWithValidateConfig = &appSignOnPolicyRulesResource{}
 )
 
 // NewAppSignOnPolicyRulesResource creates a new instance of the resource.
@@ -131,15 +132,23 @@ func newRuleIndex(rules []policyRuleModel) *ruleIndex {
 	return idx
 }
 
-// findRule looks up a rule by ID first, then by name.
+// findRule looks up a rule by name first, then by ID.
+// Name is used as the primary key because it is a Required attribute set
+// explicitly by the user in config. The ID is a Computed attribute that
+// Terraform injects positionally from state, which can be wrong when the
+// state order differs from the config order (e.g. after a rule is added or
+// deleted). Falling back to ID handles the rename case where the name has
+// changed but the same rule ID is referenced by the plan.
 func (idx *ruleIndex) findRule(id, name string) (policyRuleModel, bool) {
+	if name != "" {
+		if rule, ok := idx.byName[name]; ok {
+			return rule, true
+		}
+	}
 	if id != "" {
 		if rule, ok := idx.byID[id]; ok {
 			return rule, true
 		}
-	}
-	if rule, ok := idx.byName[name]; ok {
-		return rule, true
 	}
 	return policyRuleModel{}, false
 }
@@ -196,6 +205,83 @@ func (r *appSignOnPolicyRulesResource) Schema(ctx context.Context, req resource.
 	resp.Schema = r.buildSchema()
 }
 
+func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	var data appSignOnPolicyRulesModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	seen := make(map[string]int, len(data.Rules))
+	seenPriority := make(map[int64]int, len(data.Rules))
+	for i, rule := range data.Rules {
+		name := rule.Name.ValueString()
+		if name == "" {
+			continue
+		}
+		if prevIdx, exists := seen[name]; exists {
+			resp.Diagnostics.AddError(
+				"Duplicate rule name",
+				fmt.Sprintf(
+					"Rule name %q is used by both rule[%d] and rule[%d]. Each rule within a policy must have a unique name.",
+					name, prevIdx, i,
+				),
+			)
+		} else {
+			seen[name] = i
+		}
+
+		if !rule.Priority.IsNull() && !rule.Priority.IsUnknown() {
+			p := rule.Priority.ValueInt64()
+			if prevIdx, exists := seenPriority[p]; exists {
+				resp.Diagnostics.AddError(
+					"Duplicate rule priority",
+					fmt.Sprintf(
+						"Priority %d is used by both rule[%d] and rule[%d]. Each rule must have a unique priority.",
+						p, prevIdx, i,
+					),
+				)
+			} else {
+				seenPriority[p] = i
+			}
+		}
+
+		// Warn if conditions are set on a system rule (Catch-all Rule).
+		// The API rejects condition modifications on system rules.
+		if name == "Catch-all Rule" && r.hasConditionsSet(rule) {
+			resp.Diagnostics.AddWarning(
+				"Conditions ignored for system rule",
+				fmt.Sprintf(
+					"rule[%d] %q is a system (Catch-all) rule. Conditions (network, platform, groups, users, "+
+						"user_types, device, risk_score, custom_expression) cannot be modified on system rules "+
+						"and will be ignored. Only actions (access, factor_mode, type, re_authentication_frequency, "+
+						"inactivity_period, constraints) can be configured.",
+					i, name,
+				),
+			)
+		}
+	}
+}
+
+// hasConditionsSet returns true if any condition attributes are set on the rule.
+func (r *appSignOnPolicyRulesResource) hasConditionsSet(rule policyRuleModel) bool {
+	return (!rule.NetworkConnection.IsNull() && !rule.NetworkConnection.IsUnknown()) ||
+		(!rule.NetworkIncludes.IsNull() && !rule.NetworkIncludes.IsUnknown()) ||
+		(!rule.NetworkExcludes.IsNull() && !rule.NetworkExcludes.IsUnknown()) ||
+		(!rule.GroupsIncluded.IsNull() && !rule.GroupsIncluded.IsUnknown()) ||
+		(!rule.GroupsExcluded.IsNull() && !rule.GroupsExcluded.IsUnknown()) ||
+		(!rule.UsersIncluded.IsNull() && !rule.UsersIncluded.IsUnknown()) ||
+		(!rule.UsersExcluded.IsNull() && !rule.UsersExcluded.IsUnknown()) ||
+		(!rule.UserTypesIncluded.IsNull() && !rule.UserTypesIncluded.IsUnknown()) ||
+		(!rule.UserTypesExcluded.IsNull() && !rule.UserTypesExcluded.IsUnknown()) ||
+		(!rule.DeviceIsRegistered.IsNull() && !rule.DeviceIsRegistered.IsUnknown()) ||
+		(!rule.DeviceIsManaged.IsNull() && !rule.DeviceIsManaged.IsUnknown()) ||
+		(!rule.DeviceAssurancesIncluded.IsNull() && !rule.DeviceAssurancesIncluded.IsUnknown()) ||
+		(!rule.RiskScore.IsNull() && !rule.RiskScore.IsUnknown()) ||
+		(!rule.CustomExpression.IsNull() && !rule.CustomExpression.IsUnknown()) ||
+		len(rule.PlatformInclude) > 0
+}
+
 func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -225,8 +311,10 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 		// will update it rather than attempting to create a duplicate.
 		// Check both IsNull() and IsUnknown() because during a fresh Create (no prior state),
 		// Computed attributes come through as Unknown, not Null.
-		if existingID, found := existingByName[rule.Name.ValueString()]; found && (rule.ID.IsNull() || rule.ID.IsUnknown()) {
-			rule.ID = types.StringValue(existingID)
+		if info, found := existingByName[rule.Name.ValueString()]; found {
+			if rule.ID.IsNull() || rule.ID.IsUnknown() {
+				rule.ID = types.StringValue(info.ID)
+			}
 		}
 		resultRule, diags := r.createOrAdoptRule(ctx, client, policyID, rule)
 		resp.Diagnostics.Append(diags...)
@@ -361,12 +449,9 @@ func (r *appSignOnPolicyRulesResource) ImportState(ctx context.Context, req reso
 		return
 	}
 
-	// Fetch each non-system rule individually to get full AccessPolicyRule details.
+	// Fetch each rule individually to get full AccessPolicyRule details.
 	importedRules := make([]policyRuleModel, 0, len(sdkRules))
 	for _, sdkRule := range sdkRules {
-		if sdkRule.System != nil && *sdkRule.System {
-			continue // Skip system rules - they cannot be managed.
-		}
 		apiRule, err := r.readRuleFromAPI(ctx, client, policyID, sdkRule.Id)
 		if err != nil {
 			resp.Diagnostics.AddError("Error importing app sign-on policy rule",
@@ -468,8 +553,6 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 		},
 		"network_connection": schema.StringAttribute{
 			Optional:    true,
-			Computed:    true,
-			Default:     stringdefault.StaticString("ANYWHERE"),
 			Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
 			Validators:  []validator.String{stringvalidator.OneOf(validNetworkConnections...)},
 		},
@@ -548,6 +631,7 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 		"risk_score": schema.StringAttribute{
 			Optional:    true,
 			Computed:    true,
+			Default:     stringdefault.StaticString("ANY"),
 			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH.",
 			Validators:  []validator.String{stringvalidator.OneOf(validRiskScores...)},
 		},
@@ -636,10 +720,17 @@ func (r *appSignOnPolicyRulesResource) buildPlannedNameByID(rules []policyRuleMo
 	return m
 }
 
-// fetchExistingRulesByName lists all non-system rules currently in Okta for the policy
-// and returns a map of rule name → rule ID. This is used in Create to detect rules
-// that were partially created by an interrupted previous apply.
-func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Context, client *sdk.APISupplement, policyID string) (map[string]string, diag.Diagnostics) {
+// existingRuleInfo holds identification data for an existing rule in Okta.
+type existingRuleInfo struct {
+	ID       string
+	IsSystem bool
+}
+
+// fetchExistingRulesByName lists all rules currently in Okta for the policy
+// and returns a map of rule name → existingRuleInfo. This is used in Create to
+// detect rules that were partially created by an interrupted previous apply,
+// and to discover system rules (e.g. Catch-all Rule) for adoption.
+func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Context, client *sdk.APISupplement, policyID string) (map[string]existingRuleInfo, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	sdkRules, _, err := client.ListPolicyRules(ctx, policyID)
 	if err != nil {
@@ -647,12 +738,12 @@ func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Cont
 			fmt.Sprintf("Could not list rules for policy '%s': %s", policyID, err.Error()))
 		return nil, diags
 	}
-	byName := make(map[string]string, len(sdkRules))
+	byName := make(map[string]existingRuleInfo, len(sdkRules))
 	for _, rule := range sdkRules {
-		if rule.System != nil && *rule.System {
-			continue // Never adopt system rules.
+		byName[rule.Name] = existingRuleInfo{
+			ID:       rule.Id,
+			IsSystem: rule.System != nil && *rule.System,
 		}
-		byName[rule.Name] = rule.Id
 	}
 	return byName, diags
 }
@@ -660,20 +751,47 @@ func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Cont
 // createOrAdoptRule creates a new rule or adopts an existing one if ID is specified.
 func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, client *sdk.APISupplement, policyID string, rule policyRuleModel) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
-	apiRule := r.buildAPIRuleFromModel(ctx, rule)
 
 	// If ID is provided, adopt existing rule by updating it.
 	if !rule.ID.IsNull() && !rule.ID.IsUnknown() && rule.ID.ValueString() != "" {
-		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, rule.ID.ValueString(), apiRule)
+		ruleID := rule.ID.ValueString()
+
+		// Read the existing rule from the API to check if it's a system rule.
+		// This mirrors how okta_app_signon_policy_rule handles system rules:
+		// build the full payload, then nil out Conditions for system rules.
+		existingRule, err := r.readRuleFromAPI(ctx, client, policyID, ruleID)
 		if err != nil {
 			diags.AddError("Error adopting existing app sign-on policy rule",
-				fmt.Sprintf("Could not adopt rule '%s' (ID: %s): %s", rule.Name.ValueString(), rule.ID.ValueString(), err.Error()))
+				fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", rule.Name.ValueString(), ruleID, err.Error()))
+			return policyRuleModel{}, diags
+		}
+
+		isSystem := existingRule.System != nil && *existingRule.System
+		apiRule := r.buildAPIRuleFromModel(ctx, rule)
+		if isSystem {
+			// System rules (e.g. Catch-all Rule) reject condition changes.
+			// The API requires name, priority, and system=true to be present.
+			apiRule.Conditions = nil
+			apiRule.System = utils.BoolPtr(true)
+			// Preserve the actual name and priority from the API (they can't be changed).
+			apiRule.Name = existingRule.Name
+			if existingRule.PriorityPtr != nil {
+				apiRule.PriorityPtr = existingRule.PriorityPtr
+			}
+		}
+
+		// DEBUG: Verify the binary version by including system detection in error path
+		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, ruleID, apiRule)
+		if err != nil {
+			diags.AddError("Error adopting existing app sign-on policy rule",
+				fmt.Sprintf("Could not adopt rule '%s' (ID: %s, isSystem: %t): %s", rule.Name.ValueString(), ruleID, isSystem, err.Error()))
 			return policyRuleModel{}, diags
 		}
 		return r.updateRuleModelFromAPI(ctx, rule, updatedRule), diags
 	}
 
 	// Create new rule.
+	apiRule := r.buildAPIRuleFromModel(ctx, rule)
 	createdRule, err := r.createRuleInAPI(ctx, client, policyID, apiRule)
 	if err != nil {
 		diags.AddError("Error creating app sign-on policy rule",
@@ -695,26 +813,64 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 ) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	// Find existing rule by ID or name.
-	ruleID := ""
+	// Find existing rule by name first (semantic key), then by ID (rename case).
+	// Do NOT pass planRule.ID as the primary key because Terraform injects IDs
+	// positionally from state; when state order differs from config order the
+	// plan carries an ID that belongs to a *different* rule at the same list
+	// position. We still fall back to ID so that explicit renames work.
+	planRuleID := ""
 	if !planRule.ID.IsNull() && !planRule.ID.IsUnknown() {
-		ruleID = planRule.ID.ValueString()
+		planRuleID = planRule.ID.ValueString()
 	}
-	existingRule, exists := stateIndex.findRule(ruleID, planRule.Name.ValueString())
+	existingRule, exists := stateIndex.findRule(planRuleID, planRule.Name.ValueString())
 
 	if exists && !existingRule.ID.IsNull() {
 		existingRuleID := existingRule.ID.ValueString()
 		targetName := planRule.Name.ValueString()
 
-		// Handle name conflicts (e.g., swapping names between rules).
-		if err := r.resolveNameConflict(ctx, client, policyID, existingRuleID, targetName, nameTracker, plannedNameByID); err != nil {
-			diags.AddError("Error updating app sign-on policy rule",
-				fmt.Sprintf("Could not resolve name conflict: %s", err.Error()))
-			return policyRuleModel{}, diags
+		// Detect positional ID contamination: if the plan's ID doesn't match
+		// the rule we found by name, the plan rule has attributes (ID, priority)
+		// that were injected from a different rule at the same list position.
+		// In that case, use the state rule's priority so we don't accidentally
+		// send the wrong priority to the API.
+		if planRuleID != "" && planRuleID != existingRuleID {
+			// Overwrite with correct values from state.
+			planRule.ID = existingRule.ID
+			planRule.Priority = existingRule.Priority
 		}
 
-		// Update existing rule.
+		// Read the current rule from the API to reliably determine if it's a
+		// system rule. This mirrors how okta_app_signon_policy_rule works.
+		currentRule, err := r.readRuleFromAPI(ctx, client, policyID, existingRuleID)
+		if err != nil {
+			diags.AddError("Error updating app sign-on policy rule",
+				fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", targetName, existingRuleID, err.Error()))
+			return policyRuleModel{}, diags
+		}
+		isSystem := currentRule.System != nil && *currentRule.System
+
+		// Handle name conflicts (e.g., swapping names between rules).
+		// System rules cannot be renamed, so skip conflict resolution for them.
+		if !isSystem {
+			if err := r.resolveNameConflict(ctx, client, policyID, existingRuleID, targetName, nameTracker, plannedNameByID); err != nil {
+				diags.AddError("Error updating app sign-on policy rule",
+					fmt.Sprintf("Could not resolve name conflict: %s", err.Error()))
+				return policyRuleModel{}, diags
+			}
+		}
+
+		// Build the full payload, then strip conditions for system rules.
+		// The API requires name, priority, and system=true to be present.
 		apiRule := r.buildAPIRuleFromModel(ctx, planRule)
+		if isSystem {
+			apiRule.Conditions = nil
+			apiRule.System = utils.BoolPtr(true)
+			// Preserve the actual name and priority from the API (they can't be changed).
+			apiRule.Name = currentRule.Name
+			if currentRule.PriorityPtr != nil {
+				apiRule.PriorityPtr = currentRule.PriorityPtr
+			}
+		}
 		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, existingRuleID, apiRule)
 		if err != nil {
 			diags.AddError("Error updating app sign-on policy rule",
@@ -1140,7 +1296,11 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 
 	// Network conditions
 	if c.Network != nil {
-		rule.NetworkConnection = types.StringValue(c.Network.Connection)
+		// Only set network_connection if the user configured it (non-null in state).
+		// If null, leave it null to avoid "was null, but now ANYWHERE" inconsistency.
+		if !rule.NetworkConnection.IsNull() {
+			rule.NetworkConnection = types.StringValue(c.Network.Connection)
+		}
 		if len(c.Network.Include) > 0 {
 			rule.NetworkIncludes, _ = types.ListValueFrom(ctx, types.StringType, c.Network.Include)
 		} else if !rule.NetworkIncludes.IsNull() {
@@ -1243,25 +1403,23 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 
 // convertAPIRuleToModel creates a new Terraform model from an API response (used for import).
 func (r *appSignOnPolicyRulesResource) convertAPIRuleToModel(ctx context.Context, apiRule *sdk.AccessPolicyRule) policyRuleModel {
-	// Initialize with empty collections to avoid nil pointer issues.
-	emptySet, _ := types.SetValueFrom(ctx, types.StringType, []string{})
-	emptyList, _ := types.ListValueFrom(ctx, types.StringType, []string{})
-
 	rule := policyRuleModel{
-		ID:                       types.StringValue(apiRule.Id),
-		Name:                     types.StringValue(apiRule.Name),
-		System:                   types.BoolValue(apiRule.System != nil && *apiRule.System),
-		Status:                   types.StringValue(apiRule.Status),
-		GroupsIncluded:           emptySet,
-		GroupsExcluded:           emptySet,
-		UsersIncluded:            emptySet,
-		UsersExcluded:            emptySet,
-		DeviceAssurancesIncluded: emptySet,
-		UserTypesIncluded:        emptySet,
-		UserTypesExcluded:        emptySet,
-		NetworkIncludes:          emptyList,
-		NetworkExcludes:          emptyList,
-		Constraints:              emptyList,
+		ID:     types.StringValue(apiRule.Id),
+		Name:   types.StringValue(apiRule.Name),
+		System: types.BoolValue(apiRule.System != nil && *apiRule.System),
+		Status: types.StringValue(apiRule.Status),
+		// Initialize all List/Set fields with typed nulls to avoid "MISSING TYPE" errors.
+		// Sub-functions will overwrite these with actual values when the API returns data.
+		GroupsIncluded:           types.SetNull(types.StringType),
+		GroupsExcluded:           types.SetNull(types.StringType),
+		UsersIncluded:            types.SetNull(types.StringType),
+		UsersExcluded:            types.SetNull(types.StringType),
+		NetworkIncludes:          types.ListNull(types.StringType),
+		NetworkExcludes:          types.ListNull(types.StringType),
+		DeviceAssurancesIncluded: types.SetNull(types.StringType),
+		UserTypesIncluded:        types.SetNull(types.StringType),
+		UserTypesExcluded:        types.SetNull(types.StringType),
+		Constraints:              types.ListNull(types.StringType),
 	}
 
 	if apiRule.PriorityPtr != nil {
