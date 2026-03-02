@@ -102,6 +102,12 @@ func resourceNetworkZone() *schema.Resource {
 				Optional:    true,
 				Description: "Set this parameter to true in your request when you update the DefaultExemptIpZone to allow IPs through the blocklist.",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates a system Network Zone",
+				Elem:        &schema.Schema{Type: schema.TypeBool},
+			},
 		},
 	}
 }
@@ -442,6 +448,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v6okta.ListNetworkZones
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
 		_ = d.Set("usage", v.GetUsage())
+		_ = d.Set("system", v.GetSystem())
 		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"gateways": flattenAddresses(v.GetGateways()),
 			"proxies":  flattenAddresses(v.GetProxies()),

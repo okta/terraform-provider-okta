@@ -88,6 +88,12 @@ func dataSourceNetworkZone() *schema.Resource {
 				Description: "List of ip service excluded. Use with type `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates a system Network Zone",
+				Elem:        &schema.Schema{Type: schema.TypeBool},
+			},
 		},
 		Description: "Gets Okta Network Zone.",
 	}
