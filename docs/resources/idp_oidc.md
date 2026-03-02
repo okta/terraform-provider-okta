@@ -51,6 +51,7 @@ resource "okta_idp_oidc" "example" {
 - `account_link_group_include` (Set of String) Group memberships to determine link candidates.
 - `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state. Either `client_secret` or `client_secret_wo` must be specified, but not both.
 - `client_secret_wo` (String, Sensitive, Write-Only) Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher. Either `client_secret` or `client_secret_wo` must be specified, but not both.
+- `client_secret_wo_version` (Number, Optional) Version number for the write-only client secret. Increment this value to trigger an update when changing `client_secret_wo`.
 - `deprovisioned_action` (String) Action for a previously deprovisioned IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`
 - `groups_action` (String) Provisioning action for IdP user's group memberships. It can be `NONE`, `SYNC`, `APPEND`, or `ASSIGN`. Default: `NONE`
 - `groups_assignment` (Set of String) List of Okta Group IDs to add an IdP user as a member with the `ASSIGN` `groups_action`.
