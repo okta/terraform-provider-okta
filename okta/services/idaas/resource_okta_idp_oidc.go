@@ -7,8 +7,8 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
