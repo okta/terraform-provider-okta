@@ -232,7 +232,7 @@ resource "okta_idp_oidc" "test" {
   jwks_binding          = "HTTP-REDIRECT"
   scopes                = ["openid"]
   client_id             = "efg456"
-  client_secret_wo      = "secret_from_writeonly_attr"
+  client_secret_wo      = "write_only_secret_value_at_least_32_chars!"
   issuer_url            = "https://id.example.com"
   username_template     = "idpuser.email"
 }`
@@ -264,7 +264,7 @@ resource "okta_idp_oidc" "test" {
 					// client_secret_wo should not be persisted in state
 					resource.TestCheckNoResourceAttr(resourceName, "client_secret_wo"),
 					// Verify client_secret is not set when using write-only attribute
-					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+					resource.TestCheckNoResourceAttr(resourceName, "client_secret"),
 				),
 			},
 		},

@@ -104,7 +104,7 @@ resource "okta_idp_social" "test" {
 					// client_secret_wo should not be persisted in state
 					resource.TestCheckNoResourceAttr(resourceName, "client_secret_wo"),
 					// Verify client_secret is not set when using write-only attribute
-					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+					resource.TestCheckNoResourceAttr(resourceName, "client_secret"),
 				),
 			},
 		},

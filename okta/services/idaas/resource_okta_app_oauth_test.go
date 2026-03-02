@@ -97,12 +97,12 @@ func TestAccResourceOktaAppOauth_clientBasicSecretWo(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -110,7 +110,7 @@ func TestAccResourceOktaAppOauth_clientBasicSecretWo(t *testing.T) {
 					// client_basic_secret_wo should not be persisted in state
 					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret_wo"),
 					// Verify client_basic_secret is not set when using write-only attribute
-					resource.TestCheckResourceAttr(resourceName, "client_basic_secret", ""),
+					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret"),
 				),
 			},
 		},
