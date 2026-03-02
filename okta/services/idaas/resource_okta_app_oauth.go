@@ -1017,8 +1017,8 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	oauthClient.SetPkceRequired(pkceRequired)
 
 	// Try to get write-only attribute first, fall back to regular attribute
-	woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
-	if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
+	if !woVal.IsNull() {
 		oauthClient.SetClientSecret(woVal.AsString())
 	} else if sec, ok := d.GetOk("client_basic_secret"); ok {
 		oauthClient.SetClientSecret(sec.(string))
