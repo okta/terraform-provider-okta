@@ -181,6 +181,20 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Computed: true,
 	},
+	"type": {
+		Type:        schema.TypeList,
+		Computed:    true,
+		Description: "User type",
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"id": {
+					Type:        schema.TypeString,
+					Computed:    true,
+					Description: "User type ID",
+				},
+			},
+		},
+	},
 }
 
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
