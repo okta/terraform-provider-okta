@@ -438,7 +438,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "test2"),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "chains.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "chains.0", "{\"authenticationMethods\":[{\"key\":\"okta_password\",\"method\":\"password\"}],\"next\":[{\"authenticationMethods\":[{\"key\":\"okta_email\",\"method\":\"email\"}]}]}"),
+					resource.TestCheckResourceAttr(resourceName, "chains.0", "{\"authenticationMethods\":[{\"key\":\"okta_email\",\"method\":\"email\"}],\"next\":[{\"authenticationMethods\":[{\"key\":\"okta_password\",\"method\":\"password\"}]}]}"),
 				),
 			},
 		},
