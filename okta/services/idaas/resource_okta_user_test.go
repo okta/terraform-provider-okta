@@ -443,6 +443,7 @@ func TestAccResourceOktaUser_withUserType(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSUser, t.Name())
 	config := mgr.GetFixtures("user_with_type.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUser)
+	userTypeResourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserType)
 	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -459,7 +460,7 @@ func TestAccResourceOktaUser_withUserType(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
-					resource.TestCheckResourceAttrSet(resourceName, "type.0.id"),
+					resource.TestCheckResourceAttrPair(resourceName, "type.0.id", userTypeResourceName, "id"),
 				),
 			},
 		},
