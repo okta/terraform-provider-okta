@@ -285,8 +285,8 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 
 	// Try to get write-only attribute first, fall back to regular attribute
 	var clientSecret string
-	woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
-	if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+	if !woVal.IsNull() {
 		clientSecret = woVal.AsString()
 	} else {
 		clientSecret = d.Get("client_secret").(string)
