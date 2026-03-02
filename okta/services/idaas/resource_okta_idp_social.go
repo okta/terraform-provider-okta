@@ -257,6 +257,15 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
+	// Try to get write-only attribute first, fall back to regular attribute
+	var clientSecret string
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+	if !woVal.IsNull() {
+		clientSecret = woVal.AsString()
+	} else {
+		clientSecret = d.Get("client_secret").(string)
+	}
+
 	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
@@ -277,7 +286,10 @@ func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
 			Scopes: utils.ConvertInterfaceToStringSet(d.Get("scopes")),
 			Type:   d.Get("protocol_type").(string),
 			Credentials: &sdk.IdentityProviderCredentials{
-				Client: buildClientCredentials(d),
+				Client: &sdk.IdentityProviderCredentialsClient{
+					ClientId:     d.Get("client_id").(string),
+					ClientSecret: clientSecret,
+				},
 			},
 		},
 	}
@@ -295,20 +307,4 @@ func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
 		idp.Status = d.Get("status").(string)
 	}
 	return idp
-}
-
-func buildClientCredentials(d *schema.ResourceData) *sdk.IdentityProviderCredentialsClient {
-	// Try to get write-only attribute first, fall back to regular attribute
-	var clientSecret string
-	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
-	if !woVal.IsNull() {
-		clientSecret = woVal.AsString()
-	} else {
-		clientSecret = d.Get("client_secret").(string)
-	}
-
-	return &sdk.IdentityProviderCredentialsClient{
-		ClientId:     d.Get("client_id").(string),
-		ClientSecret: clientSecret,
-	}
 }
