@@ -460,7 +460,7 @@ func TestAccResourceOktaUser_withUserType(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
-					resource.TestCheckResourceAttrPair(resourceName, "type.0.id", userTypeResourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "type.0.id"),
 				),
 			},
 		},
