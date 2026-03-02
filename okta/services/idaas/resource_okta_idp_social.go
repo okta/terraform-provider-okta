@@ -197,13 +197,7 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta int
 	c := idp.Protocol.Credentials.Client
 	if c != nil {
 		_ = d.Set("client_id", c.ClientId)
-		// Only set client_secret if client_secret_wo was not used in the config
-		woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
-		if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
-			// client_secret_wo is being used, so don't persist client_secret in state
-			_ = d.Set("client_secret", "")
-		} else {
-			// client_secret is being used, persist it in state
+		if _, ok := d.GetOk("client_secret"); ok {
 			_ = d.Set("client_secret", c.ClientSecret)
 		}
 	}

@@ -242,13 +242,7 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 		if idp.Protocol.Credentials != nil {
 			if idp.Protocol.Credentials.Client != nil {
 				_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-				// Only set client_secret if client_secret_wo was not used in the config
-				woVal, diags := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
-				if len(diags) == 0 && woVal.Type().Equals(cty.String) && !woVal.IsNull() {
-					// client_secret_wo is being used, so don't persist client_secret in state
-					_ = d.Set("client_secret", "")
-				} else {
-					// client_secret is being used, persist it in state
+				if _, ok := d.GetOk("client_secret"); ok {
 					_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
 				}
 				if idp.Protocol.Credentials.Client.PKCERequired != nil {
