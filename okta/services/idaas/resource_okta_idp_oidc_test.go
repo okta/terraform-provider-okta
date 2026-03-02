@@ -216,3 +216,57 @@ resource "okta_idp_oidc" "test" {
 		},
 	})
 }
+
+// TestAccResourceOktaIdpOidc_clientSecretWo tests the write-only client_secret_wo attribute
+func TestAccResourceOktaIdpOidc_clientSecretWo(t *testing.T) {
+	config := `
+resource "okta_idp_oidc" "test" {
+  name                  = "testAcc_replace_with_uuid"
+  authorization_url     = "https://idp.example.com/authorize"
+  authorization_binding = "HTTP-REDIRECT"
+  token_url             = "https://idp.example.com/token"
+  token_binding         = "HTTP-POST"
+  user_info_url         = "https://idp.example.com/userinfo"
+  user_info_binding     = "HTTP-REDIRECT"
+  jwks_url              = "https://idp.example.com/keys"
+  jwks_binding          = "HTTP-REDIRECT"
+  scopes                = ["openid"]
+  client_id             = "efg456"
+  client_secret_wo      = "secret_from_writeonly_attr"
+  issuer_url            = "https://id.example.com"
+  username_template     = "idpuser.email"
+}`
+
+	mgr := newFixtureManager("resources", resources.OktaIDaaSIdpOidc, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpOidc)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpOidc, createDoesIdpExist),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "authorization_url", "https://idp.example.com/authorize"),
+					resource.TestCheckResourceAttr(resourceName, "authorization_binding", "HTTP-REDIRECT"),
+					resource.TestCheckResourceAttr(resourceName, "token_url", "https://idp.example.com/token"),
+					resource.TestCheckResourceAttr(resourceName, "token_binding", "HTTP-POST"),
+					resource.TestCheckResourceAttr(resourceName, "user_info_url", "https://idp.example.com/userinfo"),
+					resource.TestCheckResourceAttr(resourceName, "user_info_binding", "HTTP-REDIRECT"),
+					resource.TestCheckResourceAttr(resourceName, "jwks_url", "https://idp.example.com/keys"),
+					resource.TestCheckResourceAttr(resourceName, "jwks_binding", "HTTP-REDIRECT"),
+					resource.TestCheckResourceAttr(resourceName, "client_id", "efg456"),
+					resource.TestCheckResourceAttr(resourceName, "issuer_url", "https://id.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "username_template", "idpuser.email"),
+					// client_secret_wo should not be persisted in state
+					resource.TestCheckNoResourceAttr(resourceName, "client_secret_wo"),
+					// Verify client_secret is not set when using write-only attribute
+					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+				),
+			},
+		},
+	})
+}
