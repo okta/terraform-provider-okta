@@ -29,7 +29,15 @@ func (r *previewSigninPageResource) Metadata(_ context.Context, req resource.Met
 }
 
 func (r *previewSigninPageResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	// Clone the shared schema's Attributes map to avoid mutating the global
+	// `resourceSignInSchema` which can cause concurrent map read/write panics
+	// when multiple resources are initialized concurrently.
 	newSchema := resourceSignInSchema
+	newAttrs := make(map[string]resourceSchema.Attribute, len(resourceSignInSchema.Attributes))
+	for k, v := range resourceSignInSchema.Attributes {
+		newAttrs[k] = v
+	}
+	newSchema.Attributes = newAttrs
 	newSchema.Description = "Manage the preview signin page of a brand"
 	resp.Schema = newSchema
 }
