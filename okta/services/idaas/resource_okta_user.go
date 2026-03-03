@@ -690,18 +690,6 @@ func buildUserTypeFromBlock(d *schema.ResourceData) *sdk.UserType {
 	return nil
 }
 
-func flattenUserType(userType *sdk.UserType) []interface{} {
-	if userType == nil || userType.Id == "" {
-		return []interface{}{}
-	}
-
-	return []interface{}{
-		map[string]interface{}{
-			"id": userType.Id,
-		},
-	}
-}
-
 // Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
 // to give a sensible user readable error when they attempt to update a DEPROVISIONED user. Previously
 // this error always occurred when you set a user's status to DEPROVISIONED.
