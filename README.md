@@ -33,7 +33,6 @@ in form of raw markdown files.
 
 # Development Environment Setup
 
-
 The sections below will guide you through the requirements, upgrading, getting started, building with and contributing to
 the Okta Terraform Provider.
 
@@ -46,7 +45,7 @@ the Okta Terraform Provider.
 
 If you have been using version 3.x of the Okta Terraform Provider, please upgrade to the latest version to take advantage of
 all the new features, fixes, and functionality. Please refer to this [Upgrade Guide](https://github.com/okta/terraform-provider-okta/issues/1338)
-for guidance on how to upgrade to version 4.x. Also, please check our [Releases](https://github.com/okta/terraform-provider-okta/releases) page for more details on major, minor, and patch updates. 
+for guidance on how to upgrade to version 4.x. Also, please check our [Releases](https://github.com/okta/terraform-provider-okta/releases) page for more details on major, minor, and patch updates.
 
 ## Quick Start
 
