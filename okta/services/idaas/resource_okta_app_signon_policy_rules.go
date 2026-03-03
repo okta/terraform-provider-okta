@@ -167,9 +167,15 @@ func newNameTracker(rules []policyRuleModel) *nameTracker {
 		idToName: make(map[string]string, len(rules)),
 	}
 	for _, rule := range rules {
-		if !rule.ID.IsNull() && !rule.ID.IsUnknown() {
-			id := rule.ID.ValueString()
-			name := rule.Name.ValueString()
+		if rule.ID.IsNull() || rule.ID.IsUnknown() {
+			continue
+		}
+		if rule.Name.IsNull() || rule.Name.IsUnknown() {
+			continue
+		}
+		id := rule.ID.ValueString()
+		name := rule.Name.ValueString()
+		if name != "" {
 			t.nameToID[name] = id
 			t.idToName[id] = name
 		}
@@ -556,6 +562,7 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 		},
 		"network_connection": schema.StringAttribute{
 			Optional:    true,
+			Computed:    true,
 			Description: "Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.",
 			Default:     stringdefault.StaticString("ANYWHERE"),
 			Validators:  []validator.String{stringvalidator.OneOf(validNetworkConnections...)},
@@ -784,7 +791,6 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 			}
 		}
 
-		// DEBUG: Verify the binary version by including system detection in error path
 		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, ruleID, apiRule)
 		if err != nil {
 			diags.AddError("Error adopting existing app sign-on policy rule",
@@ -805,6 +811,22 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 	return r.updateRuleModelFromAPI(ctx, rule, createdRule), diags
 }
 
+// normalizeAPIRuleForSystem strips conditions and preserves name/priority for system rules
+func (r *appSignOnPolicyRulesResource) normalizeAPIRuleForSystem(
+	apiRule *sdk.AccessPolicyRule,
+	systemRule *sdk.AccessPolicyRule,
+) {
+	if systemRule.System == nil || !*systemRule.System {
+		return
+	}
+	// System rules cannot have conditions modified
+	apiRule.Conditions = nil
+	apiRule.System = utils.BoolPtr(true)
+	// Preserve immutable fields from API
+	apiRule.Name = systemRule.Name
+	apiRule.PriorityPtr = systemRule.PriorityPtr
+}
+
 // processRuleUpdate handles updating or creating a single rule during Update.
 func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 	ctx context.Context,
@@ -817,88 +839,90 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 ) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	// Find existing rule by name first (semantic key), then by ID (rename case).
-	// Do NOT pass planRule.ID as the primary key because Terraform injects IDs
-	// positionally from state; when state order differs from config order the
-	// plan carries an ID that belongs to a *different* rule at the same list
-	// position. We still fall back to ID so that explicit renames work.
+	// Extract plan rule's ID if explicitly set
 	planRuleID := ""
 	if !planRule.ID.IsNull() && !planRule.ID.IsUnknown() {
 		planRuleID = planRule.ID.ValueString()
 	}
-	existingRule, exists := stateIndex.findRule(planRuleID, planRule.Name.ValueString())
 
-	if exists && !existingRule.ID.IsNull() {
-		existingRuleID := existingRule.ID.ValueString()
-		targetName := planRule.Name.ValueString()
+	// Never trust injected IDs from positional state mapping.
+	// Only fall back to ID if name lookup fails AND user explicitly provided ID.
+	planRuleName := planRule.Name.ValueString()
+	existingRule, exists := stateIndex.findRule("", planRuleName)
 
-		// Detect positional ID contamination: if the plan's ID doesn't match
-		// the rule we found by name, the plan rule has attributes (ID, priority)
-		// that were injected from a different rule at the same list position.
-		// In that case, use the state rule's priority so we don't accidentally
-		// send the wrong priority to the API.
-		if planRuleID != "" && planRuleID != existingRuleID {
-			// Overwrite with correct values from state.
-			planRule.ID = existingRule.ID
-			planRule.Priority = existingRule.Priority
-		}
-
-		// Read the current rule from the API to reliably determine if it's a
-		// system rule. This mirrors how okta_app_signon_policy_rule works.
-		currentRule, err := r.readRuleFromAPI(ctx, client, policyID, existingRuleID)
-		if err != nil {
-			diags.AddError("Error updating app sign-on policy rule",
-				fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", targetName, existingRuleID, err.Error()))
-			return policyRuleModel{}, diags
-		}
-		isSystem := currentRule.System != nil && *currentRule.System
-
-		// Handle name conflicts (e.g., swapping names between rules).
-		// System rules cannot be renamed, so skip conflict resolution for them.
-		if !isSystem {
-			if err := r.resolveNameConflict(ctx, client, policyID, existingRuleID, targetName, nameTracker, plannedNameByID); err != nil {
-				diags.AddError("Error updating app sign-on policy rule",
-					fmt.Sprintf("Could not resolve name conflict: %s", err.Error()))
-				return policyRuleModel{}, diags
-			}
-		}
-
-		// Build the full payload, then strip conditions for system rules.
-		// The API requires name, priority, and system=true to be present.
-		apiRule := r.buildAPIRuleFromModel(ctx, planRule)
-		if isSystem {
-			apiRule.Conditions = nil
-			apiRule.System = utils.BoolPtr(true)
-			// Preserve the actual name and priority from the API (they can't be changed).
-			apiRule.Name = currentRule.Name
-			if currentRule.PriorityPtr != nil {
-				apiRule.PriorityPtr = currentRule.PriorityPtr
-			}
-		}
-		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, existingRuleID, apiRule)
-		if err != nil {
-			diags.AddError("Error updating app sign-on policy rule",
-				fmt.Sprintf("Could not update rule '%s': %s", planRule.Name.ValueString(), err.Error()))
-			return policyRuleModel{}, diags
-		}
-
-		nameTracker.updateMapping(existingRuleID, targetName)
-		return r.updateRuleModelFromAPI(ctx, planRule, updatedRule), diags
+	if !exists && planRuleID != "" {
+		// Name lookup failed, but user explicitly provided ID in config.
+		// Try ID fallback only in this case (rename scenario).
+		existingRule, exists = stateIndex.findRule(planRuleID, "")
 	}
 
-	// Create new rule.
-	apiRule := r.buildAPIRuleFromModel(ctx, planRule)
-	createdRule, err := r.createRuleInAPI(ctx, client, policyID, apiRule)
-	if err != nil {
-		diags.AddError("Error creating app sign-on policy rule",
-			fmt.Sprintf("Could not create rule '%s': %s", planRule.Name.ValueString(), err.Error()))
+	if !exists {
+		// Rule not found in state - create new rule
+		apiRule := r.buildAPIRuleFromModel(ctx, planRule)
+		createdRule, err := r.createRuleInAPI(ctx, client, policyID, apiRule)
+		if err != nil {
+			diags.AddError("Error creating app sign-on policy rule",
+				fmt.Sprintf("Could not create rule '%s': %s", planRuleName, err.Error()))
+			return policyRuleModel{}, diags
+		}
+		if createdRule.Id != "" {
+			nameTracker.updateMapping(createdRule.Id, planRuleName)
+		}
+		return r.updateRuleModelFromAPI(ctx, planRule, createdRule), diags
+	}
+
+	// Rule exists in state - update it
+	if existingRule.ID.IsNull() {
+		diags.AddError("Error updating app sign-on policy rule",
+			"Existing rule has no ID")
 		return policyRuleModel{}, diags
 	}
 
-	if createdRule.Id != "" {
-		nameTracker.updateMapping(createdRule.Id, planRule.Name.ValueString())
+	existingRuleID := existingRule.ID.ValueString()
+	targetName := planRuleName
+
+	// discard the plan ID (it was from positional injection).
+	// Use state's correct ID and priority.
+	if planRuleID != "" && planRuleID != existingRuleID {
+		planRule.ID = existingRule.ID
+		planRule.Priority = existingRule.Priority
 	}
-	return r.updateRuleModelFromAPI(ctx, planRule, createdRule), diags
+
+	// Read current rule from API to determine if it's a system rule
+	currentRule, err := r.readRuleFromAPI(ctx, client, policyID, existingRuleID)
+	if err != nil {
+		diags.AddError("Error updating app sign-on policy rule",
+			fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", targetName, existingRuleID, err.Error()))
+		return policyRuleModel{}, diags
+	}
+
+	isSystem := currentRule.System != nil && *currentRule.System
+
+	// Handle name conflicts (e.g., swapping names between rules).
+	// System rules cannot be renamed, so skip conflict resolution for them.
+	if !isSystem {
+		if err := r.resolveNameConflict(ctx, client, policyID, existingRuleID, targetName, nameTracker, plannedNameByID); err != nil {
+			diags.AddError("Error updating app sign-on policy rule",
+				fmt.Sprintf("Could not resolve name conflict: %s", err.Error()))
+			return policyRuleModel{}, diags
+		}
+	}
+
+	// Build the full payload, then normalize for system rules
+	apiRule := r.buildAPIRuleFromModel(ctx, planRule)
+	if isSystem {
+		r.normalizeAPIRuleForSystem(&apiRule, currentRule)
+	}
+
+	updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, existingRuleID, apiRule)
+	if err != nil {
+		diags.AddError("Error updating app sign-on policy rule",
+			fmt.Sprintf("Could not update rule '%s': %s", targetName, err.Error()))
+		return policyRuleModel{}, diags
+	}
+
+	nameTracker.updateMapping(existingRuleID, targetName)
+	return r.updateRuleModelFromAPI(ctx, planRule, updatedRule), diags
 }
 
 // resolveNameConflict handles cases where a rule's target name is held by another rule.
@@ -987,6 +1011,7 @@ func (r *appSignOnPolicyRulesResource) createRuleInAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		created, apiResp, err := client.CreateAppSignOnPolicyRule(ctx, policyID, rule)
 		if err != nil {
+			// Note: isRetryableStatusCode is only checked after ensuring apiResp != nil
 			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
 				return nil, err
 			}
@@ -1000,6 +1025,7 @@ func (r *appSignOnPolicyRulesResource) readRuleFromAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		rule, apiResp, err := client.GetAppSignOnPolicyRule(ctx, policyID, ruleID)
 		if err != nil {
+			// Note: isRetryableStatusCode is only checked after ensuring apiResp != nil
 			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
 				return nil, err
 			}
@@ -1026,6 +1052,7 @@ func (r *appSignOnPolicyRulesResource) deleteRule(ctx context.Context, client *s
 	_, err := backoff.Retry(ctx, func() (struct{}, error) {
 		apiResp, err := client.DeleteAppSignOnPolicyRule(ctx, policyID, ruleID)
 		if err != nil {
+			// Note: isRetryableStatusCode is only checked after ensuring apiResp != nil
 			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
 				return struct{}{}, err
 			}
