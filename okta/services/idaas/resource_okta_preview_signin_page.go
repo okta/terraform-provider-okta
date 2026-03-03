@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	resourceSchema "github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
