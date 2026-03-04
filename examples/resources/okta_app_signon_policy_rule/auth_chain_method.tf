@@ -35,14 +35,14 @@ resource "okta_app_signon_policy_rule" "test" {
     {
       "authenticationMethods" : [
         {
-          "key" : "okta_password",
-          "method" : "password"
+          "key" : "okta_email",
+          "method" : "email"
         }
       ],
       "next" : [{
         "authenticationMethods" : [{
-          "key" : "okta_email",
-          "method" : "email"
+          "key" : "okta_password",
+          "method" : "password"
         }]
       }]
     }
