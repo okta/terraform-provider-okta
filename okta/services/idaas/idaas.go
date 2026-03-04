@@ -85,7 +85,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 }
 
 func FWProviderResources() []func() resource.Resource {
-	return []func() resource.Resource{
+	rawResources := []func() resource.Resource{
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -122,6 +122,8 @@ func FWProviderResources() []func() resource.Resource {
 		newAppFederatedClaimResource,
 		newPushGroupResource,
 	}
+	// Wrap all resources with SafeResource for panic recovery
+	return resources.WrapResources(rawResources)
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {

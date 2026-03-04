@@ -6,10 +6,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func FWProviderResources() []func() resource.Resource {
-	return []func() resource.Resource{
+	rawResources := []func() resource.Resource{
 		newCampaignResource,
 		newEntitlementResource,
 		newReviewResource,
@@ -21,6 +22,8 @@ func FWProviderResources() []func() resource.Resource {
 		newEndUserMyRequestsResource,
 		newEntitlementBundleResource,
 	}
+	// Wrap all resources with SafeResource for panic recovery
+	return resources.WrapResources(rawResources)
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
