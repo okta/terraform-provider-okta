@@ -241,36 +241,33 @@ func (r *appUserSchemaResource) Create(ctx context.Context, req resource.CreateR
 	appId := plan.AppID.ValueString()
 	plan.ID = types.StringValue(appId)
 
+	properties := make(map[string]*sdk.UserSchemaAttribute, len(plan.CustomProperty))
 	for _, prop := range plan.CustomProperty {
 		if diags := validateUnionConstraint(prop); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
 		}
-	}
-
-	for _, prop := range plan.CustomProperty {
 		index := prop.Index.ValueString()
 		attr := expandPropertyModel(ctx, prop, &resp.Diagnostics)
 		if resp.Diagnostics.HasError() {
 			return
 		}
-		custom := BuildCustomUserSchema(index, attr)
-		retypeUserSchemaPropertyEnums(custom)
-		apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
-		if err != nil {
-			if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
-				resp.Diagnostics.AddError(
-					fmt.Sprintf("failed to create app user schema property %q: application not found", index),
-					err.Error(),
-				)
-				return
-			}
+		properties[index] = attr
+	}
+
+	custom := BuildCustomUserSchemaMulti(properties)
+	retypeUserSchemaPropertyEnums(custom)
+	apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
+	if err != nil {
+		if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
 			resp.Diagnostics.AddError(
-				fmt.Sprintf("failed to create app user schema property %q", index),
+				"failed to create app user schema: application not found",
 				err.Error(),
 			)
 			return
 		}
+		resp.Diagnostics.AddError("failed to create app user schema", err.Error())
+		return
 	}
 
 	found := r.readIntoState(ctx, appId, &plan, &resp.Diagnostics)
@@ -316,56 +313,53 @@ func (r *appUserSchemaResource) Update(ctx context.Context, req resource.UpdateR
 
 	appId := plan.AppID.ValueString()
 
+	oldProps := propsModelByIndex(state.CustomProperty)
+	newProps := propsModelByIndex(plan.CustomProperty)
+
+	// Delete removed properties first (batch into a single API call).
+	deleteProps := make(map[string]*sdk.UserSchemaAttribute)
+	for index := range oldProps {
+		if _, ok := newProps[index]; !ok {
+			deleteProps[index] = nil
+		}
+	}
+	if len(deleteProps) > 0 {
+		custom := BuildCustomUserSchemaMulti(deleteProps)
+		apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
+		if err != nil {
+			if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
+				resp.State.RemoveResource(ctx)
+				return
+			}
+			resp.Diagnostics.AddError("failed to delete removed app user schema properties", err.Error())
+			return
+		}
+	}
+
+	// Upsert desired properties (batch into a single API call).
+	upsertProps := make(map[string]*sdk.UserSchemaAttribute, len(plan.CustomProperty))
 	for _, prop := range plan.CustomProperty {
 		if diags := validateUnionConstraint(prop); diags.HasError() {
 			resp.Diagnostics.Append(diags...)
 			return
 		}
-	}
-
-	oldProps := propsModelByIndex(state.CustomProperty)
-	newProps := propsModelByIndex(plan.CustomProperty)
-
-	// Delete removed properties first.
-	for index := range oldProps {
-		if _, ok := newProps[index]; ok {
-			continue
-		}
-		custom := BuildCustomUserSchema(index, nil)
-		apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
-		if err != nil {
-			if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
-				// App deleted out-of-band; remove so Terraform recreates.
-				resp.State.RemoveResource(ctx)
-				return
-			}
-			resp.Diagnostics.AddError(
-				fmt.Sprintf("failed to delete app user schema property %q", index),
-				err.Error(),
-			)
-			return
-		}
-	}
-
-	// Upsert desired properties.
-	for index, prop := range newProps {
+		index := prop.Index.ValueString()
 		attr := expandPropertyModel(ctx, prop, &resp.Diagnostics)
 		if resp.Diagnostics.HasError() {
 			return
 		}
-		custom := BuildCustomUserSchema(index, attr)
+		upsertProps[index] = attr
+	}
+	if len(upsertProps) > 0 {
+		custom := BuildCustomUserSchemaMulti(upsertProps)
 		retypeUserSchemaPropertyEnums(custom)
 		apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
 		if err != nil {
 			if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
-				// App deleted out-of-band; remove so Terraform recreates.
 				resp.State.RemoveResource(ctx)
 				return
 			}
-			resp.Diagnostics.AddError(
-				fmt.Sprintf("failed to update app user schema property %q", index),
-				err.Error(),
-			)
+			resp.Diagnostics.AddError("failed to update app user schema properties", err.Error())
 			return
 		}
 	}
@@ -391,23 +385,26 @@ func (r *appUserSchemaResource) Delete(ctx context.Context, req resource.DeleteR
 
 	appId := state.AppID.ValueString()
 
+	// Build a single properties map with all properties set to nil (delete).
+	properties := make(map[string]*sdk.UserSchemaAttribute, len(state.CustomProperty))
 	for _, prop := range state.CustomProperty {
 		index := prop.Index.ValueString()
-		if index == "" {
-			continue
+		if index != "" {
+			properties[index] = nil
 		}
-		custom := BuildCustomUserSchema(index, nil)
-		apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
-		if err != nil {
-			if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
-				return // app already gone
-			}
-			resp.Diagnostics.AddError(
-				fmt.Sprintf("failed to delete app user schema property %q", index),
-				err.Error(),
-			)
-			return
+	}
+	if len(properties) == 0 {
+		return
+	}
+
+	custom := BuildCustomUserSchemaMulti(properties)
+	apiResp, err := UpdateApplicationUserProfileWithRetry(ctx, r.config, appId, custom)
+	if err != nil {
+		if apiResp != nil && utils.SuppressErrorOn404(apiResp, err) == nil {
+			return // app already gone
 		}
+		resp.Diagnostics.AddError("failed to delete app user schema properties", err.Error())
+		return
 	}
 }
 
