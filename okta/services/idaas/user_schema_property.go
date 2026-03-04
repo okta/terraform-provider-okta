@@ -472,6 +472,20 @@ func BuildCustomUserSchema(index string, schema *sdk.UserSchemaAttribute) *sdk.U
 	}
 }
 
+// BuildCustomUserSchemaMulti builds a UserSchema with multiple custom properties.
+// Properties with nil values are interpreted by the Okta API as deletions.
+func BuildCustomUserSchemaMulti(properties map[string]*sdk.UserSchemaAttribute) *sdk.UserSchema {
+	return &sdk.UserSchema{
+		Definitions: &sdk.UserSchemaDefinitions{
+			Custom: &sdk.UserSchemaPublic{
+				Id:         "#custom",
+				Properties: properties,
+				Type:       "object",
+			},
+		},
+	}
+}
+
 func UserSchemaCustomAttribute(s *sdk.UserSchema, index string) *sdk.UserSchemaAttribute {
 	if s == nil || s.Definitions == nil || s.Definitions.Custom == nil {
 		return nil
@@ -523,7 +537,7 @@ func isAppUserSchemaRetryableError(err error) bool {
 // so that both okta_app_user_schema and okta_app_user_schema_property succeed on recreate/update-after-delete.
 func UpdateApplicationUserProfileWithRetry(ctx context.Context, meta interface{}, appId string, custom *sdk.UserSchema) (*sdk.Response, error) {
 	var lastResp *sdk.Response
-	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
+	boc := utils.NewExponentialBackOffWithContext(ctx, 10*time.Second)
 	err := backoff.Retry(func() error {
 		_, resp, callErr := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, appId, *custom)
 		lastResp = resp
