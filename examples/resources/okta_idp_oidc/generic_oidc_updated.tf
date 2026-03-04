@@ -14,4 +14,5 @@ resource "okta_idp_oidc" "test" {
   issuer_url            = "https://id.example.com"
   username_template     = "idpuser.email"
   filter                = "xyz"
+  trust_claims          = false
 }
