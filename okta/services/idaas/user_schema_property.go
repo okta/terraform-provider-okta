@@ -1,10 +1,15 @@
 package idaas
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
+	"strings"
+	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -184,6 +189,10 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
 		_ = d.Set("array_enum", flattenArrayEnum(subschema.Items.Enum))
+	} else {
+		_ = d.Set("array_type", "")
+		_ = d.Set("array_one_of", nil)
+		_ = d.Set("array_enum", nil)
 	}
 
 	stringifyOneOfSlice(subschema.Type, &subschema.OneOf)
@@ -191,6 +200,8 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 
 	if len(subschema.Enum) > 0 {
 		_ = d.Set("enum", subschema.Enum)
+	} else {
+		_ = d.Set("enum", nil)
 	}
 
 	return utils.SetNonPrimitives(d, map[string]interface{}{
@@ -201,7 +212,9 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttribute) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
-	_ = d.Set("required", subschema.Required)
+	if subschema.Required != nil {
+		_ = d.Set("required", *subschema.Required)
+	}
 	if subschema.Master != nil {
 		_ = d.Set("master", subschema.Master.Type)
 		if subschema.Master.Type == "OVERRIDE" {
@@ -219,7 +232,7 @@ func syncBaseUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttribu
 		_ = d.Set("permissions", subschema.Permissions[0].Action)
 	}
 	if subschema.Pattern != nil {
-		_ = d.Set("pattern", &subschema.Pattern)
+		_ = d.Set("pattern", *subschema.Pattern)
 	}
 }
 
@@ -301,9 +314,10 @@ func buildOneOf(ae []interface{}, elemType string) ([]*sdk.UserSchemaAttributeEn
 		switch elemType {
 		case "object":
 			var object map[string]interface{}
-			if err := json.Unmarshal([]byte(value.(string)), &object); err == nil {
-				oneOf[i].Const = object
+			if err := json.Unmarshal([]byte(value.(string)), &object); err != nil {
+				return nil, fmt.Errorf("failed to parse JSON for one_of[%d].const: %w", i, err)
 			}
+			oneOf[i].Const = object
 		default:
 			oneOf[i].Const = value.(string)
 		}
@@ -312,20 +326,25 @@ func buildOneOf(ae []interface{}, elemType string) ([]*sdk.UserSchemaAttributeEn
 }
 
 func flattenOneOf(oneOf []*sdk.UserSchemaAttributeEnum) []interface{} {
-	result := make([]interface{}, len(oneOf))
-	for i, v := range oneOf {
+	result := make([]interface{}, 0, len(oneOf))
+	for _, v := range oneOf {
+		if v == nil {
+			continue
+		}
 		var value string
 		if obj, ok := v.Const.(map[string]interface{}); ok {
 			objB, _ := json.Marshal(obj)
 			value = string(objB)
+		} else if s, ok := v.Const.(string); ok {
+			value = s
 		} else {
-			value = v.Const.(string)
+			value = fmt.Sprintf("%v", v.Const)
 		}
 		of := map[string]interface{}{
 			"title": v.Title,
 			"const": value,
 		}
-		result[i] = of
+		result = append(result, of)
 	}
 	return result
 }
@@ -337,8 +356,10 @@ func flattenArrayEnum(arrayEnum []interface{}) []interface{} {
 		if obj, ok := v.(map[string]interface{}); ok {
 			objB, _ := json.Marshal(obj)
 			value = string(objB)
+		} else if s, ok := v.(string); ok {
+			value = s
 		} else {
-			value = v.(string)
+			value = fmt.Sprintf("%v", v)
 		}
 		result[i] = value
 	}
@@ -477,6 +498,49 @@ func retypeUserSchemaPropertyEnums(schema *sdk.UserSchema) {
 	}
 }
 
+// AppUserSchemaDeletionInProgressMessage is the API error text when a property with the same name is still being deleted.
+// Both okta_app_user_schema and okta_app_user_schema_property retry on this transient 4xx.
+const AppUserSchemaDeletionInProgressMessage = "deletion process for an attribute with the same variable name is incomplete"
+
+// isAppUserSchemaRetryableError returns true if the error indicates the API is still deleting a schema attribute with the same name.
+func isAppUserSchemaRetryableError(err error) bool {
+	var oktaErr *sdk.Error
+	if !errors.As(err, &oktaErr) {
+		return false
+	}
+	for i := range oktaErr.ErrorCauses {
+		for _, v := range oktaErr.ErrorCauses[i] {
+			if s, ok := v.(string); ok && strings.Contains(s, AppUserSchemaDeletionInProgressMessage) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// UpdateApplicationUserProfileWithRetry calls UpdateApplicationUserProfile with exponential backoff.
+// It retries when the API reports that deletion of an attribute with the same variable name is still in progress,
+// so that both okta_app_user_schema and okta_app_user_schema_property succeed on recreate/update-after-delete.
+func UpdateApplicationUserProfileWithRetry(ctx context.Context, meta interface{}, appId string, custom *sdk.UserSchema) (*sdk.Response, error) {
+	var lastResp *sdk.Response
+	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
+	err := backoff.Retry(func() error {
+		_, resp, callErr := getOktaClientFromMetadata(meta).UserSchema.UpdateApplicationUserProfile(ctx, appId, *custom)
+		lastResp = resp
+		if callErr == nil {
+			return nil
+		}
+		if doNotRetry(meta, callErr) {
+			return backoff.Permanent(callErr)
+		}
+		if isAppUserSchemaRetryableError(callErr) {
+			return callErr
+		}
+		return backoff.Permanent(fmt.Errorf("failed to update application user schema: %w", callErr))
+	}, boc)
+	return lastResp, err
+}
+
 // stringifyUserSchemaPropertyEnums takes a schema and ensures the enums in its
 // UserSchemaAttribute(s) have string values to satisfy the TF schema
 func stringifyUserSchemaPropertyEnums(schema *sdk.UserSchema) {
@@ -500,7 +564,6 @@ func retypeUserPropertiesEnum(properties map[string]*sdk.UserSchemaAttribute) {
 		if val.Items != nil {
 			enum := retypeEnumSlice(val.Items.Type, val.Items.Enum)
 			val.Items.Enum = enum
-			retypeOneOfSlice(val.Type, val.OneOf)
 			attributeEnum := retypeOneOfSlice(val.Items.Type, val.Items.OneOf)
 			val.Items.OneOf = attributeEnum
 		}
