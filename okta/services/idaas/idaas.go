@@ -120,6 +120,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAgentPoolUpdateResource,
 		newUISchemaResource,
 		newAppFederatedClaimResource,
+		newAppSignOnPolicyRulesResource,
 		newPushGroupResource,
 	}
 }
