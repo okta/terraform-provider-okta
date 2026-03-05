@@ -154,6 +154,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAppFederatedClaimDataSource,
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
+		newAdminRoleCustomDataSource,
 	}
 }
 
