@@ -116,10 +116,6 @@ List all rules in your policy to identify their IDs and names:
 ```bash
 # Using Terraform state
 terraform state show 'okta_app_signon_policy_rule.rule1'
-
-# Or using Okta API
-curl -s -H "Authorization: SSWS $OKTA_API_TOKEN" \
-  "https://${OKTA_DOMAIN}/api/v1/policies/${POLICY_ID}/rules" | jq '.'
 ```
 
 
