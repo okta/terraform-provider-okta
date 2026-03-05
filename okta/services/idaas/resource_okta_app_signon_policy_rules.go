@@ -31,9 +31,6 @@ const (
 
 	// ruleTypeAccessPolicy is the Okta API type for access policy rules.
 	ruleTypeAccessPolicy = "ACCESS_POLICY"
-
-	// tempRuleNamePrefix is used when temporarily renaming rules to avoid name conflicts.
-	tempRuleNamePrefix = "__temp_"
 )
 
 // Validation values for rule attributes.
@@ -394,15 +391,12 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	// Build map of planned name changes for conflict detection.
-	plannedNameByID := r.buildPlannedNameByID(plan.Rules)
-
 	// Process rules in priority order.
 	sortedPlanRules := r.sortRulesByPriority(plan.Rules)
 	updatedRules := make([]policyRuleModel, 0, len(sortedPlanRules))
 
 	for _, planRule := range sortedPlanRules {
-		resultRule, diags := r.processRuleUpdate(ctx, client, policyID, planRule, stateIndex, nameTracker, plannedNameByID)
+		resultRule, diags := r.processRuleUpdate(ctx, client, policyID, planRule, stateIndex, nameTracker)
 		resp.Diagnostics.Append(diags...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -720,17 +714,6 @@ func (r *appSignOnPolicyRulesResource) buildPlannedNamesSet(rules []policyRuleMo
 	return names
 }
 
-// buildPlannedNameByID creates a map of rule ID to planned name.
-func (r *appSignOnPolicyRulesResource) buildPlannedNameByID(rules []policyRuleModel) map[string]string {
-	m := make(map[string]string, len(rules))
-	for _, rule := range rules {
-		if !rule.ID.IsNull() && !rule.ID.IsUnknown() && rule.ID.ValueString() != "" {
-			m[rule.ID.ValueString()] = rule.Name.ValueString()
-		}
-	}
-	return m
-}
-
 // existingRuleInfo holds identification data for an existing rule in Okta.
 type existingRuleInfo struct {
 	ID       string
@@ -835,7 +818,6 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 	planRule policyRuleModel,
 	stateIndex *ruleIndex,
 	nameTracker *nameTracker,
-	plannedNameByID map[string]string,
 ) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -898,16 +880,6 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 
 	isSystem := currentRule.System != nil && *currentRule.System
 
-	// Handle name conflicts (e.g., swapping names between rules).
-	// System rules cannot be renamed, so skip conflict resolution for them.
-	if !isSystem {
-		if err := r.resolveNameConflict(ctx, client, policyID, existingRuleID, targetName, nameTracker, plannedNameByID); err != nil {
-			diags.AddError("Error updating app sign-on policy rule",
-				fmt.Sprintf("Could not resolve name conflict: %s", err.Error()))
-			return policyRuleModel{}, diags
-		}
-	}
-
 	// Build the full payload, then normalize for system rules
 	apiRule := r.buildAPIRuleFromModel(ctx, planRule)
 	if isSystem {
@@ -923,48 +895,6 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 
 	nameTracker.updateMapping(existingRuleID, targetName)
 	return r.updateRuleModelFromAPI(ctx, planRule, updatedRule), diags
-}
-
-// resolveNameConflict handles cases where a rule's target name is held by another rule.
-func (r *appSignOnPolicyRulesResource) resolveNameConflict(
-	ctx context.Context,
-	client *sdk.APISupplement,
-	policyID, ruleID, targetName string,
-	nameTracker *nameTracker,
-	plannedNameByID map[string]string,
-) error {
-	conflictingID, hasConflict := nameTracker.hasConflict(targetName, ruleID)
-	if !hasConflict {
-		return nil
-	}
-
-	// Check if the conflicting rule will be renamed (part of a swap).
-	plannedName, inPlan := plannedNameByID[conflictingID]
-	if !inPlan || plannedName == targetName {
-		return nil // No swap, let API handle the conflict.
-	}
-
-	// Rename conflicting rule to a temporary name.
-	tempName := fmt.Sprintf("%s%s_%d", tempRuleNamePrefix, conflictingID, time.Now().UnixNano())
-	if err := r.renameRuleToTemp(ctx, client, policyID, conflictingID, tempName); err != nil {
-		return fmt.Errorf("failed to rename conflicting rule to temporary name: %w", err)
-	}
-
-	nameTracker.updateMapping(conflictingID, tempName)
-	return nil
-}
-
-// renameRuleToTemp renames a rule to a temporary name while preserving all other fields.
-func (r *appSignOnPolicyRulesResource) renameRuleToTemp(ctx context.Context, client *sdk.APISupplement, policyID, ruleID, tempName string) error {
-	// Fetch current rule to preserve all fields.
-	currentRule, err := r.readRuleFromAPI(ctx, client, policyID, ruleID)
-	if err != nil {
-		return fmt.Errorf("failed to read rule before renaming: %w", err)
-	}
-
-	currentRule.Name = tempName
-	_, err = r.updateRuleInAPI(ctx, client, policyID, ruleID, *currentRule)
-	return err
 }
 
 // buildPlannedIDsSet creates a set of rule IDs from the plan.
