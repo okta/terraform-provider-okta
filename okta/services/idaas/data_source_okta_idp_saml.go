@@ -88,6 +88,11 @@ func dataSourceIdpSaml() *schema.Resource {
 				Computed:    true,
 				Description: "Key ID reference to the IdP's X.509 signature certificate.",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+			},
 		},
 		Description: "Get a SAML IdP from Okta.",
 	}
@@ -144,5 +149,6 @@ func dataSourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
 	}
+	d.Set("trust_claims", idp.Policy.TrustClaims)
 	return nil
 }

@@ -109,6 +109,11 @@ func dataSourceIdpOidc() *schema.Resource {
 				Computed:    true,
 				Description: "Maximum allowable clock-skew when processing messages from the IdP.",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+			},
 		},
 		Description: "Get a OIDC IdP from Okta.",
 	}
@@ -156,5 +161,6 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta int
 	if oidc.IssuerMode != "" {
 		_ = d.Set("issuer_mode", oidc.IssuerMode)
 	}
+	d.Set("trust_claims", oidc.Policy.TrustClaims)
 	return nil
 }

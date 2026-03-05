@@ -133,6 +133,12 @@ func resourceIdpOidc() *schema.Resource {
 				Optional:    true,
 				Description: "Optional regular expression pattern used to filter untrusted IdP usernames.",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+				Default:     false,
+			},
 		}),
 	}
 }
@@ -235,6 +241,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
 	}
+	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
+		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
+	}
 	return nil
 }
 
@@ -296,6 +305,10 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				Url: d.Get("issuer_url").(string),
 			},
 		},
+	}
+	trustClaims := d.GetRawConfig().GetAttr("trust_claims")
+	if !trustClaims.IsNull() {
+		idp.Policy.TrustClaims = utils.BoolPtr(d.Get("trust_claims").(bool))
 	}
 	if d.Get("status") != nil {
 		idp.Status = d.Get("status").(string)
