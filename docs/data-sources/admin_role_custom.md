@@ -12,7 +12,7 @@ Use this data source to retrieve a custom admin role from Okta.
 
 ```terraform
 data "okta_admin_role_custom" "example" {
-  id = "<role_id_or_label>"
+  id = "<role_id>"
 }
 ```
 
