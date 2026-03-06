@@ -102,6 +102,12 @@ func resourceNetworkZone() *schema.Resource {
 				Optional:    true,
 				Description: "Set this parameter to true in your request when you update the DefaultExemptIpZone to allow IPs through the blocklist.",
 			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Optional:    true,
+				Description: "Indicates a system Network Zone",
+			},
 		},
 	}
 }
@@ -117,6 +123,10 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 	if d.Get("name").(string) == "DefaultExemptIpZone" {
 		return diag.Errorf("the DefaultExemptIpZone is a built-in Okta network zone and cannot be created. " +
+			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
+	}
+	if d.Get("name").(string) == "BlockedIpZone" {
+		return diag.Errorf("the BlockedIpZone is a built-in Okta network zone and cannot be created. " +
 			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
 	}
 	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
@@ -181,7 +191,10 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
-	if d.Get("name").(string) != "DefaultExemptIpZone" {
+
+	name := d.Get("name").(string)
+
+	if name != "DefaultExemptIpZone" && name != "BlockedIpZone" {
 		if d.Get("status").(string) == "ACTIVE" {
 			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
 			if err != nil {
@@ -204,9 +217,9 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// Built-in zones like DefaultExemptIpZone cannot be deleted from Okta,
-	// so just remove them from state.
-	if d.Get("name").(string) == "DefaultExemptIpZone" {
+	// System zones (e.g. DefaultExemptIpZone, BlockedIpZone) cannot be deleted
+	// from Okta, so just remove them from state.
+	if d.Get("system").(bool) || d.Get("name").(string) == "DefaultExemptIpZone" {
 		return nil
 	}
 	_, resp, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
@@ -229,6 +242,10 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 		ipnz.SetName(d.Get("name").(string))
 		ipnz.SetType(zoneType)
 		ipnz.SetUsage(d.Get("usage").(string))
+		if d.Get("name").(string) == "BlockedIpZone" {
+			ipnz.SetSystem(d.Get("system").(bool))
+		}
+
 		if values, ok := d.GetOk("gateways"); ok {
 			ipnz.SetGateways(buildAddressObjList(values.(*schema.Set)))
 		}
@@ -442,6 +459,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v6okta.ListNetworkZones
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
 		_ = d.Set("usage", v.GetUsage())
+		_ = d.Set("system", v.GetSystem())
 		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"gateways": flattenAddresses(v.GetGateways()),
 			"proxies":  flattenAddresses(v.GetProxies()),
