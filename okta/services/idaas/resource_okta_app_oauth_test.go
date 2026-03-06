@@ -278,7 +278,6 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 
 // Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
 func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
-	t.Skip("Skipping JWKS test due to v6 SDK schema conflicts. Use jwks_uri instead of inline jwks configuration.")
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	config := mgr.GetFixtures("service_with_jwks.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
@@ -918,6 +917,96 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
 				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_2659 covers auto_key_rotation: explicit true/false and default (omit).
+// See https://github.com/okta/terraform-provider-okta/issues/2659
+func TestAccResourceOktaAppOauth_2659(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	// Minimal config: no groups_claim to keep VCR cassette small. Label uses replace_with_uuid for VCR seed.
+	createTrue := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  auto_key_rotation = true
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	explicitFalse := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  auto_key_rotation = false
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	omitDefault := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			// Create with explicit true; API returns true.
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+				),
+			},
+			// Case 1: explicit true when existing is true -> no change
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Case 2: explicit false when existing is true -> update to false
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 4: explicit true when existing is false -> update to true
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Case 3: omit (default) when existing is true -> no change
+			{
+				Config: mgr.ConfigReplace(omitDefault),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Apply false so next step has existing false
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 5: explicit false when existing is false -> no change
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 6: omit (default) when existing is false -> update to true
+			{
+				Config: mgr.ConfigReplace(omitDefault),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
 			},
 		},
 	})

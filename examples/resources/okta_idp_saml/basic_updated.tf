@@ -31,4 +31,5 @@ resource "okta_idp_saml" "test" {
   max_clock_skew           = 60
   name_format              = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   honor_persistent_name_id = false
+  trust_claims             = false
 }

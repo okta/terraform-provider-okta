@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -473,6 +474,43 @@ func TestLinksValue(t *testing.T) {
 			err := json.Unmarshal([]byte(test.linksJSON), &_links)
 			require.NoError(t, err)
 			result := LinksValue(_links.Links, test.keys...)
+			require.Equal(t, test.expected, result)
+		})
+	}
+}
+
+func TestLinksValue_WithStronglyTypedLinks(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    interface{}
+		keys     []string
+		expected string
+	}{
+		{
+			name: "returns empty string when key does not exist",
+			input: v6okta.ApplicationLinks{
+				AccessPolicy: &v6okta.AccessPolicyLink{
+					Href: "https://org/home/something",
+				},
+			},
+			keys:     []string{"appLinks", "href"},
+			expected: "",
+		},
+		{
+			name: "resolves accessPolicy href from strongly typed struct",
+			input: v6okta.ApplicationLinks{
+				AccessPolicy: &v6okta.AccessPolicyLink{
+					Href: "https://org/home/something",
+				},
+			},
+			keys:     []string{"accessPolicy", "href"},
+			expected: "https://org/home/something",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := LinksValue(test.input, test.keys...)
 			require.Equal(t, test.expected, result)
 		})
 	}

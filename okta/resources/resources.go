@@ -13,6 +13,7 @@ const (
 	OktaIDaaSAppBookmark                              = "okta_app_bookmark"
 	OktaIDaaSAppConnection                            = "okta_app_connection"
 	OktaIDaaSAppFeatures                              = "okta_app_features"
+	OktaIDaaSAppFederatedClaim                        = "okta_app_federated_claim"
 	OktaIDaaSAppGroupAssignment                       = "okta_app_group_assignment"
 	OktaIDaaSAppGroupAssignments                      = "okta_app_group_assignments"
 	OktaIDaaSAppMetadataSaml                          = "okta_app_metadata_saml"
@@ -27,6 +28,7 @@ const (
 	OktaIDaaSAppSharedCredentials                     = "okta_app_shared_credentials"
 	OktaIDaaSAppSignOnPolicy                          = "okta_app_signon_policy"
 	OktaIDaaSAppSignOnPolicyRule                      = "okta_app_signon_policy_rule"
+	OktaIDaaSAppSignOnPolicyRules                     = "okta_app_signon_policy_rules"
 	OktaIDaaSAppSwa                                   = "okta_app_swa"
 	OktaIDaaSAppThreeField                            = "okta_app_three_field"
 	OktaIDaaSAppToken                                 = "okta_app_token"
@@ -149,4 +151,6 @@ const (
 	OktaGovernanceCatalogEntryDefault                 = "okta_catalog_entry_default"
 	OktaGovernanceCatalogEntryUserAccessRequestFields = "okta_catalog_entry_user_access_request_fields"
 	OktaGovernanceEndUserMyRequests                   = "okta_end_user_my_requests"
+	OktaIDaaSPushGroup                                = "okta_push_group"
+	OktaIDaaSPushGroups                               = "okta_push_groups"
 )

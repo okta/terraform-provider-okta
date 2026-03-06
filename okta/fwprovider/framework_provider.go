@@ -2,6 +2,7 @@ package fwprovider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -208,7 +209,25 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	}
 
 	// reuse config from sdk provider
-	meta := p.PluginSDKProvider.Meta().(*config.Config)
+	rawMeta := p.PluginSDKProvider.Meta()
+	if rawMeta == nil {
+		resp.Diagnostics.AddError(
+			"Provider Configuration Error",
+			"The Okta provider was not properly configured. Please ensure valid credentials are provided. "+
+				"Set 'api_token' (or OKTA_API_TOKEN env var), 'access_token' (or OKTA_ACCESS_TOKEN env var), "+
+				"or 'private_key' + 'client_id' (or OKTA_API_PRIVATE_KEY + OKTA_API_CLIENT_ID env vars). "+
+				"See https://registry.terraform.io/providers/okta/okta/latest/docs for more information.",
+		)
+		return
+	}
+	meta, ok := rawMeta.(*config.Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Provider Configuration Type",
+			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", rawMeta),
+		)
+		return
+	}
 	resp.EphemeralResourceData = meta
 	resp.DataSourceData = meta
 	resp.ResourceData = meta

@@ -1,0 +1,1 @@
+terraform import okta_app_federated_claim.test <app_id/id>

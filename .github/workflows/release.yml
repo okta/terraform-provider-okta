@@ -37,14 +37,14 @@ jobs:
       - name: Import GPG key
         id: import_gpg
         uses:
-          crazy-max/ghaction-import-gpg@v6
+          crazy-max/ghaction-import-gpg@v7
           # These secrets will need to be configured for the repository:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6.4.0
+        uses: goreleaser/goreleaser-action@v7.0.0
         with:
           version: "v2.12.7"
           args: release --clean --parallelism 2

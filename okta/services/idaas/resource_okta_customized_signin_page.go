@@ -35,7 +35,16 @@ func (r *customizedSigninPageResource) Schema(_ context.Context, _ resource.Sche
 	oktaMutexKV.Lock(resources.OktaIDaaSCustomizedSignInPage)
 	defer oktaMutexKV.Unlock(resources.OktaIDaaSCustomizedSignInPage)
 
+	// Clone the shared schema's Attributes map to avoid mutating the global
+	// `resourceSignInSchema` which can cause concurrent map read/write panics
+	// when multiple resources are initialized concurrently.
 	newSchema := resourceSignInSchema
+	newAttrs := make(map[string]resourceSchema.Attribute, len(resourceSignInSchema.Attributes))
+	for k, v := range resourceSignInSchema.Attributes {
+		newAttrs[k] = v
+	}
+	newSchema.Attributes = newAttrs
+
 	pageContentAttribute := newSchema.Attributes["page_content"].(resourceSchema.StringAttribute)
 	pageContentAttribute.Required = false
 	pageContentAttribute.Optional = true
@@ -176,5 +185,6 @@ func (r *customizedSigninPageResource) Update(ctx context.Context, req resource.
 }
 
 func (r *customizedSigninPageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("brand_id"), req.ID)...)
 }

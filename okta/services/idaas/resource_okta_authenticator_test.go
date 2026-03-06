@@ -279,3 +279,25 @@ func TestAccResourceOktaAuthenticator_custom_app_crud(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAuthenticator_ExternalIDPCrud(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.extenral_idp", resources.OktaIDaaSAuthenticator)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("idp.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "federated"),
+					resource.TestCheckResourceAttr(resourceName, "name", "idp auth issue"),
+				),
+			},
+		},
+	})
+}

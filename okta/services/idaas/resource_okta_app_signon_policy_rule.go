@@ -263,7 +263,6 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
-	// getOktaV5ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, d.Get("policy_id").(string)).PolicyRule()
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -478,9 +477,14 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		Platform: &sdk.PlatformPolicyRuleCondition{
 			Include: buildAccessPolicyPlatformInclude(d),
 		},
-		ElCondition: &sdk.AccessPolicyRuleCustomCondition{
-			Condition: d.Get("custom_expression").(string),
-		},
+	}
+	// Only set ElCondition when custom_expression is not empty
+	// Setting an empty ElCondition causes API validation errors
+	customExpr := d.Get("custom_expression").(string)
+	if customExpr != "" {
+		rule.Conditions.ElCondition = &sdk.AccessPolicyRuleCustomCondition{
+			Condition: customExpr,
+		}
 	}
 	riskScore, ok := d.GetOk("risk_score")
 	if ok {
