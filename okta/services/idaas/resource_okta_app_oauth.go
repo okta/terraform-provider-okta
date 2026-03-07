@@ -517,6 +517,10 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	apiSupplement := getAPISupplementFromMetadata(meta)
 	appID := d.Id()
 	if !ok {
+		c, ok2 := meta.(*config.Config)
+		if ok2 && c.IsOAuth20Auth() {
+			return nil
+		}
 		gc := &sdk.AppOauthGroupClaim{
 			Name:      "",
 			Value:     "",
