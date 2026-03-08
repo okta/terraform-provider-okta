@@ -514,8 +514,18 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
+	c := meta.(*config.Config)
+	if c.IsOAuth20Auth() {
+		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	apiSupplement := getAPISupplementFromMetadata(meta)
 	appID := d.Id()
+
 	if !ok {
 		gc := &sdk.AppOauthGroupClaim{
 			Name:      "",
@@ -536,15 +546,6 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 		if err != nil {
 			return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
 		}
-		return nil
-	}
-
-	// Log deprecation warning
-	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
-
-	c := meta.(*config.Config)
-	if c.IsOAuth20Auth() {
-		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
