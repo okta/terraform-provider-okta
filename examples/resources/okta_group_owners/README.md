@@ -1,6 +1,6 @@
 # okta_group_owners
 
-Manage all or a tracked subset of owners for an Okta group.
+Manage all owners for an Okta group. The resource is authoritative: any owners not declared in configuration will be removed.
 
 ```hcl
 resource "okta_group_owners" "owners" {
@@ -14,8 +14,5 @@ resource "okta_group_owners" "owners" {
     type = "USER"
     id   = okta_user.owner2.id
   }
-
-  # Optional
-  # track_all_owners = false
 }
 ```

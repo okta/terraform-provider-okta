@@ -1,4 +1,4 @@
-# Test fixture: simulate deletion of group to trigger 404 on Delete/Read
+# Test fixture: basic create/destroy smoke test
 
 resource "okta_user" "owner1" {
   first_name = "TestAcc"
@@ -19,7 +19,3 @@ resource "okta_group_owners" "owners" {
     id   = okta_user.owner1.id
   }
 }
-
-# We cannot destroy the group inline; the test will perform a destroy of the group
-# between steps by removing it from configuration (second step),
-# thus causing the group_owners resource to hit 404 during its Delete

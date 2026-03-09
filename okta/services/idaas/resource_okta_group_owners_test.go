@@ -7,65 +7,67 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 // Verify we ignore 400 "already assigned" when adding owners
 func TestAccResourceOktaGroupOwners_alreadyAssignedOwner400(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
-	config := mgr.GetFixtures("test_already_assigned_owner.tf", t)
+	acctest.RequireSKU(t, config.SKUGovernance)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupOwners, t.Name())
+	tfConfig := mgr.GetFixtures("test_already_assigned_owner.tf", t)
 
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
-					Config: config,
+					Config: tfConfig,
 					// If provider did not ignore the 400 already-assigned error, this step would fail
 				},
 			},
 		})
 }
 
-// Verify we suppress 404s when group is deleted ahead of deleting owners
-func TestAccResourceOktaGroupOwners_deletedGroup404(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
-	config := mgr.GetFixtures("test_deleted_group_404.tf", t)
+// Basic create/destroy smoke test. The 404 suppression code path for
+// out-of-band group deletion cannot be exercised via config manipulation
+// because Terraform's dependency ordering destroys owners before the group.
+func TestAccResourceOktaGroupOwners_basicCreateDestroy(t *testing.T) {
+	acctest.RequireSKU(t, config.SKUGovernance)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupOwners, t.Name())
+	tfConfig := mgr.GetFixtures("test_basic_create_destroy.tf", t)
 
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
-					Config: config,
-				},
-				// Second step: remove the group resource so it gets deleted; keep owners to trigger 404
-				{
-					Config: regexp.MustCompile(`(?s)resource "okta_group" "grp"\{.*?\}\n`).ReplaceAllString(config, ""),
-					// Destroy then apply; any 404 during owner deletions should be suppressed by provider
+					Config: tfConfig,
 				},
 			},
 		})
 }
 
 func TestAccResourceOktaGroupOwners_groupAsOwner(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
-	config := mgr.GetFixtures("test_group_owner_group.tf", t)
+	acctest.RequireSKU(t, config.SKUGovernance)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupOwners, t.Name())
+	tfConfig := mgr.GetFixtures("test_group_owner_group.tf", t)
 
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
-					Config: config,
+					Config: tfConfig,
 					Check: resource.ComposeAggregateTestCheckFunc(
 						resource.TestCheckResourceAttrSet("okta_group.child", "id"),
 						resource.TestCheckTypeSetElemAttrPair("okta_group_owners.owners", "owner.*.id", "okta_group.parent", "id"),
@@ -76,26 +78,28 @@ func TestAccResourceOktaGroupOwners_groupAsOwner(t *testing.T) {
 }
 
 func TestAccResourceOktaGroupOwners_invalidTypeMismatch(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
-	config := mgr.GetFixtures("test_invalid_type_mismatch.tf", t)
+	acctest.RequireSKU(t, config.SKUGovernance)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupOwners, t.Name())
+	tfConfig := mgr.GetFixtures("test_invalid_type_mismatch.tf", t)
 
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
-					Config:      config,
-					ExpectError: regexp.MustCompile(`(?i)(invalid|validation|type|api)`),
+					Config:      tfConfig,
+					ExpectError: regexp.MustCompile(`(?i)was not found as type`),
 				},
 			},
 		})
 }
 
 func TestAccResourceOktaGroupOwners_crudAndUpdate(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
+	acctest.RequireSKU(t, config.SKUGovernance)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupOwners, t.Name())
 	configCreate := mgr.GetFixtures("test_resource.tf", t)
 	configUpdate := mgr.GetFixtures("test_update.tf", t)
 
@@ -103,7 +107,7 @@ func TestAccResourceOktaGroupOwners_crudAndUpdate(t *testing.T) {
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
@@ -118,6 +122,7 @@ func TestAccResourceOktaGroupOwners_crudAndUpdate(t *testing.T) {
 				{
 					Config: configUpdate,
 					Check: resource.ComposeAggregateTestCheckFunc(
+						resource.TestCheckResourceAttr("okta_group_owners.owners", "owner.#", "2"),
 						resource.TestCheckTypeSetElemAttrPair("okta_group_owners.owners", "owner.*.id", "okta_user.owner1", "id"),
 						// owner2 removed, owner3 added
 						resource.TestCheckTypeSetElemAttrPair("okta_group_owners.owners", "owner.*.id", "okta_user.owner3", "id"),
@@ -131,37 +136,6 @@ func TestAccResourceOktaGroupOwners_crudAndUpdate(t *testing.T) {
 						groupID := s.RootModule().Resources["okta_group.grp"].Primary.Attributes["id"]
 						return groupID, nil
 					},
-				},
-			},
-		})
-}
-
-func TestAccResourceOktaGroupOwners_trackAllOwnersFalse(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_group_owners", t.Name())
-	config := mgr.GetFixtures("test_track_false.tf", t)
-
-	acctest.OktaResourceTest(
-		t, resource.TestCase{
-			PreCheck:                 acctest.AccPreCheck(t),
-			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
-			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-			Steps: []resource.TestStep{
-				{
-					Config: config,
-					Check: resource.ComposeAggregateTestCheckFunc(
-						resource.TestCheckResourceAttrSet("okta_group.grp", "id"),
-						resource.TestCheckResourceAttr("okta_group_owners.owners", "track_all_owners", "false"),
-						resource.TestCheckTypeSetElemAttrPair("okta_group_owners.owners", "owner.*.id", "okta_user.owner1", "id"),
-						resource.TestCheckTypeSetElemAttrPair("okta_group_owners.owners", "owner.*.id", "okta_user.owner2", "id"),
-					),
-				},
-				// Now simulate refresh behavior: with track_all_owners=false the external owner should not be removed
-				{
-					Config: config,
-					Check: resource.ComposeAggregateTestCheckFunc(
-						resource.TestCheckResourceAttr("okta_group_owners.owners", "track_all_owners", "false"),
-					),
 				},
 			},
 		})

@@ -1,35 +1,16 @@
 ---
 page_title: "Resource: okta_group_owners"
 description: |-
-  Manage group owners in bulk for an Okta group. Uses the group ID as the resource ID.
+  Manage owners for a group in bulk. Uses the group_id as the resource ID. The resource is authoritative: any owners on the group not declared in configuration will be removed.
 ---
 
 # Resource: okta_group_owners
 
-Note: The okta_group_owners resource uses repeated owner blocks. This is equivalent to a list of owners, but is more readable in HCL.
-
-Manage all or a tracked subset of owners for an Okta group.
-
-- The resource ID is the Okta group ID.
-- By default (track_all_owners = true), the resource is authoritative over the declared owners. Removals of owners that aren’t declared in configuration occur during reconciliation after the resource exists in state (i.e., on subsequent refresh/plan/apply), ensuring the Terraform plan remains accurate.
-- Set track_all_owners = false to opt-out of removing owners that are not managed by this resource.
-
-### Plan accuracy
-
-### Interactions with other resources
-
-Avoid managing the same group’s owners with both okta_group_owner and okta_group_owners when track_all_owners = true. The okta_group_owners resource may remove owners that are not declared in its configuration. If you must mix, either set track_all_owners = false for okta_group_owners, or ensure all intended owners are declared in okta_group_owners.
-
-On initial creation, Terraform cannot enumerate deletions of pre-existing, non-declared owners because they are not yet in state. If you need an explicit plan showing which owners will be removed, import the current owners first, then run plan:
-
-```sh
-terraform import okta_group_owners.owners <group_id>
-terraform plan
-```
+Manage owners for a group in bulk. Uses the group_id as the resource ID. The resource is authoritative: any owners on the group not declared in configuration will be removed.
 
 ## Example Usage
 
-```hcl
+```terraform
 resource "okta_user" "owner1" {
   first_name = "Alice"
   last_name  = "Owner"
@@ -59,9 +40,6 @@ resource "okta_group_owners" "owners" {
     type = "USER"
     id   = okta_user.owner2.id
   }
-
-  # Optional: set to false to avoid removing non-tracked owners
-  # track_all_owners = false
 }
 ```
 
@@ -71,19 +49,27 @@ resource "okta_group_owners" "owners" {
 ### Required
 
 - `group_id` (String) The ID of the Okta group.
-- One or more `owner` blocks (see below)
 
 ### Optional
 
-- `track_all_owners` (Boolean) If true (default), the resource tracks all owners on the group and will remove owners not declared in configuration. Set to false to opt-out of removing owners that aren't tracked in state.
+- `owner` (Block Set) Desired owners for the group. (see [below for nested schema](#nestedblock--owner))
 
 ### Read-Only
 
 - `id` (String) Resource ID (same as group_id).
 
+<a id="nestedblock--owner"></a>
 ### Nested Schema for `owner`
 
 Required:
 
 - `id` (String) The ID of the owner entity.
 - `type` (String) The entity type of the owner. Enum: "GROUP" "USER"
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+terraform import okta_group_owners.example <group_id>
+```

@@ -16,14 +16,6 @@ resource "okta_group" "grp" {
   name = "demo-group"
 }
 
-# Non-managed owner to demonstrate track_all_owners behavior
-resource "okta_user" "owner3_external" {
-  first_name = "Eve"
-  last_name  = "NotManaged"
-  login      = "eve-external@example.com"
-  email      = "eve-external@example.com"
-}
-
 resource "okta_group_owners" "owners" {
   group_id = okta_group.grp.id
 
@@ -35,7 +27,4 @@ resource "okta_group_owners" "owners" {
     type = "USER"
     id   = okta_user.owner2.id
   }
-
-  # Optional
-  # track_all_owners = false
 }

@@ -27,7 +27,8 @@ resource "okta_group_owner" "ext" {
 
 # Now bulk-manage owners including the already-assigned owner1
 resource "okta_group_owners" "owners" {
-  group_id = okta_group.grp.id
+  depends_on = [okta_group_owner.ext]
+  group_id   = okta_group.grp.id
 
   owner {
     type = "USER"
