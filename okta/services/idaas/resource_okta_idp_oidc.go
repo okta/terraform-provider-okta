@@ -158,7 +158,6 @@ func resourceIdpOidc() *schema.Resource {
 			"slo_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Required:    false,
 				Description: "OIDC IdP logout endpoint.",
 			},
 		}),
