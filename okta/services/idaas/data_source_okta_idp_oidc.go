@@ -114,6 +114,17 @@ func dataSourceIdpOidc() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates whether to trust authentication claims from the IdP.",
 			},
+			"participate_slo": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.",
+			},
+			"slo_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Required:    false,
+				Description: "OIDC IdP logout endpoint.",
+			},
 		},
 		Description: "Get a OIDC IdP from Okta.",
 	}
@@ -162,5 +173,9 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta int
 		_ = d.Set("issuer_mode", oidc.IssuerMode)
 	}
 	d.Set("trust_claims", oidc.Policy.TrustClaims)
+	d.Set("participate_slo", oidc.Protocol.Settings.ParticipateSLO)
+	if oidc.Protocol.Settings.ParticipateSLO {
+		d.Set("slo_url", oidc.Protocol.Endpoints.Slo.Url)
+	}
 	return nil
 }

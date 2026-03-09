@@ -63,6 +63,8 @@ resource "okta_idp_oidc" "example" {
 - `provisioning_action` (String) Provisioning action for an IdP user during authentication. Default: `AUTO`
 - `request_signature_algorithm` (String) The HMAC Signature Algorithm used when signing an authorization request. Defaults to `HS256`. It can be `HS256`, `HS384`, `HS512`, `SHA-256`. `RS256`, `RS384`, or `RS512`. NOTE: `SHA-256` an undocumented legacy value and not continue to be valid. See API docs https://developer.okta.com/docs/reference/api/idps/#oidc-request-signature-algorithm-object
 - `request_signature_scope` (String) Specifies whether to digitally sign an AuthnRequest messages to the IdP. Defaults to `REQUEST`. It can be `REQUEST` or `NONE`.
+- `participate_slo` (Boolean) Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.
+- `slo_url` (String) OIDC IdP logout endpoint. Must be specified when `participate_slo` is set to true.
 - `status` (String) Default to `ACTIVE`
 - `subject_match_attribute` (String) Okta user profile attribute for matching transformed IdP username. Only for matchType `CUSTOM_ATTRIBUTE`.
 - `subject_match_type` (String) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `USERNAME`. It can be set to `USERNAME`, `EMAIL`, `USERNAME_OR_EMAIL` or `CUSTOM_ATTRIBUTE`.

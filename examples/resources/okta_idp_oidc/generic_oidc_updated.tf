@@ -15,4 +15,6 @@ resource "okta_idp_oidc" "test" {
   username_template     = "idpuser.email"
   filter                = "xyz"
   trust_claims          = false
+  participate_slo       = true
+  slo_url               = "https://www.slo-url.com/logout"
 }
