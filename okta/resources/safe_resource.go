@@ -72,7 +72,7 @@ func (s *SafeResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 	s.underlying.Schema(ctx, req, resp)
 }
 
-// Create wraps the underlying Create with panic recovery
+// Create wraps the underlying Creation with panic recovery
 func (s *SafeResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	defer s.recoverPanic(&resp.Diagnostics, "Create")
 	s.underlying.Create(ctx, req, resp)
