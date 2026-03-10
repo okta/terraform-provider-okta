@@ -52,10 +52,8 @@ func WrapSDKResource(r *schema.Resource) *schema.Resource {
 func WrapSDKResources(resources map[string]*schema.Resource) map[string]*schema.Resource {
 	wrapped := make(map[string]*schema.Resource, len(resources))
 	for name, r := range resources {
-		log.Printf("[DEBUG] WrapSDKResources: Wrapping resource %s", name)
 		wrapped[name] = WrapSDKResource(r)
 	}
-	log.Printf("[DEBUG] WrapSDKResources: Wrapped %d SDK resources with panic recovery", len(wrapped))
 	return wrapped
 }
 
