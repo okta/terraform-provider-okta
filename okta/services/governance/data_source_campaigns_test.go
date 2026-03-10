@@ -16,11 +16,15 @@ func TestAccDataSourceOktaCampaigns_read(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_campaigns.test", "campaigns"),
+					resource.TestCheckResourceAttrSet("data.okta_campaigns.test", "campaigns.#"),
+					resource.TestCheckResourceAttrSet("data.okta_campaigns.test", "campaigns.0.id"),
+					resource.TestCheckResourceAttrSet("data.okta_campaigns.test", "campaigns.0.name"),
+					resource.TestCheckResourceAttrSet("data.okta_campaigns.test", "campaigns.0.status"),
 				),
 			},
 		},

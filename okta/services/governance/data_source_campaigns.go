@@ -24,6 +24,7 @@ type campaignsDataSource struct {
 }
 
 type campaignsDataSourceModel struct {
+	ID        types.String `tfsdk:"id"`
 	Campaigns types.List   `tfsdk:"campaigns"`
 	Filter    types.String `tfsdk:"filter"`
 	Limit     types.Int64  `tfsdk:"limit"`
@@ -42,6 +43,10 @@ func (d *campaignsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	resp.Schema = schema.Schema{
 		Description: "Lists all or a subset of campaigns in your organization. Use the `filter` parameter to narrow results by name, status, scheduleType, reviewerType, and recurringCampaignId. Use `order_by` to sort by name, created, startDate, endDate, or status.",
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "Placeholder ID.",
+			},
 			"filter": schema.StringAttribute{
 				Optional:    true,
 				Description: "Filter expression to narrow results. Supported campaign properties: name, status, scheduleType, reviewerType, recurringCampaignId.",
@@ -55,64 +60,9 @@ func (d *campaignsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				ElementType: types.StringType,
 				Description: "Order results by campaign properties: name, created, startDate, endDate, status. By default results are sorted by created.",
 			},
-			"campaigns": schema.ListNestedAttribute{
-				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{
-							Computed:    true,
-							Description: "Unique identifier for the campaign.",
-						},
-						"name": schema.StringAttribute{
-							Computed:    true,
-							Description: "Name of the campaign.",
-						},
-						"description": schema.StringAttribute{
-							Computed:    true,
-							Description: "Human readable description.",
-						},
-						"start_date": schema.StringAttribute{
-							Computed:    true,
-							Description: "The date on which the campaign is scheduled to start (ISO 8601).",
-						},
-						"end_date": schema.StringAttribute{
-							Computed:    true,
-							Description: "The date on which the campaign is supposed to end (ISO 8601).",
-						},
-						"schedule_type": schema.StringAttribute{
-							Computed:    true,
-							Description: "Schedule type of the campaign (e.g. ONE_OFF, RECURRING).",
-						},
-						"recurring_campaign_id": schema.StringAttribute{
-							Computed:    true,
-							Description: "ID of the recurring campaign if this campaign was created as part of a recurring schedule.",
-						},
-						"reviewer_type": schema.StringAttribute{
-							Computed:    true,
-							Description: "Type of reviewer for the campaign.",
-						},
-						"status": schema.StringAttribute{
-							Computed:    true,
-							Description: "The status of the campaign.",
-						},
-						"created": schema.StringAttribute{
-							Computed:    true,
-							Description: "The ISO 8601 formatted date and time when the resource was created.",
-						},
-						"created_by": schema.StringAttribute{
-							Computed:    true,
-							Description: "The id of the Okta user who created the resource.",
-						},
-						"last_updated": schema.StringAttribute{
-							Computed:    true,
-							Description: "The ISO 8601 formatted date and time when the object was last updated.",
-						},
-						"last_updated_by": schema.StringAttribute{
-							Computed:    true,
-							Description: "The id of the Okta user who last updated the object.",
-						},
-					},
-				},
+			"campaigns": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.ObjectType{AttrTypes: campaignListItemAttrTypes()},
 				Description: "List of campaigns.",
 			},
 		},
@@ -221,6 +171,7 @@ func (d *campaignsDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	data.Campaigns = campaignsList
+	data.ID = types.StringValue("campaigns")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
