@@ -13,7 +13,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var _ datasource.DataSource = &campaignsDataSource{}
+var (
+	_ datasource.DataSource              = &campaignsDataSource{}
+	_ datasource.DataSourceWithConfigure = &campaignsDataSource{}
+)
 
 func newCampaignsDataSource() datasource.DataSource {
 	return &campaignsDataSource{}
@@ -43,9 +46,9 @@ func (d *campaignsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	resp.Schema = schema.Schema{
 		Description: "Lists all or a subset of campaigns in your organization. Use the `filter` parameter to narrow results by name, status, scheduleType, reviewerType, and recurringCampaignId. Use `order_by` to sort by name, created, startDate, endDate, or status.",
 		Attributes: map[string]schema.Attribute{
+			// Placeholder ID required by the terraform-plugin-sdk/v2 test framework state shim.
 			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: "Placeholder ID required by the terraform-plugin-sdk/v2 test framework state shim.",
+				Computed: true,
 			},
 			"filter": schema.StringAttribute{
 				Optional:    true,

@@ -250,11 +250,12 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// Both clients share the same recorder, so we can stop
 			// it via either client's transport.
-			rtHelper := config.OktaIDaaSClient.(HttpClientHelper)
-			rt := rtHelper.Transport()
-			err := rt.(*recorder.Recorder).Stop()
-			if err != nil {
-				t.Error(err)
+			if helper, ok := config.OktaIDaaSClient.(HttpClientHelper); ok {
+				if rec, ok := helper.Transport().(*recorder.Recorder); ok {
+					if err := rec.Stop(); err != nil {
+						t.Error(err)
+					}
+				}
 			}
 			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
 		}

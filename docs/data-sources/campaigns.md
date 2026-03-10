@@ -32,7 +32,7 @@ data "okta_campaigns" "recent" {
 ### Optional
 
 - `filter` (String) Filter expression to narrow results. Supported campaign properties: name, status, scheduleType, reviewerType, recurringCampaignId.
-- `limit` (Number) Maximum number of campaigns to return per page. When not set, all pages are fetched.
+- `limit` (Number) Maximum number of campaigns to return per page. Pagination is handled automatically to return all campaigns when not set.
 - `order_by` (List of String) Order results by campaign properties: name, created, startDate, endDate, status. By default results are sorted by created.
 
 ### Read-Only
