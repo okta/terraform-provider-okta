@@ -45,7 +45,7 @@ func (d *campaignsDataSource) Schema(ctx context.Context, req datasource.SchemaR
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:    true,
-				Description: "Placeholder ID.",
+				Description: "Placeholder ID required by the terraform-plugin-sdk/v2 test framework state shim.",
 			},
 			"filter": schema.StringAttribute{
 				Optional:    true,
