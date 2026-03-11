@@ -131,8 +131,8 @@ func TestWrapSDKResource_LegacyCreate_PanicRecovery(t *testing.T) {
 		t.Fatal("expected error from panic recovery, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "provider crashed during the Create operation") {
-		t.Errorf("expected error to contain 'provider crashed during the Create operation', got %s", err.Error())
+	if !strings.Contains(err.Error(), "crashed during the Create operation") {
+		t.Errorf("expected error to contain 'crashed during the Create operation', got %s", err.Error())
 	}
 
 	if !strings.Contains(err.Error(), "nil pointer dereference") {
@@ -157,8 +157,8 @@ func TestWrapSDKResource_LegacyRead_PanicRecovery(t *testing.T) {
 		t.Fatal("expected error from panic recovery, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "provider crashed during the Read operation") {
-		t.Errorf("expected error to contain 'provider crashed during the Read operation', got %s", err.Error())
+	if !strings.Contains(err.Error(), "crashed during the Read operation") {
+		t.Errorf("expected error to contain 'crashed during the Read operation', got %s", err.Error())
 	}
 }
 
@@ -179,8 +179,8 @@ func TestWrapSDKResource_LegacyUpdate_PanicRecovery(t *testing.T) {
 		t.Fatal("expected error from panic recovery, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "provider crashed during the Update operation") {
-		t.Errorf("expected error to contain 'provider crashed during the Update operation', got %s", err.Error())
+	if !strings.Contains(err.Error(), "crashed during the Update operation") {
+		t.Errorf("expected error to contain 'crashed during the Update operation', got %s", err.Error())
 	}
 }
 
@@ -201,8 +201,8 @@ func TestWrapSDKResource_LegacyDelete_PanicRecovery(t *testing.T) {
 		t.Fatal("expected error from panic recovery, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "provider crashed during the Delete operation") {
-		t.Errorf("expected error to contain 'provider crashed during the Delete operation', got %s", err.Error())
+	if !strings.Contains(err.Error(), "crashed during the Delete operation") {
+		t.Errorf("expected error to contain 'crashed during the Delete operation', got %s", err.Error())
 	}
 }
 

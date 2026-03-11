@@ -3,8 +3,10 @@ package resources
 import (
 	"context"
 	"fmt"
-	"log"
+	"reflect"
 	"runtime/debug"
+	"sync"
+	"sync/atomic"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -18,7 +20,9 @@ var (
 
 // SafeDataSource wraps a data source with panic recovery to prevent provider crashes
 type SafeDataSource struct {
-	underlying datasource.DataSource
+	underlying     datasource.DataSource
+	nameOnce       sync.Once
+	dataSourceName atomic.Value // string
 }
 
 // NewSafeDataSource creates a new SafeDataSource wrapper around the given data source
@@ -42,25 +46,36 @@ func WrapDataSources(constructors []func() datasource.DataSource) []func() datas
 func (s *SafeDataSource) recoverPanic(diags *diag.Diagnostics, operation string) {
 	if r := recover(); r != nil {
 		stackTrace := string(debug.Stack())
+		dataSourceName, _ := s.dataSourceName.Load().(string)
+		if dataSourceName == "" && s.underlying != nil {
+			dataSourceName = typeBaseName(reflect.TypeOf(s.underlying))
+		}
+		if dataSourceName == "" {
+			dataSourceName = "unknown"
+		}
 
 		diags.AddError(
-			fmt.Sprintf("Provider Crash in %s", operation),
+			fmt.Sprintf("Provider Crash in %s operation of data source %s", operation, dataSourceName),
 			fmt.Sprintf(
-				"The provider encountered an unexpected error:\n\n%v\n\n"+
-					"Stack trace:\n%s\n\n"+
-					"Please report this issue to the provider maintainers at "+
-					"https://github.com/okta/terraform-provider-okta/issues with this stack trace.",
-				r, stackTrace,
+				"The Terraform Provider Okta crashed during the %s operation of data source %s.\n\n"+
+					"Please check if this issue has already been reported on\n"+
+					"https://github.com/okta/terraform-provider-okta/issues\n"+
+					"or create a new issue with this stack trace.\n"+
+					"Error: %v\n\nStack trace:\n%s\n\n",
+				operation, dataSourceName, r, stackTrace,
 			),
 		)
-
-		log.Printf("[CRITICAL] Provider panic in %s operation: %v\nStack trace:\n%s", operation, r, stackTrace)
 	}
 }
 
 // Metadata delegates to the underlying data source
 func (s *SafeDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	s.underlying.Metadata(ctx, req, resp)
+	if resp.TypeName != "" {
+		s.nameOnce.Do(func() {
+			s.dataSourceName.Store(resp.TypeName)
+		})
+	}
 }
 
 // Schema delegates to the underlying data source

@@ -3,7 +3,6 @@ package resources
 import (
 	"context"
 	"fmt"
-	"log"
 	"runtime/debug"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -13,36 +12,42 @@ import (
 // WrapSDKResource wraps a terraform-plugin-sdk/v2 resource with panic recovery.
 // This handles SDK-based resources like app_bookmark that use schema.Resource.
 func WrapSDKResource(r *schema.Resource) *schema.Resource {
+	return wrapSDKResourceWithName(r, "unknown")
+}
+
+// wrapSDKResourceWithName wraps a terraform-plugin-sdk/v2 resource with panic recovery,
+// including the resource name in error messages.
+func wrapSDKResourceWithName(r *schema.Resource, resourceName string) *schema.Resource {
 	if r == nil {
 		return nil
 	}
 
 	// Wrap context-aware functions (preferred)
 	if original := r.CreateContext; original != nil {
-		r.CreateContext = wrapSDKCreateContextFunc(original)
+		r.CreateContext = wrapSDKCreateContextFunc(original, resourceName)
 	}
 	if original := r.ReadContext; original != nil {
-		r.ReadContext = wrapSDKReadContextFunc(original)
+		r.ReadContext = wrapSDKReadContextFunc(original, resourceName)
 	}
 	if original := r.UpdateContext; original != nil {
-		r.UpdateContext = wrapSDKUpdateContextFunc(original)
+		r.UpdateContext = wrapSDKUpdateContextFunc(original, resourceName)
 	}
 	if original := r.DeleteContext; original != nil {
-		r.DeleteContext = wrapSDKDeleteContextFunc(original)
+		r.DeleteContext = wrapSDKDeleteContextFunc(original, resourceName)
 	}
 
 	// Wrap legacy functions (deprecated but still used in some resources)
 	if original := r.Create; original != nil {
-		r.Create = wrapSDKCreateFunc(original)
+		r.Create = wrapSDKCreateFunc(original, resourceName)
 	}
 	if original := r.Read; original != nil {
-		r.Read = wrapSDKReadFunc(original)
+		r.Read = wrapSDKReadFunc(original, resourceName)
 	}
 	if original := r.Update; original != nil {
-		r.Update = wrapSDKUpdateFunc(original)
+		r.Update = wrapSDKUpdateFunc(original, resourceName)
 	}
 	if original := r.Delete; original != nil {
-		r.Delete = wrapSDKDeleteFunc(original)
+		r.Delete = wrapSDKDeleteFunc(original, resourceName)
 	}
 
 	return r
@@ -52,83 +57,91 @@ func WrapSDKResource(r *schema.Resource) *schema.Resource {
 func WrapSDKResources(resources map[string]*schema.Resource) map[string]*schema.Resource {
 	wrapped := make(map[string]*schema.Resource, len(resources))
 	for name, r := range resources {
-		wrapped[name] = WrapSDKResource(r)
+		wrapped[name] = wrapSDKResourceWithName(r, name)
 	}
 	return wrapped
 }
 
 // panicRecoveryDiagnostic creates a diagnostic error from a recovered panic.
-func panicRecoveryDiagnostic(operation string, r interface{}, stackTrace string) diag.Diagnostics {
+func resourcePanicRecoveryDiagnostic(operation, resourceName string, r interface{}, stackTrace string) diag.Diagnostics {
+	if resourceName == "" {
+		resourceName = "unknown"
+	}
 	return diag.Diagnostics{
 		diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  fmt.Sprintf("Provider Crash in %s", operation),
+			Summary:  fmt.Sprintf("Provider Crash in %s operation of resource %s", operation, resourceName),
 			Detail: fmt.Sprintf(
-				"The provider crashed during the %s operation.\n\n"+
-					"This is always a bug in the provider and should be reported to the provider developers.\n\n"+
-					"Error: %v\n\nStack trace:\n%s",
-				operation, r, stackTrace),
+				"The Terraform Provider Okta crashed during the %s operation of resource %s.\n\n"+
+					"Please check if this issue has already been reported on\n"+
+					"https://github.com/okta/terraform-provider-okta/issues\n"+
+					"or create a new issue with this stack trace.\n"+
+					"Error: %v\n\nStack trace:\n%s\n\n",
+				operation, resourceName, r, stackTrace,
+			),
 		},
 	}
 }
 
 // panicRecoveryError creates an error from a recovered panic for legacy functions.
-func panicRecoveryError(operation string, r interface{}, stackTrace string) error {
+func panicRecoveryError(operation, resName string, r interface{}, stackTrace string) error {
+	if resName == "" {
+		resName = "unknown"
+	}
 	return fmt.Errorf(
-		"provider crashed during the %s operation.\n\n"+
-			"This is always a bug in the provider and should be reported to the provider developers.\n\n"+
-			"Error: %v\n\nStack trace:\n%s",
-		operation, r, stackTrace)
+		"The Terraform Provider Okta crashed during the %s operation of resource %s.\n\n"+
+			"Please check if this issue has already been reported on\n"+
+			"https://github.com/okta/terraform-provider-okta/issues\n"+
+			"or create a new issue with this stack trace.\n"+
+			"Error: %v\n\nStack trace:\n%s\n\n",
+		operation, resName, r, stackTrace,
+	)
 }
 
 // Context-aware function wrappers (each is a distinct type in the SDK)
 
-func wrapSDKCreateContextFunc(fn schema.CreateContextFunc) schema.CreateContextFunc {
+func wrapSDKCreateContextFunc(fn schema.CreateContextFunc, resourceName string) schema.CreateContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) (diagResult diag.Diagnostics) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				diagResult = panicRecoveryDiagnostic("Create", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Create operation: %v\nStack trace:\n%s", r, stackTrace)
+				diagResult = resourcePanicRecoveryDiagnostic("Create", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(ctx, d, meta)
 	}
 }
 
-func wrapSDKReadContextFunc(fn schema.ReadContextFunc) schema.ReadContextFunc {
+func wrapSDKReadContextFunc(fn schema.ReadContextFunc, resourceName string) schema.ReadContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) (diagResult diag.Diagnostics) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				diagResult = panicRecoveryDiagnostic("Read", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Read operation: %v\nStack trace:\n%s", r, stackTrace)
+				diagResult = resourcePanicRecoveryDiagnostic("Read", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(ctx, d, meta)
 	}
 }
 
-func wrapSDKUpdateContextFunc(fn schema.UpdateContextFunc) schema.UpdateContextFunc {
+func wrapSDKUpdateContextFunc(fn schema.UpdateContextFunc, resourceName string) schema.UpdateContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) (diagResult diag.Diagnostics) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				diagResult = panicRecoveryDiagnostic("Update", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Update operation: %v\nStack trace:\n%s", r, stackTrace)
+				diagResult = resourcePanicRecoveryDiagnostic("Update", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(ctx, d, meta)
 	}
 }
 
-func wrapSDKDeleteContextFunc(fn schema.DeleteContextFunc) schema.DeleteContextFunc {
+func wrapSDKDeleteContextFunc(fn schema.DeleteContextFunc, resourceName string) schema.DeleteContextFunc {
 	return func(ctx context.Context, d *schema.ResourceData, meta interface{}) (diagResult diag.Diagnostics) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				diagResult = panicRecoveryDiagnostic("Delete", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Delete operation: %v\nStack trace:\n%s", r, stackTrace)
+				diagResult = resourcePanicRecoveryDiagnostic("Delete", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(ctx, d, meta)
@@ -137,52 +150,48 @@ func wrapSDKDeleteContextFunc(fn schema.DeleteContextFunc) schema.DeleteContextF
 
 // Legacy function wrappers (each is a distinct type in the SDK)
 
-func wrapSDKCreateFunc(fn schema.CreateFunc) schema.CreateFunc {
+func wrapSDKCreateFunc(fn schema.CreateFunc, resourceName string) schema.CreateFunc {
 	return func(d *schema.ResourceData, meta interface{}) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				err = panicRecoveryError("Create", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Create operation: %v\nStack trace:\n%s", r, stackTrace)
+				err = panicRecoveryError("Create", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(d, meta)
 	}
 }
 
-func wrapSDKReadFunc(fn schema.ReadFunc) schema.ReadFunc {
+func wrapSDKReadFunc(fn schema.ReadFunc, resourceName string) schema.ReadFunc {
 	return func(d *schema.ResourceData, meta interface{}) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				err = panicRecoveryError("Read", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Read operation: %v\nStack trace:\n%s", r, stackTrace)
+				err = panicRecoveryError("Read", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(d, meta)
 	}
 }
 
-func wrapSDKUpdateFunc(fn schema.UpdateFunc) schema.UpdateFunc {
+func wrapSDKUpdateFunc(fn schema.UpdateFunc, resourceName string) schema.UpdateFunc {
 	return func(d *schema.ResourceData, meta interface{}) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				err = panicRecoveryError("Update", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Update operation: %v\nStack trace:\n%s", r, stackTrace)
+				err = panicRecoveryError("Update", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(d, meta)
 	}
 }
 
-func wrapSDKDeleteFunc(fn schema.DeleteFunc) schema.DeleteFunc {
+func wrapSDKDeleteFunc(fn schema.DeleteFunc, resourceName string) schema.DeleteFunc {
 	return func(d *schema.ResourceData, meta interface{}) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				stackTrace := string(debug.Stack())
-				err = panicRecoveryError("Delete", r, stackTrace)
-				log.Printf("[CRITICAL] Provider panic in Delete operation: %v\nStack trace:\n%s", r, stackTrace)
+				err = panicRecoveryError("Delete", resourceName, r, stackTrace)
 			}
 		}()
 		return fn(d, meta)

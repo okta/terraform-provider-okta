@@ -48,8 +48,8 @@ func TestWrapSDKDataSource_LegacyRead_PanicRecovery(t *testing.T) {
 		t.Fatal("expected error from panic recovery, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "provider crashed during the Read operation") {
-		t.Errorf("expected error to contain 'provider crashed during the Read operation', got %s", err.Error())
+	if !strings.Contains(err.Error(), "The Terraform Provider Okta crashed during the Read operation") {
+		t.Errorf("expected error to contain 'The Terraform Provider Okta crashed during the Read operation', got %s", err.Error())
 	}
 }
 
