@@ -96,6 +96,7 @@ resource "okta_app_oauth" "example" {
 - `login_uri` (String) URI that initiates login.
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 - `logo_uri` (String) URI that references a logo for the client.
+- `network` (Block List, Max: 1) Network restrictions for the application client. (see [below for nested schema](#nestedblock--network))
 - `omit_secret` (Boolean) This tells the provider not manage the client_secret value in state. When this is false (the default), it will cause the auto-generated client_secret to be persisted in the client_secret attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.
 - `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 - `policy_uri` (String) URI to web page providing client policy document.
@@ -159,6 +160,19 @@ Optional:
 - `n` (String) RSA Modulus
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point
+
+
+<a id="nestedblock--network"></a>
+### Nested Schema for `network`
+
+Required:
+
+- `connection` (String) The network connection type. Can be `ANYWHERE` or `ZONE`.
+
+Optional:
+
+- `exclude` (Set of String) IP zones to exclude when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.
+- `include` (Set of String) IP zones to include when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.
 
 
 <a id="nestedblock--timeouts"></a>
