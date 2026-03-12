@@ -1,0 +1,31 @@
+{%- set singularOp = operations.get("singular", {}) %}
+{%- set responseSchema = singularOp.get("response_schema", {}) %}
+{%- set allParams = singularOp.get("schema", {})|parameters %}
+
+// {{ name|camel_case }}DataSource defines the data source implementation.
+type {{ name|variable_name }}DataSource struct {
+	Config *config.Config
+}
+
+// {{ name|camel_case }}DataSourceModel describes the data source data model.
+type {{ name|variable_name }}DataSourceModel struct {
+	ID types.String `tfsdk:"id"`
+
+	{%- for param in allParams.get("path", []) %}
+	{%- if param.name != "id" %}
+	{{ param.name|camel_case }} types.{{ param.schema|get_terraform_schema_type }} `tfsdk:"{{ param.name|snake_case }}"`
+	{%- endif %}
+	{%- endfor %}
+
+	{%- for param in allParams.get("query", []) %}
+	{{ param.name|camel_case }} types.{{ param.schema|get_terraform_schema_type }} `tfsdk:"{{ param.name|snake_case }}"`
+	{%- endfor %}
+
+	{%- if responseSchema %}
+	{%- for propName, propSchema in responseSchema.get("properties", {}).items() %}
+	{%- if propName != "id" %}
+	{{ propName|camel_case }} types.{{ propSchema|get_terraform_schema_type }} `tfsdk:"{{ propName|snake_case }}"`
+	{%- endif %}
+	{%- endfor %}
+	{%- endif %}
+}

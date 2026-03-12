@@ -1,0 +1,30 @@
+{%- set createOp = operations.get(CREATE_OPERATION, {}) %}
+
+func (r *{{ name|variable_name }}Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan {{ name|variable_name }}Model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// TODO: Build the API request from the plan
+	// Example:
+	// createReq := r.buildCreateRequest(ctx, &plan)
+	
+	// TODO: Implement API call to create the resource
+	// Example:
+	// client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	// result, _, err := client.{{ api_tag }}API.Create{{ name|camel_case }}(ctx).Body(createReq).Execute()
+	// if err != nil {
+	//     resp.Diagnostics.AddError("Error creating {{ name }}", err.Error())
+	//     return
+	// }
+
+	// TODO: Set the ID from the response
+	// plan.ID = types.StringValue(result.GetId())
+
+	// TODO: Map any computed values from response to plan
+	// r.mapResponseToState(ctx, result, &plan)
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+}

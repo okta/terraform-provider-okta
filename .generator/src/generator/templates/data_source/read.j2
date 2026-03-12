@@ -1,0 +1,57 @@
+{%- set singularOp = operations.get("singular", {}) %}
+{%- set pluralOp = operations.get("plural", {}) %}
+{%- set primaryId = get_terraform_primary_id(operations, "singular") %}
+{%- set apiTagName = api_tag|camel_case %}
+
+func (d *{{ name|variable_name }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state {{ name|variable_name }}DataSourceModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	{%- if singularOp and primaryId %}
+
+	if !state.ID.IsNull() && !state.ID.IsUnknown() && state.ID.ValueString() != "" {
+		// Fetch by ID using singular endpoint
+		// TODO: Replace with the actual API call
+		// client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
+		// result, _, err := client.{{ apiTagName }}API.{{ singularOp.get("operation_id", "Get" + name|camel_case) }}(ctx, state.ID.ValueString()).Execute()
+		// if err != nil {
+		// resp.Diagnostics.AddError(
+// "Failed to read {{ name|snake_case|replace('_', ' ') }}",
+// fmt.Sprintf("Error reading {{ name|snake_case }}: %s", err.Error()),
+		// )
+		// return
+		// }
+		// mapResponseToState(ctx, result, &state, &resp.Diagnostics)
+		_ = ctx
+	}
+	{%- endif %}
+
+	{%- if pluralOp %}
+	{%- if not singularOp or not primaryId %}
+	{
+	{%- else %}
+	 else {
+	{%- endif %}
+		// Fetch using list/plural endpoint and filter
+		// TODO: Replace with the actual API call
+		// client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
+		// request := client.{{ apiTagName }}API.{{ pluralOp.get("operation_id", "List" + name|camel_case + "s") }}(ctx)
+		// results, _, err := request.Execute()
+		// if err != nil {
+		// resp.Diagnostics.AddError(
+// "Failed to list {{ name|snake_case|replace('_', ' ') }}",
+// fmt.Sprintf("Error listing {{ name|snake_case }}: %s", err.Error()),
+		// )
+		// return
+		// }
+		// TODO: Filter results based on state fields and call mapResponseToState
+		_ = ctx
+	}
+	{%- endif %}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}

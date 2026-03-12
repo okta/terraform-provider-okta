@@ -1,0 +1,23 @@
+{%- set deleteOp = operations.get(DELETE_OPERATION, {}) %}
+
+func (r *{{ name|variable_name }}Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state {{ name|variable_name }}Model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+
+	// TODO: Implement API call to delete the resource
+	// Example:
+	// client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	// httpResp, err := client.{{ api_tag }}API.Delete{{ name|camel_case }}(ctx, id).Execute()
+	// if err != nil {
+	//     if httpResp != nil && httpResp.StatusCode == 404 {
+	//         return
+	//     }
+	//     resp.Diagnostics.AddError("Error deleting {{ name }}", err.Error())
+	//     return
+	// }
+}

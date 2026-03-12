@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "okta-terraform-generator"
+version = "0.1.0"
+description = "Generate Terraform Provider code for Okta from OpenAPI specifications"
+authors = ["Okta"]
+readme = "README.md"
+packages = [{include = "generator", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.0"
+jinja2 = "^3.1.0"
+pyyaml = "^6.0"
+jsonref = "^1.1.0"
+
+[tool.poetry.scripts]
+okta-tf-generator = "generator.cli:cli"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

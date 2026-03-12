@@ -1,0 +1,36 @@
+{%- set updateOp = operations.get(UPDATE_OPERATION, {}) %}
+
+func (r *{{ name|variable_name }}Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan {{ name|variable_name }}Model
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state {{ name|variable_name }}Model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+
+	// TODO: Build the API request from the plan
+	// Example:
+	// updateReq := r.buildUpdateRequest(ctx, &plan)
+	
+	// TODO: Implement API call to update the resource
+	// Example:
+	// client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	// result, _, err := client.{{ api_tag }}API.Update{{ name|camel_case }}(ctx, id).Body(updateReq).Execute()
+	// if err != nil {
+	//     resp.Diagnostics.AddError("Error updating {{ name }}", err.Error())
+	//     return
+	// }
+
+	// TODO: Map any computed values from response to plan
+	// r.mapResponseToState(ctx, result, &plan)
+
+	plan.ID = state.ID
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+}

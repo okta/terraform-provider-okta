@@ -1,0 +1,717 @@
+datasources:
+  api_service_integrations:
+    api_tag: ApiServiceIntegrations
+    plural:
+      method: get
+      path: /integrations/api/v1/api-services
+    singular:
+      method: get
+      path: /integrations/api/v1/api-services/{apiServiceId}
+  application:
+    api_tag: Application
+    plural:
+      method: get
+      path: /api/v1/apps
+    singular:
+      method: get
+      path: /api/v1/apps/{appId}
+  authenticator:
+    api_tag: Authenticator
+    plural:
+      method: get
+      path: /api/v1/authenticators
+    singular:
+      method: get
+      path: /api/v1/authenticators/{authenticatorId}
+  authorization_server:
+    api_tag: AuthorizationServer
+    plural:
+      method: get
+      path: /api/v1/authorizationServers
+    singular:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}
+  behavior:
+    api_tag: Behavior
+    plural:
+      method: get
+      path: /api/v1/behaviors
+    singular:
+      method: get
+      path: /api/v1/behaviors/{behaviorId}
+  brands:
+    api_tag: Brands
+    plural:
+      method: get
+      path: /api/v1/brands
+    singular:
+      method: get
+      path: /api/v1/brands/{brandId}
+  captcha:
+    api_tag: CAPTCHA
+    plural:
+      method: get
+      path: /api/v1/captchas
+    singular:
+      method: get
+      path: /api/v1/captchas/{captchaId}
+  custom_domain:
+    api_tag: CustomDomain
+    plural:
+      method: get
+      path: /api/v1/domains
+    singular:
+      method: get
+      path: /api/v1/domains/{domainId}
+  device_assurance:
+    api_tag: DeviceAssurance
+    plural:
+      method: get
+      path: /api/v1/device-assurances
+    singular:
+      method: get
+      path: /api/v1/device-assurances/{deviceAssuranceId}
+  device_posture_check:
+    api_tag: DevicePostureCheck
+    plural:
+      method: get
+      path: /api/v1/device-posture-checks
+    singular:
+      method: get
+      path: /api/v1/device-posture-checks/{postureCheckId}
+  email_domain:
+    api_tag: EmailDomain
+    plural:
+      method: get
+      path: /api/v1/email-domains
+    singular:
+      method: get
+      path: /api/v1/email-domains/{emailDomainId}
+  email_server:
+    api_tag: EmailServer
+    plural:
+      method: get
+      path: /api/v1/email-servers
+    singular:
+      method: get
+      path: /api/v1/email-servers/{emailServerId}
+  event_hook:
+    api_tag: EventHook
+    plural:
+      method: get
+      path: /api/v1/eventHooks
+    singular:
+      method: get
+      path: /api/v1/eventHooks/{eventHookId}
+  group:
+    api_tag: Group
+    plural:
+      method: get
+      path: /api/v1/groups
+    singular:
+      method: get
+      path: /api/v1/groups/{groupId}
+  hook_key:
+    api_tag: HookKey
+    plural:
+      method: get
+      path: /api/v1/hook-keys
+    singular:
+      method: get
+      path: /api/v1/hook-keys/{id}
+  identity_provider:
+    api_tag: IdentityProvider
+    plural:
+      method: get
+      path: /api/v1/idps
+    singular:
+      method: get
+      path: /api/v1/idps/{idpId}
+  inline_hook:
+    api_tag: InlineHook
+    plural:
+      method: get
+      path: /api/v1/inlineHooks
+    singular:
+      method: get
+      path: /api/v1/inlineHooks/{inlineHookId}
+  linked_object:
+    api_tag: LinkedObject
+    plural:
+      method: get
+      path: /api/v1/meta/schemas/user/linkedObjects
+    singular:
+      method: get
+      path: /api/v1/meta/schemas/user/linkedObjects/{linkedObjectName}
+  log_stream:
+    api_tag: LogStream
+    plural:
+      method: get
+      path: /api/v1/logStreams
+    singular:
+      method: get
+      path: /api/v1/logStreams/{logStreamId}
+  network_zone:
+    api_tag: NetworkZone
+    plural:
+      method: get
+      path: /api/v1/zones
+    singular:
+      method: get
+      path: /api/v1/zones/{zoneId}
+  policy:
+    api_tag: Policy
+    plural:
+      method: get
+      path: /api/v1/policies
+    singular:
+      method: get
+      path: /api/v1/policies/{policyId}
+  principal_rate_limit:
+    api_tag: PrincipalRateLimit
+    plural:
+      method: get
+      path: /api/v1/principal-rate-limits
+    singular:
+      method: get
+      path: /api/v1/principal-rate-limits/{principalRateLimitId}
+  push_provider:
+    api_tag: PushProvider
+    plural:
+      method: get
+      path: /api/v1/push-providers
+    singular:
+      method: get
+      path: /api/v1/push-providers/{pushProviderId}
+  realm:
+    api_tag: Realm
+    plural:
+      method: get
+      path: /api/v1/realms
+    singular:
+      method: get
+      path: /api/v1/realms/{realmId}
+  realm_assignment:
+    api_tag: RealmAssignment
+    plural:
+      method: get
+      path: /api/v1/realm-assignments
+    singular:
+      method: get
+      path: /api/v1/realm-assignments/{assignmentId}
+  role_c_resource_set:
+    api_tag: RoleCResourceSet
+    plural:
+      method: get
+      path: /api/v1/iam/resource-sets
+    singular:
+      method: get
+      path: /api/v1/iam/resource-sets/{resourceSetIdOrLabel}
+  role_e_custom:
+    api_tag: RoleECustom
+    plural:
+      method: get
+      path: /api/v1/iam/roles
+    singular:
+      method: get
+      path: /api/v1/iam/roles/{roleIdOrLabel}
+  service_account:
+    api_tag: ServiceAccount
+    plural:
+      method: get
+      path: /privileged-access/api/v1/service-accounts
+    singular:
+      method: get
+      path: /privileged-access/api/v1/service-accounts/{id}
+  ssf_receiver:
+    api_tag: SSFReceiver
+    plural:
+      method: get
+      path: /api/v1/security-events-providers
+    singular:
+      method: get
+      path: /api/v1/security-events-providers/{securityEventProviderId}
+  trusted_origin:
+    api_tag: TrustedOrigin
+    plural:
+      method: get
+      path: /api/v1/trustedOrigins
+    singular:
+      method: get
+      path: /api/v1/trustedOrigins/{trustedOriginId}
+  ui_schema:
+    api_tag: UISchema
+    plural:
+      method: get
+      path: /api/v1/meta/uischemas
+    singular:
+      method: get
+      path: /api/v1/meta/uischemas/{id}
+  user:
+    api_tag: User
+    plural:
+      method: get
+      path: /api/v1/users
+    singular:
+      method: get
+      path: /api/v1/users/{id}
+  user_type:
+    api_tag: UserType
+    plural:
+      method: get
+      path: /api/v1/meta/types/user
+    singular:
+      method: get
+      path: /api/v1/meta/types/user/{typeId}
+resources:
+  api_service_integrations:
+    api_tag: ApiServiceIntegrations
+    create:
+      method: post
+      path: /integrations/api/v1/api-services
+    delete:
+      method: delete
+      path: /integrations/api/v1/api-services/{apiServiceId}
+    read:
+      method: get
+      path: /integrations/api/v1/api-services/{apiServiceId}
+  application:
+    api_tag: Application
+    create:
+      method: post
+      path: /api/v1/apps
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}
+    read:
+      method: get
+      path: /api/v1/apps/{appId}
+    update:
+      method: put
+      path: /api/v1/apps/{appId}
+  authenticator:
+    api_tag: Authenticator
+    create:
+      method: post
+      path: /api/v1/authenticators
+    read:
+      method: get
+      path: /api/v1/authenticators/{authenticatorId}
+    update:
+      method: put
+      path: /api/v1/authenticators/{authenticatorId}
+  authorization_server:
+    api_tag: AuthorizationServer
+    create:
+      method: post
+      path: /api/v1/authorizationServers
+    delete:
+      method: delete
+      path: /api/v1/authorizationServers/{authServerId}
+    read:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}
+    update:
+      method: put
+      path: /api/v1/authorizationServers/{authServerId}
+  behavior:
+    api_tag: Behavior
+    create:
+      method: post
+      path: /api/v1/behaviors
+    delete:
+      method: delete
+      path: /api/v1/behaviors/{behaviorId}
+    read:
+      method: get
+      path: /api/v1/behaviors/{behaviorId}
+    update:
+      method: put
+      path: /api/v1/behaviors/{behaviorId}
+  brands:
+    api_tag: Brands
+    create:
+      method: post
+      path: /api/v1/brands
+    delete:
+      method: delete
+      path: /api/v1/brands/{brandId}
+    read:
+      method: get
+      path: /api/v1/brands/{brandId}
+    update:
+      method: put
+      path: /api/v1/brands/{brandId}
+  captcha:
+    api_tag: CAPTCHA
+    create:
+      method: post
+      path: /api/v1/captchas
+    delete:
+      method: delete
+      path: /api/v1/captchas/{captchaId}
+    read:
+      method: get
+      path: /api/v1/captchas/{captchaId}
+    update:
+      method: put
+      path: /api/v1/captchas/{captchaId}
+  custom_domain:
+    api_tag: CustomDomain
+    create:
+      method: post
+      path: /api/v1/domains
+    delete:
+      method: delete
+      path: /api/v1/domains/{domainId}
+    read:
+      method: get
+      path: /api/v1/domains/{domainId}
+    update:
+      method: put
+      path: /api/v1/domains/{domainId}
+  device_assurance:
+    api_tag: DeviceAssurance
+    create:
+      method: post
+      path: /api/v1/device-assurances
+    delete:
+      method: delete
+      path: /api/v1/device-assurances/{deviceAssuranceId}
+    read:
+      method: get
+      path: /api/v1/device-assurances/{deviceAssuranceId}
+    update:
+      method: put
+      path: /api/v1/device-assurances/{deviceAssuranceId}
+  device_posture_check:
+    api_tag: DevicePostureCheck
+    create:
+      method: post
+      path: /api/v1/device-posture-checks
+    delete:
+      method: delete
+      path: /api/v1/device-posture-checks/{postureCheckId}
+    read:
+      method: get
+      path: /api/v1/device-posture-checks/{postureCheckId}
+    update:
+      method: put
+      path: /api/v1/device-posture-checks/{postureCheckId}
+  email_domain:
+    api_tag: EmailDomain
+    create:
+      method: post
+      path: /api/v1/email-domains
+    delete:
+      method: delete
+      path: /api/v1/email-domains/{emailDomainId}
+    read:
+      method: get
+      path: /api/v1/email-domains/{emailDomainId}
+    update:
+      method: put
+      path: /api/v1/email-domains/{emailDomainId}
+  email_server:
+    api_tag: EmailServer
+    create:
+      method: post
+      path: /api/v1/email-servers
+    delete:
+      method: delete
+      path: /api/v1/email-servers/{emailServerId}
+    read:
+      method: get
+      path: /api/v1/email-servers/{emailServerId}
+    update:
+      method: patch
+      path: /api/v1/email-servers/{emailServerId}
+  event_hook:
+    api_tag: EventHook
+    create:
+      method: post
+      path: /api/v1/eventHooks
+    delete:
+      method: delete
+      path: /api/v1/eventHooks/{eventHookId}
+    read:
+      method: get
+      path: /api/v1/eventHooks/{eventHookId}
+    update:
+      method: put
+      path: /api/v1/eventHooks/{eventHookId}
+  group:
+    api_tag: Group
+    create:
+      method: post
+      path: /api/v1/groups
+    delete:
+      method: delete
+      path: /api/v1/groups/{groupId}
+    read:
+      method: get
+      path: /api/v1/groups/{groupId}
+    update:
+      method: put
+      path: /api/v1/groups/{groupId}
+  hook_key:
+    api_tag: HookKey
+    create:
+      method: post
+      path: /api/v1/hook-keys
+    delete:
+      method: delete
+      path: /api/v1/hook-keys/{id}
+    read:
+      method: get
+      path: /api/v1/hook-keys/{id}
+    update:
+      method: put
+      path: /api/v1/hook-keys/{id}
+  identity_provider:
+    api_tag: IdentityProvider
+    create:
+      method: post
+      path: /api/v1/idps
+    delete:
+      method: delete
+      path: /api/v1/idps/{idpId}
+    read:
+      method: get
+      path: /api/v1/idps/{idpId}
+    update:
+      method: put
+      path: /api/v1/idps/{idpId}
+  inline_hook:
+    api_tag: InlineHook
+    create:
+      method: post
+      path: /api/v1/inlineHooks
+    delete:
+      method: delete
+      path: /api/v1/inlineHooks/{inlineHookId}
+    read:
+      method: get
+      path: /api/v1/inlineHooks/{inlineHookId}
+    update:
+      method: put
+      path: /api/v1/inlineHooks/{inlineHookId}
+  linked_object:
+    api_tag: LinkedObject
+    create:
+      method: post
+      path: /api/v1/meta/schemas/user/linkedObjects
+    delete:
+      method: delete
+      path: /api/v1/meta/schemas/user/linkedObjects/{linkedObjectName}
+    read:
+      method: get
+      path: /api/v1/meta/schemas/user/linkedObjects/{linkedObjectName}
+  log_stream:
+    api_tag: LogStream
+    create:
+      method: post
+      path: /api/v1/logStreams
+    delete:
+      method: delete
+      path: /api/v1/logStreams/{logStreamId}
+    read:
+      method: get
+      path: /api/v1/logStreams/{logStreamId}
+    update:
+      method: put
+      path: /api/v1/logStreams/{logStreamId}
+  network_zone:
+    api_tag: NetworkZone
+    create:
+      method: post
+      path: /api/v1/zones
+    delete:
+      method: delete
+      path: /api/v1/zones/{zoneId}
+    read:
+      method: get
+      path: /api/v1/zones/{zoneId}
+    update:
+      method: put
+      path: /api/v1/zones/{zoneId}
+  policy:
+    api_tag: Policy
+    create:
+      method: post
+      path: /api/v1/policies
+    delete:
+      method: delete
+      path: /api/v1/policies/{policyId}
+    read:
+      method: get
+      path: /api/v1/policies/{policyId}
+    update:
+      method: put
+      path: /api/v1/policies/{policyId}
+  principal_rate_limit:
+    api_tag: PrincipalRateLimit
+    create:
+      method: post
+      path: /api/v1/principal-rate-limits
+    read:
+      method: get
+      path: /api/v1/principal-rate-limits/{principalRateLimitId}
+    update:
+      method: put
+      path: /api/v1/principal-rate-limits/{principalRateLimitId}
+  push_provider:
+    api_tag: PushProvider
+    create:
+      method: post
+      path: /api/v1/push-providers
+    delete:
+      method: delete
+      path: /api/v1/push-providers/{pushProviderId}
+    read:
+      method: get
+      path: /api/v1/push-providers/{pushProviderId}
+    update:
+      method: put
+      path: /api/v1/push-providers/{pushProviderId}
+  realm:
+    api_tag: Realm
+    create:
+      method: post
+      path: /api/v1/realms
+    delete:
+      method: delete
+      path: /api/v1/realms/{realmId}
+    read:
+      method: get
+      path: /api/v1/realms/{realmId}
+    update:
+      method: put
+      path: /api/v1/realms/{realmId}
+  realm_assignment:
+    api_tag: RealmAssignment
+    create:
+      method: post
+      path: /api/v1/realm-assignments
+    delete:
+      method: delete
+      path: /api/v1/realm-assignments/{assignmentId}
+    read:
+      method: get
+      path: /api/v1/realm-assignments/{assignmentId}
+    update:
+      method: put
+      path: /api/v1/realm-assignments/{assignmentId}
+  role_c_resource_set:
+    api_tag: RoleCResourceSet
+    create:
+      method: post
+      path: /api/v1/iam/resource-sets
+    delete:
+      method: delete
+      path: /api/v1/iam/resource-sets/{resourceSetIdOrLabel}
+    read:
+      method: get
+      path: /api/v1/iam/resource-sets/{resourceSetIdOrLabel}
+    update:
+      method: put
+      path: /api/v1/iam/resource-sets/{resourceSetIdOrLabel}
+  role_e_custom:
+    api_tag: RoleECustom
+    create:
+      method: post
+      path: /api/v1/iam/roles
+    delete:
+      method: delete
+      path: /api/v1/iam/roles/{roleIdOrLabel}
+    read:
+      method: get
+      path: /api/v1/iam/roles/{roleIdOrLabel}
+    update:
+      method: put
+      path: /api/v1/iam/roles/{roleIdOrLabel}
+  service_account:
+    api_tag: ServiceAccount
+    create:
+      method: post
+      path: /privileged-access/api/v1/service-accounts
+    delete:
+      method: delete
+      path: /privileged-access/api/v1/service-accounts/{id}
+    read:
+      method: get
+      path: /privileged-access/api/v1/service-accounts/{id}
+    update:
+      method: patch
+      path: /privileged-access/api/v1/service-accounts/{id}
+  ssf_receiver:
+    api_tag: SSFReceiver
+    create:
+      method: post
+      path: /api/v1/security-events-providers
+    delete:
+      method: delete
+      path: /api/v1/security-events-providers/{securityEventProviderId}
+    read:
+      method: get
+      path: /api/v1/security-events-providers/{securityEventProviderId}
+    update:
+      method: put
+      path: /api/v1/security-events-providers/{securityEventProviderId}
+  trusted_origin:
+    api_tag: TrustedOrigin
+    create:
+      method: post
+      path: /api/v1/trustedOrigins
+    delete:
+      method: delete
+      path: /api/v1/trustedOrigins/{trustedOriginId}
+    read:
+      method: get
+      path: /api/v1/trustedOrigins/{trustedOriginId}
+    update:
+      method: put
+      path: /api/v1/trustedOrigins/{trustedOriginId}
+  ui_schema:
+    api_tag: UISchema
+    create:
+      method: post
+      path: /api/v1/meta/uischemas
+    delete:
+      method: delete
+      path: /api/v1/meta/uischemas/{id}
+    read:
+      method: get
+      path: /api/v1/meta/uischemas/{id}
+    update:
+      method: put
+      path: /api/v1/meta/uischemas/{id}
+  user:
+    api_tag: User
+    create:
+      method: post
+      path: /api/v1/users
+    delete:
+      method: delete
+      path: /api/v1/users/{id}
+    read:
+      method: get
+      path: /api/v1/users/{id}
+    update:
+      method: put
+      path: /api/v1/users/{id}
+  user_type:
+    api_tag: UserType
+    create:
+      method: post
+      path: /api/v1/meta/types/user
+    delete:
+      method: delete
+      path: /api/v1/meta/types/user/{typeId}
+    read:
+      method: get
+      path: /api/v1/meta/types/user/{typeId}
+    update:
+      method: put
+      path: /api/v1/meta/types/user/{typeId}
+

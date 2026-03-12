@@ -1,0 +1,30 @@
+{%- set readOp = operations.get(GET_OPERATION, {}) %}
+{%- set primaryId = get_terraform_primary_id(operations) %}
+
+func (r *{{ name|variable_name }}Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state {{ name|variable_name }}Model
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+
+	// TODO: Implement API call to read the resource
+	// Example:
+	// client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	// result, httpResp, err := client.{{ api_tag }}API.Get{{ name|camel_case }}(ctx, id).Execute()
+	// if err != nil {
+	//     if httpResp != nil && httpResp.StatusCode == 404 {
+	//         resp.State.RemoveResource(ctx)
+	//         return
+	//     }
+	//     resp.Diagnostics.AddError("Error reading {{ name }}", err.Error())
+	//     return
+	// }
+
+	// TODO: Map API response to state
+	// r.mapResponseToState(ctx, result, &state)
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}

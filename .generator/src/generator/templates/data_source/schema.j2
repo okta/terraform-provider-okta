@@ -1,0 +1,48 @@
+{%- set singularOp = operations.get("singular", {}) %}
+{%- set pluralOp = operations.get("plural", {}) %}
+{%- set allParams = singularOp.get("schema", {})|parameters %}
+{%- set responseSchema = singularOp.get("response_schema", {}) %}
+{%- set queryParams = allParams.get("query", []) %}
+{%- set pathParams = allParams.get("path", []) %}
+
+func (d *{{ name|variable_name }}DataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Data source for the Okta `{{ name|snake_case }}` resource.",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Unique identifier of the {{ name|snake_case|replace('_', ' ') }}.",
+				Optional:            true,
+				Computed:            true,
+			},
+
+			{%- for param in pathParams %}
+			{%- if param.name != "id" %}
+			"{{ param.name|snake_case }}": schema.StringAttribute{
+				Description: {{ param.description|default("")|sanitize_description|tojson }},
+				Optional:            true,
+				Computed:            true,
+			},
+			{%- endif %}
+			{%- endfor %}
+
+			{%- for param in queryParams %}
+			"{{ param.name|snake_case }}": schema.StringAttribute{
+				Description: {{ param.description|default("")|sanitize_description|tojson }},
+				Optional:            true,
+				Computed:            true,
+			},
+			{%- endfor %}
+
+			{%- if responseSchema %}
+			{%- for propName, propSchema in responseSchema.get("properties", {}).items() %}
+			{%- if propName != "id" %}
+			"{{ propName|snake_case }}": schema.{{ propSchema|get_terraform_schema_type }}Attribute{
+				Description: {{ propSchema.get("description", "")|sanitize_description|tojson }},
+				Computed:            true,
+			},
+			{%- endif %}
+			{%- endfor %}
+			{%- endif %}
+		},
+	}
+}
