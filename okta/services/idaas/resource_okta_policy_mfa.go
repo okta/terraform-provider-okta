@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -27,6 +28,10 @@ func resourcePolicyMfa() *schema.Resource {
 }
 
 func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := validateAuthenticators(ctx, d, meta); err != nil {
+		return diag.Errorf("invalid authenticator configuration: %v", err)
+	}
+
 	policy := buildMFAPolicy(d)
 	err := createPolicy(ctx, d, meta, policy)
 	if err != nil {
@@ -54,6 +59,10 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := validateAuthenticators(ctx, d, meta); err != nil {
+		return diag.Errorf("invalid authenticator configuration: %v", err)
+	}
+
 	policy := buildMFAPolicy(d)
 	err := updatePolicy(ctx, d, meta, policy)
 	if err != nil {
@@ -66,6 +75,55 @@ func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, meta i
 	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy: %v", err)
+	}
+	return nil
+}
+
+// getEnabledAuthenticators fetches all authenticators from Okta and returns a map of enabled ones
+func getEnabledAuthenticators(ctx context.Context, meta interface{}) (map[string]bool, error) {
+	client := getOktaClientFromMetadata(meta)
+	authenticators, _, err := client.Authenticator.ListAuthenticators(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list authenticators: %v", err)
+	}
+
+	enabled := make(map[string]bool)
+	for _, auth := range authenticators {
+		if auth.Status == "ACTIVE" {
+			enabled[auth.Key] = true
+		}
+	}
+	return enabled, nil
+}
+
+func validateAuthenticators(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	if d.Get("is_oie") != true {
+		return nil
+	}
+
+	enabledAuths, err := getEnabledAuthenticators(ctx, meta)
+	if err != nil {
+		return err
+	}
+
+	var invalidAuths []string
+	for _, key := range sdk.AuthenticatorProviders {
+		if key == "custom_app" || key == "external_idp" {
+			continue
+		}
+		rawFactor := d.Get(key).(map[string]interface{})
+		enroll := rawFactor["enroll"]
+		if enroll == nil {
+			continue
+		}
+		if enroll.(string) != "NOT_ALLOWED" && !enabledAuths[key] {
+			invalidAuths = append(invalidAuths, key)
+		}
+	}
+
+	if len(invalidAuths) > 0 {
+		return fmt.Errorf("the following authenticators are not enabled in your Okta org: %v. "+
+			"Either enable them in Okta or set enroll = \"NOT_ALLOWED\"", invalidAuths)
 	}
 	return nil
 }
@@ -271,51 +329,64 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 }
 
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
+	if k == "external_idp" || k == "custom_app" {
+		syncExternalIdpAuthenticator(d, k, authenticators)
+		return
+	}
+
+	var found *sdk.PolicyAuthenticator
+	for _, authenticator := range authenticators {
+		if authenticator.Key == k {
+			found = authenticator
+			break
+		}
+	}
+
+	if found != nil {
+		m := map[string]interface{}{
+			"enroll": found.Enroll.Self,
+		}
+		if found.Constraints != nil {
+			slice := found.Constraints.AaguidGroups
+			sort.Strings(slice)
+			m["constraints"] = strings.Join(slice, ",")
+		}
+		_ = d.Set(k, m)
+	} else {
+		rawFactor := d.Get(k).(map[string]interface{})
+		if rawFactor["enroll"] != nil && rawFactor["enroll"].(string) != "" {
+			_ = d.Set(k, map[string]interface{}{})
+		}
+	}
+}
+
+func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
 	externalIdps := make([]interface{}, 0)
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			if k != "external_idp" && k != "custom_app" {
+			if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
 				if authenticator.Constraints != nil {
 					slice := authenticator.Constraints.AaguidGroups
 					sort.Strings(slice)
-					// lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll":      authenticator.Enroll.Self,
 						"constraints": strings.Join(slice, ","),
 					})
 				} else {
-					// lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll": authenticator.Enroll.Self,
 					})
 				}
-				return
 			} else {
-				if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
-					if authenticator.Constraints != nil {
-						slice := authenticator.Constraints.AaguidGroups
-						sort.Strings(slice)
-						// lintignore:R001
-						_ = d.Set(k, map[string]interface{}{
-							"enroll":      authenticator.Enroll.Self,
-							"constraints": strings.Join(slice, ","),
-						})
-					} else {
-						// lintignore:R001
-						_ = d.Set(k, map[string]interface{}{
-							"enroll": authenticator.Enroll.Self,
-						})
-					}
-				} else {
-					m := make(map[string]interface{})
-					m["enroll"] = authenticator.Enroll.Self
-					m["id"] = authenticator.ID
-					if authenticator.Constraints != nil {
-						slice := authenticator.Constraints.AaguidGroups
-						sort.Strings(slice)
-						m["constraints"] = strings.Join(slice, ",")
-					}
+				m := make(map[string]interface{})
+				m["enroll"] = authenticator.Enroll.Self
+				m["id"] = authenticator.ID
+				if authenticator.Constraints != nil {
+					slice := authenticator.Constraints.AaguidGroups
+					sort.Strings(slice)
+					m["constraints"] = strings.Join(slice, ",")
 				}
+				externalIdps = append(externalIdps, m)
 			}
 		}
 	}
@@ -363,7 +434,13 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 					Type: schema.TypeString,
 				},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					return strings.HasSuffix(k, ".%") || new == ""
+					if strings.HasSuffix(k, ".%") {
+						return true
+					}
+					if old == "" && new == "" {
+						return true
+					}
+					return false
 				},
 			}
 		}
