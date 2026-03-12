@@ -45,6 +45,7 @@ func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "filter", "abc"),
 					resource.TestCheckResourceAttr(resourceName, "trust_claims", "true"),
+					resource.TestCheckResourceAttr(resourceName, "participate_slo", "false"),
 				),
 			},
 			{
@@ -68,6 +69,8 @@ func TestAccResourceOktaIdpOidc_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "request_signature_scope", "REQUEST"),
 					resource.TestCheckResourceAttr(resourceName, "filter", "xyz"),
 					resource.TestCheckResourceAttr(resourceName, "trust_claims", "false"),
+					resource.TestCheckResourceAttr(resourceName, "participate_slo", "true"),
+					resource.TestCheckResourceAttr(resourceName, "slo_url", "https://www.slo-url.com/logout"),
 				),
 			},
 		},

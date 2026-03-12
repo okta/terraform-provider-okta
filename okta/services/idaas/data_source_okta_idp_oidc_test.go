@@ -25,6 +25,8 @@ func TestAccDataSourceOktaIdpOidc_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_idp_oidc.test", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_idp_oidc.test", "trust_claims"),
+					resource.TestCheckResourceAttrSet("data.okta_idp_oidc.test", "participate_slo"),
+					resource.TestCheckResourceAttrSet("data.okta_idp_oidc.test", "slo_url"),
 				),
 			},
 		},

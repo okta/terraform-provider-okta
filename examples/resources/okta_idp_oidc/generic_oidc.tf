@@ -15,4 +15,5 @@ resource "okta_idp_oidc" "test" {
   username_template     = "idpuser.email"
   filter                = "abc"
   trust_claims          = true
+  participate_slo       = false
 }
