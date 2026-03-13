@@ -351,10 +351,12 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 			sort.Strings(slice)
 			m["constraints"] = strings.Join(slice, ",")
 		}
+		// lintignore:R001
 		_ = d.Set(k, m)
 	} else {
 		rawFactor := d.Get(k).(map[string]interface{})
 		if rawFactor["enroll"] != nil && rawFactor["enroll"].(string) != "" {
+			// lintignore:R001
 			_ = d.Set(k, map[string]interface{}{})
 		}
 	}
@@ -368,11 +370,13 @@ func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticato
 				if authenticator.Constraints != nil {
 					slice := authenticator.Constraints.AaguidGroups
 					sort.Strings(slice)
+					// lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll":      authenticator.Enroll.Self,
 						"constraints": strings.Join(slice, ","),
 					})
 				} else {
+					// lintignore:R001
 					_ = d.Set(k, map[string]interface{}{
 						"enroll": authenticator.Enroll.Self,
 					})
