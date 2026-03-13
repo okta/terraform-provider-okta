@@ -334,39 +334,36 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 		return
 	}
 
-	var found *sdk.PolicyAuthenticator
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			found = authenticator
-			break
-		}
-	}
-
-	if found != nil {
-		m := map[string]interface{}{
-			"enroll": found.Enroll.Self,
-		}
-		if found.Constraints != nil {
-			slice := found.Constraints.AaguidGroups
-			sort.Strings(slice)
-			m["constraints"] = strings.Join(slice, ",")
-		}
-		// lintignore:R001
-		_ = d.Set(k, m)
-	} else {
-		rawFactor := d.Get(k).(map[string]interface{})
-		if rawFactor["enroll"] != nil && rawFactor["enroll"].(string) != "" {
-			// lintignore:R001
-			_ = d.Set(k, map[string]interface{}{})
+			if authenticator.Constraints != nil {
+				slice := authenticator.Constraints.AaguidGroups
+				sort.Strings(slice)
+				// lintignore:R001
+				_ = d.Set(k, map[string]interface{}{
+					"enroll":      authenticator.Enroll.Self,
+					"constraints": strings.Join(slice, ","),
+				})
+			} else {
+				// lintignore:R001
+				_ = d.Set(k, map[string]interface{}{
+					"enroll": authenticator.Enroll.Self,
+				})
+			}
+			return
 		}
 	}
 }
 
 func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
-	externalIdps := make([]interface{}, 0)
-	for _, authenticator := range authenticators {
-		if authenticator.Key == k {
-			if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
+	if k == "custom_app" {
+		syncCustomAppAuthenticator(d, authenticators)
+		return
+	}
+
+	if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
+		for _, authenticator := range authenticators {
+			if authenticator.Key == k {
 				if authenticator.Constraints != nil {
 					slice := authenticator.Constraints.AaguidGroups
 					sort.Strings(slice)
@@ -381,21 +378,76 @@ func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticato
 						"enroll": authenticator.Enroll.Self,
 					})
 				}
-			} else {
-				m := make(map[string]interface{})
-				m["enroll"] = authenticator.Enroll.Self
-				m["id"] = authenticator.ID
-				if authenticator.Constraints != nil {
-					slice := authenticator.Constraints.AaguidGroups
-					sort.Strings(slice)
-					m["constraints"] = strings.Join(slice, ",")
-				}
-				externalIdps = append(externalIdps, m)
+				return
 			}
+		}
+		return
+	}
+
+	configuredIds := make(map[string]bool)
+	if rawIdps, ok := d.Get("external_idps").(*schema.Set); ok && rawIdps != nil {
+		for _, rawIdp := range rawIdps.List() {
+			if rawIdp == nil {
+				continue
+			}
+			idp := rawIdp.(map[string]interface{})
+			if id, ok := idp["id"].(string); ok && id != "" {
+				configuredIds[id] = true
+			}
+		}
+	}
+
+	externalIdps := make([]interface{}, 0)
+	for _, authenticator := range authenticators {
+		if authenticator.Key == k && configuredIds[authenticator.ID] {
+			m := make(map[string]interface{})
+			m["enroll"] = authenticator.Enroll.Self
+			m["id"] = authenticator.ID
+			if authenticator.Constraints != nil {
+				slice := authenticator.Constraints.AaguidGroups
+				sort.Strings(slice)
+				m["constraints"] = strings.Join(slice, ",")
+			}
+			externalIdps = append(externalIdps, m)
 		}
 	}
 	if len(externalIdps) > 0 {
 		_ = d.Set("external_idps", externalIdps)
+	}
+}
+
+func syncCustomAppAuthenticator(d *schema.ResourceData, authenticators []*sdk.PolicyAuthenticator) {
+	// Get the configured custom_app IDs
+	configuredIds := make(map[string]bool)
+	if rawCustomApps, ok := d.Get("custom_app").([]interface{}); ok {
+		for _, rawCustomApp := range rawCustomApps {
+			if rawCustomApp == nil {
+				continue
+			}
+			customApp := rawCustomApp.(map[string]interface{})
+			if id, ok := customApp["id"].(string); ok && id != "" {
+				configuredIds[id] = true
+			}
+		}
+	}
+
+	// Only sync custom_apps that are configured
+	customApps := make([]interface{}, 0)
+	for _, authenticator := range authenticators {
+		if authenticator.Key == "custom_app" && configuredIds[authenticator.ID] {
+			m := make(map[string]interface{})
+			m["enroll"] = authenticator.Enroll.Self
+			m["id"] = authenticator.ID
+			if authenticator.Constraints != nil {
+				slice := authenticator.Constraints.AaguidGroups
+				sort.Strings(slice)
+				m["constraints"] = strings.Join(slice, ",")
+			}
+			customApps = append(customApps, m)
+		}
+	}
+	if len(customApps) > 0 {
+		_ = d.Set("custom_app", customApps)
 	}
 }
 
@@ -438,13 +490,7 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 					Type: schema.TypeString,
 				},
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if strings.HasSuffix(k, ".%") {
-						return true
-					}
-					if old == "" && new == "" {
-						return true
-					}
-					return false
+					return strings.HasSuffix(k, ".%") || new == ""
 				},
 			}
 		}
