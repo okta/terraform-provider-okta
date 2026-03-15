@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -424,6 +425,11 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "URL reference to JWKS",
 			},
+			"preconfigured_app": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -536,15 +542,19 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 			if d.Get("issuer_mode").(string) != "" {
 				gc.IssuerMode = d.Get("issuer_mode").(string)
 			} else {
-				return errors.New("issuer_mode must be set when issuer_mode is set")
+				return errors.New("issuer_mode must be set")
 			}
 		} else {
-			return errors.New("issuer_mode must be set when issuer_mode is set")
+			return errors.New("issuer_mode must be set")
 		}
 
-		_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
-		if err != nil {
-			return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+		if _, ok := d.GetOk("preconfigured_app"); !ok { // the internal api for setting app oauth groups claim doesn't work with most preconfigured i.e. existing apps
+			_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+			if err != nil {
+				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+			}
+		} else {
+			log.Print("Skipping updating app oauth groups for preconfigured apps.")
 		}
 		return nil
 	}
@@ -953,6 +963,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 	app.SetLabel(d.Get("label").(string))
 	app.SetName("oidc_client")
+	if preConfigName, ok := d.GetOk("preconfigured_app"); ok && preConfigName != "" {
+		app.SetName(preConfigName.(string))
+	}
 	app.SetSignOnMode("OPENID_CONNECT")
 
 	// Build credentials
