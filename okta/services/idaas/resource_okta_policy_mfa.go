@@ -116,7 +116,11 @@ func validateAuthenticators(ctx context.Context, d *schema.ResourceData, meta in
 		if enroll == nil {
 			continue
 		}
-		if enroll.(string) != "NOT_ALLOWED" && !enabledAuths[key] {
+		enrollString, ok := enroll.(string)
+		if !ok {
+			continue
+		}
+		if enrollString != "NOT_ALLOWED" && !enabledAuths[key] {
 			invalidAuths = append(invalidAuths, key)
 		}
 	}
@@ -342,12 +346,12 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
 			if authenticator.Constraints != nil {
-				slice := authenticator.Constraints.AaguidGroups
-				sort.Strings(slice)
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
 				// lintignore:R001
 				_ = d.Set(k, map[string]interface{}{
 					"enroll":      authenticator.Enroll.Self,
-					"constraints": strings.Join(slice, ","),
+					"constraints": strings.Join(aaguidGroups, ","),
 				})
 			} else {
 				// lintignore:R001
@@ -363,14 +367,14 @@ func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.P
 func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
 	if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
 		for _, authenticator := range authenticators {
-			if authenticator.Key == k {
+			if authenticator.Key == k && authenticator.Enroll != nil {
 				if authenticator.Constraints != nil {
-					slice := authenticator.Constraints.AaguidGroups
-					sort.Strings(slice)
+					aaguidGroups := authenticator.Constraints.AaguidGroups
+					sort.Strings(aaguidGroups)
 					// lintignore:R001
 					_ = d.Set(k, map[string]any{
 						"enroll":      authenticator.Enroll.Self,
-						"constraints": strings.Join(slice, ","),
+						"constraints": strings.Join(aaguidGroups, ","),
 					})
 				} else {
 					// lintignore:R001
@@ -399,14 +403,14 @@ func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticato
 
 	externalIdps := make([]any, 0)
 	for _, authenticator := range authenticators {
-		if authenticator.Key == k && configuredIds[authenticator.ID] {
+		if authenticator.Key == k && configuredIds[authenticator.ID] && authenticator.Enroll != nil {
 			m := make(map[string]any)
 			m["enroll"] = authenticator.Enroll.Self
 			m["id"] = authenticator.ID
 			if authenticator.Constraints != nil {
-				slice := authenticator.Constraints.AaguidGroups
-				sort.Strings(slice)
-				m["constraints"] = strings.Join(slice, ",")
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
+				m["constraints"] = strings.Join(aaguidGroups, ",")
 			}
 			externalIdps = append(externalIdps, m)
 		}
@@ -432,14 +436,14 @@ func syncCustomAppAuthenticator(d *schema.ResourceData, authenticators []*sdk.Po
 
 	customApps := make([]any, 0)
 	for _, authenticator := range authenticators {
-		if authenticator.Key == "custom_app" && configuredIds[authenticator.ID] {
+		if authenticator.Key == "custom_app" && configuredIds[authenticator.ID] && authenticator.Enroll != nil {
 			m := make(map[string]any)
 			m["enroll"] = authenticator.Enroll.Self
 			m["id"] = authenticator.ID
 			if authenticator.Constraints != nil {
-				slice := authenticator.Constraints.AaguidGroups
-				sort.Strings(slice)
-				m["constraints"] = strings.Join(slice, ",")
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
+				m["constraints"] = strings.Join(aaguidGroups, ",")
 			}
 			customApps = append(customApps, m)
 		}
