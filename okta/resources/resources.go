@@ -139,6 +139,8 @@ const (
 	OktaIDaaSHookKey                                  = "okta_hook_key"
 	OktaIDaaSUISchema                                 = "okta_ui_schema"
 	OktaIDaaSCustomizedSignInPage                     = "okta_customized_signin_page"
+	OktaIDaaSEntityRiskPolicy                         = "okta_entity_risk_policy"
+	OktaIDaaSEntityRiskPolicyRule                     = "okta_entity_risk_policy_rule"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
