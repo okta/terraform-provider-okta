@@ -3,27 +3,54 @@ package idaas
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-func dataSourceUserRisk() *schema.Resource {
-	return &schema.Resource{
-		ReadContext: dataSourceUserRiskRead,
+var _ datasource.DataSource = &userRiskDataSource{}
+
+func newUserRiskDataSource() datasource.DataSource {
+	return &userRiskDataSource{}
+}
+
+func (d *userRiskDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
+}
+
+type userRiskDataSource struct {
+	*config.Config
+}
+
+type userRiskDataSourceModel struct {
+	ID        types.String `tfsdk:"id"`
+	UserID    types.String `tfsdk:"user_id"`
+	RiskLevel types.String `tfsdk:"risk_level"`
+	Reason    types.String `tfsdk:"reason"`
+}
+
+func (d *userRiskDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_user_risk"
+}
+
+func (d *userRiskDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		Description: "Gets a user's risk level in Okta.",
-		Schema: map[string]*schema.Schema{
-			"user_id": {
-				Type:        schema.TypeString,
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: "The ID of this resource (same as user_id).",
+			},
+			"user_id": schema.StringAttribute{
 				Required:    true,
 				Description: "ID of the user.",
 			},
-			"risk_level": {
-				Type:        schema.TypeString,
+			"risk_level": schema.StringAttribute{
 				Computed:    true,
 				Description: "Risk level of the user. Possible values: `HIGH`, `LOW`, `NONE`. `NONE` indicates no risk level has been set.",
 			},
-			"reason": {
-				Type:        schema.TypeString,
+			"reason": schema.StringAttribute{
 				Computed:    true,
 				Description: "Reason for the risk level, if available.",
 			},
@@ -31,30 +58,41 @@ func dataSourceUserRisk() *schema.Resource {
 	}
 }
 
-func dataSourceUserRiskRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	userId := d.Get("user_id").(string)
+func (d *userRiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data userRiskDataSourceModel
 
-	logger(meta).Info("reading user risk data source", "user_id", userId)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
-	resp, _, err := getOktaV6ClientFromMetadata(meta).UserRiskAPI.GetUserRisk(ctx, userId).Execute()
-	if err != nil {
-		return diag.Errorf("failed to get user risk: %v", err)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	// Extract risk level and reason from union type response
+	userId := data.UserID.ValueString()
+
+	d.Logger.Info("reading user risk data source", "user_id", userId)
+
+	riskResp, _, err := d.OktaIDaaSClient.OktaSDKClientV6().UserRiskAPI.GetUserRisk(ctx, userId).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading user risk",
+			"Could not read user risk for user "+userId+": "+err.Error(),
+		)
+		return
+	}
+
 	var riskLevel, reason string
-	if resp.UserRiskLevelExists != nil {
-		riskLevel = resp.UserRiskLevelExists.GetRiskLevel()
-		reason = resp.UserRiskLevelExists.GetReason()
-	} else if resp.UserRiskLevelNone != nil {
+	if riskResp.UserRiskLevelExists != nil {
+		riskLevel = riskResp.UserRiskLevelExists.GetRiskLevel()
+		reason = riskResp.UserRiskLevelExists.GetReason()
+	} else if riskResp.UserRiskLevelNone != nil {
 		riskLevel = "NONE"
 		reason = ""
 	}
 
-	d.SetId(userId)
-	_ = d.Set("user_id", userId)
-	_ = d.Set("risk_level", riskLevel)
-	_ = d.Set("reason", reason)
+	data.ID = types.StringValue(userId)
+	data.UserID = types.StringValue(userId)
+	data.RiskLevel = types.StringValue(riskLevel)
+	data.Reason = types.StringValue(reason)
 
-	return nil
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
