@@ -73,48 +73,6 @@ func TestAccResourceOktaUserRisk_crud(t *testing.T) {
 	})
 }
 
-func TestAccDataSourceOktaUserRisk_read(t *testing.T) {
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserRisk)
-	dataSourceName := fmt.Sprintf("data.%s.test", resources.OktaIDaaSUserRisk)
-	mgr := newFixtureManager("data-sources", resources.OktaIDaaSUserRisk, t.Name())
-
-	config := `
-	resource "okta_user" "test" {
-	first_name = "TestAcc"
-	last_name  = "Smith"
-	login      = "testAcc-replace_with_uuid@example.com"
-	email      = "testAcc-replace_with_uuid@example.com"
-	}
-
-	resource "okta_user_risk" "test" {
-	user_id    = okta_user.test.id
-	risk_level = "HIGH"
-	}
-
-	data "okta_user_risk" "test" {
-	user_id = okta_user_risk.test.user_id
-	}
-	`
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkUserRiskTestUserDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: mgr.ConfigReplace(config),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "user_id"),
-					resource.TestCheckResourceAttr(resourceName, "risk_level", "HIGH"),
-					resource.TestCheckResourceAttrPair(dataSourceName, "user_id", resourceName, "user_id"),
-					resource.TestCheckResourceAttr(dataSourceName, "risk_level", "HIGH"),
-				),
-			},
-		},
-	})
-}
-
 func checkUserRiskTestUserDestroy(s *terraform.State) error {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	for _, r := range s.RootModule().Resources {

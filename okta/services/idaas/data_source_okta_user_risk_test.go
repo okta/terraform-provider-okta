@@ -1,10 +1,13 @@
 package idaas_test
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
@@ -35,7 +38,7 @@ func TestAccDataSourceOktaUserRisk_read(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil,
+		CheckDestroy:             checkUserRiskDataSourceTestUserDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
@@ -46,4 +49,21 @@ func TestAccDataSourceOktaUserRisk_read(t *testing.T) {
 			},
 		},
 	})
+}
+
+func checkUserRiskDataSourceTestUserDestroy(s *terraform.State) error {
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
+	for _, r := range s.RootModule().Resources {
+		if r.Type != "okta_user" {
+			continue
+		}
+		if _, resp, err := client.User.GetUser(context.Background(), r.Primary.ID); err != nil {
+			if resp != nil && resp.Response.StatusCode == http.StatusNotFound {
+				continue
+			}
+			return fmt.Errorf("[ERROR] Error Getting User in Okta: %v", err)
+		}
+		return fmt.Errorf("user still exists")
+	}
+	return nil
 }
