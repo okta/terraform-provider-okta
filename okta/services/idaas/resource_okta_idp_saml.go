@@ -121,6 +121,12 @@ func resourceIdpSaml() *schema.Resource {
 				Description: "Specifies whether to verify a `SAMLResponse` message or Assertion element XML digital signature. It can be `RESPONSE`, `ASSERTION`, or `ANY`. Default: `ANY`",
 				Default:     "ANY",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+				Default:     false,
+			},
 		}),
 	}
 }
@@ -230,6 +236,9 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
 	}
+	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
+		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
+	}
 	return nil
 }
 
@@ -300,6 +309,10 @@ func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				HonorPersistentNameId: d.Get("honor_persistent_name_id").(bool),
 			},
 		},
+	}
+	trustClaims := d.GetRawConfig().GetAttr("trust_claims")
+	if !trustClaims.IsNull() {
+		idp.Policy.TrustClaims = utils.BoolPtr(d.Get("trust_claims").(bool))
 	}
 	if d.Get("status") != nil {
 		idp.Status = d.Get("status").(string)

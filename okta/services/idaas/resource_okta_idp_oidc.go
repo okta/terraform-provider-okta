@@ -24,6 +24,15 @@ func resourceIdpOidc() *schema.Resource {
 		Description: "Creates an OIDC Identity Provider. This resource allows you to create and configure an OIDC Identity Provider.",
 		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
 			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_secret"), cty.GetAttrPath("client_secret_wo")),
+			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
+				participateSLO := req.RawConfig.GetAttr("participate_slo")
+				if !participateSLO.IsNull() && participateSLO.True() {
+					sloURL := req.RawConfig.GetAttr("slo_url")
+					if sloURL.IsNull() || sloURL.AsString() == "" {
+						resp.Diagnostics = append(resp.Diagnostics, diag.Errorf("\"slo_url\" must be specified when \"participate_slo\" is set to true")...)
+					}
+				}
+			},
 		},
 		// Note the base schema
 		Schema: buildIdpSchema(map[string]*schema.Schema{
@@ -154,6 +163,22 @@ func resourceIdpOidc() *schema.Resource {
 				Optional:    true,
 				Description: "Optional regular expression pattern used to filter untrusted IdP usernames.",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+				Default:     false,
+			},
+			"participate_slo": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.",
+			},
+			"slo_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "OIDC IdP logout endpoint.",
+			},
 		}),
 	}
 }
@@ -225,6 +250,11 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 				}
 			}
 		}
+		if idp.Protocol.Endpoints != nil && idp.Protocol.Endpoints.Slo != nil {
+			if err = d.Set("slo_url", idp.Protocol.Endpoints.Slo.Url); err != nil {
+				return diag.Errorf("failed to set provider property 'slo_url': %v", err)
+			}
+		}
 	}
 	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
 	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
@@ -257,6 +287,12 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	err = utils.SetNonPrimitives(d, setMap)
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
+	}
+	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
+		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
+	}
+	if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
+		return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
 	}
 	return nil
 }
@@ -329,6 +365,23 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				Url: d.Get("issuer_url").(string),
 			},
 		},
+	}
+	trustClaims := d.GetRawConfig().GetAttr("trust_claims")
+	if !trustClaims.IsNull() {
+		idp.Policy.TrustClaims = utils.BoolPtr(d.Get("trust_claims").(bool))
+	}
+	if !d.GetRawConfig().GetAttr("participate_slo").IsNull() {
+		idp.Protocol.Settings = &sdk.ProtocolSettings{
+			ParticipateSLO: d.Get("participate_slo").(bool),
+		}
+		if d.GetRawConfig().GetAttr("participate_slo").True() {
+			if idp.Protocol.Endpoints == nil {
+				idp.Protocol.Endpoints = &sdk.ProtocolEndpoints{}
+			}
+			idp.Protocol.Endpoints.Slo = &sdk.ProtocolEndpoint{
+				Url: d.Get("slo_url").(string),
+			}
+		}
 	}
 	if d.Get("status") != nil {
 		idp.Status = d.Get("status").(string)

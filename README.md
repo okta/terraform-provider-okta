@@ -129,7 +129,7 @@ Pull requests with new resources and data sources must include:
 
 - Signed [Okta Individual Contributor License Agreement](https://developer.okta.com/cla/) emailed to `CLA@okta.com`
 - Implemented with the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework) (not [Terraform Plugin SDKv2](https://developer.hashicorp.com/terraform/plugin/sdkv2) )
-- Make Okta API calls with the [okta-sdk-golang v3](https://github.com/okta/okta-sdk-golang) client
+- Make Okta API calls with the [okta-sdk-golang v6](https://github.com/okta/okta-sdk-golang) client
 - Include [Terraform Plugin Acceptance Tests](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests)
 
 Please see the [contribution guidelines](.github/CONTRIBUTING.md) for additional

@@ -17,10 +17,12 @@ resource "okta_policy_mfa" "test" {
   }
 
   custom_app = [
-    { "enroll" : "NOT_ALLOWED", "id" : "aut123456789abcdef" },
-    { "enroll" : "OPTIONAL", "id" : "aut123456789ghijkl" },
-    { "enroll" : "OPTIONAL", "id" : "aut123456789mnopqr" }
+    { "enroll" : "NOT_ALLOWED", "id" : var.custom_app_id_1 },
+    { "enroll" : "OPTIONAL", "id" : var.custom_app_id_2 },
+    { "enroll" : "OPTIONAL", "id" : var.custom_app_id_3 }
   ]
+
+  external_idps = []
 
   groups_included = [data.okta_group.all.id]
 }

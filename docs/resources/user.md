@@ -107,6 +107,7 @@ resource "okta_user" "test2" {
 - `title` (String) User title
 - `user_type` (String) User employee type
 - `zip_code` (String) User zipcode or postal code
+- `type` (Block Set, Max: 1) Specifies a user type other than the default user type (see [below for nested schema](#nestedblock--type))
 
 ### Read-Only
 
@@ -126,6 +127,13 @@ Optional:
 - `salt` (String) Only required for salted hashes
 - `salt_order` (String) Specifies whether salt was pre- or postfixed to the password before hashing
 - `work_factor` (Number) Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm
+
+<a id="nestedblock--type"></a>
+### Nested Schema for `type`
+
+Optional:
+
+- `id` (String) ID of the user_type
 
 ## Import
 

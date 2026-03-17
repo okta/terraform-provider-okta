@@ -120,6 +120,7 @@ func FWProviderResources() []func() resource.Resource {
 		newAgentPoolUpdateResource,
 		newUISchemaResource,
 		newAppFederatedClaimResource,
+		newAppSignOnPolicyRulesResource,
 		newPushGroupResource,
 	}
 }
@@ -154,6 +155,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAppFederatedClaimDataSource,
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
+		newAdminRoleCustomDataSource,
 	}
 }
 
