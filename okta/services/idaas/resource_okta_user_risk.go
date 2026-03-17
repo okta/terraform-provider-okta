@@ -69,7 +69,9 @@ func resourceUserRiskRead(ctx context.Context, d *schema.ResourceData, meta inte
 	if resp.UserRiskLevelExists != nil {
 		riskLevel = resp.UserRiskLevelExists.GetRiskLevel()
 	} else if resp.UserRiskLevelNone != nil {
-		riskLevel = "NONE"
+		// User has no risk level set - remove from state
+		d.SetId("")
+		return nil
 	}
 
 	_ = d.Set("user_id", userId)
@@ -106,6 +108,17 @@ func resourceUserRiskImport(ctx context.Context, d *schema.ResourceData, meta in
 
 	if strings.TrimSpace(userId) == "" {
 		return nil, &ImportError{message: "user_id is required for import"}
+	}
+
+	// Check if the user has a risk level set before importing
+	resp, _, err := getOktaV6ClientFromMetadata(meta).UserRiskAPI.GetUserRisk(ctx, userId).Execute()
+	if err != nil {
+		return nil, &ImportError{message: "failed to get user risk: " + err.Error()}
+	}
+
+	// If the user has no risk level set (NONE), we cannot import
+	if resp.UserRiskLevelNone != nil {
+		return nil, &ImportError{message: "user has no risk level set (NONE). Set a risk level (HIGH or LOW) before importing, or create a new okta_user_risk resource instead."}
 	}
 
 	d.SetId(userId)
