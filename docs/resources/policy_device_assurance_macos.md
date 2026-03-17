@@ -12,7 +12,7 @@ Manages a device assurance policy for macos.
 
 ```terraform
 resource "okta_policy_device_assurance_macos" "example" {
-  name                                      = "example"
+  name                                      = "testAcc-replace_with_uuid"
   os_version                                = "12.4.6"
   disk_encryption_type                      = toset(["ALL_INTERNAL_VOLUMES"])
   secure_hardware_present                   = true
@@ -31,6 +31,13 @@ resource "okta_policy_device_assurance_macos" "example" {
   tpsp_safe_browsing_protection_level       = "ENHANCED_PROTECTION"
   tpsp_screen_lock_secured                  = true
   tpsp_site_isolation_enabled               = true
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P14D"
+  }
+
+  display_remediation_mode = "SHOW"
 }
 ```
 
@@ -44,6 +51,8 @@ resource "okta_policy_device_assurance_macos" "example" {
 ### Optional
 
 - `disk_encryption_type` (Set of String) List of disk encryption type, can be `ALL_INTERNAL_VOLUMES`
+- `display_remediation_mode` (String) Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.
+- `grace_period` (Block, Optional) Grace period configuration for the device assurance policy (Early Access feature). (see [below for nested schema](#nestedblock--grace_period))
 - `os_version` (String) Minimum os version of the device in the device assurance policy.
 - `screenlock_type` (Set of String) List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`
 - `secure_hardware_present` (Boolean) Is the device secure with hardware in the device assurance policy.
@@ -70,6 +79,14 @@ resource "okta_policy_device_assurance_macos" "example" {
 - `last_update` (String) Last update
 - `last_updated_by` (String) Last updated by
 - `platform` (String) Policy device assurance platform
+
+<a id="nestedblock--grace_period"></a>
+### Nested Schema for `grace_period`
+
+Required:
+
+- `expiry` (String) Grace period expiry. ISO 8601 datetime (e.g. 2024-12-01T00:00:00.000Z) for BY_DATE_TIME, or ISO 8601 duration (e.g. P7D, P30D, 1-180 days) for BY_DURATION.
+- `type` (String) Grace period type: BY_DATE_TIME or BY_DURATION.
 
 ## Import
 

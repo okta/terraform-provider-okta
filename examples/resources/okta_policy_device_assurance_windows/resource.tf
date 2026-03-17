@@ -24,4 +24,11 @@ resource "okta_policy_device_assurance_windows" "example" {
   tpsp_third_party_blocking_enabled         = true
   tpsp_windows_machine_domain               = "exampleMachineDomain"
   tpsp_windows_user_domain                  = "exampleUserDomain"
+
+  grace_period {
+    type   = "BY_DATE_TIME"
+    expiry = "2026-12-01T00:00:00.000Z"
+  }
+
+  display_remediation_mode = "HIDE"
 }
