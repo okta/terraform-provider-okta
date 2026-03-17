@@ -2,7 +2,9 @@ package idaas
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -177,6 +179,7 @@ func (r *entityRiskPolicyRuleResource) Create(ctx context.Context, req resource.
 	ruleId := *ruleResp.EntityRiskPolicyRule.Id
 	state.ID = types.StringValue(ruleId)
 
+	// Handle status - deactivate if needed
 	if state.Status.ValueString() == "INACTIVE" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.DeactivatePolicyRule(ctx, policyId, ruleId).Execute()
 		if err != nil {
