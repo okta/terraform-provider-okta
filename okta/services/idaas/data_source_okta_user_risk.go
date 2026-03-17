@@ -20,7 +20,7 @@ func dataSourceUserRisk() *schema.Resource {
 			"risk_level": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Risk level of the user. Possible values: `HIGH`, `LOW`.",
+				Description: "Risk level of the user. Possible values: `HIGH`, `LOW`, `NONE`. `NONE` indicates no risk level has been set.",
 			},
 			"reason": {
 				Type:        schema.TypeString,

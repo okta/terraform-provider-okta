@@ -95,8 +95,7 @@ func resourceUserRiskUpdate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceUserRiskDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// User risk cannot be "deleted" - it can only be set to HIGH or LOW.
-	// On destroy, we simply remove the resource from state.
+	// On destroy, we simply remove the resource from Terraform state.
 	// The user's risk level will remain at whatever it was last set to.
 	logger(meta).Info("removing user risk from state", "user_id", d.Id())
 	return nil
