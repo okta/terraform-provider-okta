@@ -74,6 +74,26 @@ func TestAccResourceOktaPolicyDeviceAssuranceMacOS_crud(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "tpsp_site_isolation_enabled", "true"),
 				),
 			},
+			{
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_macos test{
+					name = "testAcc-replace_with_uuid"
+					os_version = "12.4.6"
+					disk_encryption_type = toset(["ALL_INTERNAL_VOLUMES"])
+					secure_hardware_present = true
+					screenlock_type = toset(["BIOMETRIC", "PASSCODE"])
+					grace_period {
+						type = "BY_DURATION"
+						expiry = "P14D"
+					}
+					display_remediation_mode = "SHOW"
+				  }`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "grace_period.type", "BY_DURATION"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "grace_period.expiry", "P14D"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_macos.test", "display_remediation_mode", "SHOW"),
+				),
+			},
 		},
 	})
 }

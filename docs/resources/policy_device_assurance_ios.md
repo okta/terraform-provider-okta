@@ -12,10 +12,17 @@ Manages a device assurance policy for ios.
 
 ```terraform
 resource "okta_policy_device_assurance_ios" "example" {
-  name            = "example"
+  name            = "testAcc-replace_with_uuid"
   os_version      = "12.4.5"
   jailbreak       = false
   screenlock_type = toset(["BIOMETRIC"])
+
+  grace_period {
+    type   = "BY_DATE_TIME"
+    expiry = "2026-12-01T00:00:00.000Z"
+  }
+
+  display_remediation_mode = "HIDE"
 }
 ```
 
@@ -28,6 +35,8 @@ resource "okta_policy_device_assurance_ios" "example" {
 
 ### Optional
 
+- `display_remediation_mode` (String) Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.
+- `grace_period` (Block, Optional) Grace period configuration for the device assurance policy (Early Access feature). (see [below for nested schema](#nestedblock--grace_period))
 - `jailbreak` (Boolean) Is the device jailbroken in the device assurance policy.
 - `os_version` (String) Minimum os version of the device in the device assurance policy.
 - `screenlock_type` (Set of String) List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`
@@ -40,6 +49,14 @@ resource "okta_policy_device_assurance_ios" "example" {
 - `last_update` (String) Last update of the device assurance polic
 - `last_updated_by` (String) Last updated by of the device assurance polic
 - `platform` (String) Policy device assurance platform
+
+<a id="nestedblock--grace_period"></a>
+### Nested Schema for `grace_period`
+
+Required:
+
+- `expiry` (String) Grace period expiry. ISO 8601 datetime (e.g. 2024-12-01T00:00:00.000Z) for BY_DATE_TIME, or ISO 8601 duration (e.g. P7D, P30D, 1-180 days) for BY_DURATION.
+- `type` (String) Grace period type: BY_DATE_TIME or BY_DURATION.
 
 ## Import
 
