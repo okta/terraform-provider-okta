@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -399,12 +398,13 @@ other arguments that changed will be applied.`,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
-				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
-				Deprecated:  "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
-				Description: "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
-				Elem:        groupsClaimResource,
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
+				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
+				Elem:          groupsClaimResource,
+				ConflictsWith: []string{"preconfigured_app"},
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -554,7 +554,7 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
 			}
 		} else {
-			log.Print("Skipping updating app oauth groups for preconfigured apps.")
+			logger(meta).Info("Skipping updating app oauth groups for preconfigured apps.")
 		}
 		return nil
 	}
