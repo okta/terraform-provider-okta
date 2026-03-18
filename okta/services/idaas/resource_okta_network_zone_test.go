@@ -144,6 +144,39 @@ func TestAccResourceOktaNetworkZone_issue_2271(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaNetworkZone_issue_2689(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSNetworkZone, t.Name())
+	config := mgr.GetFixtures("basic_issue_2689.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy: func(state *terraform.State) error {
+			return nil
+		},
+		Steps: []resource.TestStep{
+			{
+				ImportState:        true,
+				ResourceName:       "okta_network_zone.default_blocklist",
+				ImportStateId:      "nzo1x48tm4y10Y5h01d8",
+				ImportStatePersist: true,
+				Config:             config,
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_network_zone.default_blocklist", "name", "BlockedIpZone"),
+					resource.TestCheckResourceAttr("okta_network_zone.default_blocklist", "type", "IP"),
+					resource.TestCheckResourceAttr("okta_network_zone.default_blocklist", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("okta_network_zone.default_blocklist", "usage", "BLOCKLIST"),
+					resource.TestCheckResourceAttr("okta_network_zone.default_blocklist", "gateways.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func doesNetworkZoneExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)
