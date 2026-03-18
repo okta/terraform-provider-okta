@@ -263,6 +263,191 @@ datasources:
     singular:
       method: get
       path: /api/v1/meta/types/user/{typeId}
+
+  # ── Nested datasources (require parent ID) ───────────────────────────────────
+
+  application_grants:
+    api_tag: Application
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    plural:
+      method: get
+      path: /api/v1/apps/{appId}/grants
+    singular:
+      method: get
+      path: /api/v1/apps/{appId}/grants/{grantId}
+
+  application_group_assignments:
+    api_tag: Application
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    plural:
+      method: get
+      path: /api/v1/apps/{appId}/groups
+    singular:
+      method: get
+      path: /api/v1/apps/{appId}/groups/{groupId}
+
+  application_tokens:
+    api_tag: Application
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    plural:
+      method: get
+      path: /api/v1/apps/{appId}/tokens
+    singular:
+      method: get
+      path: /api/v1/apps/{appId}/tokens/{tokenId}
+
+  application_users:
+    api_tag: Application
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    plural:
+      method: get
+      path: /api/v1/apps/{appId}/users
+    singular:
+      method: get
+      path: /api/v1/apps/{appId}/users/{userId}
+
+  authorization_server_claims:
+    api_tag: AuthorizationServer
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+    plural:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/claims
+    singular:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/claims/{claimId}
+
+  authorization_server_policies:
+    api_tag: AuthorizationServer
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+    plural:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies
+    singular:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}
+
+  authorization_server_policy_rules:
+    api_tag: AuthorizationServer
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+      - name: policy_id
+        description: "ID of the authorization server policy"
+        path_param: "{policyId}"
+    plural:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules
+    singular:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}
+
+  brand_email_templates:
+    api_tag: CustomTemplates
+    parent_params:
+      - name: brand_id
+        description: "ID of the brand"
+        path_param: "{brandId}"
+    plural:
+      method: get
+      path: /api/v1/brands/{brandId}/templates/email
+    singular:
+      method: get
+      path: /api/v1/brands/{brandId}/templates/email/{templateName}
+
+  brand_themes:
+    api_tag: Brands
+    parent_params:
+      - name: brand_id
+        description: "ID of the brand"
+        path_param: "{brandId}"
+    plural:
+      method: get
+      path: /api/v1/brands/{brandId}/themes
+    singular:
+      method: get
+      path: /api/v1/brands/{brandId}/themes/{themeId}
+
+  group_owners:
+    api_tag: Group
+    parent_params:
+      - name: group_id
+        description: "ID of the group"
+        path_param: "{groupId}"
+    plural:
+      method: get
+      path: /api/v1/groups/{groupId}/owners
+
+  identity_provider_signing_keys:
+    api_tag: IdentityProvider
+    parent_params:
+      - name: idp_id
+        description: "ID of the identity provider"
+        path_param: "{idpId}"
+    plural:
+      method: get
+      path: /api/v1/idps/{idpId}/credentials/keys
+    singular:
+      method: get
+      path: /api/v1/idps/{idpId}/credentials/keys/{kid}
+
+  user_authenticator_enrollments:
+    api_tag: UserFactor
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    plural:
+      method: get
+      path: /api/v1/users/{userId}/authenticator-enrollments
+    singular:
+      method: get
+      path: /api/v1/users/{userId}/authenticator-enrollments/{enrollmentId}
+
+  user_factors:
+    api_tag: UserFactor
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    plural:
+      method: get
+      path: /api/v1/users/{userId}/factors
+    singular:
+      method: get
+      path: /api/v1/users/{userId}/factors/{factorId}
+
+  user_grants:
+    api_tag: UserGrant
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    plural:
+      method: get
+      path: /api/v1/users/{userId}/grants
+    singular:
+      method: get
+      path: /api/v1/users/{userId}/grants/{grantId}
+
 resources:
   api_service_integrations:
     api_tag: ApiServiceIntegrations
@@ -277,6 +462,43 @@ resources:
       path: /integrations/api/v1/api-services/{apiServiceId}
   application:
     api_tag: Application
+    variants:
+      - suffix: auto_login
+        schema_ref: AutoLoginApplication
+        discriminator_field: signOnMode
+        discriminator_value: AUTO_LOGIN
+      - suffix: basic_auth
+        schema_ref: BasicAuthApplication
+        discriminator_field: signOnMode
+        discriminator_value: BASIC_AUTH
+      - suffix: bookmark
+        schema_ref: BookmarkApplication
+        discriminator_field: signOnMode
+        discriminator_value: BOOKMARK
+      - suffix: browser_plugin
+        schema_ref: BrowserPluginApplication
+        discriminator_field: signOnMode
+        discriminator_value: BROWSER_PLUGIN
+      - suffix: oidc
+        schema_ref: OpenIdConnectApplication
+        discriminator_field: signOnMode
+        discriminator_value: OPENID_CONNECT
+      - suffix: saml_11
+        schema_ref: Saml11Application
+        discriminator_field: signOnMode
+        discriminator_value: SAML_1_1
+      - suffix: saml
+        schema_ref: SamlApplication
+        discriminator_field: signOnMode
+        discriminator_value: SAML_2_0
+      - suffix: secure_password_store
+        schema_ref: SecurePasswordStoreApplication
+        discriminator_field: signOnMode
+        discriminator_value: SECURE_PASSWORD_STORE
+      - suffix: ws_federation
+        schema_ref: WsFederationApplication
+        discriminator_field: signOnMode
+        discriminator_value: WS_FEDERATION
     create:
       method: post
       path: /api/v1/apps
@@ -316,6 +538,27 @@ resources:
       path: /api/v1/authorizationServers/{authServerId}
   behavior:
     api_tag: Behavior
+    variants:
+      - suffix: anomalous_location
+        schema_ref: BehaviorRuleAnomalousLocation
+        discriminator_field: type
+        discriminator_value: ANOMALOUS_LOCATION
+      - suffix: anomalous_ip
+        schema_ref: BehaviorRuleAnomalousIP
+        discriminator_field: type
+        discriminator_value: ANOMALOUS_IP
+      - suffix: anomalous_device
+        schema_ref: BehaviorRuleAnomalousDevice
+        discriminator_field: type
+        discriminator_value: ANOMALOUS_DEVICE
+      - suffix: velocity
+        schema_ref: BehaviorRuleVelocity
+        discriminator_field: type
+        discriminator_value: VELOCITY
+      - suffix: anomalous_asn
+        schema_ref: BehaviorRuleASN
+        discriminator_field: type
+        discriminator_value: ANOMALOUS_ASN
     create:
       method: post
       path: /api/v1/behaviors
@@ -509,6 +752,15 @@ resources:
       path: /api/v1/meta/schemas/user/linkedObjects/{linkedObjectName}
   log_stream:
     api_tag: LogStream
+    variants:
+      - suffix: aws
+        schema_ref: LogStreamAws
+        discriminator_field: type
+        discriminator_value: aws_eventbridge
+      - suffix: splunk
+        schema_ref: LogStreamSplunk
+        discriminator_field: type
+        discriminator_value: splunk_cloud_logstreaming
     create:
       method: post
       path: /api/v1/logStreams
@@ -523,6 +775,19 @@ resources:
       path: /api/v1/logStreams/{logStreamId}
   network_zone:
     api_tag: NetworkZone
+    variants:
+      - suffix: ip
+        schema_ref: IPNetworkZone
+        discriminator_field: type
+        discriminator_value: IP
+      - suffix: dynamic
+        schema_ref: DynamicNetworkZone
+        discriminator_field: type
+        discriminator_value: DYNAMIC
+      - suffix: dynamic_v2
+        schema_ref: EnhancedDynamicNetworkZone
+        discriminator_field: type
+        discriminator_value: DYNAMIC_V2
     create:
       method: post
       path: /api/v1/zones
@@ -537,6 +802,43 @@ resources:
       path: /api/v1/zones/{zoneId}
   policy:
     api_tag: Policy
+    variants:
+      - suffix: access
+        schema_ref: AccessPolicy
+        discriminator_field: type
+        discriminator_value: ACCESS_POLICY
+      - suffix: idp_discovery
+        schema_ref: IdpDiscoveryPolicy
+        discriminator_field: type
+        discriminator_value: IDP_DISCOVERY
+      - suffix: mfa_enroll
+        schema_ref: AuthenticatorEnrollmentPolicy
+        discriminator_field: type
+        discriminator_value: MFA_ENROLL
+      - suffix: okta_sign_on
+        schema_ref: OktaSignOnPolicy
+        discriminator_field: type
+        discriminator_value: OKTA_SIGN_ON
+      - suffix: password
+        schema_ref: PasswordPolicy
+        discriminator_field: type
+        discriminator_value: PASSWORD
+      - suffix: profile_enrollment
+        schema_ref: ProfileEnrollmentPolicy
+        discriminator_field: type
+        discriminator_value: PROFILE_ENROLLMENT
+      - suffix: post_auth_session
+        schema_ref: PostAuthSessionPolicy
+        discriminator_field: type
+        discriminator_value: POST_AUTH_SESSION
+      - suffix: entity_risk
+        schema_ref: EntityRiskPolicy
+        discriminator_field: type
+        discriminator_value: ENTITY_RISK
+      - suffix: device_signal_collection
+        schema_ref: DeviceSignalCollectionPolicy
+        discriminator_field: type
+        discriminator_value: DEVICE_SIGNAL_COLLECTION
     create:
       method: post
       path: /api/v1/policies
@@ -714,4 +1016,392 @@ resources:
     update:
       method: put
       path: /api/v1/meta/types/user/{typeId}
+
+  # ── Nested / sub-resources (require parent ID) ──────────────────────────────
+
+  application_grant:
+    api_tag: ApplicationGrants
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    create:
+      method: post
+      path: /api/v1/apps/{appId}/grants
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/grants/{grantId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/grants/{grantId}
+
+  application_group_assignment:
+    api_tag: ApplicationGroups
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    create:
+      method: put
+      path: /api/v1/apps/{appId}/groups/{groupId}
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/groups/{groupId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/groups/{groupId}
+
+  application_token:
+    api_tag: ApplicationTokens
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/tokens/{tokenId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/tokens/{tokenId}
+
+  application_user:
+    api_tag: ApplicationUsers
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    create:
+      method: post
+      path: /api/v1/apps/{appId}/users
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/users/{userId}
+    update:
+      method: post
+      path: /api/v1/apps/{appId}/users/{userId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/users/{userId}
+
+  application_feature:
+    api_tag: ApplicationFeatures
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/features/{featureName}
+    update:
+      method: put
+      path: /api/v1/apps/{appId}/features/{featureName}
+
+  application_group_push_mapping:
+    api_tag: GroupPushMapping
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    create:
+      method: post
+      path: /api/v1/apps/{appId}/group-push/mappings
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/group-push/mappings/{mappingId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/group-push/mappings/{mappingId}
+
+  application_federated_claim:
+    api_tag: ApplicationSSOFederatedClaims
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    create:
+      method: post
+      path: /api/v1/apps/{appId}/federated-claims
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/federated-claims/{claimId}
+    update:
+      method: put
+      path: /api/v1/apps/{appId}/federated-claims/{claimId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/federated-claims/{claimId}
+
+  application_sso_credential_key:
+    api_tag: ApplicationSSOCredentialKey
+    parent_params:
+      - name: app_id
+        description: "ID of the parent application"
+        path_param: "{appId}"
+    read:
+      method: get
+      path: /api/v1/apps/{appId}/credentials/keys/{keyId}
+    delete:
+      method: delete
+      path: /api/v1/apps/{appId}/credentials/keys/{keyId}
+
+  authorization_server_claim:
+    api_tag: AuthorizationServerClaims
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+    create:
+      method: post
+      path: /api/v1/authorizationServers/{authServerId}/claims
+    read:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/claims/{claimId}
+    update:
+      method: put
+      path: /api/v1/authorizationServers/{authServerId}/claims/{claimId}
+    delete:
+      method: delete
+      path: /api/v1/authorizationServers/{authServerId}/claims/{claimId}
+
+  authorization_server_policy:
+    api_tag: AuthorizationServerPolicies
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+    create:
+      method: post
+      path: /api/v1/authorizationServers/{authServerId}/policies
+    read:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}
+    update:
+      method: put
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}
+    delete:
+      method: delete
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}
+
+  authorization_server_policy_rule:
+    api_tag: AuthorizationServerRules
+    parent_params:
+      - name: auth_server_id
+        description: "ID of the authorization server"
+        path_param: "{authServerId}"
+      - name: policy_id
+        description: "ID of the authorization server policy"
+        path_param: "{policyId}"
+    create:
+      method: post
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules
+    read:
+      method: get
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}
+    update:
+      method: put
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}
+    delete:
+      method: delete
+      path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}/rules/{ruleId}
+
+  brand_email_template_customization:
+    api_tag: CustomTemplates
+    parent_params:
+      - name: brand_id
+        description: "ID of the brand"
+        path_param: "{brandId}"
+      - name: template_name
+        description: "Name of the email template"
+        path_param: "{templateName}"
+    create:
+      method: post
+      path: /api/v1/brands/{brandId}/templates/email/{templateName}/customizations
+    read:
+      method: get
+      path: /api/v1/brands/{brandId}/templates/email/{templateName}/customizations/{customizationId}
+    update:
+      method: put
+      path: /api/v1/brands/{brandId}/templates/email/{templateName}/customizations/{customizationId}
+    delete:
+      method: delete
+      path: /api/v1/brands/{brandId}/templates/email/{templateName}/customizations/{customizationId}
+
+  brand_theme:
+    api_tag: Themes
+    parent_params:
+      - name: brand_id
+        description: "ID of the brand"
+        path_param: "{brandId}"
+    read:
+      method: get
+      path: /api/v1/brands/{brandId}/themes/{themeId}
+    update:
+      method: put
+      path: /api/v1/brands/{brandId}/themes/{themeId}
+
+  group_owner:
+    api_tag: Group
+    parent_params:
+      - name: group_id
+        description: "ID of the group"
+        path_param: "{groupId}"
+    create:
+      method: post
+      path: /api/v1/groups/{groupId}/owners
+    read:
+      method: get
+      path: /api/v1/groups/{groupId}/owners/{ownerId}
+    delete:
+      method: delete
+      path: /api/v1/groups/{groupId}/owners/{ownerId}
+
+  group_role_assignment:
+    api_tag: RoleAssignmentBGroup
+    parent_params:
+      - name: group_id
+        description: "ID of the group"
+        path_param: "{groupId}"
+    create:
+      method: post
+      path: /api/v1/groups/{groupId}/roles
+    read:
+      method: get
+      path: /api/v1/groups/{groupId}/roles/{roleAssignmentId}
+    delete:
+      method: delete
+      path: /api/v1/groups/{groupId}/roles/{roleAssignmentId}
+
+  group_rule:
+    api_tag: GroupRule
+    create:
+      method: post
+      path: /api/v1/groups/rules
+    read:
+      method: get
+      path: /api/v1/groups/rules/{groupRuleId}
+    update:
+      method: put
+      path: /api/v1/groups/rules/{groupRuleId}
+    delete:
+      method: delete
+      path: /api/v1/groups/rules/{groupRuleId}
+
+  identity_provider_signing_key:
+    api_tag: IdentityProviderSigningKeys
+    parent_params:
+      - name: idp_id
+        description: "ID of the identity provider"
+        path_param: "{idpId}"
+    create:
+      method: post
+      path: /api/v1/idps/{idpId}/credentials/keys/generate
+    read:
+      method: get
+      path: /api/v1/idps/{idpId}/credentials/keys/{kid}
+    delete:
+      method: delete
+      path: /api/v1/idps/{idpId}/credentials/keys/{kid}
+
+  identity_provider_user:
+    api_tag: IdentityProviderUsers
+    parent_params:
+      - name: idp_id
+        description: "ID of the identity provider"
+        path_param: "{idpId}"
+    read:
+      method: get
+      path: /api/v1/idps/{idpId}/users/{userId}
+    delete:
+      method: delete
+      path: /api/v1/idps/{idpId}/users/{userId}
+
+  user_authenticator_enrollment:
+    api_tag: UserAuthenticatorEnrollments
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    read:
+      method: get
+      path: /api/v1/users/{userId}/authenticator-enrollments/{enrollmentId}
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/authenticator-enrollments/{enrollmentId}
+
+  user_factor:
+    api_tag: UserFactor
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    create:
+      method: post
+      path: /api/v1/users/{userId}/factors
+    read:
+      method: get
+      path: /api/v1/users/{userId}/factors/{factorId}
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/factors/{factorId}
+
+  user_grant:
+    api_tag: UserGrant
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    read:
+      method: get
+      path: /api/v1/users/{userId}/grants/{grantId}
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/grants/{grantId}
+
+  user_role_assignment:
+    api_tag: RoleAssignmentAUser
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+    create:
+      method: post
+      path: /api/v1/users/{userId}/roles
+    read:
+      method: get
+      path: /api/v1/users/{userId}/roles/{roleAssignmentId}
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/roles/{roleAssignmentId}
+
+  user_client_grant:
+    api_tag: UserGrant
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+      - name: client_id
+        description: "ID of the OAuth client"
+        path_param: "{clientId}"
+    read:
+      method: get
+      path: /api/v1/users/{userId}/clients/{clientId}/grants
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/clients/{clientId}/grants
+
+  user_client_token:
+    api_tag: UserOAuth
+    parent_params:
+      - name: user_id
+        description: "ID of the user"
+        path_param: "{userId}"
+      - name: client_id
+        description: "ID of the OAuth client"
+        path_param: "{clientId}"
+    read:
+      method: get
+      path: /api/v1/users/{userId}/clients/{clientId}/tokens/{tokenId}
+    delete:
+      method: delete
+      path: /api/v1/users/{userId}/clients/{clientId}/tokens/{tokenId}
 
