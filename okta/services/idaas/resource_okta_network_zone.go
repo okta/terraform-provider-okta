@@ -105,7 +105,6 @@ func resourceNetworkZone() *schema.Resource {
 			"system": {
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 				Description: "Indicates a system Network Zone",
 			},
 		},

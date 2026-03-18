@@ -90,7 +90,6 @@ func dataSourceNetworkZone() *schema.Resource {
 			},
 			"system": {
 				Type:        schema.TypeBool,
-				Optional:    true,
 				Computed:    true,
 				Description: "Indicates a system Network Zone",
 			},
