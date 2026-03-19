@@ -291,8 +291,10 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
 		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
 	}
-	if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
-		return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
+	if idp.Protocol.Settings != nil {
+		if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
+			return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
+		}
 	}
 	return nil
 }
