@@ -1,0 +1,1 @@
+terraform import okta_email_customization.example <customization_id>/<brand_id>/<template_name>

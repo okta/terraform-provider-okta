@@ -1,11 +1,17 @@
 # Visit https://goreleaser.com for documentation on how to customize this
 # behavior.
+version: 2
+
 before:
   hooks:
     # this is just an example and not a requirement for provider building/publishing
     - go mod tidy
+
+project_name: terraform-provider-okta
+
 builds:
-  - env:
+  - id: terraform-provider-okta
+    env:
       # goreleaser does not work with CGO, it could also complicate
       # usage by users in CI/CD systems like Terraform Cloud where
       # they are unable to install libraries.
@@ -30,8 +36,11 @@ builds:
         goarch: '386'
     binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
-  - format: zip
+  - formats:
+      - zip
     name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - none*
 checksum:
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
   algorithm: sha256
@@ -55,4 +64,4 @@ release:
   # Visit your project's GitHub Releases page to publish this release.
   draft: true
 changelog:
-  skip: true
+  disable: true

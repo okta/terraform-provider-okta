@@ -66,11 +66,13 @@ func TestUpdate(t *testing.T) {
 		for _, remaining := range tc.remaining {
 			go func(remaining int) {
 				sleep := time.Duration(rand.Intn(100))
+				// lintignore:R018
 				time.Sleep(sleep * time.Millisecond)
 
 				amu.Update(tc.method, tc.endPoint, limit, remaining, reset)
 			}(remaining)
 		}
+		// lintignore:R018
 		time.Sleep(300 * time.Millisecond)
 
 		minRemaining := minRemaining(tc.remaining)

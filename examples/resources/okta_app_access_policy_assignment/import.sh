@@ -1,0 +1,1 @@
+terraform import okta_app_access_policy_assignment.example <app_id>

@@ -1,0 +1,1 @@
+terraform import okta_idp_oidc.example <idp_id>

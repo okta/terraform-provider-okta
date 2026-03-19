@@ -1,0 +1,1 @@
+terraform import okta_user.example <user_id>

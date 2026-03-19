@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -36,6 +37,8 @@ const (
 	SymantecVipFactor      = "symantec_vip"
 	WebauthnFactor         = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
 	YubikeyTokenFactor     = "yubikey_token"
+	SmartCardIdpFactor     = "smart_card_idp"
+	CustomAppFactor        = "custom_app" // OIE only
 )
 
 // List of factors that are applicable to Okta Classic Engine

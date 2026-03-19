@@ -1,0 +1,1 @@
+terraform import okta_resource_set.example <resource_set_id>

@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -11,16 +12,21 @@ import (
 type AuthenticatorResource resource
 
 type Authenticator struct {
-	Links       interface{}            `json:"_links,omitempty"`
-	Created     *time.Time             `json:"created,omitempty"`
-	Id          string                 `json:"id,omitempty"`
-	Key         string                 `json:"key,omitempty"`
-	LastUpdated *time.Time             `json:"lastUpdated,omitempty"`
-	Name        string                 `json:"name,omitempty"`
-	Provider    *AuthenticatorProvider `json:"provider,omitempty"`
-	Settings    *AuthenticatorSettings `json:"settings,omitempty"`
-	Status      string                 `json:"status,omitempty"`
-	Type        string                 `json:"type,omitempty"`
+	Links        interface{}            `json:"_links,omitempty"`
+	Created      *time.Time             `json:"created,omitempty"`
+	Id           string                 `json:"id,omitempty"`
+	Key          string                 `json:"key,omitempty"`
+	LastUpdated  *time.Time             `json:"lastUpdated,omitempty"`
+	Name         string                 `json:"name,omitempty"`
+	Provider     *AuthenticatorProvider `json:"provider,omitempty"`
+	Settings     *AuthenticatorSettings `json:"settings,omitempty"`
+	Status       string                 `json:"status,omitempty"`
+	Type         string                 `json:"type,omitempty"`
+	AgreeToTerms bool                   `json:"agreeToTerms,omitempty"`
+}
+
+type OTP struct {
+	Settings *AuthenticatorSettingsOTP `json:"settings"`
 }
 
 func (m *AuthenticatorResource) GetAuthenticator(ctx context.Context, authenticatorId string) (*Authenticator, *Response, error) {
@@ -107,6 +113,26 @@ func (m *AuthenticatorResource) CreateAuthenticator(ctx context.Context, body Au
 	}
 
 	return authenticator, resp, nil
+}
+
+func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string) (*Response, error) {
+	url := fmt.Sprintf("/api/v1/authenticators/%v/methods/otp", authenticatorId)
+
+	rq := m.client.CloneRequestExecutor()
+
+	req, err := rq.WithAccept("application/json").WithContentType("application/json").NewRequest("PUT", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	var otp *OTP
+
+	resp, err := rq.Do(ctx, req, &otp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (m *AuthenticatorResource) ActivateAuthenticator(ctx context.Context, authenticatorId string) (*Authenticator, *Response, error) {

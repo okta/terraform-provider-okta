@@ -1,0 +1,250 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 268
+        host: classic-00.dne-okta.com
+        body: |
+            {"description":"test resource for entitlement bundle data source","entitlements":[{"id":"espzcbqd7Suwp4Y7A1d6","values":[{"id":"entzcbqd8lcD3BRWR1d6"}]}],"name":"entitlement bundle data source test","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 804
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"id":"espzcbqd7Suwp4Y7A1d6","values":[{"id":"entzcbqd8lcD3BRWR1d6"}]}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "804"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:50 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Location:
+                - https://dcp-testing-oig-2025-06-26-admin.oktapreview.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 3.20135875s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:52 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.273626208s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:53 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.217719333s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:55 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.225526916s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:56 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.179186667s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11s9z6eaI6UkUV1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7","hints":{}}},"name":"entitlement bundle data source test","description":"test resource for entitlement bundle data source","id":"enb11s9z6eaI6UkUV1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T11:34:50Z","lastUpdated":"2025-09-22T11:34:50Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 22 Sep 2025 11:34:57 GMT
+            Link:
+                - <https://classic-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.272653333s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11s9z6eaI6UkUV1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 22 Sep 2025 11:34:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.327648625s

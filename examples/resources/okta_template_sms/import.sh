@@ -1,0 +1,1 @@
+terraform import okta_template_sms.example <template_type>

@@ -1,0 +1,1 @@
+terraform import okta_app_saml.example <app_id>

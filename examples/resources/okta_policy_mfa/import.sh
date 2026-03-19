@@ -1,0 +1,1 @@
+$ terraform import okta_policy_mfa.example <policy_id>

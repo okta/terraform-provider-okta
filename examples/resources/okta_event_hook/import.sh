@@ -1,0 +1,1 @@
+terraform import okta_event_hook.example <hook_id>

@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 // List of factors that are applicable to Okta Identity Engine (OIE)
@@ -14,5 +15,7 @@ var AuthenticatorProviders = []string{
 	RsaTokenFactor,
 	SecurityQuestionFactor,
 	WebauthnFactor,
-	// YubikeyTokenFactor, // NOTE: support upcoming when available in public API
+	YubikeyTokenFactor,
+	SmartCardIdpFactor,
+	CustomAppFactor,
 }

@@ -1,0 +1,1 @@
+terraform import okta_user_factor_question.example <user_id>/<question_factor_id>

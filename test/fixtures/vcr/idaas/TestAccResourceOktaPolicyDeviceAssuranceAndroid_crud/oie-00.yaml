@@ -1,0 +1,253 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 218
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"diskEncryptionType":{"include":["FULL","USER"]},"jailbreak":false,"name":"testAcc-525995444","osVersion":{"minimum":"12"},"platform":"ANDROID","screenLockType":{"include":["BIOMETRIC"]},"secureHardwarePresent":true}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-525995444","platform":"ANDROID","id":"daekwr6fj5aTok2pL1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:35:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:35:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwr6fj5aTok2pL1d7","resourceDisplayName":{"value":"testAcc-525995444","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:35:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 221.425417ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-525995444","platform":"ANDROID","id":"daekwr6fj5aTok2pL1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:35:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:35:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwr6fj5aTok2pL1d7","resourceDisplayName":{"value":"testAcc-525995444","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:35:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 209.221542ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-525995444","platform":"ANDROID","id":"daekwr6fj5aTok2pL1d7","osVersion":{"minimum":"12"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:35:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:35:32.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwr6fj5aTok2pL1d7","resourceDisplayName":{"value":"testAcc-525995444","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:35:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 251.014042ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 218
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: |
+            {"diskEncryptionType":{"include":["FULL","USER"]},"jailbreak":false,"name":"testAcc-525995444","osVersion":{"minimum":"13"},"platform":"ANDROID","screenLockType":{"include":["BIOMETRIC"]},"secureHardwarePresent":true}
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-525995444","platform":"ANDROID","id":"daekwr6fj5aTok2pL1d7","osVersion":{"minimum":"13"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","lastUpdate":"2025-03-13T23:35:33.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwr6fj5aTok2pL1d7","resourceDisplayName":{"value":"testAcc-525995444","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:35:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 290.024542ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc-525995444","platform":"ANDROID","id":"daekwr6fj5aTok2pL1d7","osVersion":{"minimum":"13"},"secureHardwarePresent":true,"jailbreak":false,"diskEncryptionType":{"include":["USER","FULL"]},"screenLockType":{"include":["BIOMETRIC"]},"displayRemediationMode":"HIDE","createdDate":"2025-03-13T23:35:32.000Z","createdBy":"00u5qwjvk7u6E1DFG1d7","lastUpdate":"2025-03-13T23:35:33.000Z","lastUpdatedBy":"00u5qwjvk7u6E1DFG1d7","resourceId":"daekwr6fj5aTok2pL1d7","resourceDisplayName":{"value":"testAcc-525995444","sensitive":false},"resourceType":"DeviceAssurancePolicyEntity","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 13 Mar 2025 23:35:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 258.172084ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: oie-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-assurances/daekwr6fj5aTok2pL1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: 0
+        uncompressed: false
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 13 Mar 2025 23:35:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 216.652ms

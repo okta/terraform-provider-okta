@@ -1,0 +1,1 @@
+terraform import okta_app_auto_login.example <app_id>

@@ -1,0 +1,135 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 186
+    host: classic-00.dne-okta.com
+    body: "{\"name\":\"Security Events Provider with well-known URL\",\"settings\":{\"issuer\":\"https://example.oktapreview.com\",\"jwks_url\":\"https://example.oktapreview.com/oauth2/v1/keys\"},\"type\":\"okta\"}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://classic-00.dne-okta.com/api/v1/security-events-providers
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"sser3ifebe5dMTuTi1d7\",\"name\":\"Security Events Provider with well-known URL\",\"type\":\"okta\",\"status\":\"ACTIVE\",\"settings\":{\"issuer\":\"https://example.oktapreview.com\",\"jwks_url\":\"https://example.oktapreview.com/oauth2/v1/keys\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"deactivate\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 18 Oct 2025 12:48:08 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.581231417s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7/lifecycle/activate
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"sser3ifebe5dMTuTi1d7\",\"name\":\"Security Events Provider with well-known URL\",\"type\":\"okta\",\"status\":\"ACTIVE\",\"settings\":{\"issuer\":\"https://example.oktapreview.com\",\"jwks_url\":\"https://example.oktapreview.com/oauth2/v1/keys\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"deactivate\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 18 Oct 2025 12:48:10 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.184518333s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"sser3ifebe5dMTuTi1d7\",\"name\":\"Security Events Provider with well-known URL\",\"type\":\"okta\",\"status\":\"ACTIVE\",\"settings\":{\"issuer\":\"https://example.oktapreview.com\",\"jwks_url\":\"https://example.oktapreview.com/oauth2/v1/keys\"},\"_links\":{\"self\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}},\"deactivate\":{\"href\":\"https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7/lifecycle/deactivate\",\"hints\":{\"allow\":[\"POST\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Sat, 18 Oct 2025 12:48:11 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.173307125s
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: classic-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://classic-00.dne-okta.com/api/v1/security-events-providers/sser3ifebe5dMTuTi1d7
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Sat, 18 Oct 2025 12:48:12 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.170610041s

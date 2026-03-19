@@ -28,8 +28,12 @@ data "okta_app_signon_policy" "test" {
 }
 
 resource "okta_app_signon_policy_rule" "test" {
-  policy_id  = data.okta_app_signon_policy.test.id
-  name       = "testAcc_replace_with_uuid"
-  risk_score = "LOW"
+  policy_id = data.okta_app_signon_policy.test.id
+  name      = "testAcc_replace_with_uuid"
+  platform_include {
+    os_expression = ""
+    os_type       = "OTHER"
+    type          = "DESKTOP"
+  }
 }
 

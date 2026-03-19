@@ -1,0 +1,1 @@
+terraform import okta_policy_device_assurance_macos.example <device_assurance_id>

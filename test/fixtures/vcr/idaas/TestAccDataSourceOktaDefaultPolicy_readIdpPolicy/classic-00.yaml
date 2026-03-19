@@ -1,0 +1,222 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p5ptm07lIwtBWes1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2022-10-04T23:20:22.000Z","lastUpdated":"2022-10-04T23:20:22.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:03:14 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 209.008125ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p5ptm07lIwtBWes1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2022-10-04T23:20:22.000Z","lastUpdated":"2022-10-04T23:20:22.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:03:15 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 211.784875ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p5ptm07lIwtBWes1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2022-10-04T23:20:22.000Z","lastUpdated":"2022-10-04T23:20:22.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:03:15 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 201.532083ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p5ptm07lIwtBWes1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2022-10-04T23:20:22.000Z","lastUpdated":"2022-10-04T23:20:22.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:03:15 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 193.543542ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        transfer_encoding: []
+        trailer: {}
+        host: classic-00.dne-okta.com
+        remote_addr: ""
+        request_uri: ""
+        body: ""
+        form: {}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        transfer_encoding: []
+        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00p5ptm07lIwtBWes1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2022-10-04T23:20:22.000Z","lastUpdated":"2022-10-04T23:20:22.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00p5ptm07lIwtBWes1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 14 Mar 2025 03:03:16 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 195.482417ms

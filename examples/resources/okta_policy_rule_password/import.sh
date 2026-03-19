@@ -1,0 +1,1 @@
+$ terraform import okta_policy_rule_password.example <policy_id>/<rule_id>

@@ -1,0 +1,43 @@
+---
+page_title: "{{.Type}}: {{.Name}}"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Type}}: {{.Name}}
+
+{{ .Description | trimspace }}
+
+Manages targets for administrator roles.
+
+This resource allows you to define permissions for admin roles into a smaller subset of Groups or Apps within your org.
+You can define admin roles to target Groups, Applications, and Application Instances.
+
+```
+Note 1: you have to assign a role to a user before creating this resource.
+
+Note 2: You can target a mixture of both App and App Instance targets, but can't assign permissions to manage all
+        instances of an App and then a subset of that same App. For example, you can't specify that an admin has access
+        to manage all instances of a Salesforce app and then also specific configurations of the Salesforce app.
+```
+
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ tffile .ExampleFile }}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ codefile "shell" .ImportFile }}
+
+{{- end }}

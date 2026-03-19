@@ -1,0 +1,1 @@
+terraform import okta_auth_server_policy_rule.example <auth_server_id>/<policy_id>/<policy_rule_id>

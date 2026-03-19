@@ -23,7 +23,7 @@ data "okta_group_rule" "test" {
 
 - `id` (String) The ID of the Group Rule.
 - `name` (String) The name of the Group Rule.
-- `status` (String)
+- `status` (String) Default to `ACTIVE`
 
 ### Read-Only
 

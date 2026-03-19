@@ -13,4 +13,7 @@ resource "okta_idp_oidc" "test" {
   client_secret         = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
   issuer_url            = "https://id.example.com"
   username_template     = "idpuser.email"
+  filter                = "abc"
+  trust_claims          = true
+  participate_slo       = false
 }

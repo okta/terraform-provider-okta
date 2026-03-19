@@ -20,3 +20,12 @@ resource "okta_network_zone" "dynamic_proxy_example" {
   usage              = "BLOCKLIST"
   dynamic_proxy_type = "TorAnonymizer"
 }
+
+resource "okta_network_zone" "dynamic_v2_network_zone_example" {
+  name                          = "testAcc_replace_with_uuid Dynamic V2"
+  type                          = "DYNAMIC_V2"
+  status                        = "ACTIVE"
+  dynamic_locations             = ["US", "AF-BGL"]
+  ip_service_categories_include = ["ALL_IP_SERVICES"]
+  ip_service_categories_exclude = ["SURFSHARK_VPN"]
+}

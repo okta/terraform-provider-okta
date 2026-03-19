@@ -21,18 +21,21 @@ data "okta_network_zone" "example" {
 
 ### Optional
 
+- `dynamic_locations_exclude` (Set of String) Array of locations ISO-3166-1(2) excluded. Format code: countryCode OR countryCode-regionCode. Use with type `DYNAMIC_V2`
 - `id` (String) ID of the network zone to retrieve, conflicts with `name`.
+- `ip_service_categories_exclude` (Set of String) List of ip service excluded. Use with type `DYNAMIC_V2`
+- `ip_service_categories_include` (Set of String) List of ip service included. Use with type `DYNAMIC_V2`
 - `name` (String) Name of the network zone to retrieve, conflicts with `id`.
 
 ### Read-Only
 
-- `asns` (Set of String) Format of each array value: a string representation of an ASN numeric value
-- `dynamic_locations` (Set of String) Array of locations ISO-3166-1(2). Format code: countryCode OR countryCode-regionCode
-- `dynamic_proxy_type` (String) Type of proxy being controlled by this network zone
-- `gateways` (Set of String) Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples
-- `proxies` (Set of String) Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples
+- `asns` (Set of String) List of asns included. Format of each array value: a string representation of an ASN numeric value. Use with type `DYNAMIC` or `DYNAMIC_V2`
+- `dynamic_locations` (Set of String) Array of locations ISO-3166-1(2) included. Format code: countryCode OR countryCode-regionCode. Use with type `DYNAMIC` or `DYNAMIC_V2`
+- `dynamic_proxy_type` (String) Type of proxy being controlled by this dynamic network zone - can be one of `Any`, `TorAnonymizer` or `NotTorAnonymizer`. Use with type `DYNAMIC`
+- `gateways` (Set of String) Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Use with type `IP`
+- `proxies` (Set of String) Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`
 - `status` (String) Network Status - can either be ACTIVE or INACTIVE only
-- `type` (String) Type of the Network Zone - can either be IP or DYNAMIC only
+- `type` (String) Type of the Network Zone - can be `IP`, `DYNAMIC` or `DYNAMIC_V2` only
 - `usage` (String) Zone's purpose: POLICY or BLOCKLIST
 
 

@@ -1,0 +1,1 @@
+terraform import okta_policy_signon.example <policy_id>

@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -23,6 +24,7 @@ type ResourceSetResource struct {
 	Created     time.Time   `json:"created"`
 	LastUpdated time.Time   `json:"lastUpdated"`
 	Links       interface{} `json:"_links"`
+	Orn         string      `json:"orn"`
 }
 
 // ListResourceSetResources lists the resources that make up a Resource Set

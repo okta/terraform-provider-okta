@@ -1,0 +1,1 @@
+terraform import okta_policy_password.example <policy_id>

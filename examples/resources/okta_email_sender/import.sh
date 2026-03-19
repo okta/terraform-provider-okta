@@ -1,0 +1,1 @@
+terraform import okta_email_sender.example <sender_id>

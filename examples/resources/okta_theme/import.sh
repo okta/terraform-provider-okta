@@ -1,0 +1,1 @@
+terraform import okta_theme.example <brand_id>/<theme_id>

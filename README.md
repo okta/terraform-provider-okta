@@ -18,6 +18,12 @@
 The Terraform Okta provider is a plugin for Terraform that allows for the full lifecycle management of Okta resources.
 This provider is maintained internally by the Okta development team.
 
+## :tada: __It's Official__ :tada:
+We’re excited to announce that with v6.1.0, the Terraform Okta provider now officially supports the Okta Governance API.
+
+> [!CAUTION]
+> With this release, all 5.x versions of the provider will soon be **deprecated**.
+
 ## Examples
 
 All the resources and data sources has [one or more examples](./examples) to give you an idea of how to use this
@@ -26,6 +32,7 @@ provider to build your own Okta infrastructure. Provider's official documentatio
 in form of raw markdown files.
 
 # Development Environment Setup
+
 
 The sections below will guide you through the requirements, upgrading, getting started, building with and contributing to
 the Okta Terraform Provider.
@@ -112,8 +119,21 @@ the [provider's website](https://registry.terraform.io/providers/okta/okta/lates
 
 Terraform is the work of thousands of contributors. We really appreciate your help!
 
-To contribute, please read the contribution
-guidelines: [Contributing to Terraform - Okta Provider](.github/CONTRIBUTING.md)
+We have these minimum requirements for source code contributions.
+
+Bug fix pull requests must include:
+
+- [Terraform Plugin Acceptance Tests](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests).
+
+Pull requests with new resources and data sources must include:
+
+- Signed [Okta Individual Contributor License Agreement](https://developer.okta.com/cla/) emailed to `CLA@okta.com`
+- Implemented with the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework) (not [Terraform Plugin SDKv2](https://developer.hashicorp.com/terraform/plugin/sdkv2) )
+- Make Okta API calls with the [okta-sdk-golang v6](https://github.com/okta/okta-sdk-golang) client
+- Include [Terraform Plugin Acceptance Tests](https://developer.hashicorp.com/terraform/plugin/sdkv2/testing/acceptance-tests)
+
+Please see the [contribution guidelines](.github/CONTRIBUTING.md) for additional
+information about making contributions to the Okta Terraform Provider.
 
 Issues on GitHub are intended to be related to the bugs or feature requests with provider codebase.
 See [Plugin SDK Community](https://www.terraform.io/community)

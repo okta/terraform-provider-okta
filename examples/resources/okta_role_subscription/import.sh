@@ -1,0 +1,1 @@
+terraform import okta_role_subscription.example <role_type>/<notification_type>

@@ -50,7 +50,7 @@ data "okta_users" "example" {
 
 ### Optional
 
-- `compound_search_operator` (String) Search operator used when joining mulitple search clauses
+- `compound_search_operator` (String) Search operator used when joining multiple search clauses
 - `delay_read_seconds` (String) Force delay of the users read by N seconds. Useful when eventual consistency of users information needs to be allowed for.
 - `group_id` (String) Find users based on group membership using the id of the group.
 - `include_groups` (Boolean) Fetch group memberships for each user
@@ -106,6 +106,7 @@ Read-Only:
 - `preferred_language` (String)
 - `primary_phone` (String)
 - `profile_url` (String)
+- `realm_id` (String)
 - `roles` (Set of String)
 - `second_email` (String)
 - `state` (String)

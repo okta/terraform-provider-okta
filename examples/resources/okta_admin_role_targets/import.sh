@@ -1,0 +1,1 @@
+terraform import okta_admin_role_targets.example <user_id>/<role_type>

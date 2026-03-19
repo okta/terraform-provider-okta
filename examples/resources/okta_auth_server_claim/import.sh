@@ -1,0 +1,1 @@
+terraform import okta_auth_server_claim.example <auth_server_id>/<claim_id>

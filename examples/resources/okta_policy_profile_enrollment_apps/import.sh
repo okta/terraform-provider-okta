@@ -1,0 +1,1 @@
+terraform import okta_policy_profile_enrollment_apps.example <policy_id>

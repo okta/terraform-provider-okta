@@ -1,0 +1,1 @@
+terraform import okta_device.example <device_id>

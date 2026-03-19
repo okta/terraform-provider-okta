@@ -1,0 +1,1 @@
+terraform import okta_auth_server.example <auth_server_id>

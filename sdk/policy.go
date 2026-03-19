@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -159,6 +160,7 @@ type PolicyFactor struct {
 
 type PolicyAuthenticator struct {
 	Key         string                          `json:"key,omitempty"`
+	ID          string                          `json:"id,omitempty"`
 	Enroll      *Enroll                         `json:"enroll,omitempty"`
 	Constraints *PolicyAuthenticatorConstraints `json:"constraints,omitempty"`
 }

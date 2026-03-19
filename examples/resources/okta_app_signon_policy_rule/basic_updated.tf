@@ -60,7 +60,7 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_policy_device_assurance_android" "test" {
-  name       = "test"
+  name       = "testAcc-replace_with_uuid"
   os_version = "12"
   jailbreak  = false
 }
@@ -113,7 +113,6 @@ resource "okta_app_signon_policy_rule" "test" {
   #    os_type = "OTHER"
   #    type    = "MOBILE"
   #  }
-  risk_score = "MEDIUM"
   platform_include {
     os_type = "WINDOWS"
     type    = "DESKTOP"
@@ -145,17 +144,21 @@ resource "okta_app_signon_policy_rule" "test" {
     jsonencode({
       "knowledge" : {
         "reauthenticateIn" : "PT2H",
-        "types" : ["password"]
+        "types" : ["password"],
+        "required" : false
       },
       "possession" : {
-        "deviceBound" : "REQUIRED"
+        "deviceBound" : "REQUIRED",
+        "required" : false
       }
     }),
     jsonencode({
       "possession" : {
         "deviceBound" : "REQUIRED",
         "hardwareProtection" : "REQUIRED",
-        "userPresence" : "OPTIONAL"
+        "userPresence" : "OPTIONAL",
+        "userVerification" : "OPTIONAL",
+        "required" : false
       }
     })
   ]

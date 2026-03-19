@@ -19,5 +19,5 @@ resource "okta_app_shared_credentials" "test" {
   // accessibility_login_redirect_url = "https://example.com/redirect_url_2"
   auto_submit_toolbar = true
   hide_ios            = true
-  logo                = "../examples/resources/okta_app_basic_auth/terraform_icon.png"
+  logo                = "../../../examples/resources/okta_app_basic_auth/terraform_icon.png"
 }

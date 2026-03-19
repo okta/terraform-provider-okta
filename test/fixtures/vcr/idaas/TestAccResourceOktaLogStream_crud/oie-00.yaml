@@ -1,0 +1,602 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 305
+        host: oie-00.dne-okta.com
+        body: |
+            {"_links":{"self":{"href":""}},"created":"0001-01-01T00:00:00Z","id":"","lastUpdated":"0001-01-01T00:00:00Z","name":"testAcc_244785732 Splunk","settings":{"edition":"aws","host":"acme.splunkcloud.com","token":"58A7C8D6-4E2F-4C3B-8F5B-D4E2F3A4B5C6"},"status":"INACTIVE","type":"splunk_cloud_logstreaming"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/logStreams
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk","lastUpdated":"2026-02-13T09:07:11.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.364265917s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 291
+        host: oie-00.dne-okta.com
+        body: |
+            {"_links":{"self":{"href":""}},"created":"0001-01-01T00:00:00Z","id":"","lastUpdated":"0001-01-01T00:00:00Z","name":"testAcc_244785732 EventBridge","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"status":"ACTIVE","type":"aws_eventbridge"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/logStreams
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdchbN2joUZw1d7","type":"aws_eventbridge","name":"testAcc_244785732 EventBridge","lastUpdated":"2026-02-13T09:07:11.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.91947825s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Fri, 13 Feb 2026 09:07:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0908975s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdchbN2joUZw1d7","type":"aws_eventbridge","name":"testAcc_244785732 EventBridge","lastUpdated":"2026-02-13T09:07:11.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.2118815s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk","lastUpdated":"2026-02-13T09:07:12.000Z","created":"2026-02-13T09:07:11.000Z","status":"INACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/activate","method":"POST"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.255216708s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdchbN2joUZw1d7","type":"aws_eventbridge","name":"testAcc_244785732 EventBridge","lastUpdated":"2026-02-13T09:07:11.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.212301708s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk","lastUpdated":"2026-02-13T09:07:12.000Z","created":"2026-02-13T09:07:11.000Z","status":"INACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/activate","method":"POST"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.272615083s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 173
+        host: oie-00.dne-okta.com
+        body: |
+            {"name":"testAcc_244785732 EventBridge Updated","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"type":"aws_eventbridge"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdchbN2joUZw1d7","type":"aws_eventbridge","name":"testAcc_244785732 EventBridge Updated","lastUpdated":"2026-02-13T09:07:18.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.299934542s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 138
+        host: oie-00.dne-okta.com
+        body: |
+            {"name":"testAcc_244785732 Splunk Updated","settings":{"edition":"aws","host":"acme.splunkcloud.com"},"type":"splunk_cloud_logstreaming"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk Updated","lastUpdated":"2026-02-13T09:07:18.000Z","created":"2026-02-13T09:07:11.000Z","status":"INACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/activate","method":"POST"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.302574666s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Fri, 13 Feb 2026 09:07:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.071165042s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Fri, 13 Feb 2026 09:07:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.095473459s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdchbN2joUZw1d7","type":"aws_eventbridge","name":"testAcc_244785732 EventBridge Updated","lastUpdated":"2026-02-13T09:07:19.000Z","created":"2026-02-13T09:07:11.000Z","status":"INACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_244785732","region":"eu-west-3"},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/activate","method":"POST"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7","method":"GET"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.209231083s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk Updated","lastUpdated":"2026-02-13T09:07:19.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.245529125s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzj9tf9V6RlC361d7","type":"splunk_cloud_logstreaming","name":"testAcc_244785732 Splunk Updated","lastUpdated":"2026-02-13T09:07:19.000Z","created":"2026-02-13T09:07:11.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7","method":"GET"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:07:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.236901375s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Fri, 13 Feb 2026 09:07:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.104862458s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Fri, 13 Feb 2026 09:07:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.104857208s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzj9tf9V6RlC361d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 13 Feb 2026 09:07:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.150069042s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/logStreams/0oauzjdchbN2joUZw1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 13 Feb 2026 09:07:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.727880959s

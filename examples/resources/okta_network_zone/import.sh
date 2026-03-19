@@ -1,0 +1,1 @@
+terraform import okta_network_zone.example <zone_id>

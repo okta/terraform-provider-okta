@@ -81,7 +81,7 @@ issues of each type.
 - [ ] **Search for answers in Terraform documentation**: We're happy to answer
       questions in GitHub Issues, but it helps reduce issue churn and maintainer
       workload if you work to [find answers to common questions in the
-      documentation](https://www.terraform.io/docs/providers/okta/index.html). Oftentimes Question issues result in documentation updates
+      documentation](https://registry.terraform.io/providers/okta/okta/index.html). Oftentimes Question issues result in documentation updates
       to help future users, so if you don't find an answer, you can give us
       pointers for where you'd expect to see it in the docs.
 
@@ -230,7 +230,8 @@ guidelines.
 - [ ] **Resource Naming**: Resources should be named `okta_<service>_<name>`,
       using underscores (`_`) as the separator. Resources are namespaced with the
       service name to allow easier searching of related resources, to align
-      the resource naming with the service for [Customizing Endpoints](https://www.terraform.io/docs/providers/okta/guides/custom-service-endpoints.html#available-endpoint-customizations),
+      <!--the resource naming with the service for [Customizing Endpoints](https://www.terraform.io/docs/providers/okta/guides/custom-service-endpoints.html#available-endpoint-customizations),-->
+      the resource naming with the service for Customizing Endpoints,
       and to prevent future conflicts with new Okta services/resources.
       For reference:
 

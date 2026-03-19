@@ -1,0 +1,1 @@
+terraform import okta_inline_hook.example <hook_id>

@@ -1,0 +1,1 @@
+terraform import okta_group_role.example <group_id>/<role_id>

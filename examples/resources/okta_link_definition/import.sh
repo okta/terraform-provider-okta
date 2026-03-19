@@ -1,0 +1,1 @@
+terraform import okta_link_definition.example <primary_name>

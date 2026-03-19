@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -7,8 +8,8 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/okta/terraform-provider-okta/sdk/cache"
-	"gopkg.in/square/go-jose.v2"
 )
 
 type config struct {

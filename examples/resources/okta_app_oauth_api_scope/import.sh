@@ -1,0 +1,1 @@
+terraform import okta_app_oauth_api_scope.example <app_id>

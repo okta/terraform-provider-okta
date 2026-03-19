@@ -1,0 +1,1 @@
+terraform import okta_authenticator.example <authenticator_id>

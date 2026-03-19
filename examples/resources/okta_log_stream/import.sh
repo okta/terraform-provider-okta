@@ -1,0 +1,1 @@
+terraform import okta_log_stream.example <stream_id>

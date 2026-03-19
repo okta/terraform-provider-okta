@@ -1,0 +1,1 @@
+terraform import okta_idp_social.example <idp_id>

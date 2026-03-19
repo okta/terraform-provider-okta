@@ -1,0 +1,1 @@
+terraform import okta_app_secure_password_store.example <app_id>

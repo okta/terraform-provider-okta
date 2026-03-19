@@ -1,3 +1,4 @@
+// DO NOT EDIT LOCAL SDK - USE v3 okta-sdk-golang FOR API CALLS THAT DO NOT EXIST IN LOCAL SDK
 package sdk
 
 import (
@@ -24,6 +25,7 @@ type IdentityProviderPolicy struct {
 	MaxClockSkewPtr *int64                `json:"maxClockSkew,omitempty"`
 	Provisioning    *Provisioning         `json:"provisioning,omitempty"`
 	Subject         *PolicySubject        `json:"subject,omitempty"`
+	TrustClaims     *bool                 `json:"trustClaims,omitempty"`
 }
 
 func NewIdentityProviderPolicy() *IdentityProviderPolicy {
