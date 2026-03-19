@@ -218,9 +218,22 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
+	// Preserve the planned priority before applying API response to state.
+	// The API may silently reassign priorities (e.g., when another condition
+	// collides), but the create response still echoes back the requested value.
+	// Other conditions' priorities may shift, causing a post-apply refresh to
+	// read back a different priority than planned. By preserving the planned
+	// value here, we avoid "inconsistent result after apply" errors. Any
+	// server-side reassignment will surface as drift on the next plan via Read.
+	plannedPriority := data.Priority
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	if !plannedPriority.IsNull() && !plannedPriority.IsUnknown() {
+		data.Priority = plannedPriority
 	}
 
 	// Save Data into Terraform state
@@ -313,9 +326,16 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		}
 	}
 
+	// Preserve the planned priority — see Create for rationale.
+	plannedPriority := data.Priority
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, updatedRequestCondition)...)
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	if !plannedPriority.IsNull() && !plannedPriority.IsUnknown() {
+		data.Priority = plannedPriority
 	}
 
 	// Save Data into Terraform state
