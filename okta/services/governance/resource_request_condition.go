@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -233,6 +234,13 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	if !plannedPriority.IsNull() && !plannedPriority.IsUnknown() {
+		if !data.Priority.Equal(plannedPriority) {
+			resp.Diagnostics.AddWarning(
+				"Priority reassigned by API",
+				fmt.Sprintf("Requested priority %s was reassigned to %s by the server. "+
+					"Run terraform plan to reconcile.", plannedPriority, data.Priority),
+			)
+		}
 		data.Priority = plannedPriority
 	}
 
@@ -335,6 +343,13 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	if !plannedPriority.IsNull() && !plannedPriority.IsUnknown() {
+		if !data.Priority.Equal(plannedPriority) {
+			resp.Diagnostics.AddWarning(
+				"Priority reassigned by API",
+				fmt.Sprintf("Requested priority %s was reassigned to %s by the server. "+
+					"Run terraform plan to reconcile.", plannedPriority, data.Priority),
+			)
+		}
 		data.Priority = plannedPriority
 	}
 
