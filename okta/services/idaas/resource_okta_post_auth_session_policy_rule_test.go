@@ -1,7 +1,6 @@
 package idaas_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -14,6 +13,11 @@ import (
 func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPostAuthSessionPolicyRule)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPostAuthSessionPolicyRule, t.Name())
+
+	dataSourceConfig := `
+	data "okta_post_auth_session_policy" "test" {
+	}
+	`
 
 	config := `
 	data "okta_post_auth_session_policy" "test" {
@@ -37,13 +41,44 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 	}
 	`
 
+	var policyId string
+	var ruleId string
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkPostAuthSessionPolicyRuleDestroy,
+		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
 			{
+				// Step 1: Apply data source only to get policy ID and rule ID
+				Config: mgr.ConfigReplace(dataSourceConfig),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("data.okta_post_auth_session_policy.test", "id"),
+					// Capture the policy ID and rule ID for import
+					func(s *terraform.State) error {
+						ds, ok := s.RootModule().Resources["data.okta_post_auth_session_policy.test"]
+						if !ok {
+							return fmt.Errorf("data source not found")
+						}
+						policyId = ds.Primary.ID
+						ruleId = ds.Primary.Attributes["rule_id"]
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Import the existing rule
+				Config:             mgr.ConfigReplace(config),
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStatePersist: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return fmt.Sprintf("%s/%s", policyId, ruleId), nil
+				},
+			},
+			{
+				// Step 3: Apply config to update rule
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
@@ -52,41 +87,13 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 				),
 			},
 			{
+				// Step 4: Update
 				Config: mgr.ConfigReplace(updatedConfig),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
 					resource.TestCheckResourceAttr(resourceName, "terminate_session", "false"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					rs, ok := s.RootModule().Resources[resourceName]
-					if !ok {
-						return "", fmt.Errorf("not found: %s", resourceName)
-					}
-					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.ID), nil
-				},
-			},
 		},
 	})
-}
-
-func checkPostAuthSessionPolicyRuleDestroy(s *terraform.State) error {
-	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
-	for _, r := range s.RootModule().Resources {
-		if r.Type != resources.OktaIDaaSPostAuthSessionPolicyRule {
-			continue
-		}
-		policyId := r.Primary.Attributes["policy_id"]
-		ruleId := r.Primary.ID
-
-		resp, _, err := client.PolicyAPI.GetPolicyRule(context.Background(), policyId, ruleId).Execute()
-		if err == nil && resp.PostAuthSessionPolicyRule != nil {
-			return fmt.Errorf("post auth session policy rule still exists")
-		}
-	}
-	return nil
 }

@@ -17,3 +17,4 @@ Retrieves the Post Auth Session Policy. This is a system policy that is automati
 - `id` - ID of the Post Auth Session Policy.
 - `name` - Name of the Post Auth Session Policy.
 - `status` - Status of the policy: `ACTIVE` or `INACTIVE`.
+- `rule_id` - ID of the modifiable policy rule (non-default). Use this for importing the policy rule resource.

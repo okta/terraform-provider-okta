@@ -27,6 +27,7 @@ type postAuthSessionPolicyDataSourceModel struct {
 	ID     types.String `tfsdk:"id"`
 	Name   types.String `tfsdk:"name"`
 	Status types.String `tfsdk:"status"`
+	RuleID types.String `tfsdk:"rule_id"`
 }
 
 func (d *postAuthSessionPolicyDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -48,6 +49,10 @@ func (d *postAuthSessionPolicyDataSource) Schema(ctx context.Context, req dataso
 			"status": schema.StringAttribute{
 				Computed:    true,
 				Description: "Status of the policy: ACTIVE or INACTIVE.",
+			},
+			"rule_id": schema.StringAttribute{
+				Computed:    true,
+				Description: "ID of the modifiable policy rule (non-default). Use this for importing the policy rule resource.",
 			},
 		},
 	}
@@ -106,6 +111,34 @@ func (d *postAuthSessionPolicyDataSource) Read(ctx context.Context, req datasour
 	data.Name = types.StringValue(postAuthSessionPolicy.Name)
 	if postAuthSessionPolicy.Status != nil {
 		data.Status = types.StringValue(string(*postAuthSessionPolicy.Status))
+	}
+
+	// Fetch the modifiable rule ID (non-default, priority != 99)
+	policyId := *postAuthSessionPolicy.Id
+	rules, _, err := d.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.ListPolicyRules(ctx, policyId).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error reading policy rules",
+			"Failed to list policy rules: "+err.Error(),
+		)
+		return
+	}
+
+	for _, rule := range rules {
+		if rule.PostAuthSessionPolicyRule != nil {
+			// Skip the default rule (priority 99)
+			if rule.PostAuthSessionPolicyRule.Priority.IsSet() {
+				priority := rule.PostAuthSessionPolicyRule.Priority.Get()
+				if priority != nil && *priority == 99 {
+					continue
+				}
+			}
+			// Found the modifiable rule
+			if rule.PostAuthSessionPolicyRule.Id != nil {
+				data.RuleID = types.StringPointerValue(rule.PostAuthSessionPolicyRule.Id)
+				break
+			}
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
