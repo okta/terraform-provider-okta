@@ -35,7 +35,9 @@ data "okta_idp_oidc" "example" {
 - `jwks_binding` (String) The method of making a request for the OIDC JWKS.
 - `jwks_url` (String) Endpoint where the keys signer publishes its keys in a JWK Set.
 - `max_clock_skew` (Number) Maximum allowable clock-skew when processing messages from the IdP.
+- `participate_slo` (Boolean) Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.
 - `protocol_type` (String) The type of protocol to use.
+- `slo_url` (String) OIDC IdP logout endpoint.
 - `scopes` (Set of String) The scopes of the IdP.
 - `token_binding` (String) The method of making a token request.
 - `token_url` (String) IdP Authorization Server (AS) endpoint to exchange the authorization code grant for an access token.

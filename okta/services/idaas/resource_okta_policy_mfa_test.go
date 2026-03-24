@@ -150,9 +150,25 @@ func TestAccResourceOktaMfaPolicy_Issue_2139_yubikey_token(t *testing.T) {
 }
 
 func TestAccResourceOktaMfaPolicy_custom_app(t *testing.T) {
+	customAppID1 := "autsp50r54pH17cFz1d7"
+	customAppID2 := "autsp5p2urY5EBWs61d7"
+	customAppID3 := "autsg2yd25Pw8m7NW1d7"
+
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
 	config := mgr.GetFixtures("custom_app.tf", t)
+	config = fmt.Sprintf(`
+variable "custom_app_id_1" { default = "%s" }
+variable "custom_app_id_2" { default = "%s" }
+variable "custom_app_id_3" { default = "%s" }
+%s`, customAppID1, customAppID2, customAppID3, config)
+
 	configModified := mgr.GetFixtures("custom_app_modified.tf", t)
+	configModified = fmt.Sprintf(`
+variable "custom_app_id_1" { default = "%s" }
+variable "custom_app_id_2" { default = "%s" }
+variable "custom_app_id_3" { default = "%s" }
+%s`, customAppID1, customAppID2, customAppID3, configModified)
+
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -169,9 +185,9 @@ func TestAccResourceOktaMfaPolicy_custom_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy with Specific Custom Apps"),
 					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "security_question.enroll", "REQUIRED"),
-					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", "aut123456789abcdef"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", customAppID1),
 					resource.TestCheckResourceAttr(resourceName, "custom_app.0.enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", "aut123456789ghijkl"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", customAppID2),
 					resource.TestCheckResourceAttr(resourceName, "custom_app.1.enroll", "OPTIONAL"),
 				),
 			},
@@ -183,11 +199,11 @@ func TestAccResourceOktaMfaPolicy_custom_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy with Specific Custom Apps"),
 					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
 					resource.TestCheckResourceAttr(resourceName, "security_question.enroll", "REQUIRED"),
-					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", "aut123456789abcdef"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.0.id", customAppID1),
 					resource.TestCheckResourceAttr(resourceName, "custom_app.0.enroll", "NOT_ALLOWED"),
-					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", "aut123456789ghijkl"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.1.id", customAppID2),
 					resource.TestCheckResourceAttr(resourceName, "custom_app.1.enroll", "OPTIONAL"),
-					resource.TestCheckResourceAttr(resourceName, "custom_app.2.id", "aut123456789mnopqr"),
+					resource.TestCheckResourceAttr(resourceName, "custom_app.2.id", customAppID3),
 					resource.TestCheckResourceAttr(resourceName, "custom_app.2.enroll", "OPTIONAL"),
 				),
 			},

@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.6.1 (March 10, 2026)
+### FEATURES
+* New data source `okta_admin_role_custom` to allow users to look up an existing custom admin role by its ID or label [#2704](https://github.com/okta/terraform-provider-okta/pull/2704) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### Bug Fixes
+* Fix issue while creation of oauth applications when using OAuth2.0 Authentication [#2708](https://github.com/okta/terraform-provider-okta/pull/2708) by [aditya-okta](https://github.com/aditya-okta)
+
 ## 6.6.0 (March 5, 2026)
 ### FEATURES
 * New resource `okta_app_signon_policy_rules` to multiple app sign-on policy rules for a single policy [#2680](https://github.com/okta/terraform-provider-okta/pull/2680) by [aditya-okta](https://github.com/aditya-okta)

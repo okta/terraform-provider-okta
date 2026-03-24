@@ -14,6 +14,8 @@ resource "okta_idp_oidc" "test" {
   issuer_url            = "https://id.example.com"
   username_template     = "idpuser.email"
   trust_claims          = true
+  participate_slo       = true
+  slo_url               = "https://www.slo-url.com/logout"
 }
 
 data "okta_idp_oidc" "test" {
