@@ -43,64 +43,64 @@ resource "okta_app_signon_policy_rules" "policy_rules" {
 
   rule {
     # Replace with actual rule ID
-    name                  = "Rule1-updatedTF-23/02/26"
-    priority              = 4
-    status                = "ACTIVE"
-    factor_mode           = "2FA"
-    inactivity_period     = "PT1H"
-    network_connection    = "ANYWHERE"
+    name               = "Rule1-updatedTF-23/02/26"
+    priority           = 4
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
   }
 
   rule {
-    name                  = "Rule2-updatedTF-23/02/26"
-    priority              = 2
-    status                = "ACTIVE"
-    factor_mode           = "2FA"
-    inactivity_period     = "PT1H"
-    network_connection    = "ANYWHERE"
+    name               = "Rule2-updatedTF-23/02/26"
+    priority           = 2
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
   }
 
   rule {
-    name                  = "Rule3-updatedTF-23/02/26"
-    priority              = 1
-    status                = "ACTIVE"
-    factor_mode           = "2FA"
-    inactivity_period     = "PT1H"
-    network_connection    = "ANYWHERE"
+    name               = "Rule3-updatedTF-23/02/26"
+    priority           = 1
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
   }
 
   rule {
 
-    name                  = "Rule4-updatedTF-23/02/26"
-    priority              = 3
-    status                = "ACTIVE"
-    factor_mode           = "2FA"
-    inactivity_period     = "PT1H"
-    network_connection    = "ANYWHERE"
+    name               = "Rule4-updatedTF-23/02/26"
+    priority           = 3
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
   }
 
   rule {
-    name                  = "Rule5-updatedTF-23/02/26"
-    priority              = 5
-    status                = "ACTIVE"
-    factor_mode           = "2FA"
-    inactivity_period     = "PT1H"
-    network_connection    = "ANYWHERE"
+    name               = "Rule5-updatedTF-23/02/26"
+    priority           = 5
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
     constraints = [jsonencode(
+      {
+        "authenticationMethods" : [
           {
-            "authenticationMethods" : [
-              {
-                "key" : "okta_password",
-                "method" : "password"
-              }
-            ],
-            "next" : [{
-              "authenticationMethods" : [{
-                "key" : "okta_email",
-                "method" : "email"
-              }]
-            }]
+            "key" : "okta_password",
+            "method" : "password"
           }
-        )]
+        ],
+        "next" : [{
+          "authenticationMethods" : [{
+            "key" : "okta_email",
+            "method" : "email"
+          }]
+        }]
+      }
+    )]
   }
 }

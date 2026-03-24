@@ -1164,7 +1164,7 @@ resources:
       path: /api/v1/authorizationServers/{authServerId}/claims/{claimId}
 
   authorization_server_policy:
-    api_tag: AuthorizationServerPolicies
+    api_tag: AuthorizationServer
     parent_params:
       - name: auth_server_id
         description: "ID of the authorization server"
@@ -1183,7 +1183,7 @@ resources:
       path: /api/v1/authorizationServers/{authServerId}/policies/{policyId}
 
   authorization_server_policy_rule:
-    api_tag: AuthorizationServerRules
+    api_tag: AuthorizationServer
     parent_params:
       - name: auth_server_id
         description: "ID of the authorization server"
