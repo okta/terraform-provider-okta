@@ -138,7 +138,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	var appConfig *v6okta.AppConfig
+	var appConfig v6okta.AppConfig
 	appConfigAttrs := map[string]any{}
 	for k, v := range data.AppConfig.Attributes() {
 		value, err := v.ToTerraformValue(ctx)
@@ -159,7 +159,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 		appConfigAttrs[utils.UnderscoreToCamelCase(k)] = val
 	}
 	if len(appConfigAttrs) > 0 {
-		appConfig = &v6okta.AppConfig{
+		appConfig = v6okta.AppConfig{
 			AdditionalProperties: appConfigAttrs,
 		}
 	}
