@@ -89,6 +89,7 @@ func (r *entityRiskPolicyRuleResource) Schema(_ context.Context, _ resource.Sche
 			"priority": schema.Int64Attribute{
 				Description: "Priority of the rule. Rules are evaluated in priority order.",
 				Optional:    true,
+				Computed:    true,
 			},
 			"risk_level": schema.StringAttribute{
 				Description: "Risk level to match. Valid values: HIGH, MEDIUM, LOW, ANY.",
@@ -359,6 +360,19 @@ func (r *entityRiskPolicyRuleResource) readEntityRiskPolicyRule(ctx context.Cont
 
 	rule := ruleResp.EntityRiskPolicyRule
 
+	// Check if this is the default rule (priority 99) - cannot be managed
+	if rule.Priority.IsSet() {
+		priority := rule.Priority.Get()
+		if priority != nil && *priority == 99 {
+			diags.AddError(
+				"Cannot manage default policy rule",
+				"The default Entity Risk Policy rule (priority 99) cannot be imported or modified. "+
+					"Please create or import a non-default rule instead.",
+			)
+			return
+		}
+	}
+
 	state.Name = types.StringPointerValue(rule.Name)
 	if rule.Status != nil {
 		state.Status = types.StringValue(string(*rule.Status))
@@ -373,20 +387,22 @@ func (r *entityRiskPolicyRuleResource) readEntityRiskPolicyRule(ctx context.Cont
 		}
 
 		if rule.Conditions.People != nil {
-			if len(rule.Conditions.People.Users.Exclude) > 0 {
+			if rule.Conditions.People.Users != nil && len(rule.Conditions.People.Users.Exclude) > 0 {
 				usersExcluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Users.Exclude)
 				diags.Append(d...)
 				state.UsersExcluded = usersExcluded
 			}
-			if len(rule.Conditions.People.Groups.Include) > 0 {
-				groupsIncluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Groups.Include)
-				diags.Append(d...)
-				state.GroupsIncluded = groupsIncluded
-			}
-			if len(rule.Conditions.People.Groups.Exclude) > 0 {
-				groupsExcluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Groups.Exclude)
-				diags.Append(d...)
-				state.GroupsExcluded = groupsExcluded
+			if rule.Conditions.People.Groups != nil {
+				if len(rule.Conditions.People.Groups.Include) > 0 {
+					groupsIncluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Groups.Include)
+					diags.Append(d...)
+					state.GroupsIncluded = groupsIncluded
+				}
+				if len(rule.Conditions.People.Groups.Exclude) > 0 {
+					groupsExcluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Groups.Exclude)
+					diags.Append(d...)
+					state.GroupsExcluded = groupsExcluded
+				}
 			}
 		}
 	}
@@ -469,9 +485,17 @@ func (r *entityRiskPolicyRuleResource) buildEntityRiskPolicyRule(ctx context.Con
 		groupsExcluded = []string{}
 	}
 
-	groupCondition := v6okta.NewGroupCondition(groupsExcluded, groupsIncluded)
-	userCondition := v6okta.NewUserCondition(usersExcluded, []string{})
-	peopleCondition := v6okta.NewPolicyPeopleCondition(*groupCondition, *userCondition)
+	groupCondition := v6okta.NewGroupCondition()
+	groupCondition.SetExclude(groupsExcluded)
+	groupCondition.SetInclude(groupsIncluded)
+
+	userCondition := v6okta.NewUserCondition()
+	userCondition.SetExclude(usersExcluded)
+	userCondition.SetInclude([]string{})
+
+	peopleCondition := v6okta.NewPolicyPeopleCondition()
+	peopleCondition.SetGroups(*groupCondition)
+	peopleCondition.SetUsers(*userCondition)
 	conditions.People = peopleCondition
 
 	rule.Conditions = conditions

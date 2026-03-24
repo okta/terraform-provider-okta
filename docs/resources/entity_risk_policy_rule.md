@@ -8,7 +8,7 @@ description: |-
 
 Manages an Entity Risk Policy Rule. Entity Risk Policy rules define automated responses to identity threats detected by Okta's Identity Threat Protection (ITP).
 
-~> **NOTE:** Entity Risk Policy is automatically created when Identity Threat Protection (ITP) is enabled. Use the `okta_entity_risk_policy` data source to get the policy ID.
+~> **NOTE:** Entity Risk Policy is automatically created when Identity Threat Protection (ITP) is enabled. Use the `okta_entity_risk_policy` data source to get the policy ID. The default policy rule (priority 99) cannot be imported or modified.
 
 ## Example Usage
 

@@ -64,7 +64,7 @@ func (d *entityRiskPolicyDataSource) Read(ctx context.Context, req datasource.Re
 
 	d.Logger.Info("reading entity risk policy")
 
-	policies, _, err := d.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.ListPolicies(ctx).Type_("ENTITY_RISK").Execute()
+	policyResp, _, err := d.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.ListPolicies(ctx).Type_("ENTITY_RISK").Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Entity Risk Policy",
@@ -73,7 +73,7 @@ func (d *entityRiskPolicyDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	if len(policies) == 0 {
+	if policyResp == nil || policyResp.EntityRiskPolicy == nil {
 		resp.Diagnostics.AddError(
 			"No Entity Risk Policy found",
 			"Ensure Identity Threat Protection (ITP) is enabled in your organization.",
@@ -81,18 +81,7 @@ func (d *entityRiskPolicyDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	// There should be exactly one Entity Risk Policy
-	policy := policies[0]
-
-	if policy.EntityRiskPolicy == nil {
-		resp.Diagnostics.AddError(
-			"Unexpected policy type",
-			"Expected EntityRiskPolicy but got a different policy type.",
-		)
-		return
-	}
-
-	entityRiskPolicy := policy.EntityRiskPolicy
+	entityRiskPolicy := policyResp.EntityRiskPolicy
 
 	if entityRiskPolicy.Id == nil {
 		resp.Diagnostics.AddError(
