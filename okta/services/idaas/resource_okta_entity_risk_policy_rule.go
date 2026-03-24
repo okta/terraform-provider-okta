@@ -2,9 +2,7 @@ package idaas
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -153,9 +151,7 @@ func (r *entityRiskPolicyRuleResource) Create(ctx context.Context, req resource.
 		EntityRiskPolicyRule: rule,
 	}
 
-	// Execute the request - ignore the typed response since SDK unmarshalling fails
-	// Use the raw HTTP response from APIResponse to parse the ID
-	_, apiResp, err := r.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.CreatePolicyRule(ctx, policyId).PolicyRule(ruleRequest).Execute()
+	ruleResp, _, err := r.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.CreatePolicyRule(ctx, policyId).PolicyRule(ruleRequest).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create entity risk policy rule",
@@ -164,37 +160,17 @@ func (r *entityRiskPolicyRuleResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	// Read the response body to extract rule ID
-	body, err := io.ReadAll(apiResp.Body)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to read response body",
-			err.Error(),
-		)
-		return
-	}
-
-	var responseData map[string]interface{}
-	if err := json.Unmarshal(body, &responseData); err != nil {
-		resp.Diagnostics.AddError(
-			"failed to parse response",
-			err.Error(),
-		)
-		return
-	}
-
-	ruleId, ok := responseData["id"].(string)
-	if !ok || ruleId == "" {
+	if ruleResp.EntityRiskPolicyRule == nil || ruleResp.EntityRiskPolicyRule.Id == nil {
 		resp.Diagnostics.AddError(
 			"rule ID not found in response",
-			"The API response did not contain a valid rule ID",
+			"The API response did not contain a valid entity risk policy rule",
 		)
 		return
 	}
 
+	ruleId := *ruleResp.EntityRiskPolicyRule.Id
 	state.ID = types.StringValue(ruleId)
 
-	// Handle status - deactivate if needed
 	if state.Status.ValueString() == "INACTIVE" {
 		_, err := r.OktaIDaaSClient.OktaSDKClientV6().PolicyAPI.DeactivatePolicyRule(ctx, policyId, ruleId).Execute()
 		if err != nil {

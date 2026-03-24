@@ -28,7 +28,7 @@ require (
 	github.com/okta/okta-governance-sdk-golang v1.0.1
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
 	github.com/okta/okta-sdk-golang/v5 v5.0.6
-	github.com/okta/okta-sdk-golang/v6 v6.1.0
+	github.com/okta/okta-sdk-golang/v6 v6.1.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/text v0.35.0
