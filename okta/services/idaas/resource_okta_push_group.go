@@ -138,13 +138,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	// NOTE: SDK v6.1.0 breaking change fix
-	// The SDK changed AppConfig from pointer (*AppConfig) in v6.0.3 to value (AppConfig) in v6.1.0
-	// This caused empty AppConfig{} to always be serialized to JSON, resulting in 400 Bad Request for non-AD apps
-	// We've patched vendor/github.com/okta/okta-sdk-golang/v6/okta/model_create_group_push_mapping_request.go
-	// to use reflect.IsZero() check in ToMap() method to properly omit zero-value AppConfig structs
-	// See: https://github.com/okta/okta-sdk-golang/compare/v6.0.3...v6.1.0
-	var appConfig v6okta.AppConfig
+	var appConfig *v6okta.AppConfig
 	appConfigAttrs := map[string]any{}
 	for k, v := range data.AppConfig.Attributes() {
 		value, err := v.ToTerraformValue(ctx)
@@ -165,7 +159,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 		appConfigAttrs[utils.UnderscoreToCamelCase(k)] = val
 	}
 	if len(appConfigAttrs) > 0 {
-		appConfig = v6okta.AppConfig{
+		appConfig = &v6okta.AppConfig{
 			AdditionalProperties: appConfigAttrs,
 		}
 	}
