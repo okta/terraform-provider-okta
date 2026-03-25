@@ -379,6 +379,10 @@ func (g *Generator) autoDetectVariants(name string, cfg config.ResourceConfig) [
 		if op == nil {
 			continue
 		}
+
+		//The reason Read is preferred over Create is that GET responses are the most complete —
+		//they include all fields including readOnly ones (id, created, lastUpdated, etc.)
+		//that the API echoes back, but you'd never send in a POST body.
 		s := g.spec.GetResponseSchema(op)
 		if s != nil {
 			schema = s
