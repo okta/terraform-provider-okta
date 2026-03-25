@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -337,7 +338,7 @@ func (r *appFeatures) Create(ctx context.Context, req resource.CreateRequest, re
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating app features",
-			"Could not create app feature, unexpected error: "+err.Error(),
+			"Could not create app feature, unexpected error: "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -599,7 +600,7 @@ func (r *appFeatures) Read(ctx context.Context, req resource.ReadRequest, resp *
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading app features",
-			"Could not read app feature, unexpected error: "+err.Error(),
+			"Could not read app feature, unexpected error: "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -628,7 +629,7 @@ func (r *appFeatures) Update(ctx context.Context, req resource.UpdateRequest, re
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating app features",
-			"Could not update app feature, unexpected error: "+err.Error(),
+			"Could not update app feature, unexpected error: "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}

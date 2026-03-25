@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -146,7 +147,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -164,7 +165,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -173,7 +174,7 @@ func (r *brandResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -203,7 +204,7 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to get list brand",
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -218,7 +219,7 @@ func (r *brandResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to read brand",
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -246,7 +247,7 @@ func (r *brandResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -267,7 +268,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to get list brand",
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -282,7 +283,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to read brand",
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -301,7 +302,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -310,7 +311,7 @@ func (r *brandResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read brand",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
@@ -132,7 +133,7 @@ func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateReq
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to get principal rate limit",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -149,7 +150,7 @@ func (r *principalRateLimits) Create(ctx context.Context, req resource.CreateReq
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update principal rate limit",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -175,7 +176,7 @@ func (r *principalRateLimits) Read(ctx context.Context, req resource.ReadRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read principal rate limit",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -201,7 +202,7 @@ func (r *principalRateLimits) Update(ctx context.Context, req resource.UpdateReq
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update principal rate limit",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -227,7 +228,7 @@ func (r *principalRateLimits) Delete(ctx context.Context, req resource.DeleteReq
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update principal rate limit",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}

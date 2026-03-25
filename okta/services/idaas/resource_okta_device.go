@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -86,7 +87,7 @@ func (r *devicesResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Device",
-			"Could not read Device with Id "+data.Id.ValueString()+": "+err.Error(),
+			"Could not read Device with Id "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -115,7 +116,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating Device",
-				"Could not activate device with Id "+state.Id.ValueString()+": "+err.Error(),
+				"Could not activate device with Id "+state.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -124,7 +125,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Deactivating Device",
-				"Could not deactivate device with Id "+state.Id.ValueString()+": "+err.Error(),
+				"Could not deactivate device with Id "+state.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -133,7 +134,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Suspending Device",
-				"Could not suspend device with Id "+state.Id.ValueString()+": "+err.Error(),
+				"Could not suspend device with Id "+state.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -142,7 +143,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error unsuspending the Device",
-				"Could not unsuspend device with Id "+state.Id.ValueString()+": "+err.Error(),
+				"Could not unsuspend device with Id "+state.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -152,7 +153,7 @@ func (r *devicesResource) Update(ctx context.Context, req resource.UpdateRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Device",
-			"Could not read Device with Id "+data.Id.ValueString()+": "+err.Error(),
+			"Could not read Device with Id "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -177,7 +178,7 @@ func (r *devicesResource) Delete(ctx context.Context, req resource.DeleteRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Deleting Device",
-			"Could not delete device with Id "+data.Id.ValueString()+": "+err.Error(),
+			"Could not delete device with Id "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}

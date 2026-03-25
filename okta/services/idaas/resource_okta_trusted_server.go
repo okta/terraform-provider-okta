@@ -88,7 +88,7 @@ func (r *trustedServerResource) Create(ctx context.Context, req resource.CreateR
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create trusted servers",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -116,7 +116,7 @@ func (r *trustedServerResource) Read(ctx context.Context, req resource.ReadReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error retrieving list trusted server",
-			fmt.Sprintf("Error returned: %s", err.Error()),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -150,7 +150,7 @@ func (r *trustedServerResource) Delete(ctx context.Context, req resource.DeleteR
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("failed to delete trusted server %v", trustedServerID),
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -190,7 +190,7 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"failed to update trusted servers",
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}
@@ -201,7 +201,7 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("failed to delete trusted server %v", trustedServerID),
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}

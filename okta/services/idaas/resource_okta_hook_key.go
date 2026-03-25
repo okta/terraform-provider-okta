@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -117,7 +118,7 @@ func (r *hookKey) Create(ctx context.Context, req resource.CreateRequest, resp *
 	keyRequest.SetName(data.Name.ValueString())
 	hookKey, _, err := hookKeyRequest.KeyRequest(keyRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating hook key", "Could not create hook key, unexpected error: "+err.Error())
+		resp.Diagnostics.AddError("Error creating hook key", "Could not create hook key, unexpected error: "+utils.ErrorDetail_V5(err))
 		return
 	}
 
@@ -135,7 +136,7 @@ func (r *hookKey) Read(ctx context.Context, req resource.ReadRequest, resp *reso
 
 	hookKey, _, err := r.OktaIDaaSClient.OktaSDKClientV5().HookKeyAPI.GetHookKey(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading hook key", "Could not read hook key, unexpected error: "+err.Error())
+		resp.Diagnostics.AddError("Error reading hook key", "Could not read hook key, unexpected error: "+utils.ErrorDetail_V5(err))
 		return
 	}
 	applyHookKeyToState(&data, hookKey)
@@ -155,7 +156,7 @@ func (r *hookKey) Update(ctx context.Context, req resource.UpdateRequest, resp *
 	updateKeyRequest.SetName(data.Name.ValueString())
 	hookKey, _, err := updateHookKeyRequest.KeyRequest(updateKeyRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error replacing hook key", "Could not replace hook key, unexpected error: "+err.Error())
+		resp.Diagnostics.AddError("Error replacing hook key", "Could not replace hook key, unexpected error: "+utils.ErrorDetail_V5(err))
 		return
 	}
 
@@ -174,7 +175,7 @@ func (r *hookKey) Delete(ctx context.Context, req resource.DeleteRequest, resp *
 	deleteHookKeyRequest := r.OktaIDaaSClient.OktaSDKClientV5().HookKeyAPI.DeleteHookKey(ctx, data.Id.ValueString())
 	_, err := deleteHookKeyRequest.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error deleting hook key", "Could not delete  hook key, unexpected error: "+err.Error())
+		resp.Diagnostics.AddError("Error deleting hook key", "Could not delete  hook key, unexpected error: "+utils.ErrorDetail_V5(err))
 		return
 	}
 }

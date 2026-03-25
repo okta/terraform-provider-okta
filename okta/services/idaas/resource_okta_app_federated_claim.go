@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -91,7 +92,7 @@ func (r *appFederatedClaim) Create(ctx context.Context, req resource.CreateReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating app federated claim",
-			"Could not create app federated claim, unexpected error: "+err.Error(),
+			"Could not create app federated claim, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -123,7 +124,7 @@ func (r *appFederatedClaim) Read(ctx context.Context, req resource.ReadRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading app federated claim",
-			"Could not read app federated claim, unexpected error: "+err.Error(),
+			"Could not read app federated claim, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -151,7 +152,7 @@ func (r *appFederatedClaim) Update(ctx context.Context, req resource.UpdateReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating app federated claim",
-			"Could not update app federated claim, unexpected error: "+err.Error(),
+			"Could not update app federated claim, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -173,7 +174,7 @@ func (r *appFederatedClaim) Delete(ctx context.Context, req resource.DeleteReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting app federated claim",
-			"Could not delete app federated claim, unexpected error: "+err.Error(),
+			"Could not delete app federated claim, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}

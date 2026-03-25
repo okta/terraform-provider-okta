@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -210,7 +211,7 @@ func (r *agentPoolUpdateResource) Create(ctx context.Context, req resource.Creat
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating agent pool update",
-			fmt.Sprintf("Could not create agent pool update: %s", err.Error()),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -234,8 +235,8 @@ func (r *agentPoolUpdateResource) Read(ctx context.Context, req resource.ReadReq
 
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading agent pool update",
-			fmt.Sprintf("Could not read agent pool update %s: %s", state.ID.ValueString(), err.Error()),
+			fmt.Sprintf("Error reading agent pool update %s", state.ID.ValueString()),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -262,8 +263,8 @@ func (r *agentPoolUpdateResource) Update(ctx context.Context, req resource.Updat
 
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error updating agent pool update",
-			fmt.Sprintf("Could not update agent pool update %s: %s", state.ID.ValueString(), err.Error()),
+			fmt.Sprintf("Error updating agent pool update %s", state.ID.ValueString()),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -287,8 +288,8 @@ func (r *agentPoolUpdateResource) Delete(ctx context.Context, req resource.Delet
 
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error deleting agent pool update",
-			fmt.Sprintf("Could not delete agent pool update %s: %s", state.ID.ValueString(), err.Error()),
+			fmt.Sprintf("Error deleting agent pool update %s", state.ID.ValueString()),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}

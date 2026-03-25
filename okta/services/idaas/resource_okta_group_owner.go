@@ -137,7 +137,7 @@ func (r *groupOwnerResource) Create(ctx context.Context, req resource.CreateRequ
 				state.Type.ValueString(),
 				state.GroupID.ValueString(),
 			),
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -174,7 +174,7 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 		}
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("Error retrieving the list of owners for okta_group '%s'", state.GroupID.ValueString()),
-			fmt.Sprintf("Error returned: %s", err.Error()),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -217,8 +217,12 @@ func (r *groupOwnerResource) Delete(ctx context.Context, req resource.DeleteRequ
 			return
 		}
 		resp.Diagnostics.AddError(
-			"failed to delete group owner "+state.ID.ValueString()+" from group",
-			err.Error(),
+			fmt.Sprintf(
+				"failed to delete okta_group_owner '%s' from okta_group '%s'",
+				state.ID.ValueString(),
+				state.GroupID.ValueString(),
+			),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
