@@ -1,0 +1,273 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.163096667s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.059145625s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.075144125s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.040585542s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.055370041s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.039875167s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.123040125s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.026941291s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.031488s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        url: https://classic-00.dne-okta.com/.well-known/oauth-authorization-server
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"issuer":"https://classic-00.dne-okta.com","authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/authorize","token_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/token","registration_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/clients","response_types_supported":["code","token","id_token","code id_token","code token","id_token token","code id_token token"],"response_modes_supported":["query","fragment","form_post","okta_post_message"],"grant_types_supported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:token-exchange"],"subject_types_supported":["public"],"scopes_supported":["okta.users.manage","okta.users.manage.self","okta.users.read","okta.users.read.self","okta.linkedObjects.manage","okta.linkedObjects.read","okta.profileMappings.manage","okta.profileMappings.read","okta.userTypes.manage","okta.userTypes.read","okta.clients.manage","okta.clients.register","okta.clients.read","okta.appGrants.manage","okta.appGrants.read","okta.policies.manage","okta.policies.read","okta.groups.manage","okta.groups.read","okta.inlineHooks.manage","okta.inlineHooks.read","okta.eventHooks.manage","okta.eventHooks.read","okta.events.read","okta.logs.read","okta.apps.manage","okta.apps.read","okta.governance.assignmentCandidates.read","okta.accessRequests.tasks.manage","okta.accessRequests.tasks.read","okta.schemas.manage","okta.schemas.read","okta.idps.manage","okta.idps.read","okta.factors.manage","okta.factors.read","okta.riskProviders.manage","okta.riskProviders.read","okta.roles.manage","okta.roles.read","okta.orgs.manage","okta.orgs.read","okta.domains.manage","okta.domains.read","okta.brands.manage","okta.brands.read","okta.sessions.manage","okta.sessions.read","okta.templates.manage","okta.templates.read","okta.trustedOrigins.manage","okta.trustedOrigins.read","okta.threatInsights.manage","okta.threatInsights.read","okta.behaviors.manage","okta.behaviors.read","okta.networkZones.manage","okta.networkZones.read","okta.agentPools.manage","okta.agentPools.read","okta.reports.read","okta.features.manage","okta.features.read","okta.certificateAuthorities.manage","okta.certificateAuthorities.read","okta.principalRateLimits.manage","okta.principalRateLimits.read","okta.rateLimits.manage","okta.rateLimits.read","okta.directories.manage","okta.directories.groups.manage","okta.apiTokens.manage","okta.apiTokens.read","okta.personal.adminSettings.manage","okta.personal.adminSettings.read","openid","email","profile","address","phone","offline_access","groups"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"claims_supported":["ver","jti","iss","aud","iat","exp","cid","uid","scp","sub"],"code_challenge_methods_supported":["S256"],"introspection_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/introspect","introspection_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"revocation_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/revoke","revocation_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],"end_session_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/logout","request_parameter_supported":true,"request_object_signing_alg_values_supported":["HS256","HS384","HS512","RS256","RS384","RS512","ES256","ES384","ES512"],"device_authorization_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/device/authorize","pushed_authorization_request_endpoint":"https://classic-00.dne-okta.com/oauth2/v1/par","dpop_signing_alg_values_supported":["RS256","RS384","RS512","ES256","ES384","ES512"],"frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"identity_chaining_requested_token_types_supported":["urn:ietf:params:oauth:token-type:id-jag"]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 25 Mar 2026 06:21:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.065739667s

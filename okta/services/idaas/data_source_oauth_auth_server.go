@@ -45,7 +45,7 @@ type OAuth2ServerMetadata struct {
 // Ensure the implementation satisfies the expected interfaces
 var _ datasource.DataSource = &OAuthAuthorizationServerDataSource{}
 
-func NewOAuthAuthorizationServerDataSource() datasource.DataSource {
+func newOAuthAuthorizationServerDataSource() datasource.DataSource {
 	return &OAuthAuthorizationServerDataSource{}
 }
 
@@ -253,8 +253,14 @@ func (d *OAuthAuthorizationServerDataSource) Read(ctx context.Context, readReq d
 		return
 	}
 
-	// Make the request
-	client := &http.Client{}
+	// Use the provider's HTTP client so the VCR recorder intercepts the request
+	// during acceptance tests. Falling back to a plain client if none is configured.
+	var client *http.Client
+	if d.Config != nil && d.Config.OktaIDaaSClient != nil {
+		client = d.Config.OktaIDaaSClient.HTTPClient()
+	} else {
+		client = &http.Client{}
+	}
 	httpResp, err := client.Do(httpReq)
 	if err != nil {
 		resp.Diagnostics.AddError("Error fetching OAuth authorization server metadata", err.Error())
