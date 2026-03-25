@@ -139,6 +139,8 @@ const (
 	OktaIDaaSHookKey                                  = "okta_hook_key"
 	OktaIDaaSUISchema                                 = "okta_ui_schema"
 	OktaIDaaSCustomizedSignInPage                     = "okta_customized_signin_page"
+	OktaIDaaSPostAuthSessionPolicy                    = "okta_post_auth_session_policy"
+	OktaIDaaSPostAuthSessionPolicyRule                = "okta_post_auth_session_policy_rule"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
