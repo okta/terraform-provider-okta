@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -84,7 +85,7 @@ func (r *emailTemplateSettingsResource) Create(ctx context.Context, req resource
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update email template settings",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -108,7 +109,7 @@ func (r *emailTemplateSettingsResource) Read(ctx context.Context, req resource.R
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read email template settings",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -138,7 +139,7 @@ func (r *emailTemplateSettingsResource) Update(ctx context.Context, req resource
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update email template settings",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -136,7 +137,7 @@ func (r *uiSchemaResource) Create(ctx context.Context, req resource.CreateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating UISchema",
-			"Could not create UISchema, unexpected error: "+err.Error(),
+			"Could not create UISchema, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -203,7 +204,7 @@ func (r *uiSchemaResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading UISchema",
-			"Could not read UISchema, unexpected error: "+err.Error(),
+			"Could not read UISchema, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -232,7 +233,7 @@ func (r *uiSchemaResource) Update(ctx context.Context, req resource.UpdateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating UISchema",
-			"An error occurred while updating the UISchema: "+err.Error(),
+			"An error occurred while updating the UISchema: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -260,7 +261,7 @@ func (r *uiSchemaResource) Delete(ctx context.Context, req resource.DeleteReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting UISchema",
-			"Could not delete UISchema, unexpected error: "+err.Error(),
+			"Could not delete UISchema, unexpected error: "+utils.ErrorDetail_V6(err),
 		)
 		return
 	}

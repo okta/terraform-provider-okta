@@ -544,6 +544,104 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 	return nil
 }
 
+// ErrorDetail_V4 extracts the error summary, error code, error ID, and causes
+// from an Okta V4 SDK GenericOpenAPIError. Falls back to err.Error() when the
+// structured model is unavailable.
+func ErrorDetail_V4(err error) string {
+	var oae okta.GenericOpenAPIError
+	if errors.As(err, &oae) {
+		if m := oae.Model(); m != nil {
+			if oe, ok := m.(okta.Error); ok {
+				return formatOktaError(oe.GetErrorSummary(), oe.GetErrorCode(), oe.GetErrorId(), oktaErrorCauseSummaries(oe.GetErrorCauses()))
+			}
+		}
+	}
+	return err.Error()
+}
+
+// ErrorDetail_V5 extracts the error summary, error code, error ID, and causes
+// from an Okta V5 SDK GenericOpenAPIError. Falls back to err.Error() when the
+// structured model is unavailable.
+func ErrorDetail_V5(err error) string {
+	var oae v5okta.GenericOpenAPIError
+	if errors.As(err, &oae) {
+		if m := oae.Model(); m != nil {
+			if oe, ok := m.(v5okta.Error); ok {
+				return formatOktaError(oe.GetErrorSummary(), oe.GetErrorCode(), oe.GetErrorId(), v5ErrorCauseSummaries(oe.GetErrorCauses()))
+			}
+		}
+	}
+	return err.Error()
+}
+
+// ErrorDetail_V6 extracts the error summary, error code, error ID, and causes
+// from an Okta V6 SDK GenericOpenAPIError. Falls back to err.Error() when the
+// structured model is unavailable.
+func ErrorDetail_V6(err error) string {
+	var oae v6okta.GenericOpenAPIError
+	if errors.As(err, &oae) {
+		if m := oae.Model(); m != nil {
+			if oe, ok := m.(v6okta.Error); ok {
+				return formatOktaError(oe.GetErrorSummary(), oe.GetErrorCode(), oe.GetErrorId(), v6ErrorCauseSummaries(oe.GetErrorCauses()))
+			}
+		}
+	}
+	return err.Error()
+}
+
+// formatOktaError builds a human-readable error string from Okta API error
+// fields. This is shared across all SDK version helpers.
+func formatOktaError(summary, code, id string, causes []string) string {
+	if summary == "" {
+		return "unknown error"
+	}
+	msg := summary
+	var meta []string
+	if code != "" {
+		meta = append(meta, fmt.Sprintf("errorCode: %s", code))
+	}
+	if id != "" {
+		meta = append(meta, fmt.Sprintf("errorId: %s", id))
+	}
+	if len(meta) > 0 {
+		msg = fmt.Sprintf("%s (%s)", msg, strings.Join(meta, ", "))
+	}
+	if len(causes) > 0 {
+		msg = fmt.Sprintf("%s. Causes: %s", msg, strings.Join(causes, ", "))
+	}
+	return msg
+}
+
+func oktaErrorCauseSummaries(causes []okta.ErrorErrorCausesInner) []string {
+	out := make([]string, 0, len(causes))
+	for _, c := range causes {
+		if s := c.GetErrorSummary(); s != "" {
+			out = append(out, s)
+		}
+	}
+	return out
+}
+
+func v5ErrorCauseSummaries(causes []v5okta.ErrorCause) []string {
+	out := make([]string, 0, len(causes))
+	for _, c := range causes {
+		if s := c.GetErrorSummary(); s != "" {
+			out = append(out, s)
+		}
+	}
+	return out
+}
+
+func v6ErrorCauseSummaries(causes []v6okta.ErrorCause) []string {
+	out := make([]string, 0, len(causes))
+	for _, c := range causes {
+		if s := c.GetErrorSummary(); s != "" {
+			out = append(out, s)
+		}
+	}
+	return out
+}
+
 // TODO switch to responseErr when migration complete
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 	if err != nil {

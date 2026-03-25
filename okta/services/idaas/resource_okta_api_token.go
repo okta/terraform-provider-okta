@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -131,7 +132,7 @@ func (r *apiTokenResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in getting API token",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -155,7 +156,7 @@ func (r *apiTokenResource) Update(ctx context.Context, req resource.UpdateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error in upserting API token",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -174,7 +175,7 @@ func (r *apiTokenResource) Delete(ctx context.Context, req resource.DeleteReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"error in revoking API token",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}

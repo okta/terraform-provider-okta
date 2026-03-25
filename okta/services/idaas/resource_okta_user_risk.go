@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	fwdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -94,7 +95,7 @@ func (r *userRiskResource) Create(ctx context.Context, req resource.CreateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to set user risk",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -147,7 +148,7 @@ func (r *userRiskResource) Update(ctx context.Context, req resource.UpdateReques
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update user risk",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -187,7 +188,7 @@ func (r *userRiskResource) ImportState(ctx context.Context, req resource.ImportS
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to get user risk",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -217,7 +218,7 @@ func (r *userRiskResource) readUserRisk(ctx context.Context, state *userRiskReso
 	if err != nil {
 		diags.AddError(
 			"failed to get user risk",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}

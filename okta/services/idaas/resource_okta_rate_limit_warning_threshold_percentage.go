@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -73,7 +74,7 @@ func (r *rateLimitWarningThresholdPercentage) Create(ctx context.Context, req re
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read rate limit warning threshold percentage",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -101,7 +102,7 @@ func (r *rateLimitWarningThresholdPercentage) Read(ctx context.Context, req reso
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update rate limit warning threshold percentage",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}

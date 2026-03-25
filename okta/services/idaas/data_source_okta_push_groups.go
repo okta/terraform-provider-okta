@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var pushGroupsDataSourceObjectAttrs = map[string]attr.Type{
@@ -80,7 +81,7 @@ func (r *pushGroupsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	for {
 		mappings, response, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.ListGroupPushMappings(ctx, state.AppId.ValueString()).After(cursor).Execute()
 		if err != nil {
-			resp.Diagnostics.AddError("failed to read push group mapping: ", err.Error())
+			resp.Diagnostics.AddError("failed to read push group mapping: ", utils.ErrorDetail_V6(err))
 			return
 		}
 		groupPushMappings = append(groupPushMappings, mappings...)

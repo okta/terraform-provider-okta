@@ -175,7 +175,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 	if data.TargetGroupName.ValueString() == "" && data.TargetGroupId.ValueString() == "" {
 		sourceGroup, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupAPI.GetGroup(ctx, data.SourceGroupId.ValueString()).Execute()
 		if err != nil {
-			resp.Diagnostics.AddError("Error creating Okta Push Group ", err.Error())
+			resp.Diagnostics.AddError("Error creating Okta Push Group ", utils.ErrorDetail_V6(err))
 			return
 		}
 		if sourceGroup.Profile.OktaActiveDirectoryGroupProfile != nil {
@@ -193,7 +193,7 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 
 	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.CreateGroupPushMapping(ctx, data.AppId.ValueString()).Body(request).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating Okta Push Group ", err.Error())
+		resp.Diagnostics.AddError("Error creating Okta Push Group ", utils.ErrorDetail_V6(err))
 		return
 	}
 
@@ -217,7 +217,7 @@ func (r *pushGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading Okta push group mapping ", err.Error())
+		resp.Diagnostics.AddError("Error reading Okta push group mapping ", utils.ErrorDetail_V6(err))
 		return
 	}
 
@@ -253,7 +253,7 @@ func (r *pushGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		Status: state.Status.ValueString(),
 	}).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to update push group mapping: ", err.Error())
+		resp.Diagnostics.AddError("failed to update push group mapping: ", utils.ErrorDetail_V6(err))
 		return
 	}
 
@@ -285,14 +285,14 @@ func (r *pushGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 			Status: "INACTIVE",
 		}).Execute()
 		if err != nil {
-			resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
+			resp.Diagnostics.AddError("failed to delete push group mapping: ", utils.ErrorDetail_V6(err))
 			return
 		}
 	}
 
 	_, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.DeleteGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).DeleteTargetGroup(state.DeleteTargetGroupOnDestroy.ValueBool()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
+		resp.Diagnostics.AddError("failed to delete push group mapping: ", utils.ErrorDetail_V6(err))
 		return
 	}
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -157,7 +158,7 @@ func (r *appConnections) Create(ctx context.Context, req resource.CreateRequest,
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating App Connection",
-			"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+			"Could not create app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -175,7 +176,7 @@ func (r *appConnections) Create(ctx context.Context, req resource.CreateRequest,
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating App Connection",
-				"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+				"Could not create app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -257,7 +258,7 @@ func (r *appConnections) Read(ctx context.Context, req resource.ReadRequest, res
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading App Connection",
-			"Could not read app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+			"Could not read app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -323,7 +324,7 @@ func (r *appConnections) Update(ctx context.Context, req resource.UpdateRequest,
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating App Connection",
-			"Could not update app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+			"Could not update app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -341,7 +342,7 @@ func (r *appConnections) Update(ctx context.Context, req resource.UpdateRequest,
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating App Connection",
-				"Could not create app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+				"Could not create app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -352,7 +353,7 @@ func (r *appConnections) Update(ctx context.Context, req resource.UpdateRequest,
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Deactivating App Connection",
-				"Could not deactivate app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+				"Could not deactivate app connection for application ID "+data.ID.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
