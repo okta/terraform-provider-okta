@@ -305,8 +305,10 @@ func (r *groupOwnersResource) Delete(ctx context.Context, req resource.DeleteReq
 			if utils.SuppressErrorOn404_V5(apiResp, err) == nil {
 				continue
 			}
-			resp.Diagnostics.AddError("failed to delete group owner", fmt.Sprintf("group_id=%s owner_id=%s error=%s", groupID, o.ID, err))
-			continue
+			resp.Diagnostics.AddError(
+				"failed to delete group owner",
+				fmt.Sprintf("group_id=%s owner_id=%s error=%s", groupID, o.ID, err),
+			)
 		}
 	}
 }
@@ -319,6 +321,29 @@ func (r *groupOwnersResource) ImportState(ctx context.Context, req resource.Impo
 	}
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), groupID)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("group_id"), groupID)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Hydrate owner blocks from the API so the next plan does not error on
+	// missing required attributes. Without this, the framework would leave
+	// the "owner" set null and fail on the subsequent plan.
+	apiOwners, err := r.listAllGroupOwners(ctx, groupID)
+	if err != nil {
+		if errors.Is(err, errGroupNotFound) {
+			resp.Diagnostics.AddError("group not found", fmt.Sprintf("group %q does not exist", groupID))
+			return
+		}
+		resp.Diagnostics.AddError("failed to list owners during import", err.Error())
+		return
+	}
+
+	setVal, diags := flattenOwners(apiOwners)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("owner"), setVal)...)
 }
 
 // Internal helpers
