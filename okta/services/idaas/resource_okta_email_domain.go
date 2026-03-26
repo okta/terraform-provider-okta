@@ -147,13 +147,20 @@ func resourceEmailDomainDelete(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
+func optionalString(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
 func buildEmailDomain(d *schema.ResourceData) okta.EmailDomain {
 	return okta.EmailDomain{
 		BrandId:             d.Get("brand_id").(string),
 		Domain:              d.Get("domain").(string),
 		DisplayName:         d.Get("display_name").(string),
 		UserName:            d.Get("user_name").(string),
-		ValidationSubdomain: d.Get("validation_subdomain").(*string),
+		ValidationSubdomain: optionalString(d.Get("validation_subdomain").(string)),
 	}
 }
 
