@@ -197,6 +197,94 @@ resource "%s" "%s" {
 `, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
 }
 
+// TestAccResourceOktaPolicyRulePassword_sspr tests the SSPR requirement fields added in GH-2559.
+// The logic has been updated by AI to support new fields, review carefully
+func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRulePassword, t.Name())
+	config := testOktaPolicyRulePasswordSSPR(mgr.Seed)
+	updatedConfig := testOktaPolicyRulePasswordSSPRUpdated(mgr.Seed)
+	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "push"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "AUTH_POLICY"),
+				),
+			},
+		},
+	})
+}
+
+// testOktaPolicyRulePasswordSSPR returns a config with SSPR requirement fields (LEGACY access control).
+// The logic has been updated by AI to support new fields, review carefully
+func testOktaPolicyRulePasswordSSPR(rInt int) string {
+	name := acctest.BuildResourceName(rInt)
+
+	return fmt.Sprintf(`
+data "okta_default_policy" "default-%d" {
+	type = "%s"
+}
+
+resource "%s" "%s" {
+	policy_id = "${data.okta_default_policy.default-%d.id}"
+	name      = "%s"
+	status    = "ACTIVE"
+
+	password_change = "ALLOW"
+	password_reset  = "ALLOW"
+	password_unlock = "DENY"
+
+	password_reset_access_control = "LEGACY"
+
+	password_reset_requirement {
+		primary_methods = ["otp", "push"]
+		step_up_enabled = true
+	}
+}
+`, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
+}
+
+// testOktaPolicyRulePasswordSSPRUpdated returns a config with AUTH_POLICY access control (no requirement block).
+// The logic has been updated by AI to support new fields, review carefully
+func testOktaPolicyRulePasswordSSPRUpdated(rInt int) string {
+	name := acctest.BuildResourceName(rInt)
+
+	return fmt.Sprintf(`
+data "okta_default_policy" "default-%d" {
+	type = "%s"
+}
+
+resource "%s" "%s" {
+	policy_id = "${data.okta_default_policy.default-%d.id}"
+	name      = "%s"
+	status    = "ACTIVE"
+
+	password_change = "ALLOW"
+	password_reset  = "ALLOW"
+	password_unlock = "DENY"
+
+	password_reset_access_control = "AUTH_POLICY"
+}
+`, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
+}
+
 func testOktaPolicyRulePasswordUpdated(rInt int) string {
 	name := acctest.BuildResourceName(rInt)
 
