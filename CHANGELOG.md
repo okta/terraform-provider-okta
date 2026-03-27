@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.7.0 (March 27, 2026)
+### FEATURES
+* New Resource and data source `okta_user_risk` for [UserRisk API](https://developer.okta.com/docs/api/openapi/okta-management/management/tags/userrisk) [#2724](https://github.com/okta/terraform-provider-okta/pull/2724) by [pranav-okta](https://github.com/pranav-okta)
+* Resource and data source `okta_post_auth_session_policy`, `okta_post_auth_session_policy_rule` [#2746](https://github.com/okta/terraform-provider-okta/pull/2746) by [pranav-okta](https://github.com/pranav-okta)
+
+### ENHANCEMENTS
+* Support for `preconfigured_app` attribute in `okta_app_oauth` [#2721](https://github.com/okta/terraform-provider-okta/pull/2721) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Update fallback templates for tfplugindocs v0.17+ [#2744](https://github.com/okta/terraform-provider-okta/pull/2744) by [exitcode0]([exitcode0](https://github.com/exitcode0))
+
+### Bug Fixes
+* Add validate authenticators to list the authenticator [#2718](https://github.com/okta/terraform-provider-okta/pull/2718) by [pranav-okta](https://github.com/pranav-okta)
+* `okta_event_hook_verification` not re-verifying after update [#2723](https://github.com/okta/terraform-provider-okta/pull/2723) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+
 ## 6.6.1 (March 10, 2026)
 ### FEATURES
 * New data source `okta_admin_role_custom` to allow users to look up an existing custom admin role by its ID or label [#2704](https://github.com/okta/terraform-provider-okta/pull/2704) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
