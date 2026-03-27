@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -21,6 +23,7 @@ func resourceIdpOidc() *schema.Resource {
 		},
 		Description: "Creates an OIDC Identity Provider. This resource allows you to create and configure an OIDC Identity Provider.",
 		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_secret"), cty.GetAttrPath("client_secret_wo")),
 			func(ctx context.Context, req schema.ValidateResourceConfigFuncRequest, resp *schema.ValidateResourceConfigFuncResponse) {
 				participateSLO := req.RawConfig.GetAttr("participate_slo")
 				if !participateSLO.IsNull() && participateSLO.True() {
@@ -96,10 +99,26 @@ func resourceIdpOidc() *schema.Resource {
 				Description: "Unique identifier issued by AS for the Okta IdP instance.",
 			},
 			"client_secret": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Sensitive:   true,
-				Description: "Client secret issued by AS for the Okta IdP instance.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"client_secret_wo"},
+				ExactlyOneOf:  []string{"client_secret", "client_secret_wo"},
+				Description:   "Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_secret_wo": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				WriteOnly:     true,
+				ConflictsWith: []string{"client_secret"},
+				ExactlyOneOf:  []string{"client_secret", "client_secret_wo"},
+				Description:   "Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
+			},
+			"client_secret_wo_version": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Version number for the write-only client secret. Increment this value to trigger an update when changing `client_secret_wo`.",
 			},
 			"pkce_required": {
 				Type:        schema.TypeBool,
@@ -223,7 +242,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 		if idp.Protocol.Credentials != nil {
 			if idp.Protocol.Credentials.Client != nil {
 				_ = d.Set("client_id", idp.Protocol.Credentials.Client.ClientId)
-				_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+				if _, ok := d.GetOk("client_secret"); ok {
+					_ = d.Set("client_secret", idp.Protocol.Credentials.Client.ClientSecret)
+				}
 				if idp.Protocol.Credentials.Client.PKCERequired != nil {
 					_ = d.Set("pkce_required", idp.Protocol.Credentials.Client.PKCERequired)
 				}
@@ -270,8 +291,10 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
 		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
 	}
-	if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
-		return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
+	if idp.Protocol.Settings != nil {
+		if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
+			return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
+		}
 	}
 	return nil
 }
@@ -297,9 +320,19 @@ func buildIdPOidc(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 		len(d.Get("subject_match_attribute").(string)) > 0 {
 		return sdk.IdentityProvider{}, errors.New("you can only provide 'subject_match_attribute' with 'subject_match_type' set to 'CUSTOM_ATTRIBUTE'")
 	}
+
+	// Try to get write-only attribute first, fall back to regular attribute
+	var clientSecret string
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+	if !woVal.IsNull() {
+		clientSecret = woVal.AsString()
+	} else {
+		clientSecret = d.Get("client_secret").(string)
+	}
+
 	client := &sdk.IdentityProviderCredentialsClient{
 		ClientId:     d.Get("client_id").(string),
-		ClientSecret: d.Get("client_secret").(string),
+		ClientSecret: clientSecret,
 	}
 	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
 	if !pkceVal.IsNull() {
