@@ -1,3 +1,7 @@
+resource "okta_group" "test" {
+  name = "testAcc_replace_with_uuid"
+}
+
 resource "okta_group" "test_other" {
   name = "other_testAcc_replace_with_uuid"
 }
