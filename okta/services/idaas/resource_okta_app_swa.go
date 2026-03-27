@@ -2,7 +2,6 @@ package idaas
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -71,7 +70,7 @@ other arguments that changed will be applied.`,
 			"app_settings_json": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Application settings in JSON format",
+				Description:      "Application settings in JSON format. If app_settings_json is defined, the individual fields button_field, password_field, username_field, url, url_regex, checkbox, redirect_url will be ignored",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        utils.NormalizeDataJSON,
 				DiffSuppressFunc: utils.NoChangeInObjectFromUnmarshaledJSON,
@@ -86,14 +85,10 @@ other arguments that changed will be applied.`,
 }
 
 func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR CREATE")
 	client := getOktaClientFromMetadata(meta)
 	_, appSettingsJSONIsUsed := d.GetOk("app_settings_json")
-	fmt.Println("DHIWAKAR IN UPDATE appSettingsJSONIsUsed=", appSettingsJSONIsUsed)
-
 	switch {
 	case appSettingsJSONIsUsed: // Need to support app_settings_json while also supporting customers who have existing configuration based on the Settings.App struct
-		fmt.Println("DHIWAKAR IN CREATE appSettingsJSONIsUsed")
 		app := buildAppSwaWithApplicationSettingsJSON(d)
 		activate := d.Get("status").(string) == StatusActive
 		params := &query.Params{Activate: &activate}
@@ -108,7 +103,6 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, meta inte
 		}
 		return resourceAppSwaRead(ctx, d, meta)
 	default:
-		fmt.Println("DHIWAKAR IN CREATE DEFAULT")
 		app := buildAppSwa(d)
 		activate := d.Get("status").(string) == StatusActive
 		params := &query.Params{Activate: &activate}
@@ -127,11 +121,9 @@ func resourceAppSwaCreate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR READ")
 	_, appSettingsJSONIsUsed := d.GetOk("app_settings_json") // boolean value to indicate if app_settings_json is set
 	switch {
 	case appSettingsJSONIsUsed: // Need to support app_settings_json while also supporting customers who have existing configuration based on the Settings.App struct
-		fmt.Println("DHIWAKAR IN READ appSettingsJSONIsUsed")
 		app := sdk.NewSwaApplicationWithApplicationSettingsJSON()
 		err := fetchApp(ctx, d, meta, app)
 		if err != nil {
@@ -152,7 +144,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interf
 		_ = d.Set("logo_url", utils.LinksValue(app.Links, "logo", "href"))
 		appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
 	default:
-		fmt.Println("DHIWAKAR IN READ DEFAULT")
 		app := sdk.NewSwaApplication()
 		err := fetchApp(ctx, d, meta, app)
 		if err != nil {
@@ -181,7 +172,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR UPDATE")
 	additionalChanges, err := AppUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -190,7 +180,6 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 		return nil
 	}
 	_, appSettingsJSONIsUsed := d.GetOk("app_settings_json") // boolean value to indicate if app_settings_json is set
-	fmt.Println("DHIWAKAR IN UPDATE appSettingsJSONIsUsed=", appSettingsJSONIsUsed)
 	switch {
 	case appSettingsJSONIsUsed:
 		client := getOktaClientFromMetadata(meta)
@@ -227,7 +216,6 @@ func resourceAppSwaUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceAppSwaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	fmt.Println("DHIWAKAR DELETE")
 	err := deleteApplication(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete SWA application: %v", err)
