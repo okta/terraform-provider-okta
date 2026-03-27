@@ -84,7 +84,7 @@ resource "okta_app_oauth" "example" {
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.
 - `enduser_note` (String) Application notes for end users.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
-- `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials) (see [below for nested schema](#nestedblock--groups_claim))
+- `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials, and is not supported when `preconfigured_app` is set) (see [below for nested schema](#nestedblock--groups_claim))
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `implicit_assignment` (Boolean) *Early Access Property*. Enable Federation Broker Mode.
@@ -101,6 +101,7 @@ resource "okta_app_oauth" "example" {
 - `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 - `policy_uri` (String) URI to web page providing client policy document.
 - `post_logout_redirect_uris` (Set of String) List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.
+- `preconfigured_app` (String) Tells Okta to use an existing application in their application catalog, as opposed to a custom application. Note: `groups_claim` is not supported when using `preconfigured_app`.
 - `profile` (String) Custom JSON that represents an OAuth application's profile
 - `redirect_uris` (List of String) List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.
 - `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token

@@ -398,12 +398,13 @@ other arguments that changed will be applied.`,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
-				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
-				Deprecated:  "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
-				Description: "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
-				Elem:        groupsClaimResource,
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
+				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
+				Elem:          groupsClaimResource,
+				ConflictsWith: []string{"preconfigured_app"},
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -423,6 +424,11 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URL reference to JWKS",
+			},
+			"preconfigured_app": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
 			},
 			"network": {
 				Type:        schema.TypeList,
@@ -564,15 +570,19 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 			if d.Get("issuer_mode").(string) != "" {
 				gc.IssuerMode = d.Get("issuer_mode").(string)
 			} else {
-				return errors.New("issuer_mode must be set when issuer_mode is set")
+				return errors.New("issuer_mode must be set")
 			}
 		} else {
-			return errors.New("issuer_mode must be set when issuer_mode is set")
+			return errors.New("issuer_mode must be set")
 		}
 
-		_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
-		if err != nil {
-			return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+		if _, ok := d.GetOk("preconfigured_app"); !ok { // the internal api for setting app oauth groups claim doesn't work with most preconfigured i.e. existing apps
+			_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+			if err != nil {
+				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+			}
+		} else {
+			logger(meta).Info("Skipping updating app oauth groups for preconfigured apps.")
 		}
 		return nil
 	}
@@ -992,6 +1002,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 	app.SetLabel(d.Get("label").(string))
 	app.SetName("oidc_client")
+	if preConfigName, ok := d.GetOk("preconfigured_app"); ok && preConfigName != "" {
+		app.SetName(preConfigName.(string))
+	}
 	app.SetSignOnMode("OPENID_CONNECT")
 
 	// Build credentials

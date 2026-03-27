@@ -85,7 +85,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 }
 
 func FWProviderResources() []func() resource.Resource {
-	return []func() resource.Resource{
+	rawResources := []func() resource.Resource{
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -122,7 +122,11 @@ func FWProviderResources() []func() resource.Resource {
 		newAppFederatedClaimResource,
 		newAppSignOnPolicyRulesResource,
 		newPushGroupResource,
+		newUserRiskResource,
+		newPostAuthSessionPolicyRuleResource,
 	}
+	// Wrap all resources with SafeResource for panic recovery
+	return resources.WrapResources(rawResources)
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
@@ -156,11 +160,14 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
 		newAdminRoleCustomDataSource,
+		newUserRiskDataSource,
+		newPostAuthSessionPolicyDataSource,
 	}
 }
 
 func ProviderResources() map[string]*schema.Resource {
-	return map[string]*schema.Resource{
+	// Wrap all SDK resources with panic recovery
+	return resources.WrapSDKResources(map[string]*schema.Resource{
 		resources.OktaIDaaSAdminRoleCustom:               resourceAdminRoleCustom(),
 		resources.OktaIDaaSAdminRoleCustomAssignments:    resourceAdminRoleCustomAssignments(),
 		resources.OktaIDaaSAdminRoleTargets:              resourceAdminRoleTargets(),
@@ -250,11 +257,12 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
 		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
 		resources.OktaIDaaSUserType:                   resourceUserType(),
-	}
+	})
 }
 
 func ProviderDataSources() map[string]*schema.Resource {
-	return map[string]*schema.Resource{
+	// Wrap all SDK data sources with panic recovery
+	return resources.WrapSDKDataSources(map[string]*schema.Resource{
 		resources.OktaIDaaSApp:                      dataSourceApp(),
 		resources.OktaIDaaSAppGroupAssignments:      dataSourceAppGroupAssignments(),
 		resources.OktaIDaaSAppMetadataSaml:          dataSourceAppMetadataSaml(),
@@ -297,7 +305,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSUserProfileMappingSource: dataSourceUserProfileMappingSource(),
 		resources.OktaIDaaSUsers:                    dataSourceUsers(),
 		resources.OktaIDaaSUserSecurityQuestions:    dataSourceUserSecurityQuestions(),
-	}
+	})
 }
 
 func stringIsJSON(i interface{}, k cty.Path) diag.Diagnostics {
