@@ -76,28 +76,6 @@ other arguments that changed will be applied.`,
 				StateFunc:        utils.NormalizeDataJSON,
 				DiffSuppressFunc: utils.NoChangeInObjectFromUnmarshaledJSON,
 			},
-			"credentials_scheme": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "EDIT_USERNAME_AND_PASSWORD",
-				Description: "Application credentials scheme. One of: `EDIT_USERNAME_AND_PASSWORD`, `ADMIN_SETS_CREDENTIALS`, `EDIT_PASSWORD_ONLY`, `EXTERNAL_PASSWORD_SYNC`, or `SHARED_USERNAME_AND_PASSWORD`",
-			},
-			"reveal_password": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: `Allow user to reveal password. Default is false. It can not be set to true if credentials_scheme is "ADMIN_SETS_CREDENTIALS", "SHARED_USERNAME_AND_PASSWORD" or "EXTERNAL_PASSWORD_SYNC".`,
-			},
-			"shared_username": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Shared username, required for certain schemes.",
-			},
-			"shared_password": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Shared password, required for certain schemes.",
-			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -167,9 +145,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interf
 		if err != nil {
 			return diag.Errorf("failed to set SAML app settings: %v", err)
 		}
-		_ = d.Set("reveal_password", app.Credentials.RevealPassword)
-		_ = d.Set("shared_username", app.Credentials.UserName) // We can sync shared username but not password from upstream
-		_ = d.Set("credentials_scheme", app.Credentials.Scheme)
 		_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
 		_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
 		_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
@@ -187,9 +162,6 @@ func resourceAppSwaRead(ctx context.Context, d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		_ = d.Set("reveal_password", app.Credentials.RevealPassword)
-		_ = d.Set("shared_username", app.Credentials.UserName) // We can sync shared username but not password from upstream
-		_ = d.Set("credentials_scheme", app.Credentials.Scheme)
 		_ = d.Set("button_field", app.Settings.App.ButtonField)
 		_ = d.Set("password_field", app.Settings.App.PasswordField)
 		_ = d.Set("username_field", app.Settings.App.UsernameField)
@@ -288,11 +260,6 @@ func buildAppSwa(d *schema.ResourceData) *sdk.SwaApplication {
 	app.Accessibility = BuildAppAccessibility(d)
 	app.Credentials = &sdk.SchemeApplicationCredentials{
 		UserNameTemplate: BuildUserNameTemplate(d),
-		Scheme:           d.Get("credentials_scheme").(string),
-		UserName:         d.Get("shared_username").(string),
-		Password: &sdk.PasswordCredential{
-			Value: d.Get("shared_password").(string),
-		},
 	}
 	return app
 }
@@ -313,11 +280,6 @@ func buildAppSwaWithApplicationSettingsJSON(d *schema.ResourceData) *sdk.SwaAppl
 	app.Accessibility = BuildAppAccessibility(d)
 	app.Credentials = &sdk.SchemeApplicationCredentials{
 		UserNameTemplate: BuildUserNameTemplate(d),
-		Scheme:           d.Get("credentials_scheme").(string),
-		UserName:         d.Get("shared_username").(string),
-		Password: &sdk.PasswordCredential{
-			Value: d.Get("shared_password").(string),
-		},
 	}
 	return app
 }
