@@ -423,14 +423,14 @@ func SuppressErrorOn404_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to suppressErrorOn404 when migration complete
 func SuppressErrorOn404_V5(resp *v5okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V5(resp, err)
 }
 
 func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V6(resp, err)
@@ -548,7 +548,7 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
@@ -559,7 +559,7 @@ func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 func ResponseErr_V6(resp *v6okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
