@@ -437,10 +437,11 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Default:     false,
 			},
 			"skip_authentication_policy": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Skip authentication policy operations. When set to true, the provider will not attempt to create, update, or delete authentication policies for this application.",
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
@@ -502,6 +503,8 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 	if !d.Get("skip_authentication_policy").(bool) {
 		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	} else {
+		_ = d.Set("authentication_policy", "")
 	}
 	if app.Settings != nil {
 		if app.Settings.SignOn != nil {

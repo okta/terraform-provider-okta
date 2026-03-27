@@ -45,10 +45,11 @@ other arguments that changed will be applied.`,
 				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
 			},
 			"skip_authentication_policy": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Skip authentication policy operations. When set to true, the provider will not attempt to create, update, or delete authentication policies for this application.",
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
@@ -94,6 +95,8 @@ func resourceAppBookmarkRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 	if !d.Get("skip_authentication_policy").(bool) {
 		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	} else {
+		_ = d.Set("authentication_policy", "")
 	}
 	_ = d.Set("url", app.Settings.App.Url)
 	_ = d.Set("request_integration", app.Settings.App.RequestIntegration)
