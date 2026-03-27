@@ -1126,10 +1126,10 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
 
-			var keyData []v6okta.ListJwk200ResponseInner
+			var keyData []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
 			for _, jwk := range jwksData {
 				jwkMap := jwk.(map[string]interface{})
-				var k v6okta.ListJwk200ResponseInner
+				var k v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
 
 				kty := jwkMap["kty"].(string)
 				use := ""
@@ -1153,7 +1153,7 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
 						key.SetKid(kid)
 					}
-					k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsListJwk200ResponseInner(key)
+					k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(key)
 				} else if kty == "RSA" {
 					// RSA Signing key
 					// Fields: e, kty, n, kid, status (NO use, NO alg)
@@ -1168,9 +1168,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
 						key.SetKid(kid)
 					}
-					// Wrap RSA key in SigningKeyResponse, then in ListJwk200ResponseInner
+					// Wrap RSA key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
 					signingKey := v6okta.OAuth2ClientJsonWebKeyRsaResponseAsOAuth2ClientJsonSigningKeyResponse(key)
-					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsListJwk200ResponseInner(&signingKey)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
 				} else if kty == "EC" {
 					// EC Signing key
 					// Fields: kty, x, y, kid, status (NO crv, NO use, NO alg)
@@ -1185,9 +1185,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
 						key.SetKid(kid)
 					}
-					// Wrap EC key in SigningKeyResponse, then in ListJwk200ResponseInner
+					// Wrap EC key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
 					signingKey := v6okta.OAuth2ClientJsonWebKeyECResponseAsOAuth2ClientJsonSigningKeyResponse(key)
-					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsListJwk200ResponseInner(&signingKey)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
 				}
 
 				keyData = append(keyData, k)
