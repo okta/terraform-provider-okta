@@ -263,11 +263,72 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 				}
 			}
 			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
+			validateCassetteNoLeaks(t, vcr.CassettePath()+".yaml")
 		}
 		// Clean up test config
 		providerConfigsLock.Lock()
 		delete(providerConfigs, t.Name())
 		providerConfigsLock.Unlock()
+	}
+}
+
+// validateCassetteNoLeaks reads the raw cassette file and checks that no
+// sensitive environment variable values have leaked into the recording. This is
+// a last-resort safety net — the vcrHook should have already sanitized
+// everything, but bugs in the hook (e.g., missing a new header) could allow
+// secrets through. Call this after recorder.Stop() has written the cassette.
+func validateCassetteNoLeaks(t *testing.T, cassettePath string) {
+	t.Helper()
+
+	content, err := os.ReadFile(cassettePath)
+	if err != nil {
+		t.Errorf("VCR leak check: failed to read cassette %s: %v", cassettePath, err)
+		return
+	}
+
+	// Sensitive values to check — only tested when the env var is set and
+	// non-empty (i.e., when we're actually recording against a real org).
+	sensitiveEnvVars := []struct {
+		envVar string
+		desc   string
+	}{
+		{"OKTA_API_TOKEN", "API token"},
+		{"OKTA_ACCESS_TOKEN", "access token"},
+		{"OKTA_API_CLIENT_ID", "OAuth client ID"},
+		{"OKTA_API_PRIVATE_KEY", "OAuth private key"},
+		{"OKTA_API_PRIVATE_KEY_ID", "OAuth private key ID"},
+	}
+
+	var leaks []string
+	raw := string(content)
+
+	for _, s := range sensitiveEnvVars {
+		val := os.Getenv(s.envVar)
+		if val == "" {
+			continue
+		}
+		if strings.Contains(raw, val) {
+			leaks = append(leaks, fmt.Sprintf("  - %s (%s) found in cassette", s.envVar, s.desc))
+		}
+	}
+
+	// Check for the real org hostname (e.g., "myorg.okta.com") which should
+	// have been rewritten to the VCR placeholder domain.
+	orgName := os.Getenv("OKTA_ORG_NAME")
+	baseURL := os.Getenv("OKTA_BASE_URL")
+	if orgName != "" && baseURL != "" {
+		hostname := fmt.Sprintf("%s.%s", orgName, baseURL)
+		if strings.Contains(raw, hostname) {
+			leaks = append(leaks, fmt.Sprintf("  - org hostname %q found in cassette", hostname))
+		}
+		adminHostname := fmt.Sprintf("%s-admin.%s", orgName, baseURL)
+		if strings.Contains(raw, adminHostname) {
+			leaks = append(leaks, fmt.Sprintf("  - admin hostname %q found in cassette", adminHostname))
+		}
+	}
+
+	if len(leaks) > 0 {
+		t.Errorf("VCR leak check: sensitive data found in %s:\n%s", cassettePath, strings.Join(leaks, "\n"))
 	}
 }
 
