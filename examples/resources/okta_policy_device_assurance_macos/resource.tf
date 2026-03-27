@@ -18,4 +18,11 @@ resource "okta_policy_device_assurance_macos" "example" {
   tpsp_safe_browsing_protection_level       = "ENHANCED_PROTECTION"
   tpsp_screen_lock_secured                  = true
   tpsp_site_isolation_enabled               = true
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P14D"
+  }
+
+  display_remediation_mode = "SHOW"
 }
