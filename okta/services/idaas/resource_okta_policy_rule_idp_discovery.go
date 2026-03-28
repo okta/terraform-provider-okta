@@ -89,6 +89,14 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 - 'match_type' - (Optional) The kind of pattern. For regex, use 'EXPRESSION'. For simple string matches, use one of the following: 'SUFFIX', 'EQUALS', 'STARTS_WITH', 'CONTAINS'
 - 'value' - (Optional) The regex or simple match string to match against.`,
 			},
+			"selection_type": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"provider_expression": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		}),
 	}
 }
