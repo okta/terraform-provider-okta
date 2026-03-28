@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -96,7 +97,7 @@ func (r *rateLimitAdminNotificationSettingsResource) Read(ctx context.Context, r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read rate limit admin notification settings",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -123,7 +124,7 @@ func (r *rateLimitAdminNotificationSettingsResource) Update(ctx context.Context,
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update rate limit admin notification settings",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}

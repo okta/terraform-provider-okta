@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -71,7 +72,7 @@ func (r *securityEventsProviderResource) Create(ctx context.Context, req resourc
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating Security Events Provider",
-				"Could not activate Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not activate Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -81,7 +82,7 @@ func (r *securityEventsProviderResource) Create(ctx context.Context, req resourc
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Deactivating Security Events Provider",
-				"Could not deactivate Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not deactivate Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -108,7 +109,7 @@ func (r *securityEventsProviderResource) Read(ctx context.Context, request resou
 	if err != nil {
 		response.Diagnostics.AddError(
 			"Error Reading Security Events Provider",
-			"Could not read Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not read Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -136,7 +137,7 @@ func (r *securityEventsProviderResource) Update(ctx context.Context, req resourc
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Security Events Provider",
-			"Could not update Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not update Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -148,7 +149,7 @@ func (r *securityEventsProviderResource) Update(ctx context.Context, req resourc
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Activating Security Events Provider",
-				"Could not activate Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not activate Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -158,7 +159,7 @@ func (r *securityEventsProviderResource) Update(ctx context.Context, req resourc
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Error Deactivating Security Events Provider",
-				"Could not deactivate Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+				"Could not deactivate Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 			)
 			return
 		}
@@ -186,7 +187,7 @@ func (r *securityEventsProviderResource) Delete(ctx context.Context, request res
 	if err != nil {
 		response.Diagnostics.AddError(
 			"Error Deleting Security Events Provider",
-			"Could not delete Security Events Provider ID "+data.Id.ValueString()+": "+err.Error(),
+			"Could not delete Security Events Provider ID "+data.Id.ValueString()+": "+utils.ErrorDetail_V5(err),
 		)
 		return
 	}

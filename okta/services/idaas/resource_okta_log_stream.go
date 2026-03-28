@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -206,7 +207,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create log stream",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -230,7 +231,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to activate log stream",
-					err.Error(),
+					utils.ErrorDetail_V4(err),
 				)
 				return
 			}
@@ -241,7 +242,7 @@ func (r *logStreamResource) Create(ctx context.Context, req resource.CreateReque
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to deactivate log stream",
-					err.Error(),
+					utils.ErrorDetail_V4(err),
 				)
 				return
 			}
@@ -267,7 +268,7 @@ func (r *logStreamResource) Read(ctx context.Context, req resource.ReadRequest, 
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to get log stream",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -304,7 +305,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to replace log stream",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -328,7 +329,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to activate log stream",
-					err.Error(),
+					utils.ErrorDetail_V4(err),
 				)
 				return
 			}
@@ -339,7 +340,7 @@ func (r *logStreamResource) Update(ctx context.Context, req resource.UpdateReque
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to deactivate log stream",
-					err.Error(),
+					utils.ErrorDetail_V4(err),
 				)
 				return
 			}
@@ -366,7 +367,7 @@ func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to deactivate log stream",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -374,7 +375,7 @@ func (r *logStreamResource) Delete(ctx context.Context, req resource.DeleteReque
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete log stream",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}

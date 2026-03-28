@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -87,7 +88,7 @@ func (r *appAccessPolicyAssignmentResource) Create(ctx context.Context, req reso
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("create failed to find app %q for policy assignment", plan.AppID.ValueString()),
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -106,7 +107,7 @@ func (r *appAccessPolicyAssignmentResource) Create(ctx context.Context, req reso
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("couldn't assign policy %q to app %q", policyID, appID),
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -138,7 +139,7 @@ func (r *appAccessPolicyAssignmentResource) Read(ctx context.Context, req resour
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("read failed to find app %q for policy assignment", state.ID.ValueString()),
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -197,7 +198,7 @@ func (r *appAccessPolicyAssignmentResource) Update(ctx context.Context, req reso
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("update failed to find app %q for policy assignment", state.AppID.ValueString()),
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -209,7 +210,7 @@ func (r *appAccessPolicyAssignmentResource) Update(ctx context.Context, req reso
 		if err != nil {
 			resp.Diagnostics.AddError(
 				fmt.Sprintf("couldn't re-assign policy %q to app %q", plan.PolicyID.ValueString(), appID),
-				err.Error(),
+				utils.ErrorDetail_V4(err),
 			)
 			return
 		}

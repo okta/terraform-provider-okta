@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -95,7 +96,7 @@ func (r *apiServiceIntegrationResource) Create(ctx context.Context, req resource
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create api service integration",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -119,7 +120,7 @@ func (r *apiServiceIntegrationResource) Read(ctx context.Context, req resource.R
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create group owner for group "+data.Type.ValueString()+" for group owner user id: ",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
@@ -145,7 +146,7 @@ func (r *apiServiceIntegrationResource) Delete(ctx context.Context, req resource
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete API Service Integration",
-			err.Error(),
+			utils.ErrorDetail_V5(err),
 		)
 		return
 	}
