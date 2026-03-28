@@ -141,6 +141,8 @@ const (
 	OktaIDaaSCustomizedSignInPage                     = "okta_customized_signin_page"
 	OktaIDaaSPostAuthSessionPolicy                    = "okta_post_auth_session_policy"
 	OktaIDaaSPostAuthSessionPolicyRule                = "okta_post_auth_session_policy_rule"
+	OktaIDaaSEntityRiskPolicy                         = "okta_entity_risk_policy"
+	OktaIDaaSEntityRiskPolicyRule                     = "okta_entity_risk_policy_rule"
 	OktaGovernanceCampaign                            = "okta_campaign"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
