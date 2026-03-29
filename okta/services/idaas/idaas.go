@@ -126,6 +126,7 @@ func FWProviderResources() []func() resource.Resource {
 		newUserRiskResource,
 		newPostAuthSessionPolicyRuleResource,
 		newEntityRiskPolicyRuleResource,
+		newSessionViolationPolicyRuleResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -166,6 +167,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newUserRiskDataSource,
 		newPostAuthSessionPolicyDataSource,
 		newEntityRiskPolicyDataSource,
+		newSessionViolationPolicyDataSource,
 	}
 }
 
