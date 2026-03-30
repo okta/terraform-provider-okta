@@ -90,12 +90,26 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 - 'value' - (Optional) The regex or simple match string to match against.`,
 			},
 			"selection_type": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "SPECIFIC",
+				Description: "Determines how the IdP is selected. One of: `SPECIFIC`, `DYNAMIC`. Default: `SPECIFIC`",
 			},
 			"provider_expression": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Expression used to dynamically select an IdP. Only applicable when `selection_type` is `DYNAMIC`. Maps to `actions.idp.matchCriteria[0].providerExpression` in the API.",
+			},
+			"property_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The IdP property to match the evaluated expression against when `selection_type` is `DYNAMIC`. Maps to `actions.idp.matchCriteria[0].propertyName` in the API.",
+			},
+			"should_fall_back_to_okta": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Specifies whether to fall back to Okta if authentication with the matched IdP fails. Only applicable when `selection_type` is `DYNAMIC`. Default: `false`",
 			},
 		}),
 	}
@@ -161,6 +175,17 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
 	}
 	d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
+	d.Set("selection_type", rule.Actions.IDP.IdpSelectionType)
+	if len(rule.Actions.IDP.MatchingCriteria) > 0 {
+		d.Set("provider_expression", rule.Actions.IDP.MatchingCriteria[0].ProviderExpression)
+		d.Set("property_name", rule.Actions.IDP.MatchingCriteria[0].PropertyName)
+	} else {
+		d.Set("provider_expression", "")
+		d.Set("property_name", "")
+	}
+	if rule.Actions.IDP.ShouldFallBackToOkta != nil {
+		d.Set("should_fall_back_to_okta", *rule.Actions.IDP.ShouldFallBackToOkta)
+	}
 	return nil
 }
 
@@ -247,28 +272,38 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 
 // Build Policy Sign On Rule from resource data
 func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
-	var providers []*sdk.IdpDiscoveryRuleProvider
-	if v, ok := d.GetOk("idp_providers"); ok {
-		providerList := v.([]interface{})
-		for _, provider := range providerList {
-			if value, ok := provider.(map[string]any); ok {
-				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
-					ID:   utils.GetMapString(value, "id"),
-					Type: utils.GetMapString(value, "type"),
-				})
-			}
-		}
+	selectionType := d.Get("selection_type").(string)
+
+	idp := &sdk.IdpDiscoveryRuleIdp{
+		IdpSelectionType: selectionType,
+	}
+
+	// DYNAMIC rules require an explicit empty providers array alongside matchCriteria.
+	// SPECIFIC rules use a populated providers array.
+	if selectionType == "DYNAMIC" {
+		idp.Providers = []*sdk.IdpDiscoveryRuleProvider{}
+		idp.MatchingCriteria = buildMatchingCriteria(d)
+		fallBack := d.Get("should_fall_back_to_okta").(bool)
+		idp.ShouldFallBackToOkta = &fallBack
 	} else {
-		providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
-			Type: "OKTA",
-		})
+		if v, ok := d.GetOk("idp_providers"); ok {
+			providerList := v.([]interface{})
+			for _, provider := range providerList {
+				if value, ok := provider.(map[string]any); ok {
+					idp.Providers = append(idp.Providers, &sdk.IdpDiscoveryRuleProvider{
+						ID:   utils.GetMapString(value, "id"),
+						Type: utils.GetMapString(value, "type"),
+					})
+				}
+			}
+		} else {
+			idp.Providers = []*sdk.IdpDiscoveryRuleProvider{{Type: "OKTA"}}
+		}
 	}
 
 	rule := &sdk.IdpDiscoveryRule{
 		Actions: &sdk.IdpDiscoveryRuleActions{
-			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: providers,
-			},
+			IDP: idp,
 		},
 		Conditions: &sdk.IdpDiscoveryRuleConditions{
 			App: buildAppConditions(d),
@@ -375,6 +410,9 @@ func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
 			}
 		}
 	}
+	if len(includeList) == 0 && len(excludeList) == 0 {
+		return nil
+	}
 	return &sdk.IdpDiscoveryRuleApp{
 		Include: includeList,
 		Exclude: excludeList,
@@ -407,6 +445,19 @@ func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier
 		}
 	}
 	return nil
+}
+
+func buildMatchingCriteria(d *schema.ResourceData) []*sdk.IdpMatchingCriteria {
+	expr := d.Get("provider_expression").(string)
+	if expr == "" {
+		return nil
+	}
+	return []*sdk.IdpMatchingCriteria{
+		{
+			ProviderExpression: expr,
+			PropertyName:       d.Get("property_name").(string),
+		},
+	}
 }
 
 func flattenUserIDPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {

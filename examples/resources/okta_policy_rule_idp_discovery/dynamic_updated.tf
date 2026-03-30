@@ -8,6 +8,6 @@ resource "okta_policy_rule_idp_discovery" "test" {
   priority            = 1
   name                = "testAcc_replace_with_uuid"
   selection_type      = "DYNAMIC"
-  provider_expression = "login.identifier.substringAfter('@')"
+  provider_expression = "login.identifier.substringBefore('@')"
   property_name       = "name"
 }
