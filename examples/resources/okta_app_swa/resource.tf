@@ -7,10 +7,10 @@ resource "okta_app_swa" "example" {
 }
 
 resource "okta_app_swa" "example_with_app_settings_json" {
-  preconfigured_app = "office365"
-  label             = "Microsoft Office 365 SWA"
-  status            = "ACTIVE"
-  app_settings_json = <<JSON
+  preconfigured_app       = "office365"
+  label                   = "Microsoft Office 365 SWA"
+  status                  = "ACTIVE"
+  app_settings_json       = <<JSON
     {
       "wsFedConfigureType": "AUTO",
       "windowsTransportEnabled": false,
@@ -20,7 +20,7 @@ resource "okta_app_swa" "example_with_app_settings_json" {
       "requireAdminConsent": false
     }
 JSON
-  app_links_json = <<JSON
+  app_links_json          = <<JSON
     {
       "calendar": false,
       "crm": false,

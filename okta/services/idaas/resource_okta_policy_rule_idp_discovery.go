@@ -184,7 +184,7 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		d.Set("property_name", "")
 	}
 	if rule.Actions.IDP.ShouldFallBackToOkta != nil {
-		d.Set("should_fall_back_to_okta", *rule.Actions.IDP.ShouldFallBackToOkta)
+		d.Set("should_fall_back_to_okta", rule.Actions.IDP.ShouldFallBackToOkta)
 	}
 	return nil
 }
