@@ -1,20 +1,12 @@
-resource "okta_app_swa" "example" {
-  label          = "example"
-  button_field   = "btn-login"
-  password_field = "txtbox-password"
-  username_field = "txtbox-username"
-  url            = "https://example.com/login.html"
-}
-
-resource "okta_app_swa" "example_with_app_settings_json" {
+resource "okta_app_swa" "test" {
   preconfigured_app = "office365"
-  label             = "Microsoft Office 365 SWA"
-  status            = "ACTIVE"
+  label             = "testAcc_replace_with_uuid"
+  status            = "INACTIVE"
   app_settings_json = <<JSON
     {
       "wsFedConfigureType": "AUTO",
       "windowsTransportEnabled": false,
-      "domain": "example.com",
+      "domain": "example-updated.com",
       "msftTenant": "exampletenant",
       "domains": [],
       "requireAdminConsent": false
