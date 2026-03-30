@@ -5,3 +5,4 @@ the [API docs](https://developer.okta.com/docs/api/resources/policy#rules)
 
 - Example of a user attribute based IDP_DISCOVERY policy rule [can be found here](./basic.tf)
 - Example of a domain based IDP_DISCOVERY policy rule [can be found here](./basic_domain.tf)
+- Example of a dynamic IdP routing rule [can be found here](./dynamic.tf)
