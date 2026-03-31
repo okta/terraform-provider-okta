@@ -42,7 +42,6 @@ type sessionViolationPolicyRuleResourceModel struct {
 	NetworkConnection       types.String `tfsdk:"network_connection"`
 	NetworkIncludes         types.List   `tfsdk:"network_includes"`
 	NetworkExcludes         types.List   `tfsdk:"network_excludes"`
-	RiskScoreLevel          types.String `tfsdk:"risk_score_level"`
 	MinRiskLevel            types.String `tfsdk:"min_risk_level"`
 	PolicyEvaluationEnabled types.Bool   `tfsdk:"policy_evaluation_enabled"`
 }
@@ -101,19 +100,11 @@ func (r *sessionViolationPolicyRuleResource) Schema(_ context.Context, _ resourc
 				Optional:    true,
 				ElementType: types.StringType,
 			},
-			"risk_score_level": schema.StringAttribute{
-				Description: "The risk score level to match. Possible values: ANY, LOW, MEDIUM, HIGH.",
-				Optional:    true,
-				Computed:    true,
-				Validators: []validator.String{
-					stringvalidator.OneOf("ANY", "LOW", "MEDIUM", "HIGH"),
-				},
-			},
 			"min_risk_level": schema.StringAttribute{
-				Description: "The minimum risk level to match. Only used in Session Violation Detection policy rules. Possible values: ANY, LOW, MEDIUM, HIGH.",
-				Optional:    true,
+				Description: "The minimum risk level to match. Required for Session Violation Detection policy rules. Possible values: LOW, MEDIUM, HIGH.",
+				Required:    true,
 				Validators: []validator.String{
-					stringvalidator.OneOf("ANY", "LOW", "MEDIUM", "HIGH"),
+					stringvalidator.OneOf("LOW", "MEDIUM", "HIGH"),
 				},
 			},
 			"policy_evaluation_enabled": schema.BoolAttribute{
@@ -316,10 +307,9 @@ func (r *sessionViolationPolicyRuleResource) readSessionViolationPolicyRule(ctx 
 		}
 	}
 
-	// Read risk score conditions
+	// Read risk score conditions (only minRiskLevel is applicable for SESSION_VIOLATION_DETECTION)
 	if rule.Conditions != nil && rule.Conditions.RiskScore != nil {
 		riskScore := rule.Conditions.RiskScore
-		state.RiskScoreLevel = types.StringValue(riskScore.Level)
 		if riskScore.MinRiskLevel != nil {
 			state.MinRiskLevel = types.StringPointerValue(riskScore.MinRiskLevel)
 		}
@@ -374,15 +364,12 @@ func (r *sessionViolationPolicyRuleResource) buildSessionViolationPolicyRule(ctx
 		conditions.Network = networkCondition
 	}
 
-	// Risk score condition
-	if !state.RiskScoreLevel.IsNull() && state.RiskScoreLevel.ValueString() != "" {
-		riskScore := v6okta.NewRiskScorePolicyRuleCondition(state.RiskScoreLevel.ValueString())
-		if !state.MinRiskLevel.IsNull() && state.MinRiskLevel.ValueString() != "" {
-			minLevel := state.MinRiskLevel.ValueString()
-			riskScore.MinRiskLevel = &minLevel
-		}
-		conditions.RiskScore = riskScore
-	}
+	// minRiskLevel is mandatory for SESSION_VIOLATION_DETECTION policy rules.
+	// The 'level' field is prohibited by the Okta API for this policy type.
+	riskScore := v6okta.NewRiskScorePolicyRuleCondition()
+	minLevel := state.MinRiskLevel.ValueString()
+	riskScore.MinRiskLevel = &minLevel
+	conditions.RiskScore = riskScore
 
 	rule.Conditions = conditions
 
