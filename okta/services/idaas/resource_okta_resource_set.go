@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -177,14 +178,91 @@ func buildResourceSet(d *schema.ResourceData, isNew bool) (*sdk.ResourceSet, err
 	return rs, nil
 }
 
+// flattenResourceSetResourcesLinks converts the API resource list back into
+// the set of resource URLs that were originally supplied in the config.
+//
+// The Okta API has a known bug where the "self" href in _links is incorrect
+// for certain resource types. For example, both a specific realm resource
+// (".../realms/<id>") and its users resource (".../realms/<id>/users") are
+// returned with self.href = ".../realms/<id>/users", making self.href
+// ambiguous and unreliable.
+//
+// We therefore derive the canonical resource URL from the "orn" field, which
+// is always unique and correctly structured. The orn segments map to URL path
+// segments: e.g.
+//
+//	orn:...:realms:<id>        → /api/v1/realms/<id>
+//	orn:...:realms:<id>:users  → /api/v1/realms/<id>/users
+//
+// For resource types that don't have a realm-style orn, we fall back to
+// self.href which is correct for apps, groups, users, etc.
 func flattenResourceSetResourcesLinks(resources []*sdk.ResourceSetResource) *schema.Set {
 	var arr []interface{}
 	for _, res := range resources {
-		if res.Links != nil {
-			arr = append(arr, encodeResourceSetResourceLink(utils.LinksValue(res.Links, "self", "href")))
+		link := resourceSetResourceURL(res)
+		if link != "" {
+			arr = append(arr, encodeResourceSetResourceLink(link))
 		}
 	}
 	return schema.NewSet(schema.HashString, arr)
+}
+
+// resourceSetResourceURL derives the canonical resource URL for a
+// ResourceSetResource. It prefers the orn field (which is unambiguous) over
+// self.href (which the Okta API returns incorrectly for some realm resources).
+func resourceSetResourceURL(res *sdk.ResourceSetResource) string {
+	if res.Orn != "" {
+		if link := urlFromORN(res.Orn, res.Links); link != "" {
+			return link
+		}
+	}
+	if res.Links != nil {
+		return utils.LinksValue(res.Links, "self", "href")
+	}
+	return ""
+}
+
+// urlFromORN converts an Okta Resource Name into the corresponding REST API
+// URL. The base URL (scheme + host) is extracted from the self.href in links.
+//
+// Supported orn patterns:
+//
+//	...:realms:<realmId>         → /api/v1/realms/<realmId>
+//	...:realms:<realmId>:users   → /api/v1/realms/<realmId>/users
+//
+// For all other orn types (apps, groups, etc.) we return "" and let the
+// caller fall back to self.href.
+func urlFromORN(orn string, links interface{}) string {
+	// Extract base URL (scheme://host) from self.href so we build the right URL
+	// for the org even without hardcoding the domain.
+	baseURL := ""
+	if links != nil {
+		if selfHref := utils.LinksValue(links, "self", "href"); selfHref != "" {
+			if u, err := url.Parse(selfHref); err == nil {
+				baseURL = u.Scheme + "://" + u.Host
+			}
+		}
+	}
+	if baseURL == "" {
+		return ""
+	}
+
+	// orn format: orn:<partition>:<service>:<orgId>:<segment1>:<segment2>...
+	// We only handle realm-related orns here.
+	parts := strings.Split(orn, ":")
+	// Find the "realms" segment index.
+	for i, p := range parts {
+		if p == "realms" && i+1 < len(parts) {
+			realmID := parts[i+1]
+			// Check if there is a sub-segment after the realmID.
+			if i+2 < len(parts) {
+				subSegment := parts[i+2]
+				return fmt.Sprintf("%s/api/v1/realms/%s/%s", baseURL, realmID, subSegment)
+			}
+			return fmt.Sprintf("%s/api/v1/realms/%s", baseURL, realmID)
+		}
+	}
+	return ""
 }
 
 func flattenResourceSetResourcesORN(resources []*sdk.ResourceSetResource) *schema.Set {
@@ -261,15 +339,21 @@ func removeResourcesFromResourceSet(ctx context.Context, client *sdk.APISuppleme
 	}
 
 	for _, res := range resources {
-		orn := res.Orn
 		toDelete := false
 
-		if res.Links != nil {
-			url := utils.LinksValue(res.Links, "self", "href")
-			toDelete = utils.Contains(escapedUrls, url)
+		// Use the orn-aware URL derivation (same logic as flatten) so that
+		// realm resources — whose self.href is incorrect in the Okta API —
+		// are still matched correctly against the URLs to remove.
+		derivedURL := resourceSetResourceURL(res)
+		if derivedURL != "" {
+			escaped, err := escapeResourceSetResourceLink(derivedURL)
+			if err == nil {
+				toDelete = utils.Contains(escapedUrls, escaped)
+			}
 		}
 
-		toDelete = toDelete || utils.Contains(escapedUrls, orn)
+		// Also check the orn directly for orn-based resource sets.
+		toDelete = toDelete || utils.Contains(escapedUrls, res.Orn)
 
 		if toDelete {
 			_, err := client.DeleteResourceSetResource(ctx, resourceSetID, res.Id)
