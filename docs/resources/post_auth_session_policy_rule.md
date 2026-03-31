@@ -14,13 +14,25 @@ Manages the Post Auth Session Policy Rule. The Post Auth Session Policy has exac
 
 Before using this resource, you must import the existing rule:
 
-{{codefile "shell" "examples/resources/okta_post_auth_session_policy_rule/import.sh"}}
+```terraform
+terraform import okta_post_auth_session_policy_rule.example <policy_id>/<rule_id>
+```
 
 When you run `terraform apply` without importing first, the error message will include the exact import command with the correct policy and rule IDs.
 
 ## Example Usage
 
-{{tffile "examples/resources/okta_post_auth_session_policy_rule/resource.tf"}}
+```terraform
+data "okta_post_auth_session_policy" "example" {
+}
+
+resource "okta_post_auth_session_policy_rule" "example" {
+  policy_id         = data.okta_post_auth_session_policy.example.id
+  name              = "Session Protection Rule"
+  terminate_session = true
+}
+
+```
 
 ## Argument Reference
 
