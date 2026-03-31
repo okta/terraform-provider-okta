@@ -79,7 +79,7 @@ These operations allow the creation and manipulation of custom roles as custom c
 				"okta.identityProviders.read",
 				"okta.identityProviders.manage",
 				"okta.workflows.read",
-				"okta.workflows.invoke".
+				"okta.workflows.invoke",
 				"okta.governance.accessCertifications.manage",
 				"okta.governance.accessRequests.manage",
 				"okta.apps.manageFirstPartyApps",
@@ -97,7 +97,7 @@ These operations allow the creation and manipulation of custom roles as custom c
 				"okta.devices.lifecycle.delete",
 				"okta.devices.read",
 				"okta.iam.read",
-				"okta.support.cases.manage".,`,
+				"okta.support.cases.manage",`,
 			},
 		},
 	}
@@ -195,9 +195,18 @@ func flattenPermissions(permissions []*sdk.Permission) interface{} {
 	if len(permissions) == 0 {
 		return nil
 	}
-	arr := make([]interface{}, len(permissions))
+	// Extract permission labels and normalize them
+	permissionLabels := make([]string, len(permissions))
 	for i := range permissions {
-		arr[i] = permissions[i].Label
+		permissionLabels[i] = permissions[i].Label
+	}
+
+	// Normalize permissions to handle API expansion
+	normalizedPermissions := normalizePermissions(permissionLabels)
+
+	arr := make([]interface{}, len(normalizedPermissions))
+	for i, perm := range normalizedPermissions {
+		arr[i] = perm
 	}
 	return schema.NewSet(schema.HashString, arr)
 }
@@ -220,4 +229,61 @@ func removeCustomRolePermissions(ctx context.Context, client *sdk.APISupplement,
 		}
 	}
 	return nil
+}
+
+// normalizePermissions handles API permission expansion by mapping expanded permissions
+// back to the user's intended configuration. This prevents Terraform drift when the API
+// returns additional permissions alongside the ones explicitly configured.
+func normalizePermissions(apiPermissions []string) []string {
+	// Create a map to track which permissions we've seen
+	permissionMap := make(map[string]bool)
+	for _, perm := range apiPermissions {
+		permissionMap[perm] = true
+	}
+
+	// Track which permissions to include in the normalized result
+	normalizedSet := make(map[string]bool)
+
+	// Handle workflow permissions expansion
+	// When user configures "okta.workflows.read", API returns both:
+	// - "okta.workflows.read" (original)
+	// - "okta.workflows.flows.read" (expanded)
+	// We preserve the user's original intent
+	if permissionMap["okta.workflows.read"] {
+		normalizedSet["okta.workflows.read"] = true
+		// Don't include the expanded version in normalized output
+		delete(permissionMap, "okta.workflows.flows.read")
+	} else if permissionMap["okta.workflows.flows.read"] {
+		// If only the expanded version exists, keep it
+		normalizedSet["okta.workflows.flows.read"] = true
+	}
+
+	// Handle workflow invoke permissions expansion
+	// When user configures "okta.workflows.invoke", API returns both:
+	// - "okta.workflows.invoke" (original)
+	// - "okta.workflows.flows.invoke" (expanded)
+	// We preserve the user's original intent
+	if permissionMap["okta.workflows.invoke"] {
+		normalizedSet["okta.workflows.invoke"] = true
+		// Don't include the expanded version in normalized output
+		delete(permissionMap, "okta.workflows.flows.invoke")
+	} else if permissionMap["okta.workflows.flows.invoke"] {
+		// If only the expanded version exists, keep it
+		normalizedSet["okta.workflows.flows.invoke"] = true
+	}
+
+	// Add all other permissions that weren't handled by the workflow normalization
+	for perm := range permissionMap {
+		if perm != "okta.workflows.flows.read" && perm != "okta.workflows.flows.invoke" {
+			normalizedSet[perm] = true
+		}
+	}
+
+	// Convert back to slice
+	result := make([]string, 0, len(normalizedSet))
+	for perm := range normalizedSet {
+		result = append(result, perm)
+	}
+
+	return result
 }
