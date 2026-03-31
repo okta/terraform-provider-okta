@@ -54,6 +54,26 @@ func resourcePolicyPasswordRule() *schema.Resource {
 				Description: "Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = \"LEGACY\"`. The logic has been updated by AI to support new fields, review carefully",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"method_constraints": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "Constraints on the values specified in `primary_methods`. Specifying a constraint limits methods to specific authenticator(s). Currently, only the `otp` method supports constraints, and Google authenticator (key : `google_otp`) is the only allowed authenticator.",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"method": {
+										Type:        schema.TypeString,
+										Required:    true,
+										Description: "The method to constrain (e.g. `otp`).",
+									},
+									"allowed_authenticators": {
+										Type:        schema.TypeSet,
+										Optional:    true,
+										Elem:        &schema.Schema{Type: schema.TypeString},
+										Description: "Keys of the authenticators allowed for this method (e.g. `google_otp`).",
+									},
+								},
+							},
+						},
 						"primary_methods": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -91,8 +111,7 @@ func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceDat
 	var createdInner *v6okta.ListPolicyRules200ResponseInner
 	boc := utils.NewExponentialBackOffWithContext(ctx, backoff.DefaultMaxElapsedTime)
 	err := backoff.Retry(func() error {
-		inner, resp, createErr := getOktaV6ClientFromMetadata(meta).PolicyAPI.
-			CreatePolicyRule(ctx, policyID).PolicyRule(wrapper).Execute()
+		inner, resp, createErr := getOktaV6ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, policyID).PolicyRule(wrapper).Execute()
 		if doNotRetry(meta, createErr) {
 			return backoff.Permanent(createErr)
 		}
@@ -115,8 +134,7 @@ func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceDat
 	// If the desired status is INACTIVE, deactivate immediately after creation
 	// since the Okta API always creates rules in ACTIVE state.
 	if d.Get("status").(string) == StatusInactive {
-		_, deactErr := getOktaV6ClientFromMetadata(meta).PolicyAPI.
-			DeactivatePolicyRule(ctx, policyID, pr.GetId()).Execute()
+		_, deactErr := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeactivatePolicyRule(ctx, policyID, pr.GetId()).Execute()
 		if deactErr != nil {
 			return diag.Errorf("failed to deactivate password policy rule on creation: %v", deactErr)
 		}
@@ -136,8 +154,7 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 		return diag.Errorf("'policy_id' field should be set")
 	}
 
-	inner, resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.
-		GetPolicyRule(ctx, policyID, d.Id()).Execute()
+	inner, resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.GetPolicyRule(ctx, policyID, d.Id()).Execute()
 	if err != nil {
 		// Rule (or parent policy) no longer exists — remove from state.
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
@@ -225,8 +242,7 @@ func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	wrapper := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
 
 	// ReplacePolicyRule is the V6 equivalent of UpdatePolicyRule (HTTP PUT).
-	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.
-		ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(wrapper).Execute()
+	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(wrapper).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update password policy rule: %v", err)
 	}
@@ -259,8 +275,7 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("'policy_id' field should be set")
 	}
 
-	resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.
-		DeletePolicyRule(ctx, policyID, d.Id()).Execute()
+	resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicyRule(ctx, policyID, d.Id()).Execute()
 	if err != nil {
 		// Already gone — not an error.
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
@@ -328,6 +343,37 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 							methodList = append(methodList, m.(string))
 						}
 						primary := v6okta.SsprPrimaryRequirement{}
+						if methodConstraintsRaw, ok := reqBlock["method_constraints"]; ok {
+							methodConstraints := methodConstraintsRaw.([]interface{})
+							if len(methodConstraints) > 0 {
+								authenticatorMethodConstraints := make([]v6okta.AuthenticatorMethodConstraint, 0, len(methodConstraints))
+								for _, methodConstraint := range methodConstraints {
+									mcMap := methodConstraint.(map[string]interface{})
+									constraint := v6okta.NewAuthenticatorMethodConstraint()
+									if method, ok := mcMap["method"].(string); ok && method != "" {
+										constraint.SetMethod(method)
+									}
+									if allowedAuthenticatorsRaw, ok := mcMap["allowed_authenticators"]; ok {
+										identities := []v6okta.AuthenticatorIdentity{}
+										if allowedAuthenticatorsList, ok := allowedAuthenticatorsRaw.([]interface{}); ok {
+											for _, key := range allowedAuthenticatorsList {
+												allowedAuthenticator, ok := key.(string)
+												if ok {
+													identity := v6okta.NewAuthenticatorIdentity()
+													identity.SetKey(allowedAuthenticator)
+													identities = append(identities, *identity)
+												}
+											}
+											if len(identities) > 0 {
+												constraint.SetAllowedAuthenticators(identities)
+											}
+										}
+									}
+									authenticatorMethodConstraints = append(authenticatorMethodConstraints, *constraint)
+								}
+								primary.SetMethodConstraints(authenticatorMethodConstraints)
+							}
+						}
 						primary.SetMethods(methodList)
 						req.SetPrimary(primary)
 					}
