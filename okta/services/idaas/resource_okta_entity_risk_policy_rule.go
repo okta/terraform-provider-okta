@@ -42,6 +42,7 @@ type entityRiskPolicyRuleResourceModel struct {
 	Status               types.String `tfsdk:"status"`
 	Priority             types.Int64  `tfsdk:"priority"`
 	RiskLevel            types.String `tfsdk:"risk_level"`
+	UsersIncluded        types.Set    `tfsdk:"users_included"`
 	UsersExcluded        types.Set    `tfsdk:"users_excluded"`
 	GroupsIncluded       types.Set    `tfsdk:"groups_included"`
 	GroupsExcluded       types.Set    `tfsdk:"groups_excluded"`
@@ -95,6 +96,11 @@ func (r *entityRiskPolicyRuleResource) Schema(_ context.Context, _ resource.Sche
 				Validators: []validator.String{
 					stringvalidator.OneOf("HIGH", "MEDIUM", "LOW", "ANY"),
 				},
+			},
+			"users_included": schema.SetAttribute{
+				Description: "List of user IDs to include from this rule.",
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"users_excluded": schema.SetAttribute{
 				Description: "List of user IDs to exclude from this rule.",
@@ -437,10 +443,14 @@ func (r *entityRiskPolicyRuleResource) buildEntityRiskPolicyRule(ctx context.Con
 
 	// People conditions - always set with empty arrays if not specified
 	// The SDK requires groups and users fields to be present
+	var usersIncluded []string
 	var usersExcluded []string
 	var groupsIncluded []string
 	var groupsExcluded []string
 
+	if !state.UsersIncluded.IsNull() {
+		diags.Append(state.UsersIncluded.ElementsAs(ctx, &usersIncluded, false)...)
+	}
 	if !state.UsersExcluded.IsNull() {
 		diags.Append(state.UsersExcluded.ElementsAs(ctx, &usersExcluded, false)...)
 	}
@@ -451,6 +461,9 @@ func (r *entityRiskPolicyRuleResource) buildEntityRiskPolicyRule(ctx context.Con
 		diags.Append(state.GroupsExcluded.ElementsAs(ctx, &groupsExcluded, false)...)
 	}
 
+	if usersIncluded == nil {
+		usersIncluded = []string{}
+	}
 	if usersExcluded == nil {
 		usersExcluded = []string{}
 	}
@@ -467,7 +480,7 @@ func (r *entityRiskPolicyRuleResource) buildEntityRiskPolicyRule(ctx context.Con
 
 	userCondition := v6okta.NewUserCondition()
 	userCondition.SetExclude(usersExcluded)
-	userCondition.SetInclude([]string{})
+	userCondition.SetInclude(usersIncluded)
 
 	peopleCondition := v6okta.NewPolicyPeopleCondition()
 	peopleCondition.SetGroups(*groupCondition)

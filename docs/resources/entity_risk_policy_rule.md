@@ -68,6 +68,7 @@ The following arguments are supported:
 - `risk_level` - (Required) Risk level to match. Valid values: `HIGH`, `MEDIUM`, `LOW`, `ANY`.
 - `status` - (Optional) Status of the rule. Valid values: `ACTIVE`, `INACTIVE`. Default: `ACTIVE`.
 - `priority` - (Optional) Priority of the rule. Rules are evaluated in priority order.
+- `users_included` - (Optional) List of user IDs to include from this rule.
 - `users_excluded` - (Optional) List of user IDs to exclude from this rule.
 - `groups_included` - (Optional) List of group IDs to include in this rule.
 - `groups_excluded` - (Optional) List of group IDs to exclude from this rule.
