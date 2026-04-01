@@ -64,6 +64,18 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 		// For those familiar with Terraform schemas be sure to check the base application schema and/or
 		// the examples in the documentation
 		Schema: BuildAppSchema(map[string]*schema.Schema{
+			"skip_metadata": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip reading SAML metadata during read operations, this can improve performance for large numbers of applications but will make certain attributes unavailable. The following attributes will be null/empty when this is enabled: metadata, metadata_url, http_post_binding, http_redirect_binding, entity_key, entity_url, certificate",
+			},
+			"skip_keys": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Skip reading key credentials during read operations, this can improve performance for large numbers of applications but will make key_id and keys attributes unavailable.",
+			},
 			"preconfigured_app": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -519,7 +531,12 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	} else {
 		_ = d.Set("implicit_assignment", false)
 	}
-	if app.Credentials.Signing.Kid != "" && app.Status != StatusInactive {
+	skipMetadata := d.Get("skip_metadata").(bool)
+	skipKeys := d.Get("skip_keys").(bool)
+
+	if skipMetadata {
+		logger(meta).Warn("skip_metadata is true, skipping reading metadata for SAML application")
+	} else if app.Credentials.Signing.Kid != "" && app.Status != StatusInactive && !skipMetadata {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
 		keyMetadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, d.Id(), keyID)
@@ -541,13 +558,17 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
 
-	keys, err := fetchAppKeys(ctx, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to load existing keys for SAML application: %f", err)
-	}
+	if skipKeys {
+		logger(meta).Warn("skip_keys is true, skipping reading credentials/keys for SAML application")
+	} else {
+		keys, err := fetchAppKeys(ctx, meta, app.Id)
+		if err != nil {
+			return diag.Errorf("failed to load existing keys for SAML application: %f", err)
+		}
 
-	if err := setAppKeys(d, keys); err != nil {
-		return diag.Errorf("failed to set Application Credential Key Values: %v", err)
+		if err := setAppKeys(d, keys); err != nil {
+			return diag.Errorf("failed to set Application Credential Key Values: %v", err)
+		}
 	}
 
 	// acsEndpoints
