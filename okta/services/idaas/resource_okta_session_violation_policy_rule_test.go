@@ -26,6 +26,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 	resource "okta_session_violation_policy_rule" "test" {
 	  policy_id                  = data.okta_session_violation_policy.test.id
 	  name                       = "testAcc-replace_with_uuid"
+	  min_risk_level             = "HIGH"
 	  policy_evaluation_enabled  = true
 	}
 	`
@@ -83,6 +84,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "min_risk_level", "HIGH"),
 					resource.TestCheckResourceAttr(resourceName, "policy_evaluation_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 				),

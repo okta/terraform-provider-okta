@@ -1,0 +1,1444 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:52 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.103794s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05786775s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:54 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.03507275s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.137207084s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:58 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.131608166s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:11:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.047826667s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:01 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.069557584s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.037178125s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:04 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.119978958s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:05 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.059422625s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:07 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.044751916s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.045360208s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.060327583s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.064013541s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.078590792s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.068845875s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.028613708s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"Session Violation Rule","priority":5,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T05:20:17.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"LOW"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.082448791s
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 239
+        host: oie-00.dne-okta.com
+        body: |
+            {"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"conditions":{"riskScore":{"minRiskLevel":"HIGH"}},"id":"rulunmoechci5TEyD1d7","name":"testAcc-1250549797","system":false,"type":"SESSION_VIOLATION_DETECTION"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.126124583s
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.077260667s
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:22 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.035829459s
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 2.0159705s
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:26 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.185151791s
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.078403s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.199917875s
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:30 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.066490084s
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.122295291s
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:33 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.315582s
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.052020084s
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.154383958s
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:37 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.065816292s
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":6,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:19.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":true}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.049052375s
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 240
+        host: oie-00.dne-okta.com
+        body: |
+            {"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"conditions":{"riskScore":{"minRiskLevel":"HIGH"}},"id":"rulunmoechci5TEyD1d7","name":"testAcc-1250549797","system":false,"type":"SESSION_VIOLATION_DETECTION"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.118321625s
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05387125s
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:43 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.038479375s
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:44 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.042796375s
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:46 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.052355875s
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:47 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.075425875s
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:50 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 2.857695583s
+    - id: 39
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - SESSION_VIOLATION_DETECTION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstunmoecezEmVT9k1d7","status":"ACTIVE","name":"Session Violation Detection Policy","description":"Enables session violation detection policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:52 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=SESSION_VIOLATION_DETECTION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.033050583s
+    - id: 40
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulunmoechci5TEyD1d7","status":"ACTIVE","name":"testAcc-1250549797","priority":7,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-04-01T07:12:40.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"minRiskLevel":"HIGH"}},"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoechci5TEyD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"SESSION_VIOLATION_DETECTION"},{"id":"rulunmoecgwMlCirc1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-02-05T05:30:50.000Z","lastUpdated":"2026-02-05T05:30:50.000Z","system":true,"conditions":null,"actions":{"sessionViolationDetection":{"policyEvaluation":{"enabled":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstunmoecezEmVT9k1d7/rules/rulunmoecgwMlCirc1d7","hints":{"allow":["GET","PUT"]}}},"type":"SESSION_VIOLATION_DETECTION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 01 Apr 2026 07:12:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.08429975s
