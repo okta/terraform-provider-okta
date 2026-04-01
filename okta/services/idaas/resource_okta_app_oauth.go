@@ -430,6 +430,34 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
 			},
+			"network": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "Network restrictions for the application client. Only one `network` block may be defined.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connection": {
+							Type:         schema.TypeString,
+							Required:     true,
+							Description:  "The network connection type. Can be `ANYWHERE` or `ZONE`.",
+							ValidateFunc: validation.StringInSlice([]string{"ANYWHERE", "ZONE"}, false),
+						},
+						"include": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to include. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones included if not specified.",
+						},
+						"exclude": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to exclude. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones excluded if not specified.",
+						},
+					},
+				},
+			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
@@ -797,6 +825,17 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
 
+	if network, ok := oauthClient.GetNetworkOk(); ok && network != nil {
+		networkMap := map[string]interface{}{
+			"connection": network.GetConnection(),
+			"include":    utils.ConvertStringSliceToSet(network.GetInclude()),
+			"exclude":    utils.ConvertStringSliceToSet(network.GetExclude()),
+		}
+		if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
+			return diag.Errorf("failed to set OAuth application network properties: %v", err)
+		}
+	}
+
 	jwk, ok := oauthClient.GetJwksOk()
 	if ok {
 		jwks := jwk.Keys
@@ -1156,6 +1195,22 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 			jwks.SetKeys(keyData)
 			oauthClientSettings.SetJwks(*jwks)
 
+		}
+	}
+
+	// Handle network restrictions
+	if networkList, ok := d.GetOk("network"); ok {
+		networkData := networkList.([]interface{})
+		if len(networkData) > 0 {
+			networkMap := networkData[0].(map[string]interface{})
+			network := v6okta.NewOpenIdConnectApplicationNetwork(networkMap["connection"].(string))
+			if include := utils.ConvertInterfaceToStringSet(networkMap["include"]); len(include) > 0 {
+				network.SetInclude(include)
+			}
+			if exclude := utils.ConvertInterfaceToStringSet(networkMap["exclude"]); len(exclude) > 0 {
+				network.SetExclude(exclude)
+			}
+			oauthClientSettings.SetNetwork(*network)
 		}
 	}
 
