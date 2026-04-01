@@ -595,6 +595,9 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Optional:    true,
 			Computed:    true,
 			Description: "ID of the rule. Can be specified to adopt an existing rule during migration.",
+			PlanModifiers: []planmodifier.String{
+				stringplanmodifier.UseStateForUnknown(),
+			},
 		},
 		"name": schema.StringAttribute{
 			Required:    true,
