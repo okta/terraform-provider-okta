@@ -211,7 +211,10 @@ func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req r
 		return
 	}
 	var rules []policyRuleModel
-	data.Rules.ElementsAs(ctx, &rules, false)
+	resp.Diagnostics.Append(data.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	seen := make(map[string]int, len(rules))
 	seenPriority := make(map[int64]int, len(rules))
 	for i, rule := range rules {
@@ -322,7 +325,8 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 	reorderedRules := r.reorderRulesToMatchPlan(createdRules, rules)
 	plan.ID = plan.PolicyID
 	// Marshal back to types.List
-	plan.Rules, resp.Diagnostics = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	plan.Rules, diags = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	resp.Diagnostics.Append(diags...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *appSignOnPolicyRulesResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -332,7 +336,10 @@ func (r *appSignOnPolicyRulesResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 	var rules []policyRuleModel
-	state.Rules.ElementsAs(ctx, &rules, false)
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	policyID := state.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
 	updatedRules := make([]policyRuleModel, 0, len(rules))
@@ -364,8 +371,11 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 		return
 	}
 	var stateRules, planRules []policyRuleModel
-	state.Rules.ElementsAs(ctx, &stateRules, false)
-	plan.Rules.ElementsAs(ctx, &planRules, false)
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &stateRules, false)...)
+	resp.Diagnostics.Append(plan.Rules.ElementsAs(ctx, &planRules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	policyID := plan.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
 	// Build lookup structures.
@@ -393,7 +403,9 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 	reorderedRules := r.reorderRulesToMatchPlan(updatedRules, planRules)
 	plan.ID = plan.PolicyID
 	// Marshal back to types.List
-	plan.Rules, resp.Diagnostics = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	var diags diag.Diagnostics
+	plan.Rules, diags = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	resp.Diagnostics.Append(diags...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *appSignOnPolicyRulesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -403,7 +415,10 @@ func (r *appSignOnPolicyRulesResource) Delete(ctx context.Context, req resource.
 		return
 	}
 	var rules []policyRuleModel
-	state.Rules.ElementsAs(ctx, &rules, false)
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	policyID := state.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
 	for _, rule := range rules {
