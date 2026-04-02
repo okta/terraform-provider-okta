@@ -1,1 +1,1 @@
-terraform import okta_user_type.example &#60;user type id&#62;
+terraform import okta_user_type.example <user_type_id>

@@ -1,1 +1,1 @@
-terraform import okta_email_domain.example &#60;domain id&#62;
+terraform import okta_email_domain.example <domain_id>

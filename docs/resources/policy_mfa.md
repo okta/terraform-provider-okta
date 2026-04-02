@@ -43,6 +43,12 @@ resource "okta_policy_mfa" "oie_example" {
     enroll = "REQUIRED"
   }
 
+  # "aut123456789abcdef", "aut123456789ghijkl" are custom app IDs
+  custom_app = [
+    { "enroll" : "OPTIONAL", "id" : "aut123456789abcdef" },
+    { "enroll" : "OPTIONAL", "id" : "aut123456789ghijkl" }
+  ]
+
   groups_included = ["${data.okta_group.everyone.id}"]
 }
 
@@ -109,10 +115,12 @@ resource "okta_policy_mfa" "oie_example" {
 - `priority` (Number) Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
 - `rsa_token` (Map of String)
 - `security_question` (Map of String)
+- `smart_card_idp` (Map of String)
 - `status` (String) Policy Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
 - `symantec_vip` (Map of String)
 - `webauthn` (Map of String)
 - `yubikey_token` (Map of String)
+- `custom_app` (List of Map of String)
 
 ### Read-Only
 
@@ -123,5 +131,5 @@ resource "okta_policy_mfa" "oie_example" {
 Import is supported using the following syntax:
 
 ```shell
-$ terraform import okta_policy_mfa.example &#60;policy id&#62;
+$ terraform import okta_policy_mfa.example <policy_id>
 ```

@@ -15,5 +15,7 @@ var AuthenticatorProviders = []string{
 	RsaTokenFactor,
 	SecurityQuestionFactor,
 	WebauthnFactor,
-	// YubikeyTokenFactor, // NOTE: support upcoming when available in public API
+	YubikeyTokenFactor,
+	SmartCardIdpFactor,
+	CustomAppFactor,
 }

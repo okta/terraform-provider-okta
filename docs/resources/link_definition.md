@@ -49,5 +49,5 @@ resource "okta_link_definition" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_link_definition.example &#60;primary_name&#62;
+terraform import okta_link_definition.example <primary_name>
 ```

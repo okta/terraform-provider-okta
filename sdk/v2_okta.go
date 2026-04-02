@@ -16,7 +16,7 @@ import (
 )
 
 type Client struct {
-    // NOTE: do not create and add new resources to this local sdk
+	// NOTE: do not create and add new resources to this local sdk
 	config                     *config
 	requestExecutor            *RequestExecutor
 	resource                   resource
@@ -45,7 +45,7 @@ type Client struct {
 	UserFactor                 *UserFactorResource
 	UserSchema                 *UserSchemaResource
 	UserType                   *UserTypeResource
-    // NOTE: do not create and add new resources to this local sdk
+	// NOTE: do not create and add new resources to this local sdk
 }
 
 type resource struct {

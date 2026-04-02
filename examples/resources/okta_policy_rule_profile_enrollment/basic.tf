@@ -12,6 +12,7 @@ resource "okta_policy_rule_profile_enrollment" "test" {
     label    = "Email"
     required = true
   }
+  enroll_authenticator_types = ["password"]
 }
 
 

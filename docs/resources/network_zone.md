@@ -48,6 +48,7 @@ resource "okta_network_zone" "example" {
 - `proxies` (Set of String) Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`
 - `status` (String) Network Status - can either be `ACTIVE` or `INACTIVE` only
 - `usage` (String) Usage of the Network Zone - can be either `POLICY` or `BLOCKLIST`. By default, it is `POLICY`
+- `set_usage_as_exempt_list` (Boolean) Set this parameter to true in your request when you update the `DefaultExemptIpZone` to allow IPs through the blocklist.
 
 ### Read-Only
 
@@ -58,5 +59,5 @@ resource "okta_network_zone" "example" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_network_zone.example &#60;zone id&#62;
+terraform import okta_network_zone.example <zone_id>
 ```

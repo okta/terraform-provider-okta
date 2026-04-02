@@ -1,0 +1,398 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 71
+    host: oie-00.dne-okta.com
+    body: "{\"certificateSourceType\":\"MANUAL\",\"domain\":\"testdowncase.example.com\"}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://oie-00.dne-okta.com/api/v1/domains
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\",\"PUT\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:29 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 201 Created
+    code: 201
+    duration: 1.44363625s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:30 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.062009084s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"domains\":[{\"id\":\"OcDqaziwla4IxWlKU1d7\",\"domain\":\"test.binoy.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"FAILED_TO_VERIFY\",\"brandId\":\"bndqazuxbdBQHyqmH1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqaziwla4IxWlKU1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqazuxbdBQHyqmH1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"default\",\"domain\":\"oie-00.dne-okta.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"COMPLETED\",\"brandId\":\"bndnkw1sc3flIOTF51d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/default\",\"hints\":{\"allow\":[\"GET\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}]}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:31 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.032292375s
+- id: 3
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:32 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.056080916s
+- id: 4
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"domains\":[{\"id\":\"OcDqaziwla4IxWlKU1d7\",\"domain\":\"test.binoy.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"FAILED_TO_VERIFY\",\"brandId\":\"bndqazuxbdBQHyqmH1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqaziwla4IxWlKU1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqazuxbdBQHyqmH1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"default\",\"domain\":\"oie-00.dne-okta.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"COMPLETED\",\"brandId\":\"bndnkw1sc3flIOTF51d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/default\",\"hints\":{\"allow\":[\"GET\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}]}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:33 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.042783s
+- id: 5
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:34 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.056260208s
+- id: 6
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:36 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.04810975s
+- id: 7
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"domains\":[{\"id\":\"OcDqaziwla4IxWlKU1d7\",\"domain\":\"test.binoy.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"FAILED_TO_VERIFY\",\"brandId\":\"bndqazuxbdBQHyqmH1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqaziwla4IxWlKU1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqazuxbdBQHyqmH1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"default\",\"domain\":\"oie-00.dne-okta.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"COMPLETED\",\"brandId\":\"bndnkw1sc3flIOTF51d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/default\",\"hints\":{\"allow\":[\"GET\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}]}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:37 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.03570575s
+- id: 8
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:38 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.041635542s
+- id: 9
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"domains\":[{\"id\":\"OcDqaziwla4IxWlKU1d7\",\"domain\":\"test.binoy.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"FAILED_TO_VERIFY\",\"brandId\":\"bndqazuxbdBQHyqmH1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqaziwla4IxWlKU1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqazuxbdBQHyqmH1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"GET\",\"DELETE\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}},{\"id\":\"default\",\"domain\":\"oie-00.dne-okta.com\",\"certificateSourceType\":\"OKTA_MANAGED\",\"validationStatus\":\"COMPLETED\",\"brandId\":\"bndnkw1sc3flIOTF51d7\",\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/default\",\"hints\":{\"allow\":[\"GET\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndnkw1sc3flIOTF51d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}]}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:39 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.0565435s
+- id: 10
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: GET
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    uncompressed: true
+    body: "{\"id\":\"OcDqx86ea69UO98gQ1d7\",\"domain\":\"testdowncase.example.com\",\"certificateSourceType\":\"MANUAL\",\"validationStatus\":\"NOT_STARTED\",\"brandId\":\"bndqx86ea2eEDKu1O1d7\",\"dnsRecords\":[{\"recordType\":\"TXT\",\"fqdn\":\"_oktaverification.testdowncase.example.com\",\"values\":[\"09f6146160604e2a8b7fd205deeb1f17\"]},{\"recordType\":\"CNAME\",\"fqdn\":\"testdowncase.example.com\",\"values\":[\"oie-00.customdomains.oktapreview.com\"]}],\"_links\":{\"self\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7\",\"hints\":{\"allow\":[\"DELETE\"]}},\"verify\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7/verify\",\"hints\":{\"allow\":[\"POST\"]}},\"brand\":{\"href\":\"https://oie-00.dne-okta.com/api/v1/brands/bndqx86ea2eEDKu1O1d7\",\"hints\":{\"allow\":[\"GET\",\"PUT\",\"DELETE\"]}}}}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 13 Oct 2025 09:10:40 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 200 OK
+    code: 200
+    duration: 1.0510945s
+- id: 11
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 0
+    host: oie-00.dne-okta.com
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+    url: https://oie-00.dne-okta.com/api/v1/domains/OcDqx86ea69UO98gQ1d7
+    method: DELETE
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: 0
+    body: ""
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Date:
+      - Mon, 13 Oct 2025 09:10:41 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 204 No Content
+    code: 204
+    duration: 1.276350125s

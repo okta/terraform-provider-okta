@@ -21,11 +21,11 @@ resource "okta_log_stream" "test_splunk" {
 }
 
 data "okta_log_stream" "test_by_name" {
-  name = okta_log_stream.test_splunk.name
-  depends_on = [ okta_log_stream.test_splunk, okta_log_stream.test_aws ]
+  name       = okta_log_stream.test_splunk.name
+  depends_on = [okta_log_stream.test_splunk, okta_log_stream.test_aws]
 }
 
 data "okta_log_stream" "test_by_id" {
-  id = okta_log_stream.test_aws.id
-  depends_on = [ okta_log_stream.test_splunk, okta_log_stream.test_aws ]
+  id         = okta_log_stream.test_aws.id
+  depends_on = [okta_log_stream.test_splunk, okta_log_stream.test_aws]
 }

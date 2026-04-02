@@ -70,5 +70,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_log_stream.example &#60;strema id&#62;
+terraform import okta_log_stream.example <stream_id>
 ```

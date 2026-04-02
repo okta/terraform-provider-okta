@@ -70,5 +70,5 @@ resource "okta_behavior" "my_velocity" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_behavior.example &#60;behavior id&#62;
+terraform import okta_behavior.example <behavior_id>
 ```

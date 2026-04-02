@@ -1,0 +1,1 @@
+terraform import okta_email_template_settings.example <brand_id>/<template_name>

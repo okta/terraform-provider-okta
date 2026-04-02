@@ -31,7 +31,7 @@ resource "okta_user_admin_roles" "test" {
 
 ### Required
 
-- `admin_roles` (Set of String) The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/reference/api/roles/#role-types).
+- `admin_roles` (Set of String) The list of Okta user admin roles, e.g. `['APP_ADMIN', 'USER_ADMIN']` See [API Docs](https://developer.okta.com/docs/api/openapi/okta-management/guides/roles/#standard-roles).
 - `user_id` (String) ID of a Okta User
 
 ### Optional
@@ -47,5 +47,5 @@ resource "okta_user_admin_roles" "test" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_user_admin_roles.example &#60;user id&#62;
+terraform import okta_user_admin_roles.example <user_id>
 ```

@@ -12,16 +12,17 @@ import (
 type AuthenticatorResource resource
 
 type Authenticator struct {
-	Links       interface{}            `json:"_links,omitempty"`
-	Created     *time.Time             `json:"created,omitempty"`
-	Id          string                 `json:"id,omitempty"`
-	Key         string                 `json:"key,omitempty"`
-	LastUpdated *time.Time             `json:"lastUpdated,omitempty"`
-	Name        string                 `json:"name,omitempty"`
-	Provider    *AuthenticatorProvider `json:"provider,omitempty"`
-	Settings    *AuthenticatorSettings `json:"settings,omitempty"`
-	Status      string                 `json:"status,omitempty"`
-	Type        string                 `json:"type,omitempty"`
+	Links        interface{}            `json:"_links,omitempty"`
+	Created      *time.Time             `json:"created,omitempty"`
+	Id           string                 `json:"id,omitempty"`
+	Key          string                 `json:"key,omitempty"`
+	LastUpdated  *time.Time             `json:"lastUpdated,omitempty"`
+	Name         string                 `json:"name,omitempty"`
+	Provider     *AuthenticatorProvider `json:"provider,omitempty"`
+	Settings     *AuthenticatorSettings `json:"settings,omitempty"`
+	Status       string                 `json:"status,omitempty"`
+	Type         string                 `json:"type,omitempty"`
+	AgreeToTerms bool                   `json:"agreeToTerms,omitempty"`
 }
 
 type OTP struct {
@@ -114,7 +115,7 @@ func (m *AuthenticatorResource) CreateAuthenticator(ctx context.Context, body Au
 	return authenticator, resp, nil
 }
 
-func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string)(*Response, error){
+func (m *AuthenticatorResource) SetSettingsOTP(ctx context.Context, body OTP, authenticatorId string) (*Response, error) {
 	url := fmt.Sprintf("/api/v1/authenticators/%v/methods/otp", authenticatorId)
 
 	rq := m.client.CloneRequestExecutor()

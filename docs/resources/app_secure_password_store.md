@@ -89,5 +89,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_secure_password_store.example &#60;app id&#62
+terraform import okta_app_secure_password_store.example <app_id>
 ```

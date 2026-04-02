@@ -37,7 +37,6 @@ resource "okta_role_subscription" "test" {
 	- 'LDAP_AGENT' - Disconnects and reconnects: LDAP agent.
 	- 'AD_AGENT' - Disconnects and reconnects: AD agent.
 	- 'OKTA_ANNOUNCEMENT' - Okta release notes and announcements.
-	- 'OKTA_ISSUE' - Trust incidents and updates.
 	- 'OKTA_UPDATE' - Scheduled system updates.
 	- 'IWA_AGENT' - Disconnects and reconnects: IWA agent.
 	- 'USER_DEPROVISION' - User deprovisions.
@@ -71,5 +70,5 @@ resource "okta_role_subscription" "test" {
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_role_subscription.example &#60;role_type&#62;/&#60;notification_type&#62;
+terraform import okta_role_subscription.example <role_type>/<notification_type>
 ```

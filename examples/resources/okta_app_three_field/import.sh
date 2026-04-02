@@ -1,1 +1,1 @@
-terraform import okta_app_three_field.example &#60;app id&#62;
+terraform import okta_app_three_field.example <app_id>

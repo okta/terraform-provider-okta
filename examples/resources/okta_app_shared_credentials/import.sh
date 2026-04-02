@@ -1,1 +1,1 @@
-terraform import okta_app_shared_credentials.example &#60;app id&#62
+terraform import okta_app_shared_credentials.example <app_id>

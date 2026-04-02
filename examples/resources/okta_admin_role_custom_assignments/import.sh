@@ -1,1 +1,1 @@
-terraform import okta_admin_role_custom_assignments.example &#60;resource_set_id&#62;/&#60;custom_role_id&#62;
+terraform import okta_admin_role_custom_assignments.example <resource_set_id>/<custom_role_id>

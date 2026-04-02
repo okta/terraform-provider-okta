@@ -82,6 +82,7 @@ resource "okta_policy_rule_profile_enrollment" "example" {
 
 - `access` (String) Allow or deny access based on the rule conditions. Valid values are: `ALLOW`, `DENY`. Default: `ALLOW`.
 - `email_verification` (Boolean) Indicates whether email verification should occur before access is granted. Default: `true`.
+- `enroll_authenticator_types` (Set of String) Enrolls authenticator types
 - `inline_hook_id` (String) ID of a Registration Inline Hook
 - `profile_attributes` (Block List) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
 	- 'label' - (Required) A display-friendly label for this property
@@ -114,5 +115,5 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_policy_rule_profile_enrollment.example &#60;policy id&#62;/&#60;rule id&#62;
+terraform import okta_policy_rule_profile_enrollment.example <policy_id>/<rule_id>
 ```

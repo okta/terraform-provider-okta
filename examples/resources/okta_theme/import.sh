@@ -1,1 +1,1 @@
-terraform import okta_theme.example &#60;brand id&#62;/&#60;theme id&#62;
+terraform import okta_theme.example <brand_id>/<theme_id>

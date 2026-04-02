@@ -1,0 +1,8 @@
+- package-ecosystem: gomod
+  directory: "/"
+  schedule:
+    interval: daily
+  ignore:
+  - dependency-name: github.com/hashicorp/terraform-plugin-docs
+    versions:
+    - ">=0.14.0"

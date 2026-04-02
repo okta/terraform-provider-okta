@@ -1,5 +1,5 @@
 resource "okta_policy_device_assurance_chromeos" "example" {
-  name                                      = "example"
+  name                                      = "testAcc-replace_with_uuid"
   tpsp_allow_screen_lock                    = true
   tpsp_browser_version                      = "15393.27.0"
   tpsp_builtin_dns_client_enabled           = true

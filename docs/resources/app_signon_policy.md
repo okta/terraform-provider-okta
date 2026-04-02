@@ -92,14 +92,20 @@ resource "okta_app_signon_policy_rule" "some_rule" {
 - `description` (String) Description of the policy.
 - `name` (String) Name of the policy.
 
+### Optional
+
+- `catch_all` (Boolean, default true, creation-only argument) If false, the default rule of the policy is set access to `DENY`. Otherwise default behavior of the default rule is to leave access at `ALLOW`.  **WARNING** setting this attribute to false changes policy rule's default behavior. Use at your own risk. This is only applied during creation and does not affect import or update.
+- `priority` (Default 1) Specifies the order in which this policy is evaluated in relation to the other policies.
+
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `default_rule_id` (String) Default rule (system=true) id of the policy
+- `id` (String) Policy id
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_app_signon_policy_rule.example &#60;policy_id&#62;
+terraform import okta_app_signon_policy.example <policy_id>
 ```

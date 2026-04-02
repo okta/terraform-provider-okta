@@ -8,12 +8,16 @@ resource "okta_group" "test_2" {
   description = "testing, testing"
 }
 
-data "okta_groups" "test" {
+data "okta_groups" "okta_groups" {
   q = "testAcc_"
 }
 
 data "okta_groups" "app_groups" {
   type = "APP_GROUP"
+}
+
+data "okta_groups" "built_in_groups" {
+  type = "BUILT_IN"
 }
 
 output "special_groups" {

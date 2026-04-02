@@ -79,6 +79,7 @@ data "okta_user" "example" {
 - `preferred_language` (String)
 - `primary_phone` (String)
 - `profile_url` (String)
+- `realm_id` (String) The Realm ID associated with the user.
 - `roles` (Set of String)
 - `second_email` (String)
 - `state` (String)
