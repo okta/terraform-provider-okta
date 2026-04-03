@@ -1,0 +1,60 @@
+# This workflow uses release-please to automate release PRs and GitHub releases.
+# When conventional commits are pushed to master, release-please opens/updates a
+# release PR. When that PR is merged, release-please creates a GitHub release
+# with a v-prefixed tag and then triggers the smoke-test and goreleaser jobs
+# to build and publish provider binaries.
+name: release-please
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  smoke-test:
+    needs: [release-please]
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Set up Go
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      - name: Run VCR acceptance tests
+        run: time make smoke-test-play-vcr-acc
+        timeout-minutes: 30
+
+  goreleaser:
+    needs: [release-please, smoke-test]
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/community.yml@5f388ae147bcc1e1c34822571b2f2de40694c5d6 # v5.0.0
+    with:
+      setup-go-version-file: "go.mod"
+      goreleaser-release-args: "--parallelism 2"
+      git-ref: ${{ needs.release-please.outputs.tag_name }}
+    secrets:
+      gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      gpg-private-key-passphrase: ${{ secrets.PASSPHRASE }}
