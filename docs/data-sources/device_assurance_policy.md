@@ -23,6 +23,8 @@ Get a policy assurance from Okta.
 ### Read-Only
 
 - `disk_encryption_type` (Object) List of disk encryption type, can be `FULL`, `USER` (see [below for nested schema](#nestedatt--disk_encryption_type))
+- `display_remediation_mode` (String) Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.
+- `grace_period` (Object) Grace period configuration for the device assurance policy (Early Access feature). (see [below for nested schema](#nestedatt--grace_period))
 - `jailbreak` (Boolean) Is the device jailbroken in the device assurance policy.
 - `os_version` (Object) Minimum os version of the device in the device assurance policy. (see [below for nested schema](#nestedatt--os_version))
 - `os_version_constraint` (List of Object) The list of os version constraints. (see [below for nested schema](#nestedatt--os_version_constraint))
@@ -86,6 +88,15 @@ Optional:
 Read-Only:
 
 - `include` (Set of String)
+
+
+<a id="nestedatt--grace_period"></a>
+### Nested Schema for `grace_period`
+
+Read-Only:
+
+- `expiry` (String)
+- `type` (String)
 
 
 <a id="nestedatt--os_version"></a>

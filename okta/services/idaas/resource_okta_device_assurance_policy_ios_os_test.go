@@ -42,6 +42,24 @@ func TestAccResourceOktaPolicyDeviceAssuranceIOS_crud(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "jailbreak", "false"),
 				),
 			},
+			{
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_ios test{
+					name = "testAcc-replace_with_uuid"
+					os_version = "12.4.6"
+					jailbreak = false
+					screenlock_type = toset(["BIOMETRIC", "PASSCODE"])
+					grace_period {
+						type = "BY_DATE_TIME"
+						expiry = "2026-12-01T00:00:00.000Z"
+					}
+					display_remediation_mode = "HIDE"
+				  }`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "grace_period.type", "BY_DATE_TIME"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "grace_period.expiry", "2026-12-01T00:00:00.000Z"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_ios.test", "display_remediation_mode", "HIDE"),
+				),
+			},
 		},
 	})
 }

@@ -12,7 +12,7 @@ Manages a device assurance policy for chromeos.
 
 ```terraform
 resource "okta_policy_device_assurance_chromeos" "example" {
-  name                                      = "example"
+  name                                      = "testAcc-replace_with_uuid"
   tpsp_allow_screen_lock                    = true
   tpsp_browser_version                      = "15393.27.0"
   tpsp_builtin_dns_client_enabled           = true
@@ -27,6 +27,13 @@ resource "okta_policy_device_assurance_chromeos" "example" {
   tpsp_safe_browsing_protection_level       = "ENHANCED_PROTECTION"
   tpsp_screen_lock_secured                  = true
   tpsp_site_isolation_enabled               = true
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P7D"
+  }
+
+  display_remediation_mode = "SHOW"
 }
 ```
 
@@ -39,6 +46,8 @@ resource "okta_policy_device_assurance_chromeos" "example" {
 
 ### Optional
 
+- `display_remediation_mode` (String) Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.
+- `grace_period` (Block, Optional) Grace period configuration for the device assurance policy (Early Access feature). (see [below for nested schema](#nestedblock--grace_period))
 - `tpsp_allow_screen_lock` (Boolean) Third party signal provider allow screen lock
 - `tpsp_browser_version` (String) Third party signal provider minimum browser version
 - `tpsp_builtin_dns_client_enabled` (Boolean) Third party signal provider builtin dns client enabled
@@ -62,6 +71,14 @@ resource "okta_policy_device_assurance_chromeos" "example" {
 - `last_update` (String) Last update
 - `last_updated_by` (String) Last updated by
 - `platform` (String) Policy device assurance platform
+
+<a id="nestedblock--grace_period"></a>
+### Nested Schema for `grace_period`
+
+Required:
+
+- `expiry` (String) Grace period expiry. ISO 8601 datetime (e.g. 2024-12-01T00:00:00.000Z) for BY_DATE_TIME, or ISO 8601 duration (e.g. P7D, P30D, 1-180 days) for BY_DURATION.
+- `type` (String) Grace period type: BY_DATE_TIME or BY_DURATION.
 
 ## Import
 
