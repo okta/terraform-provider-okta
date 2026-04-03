@@ -15,8 +15,8 @@ type (
 	}
 
 	IdpDiscoveryRuleApp struct {
-		Exclude []*IdpDiscoveryRuleAppObj `json:"exclude"`
-		Include []*IdpDiscoveryRuleAppObj `json:"include"`
+		Exclude []*IdpDiscoveryRuleAppObj `json:"exclude,omitempty"`
+		Include []*IdpDiscoveryRuleAppObj `json:"include,omitempty"`
 	}
 
 	IdpDiscoveryRuleAppObj struct {
@@ -26,14 +26,22 @@ type (
 	}
 
 	IdpDiscoveryRuleConditions struct {
-		App            *IdpDiscoveryRuleApp            `json:"app"`
+		App            *IdpDiscoveryRuleApp            `json:"app,omitempty"`
 		Network        *IdpDiscoveryRuleNetwork        `json:"network"`
 		Platform       *IdpDiscoveryRulePlatform       `json:"platform,omitempty"`
 		UserIdentifier *IdpDiscoveryRuleUserIdentifier `json:"userIdentifier,omitempty"`
 	}
 
 	IdpDiscoveryRuleIdp struct {
-		Providers []*IdpDiscoveryRuleProvider `json:"providers"`
+		Providers            []*IdpDiscoveryRuleProvider `json:"providers"`
+		MatchingCriteria     []*IdpMatchingCriteria      `json:"matchCriteria,omitempty"`
+		IdpSelectionType     string                      `json:"idpSelectionType,omitempty"`
+		ShouldFallBackToOkta *bool                       `json:"shouldFallBackToOkta,omitempty"`
+	}
+
+	IdpMatchingCriteria struct {
+		ProviderExpression string `json:"providerExpression,omitempty"`
+		PropertyName       string `json:"propertyName,omitempty"`
 	}
 
 	IdpDiscoveryRuleNetwork struct {

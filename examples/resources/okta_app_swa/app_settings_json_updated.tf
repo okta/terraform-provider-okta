@@ -1,8 +1,8 @@
 resource "okta_app_swa" "test" {
-  preconfigured_app = "office365"
-  label             = "testAcc_replace_with_uuid"
-  status            = "INACTIVE"
-  app_settings_json = <<JSON
+  preconfigured_app       = "office365"
+  label                   = "testAcc_replace_with_uuid"
+  status                  = "INACTIVE"
+  app_settings_json       = <<JSON
     {
       "wsFedConfigureType": "AUTO",
       "windowsTransportEnabled": false,
@@ -12,7 +12,7 @@ resource "okta_app_swa" "test" {
       "requireAdminConsent": false
     }
 JSON
-  app_links_json = <<JSON
+  app_links_json          = <<JSON
     {
       "calendar": false,
       "crm": false,
