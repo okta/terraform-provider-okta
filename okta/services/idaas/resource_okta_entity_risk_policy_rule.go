@@ -374,6 +374,11 @@ func (r *entityRiskPolicyRuleResource) readEntityRiskPolicyRule(ctx context.Cont
 				diags.Append(d...)
 				state.UsersExcluded = usersExcluded
 			}
+			if rule.Conditions.People.Users != nil && len(rule.Conditions.People.Users.Include) > 0 {
+				usersIncluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Users.Include)
+				diags.Append(d...)
+				state.UsersIncluded = usersIncluded
+			}
 			if rule.Conditions.People.Groups != nil {
 				if len(rule.Conditions.People.Groups.Include) > 0 {
 					groupsIncluded, d := types.SetValueFrom(ctx, types.StringType, rule.Conditions.People.Groups.Include)
