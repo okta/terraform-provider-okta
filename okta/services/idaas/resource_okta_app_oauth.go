@@ -448,6 +448,12 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
 			},
+			"skip_authentication_policy": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
 			"network": {
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -555,9 +561,11 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	if d.Get("type") != "service" {
-		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, oidcApp.GetId())
-		if err != nil {
-			return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+		if !d.Get("skip_authentication_policy").(bool) {
+			err = createOrUpdateAuthenticationPolicy(ctx, d, meta, oidcApp.GetId())
+			if err != nil {
+				return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+			}
 		}
 	}
 
@@ -674,7 +682,11 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return nil
 	}
 
-	setAuthenticationPolicy(ctx, meta, d, app.Links)
+	if !d.Get("skip_authentication_policy").(bool) {
+		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	} else {
+		_ = d.Set("authentication_policy", "")
+	}
 
 	var rawProfile string
 	if profile := app.GetProfile(); profile != nil {
@@ -972,9 +984,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
