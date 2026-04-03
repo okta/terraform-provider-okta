@@ -145,6 +145,7 @@ const (
 	OktaIDaaSEntityRiskPolicy                         = "okta_entity_risk_policy"
 	OktaIDaaSEntityRiskPolicyRule                     = "okta_entity_risk_policy_rule"
 	OktaGovernanceCampaign                            = "okta_campaign"
+	OktaGovernanceCampaigns                           = "okta_campaigns"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
 	OktaGovernanceReview                              = "okta_review"
