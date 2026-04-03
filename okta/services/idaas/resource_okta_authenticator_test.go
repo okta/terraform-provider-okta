@@ -301,3 +301,52 @@ func TestAccResourceOktaAuthenticator_ExternalIDPCrud(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAuthenticator_WebAuthn_update
+// Tests that WebAuthn authenticators can be updated without requiring
+// on-premises provider configuration fields
+// Fixes: https://github.com/okta/terraform-provider-okta/issues/XXXX
+func TestAccResourceOktaAuthenticator_WebAuthn_update(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.webauthn", resources.OktaIDaaSAuthenticator)
+
+	configInitial := `
+resource "okta_authenticator" "webauthn" {
+  name   = "WebAuthn Test"
+  key    = "webauthn"
+  status = "ACTIVE"
+}`
+
+	configUpdated := `
+resource "okta_authenticator" "webauthn" {
+  name   = "WebAuthn Test Updated"
+  key    = "webauthn"
+  status = "ACTIVE"
+}`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: configInitial,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "WebAuthn Test"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+				),
+			},
+			{
+				Config: configUpdated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "WebAuthn Test Updated"),
+					resource.TestCheckResourceAttr(resourceName, "key", "webauthn"),
+					resource.TestCheckResourceAttr(resourceName, "type", "security_key"),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+				),
+			},
+		},
+	})
+}
