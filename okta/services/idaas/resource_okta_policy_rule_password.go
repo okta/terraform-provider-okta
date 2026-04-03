@@ -39,25 +39,23 @@ func resourcePolicyPasswordRule() *schema.Resource {
 				Default:     "DENY",
 			},
 			// password_reset_access_control controls whether SSPR uses legacy or auth-policy access control.
-			// The logic has been updated by AI to support new fields, review carefully
 			"password_reset_access_control": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`. The logic has been updated by AI to support new fields, review carefully",
+				Description: "Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.",
 			},
 			// password_reset_requirement defines the SSPR requirement settings (primary methods, step-up).
-			// The logic has been updated by AI to support new fields, review carefully
 			"password_reset_requirement": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
-				Description: "Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = \"LEGACY\"`. The logic has been updated by AI to support new fields, review carefully",
+				Description: "Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = \"LEGACY\"`.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"method_constraints": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Constraints on the values specified in `primary_methods`. Specifying a constraint limits methods to specific authenticator(s). Currently, only the `otp` method supports constraints, and Google authenticator (key : `google_otp`) is the only allowed authenticator.",
+							Description: "Constraints on the values specified in the methods array. Specifying a constraint limits methods to specific authenticator(s). Currently, Google OTP is the only accepted constraint.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"method": {
@@ -78,13 +76,19 @@ func resourcePolicyPasswordRule() *schema.Resource {
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
-							Description: "List of primary authentication methods for SSPR. Options: `otp`, `push`, `sms`, `email`, `voice`.",
+							Description: "Authenticator methods allowed for the initial authentication step of password recovery. Method otp requires a constraint limiting it to a Google authenticator. Options: `otp`, `push`, `sms`, `email`, `voice`.",
 						},
 						"step_up_enabled": {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     false,
-							Description: "Determines whether step-up authentication is required for SSPR.",
+							Description: "Whether a secondary authenticator is required for password reset (`stepUp.required`). The following are three valid configurations: `required=false`, `required=true` with no methods to use any SSO authenticator, and `required=true` with `security_question` as the method.",
+						},
+						"step_up_methods": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "Authenticator methods required for the secondary authentication step of password recovery. Specify only when `step_up_enabled = true` and `security_question` is permitted. Items value: `security_question`.",
 						},
 					},
 				},
@@ -206,22 +210,48 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 		if sspr := actions.SelfServicePasswordReset; sspr != nil {
 			_ = d.Set("password_reset", sspr.GetAccess())
 			// Read SSPR requirement fields from upstream and set them in state.
-			// The logic has been updated by AI to support new fields, review carefully
 			if req := sspr.Requirement; req != nil {
 				if ac := req.AccessControl; ac != nil {
 					_ = d.Set("password_reset_access_control", *ac)
 				}
 				reqMap := map[string]interface{}{
-					"primary_methods": []string{},
-					"step_up_enabled": false,
+					"primary_methods":    []string{},
+					"method_constraints": []interface{}{},
+					"step_up_enabled":    false,
+					"step_up_methods":    []string{},
 				}
 				if primary := req.Primary; primary != nil {
 					reqMap["primary_methods"] = primary.Methods
+					methodConstraints := make([]interface{}, 0, len(primary.MethodConstraints))
+					for _, mc := range primary.MethodConstraints {
+						allowedAuths := make([]interface{}, 0, len(mc.GetAllowedAuthenticators()))
+						for _, identity := range mc.GetAllowedAuthenticators() {
+							allowedAuths = append(allowedAuths, identity.GetKey())
+						}
+						methodConstraints = append(methodConstraints, map[string]interface{}{
+							"method":                 mc.GetMethod(),
+							"allowed_authenticators": allowedAuths,
+						})
+					}
+					reqMap["method_constraints"] = methodConstraints
 				}
 				if stepUp := req.StepUp; stepUp != nil {
 					reqMap["step_up_enabled"] = stepUp.GetRequired()
+					reqMap["step_up_methods"] = stepUp.Methods
 				}
-				_ = d.Set("password_reset_requirement", []interface{}{reqMap})
+				// Only persist the requirement block when it contains meaningful content.
+				// If the API returns an empty requirement (e.g. with AUTH_POLICY), omitting
+				// the block prevents a permanent diff for configs that don't set it.
+				primaryMethods, _ := reqMap["primary_methods"].([]string)
+				methodConstraints, _ := reqMap["method_constraints"].([]interface{})
+				stepUpEnabled, _ := reqMap["step_up_enabled"].(bool)
+				stepUpMethods, _ := reqMap["step_up_methods"].([]string)
+				hasContent := len(primaryMethods) > 0 || len(methodConstraints) > 0 || stepUpEnabled || len(stepUpMethods) > 0
+				if hasContent {
+					_ = d.Set("password_reset_requirement", []interface{}{reqMap})
+				} else {
+					_ = d.Set("password_reset_requirement", []interface{}{})
+				}
 			}
 		}
 	}
@@ -289,7 +319,6 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 // buildPolicyRulePassword constructs a V6 PasswordPolicyRule from schema data.
 // The SSPR action is built with an optional requirement block when password_reset_access_control is set.
 // Uses the V6 okta-sdk-golang client types directly, removing the dependency on the internal SDK.
-// The logic has been updated by AI to support new fields, review carefully
 func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 	rule := v6okta.NewPasswordPolicyRule()
 	rule.SetType("PASSWORD")
@@ -320,7 +349,6 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 
 	// Build the SSPR action, conditionally including the requirement block
 	// when password_reset_access_control is explicitly configured.
-	// The logic has been updated by AI to support new fields, review carefully
 	ssprAction := v6okta.SelfServicePasswordResetAction{}
 	access := d.Get("password_reset").(string)
 	ssprAction.SetAccess(access)
@@ -330,7 +358,6 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 		req.SetAccessControl(accessControl.(string))
 
 		// Only build primary methods and step-up if the requirement block is provided.
-		// The logic has been updated by AI to support new fields, review carefully
 		if v, ok := d.GetOk("password_reset_requirement"); ok {
 			reqList := v.([]interface{})
 			if len(reqList) > 0 {
@@ -355,10 +382,10 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 									}
 									if allowedAuthenticatorsRaw, ok := mcMap["allowed_authenticators"]; ok {
 										identities := []v6okta.AuthenticatorIdentity{}
-										if allowedAuthenticatorsList, ok := allowedAuthenticatorsRaw.([]interface{}); ok {
+										if allowedAuthenticatorsSet, ok := allowedAuthenticatorsRaw.(*schema.Set); ok {
+											allowedAuthenticatorsList := allowedAuthenticatorsSet.List()
 											for _, key := range allowedAuthenticatorsList {
-												allowedAuthenticator, ok := key.(string)
-												if ok {
+												if allowedAuthenticator, ok := key.(string); ok {
 													identity := v6okta.NewAuthenticatorIdentity()
 													identity.SetKey(allowedAuthenticator)
 													identities = append(identities, *identity)
@@ -378,12 +405,32 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 						req.SetPrimary(primary)
 					}
 				}
+				stepUpReq := v6okta.SsprStepUpRequirement{}
 				if stepUp, ok := reqBlock["step_up_enabled"]; ok {
-					stepUpReq := v6okta.SsprStepUpRequirement{}
 					stepUpReq.SetRequired(stepUp.(bool))
-					req.SetStepUp(stepUpReq)
 				}
+				if stepUpMethodsRaw, ok := reqBlock["step_up_methods"]; ok {
+					if methodSet, ok := stepUpMethodsRaw.(*schema.Set); ok && methodSet.Len() > 0 {
+						methods := make([]string, 0, methodSet.Len())
+						for _, m := range methodSet.List() {
+							methods = append(methods, m.(string))
+						}
+						stepUpReq.SetMethods(methods)
+					}
+				}
+				req.SetStepUp(stepUpReq)
 			}
+		}
+		// Okta requires requirement.primary and requirement.stepUp to be non-null
+		// whenever a requirement object is sent, even for AUTH_POLICY. Set defaults
+		// if the requirement block was not explicitly configured.
+		if req.Primary == nil {
+			req.SetPrimary(v6okta.SsprPrimaryRequirement{Methods: []string{}})
+		}
+		if req.StepUp == nil {
+			defaultStepUp := v6okta.SsprStepUpRequirement{}
+			defaultStepUp.SetRequired(false)
+			req.SetStepUp(defaultStepUp)
 		}
 		ssprAction.SetRequirement(req)
 	}
