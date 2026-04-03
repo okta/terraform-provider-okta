@@ -1,0 +1,209 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 177
+        host: oie-00.dne-okta.com
+        body: |
+            {"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-first","priority":1,"requesterSettings":{"type":"EVERYONE"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 538
+        body: '{"requesterSettings":{"type":"EVERYONE"},"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-first","id":"rco19790nwUD0YJBs1d7","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-03-19T06:09:30Z","lastUpdated":"2026-03-19T06:09:30Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7","_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco19790nwUD0YJBs1d7","hints":{}}},"status":"INACTIVE","priority":0}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "538"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Mar 2026 06:09:30 GMT
+            Location:
+                - https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco19790nwUD0YJBs1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.363355167s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 180
+        host: oie-00.dne-okta.com
+        body: |
+            {"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-second","priority":100,"requesterSettings":{"type":"EVERYONE"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 539
+        body: '{"requesterSettings":{"type":"EVERYONE"},"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-second","id":"rco197a8eaYcl1MC61d7","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-03-19T06:09:31Z","lastUpdated":"2026-03-19T06:09:31Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7","_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco197a8eaYcl1MC61d7","hints":{}}},"status":"INACTIVE","priority":1}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "539"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Mar 2026 06:09:31 GMT
+            Location:
+                - https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco197a8eaYcl1MC61d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.152398375s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco19790nwUD0YJBs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"requesterSettings":{"type":"EVERYONE"},"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-first","id":"rco19790nwUD0YJBs1d7","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-03-19T06:09:30Z","lastUpdated":"2026-03-19T06:09:30Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7","_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco19790nwUD0YJBs1d7","hints":{}}},"status":"INACTIVE","priority":0}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Mar 2026 06:09:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 720.665042ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco197a8eaYcl1MC61d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"requesterSettings":{"type":"EVERYONE"},"accessScopeSettings":{"type":"RESOURCE_DEFAULT"},"approvalSequenceId":"69251ae704a4d0a7fcdb870f","name":"priority-second","id":"rco197a8eaYcl1MC61d7","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-03-19T06:09:31Z","lastUpdated":"2026-03-19T06:09:31Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7","_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco197a8eaYcl1MC61d7","hints":{}}},"status":"INACTIVE","priority":1}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 19 Mar 2026 06:09:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 729.996292ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco197a8eaYcl1MC61d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 19 Mar 2026 06:09:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 823.21425ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oasp3g29b1hqkcYE1d7/request-conditions/rco19790nwUD0YJBs1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 19 Mar 2026 06:09:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 817.516ms
