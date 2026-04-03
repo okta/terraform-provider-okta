@@ -23,7 +23,7 @@ func TestAccResourceOktaAppOAuthApplication_apiScope(t *testing.T) {
 	config := strings.ReplaceAll(plainConfig, "https://your.okta.org", getOktaDomainName())
 	updatedConfig := strings.ReplaceAll(plainUpdatedConfig, "https://your.okta.org", getOktaDomainName())
 
-	acctest.OktaResourceTest(t, resource.TestCase{
+	acctest.OktaResourceTestSerial(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
