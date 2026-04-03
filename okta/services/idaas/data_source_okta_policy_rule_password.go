@@ -154,6 +154,7 @@ func dataSourcePolicyRulePasswordRead(ctx context.Context, d *schema.ResourceDat
 }
 
 func flattenPolicyRulePassword(d *schema.ResourceData, rule *v6okta.PasswordPolicyRule) diag.Diagnostics {
+	d.SetId(rule.GetId())
 	_ = d.Set("name", rule.GetName())
 	_ = d.Set("status", rule.GetStatus())
 	_ = d.Set("priority", int(rule.GetPriority()))
