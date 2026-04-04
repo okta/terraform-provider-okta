@@ -4,6 +4,16 @@ Manages multiple app sign-on policy rules for a single policy. This resource all
 
 ~> **IMPORTANT:** This resource uses name-first matching to identify and update rules. When migrating from individual `okta_app_signon_policy_rule` resources, ensure rule names remain consistent to enable safe adoption without data loss.
 
+~> **NOTE ON RENAMING RULES:** If you rename a rule without explicitly preserving its `id`, the provider will treat it as a deletion of the old rule and creation of a new rule. To rename a rule while preserving its configuration and ID, you must explicitly set the `id` attribute in your configuration before changing the `name`. For example:
+```terraform
+rule {
+  id   = "rulAbc123" # Explicitly reference the existing rule ID
+  name = "New Rule Name" # New name
+  # ... other attributes
+}
+```
+After applying with the explicit `id`, you can remove it in subsequent applies and the rule will be tracked by its new name.
+
 ## Example Usage
 
 ```terraform

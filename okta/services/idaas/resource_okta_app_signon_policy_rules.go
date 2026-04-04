@@ -11,6 +11,7 @@ import (
 
 	"github.com/cenkalti/backoff/v5"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -28,7 +29,6 @@ import (
 const (
 	// apiRetryTimeout is the maximum time to wait for API operations with retries.
 	apiRetryTimeout = 30 * time.Second
-
 	// ruleTypeAccessPolicy is the Okta API type for access policy rules.
 	ruleTypeAccessPolicy = "ACCESS_POLICY"
 )
@@ -43,7 +43,6 @@ var (
 	validPlatformTypes      = []string{"ANY", "MOBILE", "DESKTOP"}
 	validOSTypes            = []string{"ANY", "IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER"}
 )
-
 var (
 	_ resource.Resource                   = &appSignOnPolicyRulesResource{}
 	_ resource.ResourceWithConfigure      = &appSignOnPolicyRulesResource{}
@@ -67,9 +66,9 @@ type appSignOnPolicyRulesResource struct {
 
 // appSignOnPolicyRulesModel represents the Terraform state for this resource.
 type appSignOnPolicyRulesModel struct {
-	ID       types.String      `tfsdk:"id"`
-	PolicyID types.String      `tfsdk:"policy_id"`
-	Rules    []policyRuleModel `tfsdk:"rule"`
+	ID       types.String `tfsdk:"id"`
+	PolicyID types.String `tfsdk:"policy_id"`
+	Rules    types.List   `tfsdk:"rule"`
 }
 
 // policyRuleModel represents a single policy rule in the Terraform state.
@@ -197,29 +196,29 @@ func (t *nameTracker) updateMapping(ruleID, newName string) {
 	t.idToName[ruleID] = newName
 	t.nameToID[newName] = ruleID
 }
-
 func (r *appSignOnPolicyRulesResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
-
 func (r *appSignOnPolicyRulesResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_app_signon_policy_rules"
 }
-
 func (r *appSignOnPolicyRulesResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = r.buildSchema()
 }
-
 func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
 	var data appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	seen := make(map[string]int, len(data.Rules))
-	seenPriority := make(map[int64]int, len(data.Rules))
-	for i, rule := range data.Rules {
+	var rules []policyRuleModel
+	resp.Diagnostics.Append(data.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	seen := make(map[string]int, len(rules))
+	seenPriority := make(map[int64]int, len(rules))
+	for i, rule := range rules {
 		name := rule.Name.ValueString()
 		if name == "" {
 			continue
@@ -235,7 +234,6 @@ func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req r
 		} else {
 			seen[name] = i
 		}
-
 		if !rule.Priority.IsNull() && !rule.Priority.IsUnknown() {
 			p := rule.Priority.ValueInt64()
 			if prevIdx, exists := seenPriority[p]; exists {
@@ -250,7 +248,6 @@ func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req r
 				seenPriority[p] = i
 			}
 		}
-
 		// Warn if conditions are set on a system rule (Catch-all Rule).
 		// The API rejects condition modifications on system rules.
 		if name == "Catch-all Rule" && r.hasConditionsSet(rule) {
@@ -286,17 +283,16 @@ func (r *appSignOnPolicyRulesResource) hasConditionsSet(rule policyRuleModel) bo
 		(!rule.CustomExpression.IsNull() && !rule.CustomExpression.IsUnknown()) ||
 		len(rule.PlatformInclude) > 0
 }
-
 func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	var rules []policyRuleModel
+	plan.Rules.ElementsAs(ctx, &rules, false)
 	policyID := plan.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
-
 	// Pre-fetch any rules that already exist in Okta for this policy.
 	// This recovers from a previous interrupted apply where some rules were
 	// created but state was never written. Without this, re-running apply
@@ -306,11 +302,9 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
 	// Process rules in priority order to ensure correct ordering in Okta.
-	sortedRules := r.sortRulesByPriority(plan.Rules)
+	sortedRules := r.sortRulesByPriority(rules)
 	createdRules := make([]policyRuleModel, 0, len(sortedRules))
-
 	for _, rule := range sortedRules {
 		// If an existing rule was found by name, inject its ID so createOrAdoptRule
 		// will update it rather than attempting to create a duplicate.
@@ -328,29 +322,32 @@ func (r *appSignOnPolicyRulesResource) Create(ctx context.Context, req resource.
 		}
 		createdRules = append(createdRules, resultRule)
 	}
-
 	// Reorder to match config order (Terraform expects state order to match plan order).
-	plan.Rules = r.reorderRulesToMatchPlan(createdRules, plan.Rules)
+	reorderedRules := r.reorderRulesToMatchPlan(createdRules, rules)
 	plan.ID = plan.PolicyID
+	// Marshal back to types.List
+	plan.Rules, diags = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	resp.Diagnostics.Append(diags...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-
 func (r *appSignOnPolicyRulesResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	var rules []policyRuleModel
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	policyID := state.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
-
-	updatedRules := make([]policyRuleModel, 0, len(state.Rules))
-	for _, rule := range state.Rules {
+	updatedRules := make([]policyRuleModel, 0, len(rules))
+	for _, rule := range rules {
 		if rule.ID.IsNull() || rule.ID.IsUnknown() {
 			continue
 		}
-
 		apiRule, err := r.readRuleFromAPI(ctx, client, policyID, rule.ID.ValueString())
 		if err != nil {
 			if strings.Contains(err.Error(), "not found") {
@@ -361,14 +358,12 @@ func (r *appSignOnPolicyRulesResource) Read(ctx context.Context, req resource.Re
 				fmt.Sprintf("Could not read rule '%s': %s", rule.ID.ValueString(), err.Error()))
 			return
 		}
-
 		updatedRules = append(updatedRules, r.updateRuleModelFromAPI(ctx, rule, apiRule))
 	}
-
-	state.Rules = updatedRules
+	// Marshal back to types.List
+	state.Rules, resp.Diagnostics = types.ListValueFrom(ctx, r.policyRuleObjectType(), updatedRules)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
-
 func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var state, plan appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -376,26 +371,27 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
-	policyID := plan.PolicyID.ValueString()
-	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
-
-	// Build lookup structures.
-	stateIndex := newRuleIndex(state.Rules)
-	nameTracker := newNameTracker(state.Rules)
-	plannedNames := r.buildPlannedNamesSet(plan.Rules)
-	plannedIDs := r.buildPlannedIDsSet(plan.Rules)
-
-	// Delete rules removed from plan.
-	resp.Diagnostics.Append(r.deleteRemovedRules(ctx, client, policyID, state.Rules, plannedNames, plannedIDs)...)
+	var stateRules, planRules []policyRuleModel
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &stateRules, false)...)
+	resp.Diagnostics.Append(plan.Rules.ElementsAs(ctx, &planRules, false)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	policyID := plan.PolicyID.ValueString()
+	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
+	// Build lookup structures.
+	stateIndex := newRuleIndex(stateRules)
+	nameTracker := newNameTracker(stateRules)
+	plannedNames := r.buildPlannedNamesSet(planRules)
+	plannedIDs := r.buildPlannedIDsSet(planRules)
+	// Delete rules removed from plan.
+	resp.Diagnostics.Append(r.deleteRemovedRules(ctx, client, policyID, stateRules, plannedNames, plannedIDs)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	// Process rules in priority order.
-	sortedPlanRules := r.sortRulesByPriority(plan.Rules)
+	sortedPlanRules := r.sortRulesByPriority(planRules)
 	updatedRules := make([]policyRuleModel, 0, len(sortedPlanRules))
-
 	for _, planRule := range sortedPlanRules {
 		resultRule, diags := r.processRuleUpdate(ctx, client, policyID, planRule, stateIndex, nameTracker)
 		resp.Diagnostics.Append(diags...)
@@ -404,29 +400,33 @@ func (r *appSignOnPolicyRulesResource) Update(ctx context.Context, req resource.
 		}
 		updatedRules = append(updatedRules, resultRule)
 	}
-
 	// Reorder to match config order.
-	plan.Rules = r.reorderRulesToMatchPlan(updatedRules, plan.Rules)
+	reorderedRules := r.reorderRulesToMatchPlan(updatedRules, planRules)
 	plan.ID = plan.PolicyID
+	// Marshal back to types.List
+	var diags diag.Diagnostics
+	plan.Rules, diags = types.ListValueFrom(ctx, r.policyRuleObjectType(), reorderedRules)
+	resp.Diagnostics.Append(diags...)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-
 func (r *appSignOnPolicyRulesResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state appSignOnPolicyRulesModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	var rules []policyRuleModel
+	resp.Diagnostics.Append(state.Rules.ElementsAs(ctx, &rules, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	policyID := state.PolicyID.ValueString()
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
-
-	for _, rule := range state.Rules {
+	for _, rule := range rules {
 		// System rules cannot be deleted.
 		if rule.System.ValueBool() || rule.ID.IsNull() || rule.ID.IsUnknown() {
 			continue
 		}
-
 		if err := r.deleteRule(ctx, client, policyID, rule.ID.ValueString()); err != nil {
 			resp.Diagnostics.AddError("Error deleting app sign-on policy rule",
 				fmt.Sprintf("Could not delete rule '%s': %s", rule.Name.ValueString(), err.Error()))
@@ -434,11 +434,9 @@ func (r *appSignOnPolicyRulesResource) Delete(ctx context.Context, req resource.
 		}
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	policyID := req.ID
 	client := r.OktaIDaaSClient.OktaSDKSupplementClient()
-
 	sdkRules, apiResp, err := client.ListPolicyRules(ctx, policyID)
 	if err != nil {
 		resp.Diagnostics.AddError("Error importing app sign-on policy rules",
@@ -450,7 +448,6 @@ func (r *appSignOnPolicyRulesResource) ImportState(ctx context.Context, req reso
 			fmt.Sprintf("Policy '%s' was not found", policyID))
 		return
 	}
-
 	// Fetch each rule individually to get full AccessPolicyRule details.
 	importedRules := make([]policyRuleModel, 0, len(sdkRules))
 	for _, sdkRule := range sdkRules {
@@ -462,15 +459,55 @@ func (r *appSignOnPolicyRulesResource) ImportState(ctx context.Context, req reso
 		}
 		importedRules = append(importedRules, r.convertAPIRuleToModel(ctx, apiRule))
 	}
-
 	state := appSignOnPolicyRulesModel{
 		ID:       types.StringValue(policyID),
 		PolicyID: types.StringValue(policyID),
-		Rules:    importedRules,
 	}
+	// Marshal to types.List
+	state.Rules, resp.Diagnostics = types.ListValueFrom(ctx, r.policyRuleObjectType(), importedRules)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
-
+func (r *appSignOnPolicyRulesResource) policyRuleObjectType() types.ObjectType {
+	return types.ObjectType{
+		AttrTypes: map[string]attr.Type{
+			"id":                          types.StringType,
+			"name":                        types.StringType,
+			"system":                      types.BoolType,
+			"status":                      types.StringType,
+			"priority":                    types.Int64Type,
+			"groups_included":             types.SetType{ElemType: types.StringType},
+			"groups_excluded":             types.SetType{ElemType: types.StringType},
+			"users_included":              types.SetType{ElemType: types.StringType},
+			"users_excluded":              types.SetType{ElemType: types.StringType},
+			"network_connection":          types.StringType,
+			"network_includes":            types.ListType{ElemType: types.StringType},
+			"network_excludes":            types.ListType{ElemType: types.StringType},
+			"device_is_registered":        types.BoolType,
+			"device_is_managed":           types.BoolType,
+			"device_assurances_included":  types.SetType{ElemType: types.StringType},
+			"user_types_included":         types.SetType{ElemType: types.StringType},
+			"user_types_excluded":         types.SetType{ElemType: types.StringType},
+			"custom_expression":           types.StringType,
+			"access":                      types.StringType,
+			"factor_mode":                 types.StringType,
+			"type":                        types.StringType,
+			"re_authentication_frequency": types.StringType,
+			"inactivity_period":           types.StringType,
+			"constraints":                 types.ListType{ElemType: types.StringType},
+			"chains":                      types.ListType{ElemType: types.StringType},
+			"risk_score":                  types.StringType,
+			"platform_include": types.ListType{
+				ElemType: types.ObjectType{
+					AttrTypes: map[string]attr.Type{
+						"type":          types.StringType,
+						"os_type":       types.StringType,
+						"os_expression": types.StringType,
+					},
+				},
+			},
+		},
+	}
+}
 func (r *appSignOnPolicyRulesResource) buildSchema() schema.Schema {
 	return schema.Schema{
 		Description: "Manages multiple app sign-on policy rules for a single policy. " +
@@ -497,21 +534,43 @@ func (r *appSignOnPolicyRulesResource) buildSchema() schema.Schema {
 				Description: "List of policy rules. Rules are processed in priority order (lowest number = highest priority).",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: r.buildRuleAttributes(),
-					Blocks:     r.buildRuleBlocks(),
+					Blocks: map[string]schema.Block{
+						"platform_include": r.buildPlatformIncludeBlock(),
+					},
 				},
 			},
 		},
 	}
 }
-
+func (r *appSignOnPolicyRulesResource) buildPlatformIncludeBlock() schema.ListNestedBlock {
+	return schema.ListNestedBlock{
+		Description: "Platform conditions to include.",
+		NestedObject: schema.NestedBlockObject{
+			Attributes: map[string]schema.Attribute{
+				"type": schema.StringAttribute{
+					Optional:    true,
+					Description: "Platform type: ANY, MOBILE, or DESKTOP.",
+					Validators:  []validator.String{stringvalidator.OneOf(validPlatformTypes...)},
+				},
+				"os_type": schema.StringAttribute{
+					Optional:    true,
+					Description: "OS type: ANY, IOS, ANDROID, WINDOWS, OSX, MACOS, CHROMEOS, or OTHER.",
+					Validators:  []validator.String{stringvalidator.OneOf(validOSTypes...)},
+				},
+				"os_expression": schema.StringAttribute{
+					Optional:    true,
+					Description: "Custom OS expression for advanced matching.",
+				},
+			},
+		},
+	}
+}
 func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"id": schema.StringAttribute{
 			Optional:    true,
 			Computed:    true,
 			Description: "ID of the rule. Can be specified to adopt an existing rule during migration.",
-			// Note: We intentionally do NOT use UseStateForUnknown() here because
-			// rules are matched by name, not by list position.
 		},
 		"name": schema.StringAttribute{
 			Required:    true,
@@ -649,32 +708,6 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 	}
 }
 
-func (r *appSignOnPolicyRulesResource) buildRuleBlocks() map[string]schema.Block {
-	return map[string]schema.Block{
-		"platform_include": schema.ListNestedBlock{
-			Description: "Platform conditions to include.",
-			NestedObject: schema.NestedBlockObject{
-				Attributes: map[string]schema.Attribute{
-					"type": schema.StringAttribute{
-						Optional:    true,
-						Description: "Platform type: ANY, MOBILE, or DESKTOP.",
-						Validators:  []validator.String{stringvalidator.OneOf(validPlatformTypes...)},
-					},
-					"os_type": schema.StringAttribute{
-						Optional:    true,
-						Description: "OS type: ANY, IOS, ANDROID, WINDOWS, OSX, MACOS, CHROMEOS, or OTHER.",
-						Validators:  []validator.String{stringvalidator.OneOf(validOSTypes...)},
-					},
-					"os_expression": schema.StringAttribute{
-						Optional:    true,
-						Description: "Custom OS expression for advanced matching.",
-					},
-				},
-			},
-		},
-	}
-}
-
 // sortRulesByPriority returns rules sorted by priority (ascending).
 // Rules without priority are placed at the end.
 func (r *appSignOnPolicyRulesResource) sortRulesByPriority(rules []policyRuleModel) []policyRuleModel {
@@ -701,7 +734,6 @@ func (r *appSignOnPolicyRulesResource) reorderRulesToMatchPlan(processedRules, p
 	for _, rule := range processedRules {
 		rulesByName[rule.Name.ValueString()] = rule
 	}
-
 	result := make([]policyRuleModel, 0, len(planRules))
 	for _, planRule := range planRules {
 		if rule, ok := rulesByName[planRule.Name.ValueString()]; ok {
@@ -751,11 +783,9 @@ func (r *appSignOnPolicyRulesResource) fetchExistingRulesByName(ctx context.Cont
 // createOrAdoptRule creates a new rule or adopts an existing one if ID is specified.
 func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, client *sdk.APISupplement, policyID string, rule policyRuleModel) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
-
 	// If ID is provided, adopt existing rule by updating it.
 	if !rule.ID.IsNull() && !rule.ID.IsUnknown() && rule.ID.ValueString() != "" {
 		ruleID := rule.ID.ValueString()
-
 		// Read the existing rule from the API to check if it's a system rule.
 		// This mirrors how okta_app_signon_policy_rule handles system rules:
 		// build the full payload, then nil out Conditions for system rules.
@@ -765,7 +795,6 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 				fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", rule.Name.ValueString(), ruleID, err.Error()))
 			return policyRuleModel{}, diags
 		}
-
 		isSystem := existingRule.System != nil && *existingRule.System
 		apiRule := r.buildAPIRuleFromModel(ctx, rule)
 		if isSystem {
@@ -779,7 +808,6 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 				apiRule.PriorityPtr = existingRule.PriorityPtr
 			}
 		}
-
 		updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, ruleID, apiRule)
 		if err != nil {
 			diags.AddError("Error adopting existing app sign-on policy rule",
@@ -788,7 +816,6 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 		}
 		return r.updateRuleModelFromAPI(ctx, rule, updatedRule), diags
 	}
-
 	// Create new rule.
 	apiRule := r.buildAPIRuleFromModel(ctx, rule)
 	createdRule, err := r.createRuleInAPI(ctx, client, policyID, apiRule)
@@ -826,24 +853,20 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 	nameTracker *nameTracker,
 ) (policyRuleModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
-
 	// Extract plan rule's ID if explicitly set
 	planRuleID := ""
 	if !planRule.ID.IsNull() && !planRule.ID.IsUnknown() {
 		planRuleID = planRule.ID.ValueString()
 	}
-
 	// Never trust injected IDs from positional state mapping.
 	// Only fall back to ID if name lookup fails AND user explicitly provided ID.
 	planRuleName := planRule.Name.ValueString()
 	existingRule, exists := stateIndex.findRule("", planRuleName)
-
 	if !exists && planRuleID != "" {
 		// Name lookup failed, but user explicitly provided ID in config.
 		// Try ID fallback only in this case (rename scenario).
 		existingRule, exists = stateIndex.findRule(planRuleID, "")
 	}
-
 	if !exists {
 		// Rule not found in state - create new rule
 		apiRule := r.buildAPIRuleFromModel(ctx, planRule)
@@ -858,24 +881,20 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 		}
 		return r.updateRuleModelFromAPI(ctx, planRule, createdRule), diags
 	}
-
 	// Rule exists in state - update it
 	if existingRule.ID.IsNull() {
 		diags.AddError("Error updating app sign-on policy rule",
 			"Existing rule has no ID")
 		return policyRuleModel{}, diags
 	}
-
 	existingRuleID := existingRule.ID.ValueString()
 	targetName := planRuleName
-
 	// discard the plan ID (it was from positional injection).
 	// Use state's correct ID and priority.
 	if planRuleID != "" && planRuleID != existingRuleID {
 		planRule.ID = existingRule.ID
 		planRule.Priority = existingRule.Priority
 	}
-
 	// Read current rule from API to determine if it's a system rule
 	currentRule, err := r.readRuleFromAPI(ctx, client, policyID, existingRuleID)
 	if err != nil {
@@ -883,22 +902,18 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 			fmt.Sprintf("Could not read rule '%s' (ID: %s): %s", targetName, existingRuleID, err.Error()))
 		return policyRuleModel{}, diags
 	}
-
 	isSystem := currentRule.System != nil && *currentRule.System
-
 	// Build the full payload, then normalize for system rules
 	apiRule := r.buildAPIRuleFromModel(ctx, planRule)
 	if isSystem {
 		r.normalizeAPIRuleForSystem(&apiRule, currentRule)
 	}
-
 	updatedRule, err := r.updateRuleInAPI(ctx, client, policyID, existingRuleID, apiRule)
 	if err != nil {
 		diags.AddError("Error updating app sign-on policy rule",
 			fmt.Sprintf("Could not update rule '%s': %s", targetName, err.Error()))
 		return policyRuleModel{}, diags
 	}
-
 	nameTracker.updateMapping(existingRuleID, targetName)
 	return r.updateRuleModelFromAPI(ctx, planRule, updatedRule), diags
 }
@@ -942,7 +957,6 @@ func (r *appSignOnPolicyRulesResource) deleteRemovedRules(
 	}
 	return diags
 }
-
 func (r *appSignOnPolicyRulesResource) createRuleInAPI(ctx context.Context, client *sdk.APISupplement, policyID string, rule sdk.AccessPolicyRule) (*sdk.AccessPolicyRule, error) {
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		created, apiResp, err := client.CreateAppSignOnPolicyRule(ctx, policyID, rule)
@@ -956,7 +970,6 @@ func (r *appSignOnPolicyRulesResource) createRuleInAPI(ctx context.Context, clie
 		return created, nil
 	}, backoff.WithMaxElapsedTime(apiRetryTimeout))
 }
-
 func (r *appSignOnPolicyRulesResource) readRuleFromAPI(ctx context.Context, client *sdk.APISupplement, policyID, ruleID string) (*sdk.AccessPolicyRule, error) {
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		rule, apiResp, err := client.GetAppSignOnPolicyRule(ctx, policyID, ruleID)
@@ -970,7 +983,6 @@ func (r *appSignOnPolicyRulesResource) readRuleFromAPI(ctx context.Context, clie
 		return rule, nil
 	}, backoff.WithMaxElapsedTime(apiRetryTimeout))
 }
-
 func (r *appSignOnPolicyRulesResource) updateRuleInAPI(ctx context.Context, client *sdk.APISupplement, policyID, ruleID string, rule sdk.AccessPolicyRule) (*sdk.AccessPolicyRule, error) {
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		updated, apiResp, err := client.UpdateAppSignOnPolicyRule(ctx, policyID, ruleID, rule)
@@ -983,7 +995,6 @@ func (r *appSignOnPolicyRulesResource) updateRuleInAPI(ctx context.Context, clie
 		return updated, nil
 	}, backoff.WithMaxElapsedTime(apiRetryTimeout))
 }
-
 func (r *appSignOnPolicyRulesResource) deleteRule(ctx context.Context, client *sdk.APISupplement, policyID, ruleID string) error {
 	_, err := backoff.Retry(ctx, func() (struct{}, error) {
 		apiResp, err := client.DeleteAppSignOnPolicyRule(ctx, policyID, ruleID)
@@ -1026,7 +1037,6 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 		},
 		Conditions: &sdk.AccessPolicyRuleConditions{},
 	}
-
 	r.setAPIPriority(&apiRule, rule)
 	r.setAPIInactivityPeriod(&apiRule, rule)
 	r.setAPIConstraints(ctx, &apiRule, rule)
@@ -1038,30 +1048,25 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIDeviceConditions(ctx, &apiRule, rule)
 	r.setAPIPeopleConditions(ctx, &apiRule, rule)
 	r.setAPIUserTypeConditions(ctx, &apiRule, rule)
-
 	return apiRule
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIPriority(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.Priority.IsNull() && !rule.Priority.IsUnknown() {
 		priority := rule.Priority.ValueInt64()
 		apiRule.PriorityPtr = &priority
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIInactivityPeriod(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.InactivityPeriod.IsNull() && !rule.InactivityPeriod.IsUnknown() {
 		apiRule.Actions.AppSignOn.VerificationMethod.InactivityPeriod = rule.InactivityPeriod.ValueString()
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIConstraints(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if rule.Constraints.IsNull() || rule.Constraints.IsUnknown() {
 		return
 	}
 	var constraintStrings []string
 	rule.Constraints.ElementsAs(ctx, &constraintStrings, false)
-
 	var constraints []*sdk.AccessPolicyConstraints
 	for _, c := range constraintStrings {
 		var constraint sdk.AccessPolicyConstraints
@@ -1115,7 +1120,6 @@ func (r *appSignOnPolicyRulesResource) setAPINetworkConditions(ctx context.Conte
 		apiRule.Conditions.Network.Exclude = excludes
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIPlatformConditions(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if len(rule.PlatformInclude) == 0 {
 		return
@@ -1139,7 +1143,6 @@ func (r *appSignOnPolicyRulesResource) setAPIPlatformConditions(apiRule *sdk.Acc
 	}
 	apiRule.Conditions.Platform = &sdk.PlatformPolicyRuleCondition{Include: platforms}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPICustomExpression(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.CustomExpression.IsNull() && !rule.CustomExpression.IsUnknown() {
 		apiRule.Conditions.ElCondition = &sdk.AccessPolicyRuleCustomCondition{
@@ -1147,7 +1150,6 @@ func (r *appSignOnPolicyRulesResource) setAPICustomExpression(apiRule *sdk.Acces
 		}
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIRiskScore(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.RiskScore.IsNull() && !rule.RiskScore.IsUnknown() {
 		apiRule.Conditions.RiskScore = &sdk.RiskScorePolicyRuleCondition{
@@ -1155,35 +1157,28 @@ func (r *appSignOnPolicyRulesResource) setAPIRiskScore(apiRule *sdk.AccessPolicy
 		}
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIDeviceConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	hasRegistered := !rule.DeviceIsRegistered.IsNull() && !rule.DeviceIsRegistered.IsUnknown()
 	hasManaged := !rule.DeviceIsManaged.IsNull() && !rule.DeviceIsManaged.IsUnknown()
 	hasAssurances := !rule.DeviceAssurancesIncluded.IsNull() && !rule.DeviceAssurancesIncluded.IsUnknown()
-
 	if !hasRegistered && !hasManaged && !hasAssurances {
 		return
 	}
-
 	apiRule.Conditions.Device = &sdk.DeviceAccessPolicyRuleCondition{}
-
 	if hasRegistered {
 		apiRule.Conditions.Device.Registered = utils.BoolPtr(rule.DeviceIsRegistered.ValueBool())
 	}
 	if hasManaged {
 		apiRule.Conditions.Device.Managed = utils.BoolPtr(rule.DeviceIsManaged.ValueBool())
 	}
-
 	if hasAssurances {
 		var assurances []string
 		rule.DeviceAssurancesIncluded.ElementsAs(ctx, &assurances, false)
 		apiRule.Conditions.Device.Assurance = &sdk.DeviceAssurancePolicyRuleCondition{Include: assurances}
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIPeopleConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	var usersIncluded, usersExcluded, groupsIncluded, groupsExcluded []string
-
 	if !rule.UsersIncluded.IsNull() && !rule.UsersIncluded.IsUnknown() {
 		rule.UsersIncluded.ElementsAs(ctx, &usersIncluded, false)
 	}
@@ -1196,16 +1191,12 @@ func (r *appSignOnPolicyRulesResource) setAPIPeopleConditions(ctx context.Contex
 	if !rule.GroupsExcluded.IsNull() && !rule.GroupsExcluded.IsUnknown() {
 		rule.GroupsExcluded.ElementsAs(ctx, &groupsExcluded, false)
 	}
-
 	hasUserCondition := len(usersIncluded) > 0 || len(usersExcluded) > 0
 	hasGroupCondition := len(groupsIncluded) > 0 || len(groupsExcluded) > 0
-
 	if !hasUserCondition && !hasGroupCondition {
 		return
 	}
-
 	apiRule.Conditions.People = &sdk.PolicyPeopleCondition{}
-
 	if hasUserCondition {
 		apiRule.Conditions.People.Users = &sdk.UserCondition{
 			Include: usersIncluded,
@@ -1219,17 +1210,14 @@ func (r *appSignOnPolicyRulesResource) setAPIPeopleConditions(ctx context.Contex
 		}
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) setAPIUserTypeConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	var included, excluded []string
-
 	if !rule.UserTypesIncluded.IsNull() && !rule.UserTypesIncluded.IsUnknown() {
 		rule.UserTypesIncluded.ElementsAs(ctx, &included, false)
 	}
 	if !rule.UserTypesExcluded.IsNull() && !rule.UserTypesExcluded.IsUnknown() {
 		rule.UserTypesExcluded.ElementsAs(ctx, &excluded, false)
 	}
-
 	if len(included) > 0 || len(excluded) > 0 {
 		apiRule.Conditions.UserType = &sdk.UserTypeCondition{
 			Include: included,
@@ -1248,33 +1236,25 @@ func (r *appSignOnPolicyRulesResource) updateRuleModelFromAPI(ctx context.Contex
 	rule.Name = types.StringValue(apiRule.Name)
 	rule.System = types.BoolValue(apiRule.System != nil && *apiRule.System)
 	rule.Status = types.StringValue(apiRule.Status)
-
 	if apiRule.PriorityPtr != nil {
 		rule.Priority = types.Int64Value(*apiRule.PriorityPtr)
 	}
-
 	r.updateRuleActionsFromAPI(ctx, &rule, apiRule)
 	r.updateRuleConditionsFromAPI(ctx, &rule, apiRule)
-
 	return rule
 }
-
 func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Actions == nil || apiRule.Actions.AppSignOn == nil {
 		return
 	}
-
 	rule.Access = types.StringValue(apiRule.Actions.AppSignOn.Access)
-
 	vm := apiRule.Actions.AppSignOn.VerificationMethod
 	if vm == nil {
 		return
 	}
-
 	rule.FactorMode = types.StringValue(vm.FactorMode)
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
-
 	if vm.InactivityPeriod != "" {
 		rule.InactivityPeriod = types.StringValue(vm.InactivityPeriod)
 	}
@@ -1290,14 +1270,11 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Conditions == nil {
 		return
 	}
-
 	c := apiRule.Conditions
-
 	// Network conditions
 	if c.Network != nil {
 		// Only set network_connection if the user configured it (non-null in state).
@@ -1316,19 +1293,16 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 			rule.NetworkExcludes, _ = types.ListValueFrom(ctx, types.StringType, []string{})
 		}
 	}
-
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
 	}
-
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
 		rule.CustomExpression = types.StringValue(c.ElCondition.Condition)
 	} else if !rule.CustomExpression.IsNull() {
 		rule.CustomExpression = types.StringNull()
 	}
-
 	// Device conditions
 	if c.Device != nil {
 		if c.Device.Registered != nil {
@@ -1343,7 +1317,6 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 			rule.DeviceAssurancesIncluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 		}
 	}
-
 	// People conditions
 	if c.People != nil {
 		if c.People.Users != nil {
@@ -1371,7 +1344,6 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 			}
 		}
 	}
-
 	// User type conditions
 	if c.UserType != nil {
 		if len(c.UserType.Include) > 0 {
@@ -1385,7 +1357,6 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 			rule.UserTypesExcluded, _ = types.SetValueFrom(ctx, types.StringType, []string{})
 		}
 	}
-
 	// Platform conditions
 	if c.Platform != nil && len(c.Platform.Include) > 0 {
 		var platforms []platformIncludeModel
@@ -1426,37 +1397,28 @@ func (r *appSignOnPolicyRulesResource) convertAPIRuleToModel(ctx context.Context
 		Constraints:              types.ListNull(types.StringType),
 		Chains:                   types.ListNull(types.StringType),
 	}
-
 	if apiRule.PriorityPtr != nil {
 		rule.Priority = types.Int64Value(*apiRule.PriorityPtr)
 	}
-
 	r.convertAPIActionsToModel(ctx, &rule, apiRule)
 	r.convertAPIConditionsToModel(ctx, &rule, apiRule)
-
 	return rule
 }
-
 func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Actions == nil || apiRule.Actions.AppSignOn == nil {
 		return
 	}
-
 	rule.Access = types.StringValue(apiRule.Actions.AppSignOn.Access)
-
 	vm := apiRule.Actions.AppSignOn.VerificationMethod
 	if vm == nil {
 		return
 	}
-
 	rule.FactorMode = types.StringValue(vm.FactorMode)
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
-
 	if vm.InactivityPeriod != "" {
 		rule.InactivityPeriod = types.StringValue(vm.InactivityPeriod)
 	}
-
 	// Convert constraints to JSON strings.
 	if len(vm.Constraints) > 0 {
 		var constraintStrings []string
@@ -1479,14 +1441,11 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 }
-
 func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Conditions == nil {
 		return
 	}
-
 	c := apiRule.Conditions
-
 	// Network
 	if c.Network != nil {
 		rule.NetworkConnection = types.StringValue(c.Network.Connection)
@@ -1497,17 +1456,14 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 			rule.NetworkExcludes, _ = types.ListValueFrom(ctx, types.StringType, c.Network.Exclude)
 		}
 	}
-
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
 	}
-
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
 		rule.CustomExpression = types.StringValue(c.ElCondition.Condition)
 	}
-
 	// Device
 	if c.Device != nil {
 		if c.Device.Registered != nil {
@@ -1520,7 +1476,6 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 			rule.DeviceAssurancesIncluded, _ = types.SetValueFrom(ctx, types.StringType, c.Device.Assurance.Include)
 		}
 	}
-
 	// People
 	if c.People != nil {
 		if c.People.Users != nil {
@@ -1540,7 +1495,6 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 			}
 		}
 	}
-
 	// User types
 	if c.UserType != nil {
 		if len(c.UserType.Include) > 0 {
@@ -1550,7 +1504,6 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 			rule.UserTypesExcluded, _ = types.SetValueFrom(ctx, types.StringType, c.UserType.Exclude)
 		}
 	}
-
 	// Platforms
 	if c.Platform != nil && len(c.Platform.Include) > 0 {
 		var platforms []platformIncludeModel

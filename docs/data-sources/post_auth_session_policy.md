@@ -10,7 +10,10 @@ Retrieves the Post Auth Session Policy. This is a system policy that is automati
 
 ## Example Usage
 
-{{tffile "examples/data-sources/okta_post_auth_session_policy/data-source.tf"}}
+```terraform
+data "okta_post_auth_session_policy" "example" {
+}
+```
 
 ## Attributes Reference
 
