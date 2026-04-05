@@ -73,9 +73,12 @@ func (r *realmAssignmentResource) Schema(_ context.Context, _ resource.SchemaReq
 					stringvalidator.OneOf("ACTIVE", "INACTIVE"),
 				},
 			},
+			// profile_source_id is now Optional+Computed. When omitted, the Okta API defaults to
+			// OKTA as the profile source.
 			"profile_source_id": schema.StringAttribute{
-				Required:    true,
-				Description: "The ID of the Profile Source.",
+				Optional:    true,
+				Computed:    true,
+				Description: "The ID of the Profile Source. When omitted, defaults to 'OKTA' as the profile source.",
 			},
 			"realm_id": schema.StringAttribute{
 				Required:    true,
@@ -120,7 +123,10 @@ func (r *realmAssignmentResource) Create(ctx context.Context, req resource.Creat
 	createRealmAssignmentRequest.Actions = &actions
 
 	conditions := *v5okta.NewConditionsWithDefaults()
-	conditions.ProfileSourceId = state.ProfileSourceID.ValueStringPointer()
+	// Only set ProfileSourceId when explicitly provided; when omitted the API defaults to OKTA.
+	if !state.ProfileSourceID.IsNull() && !state.ProfileSourceID.IsUnknown() {
+		conditions.ProfileSourceId = state.ProfileSourceID.ValueStringPointer()
+	}
 	expression := v5okta.NewExpressionWithDefaults()
 	expression.Value = state.ConditionExpression.ValueStringPointer()
 	conditions.Expression = expression
@@ -223,7 +229,10 @@ func (r *realmAssignmentResource) Update(ctx context.Context, req resource.Updat
 	updateRealmAssignmentRequest.Actions = &actions
 
 	conditions := *v5okta.NewConditionsWithDefaults()
-	conditions.ProfileSourceId = state.ProfileSourceID.ValueStringPointer()
+	// Only set ProfileSourceId when explicitly provided; when omitted the API defaults to OKTA.
+	if !state.ProfileSourceID.IsNull() && !state.ProfileSourceID.IsUnknown() {
+		conditions.ProfileSourceId = state.ProfileSourceID.ValueStringPointer()
+	}
 	expression := v5okta.NewExpressionWithDefaults()
 	expression.Value = state.ConditionExpression.ValueStringPointer()
 	conditions.Expression = expression
