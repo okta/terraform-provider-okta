@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/sdk"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 )
 
 func resourcePolicyRuleIdpDiscovery() *schema.Resource {
@@ -19,7 +19,7 @@ func resourcePolicyRuleIdpDiscovery() *schema.Resource {
 		DeleteContext: resourcePolicyRuleIdpDiscoveryDelete,
 		Importer:      createPolicyRuleImporter(),
 		Description: `Creates an IdP Discovery Policy Rule.
-		
+
 This resource allows you to create and configure an IdP Discovery Policy Rule.
 -> If you receive the error 'You do not have permission to access the feature
 you are requesting' [contact support](mailto:dev-inquiries@okta.com) and
@@ -89,6 +89,30 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 - 'match_type' - (Optional) The kind of pattern. For regex, use 'EXPRESSION'. For simple string matches, use one of the following: 'SUFFIX', 'EQUALS', 'STARTS_WITH', 'CONTAINS'
 - 'value' - (Optional) The regex or simple match string to match against.`,
 			},
+			"selection_type": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "SPECIFIC",
+				Description: "Determines how the IdP is selected. One of: `SPECIFIC`, `DYNAMIC`. Default: `SPECIFIC`. When `DYNAMIC`, the IdP is selected based on the evaluated `provider_expression`.",
+			},
+			"provider_expression": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: "An Okta Expression Language expression that is evaluated against the Login Context and used to dynamically select an IdP. " +
+					"Only applicable when `selection_type` is `DYNAMIC`. Maps to `actions.idp.matchCriteria[0].providerExpression` in the API. " +
+					"Example: `login.identifier.substringAfter('@')`",
+			},
+			"property_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The IdP property to match the evaluated expression against when `selection_type` is `DYNAMIC`. Maps to `actions.idp.matchCriteria[0].propertyName` in the API.",
+			},
+			"should_fall_back_to_okta": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Specifies whether to fall back to Okta if authentication with the matched IdP fails. Only applicable when `selection_type` is `DYNAMIC`. Default: `false`.",
+			},
 		}),
 	}
 }
@@ -103,13 +127,21 @@ func resourcePolicyRuleIdpDiscoveryCreate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(meta).Info("creating IdP discovery policy rule", "policy_id", policyID)
+
 	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getAPISupplementFromMetadata(meta).CreateIdpDiscoveryRule(ctx, policyID, *newRule, nil)
+	ruleRequest := v6okta.IdpDiscoveryPolicyRuleAsListPolicyRules200ResponseInner(newRule)
+	ruleResp, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, policyID).PolicyRule(ruleRequest).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create IDP discovery policy rule: %v", err)
 	}
-	d.SetId(rule.ID)
-	err = setRuleStatus(ctx, d, meta, rule.Status)
+	if ruleResp == nil || ruleResp.IdpDiscoveryPolicyRule == nil {
+		return diag.Errorf("API response did not contain a valid IdP discovery policy rule")
+	}
+
+	rule := ruleResp.IdpDiscoveryPolicyRule
+	d.SetId(rule.GetId())
+
+	err = setRuleStatus(ctx, d, meta, rule.GetStatus())
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule status: %v", err)
 	}
@@ -122,57 +154,91 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(meta).Info("reading IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	rule, resp, err := getAPISupplementFromMetadata(meta).GetIdpDiscoveryRule(ctx, policyID, d.Id())
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+
+	ruleResp, resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.GetPolicyRule(ctx, policyID, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to get IDP discovery policy rule: %v", err)
 	}
-	if rule == nil {
+	if ruleResp == nil || ruleResp.IdpDiscoveryPolicyRule == nil {
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("name", rule.Name)
-	_ = d.Set("status", rule.Status)
-	_ = d.Set("priority", rule.Priority)
-	_ = d.Set("user_identifier_attribute", rule.Conditions.UserIdentifier.Attribute)
-	_ = d.Set("user_identifier_type", rule.Conditions.UserIdentifier.Type)
-	mm := map[string]interface{}{
-		"platform_include":         flattenPlatformInclude(rule.Conditions.Platform),
-		"app_include":              flattenDiscoveryRuleAppInclude(rule.Conditions.App),
-		"app_exclude":              flattenDiscoveryRuleAppExclude(rule.Conditions.App),
-		"user_identifier_patterns": flattenUserIDPatterns(rule.Conditions.UserIdentifier.Patterns),
+
+	rule := ruleResp.IdpDiscoveryPolicyRule
+	_ = d.Set("name", rule.GetName())
+	_ = d.Set("status", rule.GetStatus())
+	if rule.Priority.IsSet() {
+		_ = d.Set("priority", int(rule.GetPriority()))
 	}
-	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
-	if len(rule.Conditions.Network.Include) > 0 {
-		mm["network_includes"] = utils.ConvertStringSliceToInterfaceSlice(rule.Conditions.Network.Include)
+
+	mm := map[string]interface{}{}
+	conditions := rule.Conditions
+	if conditions != nil {
+		if conditions.UserIdentifier != nil {
+			_ = d.Set("user_identifier_attribute", conditions.UserIdentifier.GetAttribute())
+			_ = d.Set("user_identifier_type", conditions.UserIdentifier.Type)
+			mm["user_identifier_patterns"] = flattenUserIDPatterns(conditions.UserIdentifier.Patterns)
+		}
+		if conditions.Platform != nil {
+			mm["platform_include"] = flattenPlatformInclude(conditions.Platform)
+		}
+		if conditions.App != nil {
+			mm["app_include"] = flattenDiscoveryRuleAppInclude(conditions.App)
+			mm["app_exclude"] = flattenDiscoveryRuleAppExclude(conditions.App)
+		}
+		if conditions.Network != nil {
+			_ = d.Set("network_connection", conditions.Network.GetConnection())
+			if len(conditions.Network.Include) > 0 {
+				mm["network_includes"] = utils.ConvertStringSliceToInterfaceSlice(conditions.Network.Include)
+			}
+			if len(conditions.Network.Exclude) > 0 {
+				mm["network_excludes"] = utils.ConvertStringSliceToInterfaceSlice(conditions.Network.Exclude)
+			}
+		}
 	}
-	if len(rule.Conditions.Network.Exclude) > 0 {
-		mm["network_excludes"] = utils.ConvertStringSliceToInterfaceSlice(rule.Conditions.Network.Exclude)
+	if setErr := utils.SetNonPrimitives(d, mm); setErr != nil {
+		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", setErr)
 	}
-	err = utils.SetNonPrimitives(d, mm)
-	if err != nil {
-		return diag.Errorf("failed to set IDP discovery policy rule properties: %v", err)
+
+	if rule.Actions != nil && rule.Actions.Idp != nil {
+		idp := rule.Actions.Idp
+		selectionType := idp.GetIdpSelectionType()
+		if selectionType == "" {
+			selectionType = "SPECIFIC"
+		}
+		_ = d.Set("selection_type", selectionType)
+		_ = d.Set("should_fall_back_to_okta", idp.GetShouldFallBackToOkta())
+
+		if criteria := idp.MatchCriteria; len(criteria) > 0 {
+			_ = d.Set("provider_expression", criteria[0].GetProviderExpression())
+			_ = d.Set("property_name", criteria[0].GetPropertyName())
+		} else {
+			_ = d.Set("provider_expression", "")
+			_ = d.Set("property_name", "")
+		}
+
+		_ = d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(idp.Providers))
 	}
-	d.Set("idp_providers", flattenDiscoveryRuleIdpProviders(rule.Actions.IDP.Providers))
+
 	return nil
 }
 
-func flattenDiscoveryRuleIdpProviders(providers []*sdk.IdpDiscoveryRuleProvider) []interface{} {
+func flattenDiscoveryRuleIdpProviders(providers []v6okta.IdpPolicyRuleActionProvider) []interface{} {
 	var flattenedIdpProviders []interface{}
 	for _, p := range providers {
 		provider := make(map[string]interface{})
 
 		// Default type to OKTA if missing
-		if p.Type == "" {
+		if p.GetType() == "" {
 			provider["type"] = "OKTA"
 		} else {
-			provider["type"] = p.Type
+			provider["type"] = p.GetType()
 		}
 
 		// Include ID only if not empty
-		if p.ID != "" {
-			provider["id"] = p.ID
+		if p.GetId() != "" {
+			provider["id"] = p.GetId()
 		} else {
-			// Optional: explicitly set nil to ensure Terraform understands it should remove `id`
 			provider["id"] = nil
 		}
 
@@ -191,12 +257,20 @@ func resourcePolicyRuleIdpDiscoveryUpdate(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(meta).Info("updating IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	newRule := buildIdpDiscoveryRule(d)
-	rule, _, err := getAPISupplementFromMetadata(meta).UpdateIdpDiscoveryRule(ctx, policyID, d.Id(), *newRule, nil)
+
+	updatedRule := buildIdpDiscoveryRule(d)
+	ruleID := d.Id()
+	updatedRule.Id = &ruleID
+	ruleRequest := v6okta.IdpDiscoveryPolicyRuleAsListPolicyRules200ResponseInner(updatedRule)
+	ruleResp, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(ruleRequest).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update IDP discovery policy rule: %v", err)
 	}
-	err = setRuleStatus(ctx, d, meta, rule.Status)
+	if ruleResp == nil || ruleResp.IdpDiscoveryPolicyRule == nil {
+		return diag.Errorf("API response did not contain a valid IdP discovery policy rule after update")
+	}
+
+	err = setRuleStatus(ctx, d, meta, ruleResp.IdpDiscoveryPolicyRule.GetStatus())
 	if err != nil {
 		return diag.Errorf("failed to set IDP discovery policy rule status: %v", err)
 	}
@@ -209,8 +283,9 @@ func resourcePolicyRuleIdpDiscoveryDelete(ctx context.Context, d *schema.Resourc
 		return diag.Errorf("'policy_id' field should be set")
 	}
 	logger(meta).Info("deleting IdP discovery policy rule", "id", d.Id(), "policy_id", policyID)
-	_, err := getOktaClientFromMetadata(meta).Policy.DeletePolicyRule(ctx, policyID, d.Id())
-	if err != nil {
+
+	resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicyRule(ctx, policyID, d.Id()).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to delete IDP discovery policy rule: %v", err)
 	}
 	return nil
@@ -227,59 +302,117 @@ func setRuleStatus(ctx context.Context, d *schema.ResourceData, meta interface{}
 	}
 	logger(meta).Info("setting IdP discovery policy rule status", "id", d.Id(),
 		"policy_id", policyID, "status", desiredStatus)
+
 	var err error
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta).PolicyAPI
 	if desiredStatus == StatusInactive {
-		_, err = client.Policy.DeactivatePolicyRule(ctx, policyID, d.Id())
+		_, err = client.DeactivatePolicyRule(ctx, policyID, d.Id()).Execute()
 	} else {
-		_, err = client.Policy.ActivatePolicyRule(ctx, policyID, d.Id())
+		_, err = client.ActivatePolicyRule(ctx, policyID, d.Id()).Execute()
 	}
 	return err
 }
 
-// Build Policy Sign On Rule from resource data
-func buildIdpDiscoveryRule(d *schema.ResourceData) *sdk.IdpDiscoveryRule {
-	var providers []*sdk.IdpDiscoveryRuleProvider
-	if v, ok := d.GetOk("idp_providers"); ok {
-		providerList := v.([]interface{})
-		for _, provider := range providerList {
-			if value, ok := provider.(map[string]any); ok {
-				providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
-					ID:   utils.GetMapString(value, "id"),
-					Type: utils.GetMapString(value, "type"),
-				})
-			}
-		}
-	} else {
-		providers = append(providers, &sdk.IdpDiscoveryRuleProvider{
-			Type: "OKTA",
-		})
+// buildIdpDiscoveryRule constructs a v6 IdpDiscoveryPolicyRule from the resource data.
+func buildIdpDiscoveryRule(d *schema.ResourceData) *v6okta.IdpDiscoveryPolicyRule {
+	rule := v6okta.NewIdpDiscoveryPolicyRule()
+
+	name := d.Get("name").(string)
+	rule.Name = &name
+
+	ruleType := "IDP_DISCOVERY"
+	rule.Type = &ruleType
+
+	status := d.Get("status").(string)
+	rule.Status = &status
+
+	if priority, ok := d.GetOk("priority"); ok {
+		p := int32(priority.(int))
+		rule.Priority = *v6okta.NewNullableInt32(&p)
 	}
 
-	rule := &sdk.IdpDiscoveryRule{
-		Actions: &sdk.IdpDiscoveryRuleActions{
-			IDP: &sdk.IdpDiscoveryRuleIdp{
-				Providers: providers,
-			},
-		},
-		Conditions: &sdk.IdpDiscoveryRuleConditions{
-			App: buildAppConditions(d),
-			Network: &sdk.IdpDiscoveryRuleNetwork{
-				Connection: d.Get("network_connection").(string),
-				// plural name here is vestigial due to old policy rule resources
-				Include: utils.ConvertInterfaceToStringArr(d.Get("network_includes")),
-				Exclude: utils.ConvertInterfaceToStringArr(d.Get("network_excludes")),
-			},
-			Platform:       buildPlatformInclude(d),
-			UserIdentifier: buildIdentifier(d),
-		},
-		Type:   sdk.IdpDiscoveryType,
-		Name:   d.Get("name").(string),
-		Status: d.Get("status").(string),
+	// Build IDP action
+	idp := v6okta.NewIdpPolicyRuleActionIdp()
+
+	selectionType := d.Get("selection_type").(string)
+	if selectionType != "" {
+		idp.SetIdpSelectionType(selectionType)
 	}
-	if priority, ok := d.GetOk("priority"); ok {
-		rule.Priority = priority.(int)
+
+	shouldFallBack := d.Get("should_fall_back_to_okta").(bool)
+	idp.SetShouldFallBackToOkta(shouldFallBack)
+
+	if selectionType == "DYNAMIC" {
+		// DYNAMIC rules use matchCriteria for IdP selection; providers list is empty
+		idp.SetProviders([]v6okta.IdpPolicyRuleActionProvider{})
+		if expr := d.Get("provider_expression").(string); expr != "" {
+			criteria := v6okta.NewIdpPolicyRuleActionMatchCriteria()
+			criteria.SetProviderExpression(expr)
+			if propName := d.Get("property_name").(string); propName != "" {
+				criteria.SetPropertyName(propName)
+			}
+			idp.SetMatchCriteria([]v6okta.IdpPolicyRuleActionMatchCriteria{*criteria})
+		}
+	} else {
+		// SPECIFIC mode: use the providers list
+		var providers []v6okta.IdpPolicyRuleActionProvider
+		if v, ok := d.GetOk("idp_providers"); ok {
+			for _, provider := range v.([]interface{}) {
+				if value, ok := provider.(map[string]any); ok {
+					p := v6okta.NewIdpPolicyRuleActionProvider()
+					if id := utils.GetMapString(value, "id"); id != "" {
+						p.SetId(id)
+					}
+					if t := utils.GetMapString(value, "type"); t != "" {
+						p.SetType(t)
+					}
+					providers = append(providers, *p)
+				}
+			}
+		}
+		if len(providers) == 0 {
+			p := v6okta.NewIdpPolicyRuleActionProvider()
+			p.SetType("OKTA")
+			providers = []v6okta.IdpPolicyRuleActionProvider{*p}
+		}
+		idp.SetProviders(providers)
 	}
+
+	action := v6okta.NewIdpPolicyRuleAction()
+	action.SetIdp(*idp)
+	rule.SetActions(*action)
+
+	// Build conditions
+	conditions := v6okta.NewIdpDiscoveryPolicyRuleCondition()
+
+	// Network condition
+	network := v6okta.NewPolicyNetworkCondition()
+	network.SetConnection(d.Get("network_connection").(string))
+	if includes := utils.ConvertInterfaceToStringArr(d.Get("network_includes")); len(includes) > 0 {
+		network.SetInclude(includes)
+	}
+	if excludes := utils.ConvertInterfaceToStringArr(d.Get("network_excludes")); len(excludes) > 0 {
+		network.SetExclude(excludes)
+	}
+	conditions.SetNetwork(*network)
+
+	// Platform condition
+	if platform := buildPlatformIncludeV6(d); platform != nil {
+		conditions.SetPlatform(*platform)
+	}
+
+	// App condition
+	if app := buildAppConditionsV6(d); app != nil {
+		conditions.SetApp(*app)
+	}
+
+	// User identifier condition
+	if uid := buildIdentifierV6(d); uid != nil {
+		conditions.SetUserIdentifier(*uid)
+	}
+
+	rule.SetConditions(*conditions)
+
 	return rule
 }
 
@@ -318,135 +451,171 @@ var (
 	}
 )
 
-func buildPlatformInclude(d *schema.ResourceData) *sdk.IdpDiscoveryRulePlatform {
-	var includeList []*sdk.IdpDiscoveryRulePlatformInclude
-	if v, ok := d.GetOk("platform_include"); ok {
-		valueList := v.(*schema.Set).List()
-		for _, item := range valueList {
-			if value, ok := item.(map[string]interface{}); ok {
-				includeList = append(includeList, &sdk.IdpDiscoveryRulePlatformInclude{
-					Os: &sdk.IdpDiscoveryRulePlatformOS{
-						Expression: utils.GetMapString(value, "os_expression"),
-						Type:       utils.GetMapString(value, "os_type"),
-					},
-					Type: utils.GetMapString(value, "type"),
-				})
+func buildPlatformIncludeV6(d *schema.ResourceData) *v6okta.IdpDiscoveryPlatformPolicyRuleCondition {
+	v, ok := d.GetOk("platform_include")
+	if !ok {
+		return nil
+	}
+	var includeList []v6okta.IdpDiscoveryPlatformConditionEvaluatorPlatform
+	for _, item := range v.(*schema.Set).List() {
+		if value, ok := item.(map[string]interface{}); ok {
+			platform := v6okta.NewIdpDiscoveryPlatformConditionEvaluatorPlatform()
+			if t := utils.GetMapString(value, "type"); t != "" {
+				platform.SetType(t)
 			}
-		}
-		return &sdk.IdpDiscoveryRulePlatform{
-			Include: includeList,
+			os := v6okta.NewIdpDiscoveryPlatformConditionEvaluatorPlatformOperatingSystem()
+			if osType := utils.GetMapString(value, "os_type"); osType != "" {
+				os.SetType(osType)
+			}
+			if osExpr := utils.GetMapString(value, "os_expression"); osExpr != "" {
+				os.SetExpression(osExpr)
+			}
+			platform.SetOs(*os)
+			includeList = append(includeList, *platform)
 		}
 	}
-	return nil
+	result := v6okta.NewIdpDiscoveryPlatformPolicyRuleCondition()
+	result.SetInclude(includeList)
+	return result
 }
 
-func buildAppConditions(d *schema.ResourceData) *sdk.IdpDiscoveryRuleApp {
-	var includeList []*sdk.IdpDiscoveryRuleAppObj
+func buildAppConditionsV6(d *schema.ResourceData) *v6okta.AppAndInstancePolicyRuleCondition {
+	var includeList []v6okta.AppAndInstanceConditionEvaluatorAppOrInstance
 	if v, ok := d.GetOk("app_include"); ok {
-		valueList := v.(*schema.Set).List()
-		for _, item := range valueList {
+		for _, item := range v.(*schema.Set).List() {
 			if value, ok := item.(map[string]interface{}); ok {
-				includeList = append(includeList, &sdk.IdpDiscoveryRuleAppObj{
-					ID:   utils.GetMapString(value, "id"),
-					Type: utils.GetMapString(value, "type"),
-					Name: utils.GetMapString(value, "name"),
-				})
+				app := v6okta.NewAppAndInstanceConditionEvaluatorAppOrInstance()
+				if id := utils.GetMapString(value, "id"); id != "" {
+					app.SetId(id)
+				}
+				if name := utils.GetMapString(value, "name"); name != "" {
+					app.SetName(name)
+				}
+				if t := utils.GetMapString(value, "type"); t != "" {
+					app.SetType(t)
+				}
+				includeList = append(includeList, *app)
 			}
 		}
 	}
-	var excludeList []*sdk.IdpDiscoveryRuleAppObj
+
+	var excludeList []v6okta.AppAndInstanceConditionEvaluatorAppOrInstance
 	if v, ok := d.GetOk("app_exclude"); ok {
-		valueList := v.(*schema.Set).List()
-		for _, item := range valueList {
+		for _, item := range v.(*schema.Set).List() {
 			if value, ok := item.(map[string]interface{}); ok {
-				excludeList = append(excludeList, &sdk.IdpDiscoveryRuleAppObj{
-					ID:   utils.GetMapString(value, "id"),
-					Type: utils.GetMapString(value, "type"),
-					Name: utils.GetMapString(value, "name"),
-				})
+				app := v6okta.NewAppAndInstanceConditionEvaluatorAppOrInstance()
+				if id := utils.GetMapString(value, "id"); id != "" {
+					app.SetId(id)
+				}
+				if name := utils.GetMapString(value, "name"); name != "" {
+					app.SetName(name)
+				}
+				if t := utils.GetMapString(value, "type"); t != "" {
+					app.SetType(t)
+				}
+				excludeList = append(excludeList, *app)
 			}
 		}
 	}
-	return &sdk.IdpDiscoveryRuleApp{
-		Include: includeList,
-		Exclude: excludeList,
+
+	if len(includeList) == 0 && len(excludeList) == 0 {
+		return nil
 	}
+
+	cond := v6okta.NewAppAndInstancePolicyRuleCondition()
+	if len(includeList) > 0 {
+		cond.SetInclude(includeList)
+	}
+	if len(excludeList) > 0 {
+		cond.SetExclude(excludeList)
+	}
+	return cond
 }
 
-func buildUserIDPatterns(d *schema.ResourceData) []*sdk.IdpDiscoveryRulePattern {
-	var patternList []*sdk.IdpDiscoveryRulePattern
+func buildUserIDPatternsV6(d *schema.ResourceData) []v6okta.UserIdentifierConditionEvaluatorPattern {
+	var patternList []v6okta.UserIdentifierConditionEvaluatorPattern
 	if raw, ok := d.GetOk("user_identifier_patterns"); ok {
-		patterns := raw.(*schema.Set).List()
-		for _, pattern := range patterns {
+		for _, pattern := range raw.(*schema.Set).List() {
 			if value, ok := pattern.(map[string]interface{}); ok {
-				patternList = append(patternList, &sdk.IdpDiscoveryRulePattern{
-					MatchType: utils.GetMapString(value, "match_type"),
-					Value:     utils.GetMapString(value, "value"),
-				})
+				p := v6okta.NewUserIdentifierConditionEvaluatorPattern(
+					utils.GetMapString(value, "match_type"),
+					utils.GetMapString(value, "value"),
+				)
+				patternList = append(patternList, *p)
 			}
 		}
 	}
 	return patternList
 }
 
-func buildIdentifier(d *schema.ResourceData) *sdk.IdpDiscoveryRuleUserIdentifier {
+func buildIdentifierV6(d *schema.ResourceData) *v6okta.UserIdentifierPolicyRuleCondition {
 	uidType := d.Get("user_identifier_type").(string)
-	if uidType != "" {
-		return &sdk.IdpDiscoveryRuleUserIdentifier{
-			Attribute: d.Get("user_identifier_attribute").(string),
-			Type:      uidType,
-			Patterns:  buildUserIDPatterns(d),
-		}
+	if uidType == "" {
+		return nil
 	}
-	return nil
+	patterns := buildUserIDPatternsV6(d)
+	if patterns == nil {
+		patterns = []v6okta.UserIdentifierConditionEvaluatorPattern{}
+	}
+	uid := v6okta.NewUserIdentifierPolicyRuleCondition(patterns, uidType)
+	attribute := d.Get("user_identifier_attribute").(string)
+	if attribute != "" {
+		uid.SetAttribute(attribute)
+	}
+	return uid
 }
 
-func flattenUserIDPatterns(patterns []*sdk.IdpDiscoveryRulePattern) *schema.Set {
+func flattenUserIDPatterns(patterns []v6okta.UserIdentifierConditionEvaluatorPattern) *schema.Set {
 	flattened := make([]interface{}, len(patterns))
-	for i := range patterns {
+	for i, p := range patterns {
 		flattened[i] = map[string]interface{}{
-			"match_type": patterns[i].MatchType,
-			"value":      patterns[i].Value,
+			"match_type": p.MatchType,
+			"value":      p.Value,
 		}
 	}
 	return schema.NewSet(schema.HashResource(userIDPatternResource), flattened)
 }
 
-func flattenPlatformInclude(platform *sdk.IdpDiscoveryRulePlatform) *schema.Set {
+func flattenPlatformInclude(platform *v6okta.IdpDiscoveryPlatformPolicyRuleCondition) *schema.Set {
 	var flattened []interface{}
-	if platform != nil && platform.Include != nil {
+	if platform != nil {
 		for _, v := range platform.Include {
-			flattened = append(flattened, map[string]interface{}{
-				"os_expression": v.Os.Expression,
-				"os_type":       v.Os.Type,
-				"type":          v.Type,
-			})
+			item := map[string]interface{}{
+				"type":          v.GetType(),
+				"os_type":       "",
+				"os_expression": "",
+			}
+			if v.Os != nil {
+				item["os_type"] = v.Os.GetType()
+				item["os_expression"] = v.Os.GetExpression()
+			}
+			flattened = append(flattened, item)
 		}
 	}
 	return schema.NewSet(schema.HashResource(platformIncludeResource), flattened)
 }
 
-func flattenDiscoveryRuleAppInclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+func flattenDiscoveryRuleAppInclude(app *v6okta.AppAndInstancePolicyRuleCondition) *schema.Set {
 	if app != nil {
 		return flattenAppObj(app.Include)
 	}
 	return flattenAppObj(nil)
 }
 
-func flattenDiscoveryRuleAppExclude(app *sdk.IdpDiscoveryRuleApp) *schema.Set {
+func flattenDiscoveryRuleAppExclude(app *v6okta.AppAndInstancePolicyRuleCondition) *schema.Set {
 	if app != nil {
 		return flattenAppObj(app.Exclude)
 	}
 	return flattenAppObj(nil)
 }
 
-func flattenAppObj(appObj []*sdk.IdpDiscoveryRuleAppObj) *schema.Set {
+func flattenAppObj(appObj []v6okta.AppAndInstanceConditionEvaluatorAppOrInstance) *schema.Set {
 	var flattened []interface{}
 	for _, v := range appObj {
 		flattened = append(flattened, map[string]interface{}{
-			"id":   v.ID,
-			"name": v.Name,
-			"type": v.Type,
+			"id":   v.GetId(),
+			"name": v.GetName(),
+			"type": v.GetType(),
 		})
 	}
 	return schema.NewSet(schema.HashResource(appResource), flattened)
