@@ -747,8 +747,7 @@ func (r *campaignResource) Update(ctx context.Context, req resource.UpdateReques
 	resp.Diagnostics.AddError(
 		"Update Not Supported",
 		"The okta_campaign resource does not support in-place updates. All attributes require replacement. "+
-			"If you see this error, ensure all campaign attributes have 'requires replacement' plan modifiers, "+
-			"or destroy and re-create the resource manually.",
+			"If you see this error, please destroy the resource and re-create it again.",
 	)
 }
 
