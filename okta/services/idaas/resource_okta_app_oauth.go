@@ -448,6 +448,13 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
 			},
+			"skip_authentication_policy": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
+			},
 			"network": {
 				Type:        schema.TypeList,
 				Optional:    true,
