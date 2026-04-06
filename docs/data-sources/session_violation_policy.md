@@ -21,3 +21,6 @@ data "okta_session_violation_policy" "example" {
 - `name` - Name of the Session Violation Detection Policy.
 - `status` - Status of the policy: `ACTIVE` or `INACTIVE`.
 - `rule_id` - ID of the modifiable policy rule (non-default). Use this for importing the policy rule resource.
+- `priority` - Priority of the policy.
+- `system` - Whether this is a system-managed policy created by Okta.
+- `created` - Timestamp when the policy was created.

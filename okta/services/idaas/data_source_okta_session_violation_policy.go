@@ -24,10 +24,13 @@ type sessionViolationPolicyDataSource struct {
 }
 
 type sessionViolationPolicyDataSourceModel struct {
-	ID     types.String `tfsdk:"id"`
-	Name   types.String `tfsdk:"name"`
-	Status types.String `tfsdk:"status"`
-	RuleID types.String `tfsdk:"rule_id"`
+	ID       types.String `tfsdk:"id"`
+	Name     types.String `tfsdk:"name"`
+	Status   types.String `tfsdk:"status"`
+	RuleID   types.String `tfsdk:"rule_id"`
+	Priority types.Int64  `tfsdk:"priority"`
+	System   types.Bool   `tfsdk:"system"`
+	Created  types.String `tfsdk:"created"`
 }
 
 func (d *sessionViolationPolicyDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -53,6 +56,18 @@ func (d *sessionViolationPolicyDataSource) Schema(ctx context.Context, req datas
 			"rule_id": schema.StringAttribute{
 				Computed:    true,
 				Description: "ID of the modifiable policy rule (non-default). Use this for importing the policy rule resource.",
+			},
+			"priority": schema.Int64Attribute{
+				Computed:    true,
+				Description: "Priority of the policy.",
+			},
+			"system": schema.BoolAttribute{
+				Computed:    true,
+				Description: "Whether this is a system-managed policy created by Okta.",
+			},
+			"created": schema.StringAttribute{
+				Computed:    true,
+				Description: "Timestamp when the policy was created.",
 			},
 		},
 	}
@@ -111,6 +126,15 @@ func (d *sessionViolationPolicyDataSource) Read(ctx context.Context, req datasou
 	data.Name = types.StringValue(sessionViolationPolicy.Name)
 	if sessionViolationPolicy.Status != nil {
 		data.Status = types.StringValue(string(*sessionViolationPolicy.Status))
+	}
+	if sessionViolationPolicy.Priority != nil {
+		data.Priority = types.Int64Value(int64(*sessionViolationPolicy.Priority))
+	}
+	if sessionViolationPolicy.System != nil {
+		data.System = types.BoolPointerValue(sessionViolationPolicy.System)
+	}
+	if sessionViolationPolicy.Created != nil {
+		data.Created = types.StringValue(sessionViolationPolicy.Created.String())
 	}
 
 	// Fetch the modifiable rule ID (non-default, priority != 99)

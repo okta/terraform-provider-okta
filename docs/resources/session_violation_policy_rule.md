@@ -42,6 +42,7 @@ resource "okta_session_violation_policy_rule" "example" {
 - `network_includes` - (Optional) List of network zone IDs to include. Required when `network_connection` is set to `ZONE`.
 - `network_excludes` - (Optional) List of network zone IDs to exclude. Required when `network_connection` is set to `ZONE`.
 - `policy_evaluation_enabled` - (Optional) When `true`, the sign-on policies of the session are evaluated when a session violation is detected. Default is `true`.
+- `priority` - (Optional) Priority of the rule. Rules are evaluated in priority order.
 
 ## Attributes Reference
 

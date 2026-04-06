@@ -44,6 +44,7 @@ type sessionViolationPolicyRuleResourceModel struct {
 	NetworkExcludes         types.List   `tfsdk:"network_excludes"`
 	MinRiskLevel            types.String `tfsdk:"min_risk_level"`
 	PolicyEvaluationEnabled types.Bool   `tfsdk:"policy_evaluation_enabled"`
+	Priority                types.Int64  `tfsdk:"priority"`
 }
 
 func (r *sessionViolationPolicyRuleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -113,6 +114,11 @@ func (r *sessionViolationPolicyRuleResource) Schema(_ context.Context, _ resourc
 				Computed:    true,
 				Default:     booldefault.StaticBool(true),
 			},
+			"priority": schema.Int64Attribute{
+				Description: "Priority of the rule. Rules are evaluated in priority order.",
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 }
@@ -125,8 +131,8 @@ func (r *sessionViolationPolicyRuleResource) Create(ctx context.Context, req res
 	resp.Diagnostics.AddError(
 		"Session Violation Detection Policy Rule cannot be created",
 		"The Session Violation Detection Policy Rule already exists and cannot be created, only imported and updated. "+
-			"Use 'terraform import' with the policy ID and rule ID to import the existing rule. "+
-			"You can find the rule ID via the `okta_session_violation_policy` data source or the Okta Admin Console or API.",
+			"Use the `okta_session_violation_policy` data source to retrieve the policy ID and rule ID, then run:\n\n"+
+			"  terraform import okta_session_violation_policy_rule.<name> <policy_id>/<rule_id>",
 	)
 }
 
@@ -288,6 +294,9 @@ func (r *sessionViolationPolicyRuleResource) readSessionViolationPolicyRule(ctx 
 	if rule.Status != nil {
 		state.Status = types.StringValue(string(*rule.Status))
 	}
+	if rule.Priority.IsSet() && rule.Priority.Get() != nil {
+		state.Priority = types.Int64Value(int64(*rule.Priority.Get()))
+	}
 
 	// Read network conditions
 	if rule.Conditions != nil && rule.Conditions.Network != nil {
@@ -340,6 +349,11 @@ func (r *sessionViolationPolicyRuleResource) buildSessionViolationPolicyRule(ctx
 
 	ruleType := "SESSION_VIOLATION_DETECTION"
 	rule.Type = &ruleType
+
+	if !state.Priority.IsNull() {
+		p := int32(state.Priority.ValueInt64())
+		rule.Priority = *v6okta.NewNullableInt32(&p)
+	}
 
 	// Build conditions
 	conditions := v6okta.NewSessionViolationDetectionPolicyRuleAllOfConditions()
