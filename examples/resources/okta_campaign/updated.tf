@@ -1,12 +1,12 @@
 resource "okta_user" "test" {
   first_name = "TestAcc"
-  last_name  = "Smith"
+  last_name  = "Smith-1"
   login      = "testAcc-replace_with_uuid@example.com"
   email      = "testAcc-replace_with_uuid@example.com"
 }
 
 resource "okta_campaign" "test" {
-  name          = "Monthly access review of sales team"
+  name          = "Quarterly access review of sales team"
   description   = "Multi app campaign"
   campaign_type = "RESOURCE"
 
