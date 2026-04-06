@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 	"testing"
 
@@ -95,6 +96,11 @@ func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
 }
 
 func ensureRuleExists(resourceName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
@@ -115,6 +121,11 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 }
 
 func checkRuleDestroy(ruleType string) func(*terraform.State) error {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
