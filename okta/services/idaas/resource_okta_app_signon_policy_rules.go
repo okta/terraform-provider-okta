@@ -135,8 +135,14 @@ func (m reauthFrequencyModifier) PlanModifyString(ctx context.Context, req planm
 		planRule.Chains.ElementsAs(ctx, &chainStrings, false)
 		for _, chainStr := range chainStrings {
 			if strings.Contains(chainStr, "reauthenticateIn") {
-				// When chains have reauthenticateIn, mark as unknown so API value is accepted
-				resp.PlanValue = types.StringUnknown()
+				// When chains have reauthenticateIn, the API computes re_authentication_frequency
+				// If we have a state value, use it to suppress diff (like DiffSuppressFunc)
+				// Otherwise mark as unknown so first apply accepts whatever API returns
+				if !req.StateValue.IsNull() && !req.StateValue.IsUnknown() {
+					resp.PlanValue = req.StateValue
+				} else {
+					resp.PlanValue = types.StringUnknown()
+				}
 				return
 			}
 		}
@@ -1288,7 +1294,12 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 	if vm == nil {
 		return
 	}
-	rule.FactorMode = types.StringValue(vm.FactorMode)
+	// If API returns empty FactorMode (which can happen with ASSURANCE + chains), default to 2FA
+	if vm.FactorMode != "" {
+		rule.FactorMode = types.StringValue(vm.FactorMode)
+	} else {
+		rule.FactorMode = types.StringValue("2FA")
+	}
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
 	if vm.InactivityPeriod != "" {
@@ -1449,7 +1460,12 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 	if vm == nil {
 		return
 	}
-	rule.FactorMode = types.StringValue(vm.FactorMode)
+	// If API returns empty FactorMode (which can happen with ASSURANCE + chains), default to 2FA
+	if vm.FactorMode != "" {
+		rule.FactorMode = types.StringValue(vm.FactorMode)
+	} else {
+		rule.FactorMode = types.StringValue("2FA")
+	}
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
 	if vm.InactivityPeriod != "" {

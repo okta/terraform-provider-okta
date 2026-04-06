@@ -35,26 +35,51 @@ resource "okta_app_signon_policy_rules" "test_chains" {
     priority    = 1
     status      = "ACTIVE"
     access      = "ALLOW"
-    factor_mode = "1FA"
+    factor_mode = "2FA"
+    type        = "AUTH_METHOD_CHAIN"
     chains = [
-      jsonencode({
-        "authenticationMethods" : [
-          {
-            "key" : "okta_email",
-            "method" : "email"
-          }
-        ],
-        "next" : [
-          {
-            "authenticationMethods" : [
-              {
-                "key" : "okta_password",
-                "method" : "password"
-              }
-            ]
-          }
-        ]
-      })
+      jsonencode(
+        {
+          "authenticationMethods" : [
+            {
+              "key" : "webauthn",
+              "userVerification" : "REQUIRED",
+              "method" : "webauthn"
+            }
+          ],
+          "reauthenticateIn" : "PT43800H"
+        }),
+      jsonencode(
+        {
+          "authenticationMethods" : [
+            {
+              "key" : "okta_password",
+              "method" : "password"
+            }
+          ],
+          "reauthenticateIn" : "PT43800H",
+          "next" : [
+            {
+              "authenticationMethods" : [
+                {
+                  "key" : "custom_otp",
+                  "method" : "otp"
+                },
+                {
+                  "key" : "google_otp",
+                  "method" : "otp"
+                },
+                {
+                  "key" : "webauthn",
+                  "userVerification" : "REQUIRED",
+                  "method" : "webauthn"
+                }
+              ],
+              "reauthenticateIn" : "PT43800H"
+            }
+          ]
+        }
+      )
     ]
   }
 }

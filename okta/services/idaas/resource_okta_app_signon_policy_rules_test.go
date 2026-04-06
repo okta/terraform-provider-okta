@@ -151,9 +151,10 @@ func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "rule.0.id"),
 					resource.TestCheckResourceAttr(resourceName, "rule.0.name", fmt.Sprintf("Chain-Rule-testAcc_%s", mgr.SeedStr())),
-					resource.TestCheckResourceAttr(resourceName, "rule.0.chains.#", "1"),
-					// Verify the chain contains expected JSON structure
+					resource.TestCheckResourceAttr(resourceName, "rule.0.chains.#", "2"),
+					// Verify both chains are stored
 					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.1"),
 				),
 			},
 			{
