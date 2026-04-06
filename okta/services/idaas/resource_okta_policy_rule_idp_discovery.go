@@ -176,8 +176,8 @@ func resourcePolicyRuleIdpDiscoveryRead(ctx context.Context, d *schema.ResourceD
 	if conditions != nil {
 		if conditions.UserIdentifier != nil {
 			_ = d.Set("user_identifier_attribute", conditions.UserIdentifier.GetAttribute())
-			_ = d.Set("user_identifier_type", conditions.UserIdentifier.Type)
-			mm["user_identifier_patterns"] = flattenUserIDPatterns(conditions.UserIdentifier.Patterns)
+			_ = d.Set("user_identifier_type", conditions.UserIdentifier.GetType())
+			mm["user_identifier_patterns"] = flattenUserIDPatterns(conditions.UserIdentifier.GetPatterns())
 		}
 		if conditions.Platform != nil {
 			mm["platform_include"] = flattenPlatformInclude(conditions.Platform)
@@ -537,10 +537,9 @@ func buildUserIDPatternsV6(d *schema.ResourceData) []v6okta.UserIdentifierCondit
 	if raw, ok := d.GetOk("user_identifier_patterns"); ok {
 		for _, pattern := range raw.(*schema.Set).List() {
 			if value, ok := pattern.(map[string]interface{}); ok {
-				p := v6okta.NewUserIdentifierConditionEvaluatorPattern(
-					utils.GetMapString(value, "match_type"),
-					utils.GetMapString(value, "value"),
-				)
+				p := v6okta.NewUserIdentifierConditionEvaluatorPattern()
+				p.SetMatchType(utils.GetMapString(value, "match_type"))
+				p.SetValue(utils.GetMapString(value, "value"))
 				patternList = append(patternList, *p)
 			}
 		}
@@ -554,10 +553,9 @@ func buildIdentifierV6(d *schema.ResourceData) *v6okta.UserIdentifierPolicyRuleC
 		return nil
 	}
 	patterns := buildUserIDPatternsV6(d)
-	if patterns == nil {
-		patterns = []v6okta.UserIdentifierConditionEvaluatorPattern{}
-	}
-	uid := v6okta.NewUserIdentifierPolicyRuleCondition(patterns, uidType)
+	uid := v6okta.NewUserIdentifierPolicyRuleCondition()
+	uid.SetType(uidType)
+	uid.SetPatterns(patterns)
 	attribute := d.Get("user_identifier_attribute").(string)
 	if attribute != "" {
 		uid.SetAttribute(attribute)
@@ -569,8 +567,8 @@ func flattenUserIDPatterns(patterns []v6okta.UserIdentifierConditionEvaluatorPat
 	flattened := make([]interface{}, len(patterns))
 	for i, p := range patterns {
 		flattened[i] = map[string]interface{}{
-			"match_type": p.MatchType,
-			"value":      p.Value,
+			"match_type": p.GetMatchType(),
+			"value":      p.GetValue(),
 		}
 	}
 	return schema.NewSet(schema.HashResource(userIDPatternResource), flattened)
