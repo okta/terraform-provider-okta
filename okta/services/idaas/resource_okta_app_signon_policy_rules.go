@@ -109,6 +109,40 @@ type platformIncludeModel struct {
 	OsExpression types.String `tfsdk:"os_expression"`
 }
 
+// reauthFrequencyModifier is a plan modifier that suppresses changes to
+// re_authentication_frequency when chains contain reauthenticateIn.
+type reauthFrequencyModifier struct{}
+
+func (m reauthFrequencyModifier) Description(ctx context.Context) string {
+	return "Suppresses re_authentication_frequency changes when chains contain reauthenticateIn"
+}
+
+func (m reauthFrequencyModifier) MarkdownDescription(ctx context.Context) string {
+	return "Suppresses re_authentication_frequency changes when chains contain reauthenticateIn"
+}
+
+func (m reauthFrequencyModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	// Get the parent rule object from the plan
+	var planRule policyRuleModel
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, req.Path.ParentPath(), &planRule)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Check if chains contain reauthenticateIn
+	if !planRule.Chains.IsNull() && !planRule.Chains.IsUnknown() {
+		var chainStrings []string
+		planRule.Chains.ElementsAs(ctx, &chainStrings, false)
+		for _, chainStr := range chainStrings {
+			if strings.Contains(chainStr, "reauthenticateIn") {
+				// When chains have reauthenticateIn, mark as unknown so API value is accepted
+				resp.PlanValue = types.StringUnknown()
+				return
+			}
+		}
+	}
+}
+
 // ruleIndex provides efficient lookups for rules by name and ID.
 type ruleIndex struct {
 	byName map[string]policyRuleModel
@@ -681,8 +715,10 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 		"re_authentication_frequency": schema.StringAttribute{
 			Optional:    true,
 			Computed:    true,
-			Default:     stringdefault.StaticString("PT2H"),
-			Description: "Re-authentication frequency in ISO 8601 duration format (e.g., PT2H for 2 hours).",
+			Description: "Re-authentication frequency in ISO 8601 duration format (e.g., PT2H for 2 hours). When using authentication chains with reauthenticateIn, this value is computed by the API based on the chain configuration.",
+			PlanModifiers: []planmodifier.String{
+				reauthFrequencyModifier{},
+			},
 		},
 		"inactivity_period": schema.StringAttribute{
 			Optional:    true,

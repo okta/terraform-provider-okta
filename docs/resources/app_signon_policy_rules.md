@@ -83,6 +83,23 @@ resource "okta_app_signon_policy_rules" "example" {
     - `os_type` (String) - OS type: `ANY`, `IOS`, `ANDROID`, `WINDOWS`, `OSX`, `MACOS`, `CHROMEOS`, or `OTHER`.
     - `os_expression` (String) - Custom OS expression for advanced matching.
   - `system` (Boolean, Computed) - Whether this is a system rule (e.g., Catch-all Rule). System rules cannot be modified.
+  - `chains` (Block List) Authentication method chains. Only supports 5 items in the array. Each chain can support maximum 3 steps. To be used only with verification method type `AUTH_METHOD_CHAIN`.(see [below for nested schema](#nestedblock--chains))
+
+
+<a id="nestedblock--chains"></a>
+### Nested Schema for `chains`
+
+Optional:
+
+- `authenticationMethods` (List of Authentication Methods) (see [below for nested schema](#nestedblock--authenticationMethods))
+- `next` (List) The next steps of the authentication method chain. This is an array of type `chains`. Only supports one item in the array.
+- `reauthenticateIn` (String) Specifies how often the user is prompted for authentication using duration format for the time period. This parameter can't be set at the same time as the `re_authentication_frequency` field.
+
+<a id="nestedblock--authenticationMethods"></a>
+### Nested Schema for `authenticationMethods`
+Required:
+- `key` (String) A label that identifies the authenticator.
+- `method` (String) Specifies the method used for the authenticator.
 
 ## Attributes Reference
 
