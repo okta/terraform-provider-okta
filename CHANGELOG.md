@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.8.0 (April 7, 2026)
+### FEATURES
+* New resource and data source `okta_session_violation_policy` and `okta_session_violation_policy_rule` [#2759](https://github.com/okta/terraform-provider-okta/pull/2759) by [pranav-okta](https://github.com/pranav-okta)
+
+### ENHANCEMENTS
+* Support for updating resource `okta_campaign` [#2760](https://github.com/okta/terraform-provider-okta/pull/2760) by [aditya-okta](https://github.com/aditya-okta)
+* Support for `chains` argument in resource `okta_app_signon_policy_rules` [#2758](https://github.com/okta/terraform-provider-okta/pull/2758) by [aditya-okta](https://github.com/aditya-okta)
+* Support for `network` attribute in `okta_app_oauth` [#2754](https://github.com/okta/terraform-provider-okta/pull/2754) by [pranav-okta](https://github.com/pranav-okta)
+* Support for `app_settings_json` attribute in `okta_app_swa` [#2755](https://github.com/okta/terraform-provider-okta/pull/2755) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### Bug Fixes
+* Fixes bug when using dynamic rule blocks in resource `okta_app_signon_policy_rules` [#2753](https://github.com/okta/terraform-provider-okta/pull/2753) by [aditya-okta](https://github.com/aditya-okta)
+
 ## 6.7.0 (March 27, 2026)
 ### FEATURES
 * New Resource and data source `okta_user_risk` for [UserRisk API](https://developer.okta.com/docs/api/openapi/okta-management/management/tags/userrisk) [#2724](https://github.com/okta/terraform-provider-okta/pull/2724) by [pranav-okta](https://github.com/pranav-okta)
