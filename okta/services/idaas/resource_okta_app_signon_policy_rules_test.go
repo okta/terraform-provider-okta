@@ -130,3 +130,38 @@ func TestAccResourceOktaAppSignOnPolicyRules_dynamicValues(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRules_chains tests that the resource
+// correctly handles the chains attribute for authentication chains configuration.
+func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test_chains", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("chains.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.name", fmt.Sprintf("Chain-Rule-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.chains.#", "2"),
+					// Verify both chains are stored
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.1"),
+				),
+			},
+			{
+				// Idempotency check
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}

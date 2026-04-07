@@ -97,6 +97,7 @@ type policyRuleModel struct {
 	ReAuthenticationFrequency types.String           `tfsdk:"re_authentication_frequency"`
 	InactivityPeriod          types.String           `tfsdk:"inactivity_period"`
 	Constraints               types.List             `tfsdk:"constraints"`
+	Chains                    types.List             `tfsdk:"chains"`
 	RiskScore                 types.String           `tfsdk:"risk_score"`
 	PlatformInclude           []platformIncludeModel `tfsdk:"platform_include"`
 }
@@ -106,6 +107,46 @@ type platformIncludeModel struct {
 	Type         types.String `tfsdk:"type"`
 	OsType       types.String `tfsdk:"os_type"`
 	OsExpression types.String `tfsdk:"os_expression"`
+}
+
+// reauthFrequencyModifier is a plan modifier that suppresses changes to
+// re_authentication_frequency when chains contain reauthenticateIn.
+type reauthFrequencyModifier struct{}
+
+func (m reauthFrequencyModifier) Description(ctx context.Context) string {
+	return "Suppresses re_authentication_frequency changes when chains contain reauthenticateIn"
+}
+
+func (m reauthFrequencyModifier) MarkdownDescription(ctx context.Context) string {
+	return "Suppresses re_authentication_frequency changes when chains contain reauthenticateIn"
+}
+
+func (m reauthFrequencyModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	// Get the parent rule object from the plan
+	var planRule policyRuleModel
+	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, req.Path.ParentPath(), &planRule)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Check if chains contain reauthenticateIn
+	if !planRule.Chains.IsNull() && !planRule.Chains.IsUnknown() {
+		var chainStrings []string
+		planRule.Chains.ElementsAs(ctx, &chainStrings, false)
+		for _, chainStr := range chainStrings {
+			if strings.Contains(chainStr, "reauthenticateIn") {
+				// When chains have reauthenticateIn, the API computes re_authentication_frequency
+				// If we have a state value, use it to suppress diff (like DiffSuppressFunc)
+				// Otherwise mark as unknown so first apply accepts whatever API returns
+				if !req.StateValue.IsNull() && !req.StateValue.IsUnknown() {
+					resp.PlanValue = req.StateValue
+				} else {
+					resp.PlanValue = types.StringUnknown()
+				}
+				return
+			}
+		}
+	}
 }
 
 // ruleIndex provides efficient lookups for rules by name and ID.
@@ -493,6 +534,7 @@ func (r *appSignOnPolicyRulesResource) policyRuleObjectType() types.ObjectType {
 			"re_authentication_frequency": types.StringType,
 			"inactivity_period":           types.StringType,
 			"constraints":                 types.ListType{ElemType: types.StringType},
+			"chains":                      types.ListType{ElemType: types.StringType},
 			"risk_score":                  types.StringType,
 			"platform_include": types.ListType{
 				ElemType: types.ObjectType{
@@ -679,8 +721,10 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 		"re_authentication_frequency": schema.StringAttribute{
 			Optional:    true,
 			Computed:    true,
-			Default:     stringdefault.StaticString("PT2H"),
-			Description: "Re-authentication frequency in ISO 8601 duration format (e.g., PT2H for 2 hours).",
+			Description: "Re-authentication frequency in ISO 8601 duration format (e.g., PT2H for 2 hours). When using authentication chains with reauthenticateIn, this value is computed by the API based on the chain configuration.",
+			PlanModifiers: []planmodifier.String{
+				reauthFrequencyModifier{},
+			},
 		},
 		"inactivity_period": schema.StringAttribute{
 			Optional:    true,
@@ -690,6 +734,11 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Optional:    true,
 			ElementType: types.StringType,
 			Description: "List of authenticator constraints as JSON-encoded strings.",
+		},
+		"chains": schema.ListAttribute{
+			Optional:    true,
+			ElementType: types.StringType,
+			Description: "List of authentication method chain objects as JSON-encoded strings. Use with `type = \"AUTH_METHOD_CHAIN\"` only.",
 		},
 		"risk_score": schema.StringAttribute{
 			Optional:    true,
@@ -1033,6 +1082,7 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIPriority(&apiRule, rule)
 	r.setAPIInactivityPeriod(&apiRule, rule)
 	r.setAPIConstraints(ctx, &apiRule, rule)
+	r.setAPIChains(ctx, &apiRule, rule)
 	r.setAPINetworkConditions(ctx, &apiRule, rule)
 	r.setAPIPlatformConditions(&apiRule, rule)
 	r.setAPICustomExpression(&apiRule, rule)
@@ -1068,6 +1118,32 @@ func (r *appSignOnPolicyRulesResource) setAPIConstraints(ctx context.Context, ap
 	}
 	apiRule.Actions.AppSignOn.VerificationMethod.Constraints = constraints
 }
+
+func (r *appSignOnPolicyRulesResource) setAPIChains(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
+	if rule.Chains.IsNull() || rule.Chains.IsUnknown() {
+		return
+	}
+	var chainStrings []string
+	rule.Chains.ElementsAs(ctx, &chainStrings, false)
+	var chains []*sdk.AccessPolicyChains
+	hasReauthenticateIn := false
+	for _, c := range chainStrings {
+		var chain sdk.AccessPolicyChains
+		if err := json.Unmarshal([]byte(c), &chain); err == nil {
+			chains = append(chains, &chain)
+			if chain.ReauthenticateIn != "" {
+				hasReauthenticateIn = true
+			}
+		}
+	}
+	apiRule.Actions.AppSignOn.VerificationMethod.Chains = chains
+	// If any chain sets ReauthenticateIn, clear the top-level field to avoid
+	// the API rejecting the combination (mirrors behaviour in singular resource).
+	if hasReauthenticateIn {
+		apiRule.Actions.AppSignOn.VerificationMethod.ReauthenticateIn = ""
+	}
+}
+
 func (r *appSignOnPolicyRulesResource) setAPINetworkConditions(ctx context.Context, apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if rule.NetworkConnection.IsNull() || rule.NetworkConnection.IsUnknown() {
 		return
@@ -1218,11 +1294,27 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 	if vm == nil {
 		return
 	}
-	rule.FactorMode = types.StringValue(vm.FactorMode)
+	// If API returns empty FactorMode (which can happen with ASSURANCE + chains), default to 2FA
+	if vm.FactorMode != "" {
+		rule.FactorMode = types.StringValue(vm.FactorMode)
+	} else {
+		rule.FactorMode = types.StringValue("2FA")
+	}
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
 	if vm.InactivityPeriod != "" {
 		rule.InactivityPeriod = types.StringValue(vm.InactivityPeriod)
+	}
+
+	// Convert chains to JSON strings.
+	if len(vm.Chains) > 0 {
+		var chainStrings []string
+		for _, chain := range vm.Chains {
+			if jsonBytes, err := json.Marshal(chain); err == nil {
+				chainStrings = append(chainStrings, string(jsonBytes))
+			}
+		}
+		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 }
 func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
@@ -1350,6 +1442,7 @@ func (r *appSignOnPolicyRulesResource) convertAPIRuleToModel(ctx context.Context
 		UserTypesIncluded:        types.SetNull(types.StringType),
 		UserTypesExcluded:        types.SetNull(types.StringType),
 		Constraints:              types.ListNull(types.StringType),
+		Chains:                   types.ListNull(types.StringType),
 	}
 	if apiRule.PriorityPtr != nil {
 		rule.Priority = types.Int64Value(*apiRule.PriorityPtr)
@@ -1367,7 +1460,12 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 	if vm == nil {
 		return
 	}
-	rule.FactorMode = types.StringValue(vm.FactorMode)
+	// If API returns empty FactorMode (which can happen with ASSURANCE + chains), default to 2FA
+	if vm.FactorMode != "" {
+		rule.FactorMode = types.StringValue(vm.FactorMode)
+	} else {
+		rule.FactorMode = types.StringValue("2FA")
+	}
 	rule.Type = types.StringValue(vm.Type)
 	rule.ReAuthenticationFrequency = types.StringValue(vm.ReauthenticateIn)
 	if vm.InactivityPeriod != "" {
@@ -1382,6 +1480,17 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 			}
 		}
 		rule.Constraints, _ = types.ListValueFrom(ctx, types.StringType, constraintStrings)
+	}
+
+	// Convert chains to JSON strings.
+	if len(vm.Chains) > 0 {
+		var chainStrings []string
+		for _, chain := range vm.Chains {
+			if jsonBytes, err := json.Marshal(chain); err == nil {
+				chainStrings = append(chainStrings, string(jsonBytes))
+			}
+		}
+		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 }
 func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
