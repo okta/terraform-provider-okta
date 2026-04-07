@@ -161,7 +161,7 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 	inner, resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.GetPolicyRule(ctx, policyID, d.Id()).Execute()
 	if err != nil {
 		// Rule (or parent policy) no longer exists — remove from state.
-		if resp != nil && resp.StatusCode == http.StatusNotFound {
+		if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 			d.SetId("")
 			return nil
 		}
@@ -308,7 +308,7 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 	resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicyRule(ctx, policyID, d.Id()).Execute()
 	if err != nil {
 		// Already gone — not an error.
-		if resp != nil && resp.StatusCode == http.StatusNotFound {
+		if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		}
 		return diag.Errorf("failed to delete password policy rule: %v", err)
