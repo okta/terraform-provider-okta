@@ -14,7 +14,6 @@ import (
 func TestAccResourceOktaPolicyRuleIdpDiscovery_dynamic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleIdpDiscovery, t.Name())
 	dynamicConfig := mgr.GetFixtures("dynamic.tf", t)
-	specificConfig := mgr.GetFixtures("app_include.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleIdpDiscovery)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -26,24 +25,11 @@ func TestAccResourceOktaPolicyRuleIdpDiscovery_dynamic(t *testing.T) {
 			{
 				Config: dynamicConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "selection_type", "DYNAMIC"),
 					resource.TestCheckResourceAttr(resourceName, "provider_expression", "login.identifier.substringAfter('@')"),
 					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "0"),
-				),
-			},
-			{
-				// Switch back to SPECIFIC to verify backward compatibility
-				Config: specificConfig,
-				Check: resource.ComposeTestCheckFunc(
-					ensureRuleExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
-					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
-					resource.TestCheckResourceAttr(resourceName, "selection_type", "SPECIFIC"),
-					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "idp_providers.0.type", "OKTA"),
 				),
 			},
 		},

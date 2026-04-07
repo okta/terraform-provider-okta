@@ -103,9 +103,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 					"Example: `login.identifier.substringAfter('@')`",
 			},
 			"property_name": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The IdP property to match the evaluated expression against when `selection_type` is `DYNAMIC`. Maps to `actions.idp.matchCriteria[0].propertyName` in the API.",
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				Description: "The IdP property that the evaluated expression should match against when `selection_type` is `DYNAMIC`. " +
+					"Maps to `actions.idp.matchCriteria[0].propertyName` in the API. " +
+					"If not set, the API default is used and the value is stored in state.",
 			},
 			"should_fall_back_to_okta": {
 				Type:        schema.TypeBool,
@@ -339,11 +342,11 @@ func buildIdpDiscoveryRule(d *schema.ResourceData) *v6okta.IdpDiscoveryPolicyRul
 		idp.SetIdpSelectionType(selectionType)
 	}
 
-	shouldFallBack := d.Get("should_fall_back_to_okta").(bool)
-	idp.SetShouldFallBackToOkta(shouldFallBack)
+	// Always send shouldFallBackToOkta (API expects this field present, including false)
+	idp.SetShouldFallBackToOkta(d.Get("should_fall_back_to_okta").(bool))
 
 	if selectionType == "DYNAMIC" {
-		// DYNAMIC rules use matchCriteria for IdP selection; providers list is empty
+		// DYNAMIC rules use matchCriteria; API requires providers as an empty array
 		idp.SetProviders([]v6okta.IdpPolicyRuleActionProvider{})
 		if expr := d.Get("provider_expression").(string); expr != "" {
 			criteria := v6okta.NewIdpPolicyRuleActionMatchCriteria()
