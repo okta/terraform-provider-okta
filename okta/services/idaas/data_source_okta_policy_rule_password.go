@@ -140,7 +140,7 @@ func dataSourcePolicyRulePasswordRead(ctx context.Context, d *schema.ResourceDat
 
 	resp, httpResp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.GetPolicyRule(ctx, policyID, ruleID).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 			return diag.Errorf("password policy rule with id '%s' not found in policy '%s'", ruleID, policyID)
 		}
 		return diag.Errorf("failed to get password policy rule: %v", err)
