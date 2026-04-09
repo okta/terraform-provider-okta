@@ -950,10 +950,19 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 	})
 
 	var props []PropData
+	seenGoFields := make(map[string]bool) // Track seen GoField names to prevent duplicates
 	for _, p := range rawProps {
 		name := p.Name
 		tfAttr := formatter.TerraformAttrName(name)
 		goField := formatter.GoFieldName(name)
+
+		// Skip if we've already processed a field with this GoField name
+		if seenGoFields[goField] {
+			if g.log != nil {
+				g.log.Printf("  [schemaToProps]   SKIP %q (duplicate GoField %q)", name, goField)
+			}
+			continue
+		}
 
 		// Skip if would collide with ID
 		if tfAttr == "id" {
@@ -994,10 +1003,16 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 		case p.Schema.Type == "object" && len(p.Schema.Properties) > 0 && p.Schema.Ref == "" && depth < 10:
 			// Inline object with known sub-fields → recurse to build SingleNestedAttribute
 			nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-			tfSchemaType = "schema.SingleNestedAttribute"
-			goType = "*" + nestedModelName
-			nestedProps = g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
-			_ = nestedModelName // captured below via PropData
+			tempNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
+			if len(tempNestedProps) > 0 {
+				tfSchemaType = "schema.SingleNestedAttribute"
+				goType = "*" + nestedModelName
+				nestedProps = tempNestedProps
+			} else {
+				// No properties found - treat as opaque object
+				tfSchemaType = "schema.ObjectAttribute"
+				goType = "types.Object"
+			}
 
 		case p.Schema.Ref != "" && depth < 10:
 			// $ref to a named schema — resolve and expand as SingleNestedAttribute if it has properties.
@@ -1005,9 +1020,16 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			refProps := g.spec.GetProperties(resolvedRef)
 			if len(refProps) > 0 {
 				nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-				tfSchemaType = "schema.SingleNestedAttribute"
-				goType = "*" + nestedModelName
-				nestedProps = g.schemaToPropsDepth(&resolvedRef, allComputed, depth+1, nestedModelName)
+				tempNestedProps := g.schemaToPropsDepth(&resolvedRef, allComputed, depth+1, nestedModelName)
+				if len(tempNestedProps) > 0 {
+					tfSchemaType = "schema.SingleNestedAttribute"
+					goType = "*" + nestedModelName
+					nestedProps = tempNestedProps
+				} else {
+					// $ref exists but no properties - treat as opaque object
+					tfSchemaType = "schema.ObjectAttribute"
+					goType = "types.Object"
+				}
 			}
 
 		case p.Schema.Type == "" && p.Schema.Ref == "" && (len(p.Schema.AllOf) > 0 || len(p.Schema.OneOf) > 0) && depth < 10:
@@ -1016,9 +1038,16 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			composedProps := g.spec.GetProperties(p.Schema)
 			if len(composedProps) > 0 {
 				nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-				tfSchemaType = "schema.SingleNestedAttribute"
-				goType = "*" + nestedModelName
-				nestedProps = g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
+				tempNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
+				if len(tempNestedProps) > 0 {
+					tfSchemaType = "schema.SingleNestedAttribute"
+					goType = "*" + nestedModelName
+					nestedProps = tempNestedProps
+				} else {
+					// Composition exists but no properties - treat as opaque object
+					tfSchemaType = "schema.ObjectAttribute"
+					goType = "types.Object"
+				}
 			}
 		}
 
@@ -1049,6 +1078,7 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			schemaAttrBlock = renderSchemaAttr(pd, 3)
 			nestedStructDefs = renderNestedStructs(nestedProps, map[string]bool{nestedModelName: true})
 		}
+		seenGoFields[goField] = true // Mark this field as seen
 		props = append(props, PropData{
 			GoField:          goField,
 			GoType:           goType,
