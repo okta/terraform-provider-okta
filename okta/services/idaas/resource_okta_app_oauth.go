@@ -483,13 +483,6 @@ other arguments that changed will be applied.`,
 					},
 				},
 			},
-			"skip_authentication_policy": {
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Default:       false,
-				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
-				ConflictsWith: []string{"authentication_policy"},
-			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(1 * time.Hour),
