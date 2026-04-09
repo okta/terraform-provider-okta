@@ -1,8 +1,21 @@
 # Changelog
 
+## 6.9.0 (April 9, 2026)
+
+### ENHANCEMENTS
+* Added `skip_authentication_policy` field to `okta_app_bookmark`, `okta_app_oauth`, and `okta_app_saml` resources [#2428](https://github.com/okta/terraform-provider-okta/pull/2428) by [exitcode0](https://github.com/exitcode0)
+* Added dynamic IdP rules support to `okta_policy_rule_idp_discovery` resource [#2767](https://github.com/okta/terraform-provider-okta/pull/2767) by [pranav-okta](https://github.com/pranav-okta)
+
+### Bug Fixes
+* Fixed handling of unknown values in rule dynamic blocks [#2771](https://github.com/okta/terraform-provider-okta/pull/2771) by [mbampi](https://github.com/mbampi)
+
+
 ## 6.8.0 (April 7, 2026)
 ### FEATURES
 * New resource and data source `okta_session_violation_policy` and `okta_session_violation_policy_rule` [#2759](https://github.com/okta/terraform-provider-okta/pull/2759) by [pranav-okta](https://github.com/pranav-okta)
+* New resource `okta_group_owners` to manage multiple group owners [#2459](https://github.com/okta/terraform-provider-okta/pull/2459) by [exitcode0](https://github.com/exitcode0)
+* New data source `okta_oauth_authorization_server` [#2339](https://github.com/okta/terraform-provider-okta/pull/2339) by [exitcode0](https://github.com/exitcode0)
+* New resource and data source `okta_entity_risk_policy` and `okta_entity_risk_policy_rule` [#2749](https://github.com/okta/terraform-provider-okta/pull/2749) by [pranav-okta](https://github.com/pranav-okta)
 
 ### ENHANCEMENTS
 * Support for updating resource `okta_campaign` [#2760](https://github.com/okta/terraform-provider-okta/pull/2760) by [aditya-okta](https://github.com/aditya-okta)
