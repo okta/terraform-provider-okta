@@ -252,7 +252,7 @@ func (r *appSignOnPolicyRulesResource) ValidateConfig(ctx context.Context, req r
 		return
 	}
 	var rules []policyRuleModel
-	resp.Diagnostics.Append(data.Rules.ElementsAs(ctx, &rules, false)...)
+	resp.Diagnostics.Append(data.Rules.ElementsAs(ctx, &rules, true)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
