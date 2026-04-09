@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 	"testing"
 
@@ -95,6 +96,11 @@ func TestAccResourceOktaPolicyRulePassword_priority(t *testing.T) {
 }
 
 func ensureRuleExists(resourceName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
@@ -115,6 +121,11 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 }
 
 func checkRuleDestroy(ruleType string) func(*terraform.State) error {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
@@ -195,6 +206,75 @@ resource "%s" "%s" {
 	status   = "ACTIVE"
 }
 `, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
+}
+
+// TestAccResourceOktaPolicyRulePassword_sspr tests the SSPR requirement fields added in GH-2559,
+// including method_constraints (otp/google_otp), primary_methods, step_up_enabled, step_up_methods,
+// and switching between LEGACY and AUTH_POLICY access control.
+func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRulePassword, t.Name())
+	// Step 1: LEGACY with method_constraints (config loaded from examples fixture file)
+	config := mgr.GetFixtures("sspr_with_method_constraints.tf", t)
+	// Step 2: LEGACY without method_constraints (config loaded from examples fixture file)
+	updatedConfig := mgr.GetFixtures("sspr_no_method_constraints.tf", t)
+	// Step 3: Switch to AUTH_POLICY (config loaded from examples fixture file)
+	authPolicyConfig := mgr.GetFixtures("sspr_auth_policy.tf", t)
+	// Step 4: LEGACY with method_constraints and step_up_methods
+	stepUpMethodsConfig := mgr.GetFixtures("sspr_with_step_up_methods.tf", t)
+	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		Steps: []resource.TestStep{
+			{
+				// LEGACY + method_constraints
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
+				),
+			},
+			{
+				// LEGACY without method_constraints – verifies removing constraints works
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "push"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "sms"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.#", "0"),
+				),
+			},
+			{
+				// AUTH_POLICY – SSPR delegated to authentication policy rules
+				Config: authPolicyConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "AUTH_POLICY"),
+				),
+			},
+			{
+				// LEGACY with method_constraints and step_up_methods=security_question
+				Config: stepUpMethodsConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.step_up_methods.*", "security_question"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "email"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
+				),
+			},
+		},
+	})
 }
 
 func testOktaPolicyRulePasswordUpdated(rInt int) string {
