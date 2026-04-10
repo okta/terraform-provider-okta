@@ -1,31 +1,35 @@
 # This GitHub action can publish assets for release when a tag is created.
 # Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
 #
-# This uses an action (hashicorp/ghaction-import-gpg) that assumes you set your
-# private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
-# secret. If you would rather own your own GPG handling, please fork this action
-# or use an alternative one for key handling.
-#
-# You will need to pass the `--batch` flag to `gpg` in your signing step
-# in `goreleaser` to indicate this is being used in a non-interactive mode.
+# It uses HashiCorp's official reusable workflow for community Terraform providers
+# to handle GPG signing and GoReleaser execution.
 #
 name: release
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to release (e.g., v6.7.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
 jobs:
-  goreleaser:
+  smoke-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Unshallow
-        run: git fetch --prune --unshallow
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version-file: "go.mod"
           cache: true
@@ -34,21 +38,13 @@ jobs:
         run: time make smoke-test-play-vcr-acc
         timeout-minutes: 30
 
-      - name: Import GPG key
-        id: import_gpg
-        uses:
-          crazy-max/ghaction-import-gpg@v7
-          # These secrets will need to be configured for the repository:
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v7.0.0
-        with:
-          version: "v2.12.7"
-          args: release --clean --parallelism 2
-        env:
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
-          # GitHub sets this automatically
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  goreleaser:
+    needs: [smoke-test]
+    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/community.yml@5f388ae147bcc1e1c34822571b2f2de40694c5d6 # v5.0.0
+    with:
+      setup-go-version-file: "go.mod"
+      goreleaser-release-args: "--parallelism 2"
+      git-ref: ${{ inputs.tag || github.ref }}
+    secrets:
+      gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      gpg-private-key-passphrase: ${{ secrets.PASSPHRASE }}
