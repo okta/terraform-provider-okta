@@ -103,6 +103,78 @@ func TestAccRequestConditionResource_Status(t *testing.T) {
 	})
 }
 
+// TestAccRequestConditionResource_Priority verifies that creating two conditions
+// with explicit priorities does not cause "inconsistent result after apply" errors
+// when the API silently reassigns priorities. It also swaps priorities in a second
+// step to exercise the Update path.
+func TestAccRequestConditionResource_Priority(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_updated.tf", t)
+	firstName := fmt.Sprintf("%s.priority_first", resources.OktaGovernanceRequestCondition)
+	secondName := fmt.Sprintf("%s.priority_second", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstName, "name", "priority-first"),
+					resource.TestCheckResourceAttr(firstName, "priority", "1"),
+					resource.TestCheckResourceAttr(secondName, "name", "priority-second"),
+					resource.TestCheckResourceAttr(secondName, "priority", "2"),
+				),
+			},
+			{
+				Config:             mgr.ConfigReplace(updatedConfig),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstName, "name", "priority-first"),
+					resource.TestCheckResourceAttr(firstName, "priority", "2"),
+					resource.TestCheckResourceAttr(secondName, "name", "priority-second"),
+					resource.TestCheckResourceAttr(secondName, "priority", "1"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccRequestConditionResource_PriorityNonSequential verifies that creating
+// a condition with a non-sequential priority (e.g., 100 when only 2 conditions
+// exist) does not cause "inconsistent result after apply" errors. This hits the
+// Create code path directly — the API is likely to normalize the priority down
+// to the actual position, which is the most common trigger for the bug.
+func TestAccRequestConditionResource_PriorityNonSequential(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority_non_sequential.tf", t)
+	firstName := fmt.Sprintf("%s.priority_first", resources.OktaGovernanceRequestCondition)
+	secondName := fmt.Sprintf("%s.priority_second", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config:             config,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(firstName, "name", "priority-first"),
+					resource.TestCheckResourceAttr(firstName, "priority", "1"),
+					resource.TestCheckResourceAttr(secondName, "name", "priority-second"),
+					resource.TestCheckResourceAttr(secondName, "priority", "100"),
+				),
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode
