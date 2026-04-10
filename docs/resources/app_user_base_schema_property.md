@@ -33,7 +33,7 @@ resource "okta_app_user_base_schema_property" "example" {
 ### Optional
 
 - `master` (String) Master priority for the user schema property. It can be set to `PROFILE_MASTER` or `OKTA`. Default: `PROFILE_MASTER`
-- `pattern` (String) The validation pattern to use for the subschema. Must be in form of '.+', or '[<pattern>]+' if present.'
+- `pattern` (String) The validation pattern to use for the subschema. Must be in form of `.+`, or `[<pattern>]+` if present.
 - `permissions` (String) Access control permissions for the property. It can be set to `READ_WRITE`, `READ_ONLY`, `HIDE`. Default: `READ_ONLY`
 - `required` (Boolean) Whether the subschema is required
 - `user_type` (String) User type ID. By default, it is `default`
