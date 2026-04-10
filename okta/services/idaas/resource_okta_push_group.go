@@ -34,6 +34,14 @@ type pushGroupResourceModel struct {
 	AppConfig                  types.Object `tfsdk:"app_config"`
 }
 
+var appConfigAttrTypes = map[string]attr.Type{
+	"type":               types.StringType,
+	"distinguished_name": types.StringType,
+	"group_scope":        types.StringType,
+	"group_type":         types.StringType,
+	"sam_account_name":   types.StringType,
+}
+
 type pushGroupResource struct {
 	config *config.Config
 }
@@ -107,16 +115,11 @@ func (r *pushGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Default:     booldefault.StaticBool(true),
 			},
 			"app_config": schema.ObjectAttribute{
-				Required:    false,
-				Optional:    true,
-				Computed:    false,
-				Description: "Additional app configuration for group push mappings. Currently only required for Active Directory.",
-				AttributeTypes: map[string]attr.Type{
-					"distinguished_name": types.StringType,
-					"group_scope":        types.StringType,
-					"group_type":         types.StringType,
-					"sam_account_name":   types.StringType,
-				},
+				Required:       false,
+				Optional:       true,
+				Computed:       false,
+				Description:    "Additional app configuration for group push mappings. Currently only required for Active Directory.",
+				AttributeTypes: appConfigAttrTypes,
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.UseStateForUnknown(),
 					objectplanmodifier.RequiresReplace(),
@@ -139,27 +142,33 @@ func (r *pushGroupResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	var appConfig *v6okta.AppConfig
-	appConfigAttrs := map[string]any{}
-	for k, v := range data.AppConfig.Attributes() {
-		value, err := v.ToTerraformValue(ctx)
-		if err != nil {
-			resp.Diagnostics.AddError(fmt.Sprintf("Error converting app config attribute %s to terraform value", k), err.Error())
-			return
-		}
-		if value.IsNull() {
-			continue
-		}
+	if !data.AppConfig.IsNull() && !data.AppConfig.IsUnknown() {
+		appConfigAttrs := map[string]any{}
+		var appConfigType *string
+		for k, v := range data.AppConfig.Attributes() {
+			value, err := v.ToTerraformValue(ctx)
+			if err != nil {
+				resp.Diagnostics.AddError(fmt.Sprintf("Error converting app config attribute %s to terraform value", k), err.Error())
+				return
+			}
+			if value.IsNull() {
+				continue
+			}
 
-		var val string
-		if err = value.As(&val); err != nil {
-			resp.Diagnostics.AddError(fmt.Sprintf("Error converting app config attribute %s to string", k), err.Error())
-			return
-		}
+			var val string
+			if err = value.As(&val); err != nil {
+				resp.Diagnostics.AddError(fmt.Sprintf("Error converting app config attribute %s to string", k), err.Error())
+				return
+			}
 
-		appConfigAttrs[utils.UnderscoreToCamelCase(k)] = val
-	}
-	if len(appConfigAttrs) > 0 {
+			if k == "type" {
+				appConfigType = &val
+			} else {
+				appConfigAttrs[utils.UnderscoreToCamelCase(k)] = val
+			}
+		}
 		appConfig = &v6okta.AppConfig{
+			Type:                 appConfigType,
 			AdditionalProperties: appConfigAttrs,
 		}
 	}
@@ -337,5 +346,37 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 	state.SourceGroupId = types.StringPointerValue(groupPushMapping.SourceGroupId)
 	state.TargetGroupId = types.StringPointerValue(groupPushMapping.TargetGroupId)
 	state.Status = types.StringPointerValue(groupPushMapping.Status)
+
+	// Preserve app_config in state from the API response
+	if groupPushMapping.HasAppConfig() {
+		apiAppConfig := groupPushMapping.GetAppConfig()
+		appConfigAttrs := map[string]attr.Value{
+			"type":               types.StringNull(),
+			"distinguished_name": types.StringNull(),
+			"group_scope":        types.StringNull(),
+			"group_type":         types.StringNull(),
+			"sam_account_name":   types.StringNull(),
+		}
+
+		if apiAppConfig.HasType() {
+			appConfigAttrs["type"] = types.StringValue(apiAppConfig.GetType())
+		}
+
+		// Map camelCase additional properties back to underscore attributes
+		for camelKey, val := range apiAppConfig.AdditionalProperties {
+			underscoreKey := utils.CamelCaseToUnderscore(camelKey)
+			if _, exists := appConfigAttrs[underscoreKey]; !exists {
+				continue
+			}
+			if strVal, ok := val.(string); ok {
+				appConfigAttrs[underscoreKey] = types.StringValue(strVal)
+			}
+		}
+
+		appConfigObj, objDiags := types.ObjectValue(appConfigAttrTypes, appConfigAttrs)
+		diags.Append(objDiags...)
+		state.AppConfig = appConfigObj
+	}
+
 	return diags
 }
