@@ -200,22 +200,24 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	idaasTestClient := NewVcrIDaaSClient(d)
 	cfg.SetIdaasAPIClient(idaasTestClient)
 
-	idaaSRec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
-	if err != nil {
-		return nil, diag.FromErr(err)
-	}
-	idaaSRt := http.RoundTripper(idaaSRec)
-	idaasTestClient.SetTransport(idaaSRt)
-
 	governanceTestClient := NewVcrGovernanceClient(d)
 	cfg.SetGovernanceAPIClient(governanceTestClient)
 
-	governanceRec, err := newVCRRecorder(mgr, governanceTestClient.Transport())
+	// Use a single VCR recorder for both clients so that all API
+	// interactions (idaas + governance) are captured in one cassette.
+	// A routingTransport dispatches to the correct real transport
+	// based on the request URL path during recording.
+	router := &routingTransport{
+		idaas:      idaasTestClient.Transport(),
+		governance: governanceTestClient.Transport(),
+	}
+	rec, err := newVCRRecorder(mgr, router)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	governanceRt := http.RoundTripper(governanceRec)
-	governanceTestClient.SetTransport(governanceRt)
+	sharedRt := http.RoundTripper(rec)
+	idaasTestClient.SetTransport(sharedRt)
+	governanceTestClient.SetTransport(sharedRt)
 
 	providerConfigsLock.Lock()
 	providerConfigs[mgr.TestAndCassetteNameKey()] = cfg
@@ -246,20 +248,13 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 	if ok {
 		// don't record failing test runs (unless explicitly allowed for error response testing)
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
-			// If a test succeeds, write new seed/yaml to files
-			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
-				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
-				rt := rtIDaasHelper.Transport()
-				err := rt.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
-				}
-			} else {
-				rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
-				rtGovernance := rtGovernanceHelper.Transport()
-				err := rtGovernance.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
+			// Both clients share the same recorder, so we can stop
+			// it via either client's transport.
+			if helper, ok := config.OktaIDaaSClient.(HttpClientHelper); ok {
+				if rec, ok := helper.Transport().(*recorder.Recorder); ok {
+					if err := rec.Stop(); err != nil {
+						t.Error(err)
+					}
 				}
 			}
 			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
@@ -661,6 +656,21 @@ var (
 	_ api.OktaGovernanceClient = &vcrGovernanceTestClient{}
 	_ HttpClientHelper         = &vcrGovernanceTestClient{}
 )
+
+// routingTransport dispatches HTTP requests to the correct real transport
+// based on the URL path. This allows a single VCR recorder to capture both
+// idaas and governance API interactions in one cassette.
+type routingTransport struct {
+	idaas      http.RoundTripper
+	governance http.RoundTripper
+}
+
+func (rt *routingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	if strings.HasPrefix(req.URL.Path, "/governance/") {
+		return rt.governance.RoundTrip(req)
+	}
+	return rt.idaas.RoundTrip(req)
+}
 
 type HttpClientHelper interface {
 	Transport() http.RoundTripper
