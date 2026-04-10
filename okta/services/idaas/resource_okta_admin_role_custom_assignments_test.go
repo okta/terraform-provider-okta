@@ -17,7 +17,7 @@ func TestAccResourceOktaAdminRoleCustomAssignments_crud(t *testing.T) {
 	config := mgr.GetFixtures("basic.tf", t)
 	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAdminRoleCustomAssignments)
-	acctest.OktaResourceTest(
+	acctest.OktaResourceTestSerial(
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
