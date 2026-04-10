@@ -131,10 +131,10 @@ func (r *realmAssignmentResource) Create(ctx context.Context, req resource.Creat
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
 		if ioErr != nil {
-			resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+			resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 			return
 		}
-		resp.Diagnostics.AddError("failed to create realm assignment:"+err.Error(), string(body))
+		resp.Diagnostics.AddError("failed to create realm assignment:"+utils.ErrorDetail_V5(err), string(body))
 		return
 	}
 
@@ -144,10 +144,10 @@ func (r *realmAssignmentResource) Create(ctx context.Context, req resource.Creat
 			body, ioErr := io.ReadAll(response.Body)
 			defer response.Body.Close()
 			if ioErr != nil {
-				resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+				resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 				return
 			}
-			resp.Diagnostics.AddError("failed to activate realm assignment:"+err.Error(), string(body))
+			resp.Diagnostics.AddError("failed to activate realm assignment:"+utils.ErrorDetail_V5(err), string(body))
 			return
 		}
 		realmAssignment.Status = utils.StringPtr("ACTIVE")
@@ -173,7 +173,7 @@ func (r *realmAssignmentResource) Read(ctx context.Context, req resource.ReadReq
 
 	realmAssignment, _, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAssignmentAPI.GetRealmAssignment(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError(fmt.Sprintf("Error getting realm assignment with id: %v", state.ID.ValueString()), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("Error getting realm assignment with id: %v", state.ID.ValueString()), utils.ErrorDetail_V5(err))
 		return
 	}
 
@@ -205,10 +205,10 @@ func (r *realmAssignmentResource) Update(ctx context.Context, req resource.Updat
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
 		if ioErr != nil {
-			resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+			resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 			return
 		}
-		resp.Diagnostics.AddError("failed to deactivate realm assignment before updating:"+err.Error(), string(body))
+		resp.Diagnostics.AddError("failed to deactivate realm assignment before updating:"+utils.ErrorDetail_V5(err), string(body))
 		return
 	}
 
@@ -234,10 +234,10 @@ func (r *realmAssignmentResource) Update(ctx context.Context, req resource.Updat
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
 		if ioErr != nil {
-			resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+			resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 			return
 		}
-		resp.Diagnostics.AddError("failed to update realm assignment:"+err.Error(), string(body))
+		resp.Diagnostics.AddError("failed to update realm assignment:"+utils.ErrorDetail_V5(err), string(body))
 
 		return
 	}
@@ -248,10 +248,10 @@ func (r *realmAssignmentResource) Update(ctx context.Context, req resource.Updat
 			body, ioErr := io.ReadAll(response.Body)
 			defer response.Body.Close()
 			if ioErr != nil {
-				resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+				resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 				return
 			}
-			resp.Diagnostics.AddError("failed to activate realm assignment:"+err.Error(), string(body))
+			resp.Diagnostics.AddError("failed to activate realm assignment:"+utils.ErrorDetail_V5(err), string(body))
 			return
 		}
 		realmAssignment.Status = utils.StringPtr("ACTIVE")
@@ -280,10 +280,10 @@ func (r *realmAssignmentResource) Delete(ctx context.Context, req resource.Delet
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
 		if ioErr != nil {
-			resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+			resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 			return
 		}
-		resp.Diagnostics.AddError("failed to deactivate realm assignment before deletion:"+err.Error(), string(body))
+		resp.Diagnostics.AddError("failed to deactivate realm assignment before deletion:"+utils.ErrorDetail_V5(err), string(body))
 		return
 	}
 
@@ -292,10 +292,10 @@ func (r *realmAssignmentResource) Delete(ctx context.Context, req resource.Delet
 		body, ioErr := io.ReadAll(response.Body)
 		defer response.Body.Close()
 		if ioErr != nil {
-			resp.Diagnostics.AddError(err.Error(), "failed to read response body")
+			resp.Diagnostics.AddError(utils.ErrorDetail_V5(err), "failed to read response body")
 			return
 		}
-		resp.Diagnostics.AddError("failed to delete realm assignment:"+err.Error(), string(body))
+		resp.Diagnostics.AddError("failed to delete realm assignment:"+utils.ErrorDetail_V5(err), string(body))
 		return
 	}
 }

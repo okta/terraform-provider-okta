@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 type pushGroupDataSourceModel struct {
@@ -93,14 +94,14 @@ func (r *pushGroupDataSource) Read(ctx context.Context, req datasource.ReadReque
 	if state.ID.ValueString() != "" {
 		groupPushMapping, _, err = r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
 		if err != nil {
-			resp.Diagnostics.AddError("failed to read push group mapping: ", err.Error())
+			resp.Diagnostics.AddError("failed to read push group mapping: ", utils.ErrorDetail_V6(err))
 			return
 		}
 	} else {
 		err := retry.RetryContext(ctx, 3*time.Second, func() *retry.RetryError {
 			groupPushMappings, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.ListGroupPushMappings(ctx, state.AppId.ValueString()).SourceGroupId(state.SourceGroupId.ValueString()).Execute()
 			if err != nil {
-				resp.Diagnostics.AddError("failed to list push group mappings: ", err.Error())
+				resp.Diagnostics.AddError("failed to list push group mappings: ", utils.ErrorDetail_V6(err))
 				return retry.NonRetryableError(err)
 			}
 			if len(groupPushMappings) == 0 {

@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -182,7 +183,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -209,7 +210,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -236,7 +237,7 @@ func (r *policyDeviceAssuranceAndroidResource) Delete(ctx context.Context, req r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}
@@ -262,7 +263,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",
-			err.Error(),
+			utils.ErrorDetail_V4(err),
 		)
 		return
 	}

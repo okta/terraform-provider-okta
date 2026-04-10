@@ -16,6 +16,7 @@ import (
 
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 type realmModel struct {
@@ -88,7 +89,7 @@ func (r *realmResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	responseRealm, _, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.CreateRealm(ctx).Body(*createRealmRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating Okta realm ", err.Error())
+		resp.Diagnostics.AddError("Error creating Okta realm ", utils.ErrorDetail_V5(err))
 		return
 	}
 	responseRealm.Profile.SetRealmType(data.RealmType.String()) // realm type isn't returned as part of the response, we need to set it manually.
@@ -113,7 +114,7 @@ func (r *realmResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	realm, _, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.GetRealm(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading Okta realm ", err.Error())
+		resp.Diagnostics.AddError("Error reading Okta realm ", utils.ErrorDetail_V5(err))
 		return
 	}
 
@@ -146,7 +147,7 @@ func (r *realmResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	realm, _, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.ReplaceRealm(ctx, state.ID.ValueString()).Body(*updateRealmRequest).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to update realm: ", err.Error())
+		resp.Diagnostics.AddError("failed to update realm: ", utils.ErrorDetail_V5(err))
 		return
 	}
 	realm.Profile.SetRealmType(state.RealmType.String()) // realm type isn't returned as part of the response, we need to set it manually.
@@ -172,7 +173,7 @@ func (r *realmResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 
 	_, err := r.config.OktaIDaaSClient.OktaSDKClientV5().RealmAPI.DeleteRealm(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to delete realm: ", err.Error())
+		resp.Diagnostics.AddError("failed to delete realm: ", utils.ErrorDetail_V5(err))
 		return
 	}
 }

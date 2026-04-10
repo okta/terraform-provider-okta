@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 
 	fwdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -174,7 +175,7 @@ func (r *postAuthSessionPolicyRuleResource) Update(ctx context.Context, req reso
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update post auth session policy rule",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
@@ -186,7 +187,7 @@ func (r *postAuthSessionPolicyRuleResource) Update(ctx context.Context, req reso
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to activate post auth session policy rule",
-					err.Error(),
+					utils.ErrorDetail_V6(err),
 				)
 				return
 			}
@@ -195,7 +196,7 @@ func (r *postAuthSessionPolicyRuleResource) Update(ctx context.Context, req reso
 			if err != nil {
 				resp.Diagnostics.AddError(
 					"failed to deactivate post auth session policy rule",
-					err.Error(),
+					utils.ErrorDetail_V6(err),
 				)
 				return
 			}
@@ -253,7 +254,7 @@ func (r *postAuthSessionPolicyRuleResource) readPostAuthSessionPolicyRule(ctx co
 	if err != nil {
 		diags.AddError(
 			"failed to get post auth session policy rule",
-			err.Error(),
+			utils.ErrorDetail_V6(err),
 		)
 		return
 	}
