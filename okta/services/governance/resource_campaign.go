@@ -1075,9 +1075,9 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 	ExcludedResources := make([]governance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
 	for _, ex := range d.ResourceSettings.ExcludedResources {
 		x := ex.ResourceId.ValueString()
-		var resourceType *governance.ResourceType
+		var resourceType *governance.ResourceTypeExclude
 		if !ex.ResourceType.IsNull() && ex.ResourceType.ValueString() != "" {
-			rt := governance.ResourceType(ex.ResourceType.ValueString())
+			rt := governance.ResourceTypeExclude(ex.ResourceType.ValueString())
 			resourceType = &rt
 		}
 		excludedRes := governance.ResourceSettingsMutableExcludedResourcesInner{
