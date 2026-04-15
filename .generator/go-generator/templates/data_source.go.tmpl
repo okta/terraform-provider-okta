@@ -34,15 +34,7 @@ type {{.Name}}DataSourceModel struct {
 	{{.GoField}} {{.GoType}} `tfsdk:"{{.TFAttr}}"`
 {{- end}}
 }
-{{range .Properties}}{{if .NestedModelName}}
-// {{.NestedModelName}} is the nested model for {{.TFAttr}}.
-type {{.NestedModelName}} struct {
-{{- range .NestedProps}}
-	{{.GoField}} {{.GoType}} `tfsdk:"{{.TFAttr}}"`
-{{- end}}
-}
-{{.NestedStructDefs}}{{end}}{{end}}
-
+{{.AllNestedStructDefs}}
 func New{{.TitleName}}DataSource() datasource.DataSource {
 	return &{{.Name}}DataSource{}
 }

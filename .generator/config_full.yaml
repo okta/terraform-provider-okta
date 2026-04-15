@@ -430,6 +430,19 @@ datasources:
       method: get
       path: /api/v1/identity-sources/{identitySourceId}/groups/{groupId}
 
+  identity_source_sessions:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+    plural:
+      method: get
+      path: /api/v1/identity-sources/{identitySourceId}/sessions
+    singular:
+      method: get
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}
+
   user_authenticator_enrollments:
     api_tag: UserFactor
     parent_params:
@@ -1361,13 +1374,146 @@ resources:
       path: /api/v1/identity-sources/{identitySourceId}/groups
     read:
       method: get
-      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupId}
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}
     update:
       method: put
-      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupId}
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}
     delete:
       method: delete
-      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupId}
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}
+
+  identity_source_group_membership:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: group_or_external_id
+        description: "External ID of the identity source group"
+        path_param: "{groupOrExternalId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}/membership
+    read:
+      method: get
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}/membership
+    delete:
+      method: delete
+      path: /api/v1/identity-sources/{identitySourceId}/groups/{groupOrExternalId}/membership/{memberExternalId}
+    create_id_field: member_external_id
+    read_list_id_field: member_external_ids
+
+  identity_source_session:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions
+    read:
+      method: get
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}
+    delete:
+      method: delete
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}
+
+  identity_source_bulk_delete:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-delete
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
+
+  identity_source_bulk_group_memberships_delete:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-group-memberships-delete
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
+
+  identity_source_bulk_group_memberships_upsert:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-group-memberships-upsert
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
+
+  identity_source_bulk_groups_delete:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-groups-delete
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
+
+  identity_source_bulk_groups_upsert:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-groups-upsert
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
+
+  identity_source_bulk_upsert:
+    api_tag: IdentitySource
+    parent_params:
+      - name: identity_source_id
+        description: "ID of the identity source"
+        path_param: "{identitySourceId}"
+      - name: session_id
+        description: "ID of the identity source session"
+        path_param: "{sessionId}"
+    create:
+      method: post
+      path: /api/v1/identity-sources/{identitySourceId}/sessions/{sessionId}/bulk-upsert
+    read_noop: true
+    delete_noop: true
+    create_id_field: session_id
 
   user_authenticator_enrollment:
     api_tag: UserAuthenticatorEnrollments

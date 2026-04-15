@@ -5,6 +5,9 @@ import (
 	"context"
 	"net/http"
 	"time"
+{{- if .HasParent}}
+	"strings"
+{{- end}}
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -41,21 +44,13 @@ type {{.Name}}Model struct {
 	{{.GoField}} types.String `tfsdk:"{{.TFAttr}}"`
 {{- end}}
 {{- if .IsVariant}}
-	{{.DiscriminatorField | title}} types.String `tfsdk:"{{.DiscriminatorField}}"`
+	{{.DiscriminatorField | title}} types.String `tfsdk:"{{.DiscriminatorTFAttr}}"`
 {{- end}}
 {{- range .Properties}}
 	{{.GoField}} {{.GoType}} `tfsdk:"{{.TFAttr}}"`
 {{- end}}
 }
-{{range .Properties}}{{if .NestedModelName}}
-// {{.NestedModelName}} is the nested model for {{.TFAttr}}.
-type {{.NestedModelName}} struct {
-{{- range .NestedProps}}
-	{{.GoField}} {{.GoType}} `tfsdk:"{{.TFAttr}}"`
-{{- end}}
-}
-{{.NestedStructDefs}}{{end}}{{end}}
-
+{{.AllNestedStructDefs}}
 func New{{.TitleName}}Resource() resource.Resource {
 	return &{{.Name}}Resource{}
 }
@@ -100,7 +95,7 @@ func (r *{{.Name}}Resource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 {{- end}}
 {{- if .IsVariant}}
-			"{{.DiscriminatorField}}": schema.StringAttribute{
+			"{{.DiscriminatorTFAttr}}": schema.StringAttribute{
 				Description: "Discriminator field identifying the variant type. Must be set to \"{{.DiscriminatorValue}}\".",
 				Required:    true,
 				PlanModifiers: []planmodifier.String{
@@ -117,7 +112,7 @@ func (r *{{.Name}}Resource) Schema(_ context.Context, _ resource.SchemaRequest, 
 {{- end}}
 {{- if .Required}}
 				Required: true,
-{{- else}}
+{{- else if not .Computed}}
 				Optional: true,
 {{- end}}
 {{- if .Computed}}
@@ -131,7 +126,23 @@ func (r *{{.Name}}Resource) Schema(_ context.Context, _ resource.SchemaRequest, 
 }
 
 func (r *{{.Name}}Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+{{- if .HasParent}}
+	// Import ID format: {{range .ParentParams}}{{printf "{%s}" .TFAttr}}/{{end}}{id}
+	parts := strings.SplitN(req.ID, "/", {{add (len .ParentParams) 1}})
+	if len(parts) != {{add (len .ParentParams) 1}}{{range .ParentParams}} || parts[0] == ""{{end}} || parts[{{len .ParentParams}}] == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Import ID must be in the format: {{range .ParentParams}}{{printf "{%s}" .TFAttr}}/{{end}}{id}",
+		)
+		return
+	}
+{{range $i, $p := .ParentParams}}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("{{$p.TFAttr}}"), parts[{{$i}}])...)
+{{- end}}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[{{len .ParentParams}}])...)
+{{- else}}
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+{{- end}}
 }
 
 func (r *{{.Name}}Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -147,11 +158,39 @@ func (r *{{.Name}}Resource) Read(ctx context.Context, req resource.ReadRequest, 
 {{- end}}
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+{{- if .ReadListIDField}}
+	// Read via list — search for the ID in the {{.ReadListIDField}} array.
 {{- if .HasParent}}
+	result, httpResp, err := client.{{.APITag}}API.{{.ReadMethod}}(ctx{{range .ParentParams}}, {{.TFAttr}}{{end}}).Execute()
+{{- else}}
+	result, httpResp, err := client.{{.APITag}}API.{{.ReadMethod}}(ctx).Execute()
+{{- end}}
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error reading {{.TFName}}", err.Error())
+		return
+	}
+	// Search the list for our ID — if not found the resource has been deleted externally.
+	found := false
+	for _, item := range result.Get{{.ReadListIDField}}() {
+		if item == id {
+			found = true
+			break
+		}
+	}
+	if !found {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+{{- else if .HasParent}}
 	result, httpResp, err := client.{{.APITag}}API.{{.ReadMethod}}(ctx, {{range .ParentParams}}{{.TFAttr}}, {{end}}id).Execute()
 {{- else}}
 	result, httpResp, err := client.{{.APITag}}API.{{.ReadMethod}}(ctx, id).Execute()
 {{- end}}
+{{- if not .ReadListIDField}}
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
@@ -205,6 +244,7 @@ func (r *{{.Name}}Resource) Read(ctx context.Context, req resource.ReadRequest, 
 {{- end}}
 	state.ID = types.StringValue(result.Get{{.IDField}}())
 {{- end}}
+{{- end}}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -234,6 +274,27 @@ func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateReque
 	body.Set{{.GoField}}(plan.{{.GoField}}.ValueInt64())
 {{- else if eq .GoType "types.Bool"}}
 	body.Set{{.GoField}}(plan.{{.GoField}}.ValueBool())
+{{- else if .SDKNestedTypeName}}
+	if plan.{{.GoField}} != nil {
+		nested{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()
+		{{- $parent := .}}
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueString())
+		}
+{{- else if eq .GoType "types.Int64"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueInt64())
+		}
+{{- else if eq .GoType "types.Bool"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueBool())
+		}
+{{- end}}
+{{- end}}
+		body.Set{{.GoField}}(*nested{{.GoField}})
+	}
 {{- end}}
 {{- end}}
 {{- if and .IsVariant .UnionTypeName}}
@@ -243,6 +304,15 @@ func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateReque
 {{- end}}
 {{- end}}
 
+{{- if .CreateIDField}}
+	_, err := createReq.Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error creating {{.TFName}}", err.Error())
+		return
+	}
+	// Create returns no body (204); set ID from the plan field.
+	plan.ID = plan.{{.CreateIDField}}
+{{- else}}
 	result, _, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating {{.TFName}}", err.Error())
@@ -297,6 +367,7 @@ func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateReque
 {{- end}}
 {{- end}}
 {{- end}}
+{{- end}}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 {{- else}}
@@ -338,6 +409,27 @@ func (r *{{.Name}}Resource) Update(ctx context.Context, req resource.UpdateReque
 	updateBody.Set{{.GoField}}(plan.{{.GoField}}.ValueInt64())
 {{- else if eq .GoType "types.Bool"}}
 	updateBody.Set{{.GoField}}(plan.{{.GoField}}.ValueBool())
+{{- else if .SDKNestedTypeName}}
+	if plan.{{.GoField}} != nil {
+		nested{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()
+		{{- $parent := .}}
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueString())
+		}
+{{- else if eq .GoType "types.Int64"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueInt64())
+		}
+{{- else if eq .GoType "types.Bool"}}
+		if !plan.{{$parent.GoField}}.{{.GoField}}.IsNull() && !plan.{{$parent.GoField}}.{{.GoField}}.IsUnknown() {
+			nested{{$parent.GoField}}.Set{{.GoField}}(plan.{{$parent.GoField}}.{{.GoField}}.ValueBool())
+		}
+{{- end}}
+{{- end}}
+		updateBody.Set{{.GoField}}(*nested{{.GoField}})
+	}
 {{- end}}
 {{- end}}
 {{- if and .IsVariant .UnionTypeName}}
@@ -361,43 +453,46 @@ func (r *{{.Name}}Resource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	// Map computed fields from response back to plan (scalar types only)
+	// Map API response fields to state (scalar types only)
+	state.ID = types.StringValue(updateVariantObj.Get{{.IDField}}())
 {{- range .Properties}}
-{{- if .Computed}}
+{{- if not .WriteOnly}}
 {{- if eq .GoType "types.String"}}
 {{- if .IsDateTime}}
-	plan.{{.GoField}} = types.StringValue(updateVariantObj.Get{{.GoField}}().Format(time.RFC3339))
+	state.{{.GoField}} = types.StringValue(updateVariantObj.Get{{.GoField}}().Format(time.RFC3339))
 {{- else}}
-	plan.{{.GoField}} = types.StringValue(updateVariantObj.Get{{.GoField}}())
+	state.{{.GoField}} = types.StringValue(updateVariantObj.Get{{.GoField}}())
 {{- end}}
 {{- else if eq .GoType "types.Int64"}}
-	plan.{{.GoField}} = types.Int64Value(updateVariantObj.Get{{.GoField}}())
+	state.{{.GoField}} = types.Int64Value(updateVariantObj.Get{{.GoField}}())
 {{- else if eq .GoType "types.Bool"}}
-	plan.{{.GoField}} = types.BoolValue(updateVariantObj.Get{{.GoField}}())
+	state.{{.GoField}} = types.BoolValue(updateVariantObj.Get{{.GoField}}())
 {{- end}}
 {{- end}}
 {{- end}}
 {{- else}}
-	// Map computed fields from response back to plan (scalar types only)
+	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.ID = types.StringValue(result.Get{{.IDField}}())
 {{- range .Properties}}
-{{- if .Computed}}
+{{- if not .WriteOnly}}
 {{- if eq .GoType "types.String"}}
 {{- if .IsDateTime}}
-	plan.{{.GoField}} = types.StringValue(result.Get{{.GoField}}().Format(time.RFC3339))
+	state.{{.GoField}} = types.StringValue(result.Get{{.GoField}}().Format(time.RFC3339))
 {{- else}}
-	plan.{{.GoField}} = types.StringValue(result.Get{{.GoField}}())
+	state.{{.GoField}} = types.StringValue(result.Get{{.GoField}}())
 {{- end}}
 {{- else if eq .GoType "types.Int64"}}
-	plan.{{.GoField}} = types.Int64Value(result.Get{{.GoField}}())
+	state.{{.GoField}} = types.Int64Value(result.Get{{.GoField}}())
 {{- else if eq .GoType "types.Bool"}}
-	plan.{{.GoField}} = types.BoolValue(result.Get{{.GoField}}())
+	state.{{.GoField}} = types.BoolValue(result.Get{{.GoField}}())
+{{- else if .SDKNestedTypeName}}
+	state.{{.GoField}} = plan.{{.GoField}}
 {{- end}}
 {{- end}}
 {{- end}}
 {{- end}}
 
-	plan.ID = state.ID
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 {{- else}}
 	resp.Diagnostics.AddWarning(
 		"Update Not Supported",

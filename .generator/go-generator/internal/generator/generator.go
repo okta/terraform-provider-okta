@@ -19,11 +19,14 @@ import (
 
 // TemplateData is the data passed to all Go templates
 type TemplateData struct {
-	Name       string // lowerCamel, e.g. "group"
-	TitleName  string // TitleCase, e.g. "Group"
-	TFName     string // snake_case terraform name, e.g. "group"
-	APITag     string // e.g. "Group"
-	Properties []PropData
+	Name      string // lowerCamel, e.g. "group"
+	TitleName string // TitleCase, e.g. "Group"
+	TFName    string // snake_case terraform name, e.g. "group"
+	APITag    string // e.g. "Group"
+	// AllNestedStructDefs contains all nested Go struct type definitions for the resource,
+	// computed in one pass with a shared dedup map to prevent redeclarations.
+	AllNestedStructDefs string
+	Properties          []PropData
 	// RequestBodyFields is the subset of Properties that are settable (non-computed, non-id).
 	// Used to generate the request body construction in Create/Update.
 	RequestBodyFields []PropData
@@ -64,7 +67,8 @@ type TemplateData struct {
 	// Falls back to RequestBodyFields when Update has no distinct schema.
 	UpdateRequestBodyFields []PropData
 	// Discriminator fields — set when this is one variant of a polymorphic (oneOf) resource
-	DiscriminatorField     string // e.g. "signOnMode", "type"
+	DiscriminatorField     string // e.g. "signOnMode", "type" (raw spec name)
+	DiscriminatorTFAttr    string // e.g. "sign_on_mode", "type" (snake_case for tfsdk tags)
 	DiscriminatorValue     string // e.g. "SAML_2_0", "ACCESS_POLICY"
 	DiscriminatorSchemaRef string // e.g. "SamlApplication"
 	IsVariant              bool   // true when this TemplateData came from a variants expansion
@@ -73,6 +77,17 @@ type TemplateData struct {
 	// Used to unwrap the concrete variant: result.<DiscriminatorSchemaRef> and to
 	// build the body wrapper: okta.<SDKTypeName>As<UnionTypeName>(body).
 	UnionTypeName string
+	// CreateIDField: when set, Create does not call result.GetId() (no response body).
+	// Instead, the resource ID is taken from this plan field (Go struct field name, e.g. "MemberExternalId").
+	CreateIDField string
+	// ReadListIDField: when set, Read calls the list endpoint and searches this response field
+	// (Go struct field name, e.g. "MemberExternalIds") for the resource ID to verify existence.
+	// The list field must be a []string (or similar) in the SDK response struct.
+	ReadListIDField string
+	// ReadNoop: when true, Read is a no-op — state is preserved as-is (no GET call).
+	ReadNoop bool
+	// DeleteNoop: when true, Delete is a no-op — no API call is made.
+	DeleteNoop bool
 }
 
 // ParentParamData holds a rendered parent param for templates
@@ -85,20 +100,23 @@ type ParentParamData struct {
 
 // PropData holds one schema property for template rendering
 type PropData struct {
-	GoField          string
-	GoType           string
-	TFAttr           string
-	TFSchemaType     string
-	ElementType      string     // non-empty for array types: the attr.Type expression for ElementType
-	NestedProps      []PropData // non-empty when property is an inline object — use SingleNestedAttribute
-	NestedModelName  string     // e.g. "DevicePostureCheckRemediationSettingsModel" — the generated nested struct name
-	SchemaAttrBlock  string     // pre-rendered full schema attribute Go literal (handles arbitrary depth)
-	NestedStructDefs string     // pre-rendered nested struct type definitions for all sub-models
-	Description      string
-	Required         bool
-	Computed         bool
-	IsDateTime       bool // true when OAS format=date-time; SDK getter returns time.Time, needs .Format(time.RFC3339)
-	WriteOnly        bool // true when field exists only in the request body schema, not in the response — never call Get<Field>() on result
+	GoField           string
+	GoType            string
+	TFAttr            string
+	TFSchemaType      string
+	ElementType       string     // non-empty for flat array types: the attr.Type expression for ElementType
+	IsListNested      bool       // true when the array items are objects → use schema.ListNestedAttribute
+	NestedProps       []PropData // non-empty when property is an inline object/list-of-objects — use SingleNestedAttribute or ListNestedAttribute
+	NestedModelName   string     // e.g. "DevicePostureCheckRemediationSettingsModel" — the generated nested struct name
+	SDKNestedTypeName string     // e.g. "IdentitySourceGroupProfileForUpsert" — the SDK struct to construct for nested body fields; derived from $ref
+	TFPlanNestedProps []PropData // when this is a nested request-body field, holds the *response-schema* nested props so the template knows the plan access path (e.g. plan.Profile.Profile.DisplayName vs plan.Profile.DisplayName)
+	SchemaAttrBlock   string     // pre-rendered full schema attribute Go literal (handles arbitrary depth)
+	NestedStructDefs  string     // pre-rendered nested struct type definitions for all sub-models
+	Description       string
+	Required          bool
+	Computed          bool
+	IsDateTime        bool // true when OAS format=date-time; SDK getter returns time.Time, needs .Format(time.RFC3339)
+	WriteOnly         bool // true when field exists only in the request body schema, not in the response — never call Get<Field>() on result
 }
 
 // Generator holds templates and spec
@@ -115,6 +133,7 @@ func New(spec *openapi.Spec, templatesDir, outputDir string, goFmt bool, logger 
 	tmpl := template.New("").Funcs(template.FuncMap{
 		"lower": strings.ToLower,
 		"title": strings.Title, //nolint:staticcheck
+		"add":   func(a, b int) int { return a + b },
 	})
 
 	pattern := filepath.Join(templatesDir, "*.tmpl")
@@ -263,7 +282,7 @@ func (g *Generator) buildResourceDataList(name string, cfg config.ResourceConfig
 				props = g.schemaToProps(sc, false, title+"Model")
 				// Remove the discriminator field — it is emitted separately in the template.
 				if v.DiscriminatorField != "" {
-					props = filterOutProp(props, v.DiscriminatorField)
+					props = filterOutProp(props, formatter.TerraformAttrName(v.DiscriminatorField))
 				}
 			}
 		}
@@ -338,6 +357,7 @@ func (g *Generator) buildResourceDataList(name string, cfg config.ResourceConfig
 			TitleName:              title,
 			TFName:                 variantName,
 			APITag:                 cfg.APITag,
+			AllNestedStructDefs:    renderNestedStructs(props, map[string]bool{}),
 			Properties:             props,
 			RequestBodyFields:      requestBodyFields,
 			ParentParams:           parentParams,
@@ -355,6 +375,7 @@ func (g *Generator) buildResourceDataList(name string, cfg config.ResourceConfig
 			UpdateSDKTypeName:      sdkTypeName,
 			BodySetterMethod:       variantBodySetter,
 			DiscriminatorField:     v.DiscriminatorField,
+			DiscriminatorTFAttr:    formatter.TerraformAttrName(v.DiscriminatorField),
 			DiscriminatorValue:     v.DiscriminatorValue,
 			DiscriminatorSchemaRef: v.SchemaRef,
 			IsVariant:              true,
@@ -466,6 +487,7 @@ func (g *Generator) buildDataSourceDataList(name string, cfg config.DataSourceCo
 			TitleName:              title,
 			TFName:                 variantName,
 			APITag:                 cfg.APITag,
+			AllNestedStructDefs:    renderNestedStructs(props, map[string]bool{}),
 			Properties:             props,
 			ParentParams:           parentParams,
 			HasParent:              len(parentParams) > 0,
@@ -475,6 +497,7 @@ func (g *Generator) buildDataSourceDataList(name string, cfg config.DataSourceCo
 			ReadMethod:             readMethod,
 			ListMethod:             listMethod,
 			DiscriminatorField:     v.DiscriminatorField,
+			DiscriminatorTFAttr:    formatter.TerraformAttrName(v.DiscriminatorField),
 			DiscriminatorValue:     v.DiscriminatorValue,
 			DiscriminatorSchemaRef: v.SchemaRef,
 			IsVariant:              true,
@@ -541,10 +564,17 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		g.log.Printf("  [buildResourceData] WARNING: no schema found from any candidate — resource will have no properties")
 	}
 
-	// Merge request-body-only fields into props.
-	// The response schema may omit write-only/create-only fields (e.g. EmailDomain.brandId is in
-	// the POST request body but not in EmailDomainResponseWithEmbedded). We merge them in as
-	// non-Computed (writable) fields so they appear in the TF schema and model struct.
+	// Merge request-body fields into props.
+	// Two cases are handled:
+	// 1. Request-body-only fields (not in response) are added as WriteOnly so they appear in
+	//    the TF schema/model but are never read back from the API response.
+	// 2. Writable nested fields that exist in both request body and response schemas but with
+	//    different nesting structures: the request-body version is preferred because it directly
+	//    mirrors the API body shape that users configure, avoiding spurious extra wrapper levels
+	//    introduced by the response schema (e.g. GroupsResponseSchema wraps
+	//    IdentitySourceGroupProfileForUpsert in an extra "profile" object that does not exist
+	//    in GroupsRequestSchema, which would force users to write profile { profile { ... } }
+	//    instead of the natural profile { display_name = ... }).
 	{
 		existingFields := make(map[string]bool, len(props))
 		for _, p := range props {
@@ -562,20 +592,44 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 			if rbSchema == nil {
 				continue
 			}
-			for _, p := range g.schemaToProps(rbSchema, false, title+"Model") {
-				if !existingFields[p.TFAttr] {
+			for _, rbProp := range g.schemaToProps(rbSchema, false, title+"Model") {
+				if !existingFields[rbProp.TFAttr] {
+					// Field only in request body — add as WriteOnly
 					if g.log != nil {
-						g.log.Printf("  [buildResourceData] merging request-body-only field %q (%s) into props (WriteOnly)", p.TFAttr, p.GoType)
+						g.log.Printf("  [buildResourceData] merging request-body-only field %q (%s) into props (WriteOnly)", rbProp.TFAttr, rbProp.GoType)
 					}
-					p.WriteOnly = true
-					props = append(props, p)
-					existingFields[p.TFAttr] = true
+					rbProp.WriteOnly = true
+					props = append(props, rbProp)
+					existingFields[rbProp.TFAttr] = true
+				} else if !rbProp.Computed && len(rbProp.NestedProps) > 0 {
+					// Field exists in both schemas but request body has a writable nested structure.
+					// Replace the response-schema version with the request-body version so the TF
+					// schema/model matches the API body shape (avoids extra wrapper nesting levels).
+					for i, existing := range props {
+						if existing.TFAttr == rbProp.TFAttr && !existing.Computed {
+							if g.log != nil {
+								g.log.Printf("  [buildResourceData] replacing response-schema field %q with request-body version (shallower nesting)", rbProp.TFAttr)
+							}
+							props[i] = rbProp
+							break
+						}
+					}
 				}
 			}
+			break // only process Create body once; Update body is handled in UpdateRequestBodyFields
 		}
 	}
 
 	parentParams := buildParentParams(cfg.ParentParams, g.log)
+
+	// Remove any property that is already emitted as a parent param to avoid duplicate schema attributes.
+	if len(parentParams) > 0 {
+		parentAttrs := make(map[string]bool, len(parentParams))
+		for _, pp := range parentParams {
+			parentAttrs[pp.TFAttr] = true
+		}
+		props = filterByTFAttr(props, parentAttrs)
+	}
 
 	// Prefer operationId from the spec for accurate SDK method names.
 	// Fall back to convention-derived names if operationId is absent.
@@ -686,8 +740,25 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		}
 		if rbSchema != nil {
 			rbProps := g.schemaToProps(rbSchema, false, title+"Model")
+			// Build a lookup of response-schema props by TFAttr for enriching nested fields.
+			respPropsByAttr := make(map[string]PropData, len(props))
+			for _, rp := range props {
+				respPropsByAttr[rp.TFAttr] = rp
+			}
 			for _, p := range rbProps {
-				if !p.Computed && isScalarGoType(p.GoType) {
+				if p.Computed {
+					continue
+				}
+				if isScalarGoType(p.GoType) {
+					requestBodyFields = append(requestBodyFields, p)
+				} else if len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
+					// Enrich with TFPlanNestedProps from the response schema so the template
+					// knows the correct plan field path (response schema may have deeper nesting).
+					if respProp, ok := respPropsByAttr[p.TFAttr]; ok && len(respProp.NestedProps) > 0 {
+						p.TFPlanNestedProps = respProp.NestedProps
+					} else {
+						p.TFPlanNestedProps = p.NestedProps
+					}
 					requestBodyFields = append(requestBodyFields, p)
 				}
 			}
@@ -708,8 +779,23 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		}
 		if updateRbSchema != nil {
 			rbProps := g.schemaToProps(updateRbSchema, false, title+"Model")
+			// Build a lookup of response-schema props by TFAttr for enriching nested fields.
+			respPropsByAttr := make(map[string]PropData, len(props))
+			for _, rp := range props {
+				respPropsByAttr[rp.TFAttr] = rp
+			}
 			for _, p := range rbProps {
-				if !p.Computed && isScalarGoType(p.GoType) {
+				if p.Computed {
+					continue
+				}
+				if isScalarGoType(p.GoType) {
+					updateRequestBodyFields = append(updateRequestBodyFields, p)
+				} else if len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
+					if respProp, ok := respPropsByAttr[p.TFAttr]; ok && len(respProp.NestedProps) > 0 {
+						p.TFPlanNestedProps = respProp.NestedProps
+					} else {
+						p.TFPlanNestedProps = p.NestedProps
+					}
 					updateRequestBodyFields = append(updateRequestBodyFields, p)
 				}
 			}
@@ -738,6 +824,7 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		TitleName:               title,
 		TFName:                  name,
 		APITag:                  apiTag,
+		AllNestedStructDefs:     renderNestedStructs(props, map[string]bool{}),
 		Properties:              props,
 		RequestBodyFields:       requestBodyFields,
 		UpdateRequestBodyFields: updateRequestBodyFields,
@@ -756,6 +843,10 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		UpdateSDKTypeName:       updateSDKTypeName,
 		BodySetterMethod:        bodySetterMethod,
 		UpdateBodySetterMethod:  updateBodySetterMethod,
+		CreateIDField:           formatter.GoFieldName(cfg.CreateIDField),
+		ReadListIDField:         formatter.GoFieldName(cfg.ReadListIDField),
+		ReadNoop:                cfg.ReadNoop,
+		DeleteNoop:              cfg.DeleteNoop,
 	}
 }
 
@@ -817,6 +908,15 @@ func (g *Generator) buildDataSourceData(name string, cfg config.DataSourceConfig
 
 	parentParams := buildParentParams(cfg.ParentParams, g.log)
 
+	// Remove any property that is already emitted as a parent param to avoid duplicate schema attributes.
+	if len(parentParams) > 0 {
+		parentAttrs := make(map[string]bool, len(parentParams))
+		for _, pp := range parentParams {
+			parentAttrs[pp.TFAttr] = true
+		}
+		props = filterByTFAttr(props, parentAttrs)
+	}
+
 	// Prefer operationId from the spec for accurate SDK method names.
 	readOpID := ""
 	if cfg.Singular != nil {
@@ -836,21 +936,22 @@ func (g *Generator) buildDataSourceData(name string, cfg config.DataSourceConfig
 	}
 
 	return TemplateData{
-		Name:         formatter.LowerFirst(title),
-		TitleName:    title,
-		TFName:       name,
-		APITag:       apiTag,
-		Properties:   props,
-		ParentParams: parentParams,
-		HasParent:    len(parentParams) > 0,
-		HasCreate:    false,
-		HasUpdate:    false,
-		HasDelete:    false,
-		ReadMethod:   readMethod,
-		CreateMethod: "",
-		UpdateMethod: "",
-		DeleteMethod: "",
-		ListMethod:   listMethod,
+		Name:                formatter.LowerFirst(title),
+		TitleName:           title,
+		TFName:              name,
+		APITag:              apiTag,
+		AllNestedStructDefs: renderNestedStructs(props, map[string]bool{}),
+		Properties:          props,
+		ParentParams:        parentParams,
+		HasParent:           len(parentParams) > 0,
+		HasCreate:           false,
+		HasUpdate:           false,
+		HasDelete:           false,
+		ReadMethod:          readMethod,
+		CreateMethod:        "",
+		UpdateMethod:        "",
+		DeleteMethod:        "",
+		ListMethod:          listMethod,
 	}
 }
 
@@ -872,6 +973,18 @@ func filterOutProp(props []PropData, fieldName string) []PropData {
 	out := props[:0:0] // same backing-array type, zero len
 	for _, p := range props {
 		if p.TFAttr != fieldName {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+// filterByTFAttr removes any prop whose TFAttr key exists in the excluded map.
+// Used to prevent parent-param fields from being emitted a second time in the properties loop.
+func filterByTFAttr(props []PropData, excluded map[string]bool) []PropData {
+	out := props[:0:0]
+	for _, p := range props {
+		if !excluded[p.TFAttr] {
 			out = append(out, p)
 		}
 	}
@@ -949,20 +1062,14 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 		return rawProps[i].Name < rawProps[j].Name
 	})
 
+	// Deduplicate by tfAttr — allOf composition can yield the same property from multiple levels.
+	seenTFAttrs := make(map[string]bool)
+
 	var props []PropData
-	seenGoFields := make(map[string]bool) // Track seen GoField names to prevent duplicates
 	for _, p := range rawProps {
 		name := p.Name
 		tfAttr := formatter.TerraformAttrName(name)
 		goField := formatter.GoFieldName(name)
-
-		// Skip if we've already processed a field with this GoField name
-		if seenGoFields[goField] {
-			if g.log != nil {
-				g.log.Printf("  [schemaToProps]   SKIP %q (duplicate GoField %q)", name, goField)
-			}
-			continue
-		}
 
 		// Skip if would collide with ID
 		if tfAttr == "id" {
@@ -980,6 +1087,15 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			continue
 		}
 
+		// Skip duplicate tfAttrs (can arise from allOf merging or camelCase/snake_case variants)
+		if seenTFAttrs[tfAttr] {
+			if g.log != nil {
+				g.log.Printf("  [schemaToProps]   SKIP %q (duplicate tfAttr %q)", name, tfAttr)
+			}
+			continue
+		}
+		seenTFAttrs[tfAttr] = true
+
 		desc := formatter.SanitizeDescription(p.Description)
 		if desc == "" {
 			desc = goField
@@ -988,65 +1104,114 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 		goType := oktypes.GoType(p.Schema)
 		tfSchemaType := oktypes.TFSchemaType(p.Schema)
 		elementType := ""
+		sdkNestedTypeName := ""
 		var nestedProps []PropData
+
+		// Only flatten nested objects into typed structs when the field is writable.
+		// Read-only (computed) nested objects are represented as types.Object — users never
+		// configure them, so there's no benefit in expanding the full struct hierarchy.
+		isWritable := !p.ReadOnly && !allComputed
 
 		switch {
 		case p.Schema.Type == "array":
-			// Resolve items element type
-			if p.Schema.Items != nil {
+			// Resolve items schema to determine whether items are scalars or objects.
+			if p.Schema.Items != nil && isWritable && depth < 10 {
+				resolved := g.spec.ResolveSchema(*p.Schema.Items)
+				// Object items (inline or via $ref) → ListNestedAttribute
+				if resolved.Type == "object" || resolved.Ref != "" || len(resolved.Properties) > 0 {
+					nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
+					candidateNestedProps := g.schemaToPropsDepth(&resolved, allComputed, depth+1, nestedModelName)
+					if len(candidateNestedProps) > 0 {
+						tfSchemaType = "schema.ListNestedAttribute"
+						goType = "[]" + nestedModelName
+						nestedProps = candidateNestedProps
+						// Capture SDK item type name from $ref if available.
+						// Prefer items $ref (direct item type); fall back to OriginalRef.
+						// When OriginalRef is a named array schema (e.g. IdentitySourceGroupMembershipsDeleteProfile
+						// which is type:array), the SDK codegen appends "Inner" to name the item struct.
+						const refPrefix = "#/components/schemas/"
+						if p.Schema.Items.Ref != "" {
+							sdkNestedTypeName = p.Schema.Items.Ref
+						} else if p.OriginalRef != "" {
+							candidateName := p.OriginalRef
+							if strings.HasPrefix(candidateName, refPrefix) {
+								candidateName = candidateName[len(refPrefix):]
+							}
+							if named, ok := g.spec.Components.Schemas[candidateName]; ok && named.Type == "array" {
+								// Named array schema → SDK item struct is <Name>Inner
+								sdkNestedTypeName = candidateName + "Inner"
+							} else {
+								sdkNestedTypeName = candidateName
+							}
+						}
+						if sdkNestedTypeName != "" && strings.HasPrefix(sdkNestedTypeName, refPrefix) {
+							sdkNestedTypeName = sdkNestedTypeName[len(refPrefix):]
+						}
+					} else {
+						// Object items but no properties resolved — fall back to scalar list
+						elementType = oktypes.ElementTypeStr(resolved)
+					}
+				} else {
+					// Scalar items (string/bool/int)
+					elementType = oktypes.ElementTypeStr(resolved)
+				}
+			} else if p.Schema.Items != nil {
 				resolved := g.spec.ResolveSchema(*p.Schema.Items)
 				elementType = oktypes.ElementTypeStr(resolved)
 			} else {
 				elementType = "types.StringType" // safe fallback
 			}
 
-		case p.Schema.Type == "object" && len(p.Schema.Properties) > 0 && p.Schema.Ref == "" && depth < 10:
-			// Inline object with known sub-fields → recurse to build SingleNestedAttribute
+		case isWritable && p.Schema.Type == "object" && len(p.Schema.Properties) > 0 && p.Schema.Ref == "" && depth < 10:
+			// Inline writable object with known sub-fields → recurse to build SingleNestedAttribute.
 			nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-			tempNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
-			if len(tempNestedProps) > 0 {
+			candidateNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
+			if len(candidateNestedProps) > 0 {
 				tfSchemaType = "schema.SingleNestedAttribute"
 				goType = "*" + nestedModelName
-				nestedProps = tempNestedProps
-			} else {
-				// No properties found - treat as opaque object
-				tfSchemaType = "schema.ObjectAttribute"
-				goType = "types.Object"
+				nestedProps = candidateNestedProps
+				// If this inline object originated from a $ref, capture the SDK type name
+				// so the template can call okta.New<SDKNestedTypeName>WithDefaults().
+				if p.OriginalRef != "" {
+					sdkNestedTypeName = p.OriginalRef
+					const refPrefix = "#/components/schemas/"
+					if strings.HasPrefix(sdkNestedTypeName, refPrefix) {
+						sdkNestedTypeName = sdkNestedTypeName[len(refPrefix):]
+					}
+				}
 			}
 
-		case p.Schema.Ref != "" && depth < 10:
+		case isWritable && p.Schema.Ref != "" && depth < 10:
 			// $ref to a named schema — resolve and expand as SingleNestedAttribute if it has properties.
 			resolvedRef := g.spec.ResolveSchema(p.Schema)
 			refProps := g.spec.GetProperties(resolvedRef)
 			if len(refProps) > 0 {
 				nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-				tempNestedProps := g.schemaToPropsDepth(&resolvedRef, allComputed, depth+1, nestedModelName)
-				if len(tempNestedProps) > 0 {
+				candidateNestedProps := g.schemaToPropsDepth(&resolvedRef, allComputed, depth+1, nestedModelName)
+				if len(candidateNestedProps) > 0 {
 					tfSchemaType = "schema.SingleNestedAttribute"
 					goType = "*" + nestedModelName
-					nestedProps = tempNestedProps
-				} else {
-					// $ref exists but no properties - treat as opaque object
-					tfSchemaType = "schema.ObjectAttribute"
-					goType = "types.Object"
+					nestedProps = candidateNestedProps
+					// Capture the SDK type name from the $ref so the template can call okta.New<SDKNestedTypeName>WithDefaults()
+					// Strip the "#/components/schemas/" prefix to get just the type name.
+					sdkNestedTypeName = p.Schema.Ref
+					const refPrefix = "#/components/schemas/"
+					if strings.HasPrefix(sdkNestedTypeName, refPrefix) {
+						sdkNestedTypeName = sdkNestedTypeName[len(refPrefix):]
+					}
 				}
 			}
 
-		case p.Schema.Type == "" && p.Schema.Ref == "" && (len(p.Schema.AllOf) > 0 || len(p.Schema.OneOf) > 0) && depth < 10:
-			// allOf/oneOf composition with no explicit type — treat as object, collect all properties.
-			// This happens when GetProperties resolves a $ref and returns the composed schema.
+		case isWritable && p.Schema.Type == "" && p.Schema.Ref == "" && (len(p.Schema.AllOf) > 0 || len(p.Schema.OneOf) > 0) && depth < 10:
+			// allOf/oneOf composition — treat as object, collect all properties.
 			composedProps := g.spec.GetProperties(p.Schema)
 			if len(composedProps) > 0 {
 				nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
-				tempNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
-				if len(tempNestedProps) > 0 {
+				candidateNestedProps := g.schemaToPropsDepth(&p.Schema, allComputed, depth+1, nestedModelName)
+				if len(candidateNestedProps) > 0 {
 					tfSchemaType = "schema.SingleNestedAttribute"
 					goType = "*" + nestedModelName
-					nestedProps = tempNestedProps
-				} else {
-					// Composition exists but no properties - treat as opaque object
-					tfSchemaType = "schema.ObjectAttribute"
-					goType = "types.Object"
+					nestedProps = candidateNestedProps
 				}
 			}
 		}
@@ -1061,14 +1226,14 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 
 		nestedModelName := ""
 		schemaAttrBlock := ""
-		nestedStructDefs := ""
+		isListNested := tfSchemaType == "schema.ListNestedAttribute"
 		if len(nestedProps) > 0 {
 			nestedModelName = parentModelName + formatter.GoFieldName(name) + "Model"
-			// Pre-render the full schema attribute block and all nested struct definitions.
-			// This handles arbitrary depth without any template recursion.
+			// Pre-render the schema attribute block (schema only, no struct defs here).
 			pd := PropData{
 				TFAttr:       tfAttr,
 				TFSchemaType: tfSchemaType,
+				IsListNested: isListNested,
 				ElementType:  elementType,
 				NestedProps:  nestedProps,
 				Description:  desc,
@@ -1076,23 +1241,22 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 				Computed:     computed,
 			}
 			schemaAttrBlock = renderSchemaAttr(pd, 3)
-			nestedStructDefs = renderNestedStructs(nestedProps, map[string]bool{nestedModelName: true})
 		}
-		seenGoFields[goField] = true // Mark this field as seen
 		props = append(props, PropData{
-			GoField:          goField,
-			GoType:           goType,
-			TFAttr:           tfAttr,
-			TFSchemaType:     tfSchemaType,
-			ElementType:      elementType,
-			NestedProps:      nestedProps,
-			NestedModelName:  nestedModelName,
-			SchemaAttrBlock:  schemaAttrBlock,
-			NestedStructDefs: nestedStructDefs,
-			Description:      desc,
-			Required:         required,
-			Computed:         computed,
-			IsDateTime:       goType == "types.String" && p.Schema.Format == "date-time",
+			GoField:           goField,
+			GoType:            goType,
+			TFAttr:            tfAttr,
+			TFSchemaType:      tfSchemaType,
+			IsListNested:      isListNested,
+			ElementType:       elementType,
+			NestedProps:       nestedProps,
+			NestedModelName:   nestedModelName,
+			SDKNestedTypeName: sdkNestedTypeName,
+			SchemaAttrBlock:   schemaAttrBlock,
+			Description:       desc,
+			Required:          required,
+			Computed:          computed,
+			IsDateTime:        goType == "types.String" && p.Schema.Format == "date-time",
 		})
 	}
 
@@ -1108,13 +1272,33 @@ func renderSchemaAttr(p PropData, indent int) string {
 	tabs := strings.Repeat("\t", indent)
 	var b strings.Builder
 
-	if len(p.NestedProps) > 0 {
+	if len(p.NestedProps) > 0 && p.IsListNested {
+		// ListNestedAttribute — wrap nested attrs in a NestedAttributeObject
+		b.WriteString("schema.ListNestedAttribute{\n")
+		b.WriteString(fmt.Sprintf("%s\tDescription: %q,\n", tabs, p.Description))
+		if p.Required {
+			b.WriteString(fmt.Sprintf("%s\tRequired: true,\n", tabs))
+		} else if !p.Computed {
+			b.WriteString(fmt.Sprintf("%s\tOptional: true,\n", tabs))
+		}
+		if p.Computed {
+			b.WriteString(fmt.Sprintf("%s\tComputed: true,\n", tabs))
+		}
+		b.WriteString(fmt.Sprintf("%s\tNestedObject: schema.NestedAttributeObject{\n", tabs))
+		b.WriteString(fmt.Sprintf("%s\t\tAttributes: map[string]schema.Attribute{\n", tabs))
+		for _, sub := range p.NestedProps {
+			b.WriteString(fmt.Sprintf("%s\t\t\t%q: %s,\n", tabs, sub.TFAttr, renderSchemaAttr(sub, indent+3)))
+		}
+		b.WriteString(fmt.Sprintf("%s\t\t},\n", tabs))
+		b.WriteString(fmt.Sprintf("%s\t},\n", tabs))
+		b.WriteString(fmt.Sprintf("%s}", tabs))
+	} else if len(p.NestedProps) > 0 {
 		// SingleNestedAttribute — emit Attributes map recursively
 		b.WriteString("schema.SingleNestedAttribute{\n")
 		b.WriteString(fmt.Sprintf("%s\tDescription: %q,\n", tabs, p.Description))
 		if p.Required {
 			b.WriteString(fmt.Sprintf("%s\tRequired: true,\n", tabs))
-		} else {
+		} else if !p.Computed {
 			b.WriteString(fmt.Sprintf("%s\tOptional: true,\n", tabs))
 		}
 		if p.Computed {
@@ -1134,7 +1318,7 @@ func renderSchemaAttr(p PropData, indent int) string {
 		}
 		if p.Required {
 			b.WriteString(fmt.Sprintf("%s\tRequired: true,\n", tabs))
-		} else {
+		} else if !p.Computed {
 			b.WriteString(fmt.Sprintf("%s\tOptional: true,\n", tabs))
 		}
 		if p.Computed {
@@ -1150,7 +1334,7 @@ func renderSchemaAttr(p PropData, indent int) string {
 func renderNestedStructs(props []PropData, seen map[string]bool) string {
 	var b strings.Builder
 	for _, p := range props {
-		if len(p.NestedProps) == 0 || p.NestedModelName == "" {
+		if p.NestedModelName == "" {
 			continue
 		}
 		if seen[p.NestedModelName] {
@@ -1163,7 +1347,7 @@ func renderNestedStructs(props []PropData, seen map[string]bool) string {
 			b.WriteString(fmt.Sprintf("\t%s %s `tfsdk:%q`\n", sub.GoField, sub.GoType, sub.TFAttr))
 		}
 		b.WriteString("}\n\n")
-		// Recurse
+		// Recurse into children using the shared seen map to deduplicate.
 		b.WriteString(renderNestedStructs(p.NestedProps, seen))
 	}
 	return b.String()

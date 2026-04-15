@@ -122,7 +122,9 @@ func FWProviderResources() []func() resource.Resource {
 		newAppFederatedClaimResource,
 		newAppSignOnPolicyRulesResource,
 		newPushGroupResource,
+		NewIdentitySourceSessionResource,
 		NewIdentitySourceGroupResource,
+		NewIdentitySourceGroupMembershipResource,
 	}
 }
 

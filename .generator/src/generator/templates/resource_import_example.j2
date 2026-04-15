@@ -1,2 +1,0 @@
-{%- set primaryId = get_terraform_primary_id(operations) -%}
-terraform import okta_{{ name|snake_case }}.example <{{ primaryId.get("name", "id") }}>

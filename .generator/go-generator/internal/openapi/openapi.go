@@ -87,6 +87,7 @@ type Schema struct {
 type Property struct {
 	Name        string
 	Schema      Schema
+	OriginalRef string // the $ref value before resolution, e.g. "#/components/schemas/Foo"
 	Description string
 	Required    bool
 	ReadOnly    bool
@@ -166,6 +167,7 @@ func (s *Spec) GetProperties(schema Schema) []Property {
 		props = append(props, Property{
 			Name:        name,
 			Schema:      resolvedProp,
+			OriginalRef: propSchema.Ref,
 			Description: desc,
 			Required:    requiredSet[name],
 			ReadOnly:    resolvedProp.ReadOnly || propSchema.ReadOnly,

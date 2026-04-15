@@ -15,6 +15,14 @@ type ResourceConfig struct {
 	Create       *OperationConfig `yaml:"create"`
 	Update       *OperationConfig `yaml:"update"`
 	Delete       *OperationConfig `yaml:"delete"`
+	// CreateIDField: when the Create operation returns no body (e.g. 204 No Content),
+	// set the resource ID from this plan field name (snake_case TF attr) instead of result.GetId().
+	// Example: "member_external_id"
+	CreateIDField string `yaml:"create_id_field"`
+	// ReadListIDField: when the Read operation returns a list (not a single item),
+	// search this array field name in the response for the resource ID to verify existence.
+	// Example: "member_external_ids"
+	ReadListIDField string `yaml:"read_list_id_field"`
 }
 
 // DataSourceConfig holds the singular/plural fetch config for a data source
