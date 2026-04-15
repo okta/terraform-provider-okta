@@ -2,6 +2,8 @@ package governance
 
 import (
 	"context"
+	"github.com/okta/terraform-provider-okta/okta/api"
+	"net/http"
 	"strings"
 	"time"
 
@@ -193,7 +195,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -238,8 +240,14 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Read API call logic
-	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, httpResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			// Resource was deleted outside Terraform — remove from state so
+			// the next plan recreates it rather than erroring on every refresh.
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",
 			"Could not read Request conditions, unexpected error: "+err.Error(),
@@ -270,6 +278,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Update API call logic
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -354,8 +363,21 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+	deleteResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusNotFound {
+			// Already deleted outside Terraform — treat as success.
+			return
+		}
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusInternalServerError {
+			// The governance API sometimes returns 500 even when the delete
+			// succeeded. Verify by attempting a GET — if the resource is gone
+			// (404) we can safely treat the delete as successful.
+			_, verifyResp, _ := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+			if verifyResp != nil && verifyResp.StatusCode == http.StatusNotFound {
+				return
+			}
+		}
 		resp.Diagnostics.AddError(
 			"Error deleting Request conditions",
 			"Could not delete Request conditions, unexpected error: "+err.Error(),
