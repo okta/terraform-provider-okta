@@ -204,6 +204,10 @@ resource "%s" "%s" {
 	name     = "%s"
 	priority = 999
 	status   = "ACTIVE"
+	users_included  = ["00ustguf78owmG7Rt1d7"]
+	users_excluded  = ["00urzse61ohS6KPfT1d7"]
+	groups_included = ["00gwxsozqariU272g1d7"]
+	groups_excluded = ["00gwxstmy6w36z1dZ1d7"]
 }
 `, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
 }
@@ -238,6 +242,10 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_included.*", "00ustguf78owmG7Rt1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_excluded.*", "00urzse61ohS6KPfT1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_included.*", "00gwxsozqariU272g1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_excluded.*", "00gwxstmy6w36z1dZ1d7"),
 				),
 			},
 			{
@@ -250,6 +258,10 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "push"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "sms"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.#", "0"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_included.*", "00ustguf78owmG7Rt1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_excluded.*", "00urzse61ohS6KPfT1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_included.*", "00gwxsozqariU272g1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_excluded.*", "00gwxstmy6w36z1dZ1d7"),
 				),
 			},
 			{
@@ -258,6 +270,10 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "AUTH_POLICY"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_included.*", "00ustguf78owmG7Rt1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_excluded.*", "00urzse61ohS6KPfT1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_included.*", "00gwxsozqariU272g1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_excluded.*", "00gwxstmy6w36z1dZ1d7"),
 				),
 			},
 			{
@@ -271,6 +287,10 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "email"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_included.*", "00ustguf78owmG7Rt1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "users_excluded.*", "00urzse61ohS6KPfT1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_included.*", "00gwxsozqariU272g1d7"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "groups_excluded.*", "00gwxstmy6w36z1dZ1d7"),
 				),
 			},
 		},
