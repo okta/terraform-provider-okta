@@ -1,3 +1,25 @@
+resource "okta_user" "included-replace_with_uuid" {
+	first_name = "TestAcc"
+	last_name  = "Included"
+	login      = "testAcc-included-replace_with_uuid@example.com"
+	email      = "testAcc-included-replace_with_uuid@example.com"
+}
+
+resource "okta_user" "excluded-replace_with_uuid" {
+	first_name = "TestAcc"
+	last_name  = "Excluded"
+	login      = "testAcc-excluded-replace_with_uuid@example.com"
+	email      = "testAcc-excluded-replace_with_uuid@example.com"
+}
+
+resource "okta_group" "included-replace_with_uuid" {
+	name = "testAcc_included_replace_with_uuid"
+}
+
+resource "okta_group" "excluded-replace_with_uuid" {
+	name = "testAcc_excluded_replace_with_uuid"
+}
+
 data "okta_default_policy" "default-replace_with_uuid" {
 	type = "PASSWORD"
 }
@@ -11,10 +33,10 @@ resource "okta_policy_rule_password" "testAcc_replace_with_uuid" {
 	password_reset  = "ALLOW"
 	password_unlock = "DENY"
 
-	users_included  = ["00ustguf78owmG7Rt1d7"]
-	users_excluded  = ["00urzse61ohS6KPfT1d7"]
-	groups_included = ["00gwxsozqariU272g1d7"]
-	groups_excluded = ["00gwxstmy6w36z1dZ1d7"]
+	users_included  = [okta_user.included-replace_with_uuid.id]
+	users_excluded  = [okta_user.excluded-replace_with_uuid.id]
+	groups_included = [okta_group.included-replace_with_uuid.id]
+	groups_excluded = [okta_group.excluded-replace_with_uuid.id]
 
 	password_reset_access_control = "LEGACY"
 

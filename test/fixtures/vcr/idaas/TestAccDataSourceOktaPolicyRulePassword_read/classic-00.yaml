@@ -31,14 +31,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:39 GMT
+                - Thu, 16 Apr 2026 06:10:58 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.117822333s
+        duration: 1.073071625s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -69,14 +69,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:41 GMT
+                - Thu, 16 Apr 2026 06:10:59 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.065489708s
+        duration: 1.062350792s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -101,19 +101,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:42 GMT
+                - Thu, 16 Apr 2026 06:11:00 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.384690625s
+        duration: 1.215980084s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -126,7 +126,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -134,19 +134,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:43 GMT
+                - Thu, 16 Apr 2026 06:11:02 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.069019416s
+        duration: 1.091295s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -159,7 +159,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -167,19 +167,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:44 GMT
+                - Thu, 16 Apr 2026 06:11:03 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.033549917s
+        duration: 1.063798959s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -210,14 +210,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:45 GMT
+                - Thu, 16 Apr 2026 06:11:04 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.069273833s
+        duration: 1.058685166s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -230,7 +230,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -238,19 +238,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:47 GMT
+                - Thu, 16 Apr 2026 06:11:05 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.073358459s
+        duration: 1.065406458s
     - id: 7
       request:
         proto: HTTP/1.1
@@ -281,14 +281,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:48 GMT
+                - Thu, 16 Apr 2026 06:11:06 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.058713791s
+        duration: 1.0820585s
     - id: 8
       request:
         proto: HTTP/1.1
@@ -301,7 +301,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -309,19 +309,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:49 GMT
+                - Thu, 16 Apr 2026 06:11:07 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.066546542s
+        duration: 1.057030459s
     - id: 9
       request:
         proto: HTTP/1.1
@@ -334,7 +334,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -342,19 +342,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["email","otp"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:50 GMT
+                - Thu, 16 Apr 2026 06:11:08 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.075378916s
+        duration: 1.069292834s
     - id: 10
       request:
         proto: HTTP/1.1
@@ -385,14 +385,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:51 GMT
+                - Thu, 16 Apr 2026 06:11:09 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.076291s
+        duration: 1.056623333s
     - id: 11
       request:
         proto: HTTP/1.1
@@ -405,7 +405,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -413,19 +413,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmw3k7pEMKKLO1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T03:50:42.000Z","lastUpdated":"2026-04-16T03:50:42.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrhzn7kRrPwhK1d7","status":"ACTIVE","name":"testAcc_3669632588","priority":1,"created":"2026-04-16T06:11:00.000Z","lastUpdated":"2026-04-16T06:11:00.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW","requirement":{"primary":{"methods":["otp","email"],"methodConstraints":[{"method":"otp","allowedAuthenticators":[{"key":"google_otp"}]}]},"stepUp":{"required":true,"methods":["security_question"]},"accessControl":"LEGACY"}},"selfServiceUnlock":{"access":"ALLOW"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:50:52 GMT
+                - Thu, 16 Apr 2026 06:11:10 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.031389958s
+        duration: 1.052087292s
     - id: 12
       request:
         proto: HTTP/1.1
@@ -438,7 +438,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmw3k7pEMKKLO1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrhzn7kRrPwhK1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -450,9 +450,9 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Thu, 16 Apr 2026 03:50:53 GMT
+                - Thu, 16 Apr 2026 06:11:12 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.098024792s
+        duration: 1.163879583s

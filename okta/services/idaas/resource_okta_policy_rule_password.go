@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -24,6 +23,12 @@ func resourcePolicyPasswordRule() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Set of User IDs to include in this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"users_excluded": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Set of User IDs to exclude in this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"groups_excluded": {
@@ -127,25 +132,9 @@ func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceDat
 
 	rule := buildPolicyRulePassword(d)
 	// Wrap the typed rule in the union type required by the V6 PolicyAPI.
-	wrapper := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
+	policyRule := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
 
-	// Use exponential backoff to handle transient 500 errors from the Okta API.
-	var createdInner *v6okta.ListPolicyRules200ResponseInner
-	boc := utils.NewExponentialBackOffWithContext(ctx, backoff.DefaultMaxElapsedTime)
-	err := backoff.Retry(func() error {
-		inner, resp, createErr := getOktaV6ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, policyID).PolicyRule(wrapper).Execute()
-		if doNotRetry(meta, createErr) {
-			return backoff.Permanent(createErr)
-		}
-		if createErr != nil {
-			return backoff.Permanent(createErr)
-		}
-		if resp.StatusCode == http.StatusInternalServerError {
-			return createErr
-		}
-		createdInner = inner
-		return nil
-	}, boc)
+	createdInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.CreatePolicyRule(ctx, policyID).PolicyRule(policyRule).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create password policy rule: %v", err)
 	}
@@ -292,10 +281,10 @@ func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	rule := buildPolicyRulePassword(d)
-	wrapper := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
+	policyRule := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
 
 	// ReplacePolicyRule is the V6 equivalent of UpdatePolicyRule (HTTP PUT).
-	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(wrapper).Execute()
+	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(policyRule).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update password policy rule: %v", err)
 	}
@@ -328,12 +317,8 @@ func resourcePolicyPasswordRuleDelete(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("'policy_id' field should be set")
 	}
 
-	resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicyRule(ctx, policyID, d.Id()).Execute()
+	_, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicyRule(ctx, policyID, d.Id()).Execute()
 	if err != nil {
-		// Already gone — not an error.
-		if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
-			return nil
-		}
 		return diag.Errorf("failed to delete password policy rule: %v", err)
 	}
 	return nil
