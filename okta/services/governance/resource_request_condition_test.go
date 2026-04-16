@@ -103,6 +103,31 @@ func TestAccRequestConditionResource_Status(t *testing.T) {
 	})
 }
 
+func TestAccRequestConditionResource_Priority(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority.tf", t)
+	resourceName0 := fmt.Sprintf("%s.test_priority_0", resources.OktaGovernanceRequestCondition)
+	resourceName1 := fmt.Sprintf("%s.test_priority_1", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName0, "name", "test-condition-priority-0"),
+					resource.TestCheckResourceAttr(resourceName0, "priority", "0"),
+					resource.TestCheckResourceAttr(resourceName1, "name", "test-condition-priority-1"),
+					resource.TestCheckResourceAttr(resourceName1, "priority", "1"),
+				),
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode

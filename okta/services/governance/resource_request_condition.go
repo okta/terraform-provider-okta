@@ -218,6 +218,23 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
+	// The API may ignore the priority field on create and return a default value.
+	// If the planned priority differs from what the API returned, do a follow-up
+	// PATCH to set the correct priority, avoiding an inconsistent state error.
+	if !data.Priority.IsNull() && data.Priority.ValueInt32() != requestConditionResp.GetPriority() {
+		requestConditionResp, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx,
+			data.ResourceId.ValueString(),
+			requestConditionResp.GetId()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error setting priority on Request condition",
+				"Could not update priority after creation: "+err.Error(),
+			)
+			return
+		}
+	}
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
 	if resp.Diagnostics.HasError() {
 		return
