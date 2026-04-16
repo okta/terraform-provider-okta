@@ -2,10 +2,11 @@ package governance
 
 import (
 	"context"
-	"github.com/okta/terraform-provider-okta/okta/api"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/okta/terraform-provider-okta/okta/api"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -289,7 +290,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Handle status changes
-	if !data.Status.IsNull() && !state.Status.IsNull() {
+	if !data.Status.IsNull() {
 		oldStatus := state.Status.ValueString()
 		newStatus := data.Status.ValueString()
 
@@ -332,16 +333,9 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 }
 
 func (r *requestConditionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data, state requestConditionResourceModel
+	var state requestConditionResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Read Terraform prior state Data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -363,7 +357,7 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	deleteResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+	deleteResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
 		if deleteResp != nil && deleteResp.StatusCode == http.StatusNotFound {
 			// Already deleted outside Terraform — treat as success.
@@ -373,7 +367,7 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 			// The governance API sometimes returns 500 even when the delete
 			// succeeded. Verify by attempting a GET — if the resource is gone
 			// (404) we can safely treat the delete as successful.
-			_, verifyResp, _ := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+			_, verifyResp, _ := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 			if verifyResp != nil && verifyResp.StatusCode == http.StatusNotFound {
 				return
 			}
@@ -575,7 +569,6 @@ func createRequestConditionPatch(data requestConditionResourceModel) governance.
 	if !data.Priority.IsNull() {
 		patch.Priority = data.Priority.ValueInt32Pointer()
 	}
-	patch.ApprovalSequenceId = data.ApprovalSequenceId.ValueStringPointer()
 	var accessScopeSettings governance.AccessScopeSettingsCreatableAccessScopeSettings
 	if data.AccessScopeSettings.Type.ValueString() == "GROUPS" {
 		if accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings == nil {
