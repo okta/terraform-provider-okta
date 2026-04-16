@@ -103,6 +103,40 @@ func TestAccRequestConditionResource_Status(t *testing.T) {
 	})
 }
 
+// TestAccRequestConditionResource_Issue2780 verifies that changing resource_id
+// triggers a destroy+create (replacement) rather than an in-place update that
+// would 404 because the condition does not exist on the new resource.
+func TestAccRequestConditionResource_Issue2780(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("issue_2780.tf", t)
+	updatedConfig := mgr.GetFixtures("issue_2780_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "issue-2780"),
+					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oatu8k9anRWwR1oq1d7"),
+				),
+			},
+			{
+				// Changing resource_id must trigger destroy+create, not a 404-failing update.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "issue-2780"),
+					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oaty79sxfpt7AVvI1d7"),
+				),
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode
