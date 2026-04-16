@@ -103,6 +103,31 @@ func TestAccRequestConditionResource_Status(t *testing.T) {
 	})
 }
 
+// TestAccRequestConditionResource_Issue2781 verifies that when the create API returns
+// a different priority than planned (the API always returns 0), the provider issues a
+// follow-up PATCH so the state matches the planned value and no inconsistency error occurs.
+func TestAccRequestConditionResource_Issue2781(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("issue_2781.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "issue-2781"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "1"),
+				),
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode

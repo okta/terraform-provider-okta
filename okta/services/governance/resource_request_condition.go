@@ -194,6 +194,11 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// Save planned priority before the API call: the create API may return a
+	// different value (e.g. always 0), and we need the original intent to
+	// issue a follow-up PATCH when they diverge.
+	plannedPriority := data.Priority
+
 	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -223,6 +228,30 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// The create API may not honor the requested priority (always returns 0 in
+	// the response). If the planned priority differs from the API response,
+	// issue a follow-up PATCH to attempt to set the correct value server-side,
+	// then unconditionally write the planned priority to state so Terraform
+	// does not report an inconsistent result after apply.
+	if !plannedPriority.IsNull() && plannedPriority.ValueInt32() != data.Priority.ValueInt32() {
+		data.Priority = plannedPriority
+		_, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx,
+			data.ResourceId.ValueString(),
+			data.Id.ValueString()).
+			RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error updating priority after create",
+				"Could not set priority after create: "+err.Error(),
+			)
+			return
+		}
+		// data.Priority is already set to plannedPriority above; the PATCH
+		// response is intentionally discarded because the API returns 0 even
+		// when it has accepted the new value.
+	}
+
 	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -236,6 +265,11 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Save the prior-state priority: the API always returns 0 for this field
+	// regardless of what was configured, so we preserve the known priority to
+	// avoid a spurious non-empty plan after apply.
+	priorPriority := data.Priority
 
 	// Read API call logic
 	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
@@ -251,6 +285,13 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// The API always returns 0 for priority. Restore the prior state value so
+	// that Read does not introduce a spurious diff when priority was configured.
+	if !priorPriority.IsNull() && data.Priority.ValueInt32() == 0 && priorPriority.ValueInt32() != 0 {
+		data.Priority = priorPriority
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -268,6 +309,11 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Save planned priority before the API call: the update API also returns 0
+	// for priority in the response, so we preserve the planned value to avoid
+	// a spurious diff after update.
+	plannedPriority := data.Priority
 
 	// Update API call logic
 	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
@@ -316,6 +362,12 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, updatedRequestCondition)...)
 	if resp.Diagnostics.HasError() {
 		return
+	}
+
+	// The update API also returns 0 for priority. Restore the planned value so
+	// state stays consistent with the configuration.
+	if !plannedPriority.IsNull() && data.Priority.ValueInt32() == 0 && plannedPriority.ValueInt32() != 0 {
+		data.Priority = plannedPriority
 	}
 
 	// Save Data into Terraform state
