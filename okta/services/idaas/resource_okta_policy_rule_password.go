@@ -20,6 +20,24 @@ func resourcePolicyPasswordRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Description:   "Creates a Password Policy Rule. This resource allows you to create and configure a Password Policy Rule.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
+			"users_included": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Set of User IDs to include in this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"groups_excluded": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Set of Group IDs to exclude from this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"groups_included": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Set of Group IDs to include in this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"password_change": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -190,10 +208,15 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 				_ = d.Set("network_excludes", utils.ConvertStringSliceToInterfaceSlice(net.Exclude))
 			}
 		}
-		// Sync users_excluded.
+		// Sync people conditions.
 		if people := conds.People; people != nil {
 			if users := people.Users; users != nil {
 				_ = d.Set("users_excluded", utils.ConvertStringSliceToSetNullable(users.Exclude))
+				_ = d.Set("users_included", utils.ConvertStringSliceToSetNullable(users.Include))
+			}
+			if groups := people.Groups; groups != nil {
+				_ = d.Set("groups_excluded", utils.ConvertStringSliceToSetNullable(groups.Exclude))
+				_ = d.Set("groups_included", utils.ConvertStringSliceToSetNullable(groups.Include))
 			}
 		}
 	}
@@ -337,12 +360,38 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 	conds := v6okta.PasswordPolicyRuleConditions{}
 	conds.SetNetwork(networkCond)
 
-	// Build the people/users_excluded condition.
+	// Build the people conditions (users and groups).
+	peopleCond := v6okta.PolicyPeopleCondition{}
+	hasPeople := false
+
+	userCond := v6okta.UserCondition{}
 	if exclude, ok := d.GetOk("users_excluded"); ok {
-		userCond := v6okta.UserCondition{}
 		userCond.Exclude = utils.ConvertInterfaceToStringSet(exclude)
-		peopleCond := v6okta.PolicyPeopleCondition{}
+		hasPeople = true
+	}
+	if include, ok := d.GetOk("users_included"); ok {
+		userCond.Include = utils.ConvertInterfaceToStringSet(include)
+		hasPeople = true
+	}
+	if hasPeople {
 		peopleCond.SetUsers(userCond)
+	}
+
+	groupCond := v6okta.GroupCondition{}
+	hasGroups := false
+	if exclude, ok := d.GetOk("groups_excluded"); ok {
+		groupCond.Exclude = utils.ConvertInterfaceToStringSet(exclude)
+		hasGroups = true
+	}
+	if include, ok := d.GetOk("groups_included"); ok {
+		groupCond.Include = utils.ConvertInterfaceToStringSet(include)
+		hasGroups = true
+	}
+	if hasGroups {
+		peopleCond.SetGroups(groupCond)
+	}
+
+	if hasPeople || hasGroups {
 		conds.SetPeople(peopleCond)
 	}
 	rule.SetConditions(conds)

@@ -11,6 +11,11 @@ resource "okta_policy_rule_password" "testAcc_replace_with_uuid" {
 	password_reset  = "ALLOW"
 	password_unlock = "ALLOW"
 
+	users_included  = ["00ustguf78owmG7Rt1d7"]
+	users_excluded  = ["00urzse61ohS6KPfT1d7"]
+	groups_included = ["00gwxsozqariU272g1d7"]
+	groups_excluded = ["00gwxstmy6w36z1dZ1d7"]
+
 	password_reset_access_control = "LEGACY"
 
 	password_reset_requirement {

@@ -64,6 +64,24 @@ func dataSourcePolicyRulePassword() *schema.Resource {
 				Description: "User IDs to exclude from this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"users_included": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "User IDs to include in this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"groups_excluded": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "Group IDs to exclude from this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"groups_included": {
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Description: "Group IDs to include in this rule.",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"password_change": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -170,6 +188,11 @@ func flattenPolicyRulePassword(d *schema.ResourceData, rule *v6okta.PasswordPoli
 		if people := conds.People; people != nil {
 			if users := people.Users; users != nil {
 				_ = d.Set("users_excluded", users.Exclude)
+				_ = d.Set("users_included", users.Include)
+			}
+			if groups := people.Groups; groups != nil {
+				_ = d.Set("groups_excluded", groups.Exclude)
+				_ = d.Set("groups_included", groups.Include)
 			}
 		}
 	}
