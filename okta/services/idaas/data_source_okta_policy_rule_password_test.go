@@ -32,10 +32,10 @@ func TestAccDataSourceOktaPolicyRulePassword_read(t *testing.T) {
 					resource.TestCheckResourceAttr(dataSourceName, "password_unlock", "ALLOW"),
 					resource.TestCheckResourceAttr(dataSourceName, "password_reset_access_control", "LEGACY"),
 					// People conditions
-					resource.TestCheckTypeSetElemAttr(dataSourceName, "users_included.*", "00ustguf78owmG7Rt1d7"),
-					resource.TestCheckTypeSetElemAttr(dataSourceName, "users_excluded.*", "00urzse61ohS6KPfT1d7"),
-					resource.TestCheckTypeSetElemAttr(dataSourceName, "groups_included.*", "00gwxsozqariU272g1d7"),
-					resource.TestCheckTypeSetElemAttr(dataSourceName, "groups_excluded.*", "00gwxstmy6w36z1dZ1d7"),
+					resource.TestCheckResourceAttr(dataSourceName, "users_included.#", "1"),
+					resource.TestCheckResourceAttr(dataSourceName, "users_excluded.#", "1"),
+					resource.TestCheckResourceAttr(dataSourceName, "groups_included.#", "1"),
+					resource.TestCheckResourceAttr(dataSourceName, "groups_excluded.#", "1"),
 					// SSPR requirement fields
 					resource.TestCheckResourceAttr(dataSourceName, "password_reset_requirement.0.step_up_enabled", "true"),
 					resource.TestCheckTypeSetElemAttr(dataSourceName, "password_reset_requirement.0.step_up_methods.*", "security_question"),

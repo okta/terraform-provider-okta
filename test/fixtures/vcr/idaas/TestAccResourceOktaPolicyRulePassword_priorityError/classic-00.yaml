@@ -31,14 +31,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:51:55 GMT
+                - Thu, 16 Apr 2026 06:11:23 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.071579625s
+        duration: 1.040014667s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -69,14 +69,14 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:51:56 GMT
+                - Thu, 16 Apr 2026 06:11:24 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/policies?type=PASSWORD>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.033502666s
+        duration: 1.093370917s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -101,19 +101,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0prxmmvmp2Er4ZrBs1d7","status":"ACTIVE","name":"testAcc_1385522815","priority":1,"created":"2026-04-16T03:51:57.000Z","lastUpdated":"2026-04-16T03:51:57.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmvmp2Er4ZrBs1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmvmp2Er4ZrBs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"0prxmrfirrWhIDWfJ1d7","status":"ACTIVE","name":"testAcc_1385522815","priority":1,"created":"2026-04-16T06:11:25.000Z","lastUpdated":"2026-04-16T06:11:25.000Z","system":false,"conditions":{"people":{"users":{"include":["00ustguf78owmG7Rt1d7"],"exclude":["00urzse61ohS6KPfT1d7"]},"groups":{"include":["00gwxsozqariU272g1d7"],"exclude":["00gwxstmy6w36z1dZ1d7"]}},"network":{"connection":"ANYWHERE"}},"actions":{"passwordChange":{"access":"ALLOW"},"selfServicePasswordReset":{"access":"ALLOW"},"selfServiceUnlock":{"access":"DENY"}},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrfirrWhIDWfJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrfirrWhIDWfJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 16 Apr 2026 03:51:57 GMT
+                - Thu, 16 Apr 2026 06:11:26 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.196620625s
+        duration: 1.182274083s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -126,7 +126,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmmvmp2Er4ZrBs1d7
+        url: https://classic-00.dne-okta.com/api/v1/policies/00pnkw1sf7vmV0MgW1d7/rules/0prxmrfirrWhIDWfJ1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -138,9 +138,9 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Thu, 16 Apr 2026 03:51:59 GMT
+                - Thu, 16 Apr 2026 06:11:27 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.130341125s
+        duration: 1.125123916s

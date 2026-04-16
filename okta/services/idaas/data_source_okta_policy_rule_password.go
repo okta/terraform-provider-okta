@@ -61,25 +61,25 @@ func dataSourcePolicyRulePassword() *schema.Resource {
 			"users_excluded": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "User IDs to exclude from this rule.",
+				Description: "Set of User IDs to exclude from this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"users_included": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "User IDs to include in this rule.",
+				Description: "Set of User IDs to include in this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"groups_excluded": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Group IDs to exclude from this rule.",
+				Description: "Set of Group IDs to exclude from this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"groups_included": {
 				Type:        schema.TypeSet,
 				Computed:    true,
-				Description: "Group IDs to include in this rule.",
+				Description: "Set of Group IDs to include in this rule.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"password_change": {
