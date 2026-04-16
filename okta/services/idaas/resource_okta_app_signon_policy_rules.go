@@ -44,7 +44,7 @@ var (
 	// NOTE: ANY is intentionally excluded. The API silently maps os_type=ANY to
 	// OTHER on read, which causes a post-apply inconsistency. Users should set
 	// os_type = "OTHER" directly (with or without os_expression).
-	validOSTypes = []string{"IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER"}
+	validOSTypes = []string{"IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER", "LINUX"}
 )
 var (
 	_ resource.Resource                   = &appSignOnPolicyRulesResource{}
