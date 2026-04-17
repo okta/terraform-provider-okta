@@ -196,14 +196,14 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Description: "Grace period type: BY_DATE_TIME or BY_DURATION.",
-						Required:    true,
+						Optional:    true,
 						Validators: []validator.String{
 							stringvalidator.OneOf("BY_DATE_TIME", "BY_DURATION"),
 						},
 					},
 					"expiry": schema.StringAttribute{
 						Description: "Grace period expiry. ISO 8601 datetime (e.g. 2024-12-01T00:00:00.000Z) for BY_DATE_TIME, or ISO 8601 duration (e.g. P7D, P30D, 1-180 days) for BY_DURATION.",
-						Required:    true,
+						Optional:    true,
 					},
 				},
 			},
