@@ -21,8 +21,7 @@ func dataSourcePolicyRulePassword() *schema.Resource {
 			},
 			"id": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Required:    true,
 				Description: "ID of the rule.",
 			},
 			"name": {
