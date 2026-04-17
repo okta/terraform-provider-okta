@@ -181,7 +181,21 @@ func (r *delegateAppointmentsResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	applyDelegateAppointmentListToState(&data, listResp)
+	allItems := listResp.Data
+	for apiResp.HasNextPage() {
+		var nextPage governance.DelegateAppointmentList
+		apiResp, err = apiResp.Next(&nextPage)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error reading Delegate Appointments",
+				fmt.Sprintf("Could not read next page of delegate appointments for principal %s: %s", principalId, err.Error()),
+			)
+			return
+		}
+		allItems = append(allItems, nextPage.Data...)
+	}
+
+	applyDelegateAppointmentListToState(&data, allItems)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -316,18 +330,18 @@ func applyDelegateAppointmentsResponseToState(data *delegateAppointmentsResource
 	reorderAppointmentsToMatchPlan(data, apiAppointments)
 }
 
-func applyDelegateAppointmentListToState(data *delegateAppointmentsResourceModel, listResp *governance.DelegateAppointmentList) {
+func applyDelegateAppointmentListToState(data *delegateAppointmentsResourceModel, items []governance.DelegateAppointment) {
 	data.Id = data.PrincipalId
 	if data.PrincipalType.IsNull() || data.PrincipalType.IsUnknown() {
 		data.PrincipalType = types.StringValue(defaultPrincipalType)
 	}
 
-	if listResp == nil {
+	if len(items) == 0 {
 		data.Appointments = []delegateAppointmentBlockModel{}
 		return
 	}
 
-	reorderAppointmentsToMatchPlan(data, listResp.Data)
+	reorderAppointmentsToMatchPlan(data, items)
 }
 
 func reorderAppointmentsToMatchPlan(data *delegateAppointmentsResourceModel, apiAppointments []governance.DelegateAppointment) {

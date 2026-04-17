@@ -8,10 +8,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/okta/okta-governance-sdk-golang/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-var _ datasource.DataSource = &delegateAppointmentsDataSource{}
+var (
+	_ datasource.DataSource              = &delegateAppointmentsDataSource{}
+	_ datasource.DataSourceWithConfigure = &delegateAppointmentsDataSource{}
+)
 
 func newDelegateAppointmentsDataSource() datasource.DataSource {
 	return &delegateAppointmentsDataSource{}
@@ -136,7 +140,7 @@ func (d *delegateAppointmentsDataSource) Read(ctx context.Context, req datasourc
 		apiReq = apiReq.Filter(filter)
 	}
 
-	listResp, _, err := apiReq.Execute()
+	listResp, apiResp, err := apiReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading Delegate Appointments",
@@ -145,8 +149,22 @@ func (d *delegateAppointmentsDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	appointments := make([]delegateAppointmentDataSourceModel, 0, len(listResp.Data))
-	for _, item := range listResp.Data {
+	allItems := listResp.Data
+	for apiResp.HasNextPage() {
+		var nextPage governance.DelegateAppointmentList
+		apiResp, err = apiResp.Next(&nextPage)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error reading Delegate Appointments",
+				"Could not read next page of delegate appointments: "+err.Error(),
+			)
+			return
+		}
+		allItems = append(allItems, nextPage.Data...)
+	}
+
+	appointments := make([]delegateAppointmentDataSourceModel, 0, len(allItems))
+	for _, item := range allItems {
 		appt := delegateAppointmentDataSourceModel{
 			Id:            types.StringValue(item.Id),
 			DelegatorId:   types.StringValue(item.Delegator.ExternalId),
@@ -177,6 +195,10 @@ func (d *delegateAppointmentsDataSource) Read(ctx context.Context, req datasourc
 	}
 
 	data.Data = appointments
-	data.Id = types.StringValue("delegate-appointments")
+	if !data.PrincipalId.IsNull() && !data.PrincipalId.IsUnknown() {
+		data.Id = types.StringValue("delegate-appointments-" + data.PrincipalId.ValueString())
+	} else {
+		data.Id = types.StringValue("delegate-appointments")
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
