@@ -121,11 +121,6 @@ func ensureRuleExists(resourceName string) resource.TestCheckFunc {
 }
 
 func checkRuleDestroy(ruleType string) func(*terraform.State) error {
-	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
-		return func(s *terraform.State) error {
-			return nil
-		}
-	}
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
 			if rs.Type != ruleType {
