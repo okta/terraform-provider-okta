@@ -59,6 +59,23 @@ func TestAccResourceOktaPolicyDeviceAssuranceChromeOS_crud(t *testing.T) {
 					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "tpsp_site_isolation_enabled", "true"),
 				),
 			},
+			{
+				Config: mgr.ConfigReplace(`resource okta_policy_device_assurance_chromeos test{
+					name = "testAcc-replace_with_uuid"
+					tpsp_allow_screen_lock = true
+					grace_period {
+						type = "BY_DURATION"
+						expiry = "P7D"
+					}
+					display_remediation_mode = "SHOW"
+				  }`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "name", fmt.Sprintf("testAcc-%d", mgr.Seed)),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "grace_period.type", "BY_DURATION"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "grace_period.expiry", "P7D"),
+					resource.TestCheckResourceAttr("okta_policy_device_assurance_chromeos.test", "display_remediation_mode", "SHOW"),
+				),
+			},
 		},
 	})
 }

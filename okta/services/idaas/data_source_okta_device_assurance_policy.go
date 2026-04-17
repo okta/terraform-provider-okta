@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v5/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -45,6 +45,8 @@ type deviceAssurancePolicyModel struct {
 	ScreenlockType           types.Object          `tfsdk:"screenlock_type"`
 	SecureHardwarePresent    types.Bool            `tfsdk:"secure_hardware_present"`
 	ThirdPartySignalProvider types.Object          `tfsdk:"third_party_signal_provider"`
+	GracePeriod              types.Object          `tfsdk:"grace_period"`
+	DisplayRemediationMode   types.String          `tfsdk:"display_remediation_mode"`
 	OSVersionConstraint      []OsVersionConstraint `tfsdk:"os_version_constraint"`
 }
 
@@ -64,7 +66,7 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 		Description: "Get a policy assurance from Okta.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "ID of the user type to retrieve, conflicts with `name`.",
+				Description: "ID of the device assurance policy to retrieve, conflicts with `name`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -73,7 +75,7 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 				},
 			},
 			"name": schema.StringAttribute{
-				Description: "Name of user type to retrieve, conflicts with `id`.",
+				Description: "Name of the device assurance policy to retrieve, conflicts with `id`.",
 				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
@@ -123,11 +125,11 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 			},
 			"secure_hardware_present": schema.BoolAttribute{
 				Description: "Indicates if the device contains a secure hardware functionality",
-				Optional:    true,
+				Computed:    true,
 			},
 			"third_party_signal_provider": schema.ObjectAttribute{
-				Description: "Indicates if the device contains a secure hardware functionality",
-				Optional:    true,
+				Description: "Third party signal provider settings",
+				Computed:    true,
 				AttributeTypes: map[string]attr.Type{
 					"dtc": types.ObjectType{
 						AttrTypes: map[string]attr.Type{
@@ -163,6 +165,18 @@ func (d *deviceAssurancePolicyDataSource) Schema(ctx context.Context, req dataso
 					},
 				},
 			},
+			"grace_period": schema.ObjectAttribute{
+				Description: "Grace period configuration for the device assurance policy (Early Access feature).",
+				Computed:    true,
+				AttributeTypes: map[string]attr.Type{
+					"type":   types.StringType,
+					"expiry": types.StringType,
+				},
+			},
+			"display_remediation_mode": schema.StringAttribute{
+				Description: "Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.",
+				Computed:    true,
+			},
 			"os_version_constraint": schema.ListAttribute{
 				Description: "The list of os version constraints.",
 				Computed:    true,
@@ -194,11 +208,11 @@ func (d *deviceAssurancePolicyDataSource) Read(ctx context.Context, req datasour
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	var devicePolicyAssuranceResp *okta.ListDeviceAssurancePolicies200ResponseInner
+	var devicePolicyAssuranceResp *v6okta.ListDeviceAssurancePolicies200ResponseInner
 	if data.ID.ValueString() != "" {
-		devicePolicyAssuranceResp, _, err = d.OktaIDaaSClient.OktaSDKClientV5().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
+		devicePolicyAssuranceResp, _, err = d.OktaIDaaSClient.OktaSDKClientV6().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, data.ID.ValueString()).Execute()
 	} else {
-		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.OktaIDaaSClient.OktaSDKClientV5(), data.Name.ValueString())
+		devicePolicyAssuranceResp, err = findDeviceAssurancePolicyByName(ctx, d.OktaIDaaSClient.OktaSDKClientV6(), data.Name.ValueString())
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -215,7 +229,7 @@ func (d *deviceAssurancePolicyDataSource) Read(ctx context.Context, req datasour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies200ResponseInner, state *deviceAssurancePolicyModel) diag.Diagnostics {
+func mapDeviceAssurancePolicyDatasource(data *v6okta.ListDeviceAssurancePolicies200ResponseInner, state *deviceAssurancePolicyModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if data == nil {
 		diags.AddError("Empty response", "device assurance object")
@@ -224,8 +238,18 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 
 	dataInstance := data.GetActualInstance()
 	sharedData := dataInstance.(OktaDeviceAssurancePolicy)
+
+	gpTypesMap := map[string]attr.Type{
+		"type":   types.StringType,
+		"expiry": types.StringType,
+	}
+	gpValueMap := map[string]attr.Value{
+		"type":   types.StringPointerValue(nil),
+		"expiry": types.StringPointerValue(nil),
+	}
+
 	switch v := dataInstance.(type) {
-	case *okta.DeviceAssuranceAndroidPlatform:
+	case *v6okta.DeviceAssuranceAndroidPlatform:
 		if det, ok := v.GetDiskEncryptionTypeOk(); ok {
 			include := make([]attr.Value, 0)
 			for _, i := range det.Include {
@@ -323,7 +347,9 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 		}
 		state.Jaibreak = types.BoolPointerValue(v.Jailbreak)
 		state.SecureHardwarePresent = types.BoolPointerValue(v.SecureHardwarePresent)
-	case *okta.DeviceAssuranceChromeOSPlatform:
+		mapGracePeriodToValues(v.GracePeriod, gpValueMap)
+		state.DisplayRemediationMode = types.StringPointerValue(v.DisplayRemediationMode)
+	case *v6okta.DeviceAssuranceChromeOSPlatform:
 		if tpsp, ok := v.GetThirdPartySignalProvidersOk(); ok {
 			tpspTypesMap, dtcTypesMap, bvTypesMap, osvTypesMap, tpspValueMap, dtcValueMap, bvValueMap, osvValueMap := initEmptyTpsp()
 			if dtc, ok := tpsp.GetDtcOk(); ok {
@@ -372,7 +398,9 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 			}
 			state.ThirdPartySignalProvider = thirdPartySignalProvider
 		}
-	case *okta.DeviceAssuranceIOSPlatform:
+		mapGracePeriodToValues(v.GracePeriod, gpValueMap)
+		state.DisplayRemediationMode = types.StringPointerValue(v.DisplayRemediationMode)
+	case *v6okta.DeviceAssuranceIOSPlatform:
 		if osv, ok := v.GetOsVersionOk(); ok {
 			dvrTypesMap := map[string]attr.Type{
 				"type":                       types.StringType,
@@ -444,7 +472,9 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 			state.ScreenlockType = screenlockType
 		}
 		state.Jaibreak = types.BoolPointerValue(v.Jailbreak)
-	case *okta.DeviceAssuranceMacOSPlatform:
+		mapGracePeriodToValues(v.GracePeriod, gpValueMap)
+		state.DisplayRemediationMode = types.StringPointerValue(v.DisplayRemediationMode)
+	case *v6okta.DeviceAssuranceMacOSPlatform:
 		if det, ok := v.GetDiskEncryptionTypeOk(); ok {
 			include := make([]attr.Value, 0)
 			for _, i := range det.Include {
@@ -587,7 +617,9 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 			state.ThirdPartySignalProvider = thirdPartySignalProvider
 		}
 		state.SecureHardwarePresent = types.BoolPointerValue(v.SecureHardwarePresent)
-	case *okta.DeviceAssuranceWindowsPlatform:
+		mapGracePeriodToValues(v.GracePeriod, gpValueMap)
+		state.DisplayRemediationMode = types.StringPointerValue(v.DisplayRemediationMode)
+	case *v6okta.DeviceAssuranceWindowsPlatform:
 		if det, ok := v.GetDiskEncryptionTypeOk(); ok {
 			include := make([]attr.Value, 0)
 			for _, i := range det.Include {
@@ -749,11 +781,35 @@ func mapDeviceAssurancePolicyDatasource(data *okta.ListDeviceAssurancePolicies20
 			}
 		}
 		state.SecureHardwarePresent = types.BoolPointerValue(v.SecureHardwarePresent)
+		mapGracePeriodToValues(v.GracePeriod, gpValueMap)
+		state.DisplayRemediationMode = types.StringPointerValue(v.DisplayRemediationMode)
 	}
+
+	gracePeriod, gpDiag := types.ObjectValue(gpTypesMap, gpValueMap)
+	if gpDiag != nil {
+		diags.Append(gpDiag...)
+		return diags
+	}
+	state.GracePeriod = gracePeriod
+
 	state.ID = types.StringValue(sharedData.GetId())
 	state.Name = types.StringValue(sharedData.GetName())
 	state.Platform = types.StringValue(sharedData.GetPlatform())
 	return diags
+}
+
+func mapGracePeriodToValues(gp *v6okta.GracePeriod, gpValueMap map[string]attr.Value) {
+	if gp == nil {
+		return
+	}
+	gpValueMap["type"] = types.StringPointerValue(gp.Type)
+	if gp.Expiry != nil {
+		if s := gp.Expiry.String; s != nil {
+			gpValueMap["expiry"] = types.StringPointerValue(s)
+		} else if t := gp.Expiry.TimeTime; t != nil {
+			gpValueMap["expiry"] = types.StringValue(t.Format("2006-01-02T15:04:05.000Z07:00"))
+		}
+	}
 }
 
 func initEmptyTpsp() (tpspTypesMap, dtcTypesMap, bvTypesMap, osvTypesMap map[string]attr.Type, tpspValueMap, dtcValueMap, bvValueMap, osvValueMap map[string]attr.Value) {
@@ -864,8 +920,8 @@ func initEmptyTpsp() (tpspTypesMap, dtcTypesMap, bvTypesMap, osvTypesMap map[str
 	return tpspTypesMap, dtcTypesMap, bvTypesMap, osvTypesMap, tpspValueMap, dtcValueMap, bvValueMap, osvValueMap
 }
 
-func findDeviceAssurancePolicyByName(ctx context.Context, client *okta.APIClient, name string) (*okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	var res *okta.ListDeviceAssurancePolicies200ResponseInner
+func findDeviceAssurancePolicyByName(ctx context.Context, client *v6okta.APIClient, name string) (*v6okta.ListDeviceAssurancePolicies200ResponseInner, error) {
+	var res *v6okta.ListDeviceAssurancePolicies200ResponseInner
 	dapListResp, _, err := client.DeviceAssuranceAPI.ListDeviceAssurancePolicies(ctx).Execute()
 	if err != nil {
 		return nil, err
@@ -877,5 +933,5 @@ func findDeviceAssurancePolicyByName(ctx context.Context, client *okta.APIClient
 			return res, nil
 		}
 	}
-	return nil, fmt.Errorf("user type '%s' does not exist", name)
+	return nil, fmt.Errorf("device assurance policy '%s' does not exist", name)
 }
