@@ -151,6 +151,12 @@ func (r *{{.Name}}Resource) Read(ctx context.Context, req resource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+{{- if .ReadNoop}}
+	// No GET endpoint — preserve existing state unchanged.
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+{{- else}}
 
 	id := state.ID.ValueString()
 {{- range .ParentParams}}
@@ -248,6 +254,7 @@ func (r *{{.Name}}Resource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
+{{- end}}
 
 func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 {{- if .HasCreate}}
@@ -274,6 +281,71 @@ func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateReque
 	body.Set{{.GoField}}(plan.{{.GoField}}.ValueInt64())
 {{- else if eq .GoType "types.Bool"}}
 	body.Set{{.GoField}}(plan.{{.GoField}}.ValueBool())
+{{- else if .IsListScalar}}
+	if !plan.{{.GoField}}.IsNull() && !plan.{{.GoField}}.IsUnknown() {
+		var {{.TFAttr}}Slice []string
+		for _, item := range plan.{{.GoField}}.Elements() {
+			if sv, ok := item.(types.String); ok {
+				{{.TFAttr}}Slice = append({{.TFAttr}}Slice, sv.ValueString())
+			}
+		}
+		body.Set{{.GoField}}({{.TFAttr}}Slice)
+	}
+{{- else if and .IsListNested .SDKNestedTypeName}}
+	if len(plan.{{.GoField}}) > 0 {
+		var {{.TFAttr}}Slice []okta.{{.SDKNestedTypeName}}
+		for _, item := range plan.{{.GoField}} {
+			nestedItem := okta.New{{.SDKNestedTypeName}}WithDefaults()
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueString())
+			}
+{{- else if eq .GoType "types.Int64"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueInt64())
+			}
+{{- else if eq .GoType "types.Bool"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueBool())
+			}
+{{- else if .IsListScalar}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				var {{.TFAttr}}ItemSlice []string
+				for _, elem := range item.{{.GoField}}.Elements() {
+					if sv, ok := elem.(types.String); ok {
+						{{.TFAttr}}ItemSlice = append({{.TFAttr}}ItemSlice, sv.ValueString())
+					}
+				}
+				nestedItem.Set{{.GoField}}({{.TFAttr}}ItemSlice)
+			}
+{{- else if .SDKNestedTypeName}}
+			if item.{{.GoField}} != nil {
+				inner{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()
+{{- $sub := .}}
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueString())
+				}
+{{- else if eq .GoType "types.Int64"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueInt64())
+				}
+{{- else if eq .GoType "types.Bool"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueBool())
+				}
+{{- end}}
+{{- end}}
+				nestedItem.Set{{.GoField}}(*inner{{.GoField}})
+			}
+{{- end}}
+{{- end}}
+			{{.TFAttr}}Slice = append({{.TFAttr}}Slice, *nestedItem)
+		}
+		body.Set{{.GoField}}({{.TFAttr}}Slice)
+	}
 {{- else if .SDKNestedTypeName}}
 	if plan.{{.GoField}} != nil {
 		nested{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()
@@ -312,6 +384,32 @@ func (r *{{.Name}}Resource) Create(ctx context.Context, req resource.CreateReque
 	}
 	// Create returns no body (204); set ID from the plan field.
 	plan.ID = plan.{{.CreateIDField}}
+{{- if and .ReadMethod .HasComputedProperties}}
+	// Fetch computed fields via a follow-up Read (Create returned no body).
+	id := plan.ID.ValueString()
+{{- if .HasParent}}
+	readResult, _, readErr := client.{{.APITag}}API.{{.ReadMethod}}(ctx, {{range .ParentParams}}plan.{{.GoField}}.ValueString(), {{end}}id).Execute()
+{{- else}}
+	readResult, _, readErr := client.{{.APITag}}API.{{.ReadMethod}}(ctx, id).Execute()
+{{- end}}
+	if readErr == nil {
+{{- range .Properties}}
+{{- if .Computed}}
+{{- if eq .GoType "types.String"}}
+{{- if .IsDateTime}}
+		plan.{{.GoField}} = types.StringValue(readResult.Get{{.GoField}}().Format(time.RFC3339))
+{{- else}}
+		plan.{{.GoField}} = types.StringValue(readResult.Get{{.GoField}}())
+{{- end}}
+{{- else if eq .GoType "types.Int64"}}
+		plan.{{.GoField}} = types.Int64Value(readResult.Get{{.GoField}}())
+{{- else if eq .GoType "types.Bool"}}
+		plan.{{.GoField}} = types.BoolValue(readResult.Get{{.GoField}}())
+{{- end}}
+{{- end}}
+{{- end}}
+	}
+{{- end}}
 {{- else}}
 	result, _, err := createReq.Execute()
 	if err != nil {
@@ -409,6 +507,71 @@ func (r *{{.Name}}Resource) Update(ctx context.Context, req resource.UpdateReque
 	updateBody.Set{{.GoField}}(plan.{{.GoField}}.ValueInt64())
 {{- else if eq .GoType "types.Bool"}}
 	updateBody.Set{{.GoField}}(plan.{{.GoField}}.ValueBool())
+{{- else if .IsListScalar}}
+	if !plan.{{.GoField}}.IsNull() && !plan.{{.GoField}}.IsUnknown() {
+		var {{.TFAttr}}Slice []string
+		for _, item := range plan.{{.GoField}}.Elements() {
+			if sv, ok := item.(types.String); ok {
+				{{.TFAttr}}Slice = append({{.TFAttr}}Slice, sv.ValueString())
+			}
+		}
+		updateBody.Set{{.GoField}}({{.TFAttr}}Slice)
+	}
+{{- else if and .IsListNested .SDKNestedTypeName}}
+	if len(plan.{{.GoField}}) > 0 {
+		var {{.TFAttr}}Slice []okta.{{.SDKNestedTypeName}}
+		for _, item := range plan.{{.GoField}} {
+			nestedItem := okta.New{{.SDKNestedTypeName}}WithDefaults()
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueString())
+			}
+{{- else if eq .GoType "types.Int64"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueInt64())
+			}
+{{- else if eq .GoType "types.Bool"}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				nestedItem.Set{{.GoField}}(item.{{.GoField}}.ValueBool())
+			}
+{{- else if .IsListScalar}}
+			if !item.{{.GoField}}.IsNull() && !item.{{.GoField}}.IsUnknown() {
+				var {{.TFAttr}}ItemSlice []string
+				for _, elem := range item.{{.GoField}}.Elements() {
+					if sv, ok := elem.(types.String); ok {
+						{{.TFAttr}}ItemSlice = append({{.TFAttr}}ItemSlice, sv.ValueString())
+					}
+				}
+				nestedItem.Set{{.GoField}}({{.TFAttr}}ItemSlice)
+			}
+{{- else if .SDKNestedTypeName}}
+			if item.{{.GoField}} != nil {
+				inner{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()
+{{- $sub := .}}
+{{- range .NestedProps}}
+{{- if eq .GoType "types.String"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueString())
+				}
+{{- else if eq .GoType "types.Int64"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueInt64())
+				}
+{{- else if eq .GoType "types.Bool"}}
+				if !item.{{$sub.GoField}}.{{.GoField}}.IsNull() && !item.{{$sub.GoField}}.{{.GoField}}.IsUnknown() {
+					inner{{$sub.GoField}}.Set{{.GoField}}(item.{{$sub.GoField}}.{{.GoField}}.ValueBool())
+				}
+{{- end}}
+{{- end}}
+				nestedItem.Set{{.GoField}}(*inner{{.GoField}})
+			}
+{{- end}}
+{{- end}}
+			{{.TFAttr}}Slice = append({{.TFAttr}}Slice, *nestedItem)
+		}
+		updateBody.Set{{.GoField}}({{.TFAttr}}Slice)
+	}
 {{- else if .SDKNestedTypeName}}
 	if plan.{{.GoField}} != nil {
 		nested{{.GoField}} := okta.New{{.SDKNestedTypeName}}WithDefaults()

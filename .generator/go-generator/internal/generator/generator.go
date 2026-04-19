@@ -80,13 +80,18 @@ type TemplateData struct {
 	// CreateIDField: when set, Create does not call result.GetId() (no response body).
 	// Instead, the resource ID is taken from this plan field (Go struct field name, e.g. "MemberExternalId").
 	CreateIDField string
+	// HasComputedProperties is true when at least one property is Computed (read-only from the API).
+	// Used by the template to decide whether to emit a follow-up Read after a 204 Create.
+	HasComputedProperties bool
 	// ReadListIDField: when set, Read calls the list endpoint and searches this response field
 	// (Go struct field name, e.g. "MemberExternalIds") for the resource ID to verify existence.
 	// The list field must be a []string (or similar) in the SDK response struct.
 	ReadListIDField string
-	// ReadNoop: when true, Read is a no-op — state is preserved as-is (no GET call).
+	// ReadNoop: when true, the Read function does not call any API — it preserves existing state unchanged.
+	// Used for POST-only resources where there is no GET endpoint.
 	ReadNoop bool
-	// DeleteNoop: when true, Delete is a no-op — no API call is made.
+	// DeleteNoop: when true, the Delete function does not call any API.
+	// Used for resources that cannot be deleted via the API.
 	DeleteNoop bool
 }
 
@@ -106,6 +111,7 @@ type PropData struct {
 	TFSchemaType      string
 	ElementType       string     // non-empty for flat array types: the attr.Type expression for ElementType
 	IsListNested      bool       // true when the array items are objects → use schema.ListNestedAttribute
+	IsListScalar      bool       // true when the array items are scalars ([]string, []int64) — uses schema.ListAttribute + ElementType
 	NestedProps       []PropData // non-empty when property is an inline object/list-of-objects — use SingleNestedAttribute or ListNestedAttribute
 	NestedModelName   string     // e.g. "DevicePostureCheckRemediationSettingsModel" — the generated nested struct name
 	SDKNestedTypeName string     // e.g. "IdentitySourceGroupProfileForUpsert" — the SDK struct to construct for nested body fields; derived from $ref
@@ -601,18 +607,32 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 					rbProp.WriteOnly = true
 					props = append(props, rbProp)
 					existingFields[rbProp.TFAttr] = true
-				} else if !rbProp.Computed && len(rbProp.NestedProps) > 0 {
-					// Field exists in both schemas but request body has a writable nested structure.
-					// Replace the response-schema version with the request-body version so the TF
-					// schema/model matches the API body shape (avoids extra wrapper nesting levels).
+				} else if !rbProp.Computed {
+					// Field exists in both schemas and request body version is writable.
 					for i, existing := range props {
-						if existing.TFAttr == rbProp.TFAttr && !existing.Computed {
+						if existing.TFAttr != rbProp.TFAttr {
+							continue
+						}
+						if len(rbProp.NestedProps) > 0 {
+							// Request body has a writable nested structure — replace the response-schema
+							// version so the TF schema matches the API body shape (avoids extra wrapper
+							// nesting levels introduced by the response schema).
 							if g.log != nil {
 								g.log.Printf("  [buildResourceData] replacing response-schema field %q with request-body version (shallower nesting)", rbProp.TFAttr)
 							}
 							props[i] = rbProp
-							break
+						} else if existing.Computed {
+							// Scalar field: response schema marks it readOnly/Computed, but the request
+							// body accepts it as user input — flip to Required or Optional so users can
+							// set it. (e.g. UserResponseSchema.externalId has readOnly:true, but
+							// UserRequestSchema.externalId is a plain writable field.)
+							if g.log != nil {
+								g.log.Printf("  [buildResourceData] un-computing response-schema field %q — it is writable in the request body (required=%v)", rbProp.TFAttr, rbProp.Required)
+							}
+							props[i].Computed = false
+							props[i].Required = rbProp.Required
 						}
+						break
 					}
 				}
 			}
@@ -727,19 +747,26 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 	var requestBodyFields []PropData
 	{
 		var rbSchema *openapi.Schema
+		rbParentModelName := title + "Model"
 		if cfg.Create != nil {
 			if op := g.spec.GetOperation(cfg.Create.Method, cfg.Create.Path); op != nil {
 				rbSchema = g.spec.GetRequestBodySchema(op)
+				if ref := g.spec.GetRequestBodySchemaRef(op); ref != "" {
+					rbParentModelName = ref + "Model"
+				}
 			}
 		}
 		if rbSchema == nil && cfg.Update != nil {
 			// No Create op — fall back to Update schema
 			if op := g.spec.GetOperation(cfg.Update.Method, cfg.Update.Path); op != nil {
 				rbSchema = g.spec.GetRequestBodySchema(op)
+				if ref := g.spec.GetRequestBodySchemaRef(op); ref != "" {
+					rbParentModelName = ref + "Model"
+				}
 			}
 		}
 		if rbSchema != nil {
-			rbProps := g.schemaToProps(rbSchema, false, title+"Model")
+			rbProps := g.schemaToProps(rbSchema, false, rbParentModelName)
 			// Build a lookup of response-schema props by TFAttr for enriching nested fields.
 			respPropsByAttr := make(map[string]PropData, len(props))
 			for _, rp := range props {
@@ -750,6 +777,17 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 					continue
 				}
 				if isScalarGoType(p.GoType) {
+					requestBodyFields = append(requestBodyFields, p)
+				} else if p.IsListScalar {
+					// Scalar list ([]string, []int64, etc.) — include as-is.
+					requestBodyFields = append(requestBodyFields, p)
+				} else if p.IsListNested && len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
+					// List-of-nested-objects: enrich with response schema props if available.
+					if respProp, ok := respPropsByAttr[p.TFAttr]; ok && len(respProp.NestedProps) > 0 {
+						p.TFPlanNestedProps = respProp.NestedProps
+					} else {
+						p.TFPlanNestedProps = p.NestedProps
+					}
 					requestBodyFields = append(requestBodyFields, p)
 				} else if len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
 					// Enrich with TFPlanNestedProps from the response schema so the template
@@ -772,13 +810,17 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 	var updateRequestBodyFields []PropData
 	{
 		var updateRbSchema *openapi.Schema
+		updateRbParentModelName := title + "Model"
 		if cfg.Update != nil {
 			if op := g.spec.GetOperation(cfg.Update.Method, cfg.Update.Path); op != nil {
 				updateRbSchema = g.spec.GetRequestBodySchema(op)
+				if ref := g.spec.GetRequestBodySchemaRef(op); ref != "" {
+					updateRbParentModelName = ref + "Model"
+				}
 			}
 		}
 		if updateRbSchema != nil {
-			rbProps := g.schemaToProps(updateRbSchema, false, title+"Model")
+			rbProps := g.schemaToProps(updateRbSchema, false, updateRbParentModelName)
 			// Build a lookup of response-schema props by TFAttr for enriching nested fields.
 			respPropsByAttr := make(map[string]PropData, len(props))
 			for _, rp := range props {
@@ -789,6 +831,17 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 					continue
 				}
 				if isScalarGoType(p.GoType) {
+					updateRequestBodyFields = append(updateRequestBodyFields, p)
+				} else if p.IsListScalar {
+					// Scalar list ([]string, []int64, etc.) — include as-is.
+					updateRequestBodyFields = append(updateRequestBodyFields, p)
+				} else if p.IsListNested && len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
+					// List-of-nested-objects: enrich with response schema props if available.
+					if respProp, ok := respPropsByAttr[p.TFAttr]; ok && len(respProp.NestedProps) > 0 {
+						p.TFPlanNestedProps = respProp.NestedProps
+					} else {
+						p.TFPlanNestedProps = p.NestedProps
+					}
 					updateRequestBodyFields = append(updateRequestBodyFields, p)
 				} else if len(p.NestedProps) > 0 && p.SDKNestedTypeName != "" {
 					if respProp, ok := respPropsByAttr[p.TFAttr]; ok && len(respProp.NestedProps) > 0 {
@@ -809,6 +862,71 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 	// IDField: name of the Go SDK struct setter/getter for the ID field.
 	// Most Okta resources use "Id"; we default to that.
 	idField := "Id"
+
+	// Auto-detect CreateIDField when:
+	//   1. No create_id_field was set in config, AND
+	//   2. The Create operation exists, AND
+	//   3. The Create operation returns no response schema (i.e. the POST response has no body).
+	// In that case the resource ID cannot be read from the response; we pick it from the request
+	// body instead.  Selection priority:
+	//   a) a field whose snake_case name is "external_id"
+	//   b) a field whose snake_case name ends in "_id"
+	//   c) the first non-nested, non-computed string field in the request body
+	// If nothing matches, we leave CreateIDField empty and let the template fall back to
+	// result.GetId() — which will likely cause a compile error that the developer must resolve
+	// manually (by adding create_id_field to the config).
+	resolvedCreateIDField := cfg.CreateIDField
+	if resolvedCreateIDField == "" && cfg.Create != nil {
+		createOp := g.spec.GetOperation(cfg.Create.Method, cfg.Create.Path)
+		if createOp != nil && g.spec.GetResponseSchema(createOp) == nil {
+			// POST returns no body — try to find a suitable ID field in the request body.
+			var candidate string
+			if rbSchema := g.spec.GetRequestBodySchema(createOp); rbSchema != nil {
+				rbProps := g.schemaToProps(rbSchema, false, title+"Model")
+				// Pass 1: prefer a field literally named "external_id"
+				for _, p := range rbProps {
+					if p.TFAttr == "external_id" && len(p.NestedProps) == 0 {
+						candidate = p.TFAttr
+						break
+					}
+				}
+				// Pass 2: any field whose name ends in "_id"
+				if candidate == "" {
+					for _, p := range rbProps {
+						if strings.HasSuffix(p.TFAttr, "_id") && len(p.NestedProps) == 0 {
+							candidate = p.TFAttr
+							break
+						}
+					}
+				}
+				// Pass 3: first non-nested, non-computed string field
+				if candidate == "" {
+					for _, p := range rbProps {
+						if p.GoType == "types.String" && !p.Computed && len(p.NestedProps) == 0 {
+							candidate = p.TFAttr
+							break
+						}
+					}
+				}
+			}
+			if candidate != "" {
+				resolvedCreateIDField = candidate
+				if g.log != nil {
+					g.log.Printf("  [buildResourceData] auto-detected create_id_field=%q (POST returns no body)", candidate)
+				}
+			} else if g.log != nil {
+				g.log.Printf("  [buildResourceData] WARNING: POST returns no body and no suitable create_id_field found; generated Create will likely not compile")
+			}
+		}
+	}
+
+	hasComputedProperties := false
+	for _, p := range props {
+		if p.Computed {
+			hasComputedProperties = true
+			break
+		}
+	}
 
 	if g.log != nil {
 		g.log.Printf("  [buildResourceData] operationIds: read=%q create=%q update=%q delete=%q",
@@ -843,8 +961,9 @@ func (g *Generator) buildResourceData(name string, cfg config.ResourceConfig) Te
 		UpdateSDKTypeName:       updateSDKTypeName,
 		BodySetterMethod:        bodySetterMethod,
 		UpdateBodySetterMethod:  updateBodySetterMethod,
-		CreateIDField:           formatter.GoFieldName(cfg.CreateIDField),
+		CreateIDField:           formatter.GoFieldName(resolvedCreateIDField),
 		ReadListIDField:         formatter.GoFieldName(cfg.ReadListIDField),
+		HasComputedProperties:   hasComputedProperties,
 		ReadNoop:                cfg.ReadNoop,
 		DeleteNoop:              cfg.DeleteNoop,
 	}
@@ -1129,6 +1248,8 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 						// Prefer items $ref (direct item type); fall back to OriginalRef.
 						// When OriginalRef is a named array schema (e.g. IdentitySourceGroupMembershipsDeleteProfile
 						// which is type:array), the SDK codegen appends "Inner" to name the item struct.
+						// When both are absent (inline items), the SDK codegen convention is
+						// <ParentSchemaName><FieldNamePascal>Inner.
 						const refPrefix = "#/components/schemas/"
 						if p.Schema.Items.Ref != "" {
 							sdkNestedTypeName = p.Schema.Items.Ref
@@ -1142,6 +1263,14 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 								sdkNestedTypeName = candidateName + "Inner"
 							} else {
 								sdkNestedTypeName = candidateName
+							}
+						} else {
+							// Inline items with no $ref — derive from parent schema name + field + "Inner".
+							// parentModelName is e.g. "BulkUpsertRequestBodyModel"; strip the "Model" suffix
+							// to get "BulkUpsertRequestBody", then append PascalCase(name) + "Inner".
+							parentBase := strings.TrimSuffix(parentModelName, "Model")
+							if parentBase != "" {
+								sdkNestedTypeName = parentBase + formatter.GoFieldName(name) + "Inner"
 							}
 						}
 						if sdkNestedTypeName != "" && strings.HasPrefix(sdkNestedTypeName, refPrefix) {
@@ -1161,7 +1290,6 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			} else {
 				elementType = "types.StringType" // safe fallback
 			}
-
 		case isWritable && p.Schema.Type == "object" && len(p.Schema.Properties) > 0 && p.Schema.Ref == "" && depth < 10:
 			// Inline writable object with known sub-fields → recurse to build SingleNestedAttribute.
 			nestedModelName := parentModelName + formatter.GoFieldName(name) + "Model"
@@ -1212,6 +1340,15 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 					tfSchemaType = "schema.SingleNestedAttribute"
 					goType = "*" + nestedModelName
 					nestedProps = candidateNestedProps
+					// If this composed object originated from a $ref, capture the SDK type name
+					// so the template can call okta.New<SDKNestedTypeName>WithDefaults().
+					if p.OriginalRef != "" {
+						sdkNestedTypeName = p.OriginalRef
+						const refPrefix = "#/components/schemas/"
+						if strings.HasPrefix(sdkNestedTypeName, refPrefix) {
+							sdkNestedTypeName = sdkNestedTypeName[len(refPrefix):]
+						}
+					}
 				}
 			}
 		}
@@ -1227,6 +1364,7 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 		nestedModelName := ""
 		schemaAttrBlock := ""
 		isListNested := tfSchemaType == "schema.ListNestedAttribute"
+		isListScalar := elementType != "" && !isListNested
 		if len(nestedProps) > 0 {
 			nestedModelName = parentModelName + formatter.GoFieldName(name) + "Model"
 			// Pre-render the schema attribute block (schema only, no struct defs here).
@@ -1234,6 +1372,7 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 				TFAttr:       tfAttr,
 				TFSchemaType: tfSchemaType,
 				IsListNested: isListNested,
+				IsListScalar: isListScalar,
 				ElementType:  elementType,
 				NestedProps:  nestedProps,
 				Description:  desc,
@@ -1248,6 +1387,7 @@ func (g *Generator) schemaToPropsDepth(schema *openapi.Schema, allComputed bool,
 			TFAttr:            tfAttr,
 			TFSchemaType:      tfSchemaType,
 			IsListNested:      isListNested,
+			IsListScalar:      isListScalar,
 			ElementType:       elementType,
 			NestedProps:       nestedProps,
 			NestedModelName:   nestedModelName,

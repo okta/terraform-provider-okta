@@ -125,6 +125,13 @@ func FWProviderResources() []func() resource.Resource {
 		NewIdentitySourceSessionResource,
 		NewIdentitySourceGroupResource,
 		NewIdentitySourceGroupMembershipResource,
+		NewIdentitySourceUserResource,
+		NewIdentitySourceBulkUpsertResource,
+		NewIdentitySourceBulkGroupsUpsertResource,
+		NewIdentitySourceBulkGroupsDeleteResource,
+		NewIdentitySourceBulkDeleteResource,
+		NewIdentitySourceBulkGroupMembershipsUpsertResource,
+		NewIdentitySourceBulkGroupMembershipsDeleteResource,
 	}
 }
 

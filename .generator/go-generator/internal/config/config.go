@@ -23,6 +23,10 @@ type ResourceConfig struct {
 	// search this array field name in the response for the resource ID to verify existence.
 	// Example: "member_external_ids"
 	ReadListIDField string `yaml:"read_list_id_field"`
+	// ReadNoop: when true, Read is a no-op — state is preserved as-is (no GET call).
+	ReadNoop bool `yaml:"read_noop"`
+	// DeleteNoop: when true, Delete is a no-op — no API call is made.
+	DeleteNoop bool `yaml:"delete_noop"`
 }
 
 // DataSourceConfig holds the singular/plural fetch config for a data source
