@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -63,9 +64,10 @@ func resourcePolicyPasswordRule() *schema.Resource {
 			},
 			// password_reset_access_control controls whether SSPR uses legacy or auth-policy access control.
 			"password_reset_access_control": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"LEGACY", "AUTH_POLICY"}, false),
+				Description:  "Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.",
 			},
 			// password_reset_requirement defines the SSPR requirement settings (primary methods, step-up).
 			"password_reset_requirement": {
@@ -224,7 +226,9 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 			// Read SSPR requirement fields from upstream and set them in state.
 			if req := sspr.Requirement; req != nil {
 				if ac := req.AccessControl; ac != nil {
-					_ = d.Set("password_reset_access_control", ac)
+					_ = d.Set("password_reset_access_control", *ac)
+				} else {
+					_ = d.Set("password_reset_access_control", "")
 				}
 				reqMap := map[string]interface{}{
 					"primary_methods":    []string{},
@@ -249,7 +253,7 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 				}
 				if stepUp := req.StepUp; stepUp != nil {
 					reqMap["step_up_enabled"] = stepUp.GetRequired()
-					reqMap["step_up_methods"] = stepUp.Methods
+					reqMap["step_up_methods"] = stepUp.GetMethods()
 				}
 				// Only persist the requirement block when it contains meaningful content.
 				// If the API returns an empty requirement (e.g. with AUTH_POLICY), omitting

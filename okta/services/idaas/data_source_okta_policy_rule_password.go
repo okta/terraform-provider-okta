@@ -207,7 +207,9 @@ func flattenPolicyRulePassword(d *schema.ResourceData, rule *v6okta.PasswordPoli
 			_ = d.Set("password_reset", sspr.GetAccess())
 			if req := sspr.Requirement; req != nil {
 				if ac := req.AccessControl; ac != nil {
-					_ = d.Set("password_reset_access_control", ac)
+					_ = d.Set("password_reset_access_control", *ac)
+				} else {
+					_ = d.Set("password_reset_access_control", "")
 				}
 				reqMap := map[string]interface{}{
 					"primary_methods":    []string{},
@@ -231,7 +233,7 @@ func flattenPolicyRulePassword(d *schema.ResourceData, rule *v6okta.PasswordPoli
 				}
 				if stepUp := req.StepUp; stepUp != nil {
 					reqMap["step_up_enabled"] = stepUp.GetRequired()
-					reqMap["step_up_methods"] = stepUp.Methods
+					reqMap["step_up_methods"] = stepUp.GetMethods()
 				}
 				_ = d.Set("password_reset_requirement", []interface{}{reqMap})
 			}
