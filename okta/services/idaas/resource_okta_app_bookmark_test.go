@@ -158,3 +158,110 @@ func TestAccResourceOktaAppBookmarkApplication_authenticationPolicy_OIEonly(t *t
 		},
 	})
 }
+
+func TestAccResourceOktaAppBookmarkApplication_skipAuthenticationPolicy(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppBookmark, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBookmark)
+	config := `
+resource "okta_app_bookmark" "test" {
+  label  = "testAcc_replace_with_uuid"
+  url    = "https://test.com"
+  skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppBookmarkApplication_skipAuthenticationPolicyUpdate(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppBookmark, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBookmark)
+	config := `
+resource "okta_app_bookmark" "test" {
+  label  = "testAcc_replace_with_uuid"
+  url    = "https://test.com"
+  skip_authentication_policy = false
+}`
+	updatedConfig := `
+resource "okta_app_bookmark" "test" {
+  label  = "testAcc_replace_with_uuid"
+  url    = "https://test.com"
+  skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "false"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(updatedConfig),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppBookmarkApplication_skipAuthenticationPolicyWithLogo(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppBookmark, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppBookmark)
+	config := `
+resource "okta_app_bookmark" "test" {
+  label  = "testAcc_replace_with_uuid"
+  url    = "https://test.com"
+  skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppBookmark, createDoesAppExist(sdk.NewBookmarkApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewBookmarkApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.com"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+				),
+			},
+		},
+	})
+}

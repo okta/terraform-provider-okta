@@ -4,6 +4,16 @@ Manages multiple app sign-on policy rules for a single policy. This resource all
 
 ~> **IMPORTANT:** This resource uses name-first matching to identify and update rules. When migrating from individual `okta_app_signon_policy_rule` resources, ensure rule names remain consistent to enable safe adoption without data loss.
 
+~> **NOTE ON RENAMING RULES:** If you rename a rule without explicitly preserving its `id`, the provider will treat it as a deletion of the old rule and creation of a new rule. To rename a rule while preserving its configuration and ID, you must explicitly set the `id` attribute in your configuration before changing the `name`. For example:
+```terraform
+rule {
+  id   = "rulAbc123" # Explicitly reference the existing rule ID
+  name = "New Rule Name" # New name
+  # ... other attributes
+}
+```
+After applying with the explicit `id`, you can remove it in subsequent applies and the rule will be tracked by its new name.
+
 ## Example Usage
 
 ```terraform
@@ -73,6 +83,23 @@ resource "okta_app_signon_policy_rules" "example" {
     - `os_type` (String) - OS type: `ANY`, `IOS`, `ANDROID`, `WINDOWS`, `OSX`, `MACOS`, `CHROMEOS`, or `OTHER`.
     - `os_expression` (String) - Custom OS expression for advanced matching.
   - `system` (Boolean, Computed) - Whether this is a system rule (e.g., Catch-all Rule). System rules cannot be modified.
+  - `chains` (Block List) Authentication method chains. Only supports 5 items in the array. Each chain can support maximum 3 steps. To be used only with verification method type `AUTH_METHOD_CHAIN`.(see [below for nested schema](#nestedblock--chains))
+
+
+<a id="nestedblock--chains"></a>
+### Nested Schema for `chains`
+
+Optional:
+
+- `authenticationMethods` (List of Authentication Methods) (see [below for nested schema](#nestedblock--authenticationMethods))
+- `next` (List) The next steps of the authentication method chain. This is an array of type `chains`. Only supports one item in the array.
+- `reauthenticateIn` (String) Specifies how often the user is prompted for authentication using duration format for the time period. This parameter can't be set at the same time as the `re_authentication_frequency` field.
+
+<a id="nestedblock--authenticationMethods"></a>
+### Nested Schema for `authenticationMethods`
+Required:
+- `key` (String) A label that identifies the authenticator.
+- `method` (String) Specifies the method used for the authenticator.
 
 ## Attributes Reference
 
