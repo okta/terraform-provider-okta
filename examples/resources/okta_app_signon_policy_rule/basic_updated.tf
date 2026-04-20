@@ -113,7 +113,6 @@ resource "okta_app_signon_policy_rule" "test" {
   #    os_type = "OTHER"
   #    type    = "MOBILE"
   #  }
-  risk_score = "MEDIUM"
   platform_include {
     os_type = "WINDOWS"
     type    = "DESKTOP"

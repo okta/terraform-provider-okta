@@ -18,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -232,6 +233,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 		},
 		Blocks: map[string]schema.Block{
 			"remediation_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"access_approved": schema.StringAttribute{
 						Required:    true,
@@ -293,6 +297,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Specify the action to be taken after a reviewer makes a decision to APPROVE or REVOKE the access, or if the campaign was CLOSED and there was no response from the reviewer.",
 			},
 			"resource_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -463,6 +470,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Resource specific properties.",
 			},
 			"reviewer_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -630,6 +640,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Identifies the kind of reviewer for Access Certification.",
 			},
 			"schedule_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"start_date": schema.StringAttribute{
 						Required:    true,
@@ -704,6 +717,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Scheduler specific settings.",
 			},
 			"notification_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
 						Required:    true,
@@ -752,6 +768,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				},
 			},
 			"principal_scope_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,

@@ -181,6 +181,20 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Computed: true,
 	},
+	"type": {
+		Type:        schema.TypeList,
+		Computed:    true,
+		Description: "User type",
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"id": {
+					Type:        schema.TypeString,
+					Computed:    true,
+					Description: "User type ID",
+				},
+			},
+		},
+	},
 }
 
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
@@ -409,6 +423,15 @@ func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]inte
 
 	data, _ := json.Marshal(customAttributes)
 	attrs["custom_profile_attributes"] = string(data)
+
+	// Add user type if present
+	if u.Type != nil {
+		attrs["type"] = []interface{}{
+			map[string]interface{}{
+				"id": u.Type.Id,
+			},
+		}
+	}
 
 	return attrs
 }

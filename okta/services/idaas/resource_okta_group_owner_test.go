@@ -1,13 +1,18 @@
 package idaas_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
+	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
 func TestAccResourceOktaGroupOwner_crud(t *testing.T) {
+	acctest.RequireSKU(t, config.SKUGovernance)
 	mgr := newFixtureManager("resources", "okta_group_owner", t.Name())
 	config := mgr.GetFixtures("resource.tf", t)
 
@@ -15,7 +20,7 @@ func TestAccResourceOktaGroupOwner_crud(t *testing.T) {
 		t, resource.TestCase{
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               testAccErrorChecks(t),
-			CheckDestroy:             nil,
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 			Steps: []resource.TestStep{
 				{
@@ -25,6 +30,16 @@ func TestAccResourceOktaGroupOwner_crud(t *testing.T) {
 						resource.TestCheckResourceAttr("okta_user.test", "last_name", "Smith"),
 						resource.TestCheckResourceAttr("okta_group_owner.test", "type", "USER"),
 					),
+				},
+				{
+					ResourceName:      "okta_group_owner.test",
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateIdFunc: func(s *terraform.State) (string, error) {
+						groupID := s.RootModule().Resources["okta_group.test"].Primary.Attributes["id"]
+						groupOwnerID := s.RootModule().Resources["okta_group_owner.test"].Primary.Attributes["id"]
+						return fmt.Sprintf("%s/%s", groupID, groupOwnerID), nil
+					},
 				},
 			},
 		})

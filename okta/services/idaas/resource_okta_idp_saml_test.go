@@ -42,6 +42,7 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
 					resource.TestCheckResourceAttr(resourceName, "honor_persistent_name_id", "true"),
 					resource.TestCheckResourceAttrSet(resourceName, "kid"),
+					resource.TestCheckResourceAttr(resourceName, "trust_claims", "true"),
 				),
 			},
 			{
@@ -63,6 +64,7 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"),
 					resource.TestCheckResourceAttr(resourceName, "honor_persistent_name_id", "false"),
 					resource.TestCheckResourceAttrSet(resourceName, "kid"),
+					resource.TestCheckResourceAttr(resourceName, "trust_claims", "false"),
 				),
 			},
 			{

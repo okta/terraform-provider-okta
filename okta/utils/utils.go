@@ -25,11 +25,14 @@ import (
 
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	"github.com/okta/terraform-provider-okta/sdk"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const DefaultPaginationLimit int64 = 200
@@ -63,6 +66,20 @@ func CamelCaseToUnderscore(s string) string {
 	s = string(a)
 
 	return s
+}
+
+// UnderscoreToCamelCase converts underscore separated strings to camel case
+// (ie. first_name becomes firstName)
+func UnderscoreToCamelCase(s string) string {
+	parts := strings.Split(s, "_")
+	for i := 1; i < len(parts); i++ {
+		if len(parts[i]) > 0 {
+			runes := []rune(parts[i])
+			runes[0] = unicode.ToUpper(runes[0])
+			parts[i] = string(runes)
+		}
+	}
+	return strings.Join(parts, "")
 }
 
 func ConditionalRequire(d *schema.ResourceData, propList []string, reason string) error {
@@ -362,6 +379,32 @@ func DoesResourceExistV5(response *v5okta.APIResponse, err error) (bool, error) 
 	return true, nil
 }
 
+func DoesResourceExistV6(response *v6okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, ResponseErr_V6(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, ResponseErr_V6(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func SuppressErrorOn404(resp *sdk.Response, err error) error {
@@ -381,14 +424,14 @@ func SuppressErrorOn404_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to suppressErrorOn404 when migration complete
 func SuppressErrorOn404_V5(resp *v5okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V5(resp, err)
 }
 
 func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V6(resp, err)
@@ -506,7 +549,7 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
@@ -517,7 +560,7 @@ func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 func ResponseErr_V6(resp *v6okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
@@ -654,6 +697,11 @@ func CertNormalize(certContents string) (*x509.Certificate, error) {
 // returns true if old and new JSONs are equivalent object representations ...
 // It is true, there is no change!  Edge chase if newJSON is blank, will also
 // return true which cover the new resource case.
+//
+// Note: the Okta API echoes back "required": false on constraint sub-objects
+// even when the field was never set by the caller. To avoid a perpetual diff,
+// false boolean values are stripped from both sides before comparing so that
+// an absent key and an explicit false are treated as semantically equivalent.
 func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.ResourceData) bool {
 	if newJSON == "" {
 		return true
@@ -667,7 +715,26 @@ func NoChangeInObjectFromUnmarshaledJSON(k, oldJSON, newJSON string, d *schema.R
 		return false
 	}
 
+	stripFalseBools(oldObj)
+	stripFalseBools(newObj)
+
 	return reflect.DeepEqual(oldObj, newObj)
+}
+
+// stripFalseBools recursively removes all map keys whose value is the boolean
+// false. This normalises API responses that echo back zero-value bools against
+// configs that simply omit those keys.
+func stripFalseBools(m map[string]any) {
+	for k, v := range m {
+		switch val := v.(type) {
+		case bool:
+			if !val {
+				delete(m, k)
+			}
+		case map[string]any:
+			stripFalseBools(val)
+		}
+	}
 }
 
 // NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON Intended for use by a DiffSuppressFunc,
@@ -810,29 +877,50 @@ func LinksValue(links interface{}, keys ...string) string {
 	if links == nil {
 		return ""
 	}
-	sl, ok := links.([]interface{})
-	if ok {
-		if len(sl) == 0 {
-			links = map[string]interface{}{}
-		} else {
-			links = sl[0]
-		}
-	}
-	if len(keys) == 0 {
-		v, ok := links.(string)
-		if !ok {
+
+	val := reflect.Indirect(reflect.ValueOf(links))
+
+	if val.Kind() == reflect.Slice {
+		if val.Len() == 0 {
 			return ""
 		}
-		return v
+		return LinksValue(val.Index(0).Interface(), keys...)
 	}
-	l, ok := links.(map[string]interface{})
-	if !ok {
+
+	if len(keys) == 0 {
+		if val.Kind() == reflect.String {
+			return val.String()
+		}
 		return ""
 	}
-	if len(keys) == 1 {
-		return LinksValue(l[keys[0]])
+
+	var nextVal interface{}
+	key := keys[0]
+
+	switch val.Kind() {
+	case reflect.Map:
+		mapVal := val.MapIndex(reflect.ValueOf(key))
+		if !mapVal.IsValid() {
+			return ""
+		}
+		nextVal = mapVal.Interface()
+
+	case reflect.Struct:
+		field := val.FieldByName(key)
+		if !field.IsValid() {
+			field = val.FieldByName(cases.Title(language.Und, cases.NoLower).String(key))
+		}
+
+		if !field.IsValid() {
+			return ""
+		}
+		nextVal = field.Interface()
+
+	default:
+		return ""
 	}
-	return LinksValue(l[keys[0]], keys[1:]...)
+
+	return LinksValue(nextVal, keys[1:]...)
 }
 
 // StrMaxLength validates that the string is not longer than the specified maximum length.
@@ -850,4 +938,13 @@ func StrMaxLength(max int) schema.SchemaValidateDiagFunc {
 		}
 		return nil
 	}
+}
+
+// Helper function to convert []string to []types.String
+func ConvertStringSlice(slice []string) []types.String {
+	result := make([]types.String, len(slice))
+	for i, v := range slice {
+		result[i] = types.StringValue(v)
+	}
+	return result
 }

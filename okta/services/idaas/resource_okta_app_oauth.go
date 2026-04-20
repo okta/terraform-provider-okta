@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
@@ -140,6 +141,9 @@ func resourceAppOAuth() *schema.Resource {
 			}
 			return nil
 		},
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_basic_secret"), cty.GetAttrPath("client_basic_secret_wo")),
+		},
 		Description: `This resource allows you to create and configure an OIDC Application.
 -> During an apply if there is change in status the app will first be
 activated or deactivated in accordance with the status change. Then, all
@@ -178,10 +182,24 @@ other arguments that changed will be applied.`,
 				Description: "OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"client_basic_secret": {
-				Type:        schema.TypeString,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"client_basic_secret_wo"},
+				Description:   "The user provided OAuth client secret key value. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_basic_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_basic_secret_wo": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				WriteOnly:     true,
+				ConflictsWith: []string{"client_basic_secret"},
+				Description:   "The user provided write-only OAuth client secret key value for Terraform 1.11+. Unlike `client_basic_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
+			},
+			"client_basic_secret_wo_version": {
+				Type:        schema.TypeInt,
 				Optional:    true,
-				Sensitive:   true,
-				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
+				Description: "Version number for the write-only client secret. Increment this value to trigger an update when changing `client_basic_secret_wo`.",
 			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
@@ -398,12 +416,13 @@ other arguments that changed will be applied.`,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
 			"groups_claim": {
-				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
-				Deprecated:  "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
-				Description: "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
-				Elem:        groupsClaimResource,
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
+				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
+				Elem:          groupsClaimResource,
+				ConflictsWith: []string{"preconfigured_app"},
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -423,6 +442,46 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URL reference to JWKS",
+			},
+			"preconfigured_app": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
+			},
+			"skip_authentication_policy": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
+			},
+			"network": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "Network restrictions for the application client. Only one `network` block may be defined.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connection": {
+							Type:         schema.TypeString,
+							Required:     true,
+							Description:  "The network connection type. Can be `ANYWHERE` or `ZONE`.",
+							ValidateFunc: validation.StringInSlice([]string{"ANYWHERE", "ZONE"}, false),
+						},
+						"include": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to include. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones included if not specified.",
+						},
+						"exclude": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to exclude. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones excluded if not specified.",
+						},
+					},
+				},
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
@@ -503,9 +562,11 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	if d.Get("type") != "service" {
-		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, oidcApp.GetId())
-		if err != nil {
-			return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+		if !d.Get("skip_authentication_policy").(bool) {
+			err = createOrUpdateAuthenticationPolicy(ctx, d, meta, oidcApp.GetId())
+			if err != nil {
+				return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+			}
 		}
 	}
 
@@ -514,8 +575,18 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
 	raw, ok := d.GetOk("groups_claim")
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
+	c := meta.(*config.Config)
+	if c.IsOAuth20Auth() {
+		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
+		return nil
+	}
+
 	apiSupplement := getAPISupplementFromMetadata(meta)
 	appID := d.Id()
+
 	if !ok {
 		gc := &sdk.AppOauthGroupClaim{
 			Name:      "",
@@ -526,25 +597,20 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 			if d.Get("issuer_mode").(string) != "" {
 				gc.IssuerMode = d.Get("issuer_mode").(string)
 			} else {
-				return errors.New("issuer_mode must be set when issuer_mode is set")
+				return errors.New("issuer_mode must be set")
 			}
 		} else {
-			return errors.New("issuer_mode must be set when issuer_mode is set")
+			return errors.New("issuer_mode must be set")
 		}
 
-		_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
-		if err != nil {
-			return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+		if _, ok := d.GetOk("preconfigured_app"); !ok { // the internal api for setting app oauth groups claim doesn't work with most preconfigured i.e. existing apps
+			_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+			if err != nil {
+				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+			}
+		} else {
+			logger(meta).Info("Skipping updating app oauth groups for preconfigured apps.")
 		}
-		return nil
-	}
-
-	// Log deprecation warning
-	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
-
-	c := meta.(*config.Config)
-	if c.IsOAuth20Auth() {
-		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
@@ -617,7 +683,11 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return nil
 	}
 
-	setAuthenticationPolicy(ctx, meta, d, app.Links)
+	if !d.Get("skip_authentication_policy").(bool) {
+		setAuthenticationPolicy(ctx, meta, d, app.Links)
+	} else {
+		_ = d.Set("authentication_policy", "")
+	}
 
 	var rawProfile string
 	if profile := app.GetProfile(); profile != nil {
@@ -786,6 +856,17 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
 
+	if network, ok := oauthClient.GetNetworkOk(); ok && network != nil {
+		networkMap := map[string]interface{}{
+			"connection": network.GetConnection(),
+			"include":    utils.ConvertStringSliceToSet(network.GetInclude()),
+			"exclude":    utils.ConvertStringSliceToSet(network.GetExclude()),
+		}
+		if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
+			return diag.Errorf("failed to set OAuth application network properties: %v", err)
+		}
+	}
+
 	jwk, ok := oauthClient.GetJwksOk()
 	if ok {
 		jwks := jwk.Keys
@@ -904,9 +985,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
@@ -952,6 +1035,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 	app.SetLabel(d.Get("label").(string))
 	app.SetName("oidc_client")
+	if preConfigName, ok := d.GetOk("preconfigured_app"); ok && preConfigName != "" {
+		app.SetName(preConfigName.(string))
+	}
 	app.SetSignOnMode("OPENID_CONNECT")
 
 	// Build credentials
@@ -997,7 +1083,11 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	}
 	oauthClient.SetPkceRequired(pkceRequired)
 
-	if sec, ok := d.GetOk("client_basic_secret"); ok {
+	// Try to get write-only attribute first, fall back to regular attribute
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
+	if !woVal.IsNull() {
+		oauthClient.SetClientSecret(woVal.AsString())
+	} else if sec, ok := d.GetOk("client_basic_secret"); ok {
 		oauthClient.SetClientSecret(sec.(string))
 	}
 
@@ -1142,6 +1232,22 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 			jwks.SetKeys(keyData)
 			oauthClientSettings.SetJwks(*jwks)
 
+		}
+	}
+
+	// Handle network restrictions
+	if networkList, ok := d.GetOk("network"); ok {
+		networkData := networkList.([]interface{})
+		if len(networkData) > 0 {
+			networkMap := networkData[0].(map[string]interface{})
+			network := v6okta.NewOpenIdConnectApplicationNetwork(networkMap["connection"].(string))
+			if include := utils.ConvertInterfaceToStringSet(networkMap["include"]); len(include) > 0 {
+				network.SetInclude(include)
+			}
+			if exclude := utils.ConvertInterfaceToStringSet(networkMap["exclude"]); len(exclude) > 0 {
+				network.SetExclude(exclude)
+			}
+			oauthClientSettings.SetNetwork(*network)
 		}
 	}
 

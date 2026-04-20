@@ -3,8 +3,10 @@ package idaas
 import (
 	"context"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -19,6 +21,9 @@ func resourceIdpSocial() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: "Creates a Social Identity Provider. This resource allows you to create and configure a Social Identity Provider.",
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_secret"), cty.GetAttrPath("client_secret_wo")),
+		},
 		Schema: buildIdpSchema(map[string]*schema.Schema{
 			"authorization_url": {
 				Type:        schema.TypeString,
@@ -63,10 +68,24 @@ func resourceIdpSocial() *schema.Resource {
 				Description: "Unique identifier issued by AS for the Okta IdP instance.",
 			},
 			"client_secret": {
-				Type:        schema.TypeString,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"client_secret_wo"},
+				Description:   "Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_secret_wo": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				WriteOnly:     true,
+				ConflictsWith: []string{"client_secret"},
+				Description:   "Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
+			},
+			"client_secret_wo_version": {
+				Type:        schema.TypeInt,
 				Optional:    true,
-				Sensitive:   true,
-				Description: "Client secret issued by AS for the Okta IdP instance.",
+				Description: "Version number for the write-only client secret. Increment this value to trigger an update when changing `client_secret_wo`.",
 			},
 			"max_clock_skew": {
 				Type:        schema.TypeInt,
@@ -178,7 +197,9 @@ func resourceIdpSocialRead(ctx context.Context, d *schema.ResourceData, meta int
 	c := idp.Protocol.Credentials.Client
 	if c != nil {
 		_ = d.Set("client_id", c.ClientId)
-		_ = d.Set("client_secret", c.ClientSecret)
+		if _, ok := d.GetOk("client_secret"); ok {
+			_ = d.Set("client_secret", c.ClientSecret)
+		}
 	}
 	t := idp.Protocol.Credentials.Trust
 	if t != nil {
@@ -236,6 +257,15 @@ func resourceIdpSocialUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
+	// Try to get write-only attribute first, fall back to regular attribute
+	var clientSecret string
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_secret_wo"))
+	if !woVal.IsNull() {
+		clientSecret = woVal.AsString()
+	} else {
+		clientSecret = d.Get("client_secret").(string)
+	}
+
 	idp := sdk.IdentityProvider{
 		Name:       d.Get("name").(string),
 		Type:       d.Get("type").(string),
@@ -258,7 +288,7 @@ func buildIdPSocial(d *schema.ResourceData) sdk.IdentityProvider {
 			Credentials: &sdk.IdentityProviderCredentials{
 				Client: &sdk.IdentityProviderCredentialsClient{
 					ClientId:     d.Get("client_id").(string),
-					ClientSecret: d.Get("client_secret").(string),
+					ClientSecret: clientSecret,
 				},
 			},
 		},

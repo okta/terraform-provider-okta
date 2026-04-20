@@ -97,6 +97,16 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "List of ip service excluded. Use with type `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"set_usage_as_exempt_list": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Set this parameter to true in your request when you update the DefaultExemptIpZone to allow IPs through the blocklist.",
+			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates a system Network Zone",
+			},
 		},
 	}
 }
@@ -110,6 +120,14 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	if d.Get("name").(string) == "DefaultExemptIpZone" {
+		return diag.Errorf("the DefaultExemptIpZone is a built-in Okta network zone and cannot be created. " +
+			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
+	}
+	if d.Get("name").(string) == "BlockedIpZone" {
+		return diag.Errorf("the BlockedIpZone is a built-in Okta network zone and cannot be created. " +
+			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
+	}
 	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
@@ -120,17 +138,21 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 	d.SetId(nzID)
 	if d.Get("status").(string) == "ACTIVE" {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+		zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
 		if err != nil {
 			return diag.Errorf("failed to activate network zone: %v", err)
 		}
 	} else {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+		zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 		if err != nil {
 			return diag.Errorf("failed to deactivate network zone: %v", err)
 		}
 	}
-	return resourceNetworkZoneRead(ctx, d, meta)
+	err = mapNetworkZoneToState(d, zone)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
 }
 
 func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -164,25 +186,41 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
-	if d.Get("status").(string) == "ACTIVE" {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
-		if err != nil {
-			return diag.Errorf("failed to activate network zone: %v", err)
-		}
-	} else {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
-		if err != nil {
-			return diag.Errorf("failed to deactivate network zone: %v", err)
+
+	name := d.Get("name").(string)
+
+	if name != "DefaultExemptIpZone" && name != "BlockedIpZone" {
+		if d.Get("status").(string) == "ACTIVE" {
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to activate network zone: %v", err)
+			}
+		} else {
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to deactivate network zone: %v", err)
+			}
 		}
 	}
-	return resourceNetworkZoneRead(ctx, d, meta)
+	// Read the zone state from the API
+	err = mapNetworkZoneToState(d, zone)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	// The GET API does not return useAsExemptList, so persist it from the config
+	return nil
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// System zones (e.g. DefaultExemptIpZone, BlockedIpZone) cannot be deleted
+	// from Okta, so just remove them from state.
+	if d.Get("system").(bool) || d.Get("name").(string) == "DefaultExemptIpZone" {
+		return nil
+	}
 	_, resp, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate network zone: %v", err)
@@ -203,6 +241,10 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 		ipnz.SetName(d.Get("name").(string))
 		ipnz.SetType(zoneType)
 		ipnz.SetUsage(d.Get("usage").(string))
+		if d.Get("name").(string) == "BlockedIpZone" {
+			ipnz.SetSystem(d.Get("system").(bool))
+		}
+
 		if values, ok := d.GetOk("gateways"); ok {
 			ipnz.SetGateways(buildAddressObjList(values.(*schema.Set)))
 		}
@@ -211,6 +253,9 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 		}
 		if status, ok := d.GetOk("status"); ok {
 			ipnz.SetStatus(status.(string))
+		}
+		if usageAsExemptList, ok := d.GetOk("set_usage_as_exempt_list"); ok {
+			ipnz.SetUseAsExemptList(usageAsExemptList.(bool))
 		}
 		resp.IPNetworkZone = &ipnz
 		return resp, nil
@@ -413,6 +458,7 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v6okta.ListNetworkZones
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
 		_ = d.Set("usage", v.GetUsage())
+		_ = d.Set("system", v.GetSystem())
 		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"gateways": flattenAddresses(v.GetGateways()),
 			"proxies":  flattenAddresses(v.GetProxies()),

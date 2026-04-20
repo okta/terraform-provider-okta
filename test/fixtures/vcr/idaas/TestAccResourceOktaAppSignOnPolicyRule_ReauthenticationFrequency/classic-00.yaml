@@ -41,7 +41,7 @@ interactions:
         content_length: 601
         host: classic-00.dne-okta.com
         body: |
-            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","inactivityPeriod":"PT1H","reauthenticateIn":"PT2H10M","type":"AUTH_METHOD_CHAIN","chains":[{"authenticationMethods":[{"key":"okta_password","method":"password"}],"next":[{"authenticationMethods":[{"key":"phone_number","method":"sms"}]}]},{"authenticationMethods":[{"key":"okta_verify","method":"signed_nonce","userVerification":"REQUIRED"}]}]}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{},"elCondition":{}},"name":"test_with_re_authentication_frequency_only","priority":4,"type":"ACCESS_POLICY"}
+            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","inactivityPeriod":"PT1H","reauthenticateIn":"PT2H10M","type":"AUTH_METHOD_CHAIN","chains":[{"authenticationMethods":[{"key":"okta_password","method":"password"}],"next":[{"authenticationMethods":[{"key":"phone_number","method":"sms"}]}]},{"authenticationMethods":[{"key":"okta_verify","method":"signed_nonce","userVerification":"REQUIRED"}]}]}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{}},"name":"test_with_re_authentication_frequency_only","priority":4,"type":"ACCESS_POLICY"}
         headers:
             Accept:
                 - application/json
@@ -111,7 +111,7 @@ interactions:
         content_length: 807
         host: classic-00.dne-okta.com
         body: |
-            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"AUTH_METHOD_CHAIN","chains":[{"authenticationMethods":[{"key":"webauthn","method":"webauthn","userVerification":"REQUIRED"}],"reauthenticateIn":"PT43800H"},{"authenticationMethods":[{"key":"okta_password","method":"password"}],"next":[{"authenticationMethods":[{"key":"custom_otp","method":"otp"},{"key":"google_otp","method":"otp"},{"key":"phone_number","method":"sms"},{"key":"phone_number","method":"voice"},{"key":"webauthn","method":"webauthn","userVerification":"REQUIRED"}],"reauthenticateIn":"PT43800H"}],"reauthenticateIn":"PT43800H"}]}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{},"elCondition":{}},"name":"test_with_reauthenticate_in_chains_only","priority":3,"type":"ACCESS_POLICY"}
+            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"AUTH_METHOD_CHAIN","chains":[{"authenticationMethods":[{"key":"webauthn","method":"webauthn","userVerification":"REQUIRED"}],"reauthenticateIn":"PT43800H"},{"authenticationMethods":[{"key":"okta_password","method":"password"}],"next":[{"authenticationMethods":[{"key":"custom_otp","method":"otp"},{"key":"google_otp","method":"otp"},{"key":"phone_number","method":"sms"},{"key":"phone_number","method":"voice"},{"key":"webauthn","method":"webauthn","userVerification":"REQUIRED"}],"reauthenticateIn":"PT43800H"}],"reauthenticateIn":"PT43800H"}]}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{}},"name":"test_with_reauthenticate_in_chains_only","priority":3,"type":"ACCESS_POLICY"}
         headers:
             Accept:
                 - application/json
