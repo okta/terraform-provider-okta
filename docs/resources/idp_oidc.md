@@ -37,7 +37,6 @@ resource "okta_idp_oidc" "example" {
 - `authorization_binding` (String) The method of making an authorization request. It can be set to `HTTP-POST` or `HTTP-REDIRECT`.
 - `authorization_url` (String) IdP Authorization Server (AS) endpoint to request consent from the user and obtain an authorization code grant.
 - `client_id` (String) Unique identifier issued by AS for the Okta IdP instance.
-- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance.
 - `issuer_url` (String) URI that identifies the issuer.
 - `jwks_binding` (String) The method of making a request for the OIDC JWKS. It can be set to `HTTP-POST` or `HTTP-REDIRECT`
 - `jwks_url` (String) Endpoint where the keys signer publishes its keys in a JWK Set.
@@ -50,6 +49,9 @@ resource "okta_idp_oidc" "example" {
 
 - `account_link_action` (String) Specifies the account linking action for an IdP user. Default: `AUTO`
 - `account_link_group_include` (Set of String) Group memberships to determine link candidates.
+- `client_secret` (String, Sensitive) Client secret issued by AS for the Okta IdP instance. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_secret_wo` instead to avoid persisting secrets in state. Either `client_secret` or `client_secret_wo` must be specified, but not both.
+- `client_secret_wo` (String, Sensitive, Write-Only) Write-only client secret issued by AS for the Okta IdP instance for Terraform 1.11+. Unlike `client_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher. Either `client_secret` or `client_secret_wo` must be specified, but not both.
+- `client_secret_wo_version` (Number, Optional) Version number for the write-only client secret. Increment this value to trigger an update when changing `client_secret_wo`.
 - `deprovisioned_action` (String) Action for a previously deprovisioned IdP user during authentication. Can be `NONE` or `REACTIVATE`. Default: `NONE`
 - `groups_action` (String) Provisioning action for IdP user's group memberships. It can be `NONE`, `SYNC`, `APPEND`, or `ASSIGN`. Default: `NONE`
 - `groups_assignment` (Set of String) List of Okta Group IDs to add an IdP user as a member with the `ASSIGN` `groups_action`.
@@ -63,6 +65,8 @@ resource "okta_idp_oidc" "example" {
 - `provisioning_action` (String) Provisioning action for an IdP user during authentication. Default: `AUTO`
 - `request_signature_algorithm` (String) The HMAC Signature Algorithm used when signing an authorization request. Defaults to `HS256`. It can be `HS256`, `HS384`, `HS512`, `SHA-256`. `RS256`, `RS384`, or `RS512`. NOTE: `SHA-256` an undocumented legacy value and not continue to be valid. See API docs https://developer.okta.com/docs/reference/api/idps/#oidc-request-signature-algorithm-object
 - `request_signature_scope` (String) Specifies whether to digitally sign an AuthnRequest messages to the IdP. Defaults to `REQUEST`. It can be `REQUEST` or `NONE`.
+- `participate_slo` (Boolean) Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.
+- `slo_url` (String) OIDC IdP logout endpoint. Must be specified when `participate_slo` is set to true.
 - `status` (String) Default to `ACTIVE`
 - `subject_match_attribute` (String) Okta user profile attribute for matching transformed IdP username. Only for matchType `CUSTOM_ATTRIBUTE`.
 - `subject_match_type` (String) Determines the Okta user profile attribute match conditions for account linking and authentication of the transformed IdP username. By default, it is set to `USERNAME`. It can be set to `USERNAME`, `EMAIL`, `USERNAME_OR_EMAIL` or `CUSTOM_ATTRIBUTE`.

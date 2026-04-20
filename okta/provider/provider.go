@@ -128,6 +128,14 @@ func Provider() *schema.Provider {
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing Okta client")
 	cfg := config.NewConfig(d)
+	if cfg.ApiToken == "" && cfg.AccessToken == "" && cfg.PrivateKey == "" {
+		return nil, diag.Errorf(
+			"[ERROR] no Okta credentials provided. Please set one of the following: " +
+				"'api_token' (or OKTA_API_TOKEN env var), " +
+				"'access_token' (or OKTA_ACCESS_TOKEN env var), or " +
+				"'private_key' + 'client_id' (or OKTA_API_PRIVATE_KEY + OKTA_API_CLIENT_ID env vars). " +
+				"See https://registry.terraform.io/providers/okta/okta/latest/docs for more information")
+	}
 	if err := cfg.LoadAPIClient(); err != nil {
 		return nil, diag.Errorf("[ERROR] failed to load sdk clients: %v", err)
 	}

@@ -256,15 +256,43 @@ func applyEntitlementToState(data *entitlementResourceModel, createEntitlementRe
 		ExternalID: types.StringValue(createEntitlementResp.Parent.GetExternalId()),
 		Type:       types.StringValue(string(createEntitlementResp.Parent.GetType())),
 	}
-	data.Values = make([]entitlementValuesModel, len(createEntitlementResp.GetValues()))
-	for i, value := range createEntitlementResp.GetValues() {
-		data.Values[i] = entitlementValuesModel{
-			Id:            types.StringValue(value.GetId()),
-			ExternalValue: types.StringValue(value.GetExternalValue()),
-			Name:          types.StringValue(value.GetName()),
-			Description:   types.StringValue(value.GetDescription()),
+	// Build a lookup of API response values keyed by external_value so we can
+	// reorder them to match the plan order. The API may return values in a
+	// different order than what was sent, which causes Terraform to report
+	// "inconsistent result after apply" if we blindly copy the response order.
+	respValues := createEntitlementResp.GetValues()
+	respByExternalValue := make(map[string]governance.EntitlementValueFull, len(respValues))
+	for _, v := range respValues {
+		respByExternalValue[v.GetExternalValue()] = v
+	}
+
+	// First pass: match existing plan values to response values in plan order
+	matched := make(map[string]bool, len(data.Values))
+	newValues := make([]entitlementValuesModel, 0, len(respValues))
+	for _, planned := range data.Values {
+		if v, ok := respByExternalValue[planned.ExternalValue.ValueString()]; ok {
+			newValues = append(newValues, entitlementValuesModel{
+				Id:            types.StringValue(v.GetId()),
+				ExternalValue: types.StringValue(v.GetExternalValue()),
+				Name:          types.StringValue(v.GetName()),
+				Description:   types.StringValue(v.GetDescription()),
+			})
+			matched[v.GetExternalValue()] = true
 		}
 	}
+	// Second pass: append any values from the response that weren't in the plan
+	// (shouldn't normally happen, but keeps us safe)
+	for _, v := range respValues {
+		if !matched[v.GetExternalValue()] {
+			newValues = append(newValues, entitlementValuesModel{
+				Id:            types.StringValue(v.GetId()),
+				ExternalValue: types.StringValue(v.GetExternalValue()),
+				Name:          types.StringValue(v.GetName()),
+				Description:   types.StringValue(v.GetDescription()),
+			})
+		}
+	}
+	data.Values = newValues
 	return nil
 }
 
@@ -313,13 +341,20 @@ func buildEntitlementReplace(data, state entitlementResourceModel) governance.En
 }
 
 func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []governance.EntitlementValueFull {
+	// Build a lookup map from the prior state so we can match existing values
+	// by their external_value (which is the unique key) rather than by positional index.
+	stateByExternalValue := make(map[string]string, len(state))
+	for _, s := range state {
+		if !s.Id.IsNull() && !s.Id.IsUnknown() && s.Id.ValueString() != "" {
+			stateByExternalValue[s.ExternalValue.ValueString()] = s.Id.ValueString()
+		}
+	}
+
 	x := make([]governance.EntitlementValueFull, len(values))
 	for i, value := range values {
 		var Id *string
-		if i < len(state) {
-			if !state[i].Id.IsNull() && state[i].Id.ValueString() != "" {
-				Id = state[i].Id.ValueStringPointer()
-			}
+		if existingID, ok := stateByExternalValue[value.ExternalValue.ValueString()]; ok {
+			Id = &existingID
 		}
 
 		x[i] = governance.EntitlementValueFull{

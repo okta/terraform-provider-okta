@@ -47,8 +47,14 @@ func init() {
 			os.Setenv("OKTA_ORG_NAME", os.Getenv("OKTA_VCR_CASSETTE"))
 		}
 	}
-	t := &testing.T{}
-	iDaaSAPIClientForTestUtil = IDaaSClientForTest(t)
+	// Initialize the shared IDaaS client only when running acceptance
+	// tests (TF_ACC=1). In unit-test or CI-lint runs where no Okta
+	// credentials are available, skip initialization to avoid a panic from
+	// calling Fatalf on a bare testing.T{}.
+	if os.Getenv("TF_ACC") != "" {
+		t := &testing.T{}
+		iDaaSAPIClientForTestUtil = IDaaSClientForTest(t)
+	}
 }
 
 // TestMain overridden main testing function. Package level BeforeAll and AfterAll.
@@ -58,6 +64,14 @@ func TestMain(m *testing.M) {
 	// see examples/resources/okta_resource_set/basic.tf
 	if os.Getenv("TF_VAR_hostname") == "" {
 		os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL")))
+	}
+	// TF_VAR_org_name and TF_VAR_base_url allow org_name and base_url to be scripted into config tests
+	// see examples/data-sources/okta_oauth_authorization_server/datasource.tf
+	if os.Getenv("TF_VAR_org_name") == "" {
+		os.Setenv("TF_VAR_org_name", os.Getenv("OKTA_ORG_NAME"))
+	}
+	if os.Getenv("TF_VAR_base_url") == "" {
+		os.Setenv("TF_VAR_base_url", os.Getenv("OKTA_BASE_URL"))
 	}
 	os.Setenv("TF_VAR_orgID", os.Getenv("OKTA_ORG_ID"))
 

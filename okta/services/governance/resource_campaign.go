@@ -14,7 +14,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int32default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -193,10 +196,16 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the campaign. Maintain some uniqueness when naming the campaign as it helps to identify and filter for campaigns when needed.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"campaign_tier": schema.StringAttribute{
 				Optional:    true,
 				Description: "Indicates the minimum required SKU to manage the campaign. Values can be `BASIC` and `PREMIUM`.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"campaign_type": schema.StringAttribute{
 				Optional:    true,
@@ -205,18 +214,30 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Validators: []validator.String{
 					stringvalidator.OneOf("RESOURCE", "USER"),
 				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"description": schema.StringAttribute{
 				Optional:    true,
 				Description: "Description about the campaign.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"skip_remediation": schema.BoolAttribute{
 				Optional:    true,
 				Description: "If true, skip remediation when ending the campaign (only applicable if remediationSetting.noResponse=DENY).",
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"remediation_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"access_approved": schema.StringAttribute{
 						Required:    true,
@@ -260,6 +281,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Specify the action to be taken after a reviewer makes a decision to APPROVE or REVOKE the access, or if the campaign was CLOSED and there was no response from the reviewer.",
 			},
 			"resource_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -385,6 +409,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Resource specific properties.",
 			},
 			"reviewer_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -501,6 +528,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Identifies the kind of reviewer for Access Certification.",
 			},
 			"schedule_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"start_date": schema.StringAttribute{
 						Required:    true,
@@ -551,6 +581,9 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 				Description: "Scheduler specific settings.",
 			},
 			"notification_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"notify_reviewer_at_campaign_end": schema.BoolAttribute{
 						Required:    true,
@@ -577,10 +610,16 @@ func (r *campaignResource) Schema(ctx context.Context, req resource.SchemaReques
 						Computed:    true,
 						ElementType: types.Int64Type,
 						Description: "Specifies times (in seconds) to send reminders to reviewers before the campaign closes. Max 3 values. Example: [86400, 172800, 604800]",
+						PlanModifiers: []planmodifier.List{
+							listplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 			},
 			"principal_scope_settings": schema.SingleNestedBlock{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplace(),
+				},
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Required:    true,
@@ -710,7 +749,8 @@ func (r *campaignResource) Update(ctx context.Context, req resource.UpdateReques
 
 	resp.Diagnostics.AddError(
 		"Update Not Supported",
-		"No other fields other than launch_campaign and end_campaign are updatable for this resource. Terraform will retain the existing state.",
+		"The okta_campaign resource does not support in-place updates. All attributes require replacement. "+
+			"If you see this error, please destroy the resource and re-create it again.",
 	)
 }
 
@@ -752,6 +792,7 @@ func applyCampaignsToState(ctx context.Context, resp *governance.CampaignFull, c
 		c.RemediationSettings.NoResponse = types.StringValue(string(resp.RemediationSettings.GetNoResponse()))
 	}
 	if autoRemediationSettings, ok := resp.RemediationSettings.GetAutoRemediationSettingsOk(); ok {
+		c.RemediationSettings.AutoRemediationSettings = &autoRemediationSettingsModel{}
 		c.RemediationSettings.AutoRemediationSettings.IncludeAllIndirectAssignments = types.BoolValue(autoRemediationSettings.GetIncludeAllIndirectAssignments())
 		for _, includeOnly := range autoRemediationSettings.GetIncludeOnly() {
 			targetResource := targetResourceModel{

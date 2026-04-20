@@ -26,9 +26,14 @@ func init() {
 		}
 	}
 
-	// Initialize the shared governance client
-	t := &testing.T{}
-	governanceAPIClientForTestUtil = GovernanceClientForTest(t)
+	// Initialize the shared governance client only when running acceptance
+	// tests (TF_ACC=1). In unit-test or CI-lint runs where no Okta
+	// credentials are available, skip initialization to avoid a panic from
+	// calling Fatalf on a bare testing.T{}.
+	if os.Getenv("TF_ACC") != "" {
+		t := &testing.T{}
+		governanceAPIClientForTestUtil = GovernanceClientForTest(t)
+	}
 }
 
 // GovernanceClientForTest creates a governance API client for testing
