@@ -7,11 +7,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/okta/terraform-provider-okta/okta/api"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-governance-sdk-golang/governance"
@@ -94,6 +98,9 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 			"resource_id": schema.StringAttribute{
 				Required:    true,
 				Description: "The id of the resource in Okta ID format.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"approval_sequence_id": schema.StringAttribute{
 				Required:    true,
@@ -195,7 +202,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -242,9 +249,11 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Read API call logic
-	readRequestConditionResp, apiResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, httpResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
-		if apiResp != nil && apiResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			// Resource was deleted outside Terraform — remove from state so
+			// the next plan recreates it rather than erroring on every refresh.
 			resp.State.RemoveResource(ctx)
 			return
 		}
@@ -279,6 +288,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Update API call logic
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -290,7 +300,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Handle status changes
-	if !data.Status.IsNull() && !state.Status.IsNull() {
+	if !data.Status.IsNull() {
 		oldStatus := state.Status.ValueString()
 		newStatus := data.Status.ValueString()
 
@@ -363,10 +373,20 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	apiResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+	deleteResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
-		if apiResp != nil && apiResp.StatusCode == http.StatusNotFound {
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusNotFound {
+			// Already deleted outside Terraform — treat as success.
 			return
+		}
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusInternalServerError {
+			// The governance API sometimes returns 500 even when the delete
+			// succeeded. Verify by attempting a GET — if the resource is gone
+			// (404) we can safely treat the delete as successful.
+			_, verifyResp, _ := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+			if verifyResp != nil && verifyResp.StatusCode == http.StatusNotFound {
+				return
+			}
 		}
 		resp.Diagnostics.AddError(
 			"Error deleting Request Condition",

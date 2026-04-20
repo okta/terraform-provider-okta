@@ -41,7 +41,10 @@ var (
 	validFactorModes        = []string{"1FA", "2FA"}
 	validRiskScores         = []string{"ANY", "LOW", "MEDIUM", "HIGH"}
 	validPlatformTypes      = []string{"ANY", "MOBILE", "DESKTOP"}
-	validOSTypes            = []string{"ANY", "IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER"}
+	// NOTE: ANY is intentionally excluded. The API silently maps os_type=ANY to
+	// OTHER on read, which causes a post-apply inconsistency. Users should set
+	// os_type = "OTHER" directly (with or without os_expression).
+	validOSTypes = []string{"IOS", "ANDROID", "WINDOWS", "OSX", "MACOS", "CHROMEOS", "OTHER", "LINUX"}
 )
 var (
 	_ resource.Resource                   = &appSignOnPolicyRulesResource{}
@@ -598,8 +601,16 @@ func (r *appSignOnPolicyRulesResource) buildPlatformIncludeBlock() schema.ListNe
 					Validators:  []validator.String{stringvalidator.OneOf(validOSTypes...)},
 				},
 				"os_expression": schema.StringAttribute{
-					Optional:    true,
-					Description: "Custom OS expression for advanced matching.",
+					Optional: true,
+					Computed: true,
+					// Default to "" so that omitting os_expression in config is equivalent
+					// to os_expression = "". The Okta API requires the field to be present
+					// (non-null) when os_type = "OTHER" but always returns null/empty on
+					// read — mirroring the SDKv2 resource which stored "" implicitly.
+					Default: stringdefault.StaticString(""),
+					Description: "Custom OS expression for advanced matching. Required by the API when os_type is OTHER " +
+						"(leave empty or omit to match any OTHER OS). " +
+						"The API normalizes empty and wildcard values to null on read; the provider preserves \"\" in state.",
 				},
 			},
 		},
@@ -1173,11 +1184,20 @@ func (r *appSignOnPolicyRulesResource) setAPIPlatformConditions(apiRule *sdk.Acc
 			platform.Type = p.Type.ValueString()
 		}
 		if !p.OsType.IsNull() && !p.OsType.IsUnknown() {
+			osType := p.OsType.ValueString()
 			platform.Os = &sdk.PlatformConditionEvaluatorPlatformOperatingSystem{
-				Type: p.OsType.ValueString(),
+				Type: osType,
 			}
-			if !p.OsExpression.IsNull() && !p.OsExpression.IsUnknown() {
-				expr := p.OsExpression.ValueString()
+			// The API requires os_expression when os_type is OTHER (returns 400 if absent).
+			// It accepts (and ignores) an empty string, normalizing it to null on read.
+			// Always send a non-nil pointer for OTHER — default to "" when the user
+			// omitted it, passed null, or the value is still unknown at apply time
+			// (e.g. try(..., null) in a dynamic block overrides the schema Default).
+			if osType == "OTHER" {
+				expr := ""
+				if !p.OsExpression.IsNull() && !p.OsExpression.IsUnknown() && p.OsExpression.ValueString() != "" {
+					expr = p.OsExpression.ValueString()
+				}
 				platform.Os.Expression = &expr
 			}
 		}
@@ -1410,9 +1430,20 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 		for _, p := range c.Platform.Include {
 			platform := platformIncludeModel{Type: types.StringValue(p.Type)}
 			if p.Os != nil {
-				platform.OsType = types.StringValue(p.Os.Type)
+				// The API silently maps os_type=ANY to OTHER on read.
+				osType := p.Os.Type
+				if osType == "ANY" {
+					osType = "OTHER"
+				}
+				platform.OsType = types.StringValue(osType)
 				if p.Os.Expression != nil && *p.Os.Expression != "" {
+					// API returned a real expression — use it.
 					platform.OsExpression = types.StringValue(*p.Os.Expression)
+				} else {
+					// API returns null/empty for os_expression on all os_types.
+					// Always store "" to match the schema Default and avoid
+					// "was cty.StringVal("\"\""), but now null" inconsistency.
+					platform.OsExpression = types.StringValue("")
 				}
 			}
 			platforms = append(platforms, platform)
@@ -1562,9 +1593,16 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 		for _, p := range c.Platform.Include {
 			platform := platformIncludeModel{Type: types.StringValue(p.Type)}
 			if p.Os != nil {
-				platform.OsType = types.StringValue(p.Os.Type)
+				// The API silently maps os_type=ANY to OTHER on read.
+				osType := p.Os.Type
+				if osType == "ANY" {
+					osType = "OTHER"
+				}
+				platform.OsType = types.StringValue(osType)
 				if p.Os.Expression != nil && *p.Os.Expression != "" {
 					platform.OsExpression = types.StringValue(*p.Os.Expression)
+				} else {
+					platform.OsExpression = types.StringValue("")
 				}
 			}
 			platforms = append(platforms, platform)

@@ -131,6 +131,37 @@ func TestAccResourceOktaAppSignOnPolicyRules_dynamicValues(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaAppSignOnPolicyRules_Issue2774 tests that LINUX is accepted
+// as a valid os_type in platform_include blocks. It was missing from validOSTypes.
+func TestAccResourceOktaAppSignOnPolicyRules_Issue2774(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("issue_2774.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.platform_include.0.os_type", "LINUX"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.platform_include.0.type", "DESKTOP"),
+				),
+			},
+			{
+				// Idempotency check — no changes expected after first apply.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 // TestAccResourceOktaAppSignOnPolicyRules_chains tests that the resource
 // correctly handles the chains attribute for authentication chains configuration.
 func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
