@@ -77,3 +77,91 @@ func TestAccResourceOktaAppSignOnPolicyRules_crud(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRules_dynamicValues tests that the resource
+// correctly handles dynamic "rule" blocks where attribute values (e.g. network
+// zone IDs) are unknown at plan time. This is a regression test for the
+// "Value Conversion Error: Received unknown value, however the target type cannot
+// handle unknown values" error that occurred when appSignOnPolicyRulesModel.Rules
+// was typed as []policyRuleModel (a native Go slice) instead of types.List.
+func TestAccResourceOktaAppSignOnPolicyRules_dynamicValues(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.policy_rules", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("dynamic_values.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// First apply: network zone ID is unknown at plan time.
+				// Previously this triggered "Value Conversion Error" because
+				// Rules []policyRuleModel could not hold unknown values.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					// 3 rules from the local map
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "3"),
+					// Rules are stored in config order (map iteration is deterministic
+					// in Terraform because it sorts map keys alphabetically).
+					// Keys: allow_1fa, allow_2fa, deny_all → sorted: allow_1fa, allow_2fa, deny_all
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.name", fmt.Sprintf("Allow-1FA-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.factor_mode", "1FA"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.access", "ALLOW"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.1.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.name", fmt.Sprintf("Allow-2FA-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.factor_mode", "2FA"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.network_connection", "ZONE"),
+					// network_includes should contain the resolved network zone ID
+					resource.TestCheckResourceAttrSet(resourceName, "rule.1.network_includes.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.2.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.name", fmt.Sprintf("Deny-All-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.access", "DENY"),
+				),
+			},
+			{
+				// Second apply: idempotency check — no changes expected.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRules_chains tests that the resource
+// correctly handles the chains attribute for authentication chains configuration.
+func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test_chains", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("chains.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.name", fmt.Sprintf("Chain-Rule-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.chains.#", "2"),
+					// Verify both chains are stored
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.1"),
+				),
+			},
+			{
+				// Idempotency check
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}

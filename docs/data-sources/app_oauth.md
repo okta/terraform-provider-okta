@@ -50,6 +50,7 @@ data "okta_app_oauth" "test" {
 - `login_uri` (String) URI that initiates login.
 - `logo_uri` (String) URI that references a logo for the client.
 - `name` (String) Name of application.
+- `network` (List of Object) Network restrictions for the application client. (see [below for nested schema](#nestedblock--network))
 - `policy_uri` (String) URI to web page providing client policy document.
 - `post_logout_redirect_uris` (Set of String) List of URIs for redirection after logout
 - `redirect_uris` (Set of String) List of URIs for use in the redirect-based flow.
@@ -59,3 +60,11 @@ data "okta_app_oauth" "test" {
 - `wildcard_redirect` (String) Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: "SUBDOMAIN", "DISABLED".
 
 
+<a id="nestedblock--network"></a>
+### Nested Schema for `network`
+
+Read-Only:
+
+- `connection` (String) The network connection type. Can be `ANYWHERE` or `ZONE`.
+- `exclude` (Set of String) IP zones to exclude when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.
+- `include` (Set of String) IP zones to include when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.
