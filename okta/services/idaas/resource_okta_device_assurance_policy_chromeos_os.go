@@ -349,7 +349,7 @@ func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChrome
 		gp.SetExpiry(v6okta.StringAsGracePeriodExpiry(model.GracePeriod.Expiry.ValueStringPointer()))
 		chromeOS.SetGracePeriod(*gp)
 	}
-	if !model.DisplayRemediationMode.IsNull() {
+	if !model.DisplayRemediationMode.IsNull() && !model.DisplayRemediationMode.IsUnknown() && model.DisplayRemediationMode.ValueString() != "" {
 		chromeOS.SetDisplayRemediationMode(model.DisplayRemediationMode.ValueString())
 	}
 
@@ -392,10 +392,16 @@ func mapDeviceAssuranceChromeOSToState(data *v6okta.ListDeviceAssurancePolicies2
 	}
 
 	if gp, ok := data.DeviceAssuranceChromeOSPlatform.GetGracePeriodOk(); ok && gp != nil {
+		priorExpiry := types.StringNull()
+		if state.GracePeriod != nil && !state.GracePeriod.Expiry.IsNull() {
+			priorExpiry = state.GracePeriod.Expiry
+		}
 		state.GracePeriod = &gracePeriodModel{
 			Type: types.StringPointerValue(gp.Type),
 		}
-		if gp.Expiry != nil {
+		if !priorExpiry.IsNull() {
+			state.GracePeriod.Expiry = priorExpiry
+		} else if gp.Expiry != nil {
 			if s := gp.Expiry.String; s != nil {
 				state.GracePeriod.Expiry = types.StringPointerValue(s)
 			} else if t := gp.Expiry.TimeTime; t != nil {

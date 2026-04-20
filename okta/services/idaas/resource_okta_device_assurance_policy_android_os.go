@@ -343,7 +343,7 @@ func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroid
 		gp.SetExpiry(v6okta.StringAsGracePeriodExpiry(model.GracePeriod.Expiry.ValueStringPointer()))
 		android.SetGracePeriod(*gp)
 	}
-	if !model.DisplayRemediationMode.IsNull() {
+	if !model.DisplayRemediationMode.IsNull() && !model.DisplayRemediationMode.IsUnknown() && model.DisplayRemediationMode.ValueString() != "" {
 		android.SetDisplayRemediationMode(model.DisplayRemediationMode.ValueString())
 	}
 	return v6okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceAndroidPlatform: android}, nil
@@ -381,10 +381,18 @@ func mapDeviceAssuranceAndroidToState(data *v6okta.ListDeviceAssurancePolicies20
 	}
 
 	if gp, ok := data.DeviceAssuranceAndroidPlatform.GetGracePeriodOk(); ok && gp != nil {
+		// Preserve the configured expiry value if already set, since the API
+		// normalizes durations (e.g. P30D → PT720H) which are semantically equal.
+		priorExpiry := types.StringNull()
+		if state.GracePeriod != nil && !state.GracePeriod.Expiry.IsNull() {
+			priorExpiry = state.GracePeriod.Expiry
+		}
 		state.GracePeriod = &gracePeriodModel{
 			Type: types.StringPointerValue(gp.Type),
 		}
-		if gp.Expiry != nil {
+		if !priorExpiry.IsNull() {
+			state.GracePeriod.Expiry = priorExpiry
+		} else if gp.Expiry != nil {
 			if s := gp.Expiry.String; s != nil {
 				state.GracePeriod.Expiry = types.StringPointerValue(s)
 			} else if t := gp.Expiry.TimeTime; t != nil {
