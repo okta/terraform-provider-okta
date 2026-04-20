@@ -226,7 +226,7 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 			// Read SSPR requirement fields from upstream and set them in state.
 			if req := sspr.Requirement; req != nil {
 				if ac := req.AccessControl; ac != nil {
-					_ = d.Set("password_reset_access_control", *ac)
+					_ = d.Set("password_reset_access_control", ac)
 				} else {
 					_ = d.Set("password_reset_access_control", "")
 				}

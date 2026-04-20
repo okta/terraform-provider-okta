@@ -207,7 +207,7 @@ func flattenPolicyRulePassword(d *schema.ResourceData, rule *v6okta.PasswordPoli
 			_ = d.Set("password_reset", sspr.GetAccess())
 			if req := sspr.Requirement; req != nil {
 				if ac := req.AccessControl; ac != nil {
-					_ = d.Set("password_reset_access_control", *ac)
+					_ = d.Set("password_reset_access_control", ac)
 				} else {
 					_ = d.Set("password_reset_access_control", "")
 				}
