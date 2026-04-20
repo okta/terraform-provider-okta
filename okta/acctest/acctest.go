@@ -778,6 +778,10 @@ func (c *vcrIDaaSTestClient) OktaSDKSupplementClient() *oktaSdk.APISupplement {
 	return c.sdkSupplementClient
 }
 
+func (c *vcrIDaaSTestClient) HTTPClient() *http.Client {
+	return &http.Client{Transport: c.transport}
+}
+
 func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.OktaGovernanceAPIClient {
 	return c.oktaGovernanceSDKClient
 }
