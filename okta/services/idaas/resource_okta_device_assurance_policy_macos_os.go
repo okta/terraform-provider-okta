@@ -3,14 +3,16 @@ package idaas
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v4/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -30,31 +32,33 @@ type policyDeviceAssuranceMacOSResource struct {
 }
 
 type policyDeviceAssuranceMacOSResourceModel struct {
-	ID                                   types.String   `tfsdk:"id"`
-	Name                                 types.String   `tfsdk:"name"`
-	Platform                             types.String   `tfsdk:"platform"`
-	DiskEncryptionType                   []types.String `tfsdk:"disk_encryption_type"`
-	OsVersion                            types.String   `tfsdk:"os_version"`
-	SecureHardwarePresent                types.Bool     `tfsdk:"secure_hardware_present"`
-	ScreenLockType                       []types.String `tfsdk:"screenlock_type"`
-	CreateDate                           types.String   `tfsdk:"created_date"`
-	CreateBy                             types.String   `tfsdk:"created_by"`
-	LastUpdate                           types.String   `tfsdk:"last_update"`
-	LastUpdatedBy                        types.String   `tfsdk:"last_updated_by"`
-	ThirdPartySignalProviders            types.Bool     `tfsdk:"third_party_signal_providers"`
-	TpspBrowserVersion                   types.String   `tfsdk:"tpsp_browser_version"`
-	TpspBuiltInDNSClientEnabled          types.Bool     `tfsdk:"tpsp_builtin_dns_client_enabled"`
-	TpspChromeRemoteDesktopAppBlocked    types.Bool     `tfsdk:"tpsp_chrome_remote_desktop_app_blocked"`
-	TpspDeviceEnrollmentDomain           types.String   `tfsdk:"tpsp_device_enrollment_domain"`
-	TpspDiskEncrypted                    types.Bool     `tfsdk:"tpsp_disk_encrypted"`
-	TpspKeyTrustLevel                    types.String   `tfsdk:"tpsp_key_trust_level"`
-	TpspOsFirewall                       types.Bool     `tfsdk:"tpsp_os_firewall"`
-	TpspOsVersion                        types.String   `tfsdk:"tpsp_os_version"`
-	TpspPasswordProtectionWarningTrigger types.String   `tfsdk:"tpsp_password_proctection_warning_trigger"`
-	TpspRealtimeURLCheckMode             types.Bool     `tfsdk:"tpsp_realtime_url_check_mode"`
-	TpspSafeBrowsingProtectionLevel      types.String   `tfsdk:"tpsp_safe_browsing_protection_level"`
-	TpspScreenLockSecured                types.Bool     `tfsdk:"tpsp_screen_lock_secured"`
-	TpspSiteIsolationEnabled             types.Bool     `tfsdk:"tpsp_site_isolation_enabled"`
+	ID                                   types.String      `tfsdk:"id"`
+	Name                                 types.String      `tfsdk:"name"`
+	Platform                             types.String      `tfsdk:"platform"`
+	DiskEncryptionType                   []types.String    `tfsdk:"disk_encryption_type"`
+	OsVersion                            types.String      `tfsdk:"os_version"`
+	SecureHardwarePresent                types.Bool        `tfsdk:"secure_hardware_present"`
+	ScreenLockType                       []types.String    `tfsdk:"screenlock_type"`
+	GracePeriod                          *gracePeriodModel `tfsdk:"grace_period"`
+	DisplayRemediationMode               types.String      `tfsdk:"display_remediation_mode"`
+	CreateDate                           types.String      `tfsdk:"created_date"`
+	CreateBy                             types.String      `tfsdk:"created_by"`
+	LastUpdate                           types.String      `tfsdk:"last_update"`
+	LastUpdatedBy                        types.String      `tfsdk:"last_updated_by"`
+	ThirdPartySignalProviders            types.Bool        `tfsdk:"third_party_signal_providers"`
+	TpspBrowserVersion                   types.String      `tfsdk:"tpsp_browser_version"`
+	TpspBuiltInDNSClientEnabled          types.Bool        `tfsdk:"tpsp_builtin_dns_client_enabled"`
+	TpspChromeRemoteDesktopAppBlocked    types.Bool        `tfsdk:"tpsp_chrome_remote_desktop_app_blocked"`
+	TpspDeviceEnrollmentDomain           types.String      `tfsdk:"tpsp_device_enrollment_domain"`
+	TpspDiskEncrypted                    types.Bool        `tfsdk:"tpsp_disk_encrypted"`
+	TpspKeyTrustLevel                    types.String      `tfsdk:"tpsp_key_trust_level"`
+	TpspOsFirewall                       types.Bool        `tfsdk:"tpsp_os_firewall"`
+	TpspOsVersion                        types.String      `tfsdk:"tpsp_os_version"`
+	TpspPasswordProtectionWarningTrigger types.String      `tfsdk:"tpsp_password_proctection_warning_trigger"`
+	TpspRealtimeURLCheckMode             types.Bool        `tfsdk:"tpsp_realtime_url_check_mode"`
+	TpspSafeBrowsingProtectionLevel      types.String      `tfsdk:"tpsp_safe_browsing_protection_level"`
+	TpspScreenLockSecured                types.Bool        `tfsdk:"tpsp_screen_lock_secured"`
+	TpspSiteIsolationEnabled             types.Bool        `tfsdk:"tpsp_site_isolation_enabled"`
 }
 
 func (r *policyDeviceAssuranceMacOSResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -158,6 +162,17 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 				Description: "Third party signal provider site isolation enabled",
 				Optional:    true,
 			},
+			"display_remediation_mode": schema.StringAttribute{
+				Description: "Display remediation mode for non-compliant devices (Early Access feature): HIDE or SHOW.",
+				Optional:    true,
+				Computed:    true,
+				Validators: []validator.String{
+					stringvalidator.OneOf("HIDE", "SHOW"),
+				},
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 			"created_date": schema.StringAttribute{
 				Description: "Created date",
 				Computed:    true,
@@ -173,6 +188,24 @@ func (r *policyDeviceAssuranceMacOSResource) Schema(_ context.Context, _ resourc
 			"last_updated_by": schema.StringAttribute{
 				Description: "Last updated by",
 				Computed:    true,
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"grace_period": schema.SingleNestedBlock{
+				Description: "Grace period configuration for the device assurance policy (Early Access feature).",
+				Attributes: map[string]schema.Attribute{
+					"type": schema.StringAttribute{
+						Description: "Grace period type: BY_DATE_TIME or BY_DURATION.",
+						Optional:    true,
+						Validators: []validator.String{
+							stringvalidator.OneOf("BY_DATE_TIME", "BY_DURATION"),
+						},
+					},
+					"expiry": schema.StringAttribute{
+						Description: "Grace period expiry. ISO 8601 datetime (e.g. 2024-12-01T00:00:00.000Z) for BY_DATE_TIME, or ISO 8601 duration (e.g. P7D, P30D, 1-180 days) for BY_DURATION.",
+						Optional:    true,
+					},
+				},
 			},
 		},
 	}
@@ -199,7 +232,7 @@ func (r *policyDeviceAssuranceMacOSResource) Create(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV6().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -226,7 +259,7 @@ func (r *policyDeviceAssuranceMacOSResource) Read(ctx context.Context, req resou
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV6().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -253,7 +286,7 @@ func (r *policyDeviceAssuranceMacOSResource) Delete(ctx context.Context, req res
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV6().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -279,7 +312,7 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV6().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",
@@ -299,8 +332,8 @@ func (r *policyDeviceAssuranceMacOSResource) Update(ctx context.Context, req res
 	}
 }
 
-func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSResourceModel) (okta.ListDeviceAssurancePolicies200ResponseInner, error) {
-	macos := &okta.DeviceAssuranceMacOSPlatform{}
+func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSResourceModel) (v6okta.ListDeviceAssurancePolicies200ResponseInner, error) {
+	macos := &v6okta.DeviceAssuranceMacOSPlatform{}
 	macos.SetName(model.Name.ValueString())
 	macos.SetPlatform("MACOS")
 	if len(model.DiskEncryptionType) > 0 {
@@ -308,25 +341,25 @@ func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSReso
 		for _, det := range model.DiskEncryptionType {
 			diskEncryptionType = append(diskEncryptionType, det.ValueString())
 		}
-		macos.DiskEncryptionType = &okta.DeviceAssuranceMacOSPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
+		macos.DiskEncryptionType = &v6okta.DeviceAssuranceMacOSPlatformAllOfDiskEncryptionType{Include: diskEncryptionType}
 	}
 	if !model.OsVersion.IsNull() {
-		macos.OsVersion = &okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
+		macos.OsVersion = &v6okta.OSVersion{Minimum: model.OsVersion.ValueStringPointer()}
 	}
 	if len(model.ScreenLockType) > 0 {
 		screenlockType := make([]string, 0)
 		for _, det := range model.ScreenLockType {
 			screenlockType = append(screenlockType, det.ValueString())
 		}
-		macos.ScreenLockType = &okta.DeviceAssuranceAndroidPlatformAllOfScreenLockType{Include: screenlockType}
+		macos.ScreenLockType = &v6okta.DeviceAssuranceAndroidPlatformAllOfScreenLockType{Include: screenlockType}
 	}
 	macos.SecureHardwarePresent = model.SecureHardwarePresent.ValueBoolPointer()
 
 	if model.ThirdPartySignalProviders.ValueBool() {
-		var thirdPartySignalProviders okta.DeviceAssuranceMacOSPlatformAllOfThirdPartySignalProviders
-		var dtc okta.DTCMacOS
+		var thirdPartySignalProviders v6okta.DeviceAssuranceMacOSPlatformAllOfThirdPartySignalProviders
+		var dtc v6okta.DTCMacOS
 		if !model.TpspBrowserVersion.IsNull() {
-			dtc.BrowserVersion = &okta.ChromeBrowserVersion{Minimum: model.TpspBrowserVersion.ValueStringPointer()}
+			dtc.BrowserVersion = &v6okta.ChromeBrowserVersion{Minimum: model.TpspBrowserVersion.ValueStringPointer()}
 		}
 		dtc.BuiltInDnsClientEnabled = model.TpspBuiltInDNSClientEnabled.ValueBoolPointer()
 		dtc.ChromeRemoteDesktopAppBlocked = model.TpspChromeRemoteDesktopAppBlocked.ValueBoolPointer()
@@ -337,7 +370,7 @@ func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSReso
 		}
 		dtc.OsFirewall = model.TpspOsFirewall.ValueBoolPointer()
 		if !model.TpspOsVersion.IsNull() {
-			dtc.OsVersion = &okta.OSVersionThreeComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
+			dtc.OsVersion = &v6okta.OSVersionThreeComponents{Minimum: model.TpspOsVersion.ValueStringPointer()}
 		}
 		if !model.TpspPasswordProtectionWarningTrigger.IsNull() {
 			dtc.PasswordProtectionWarningTrigger = model.TpspPasswordProtectionWarningTrigger.ValueStringPointer()
@@ -352,11 +385,21 @@ func buildDeviceAssuranceMacOSPolicyRequest(model policyDeviceAssuranceMacOSReso
 		macos.SetThirdPartySignalProviders(thirdPartySignalProviders)
 	}
 
-	return okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceMacOSPlatform: macos}, nil
+	if model.GracePeriod != nil {
+		gp := v6okta.NewGracePeriod()
+		gp.SetType(model.GracePeriod.Type.ValueString())
+		gp.SetExpiry(v6okta.StringAsGracePeriodExpiry(model.GracePeriod.Expiry.ValueStringPointer()))
+		macos.SetGracePeriod(*gp)
+	}
+	if !model.DisplayRemediationMode.IsNull() && !model.DisplayRemediationMode.IsUnknown() && model.DisplayRemediationMode.ValueString() != "" {
+		macos.SetDisplayRemediationMode(model.DisplayRemediationMode.ValueString())
+	}
+
+	return v6okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceMacOSPlatform: macos}, nil
 }
 
 // Map response body to schema
-func mapDeviceAssuranceMacOSToState(data *okta.ListDeviceAssurancePolicies200ResponseInner, state *policyDeviceAssuranceMacOSResourceModel) diag.Diagnostics {
+func mapDeviceAssuranceMacOSToState(data *v6okta.ListDeviceAssurancePolicies200ResponseInner, state *policyDeviceAssuranceMacOSResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	if data.DeviceAssuranceMacOSPlatform == nil {
 		diags.AddError("Empty response", "MacOS object")
@@ -365,7 +408,7 @@ func mapDeviceAssuranceMacOSToState(data *okta.ListDeviceAssurancePolicies200Res
 
 	state.ID = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.Id)
 	state.Name = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.Name)
-	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceMacOSPlatform.Platform))
+	state.Platform = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.Platform)
 
 	state.SecureHardwarePresent = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.SecureHardwarePresent)
 	if _, ok := data.DeviceAssuranceMacOSPlatform.GetOsVersionOk(); ok {
@@ -395,18 +438,42 @@ func mapDeviceAssuranceMacOSToState(data *okta.ListDeviceAssurancePolicies200Res
 		state.TpspDeviceEnrollmentDomain = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.DeviceEnrollmentDomain)
 		state.TpspDiskEncrypted = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.DiskEncrypted)
 		if _, ok := data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.GetKeyTrustLevelOk(); ok {
-			state.TpspKeyTrustLevel = types.StringPointerValue((*string)(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.KeyTrustLevel))
+			state.TpspKeyTrustLevel = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.KeyTrustLevel)
 		}
 		state.TpspOsFirewall = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.OsFirewall)
 		if _, ok := data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.GetOsVersionOk(); ok {
 			state.TpspOsVersion = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.OsVersion.Minimum)
 		}
-		state.TpspPasswordProtectionWarningTrigger = types.StringPointerValue((*string)(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger))
+		state.TpspPasswordProtectionWarningTrigger = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger)
 		state.TpspRealtimeURLCheckMode = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.RealtimeUrlCheckMode)
-		state.TpspSafeBrowsingProtectionLevel = types.StringPointerValue((*string)(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel))
+		state.TpspSafeBrowsingProtectionLevel = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel)
 		state.TpspScreenLockSecured = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.ScreenLockSecured)
 		state.TpspSiteIsolationEnabled = types.BoolPointerValue(data.DeviceAssuranceMacOSPlatform.ThirdPartySignalProviders.Dtc.SiteIsolationEnabled)
 	}
+
+	if gp, ok := data.DeviceAssuranceMacOSPlatform.GetGracePeriodOk(); ok && gp != nil {
+		priorExpiry := types.StringNull()
+		if state.GracePeriod != nil && !state.GracePeriod.Expiry.IsNull() {
+			priorExpiry = state.GracePeriod.Expiry
+		}
+		state.GracePeriod = &gracePeriodModel{
+			Type: types.StringPointerValue(gp.Type),
+		}
+		if !priorExpiry.IsNull() {
+			state.GracePeriod.Expiry = priorExpiry
+		} else if gp.Expiry != nil {
+			if s := gp.Expiry.String; s != nil {
+				state.GracePeriod.Expiry = types.StringPointerValue(s)
+			} else if t := gp.Expiry.TimeTime; t != nil {
+				state.GracePeriod.Expiry = types.StringValue(t.Format("2006-01-02T15:04:05.000Z07:00"))
+			} else {
+				state.GracePeriod.Expiry = types.StringNull()
+			}
+		} else {
+			state.GracePeriod.Expiry = types.StringNull()
+		}
+	}
+	state.DisplayRemediationMode = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.DisplayRemediationMode)
 
 	state.CreateDate = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.CreatedDate)
 	state.CreateBy = types.StringPointerValue(data.DeviceAssuranceMacOSPlatform.CreatedBy)

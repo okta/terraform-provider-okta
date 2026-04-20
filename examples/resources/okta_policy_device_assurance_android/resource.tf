@@ -5,4 +5,11 @@ resource "okta_policy_device_assurance_android" "example" {
   jailbreak               = false
   secure_hardware_present = true
   screenlock_type         = toset(["BIOMETRIC"])
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P30D"
+  }
+
+  display_remediation_mode = "SHOW"
 }
