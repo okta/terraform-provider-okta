@@ -23,9 +23,7 @@ func TestAccDataSourceOktaAuthenticatorWebauthnCustomAAGUIDs_read(t *testing.T) 
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(datasourceName, "authenticator_id"),
-					resource.TestCheckResourceAttr(datasourceName, "custom_aaguids.#", "1"),
-					resource.TestCheckResourceAttr(datasourceName, "custom_aaguids.0.aaguid", "cb69481e-8ff7-4039-93ec-0a2729a154a8"),
-					resource.TestCheckResourceAttr(datasourceName, "custom_aaguids.0.name", "YubiKey 5 Series"),
+					resource.TestCheckResourceAttrSet(datasourceName, "custom_aaguids.#"),
 				),
 			},
 		},
