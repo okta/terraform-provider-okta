@@ -234,6 +234,7 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureRuleExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "network_connection", "ZONE"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "true"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
@@ -241,6 +242,7 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_includes.#", "1"),
 				),
 			},
 			{

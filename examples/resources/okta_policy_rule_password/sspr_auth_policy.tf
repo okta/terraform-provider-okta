@@ -20,6 +20,14 @@ resource "okta_group" "excluded-replace_with_uuid" {
 	name = "testAcc_excluded_replace_with_uuid"
 }
 
+resource "okta_network_zone" "test" {
+  name     = "testAcc_replace_with_uuid"
+  type     = "IP"
+  gateways = ["1.2.3.4/24", "2.3.4.5-2.3.4.15"]
+  proxies  = ["2.2.3.4/24", "3.3.4.5-3.3.4.15"]
+  status   = "ACTIVE"
+}
+
 data "okta_default_policy" "default-replace_with_uuid" {
 	type = "PASSWORD"
 }
@@ -39,4 +47,6 @@ resource "okta_policy_rule_password" "testAcc_replace_with_uuid" {
 	groups_excluded = [okta_group.excluded-replace_with_uuid.id]
 
 	password_reset_access_control = "AUTH_POLICY"
+	network_connection = "ZONE"
+	network_includes = [okta_network_zone.test.id]
 }

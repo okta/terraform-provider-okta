@@ -61,7 +61,7 @@ resource "okta_policy_rule_password" "example_legacy" {
 
 ### Optional
 
-- `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`, `ON_NETWORK`, or `OFF_NETWORK`. Default: `ANYWHERE`
+- `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`. Default: `ANYWHERE`
 - `network_excludes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to exclude.
 - `network_includes` (List of String) Required if `network_connection` = `ZONE`. Indicates the network zones to include.
 - `password_change` (String) Allow or deny a user to change their password: `ALLOW` or `DENY`. Default: `ALLOW`

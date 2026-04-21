@@ -20,6 +20,24 @@ func resourcePolicyPasswordRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Description:   "Creates a Password Policy Rule. This resource allows you to create and configure a Password Policy Rule.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
+			"network_connection": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Network selection mode: `ANYWHERE`, `ZONE`.",
+				Default:     "ANYWHERE",
+			},
+			"network_includes": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Network zones to include (when `network_connection` = `ZONE`).",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+			"network_excludes": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Network zones to exclude (when `network_connection` = `ZONE`).",
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"users_included": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -140,6 +158,9 @@ func resourcePolicyPasswordRuleCreate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.Errorf("failed to create password policy rule: %v", err)
 	}
+	if createdInner == nil || createdInner.PasswordPolicyRule == nil {
+		return diag.Errorf("password policy rule response is nil after creation")
+	}
 
 	pr := createdInner.PasswordPolicyRule
 	d.SetId(pr.GetId())
@@ -192,11 +213,15 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 	if conds := rule.Conditions; conds != nil {
 		if net := conds.Network; net != nil {
 			_ = d.Set("network_connection", net.GetConnection())
-			if len(net.Include) > 0 {
+			// Only populate zone lists when the connection mode is ZONE.
+			// The API may return stale zone IDs when the mode is ANYWHERE,
+			// which causes perpetual plan diffs if the config omits them.
+			if net.GetConnection() == "ZONE" {
 				_ = d.Set("network_includes", utils.ConvertStringSliceToInterfaceSlice(net.Include))
-			}
-			if len(net.Exclude) > 0 {
 				_ = d.Set("network_excludes", utils.ConvertStringSliceToInterfaceSlice(net.Exclude))
+			} else {
+				_ = d.Set("network_includes", nil)
+				_ = d.Set("network_excludes", nil)
 			}
 		}
 		// Sync people conditions.
@@ -291,6 +316,9 @@ func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(policyRule).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update password policy rule: %v", err)
+	}
+	if updatedInner == nil || updatedInner.PasswordPolicyRule == nil {
+		return diag.Errorf("password policy rule response is nil after update")
 	}
 
 	if err := utils.ValidatePriority(int64(rule.GetPriority()), int64(updatedInner.PasswordPolicyRule.GetPriority())); err != nil {

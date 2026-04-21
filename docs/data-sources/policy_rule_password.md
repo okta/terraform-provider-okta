@@ -40,7 +40,7 @@ data "okta_policy_rule_password" "example" {
 - `name` (String) Name of the rule.
 - `priority` (Number) Priority of the rule.
 - `status` (String) Status of the rule: `ACTIVE` or `INACTIVE`.
-- `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`, `ON_NETWORK`, or `OFF_NETWORK`.
+- `network_connection` (String) Network selection mode: `ANYWHERE`, `ZONE`.
 - `network_includes` (List of String) Network zones to include (when `network_connection` = `ZONE`).
 - `network_excludes` (List of String) Network zones to exclude (when `network_connection` = `ZONE`).
 - `users_excluded` (Set of String) User IDs excluded from this rule.
