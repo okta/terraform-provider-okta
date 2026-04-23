@@ -50,7 +50,6 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Use with type `IP`",
-				// TODO: Next Major Release - add support for IP types
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
 					ValidateFunc:     validateIPaddress,
@@ -66,7 +65,6 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`",
-				// TODO: Next Major Release - add support for IP types
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
 					ValidateFunc:     validateIPaddress,
