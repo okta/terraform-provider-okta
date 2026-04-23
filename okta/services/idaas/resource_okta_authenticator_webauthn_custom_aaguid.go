@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -154,6 +155,23 @@ func (r *authenticatorWebauthnCustomAAGUIDResource) Create(ctx context.Context, 
 		return
 	}
 
+	client := r.config.OktaIDaaSClient.OktaSDKClientV6().AuthenticatorAPI
+	authenticatorID := data.AuthenticatorID.ValueString()
+	aaguidVal := data.AAGUID.ValueString()
+
+	// Check if this AAGUID already exists — adopt it into state if so
+	existing, getResp, getErr := client.GetCustomAAGUID(ctx, authenticatorID, aaguidVal).Execute()
+	if getErr == nil && getResp != nil && getResp.StatusCode == 200 && existing != nil {
+		tflog.Info(ctx, fmt.Sprintf("Custom AAGUID %s already exists, adopting into Terraform state", aaguidVal))
+		plannedName := data.Name
+		mapCustomAAGUIDToState(existing, &data)
+		// Preserve the plan's name value to avoid inconsistent result error,
+		// since the API does not currently support updating the name.
+		data.Name = plannedName
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		return
+	}
+
 	body := v6okta.CustomAAGUIDCreateRequestObject{
 		Aaguid: data.AAGUID.ValueStringPointer(),
 	}
@@ -164,7 +182,7 @@ func (r *authenticatorWebauthnCustomAAGUIDResource) Create(ctx context.Context, 
 	setCreateRequestCharacteristics(&data, &body)
 	setCreateRequestCertificates(&data, &body)
 
-	result, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().AuthenticatorAPI.CreateCustomAAGUID(ctx, data.AuthenticatorID.ValueString()).CustomAAGUIDCreateRequestObject(body).Execute()
+	result, _, err := client.CreateCustomAAGUID(ctx, authenticatorID).CustomAAGUIDCreateRequestObject(body).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating custom AAGUID", err.Error())
 		return
@@ -240,11 +258,13 @@ func (r *authenticatorWebauthnCustomAAGUIDResource) Delete(ctx context.Context, 
 		return
 	}
 
-	_, err := r.config.OktaIDaaSClient.OktaSDKClientV6().AuthenticatorAPI.DeleteCustomAAGUID(ctx, state.AuthenticatorID.ValueString(), state.AAGUID.ValueString()).Execute()
-	if err != nil {
-		resp.Diagnostics.AddError("Error deleting custom AAGUID", err.Error())
-		return
-	}
+	// The Okta API does not currently support deleting custom AAGUIDs.
+	// Destroying this resource removes it from Terraform state only.
+	tflog.Warn(ctx, fmt.Sprintf(
+		"Custom AAGUID %s will be removed from Terraform state but will remain in Okta. "+
+			"The Okta API does not support deleting custom AAGUIDs.",
+		state.AAGUID.ValueString(),
+	))
 }
 
 func (r *authenticatorWebauthnCustomAAGUIDResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -344,12 +364,18 @@ func mapCustomAAGUIDToState(result *v6okta.CustomAAGUIDResponseObject, data *aut
 		chars := result.AuthenticatorCharacteristics
 		if chars.FipsCompliant != nil {
 			data.AuthenticatorCharacteristics.FIPSCompliant = types.BoolValue(*chars.FipsCompliant)
+		} else if data.AuthenticatorCharacteristics.FIPSCompliant.IsNull() {
+			data.AuthenticatorCharacteristics.FIPSCompliant = types.BoolValue(false)
 		}
 		if chars.HardwareProtected != nil {
 			data.AuthenticatorCharacteristics.HardwareProtected = types.BoolValue(*chars.HardwareProtected)
+		} else if data.AuthenticatorCharacteristics.HardwareProtected.IsNull() {
+			data.AuthenticatorCharacteristics.HardwareProtected = types.BoolValue(false)
 		}
 		if chars.PlatformAttached != nil {
 			data.AuthenticatorCharacteristics.PlatformAttached = types.BoolValue(*chars.PlatformAttached)
+		} else if data.AuthenticatorCharacteristics.PlatformAttached.IsNull() {
+			data.AuthenticatorCharacteristics.PlatformAttached = types.BoolValue(false)
 		}
 	}
 

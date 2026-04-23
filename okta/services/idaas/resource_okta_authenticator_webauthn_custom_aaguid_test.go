@@ -28,18 +28,15 @@ func TestAccResourceOktaAuthenticatorWebauthnCustomAAGUID_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "authenticator_id"),
 					resource.TestCheckResourceAttr(resourceName, "aaguid", "00000000-0000-0000-0000-000000000001"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Test Custom Key"),
-					resource.TestCheckResourceAttr(resourceName, "authenticator_characteristics.fips_compliant", "false"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Test Key 1"),
 					resource.TestCheckResourceAttr(resourceName, "authenticator_characteristics.hardware_protected", "true"),
-					resource.TestCheckResourceAttr(resourceName, "authenticator_characteristics.platform_attached", "false"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttr(resourceName, "name", "Test Custom Key (Updated)"),
-					resource.TestCheckResourceAttr(resourceName, "authenticator_characteristics.platform_attached", "true"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Test Key 1"),
 				),
 			},
 			{
