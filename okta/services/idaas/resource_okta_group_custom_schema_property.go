@@ -203,7 +203,11 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAtt
 		stringifyEnumSlice(subschema.Items.Type, &subschema.Items.Enum)
 		_ = d.Set("array_type", subschema.Items.Type)
 		_ = d.Set("array_one_of", flattenOneOf(subschema.Items.OneOf))
-		_ = d.Set("array_enum", subschema.Items.Enum)
+		_ = d.Set("array_enum", flattenArrayEnum(subschema.Items.Enum))
+	} else {
+		_ = d.Set("array_type", "")
+		_ = d.Set("array_one_of", nil)
+		_ = d.Set("array_enum", nil)
 	}
 
 	stringifyOneOfSlice(subschema.Type, &subschema.OneOf)
@@ -211,6 +215,8 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAtt
 
 	if len(subschema.Enum) > 0 {
 		_ = d.Set("enum", subschema.Enum)
+	} else {
+		_ = d.Set("enum", nil)
 	}
 
 	return utils.SetNonPrimitives(d, map[string]interface{}{
@@ -221,7 +227,9 @@ func syncCustomGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAtt
 func syncBaseGroupSchema(d *schema.ResourceData, subschema *sdk.GroupSchemaAttribute) {
 	_ = d.Set("title", subschema.Title)
 	_ = d.Set("type", subschema.Type)
-	_ = d.Set("required", subschema.Required)
+	if subschema.Required != nil {
+		_ = d.Set("required", *subschema.Required)
+	}
 	if subschema.Master != nil {
 		_ = d.Set("master", subschema.Master.Type)
 		if subschema.Master.Type == "OVERRIDE" {
@@ -325,7 +333,6 @@ func retypeGroupPropertiesEnum(properties map[string]*sdk.GroupSchemaAttribute) 
 		if val.Items != nil {
 			enum := retypeEnumSlice(val.Items.Type, val.Items.Enum)
 			val.Items.Enum = enum
-			retypeOneOfSlice(val.Type, val.OneOf)
 			attributeEnum := retypeOneOfSlice(val.Items.Type, val.Items.OneOf)
 			val.Items.OneOf = attributeEnum
 		}

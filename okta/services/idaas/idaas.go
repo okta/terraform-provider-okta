@@ -125,6 +125,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPushGroupResource,
 		newUserRiskResource,
 		newPostAuthSessionPolicyRuleResource,
+		newAppUserSchemaResource,
 		newEntityRiskPolicyRuleResource,
 		newSessionViolationPolicyRuleResource,
 	}
@@ -166,6 +167,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newOAuthAuthorizationServerDataSource,
 		newUserRiskDataSource,
 		newPostAuthSessionPolicyDataSource,
+		newAppUserSchemaDataSource,
 		newEntityRiskPolicyDataSource,
 		newSessionViolationPolicyDataSource,
 	}
@@ -276,6 +278,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSAppSaml:                  dataSourceAppSaml(),
 		resources.OktaIDaaSAppSignOnPolicy:          dataSourceAppSignOnPolicy(),
 		resources.OktaIDaaSAppUserAssignments:       dataSourceAppUserAssignments(),
+		resources.OktaIDaaSAppUserSchemaProperty:    dataSourceAppUserSchemaProperty(),
 		resources.OktaIDaaSAuthenticator:            dataSourceAuthenticator(),
 		resources.OktaIDaaSAuthServer:               dataSourceAuthServer(),
 		resources.OktaIDaaSAuthServerClaim:          dataSourceAuthServerClaim(),
