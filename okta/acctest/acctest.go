@@ -63,8 +63,25 @@ func init() {
 }
 
 // OktaResourceTest is the entry to overriding the Terraform SDKs Acceptance
-// Test framework before the call to resource.Test
+// Test framework before the call to resource.Test. During VCR playback, tests
+// are marked parallel via t.Parallel() so they can run concurrently. Tests
+// that depend on process-wide TF_VAR_* env vars (e.g. fixtures using
+// variable "hostname") should use OktaResourceTestSerial instead.
 func OktaResourceTest(t *testing.T, c resource.TestCase) {
+	t.Helper()
+	oktaResourceTest(t, c, true)
+}
+
+// OktaResourceTestSerial is like OktaResourceTest but does NOT call
+// t.Parallel() during VCR playback. Use this for tests whose fixtures depend
+// on TF_VAR_hostname or other process-wide env vars that cannot be injected
+// per-test (e.g. okta_resource_set, okta_admin_role_custom_assignments).
+func OktaResourceTestSerial(t *testing.T, c resource.TestCase) {
+	t.Helper()
+	oktaResourceTest(t, c, false)
+}
+
+func oktaResourceTest(t *testing.T, c resource.TestCase, parallel bool) {
 	t.Helper()
 
 	// plug in the VCR
@@ -93,32 +110,38 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 			return
 		}
 
-		// FIXME most of the skips we get are from the "classic-00" cassettes,
+		if parallel {
+			t.Parallel()
+		}
+
+		// most of the skips we get are from the "classic-00" cassettes,
 		// not the "oie-00" so reverse order the cassettes
 		cassettes := mgr.Cassettes()
-		// for _, cassette := range cassettes {
 		for i := len(cassettes) - 1; i >= 0; i-- {
 			cassette := cassettes[i]
-			// need to artificially set expected OKTA env vars if VCR is playing
-			// VCR re-writes the name [cassette].dne-okta.com
-			os.Setenv("OKTA_ORG_NAME", cassette)
-			os.Setenv("OKTA_BASE_URL", TestDomainName)
-			os.Setenv("OKTA_API_TOKEN", "token")
-			os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", cassette, TestDomainName))
+
+			// Store config on the manager so vcrCachedConfigV2 can inject
+			// values directly into ResourceData, avoiding process-wide
+			// os.Setenv calls that race under parallel execution.
+			mgr.OrgName = cassette
+			mgr.BaseDomain = TestDomainName
+			mgr.APIToken = "token"
 			mgr.SetCurrentCassette(cassette)
+
+			if !parallel {
+				// Serial tests may have fixtures that read TF_VAR_hostname
+				// from the process environment.
+				os.Setenv("OKTA_ORG_NAME", cassette)
+				os.Setenv("OKTA_BASE_URL", TestDomainName)
+				os.Setenv("OKTA_API_TOKEN", "token")
+				os.Setenv("TF_VAR_hostname", fmt.Sprintf("%s.%s", cassette, TestDomainName))
+			}
 
 			// we disable check destroy when recording/playing vcr tests
 			c.CheckDestroy = nil
 			fmt.Printf("=== VCR PLAY CASSETTE %q for %s\n", cassette, t.Name())
 
-			// FIXME: Once we get fully mux'd ACC tests recording with VCR
-			// revisit if we can call ParallelTest when playing.
-
-			// FIXME: if we get a skip from one cassette the next will not run.
-			// Capturing the resource.Test result in a go routine does not give
-			// a means of capturing and rerunning the test.
 			resource.Test(t, c)
-
 		}
 		return
 	}
@@ -148,6 +171,12 @@ type vcrManager struct {
 	GovernanceCassettesPath string
 	CurrentCassette         string
 	VCRModeName             string
+
+	// Per-cassette config values used during VCR playback to avoid
+	// process-wide os.Setenv calls that are not safe for parallel tests.
+	OrgName    string
+	BaseDomain string
+	APIToken   string
 }
 
 // newVCRManager Returns a vcr manager
@@ -187,6 +216,15 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	if ok {
 		// config is cached, proceed
 		return v, nil
+	}
+
+	// Inject VCR playback config directly into ResourceData so
+	// config.NewConfig(d) reads these values instead of falling back to
+	// process-wide env vars. This is critical for parallel test safety.
+	if mgr.IsPlaying() && mgr.OrgName != "" {
+		d.Set("org_name", mgr.OrgName)
+		d.Set("base_url", mgr.BaseDomain)
+		d.Set("api_token", mgr.APIToken)
 	}
 
 	c, diags := configureFunc(ctx, d)
@@ -449,23 +487,34 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 		// [cassette-name].dne-okta.com so that HTTP requests that escape VCR
 		// are bad.
 
+		// Use manager fields when available (parallel-safe), fall back to
+		// env vars for recording mode where they are still set by the caller.
+		mgrOrgName := mgr.OrgName
+		if mgrOrgName == "" {
+			mgrOrgName = os.Getenv("OKTA_ORG_NAME")
+		}
+		mgrBaseDomain := mgr.BaseDomain
+		if mgrBaseDomain == "" {
+			mgrBaseDomain = os.Getenv("OKTA_BASE_URL")
+		}
+
 		// test-admin.dne-okta.com
 		vcrAdminHostname := fmt.Sprintf("%s-admin.%s", mgr.CurrentCassette, TestDomainName)
 		// test.dne-okta.com
 		vcrHostname := fmt.Sprintf("%s.%s", mgr.CurrentCassette, TestDomainName)
 		// example-admin.okta.com
-		orgAdminHostname := fmt.Sprintf("%s-admin.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+		orgAdminHostname := fmt.Sprintf("%s-admin.%s", mgrOrgName, mgrBaseDomain)
 		// example.okta.com
-		orgHostname := fmt.Sprintf("%s.%s", os.Getenv("OKTA_ORG_NAME"), os.Getenv("OKTA_BASE_URL"))
+		orgHostname := fmt.Sprintf("%s.%s", mgrOrgName, mgrBaseDomain)
 
 		// test-admin
 		vcrAdminOrgName := fmt.Sprintf("%s-admin", mgr.CurrentCassette)
 		// test
 		vcrOrgName := mgr.CurrentCassette
 		// example-admin
-		adminOrgName := fmt.Sprintf("%s-admin", os.Getenv("OKTA_ORG_NAME"))
+		adminOrgName := fmt.Sprintf("%s-admin", mgrOrgName)
 		// example
-		orgName := os.Getenv("OKTA_ORG_NAME")
+		orgName := mgrOrgName
 
 		// re-write the Authorization header
 		authHeader := "Authorization"
@@ -561,6 +610,10 @@ func AccPreCheck(t *testing.T) func() {
 }
 
 func accPreCheck() error {
+	// VCR playback injects config via ResourceData, not env vars.
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return nil
+	}
 	if v := os.Getenv("OKTA_ORG_NAME"); v == "" {
 		return errors.New("OKTA_ORG_NAME must be set for acceptance tests")
 	}
@@ -787,15 +840,20 @@ func (c *vcrGovernanceTestClient) OktaGovernanceSDKClient() *governance.OktaGove
 }
 
 func currentVCRManager(name string) *vcrManager {
+	vcrMgrsLock.RLock()
 	mgr, ok := vcrMgrs[name]
+	vcrMgrsLock.RUnlock()
 	if ok {
 		return mgr
 	}
 
-	vcrMgrsLock.RLock()
+	vcrMgrsLock.Lock()
+	defer vcrMgrsLock.Unlock()
+	// Double-check after acquiring write lock
+	if mgr, ok := vcrMgrs[name]; ok {
+		return mgr
+	}
 	mgr = newVCRManager(name)
 	vcrMgrs[name] = mgr
-	vcrMgrsLock.RUnlock()
-
 	return mgr
 }
