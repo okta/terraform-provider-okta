@@ -109,6 +109,21 @@ func dataSourceIdpOidc() *schema.Resource {
 				Computed:    true,
 				Description: "Maximum allowable clock-skew when processing messages from the IdP.",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+			},
+			"participate_slo": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Set to true to have Okta send a logout request to the upstream IdP when a user signs out of Okta or a downstream app.",
+			},
+			"slo_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "OIDC IdP logout endpoint.",
+			},
 		},
 		Description: "Get a OIDC IdP from Okta.",
 	}
@@ -139,16 +154,27 @@ func dataSourceIdpOidcRead(ctx context.Context, d *schema.ResourceData, meta int
 	syncEndpoint("token", oidc.Protocol.Endpoints.Token, d)
 	syncEndpoint("user_info", oidc.Protocol.Endpoints.UserInfo, d)
 	syncEndpoint("jwks", oidc.Protocol.Endpoints.Jwks, d)
-	_ = d.Set("protocol_type", oidc.Protocol.Type)
-	_ = d.Set("client_secret", oidc.Protocol.Credentials.Client.ClientSecret)
-	_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
-	_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
+	if oidc.Protocol != nil {
+		_ = d.Set("protocol_type", oidc.Protocol.Type)
+		if oidc.Protocol.Credentials != nil && oidc.Protocol.Credentials.Client != nil {
+			_ = d.Set("client_secret", oidc.Protocol.Credentials.Client.ClientSecret)
+			_ = d.Set("client_id", oidc.Protocol.Credentials.Client.ClientId)
+		}
+		if oidc.Protocol.Issuer != nil {
+			_ = d.Set("issuer_url", oidc.Protocol.Issuer.Url)
+		}
+	}
 	if oidc.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", oidc.Policy.MaxClockSkewPtr)
 	}
 	_ = d.Set("scopes", utils.ConvertStringSliceToSet(oidc.Protocol.Scopes))
 	if oidc.IssuerMode != "" {
 		_ = d.Set("issuer_mode", oidc.IssuerMode)
+	}
+	d.Set("trust_claims", oidc.Policy.TrustClaims)
+	d.Set("participate_slo", oidc.Protocol.Settings.ParticipateSLO)
+	if oidc.Protocol.Settings.ParticipateSLO {
+		d.Set("slo_url", oidc.Protocol.Endpoints.Slo.Url)
 	}
 	return nil
 }

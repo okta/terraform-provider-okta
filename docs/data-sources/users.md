@@ -106,6 +106,7 @@ Read-Only:
 - `preferred_language` (String)
 - `primary_phone` (String)
 - `profile_url` (String)
+- `realm_id` (String)
 - `roles` (Set of String)
 - `second_email` (String)
 - `state` (String)

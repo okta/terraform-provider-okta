@@ -1,0 +1,1 @@
+terraform import okta_entitlement_bundle.example <entitlement_bundle_id>

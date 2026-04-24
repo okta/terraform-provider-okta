@@ -12,9 +12,6 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
-	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
@@ -29,12 +26,12 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -44,10 +41,12 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "auto_submit_toolbar", "false"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "response_types.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "client_secret", "something_from_somewhere"),
-					resource.TestCheckResourceAttr(resourceName, "client_id", "something_from_somewhere"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "DISABLED"),
-					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttr(resourceName, "participate_slo", "true"),
+					resource.TestCheckResourceAttr(resourceName, "frontchannel_logout_uri", "https://example.com/logout"),
+					resource.TestCheckResourceAttr(resourceName, "issuer_mode", "ORG_URL"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.type", "EXPRESSION"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.value", "aa"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.0.name", "bb"),
@@ -56,7 +55,7 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
@@ -66,9 +65,12 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
-					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
 					resource.TestCheckResourceAttr(resourceName, "groups_claim.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "SUBDOMAIN"),
+					resource.TestCheckResourceAttr(resourceName, "participate_slo", "true"),
+					resource.TestCheckResourceAttr(resourceName, "frontchannel_logout_uri", "https://*.example.com/logout"),
+					resource.TestCheckResourceAttr(resourceName, "frontchannel_logout_session_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "issuer_mode", "ORG_URL"),
 				),
 			},
 			{
@@ -80,6 +82,36 @@ func TestAccResourceOktaAppOauth_basic(t *testing.T) {
 					}
 					return nil
 				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_clientBasicSecretWo tests the write-only client_basic_secret_wo attribute
+func TestAccResourceOktaAppOauth_clientBasicSecretWo(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	config := mgr.GetFixtures("client_basic_secret_wo.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					// client_basic_secret_wo should not be persisted in state
+					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret_wo"),
+					// Verify client_basic_secret is not set when using write-only attribute
+					resource.TestCheckNoResourceAttr(resourceName, "client_basic_secret"),
+				),
 			},
 		},
 	})
@@ -102,12 +134,12 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
@@ -118,7 +150,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 			{
 				Config: update,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "2"),
@@ -129,7 +161,7 @@ func TestAccResourceOktaAppOauth_refreshToken(t *testing.T) {
 			{
 				Config: secondUpdate,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "type", "browser"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
@@ -152,12 +184,12 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "service"),
@@ -166,7 +198,7 @@ func TestAccResourceOktaAppOauth_serviceNative(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "native"),
@@ -193,12 +225,12 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -208,7 +240,7 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -232,12 +264,12 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: configBlankCustomAttributes,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", ""),
@@ -246,7 +278,7 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 			{
 				Config: configCustomAttributes,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
@@ -255,7 +287,7 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 			{
 				Config: groupWhitelistConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", fmt.Sprintf("{\"groups\":{\"whitelist\":[\"%s_%d\"]}}", acctest.ResourcePrefixForTest, mgr.Seed)),
@@ -264,7 +296,7 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "profile", ""),
@@ -286,12 +318,12 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY_RSA"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
@@ -301,7 +333,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(ecResourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(ecResourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kty", "EC"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kid", "SIGNING_KEY_EC"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.x", "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"),
@@ -321,12 +353,12 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "jwks_uri", "https://example.com"),
 				),
 			},
@@ -334,21 +366,29 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 	})
 }
 
-func createDoesAppExist(app sdk.App) func(string) (bool, error) {
-	return func(id string) (bool, error) {
-		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
-		_, response, err := client.Application.GetApplication(context.Background(), id, app, &query.Params{})
+// createDoesAppExist is a compatibility wrapper for other test files
+func createDoesAppExist(app interface{}) func(string) (bool, error) {
+	// For OAuth apps, ignore the app parameter and use the v6 SDK helper
+	return createDoesOAuthAppExist()
+}
 
-		// We don't want to consider a 404 an error in some cases and thus the delineation
+// createDoesOAuthAppExist checks if an OAuth application exists using v6 SDK
+func createDoesOAuthAppExist() func(string) (bool, error) {
+	return func(id string) (bool, error) {
+		// Use v6 SDK for consistency with the resource implementation
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+		_, response, err := client.ApplicationAPI.GetApplication(context.Background(), id).Execute()
+
+		// Check if it's a 404 error (app doesn't exist)
 		if response != nil && response.StatusCode == 404 {
 			return false, nil
 		}
 
 		if err != nil {
-			return false, utils.ResponseErr(response, err)
+			return false, err
 		}
 
-		return true, err
+		return true, nil
 	}
 }
 
@@ -363,7 +403,7 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: `
@@ -381,7 +421,7 @@ func TestAccResourceOktaAppOauth_redirect_uris(t *testing.T) {
 				  }
 				`,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "wildcard_redirect", "SUBDOMAIN"),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.0", "https://one.example.com/"),
@@ -417,12 +457,12 @@ resource "okta_app_oauth" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "type", "web"),
@@ -479,12 +519,12 @@ resource "okta_app_oauth" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.create", "60m"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.read", "2h"),
 					resource.TestCheckResourceAttr(resourceName, "timeouts.update", "30m"),
@@ -511,12 +551,12 @@ resource "okta_app_oauth" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "pkce_required", "true"),
 				),
 			},
@@ -847,7 +887,7 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 		resourceName := fmt.Sprintf("%s.%s", resources.OktaIDaaSAppOAuth, test.name)
 		config := fmt.Sprintf(test.config, test.name)
 		testFuncs := []resource.TestCheckFunc{
-			ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+			ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 		}
 		for _, pair := range test.attrPairs {
 			testFuncs = append(testFuncs, resource.TestCheckResourceAttr(resourceName, pair[0], pair[1]))
@@ -869,7 +909,7 @@ func TestAccResourceOktaAppOauth_config_combinations(t *testing.T) {
 			PreCheck:                 acctest.AccPreCheck(t),
 			ErrorCheck:               errorCheck,
 			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 			Steps: []resource.TestStep{
 				{
 					Config: mgr.ConfigReplace(config),
@@ -890,12 +930,12 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: omit_secret_off,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 				),
@@ -903,10 +943,100 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 			{
 				Config: omit_secret_on,
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
 				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_2659 covers auto_key_rotation: explicit true/false and default (omit).
+// See https://github.com/okta/terraform-provider-okta/issues/2659
+func TestAccResourceOktaAppOauth_2659(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	// Minimal config: no groups_claim to keep VCR cassette small. Label uses replace_with_uuid for VCR seed.
+	createTrue := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  auto_key_rotation = true
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	explicitFalse := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  auto_key_rotation = false
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	omitDefault := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			// Create with explicit true; API returns true.
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+				),
+			},
+			// Case 1: explicit true when existing is true -> no change
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Case 2: explicit false when existing is true -> update to false
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 4: explicit true when existing is false -> update to true
+			{
+				Config: mgr.ConfigReplace(createTrue),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Case 3: omit (default) when existing is true -> no change
+			{
+				Config: mgr.ConfigReplace(omitDefault),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
+			},
+			// Apply false so next step has existing false
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 5: explicit false when existing is false -> no change
+			{
+				Config: mgr.ConfigReplace(explicitFalse),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "false"),
+			},
+			// Case 6: omit (default) when existing is false -> update to true
+			{
+				Config: mgr.ConfigReplace(omitDefault),
+				Check:  resource.TestCheckResourceAttr(resourceName, "auto_key_rotation", "true"),
 			},
 		},
 	})
@@ -929,14 +1059,227 @@ resource "okta_app_oauth" "test" {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesAppExist(sdk.NewOpenIdConnectApplication())),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
 		Steps: []resource.TestStep{
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewAutoLoginApplication())),
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "grant_types.0", "authorization_code"),
+				),
+			},
+		},
+	})
+}
+
+
+// TestAccResourceOktaAppOauth_preconfigured tests creating and updating OAuth applications
+// using preconfigured apps from the Okta Integration Network (test1-test3), as well as
+// custom OAuth apps (test4-test5). groups_claim is not supported for preconfigured apps
+// and should be skipped without error.
+func TestAccResourceOktaAppOauth_preconfigured(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	config := mgr.GetFixtures("basic_preconfigured_apps.tf", t)
+	updatedConfig := mgr.GetFixtures("basic_preconfigured_apps_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					// test1: strongdm preconfigured app
+					ensureResourceExists(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "preconfigured_app", "strongdm"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "label", "StrongDM"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "type", "web"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "name", "strongdm"),
+					// test2: Applauz preconfigured app
+					ensureResourceExists(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "preconfigured_app", "Applauz"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "label", "Applauz"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "type", "web"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "name", "applauz"),
+					// test3: Deel preconfigured app
+					ensureResourceExists(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "preconfigured_app", "Deel"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "label", "Deel"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "type", "web"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "name", "deel"),
+					// test4: custom app (no preconfigured_app)
+					ensureResourceExists(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "label", "StrongDM_CUSTOM"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "type", "web"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "http://redirect-uri-2.com/"),
+					// test5: custom app with grant types and issuer_mode
+					ensureResourceExists(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "label", "CustomApp001"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "type", "web"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "grant_types.#", "2"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "http://redirect-uri.com/"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "issuer_mode", "ORG_URL"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					// test1: updated label + redirect URI added
+					ensureResourceExists(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "preconfigured_app", "strongdm"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "label", "StrongDM_Updated"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "name", "strongdm"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test1", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "https://strongdm.example.com/callback"),
+					// test2: updated label + redirect URI added
+					ensureResourceExists(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "preconfigured_app", "Applauz"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "label", "Applauz_Updated"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "name", "applauz"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test2", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "https://applauz.example.com/callback"),
+					// test3: updated label + redirect URI added
+					ensureResourceExists(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "preconfigured_app", "Deel"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "label", "Deel_Updated"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test3", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "https://deel.example.com/callback"),
+					// test4: updated label + updated redirect URI
+					ensureResourceExists(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "label", "StrongDM_CUSTOM_Updated"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test4", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "http://redirect-uri-2-updated.com/"),
+					// test5: updated label + updated redirect URI
+					ensureResourceExists(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "label", "CustomApp001_Updated"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "redirect_uris.#", "1"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "redirect_uris.0", "http://redirect-uri-updated.com/"),
+					resource.TestCheckResourceAttr(fmt.Sprintf("%s.test5", resources.OktaIDaaSAppOAuth), "issuer_mode", "ORG_URL"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_skipAuthenticationPolicy(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+	label                     = "testAcc_replace_with_uuid"
+	type                      = "web"
+	grant_types               = ["authorization_code"]
+	redirect_uris             = ["http://d.com/"]
+	response_types            = ["code"]
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_skipAuthenticationPolicyUpdate(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+	label                     = "testAcc_replace_with_uuid"
+	type                      = "web"
+	grant_types               = ["authorization_code"]
+	redirect_uris             = ["http://d.com/"]
+	response_types            = ["code"]
+	skip_authentication_policy = false
+}`
+	updatedConfig := `
+resource "okta_app_oauth" "test" {
+	label                     = "testAcc_replace_with_uuid"
+	type                      = "web"
+	grant_types               = ["authorization_code"]
+	redirect_uris             = ["http://d.com/"]
+	response_types            = ["code"]
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "false"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(updatedConfig),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_skipAuthenticationPolicyServiceType(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	config := `
+resource "okta_app_oauth" "test" {
+	label                     = "testAcc_replace_with_uuid"
+	type                      = "service"
+	grant_types               = ["client_credentials"]
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "type", "service"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 				),
 			},
 		},

@@ -6,15 +6,10 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 96
-        transfer_encoding: []
-        trailer: {}
+        content_length: 74
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
-            {"mode":"PREVIEW","granularModeSettings":{"OAUTH2_AUTHORIZE":"ENFORCE","LOGIN_PAGE":"ENFORCE"}}
-        form: {}
+            {"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}
         headers:
             Accept:
                 - application/json
@@ -22,154 +17,57 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://classic-00.dne-okta.com/api/v1/internal/rateLimits/clientRateLimitMode
-        method: POST
+        url: https://classic-00.dne-okta.com/api/v1/rate-limit-settings/per-client
+        method: PUT
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
-        uncompressed: false
-        body: '{"mode":"PREVIEW","granularModeSettings":{"OAUTH2_AUTHORIZE":"ENFORCE","LOGIN_PAGE":"ENFORCE"}}'
+        uncompressed: true
+        body: '{"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:19:23 GMT
+                - Wed, 03 Sep 2025 06:48:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 300.316042ms
+        duration: 1.070090584s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 31
-        transfer_encoding: []
-        trailer: {}
-        host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: |
-            {"rateLimitNotification":true}
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-            Content-Type:
-                - application/json
-        url: https://classic-00.dne-okta.com/api/internal/orgSettings/rateLimitNotificationSetting
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: false
-        body: '{"rateLimitNotification":true}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Fri, 14 Mar 2025 03:19:23 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-        status: 200 OK
-        code: 200
-        duration: 219.713958ms
-    - id: 2
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/internal/rateLimits/clientRateLimitMode
+        url: https://classic-00.dne-okta.com/api/v1/rate-limit-settings/per-client
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
-        uncompressed: false
-        body: '{"mode":"PREVIEW","granularModeSettings":{"OAUTH2_AUTHORIZE":"ENFORCE","LOGIN_PAGE":"ENFORCE"}}'
+        uncompressed: true
+        body: '{"defaultMode":"ENFORCE","useCaseModeOverrides":{"LOGIN_PAGE":"ENFORCE"}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:19:23 GMT
+                - Wed, 03 Sep 2025 06:48:55 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 211.528833ms
-    - id: 3
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/internal/orgSettings/rateLimitNotificationSetting
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: false
-        body: '{"rateLimitNotification":true}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Fri, 14 Mar 2025 03:19:24 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 219.0715ms
+        duration: 1.094375875s

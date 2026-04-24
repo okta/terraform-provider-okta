@@ -29,4 +29,5 @@ resource "okta_idp_saml" "test" {
   request_signature_scope  = "REQUEST"
   response_signature_scope = "ANY"
   honor_persistent_name_id = true
+  trust_claims             = true
 }

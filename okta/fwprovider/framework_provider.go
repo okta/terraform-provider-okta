@@ -2,6 +2,7 @@ package fwprovider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -15,6 +16,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/resources"
+	"github.com/okta/terraform-provider-okta/okta/services/governance"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
@@ -207,7 +210,25 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 	}
 
 	// reuse config from sdk provider
-	meta := p.PluginSDKProvider.Meta().(*config.Config)
+	rawMeta := p.PluginSDKProvider.Meta()
+	if rawMeta == nil {
+		resp.Diagnostics.AddError(
+			"Provider Configuration Error",
+			"The Okta provider was not properly configured. Please ensure valid credentials are provided. "+
+				"Set 'api_token' (or OKTA_API_TOKEN env var), 'access_token' (or OKTA_ACCESS_TOKEN env var), "+
+				"or 'private_key' + 'client_id' (or OKTA_API_PRIVATE_KEY + OKTA_API_CLIENT_ID env vars). "+
+				"See https://registry.terraform.io/providers/okta/okta/latest/docs for more information.",
+		)
+		return
+	}
+	meta, ok := rawMeta.(*config.Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Provider Configuration Type",
+			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", rawMeta),
+		)
+		return
+	}
 	resp.EphemeralResourceData = meta
 	resp.DataSourceData = meta
 	resp.ResourceData = meta
@@ -215,10 +236,22 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 
 // DataSources defines the data sources implemented in the provider.
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return idaas.FWProviderDataSources()
+	var sources []func() datasource.DataSource
+	sources = append(sources, idaas.FWProviderDataSources()...)
+	sources = append(sources, governance.FWProviderDataSources()...)
+
+	// Wrap all data sources with SafeDataSource for panic recovery
+	return resources.WrapDataSources(sources)
 }
 
 // Resources defines the resources implemented in the provider.
 func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	return idaas.FWProviderResources()
+	var res []func() resource.Resource
+
+	// Append resources from various modules
+	res = append(res, idaas.FWProviderResources()...)
+	res = append(res, governance.FWProviderResources()...)
+
+	// Wrap all resources with SafeResource for panic recovery
+	return resources.WrapResources(res)
 }

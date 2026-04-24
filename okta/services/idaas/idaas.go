@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -56,6 +57,10 @@ func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
 }
 
+func getOktaV6ClientFromMetadata(meta interface{}) *v6okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV6()
+}
+
 func getAPISupplementFromMetadata(meta interface{}) *sdk.APISupplement {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKSupplementClient()
 }
@@ -80,7 +85,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 }
 
 func FWProviderResources() []func() resource.Resource {
-	return []func() resource.Resource{
+	rawResources := []func() resource.Resource{
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -94,24 +99,81 @@ func FWProviderResources() []func() resource.Resource {
 		newCustomizedSigninResource,
 		newPreviewSigninResource,
 		newGroupOwnerResource,
+		newGroupOwnersResource,
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
+		newFeaturesResource,
+		newRealmResource,
+		newRealmAssignmentResource,
+		newRateLimitResource,
+		newRateLimitAdminNotificationSettingsResource,
+		newRateLimitWarningThresholdPercentageResource,
+		newPrincipalRateLimitsResource,
+		newSecurityEventsProviderResource,
+		newDevicesResource,
+		newAppFeaturesResource,
+		newPushProvidersResource,
+		newHookKeyResource,
+		newAPIServiceIntegrationResource,
+		newAPITokenResource,
+		newAppTokenResource,
+		newAppConnectionsResource,
+		newAgentPoolUpdateResource,
+		newUISchemaResource,
+		newAppFederatedClaimResource,
+		newAppSignOnPolicyRulesResource,
+		newPushGroupResource,
+		newUserRiskResource,
+		newPostAuthSessionPolicyRuleResource,
+		newEntityRiskPolicyRuleResource,
+		newSessionViolationPolicyRuleResource,
 	}
+	// Wrap all resources with SafeResource for panic recovery
+	return resources.WrapResources(rawResources)
 }
 
 func FWProviderDataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		newAuthServerClientsDataSource,
+		newAuthServerKeysDataSource,
 		newOrgMetadataDataSource,
 		newDefaultSigninPageDataSource,
 		newLogStreamDataSource,
 		newAppsDataSource,
 		newUserTypeDataSource,
 		newDeviceAssurancePolicyDataSource,
+		newFeaturesDataSource,
+		newRealmDataSource,
+		newRealmAssignmentDataSource,
+		newRateLimitAdminNotificationSettingsDataSource,
+		newRateLimitWarningThresholdPercentageDataSource,
+		newPrincipalRateLimitsDataSource,
+		newSecurityEventsProviderDataSource,
+		newDeviceDataSource,
+		newAppFeaturesDataSource,
+		newPushProviderDataSource,
+		newHookKeyDataSource,
+		newAPIServiceIntegrationDataSource,
+		newAPITokenDataSource,
+		newAppTokenDataSource,
+		newAppConnectionsDataSource,
+		newAgentPoolDataSource,
+		newUISchemaDataSource,
+		newAppFederatedClaimDataSource,
+		newPushGroupDataSource,
+		newPushGroupsDataSource,
+		newAdminRoleCustomDataSource,
+		newOAuthAuthorizationServerDataSource,
+		newUserRiskDataSource,
+		newPostAuthSessionPolicyDataSource,
+		newEntityRiskPolicyDataSource,
+		newSessionViolationPolicyDataSource,
 	}
 }
 
 func ProviderResources() map[string]*schema.Resource {
-	return map[string]*schema.Resource{
+	// Wrap all SDK resources with panic recovery
+	return resources.WrapSDKResources(map[string]*schema.Resource{
 		resources.OktaIDaaSAdminRoleCustom:               resourceAdminRoleCustom(),
 		resources.OktaIDaaSAdminRoleCustomAssignments:    resourceAdminRoleCustomAssignments(),
 		resources.OktaIDaaSAdminRoleTargets:              resourceAdminRoleTargets(),
@@ -186,26 +248,27 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
-		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:              resourceRoleSubscription(),
-		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                   resourceTemplateSms(),
-		resources.OktaIDaaSTheme:                         resourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:         resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:                 resourceTrustedOrigin(),
-		resources.OktaIDaaSUser:                          resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                      resourceUserType(),
-	}
+		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
+		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
+		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
+		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
+		resources.OktaIDaaSTheme:                      resourceTheme(),
+		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
+		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
+		resources.OktaIDaaSUser:                       resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                   resourceUserType(),
+	})
 }
 
 func ProviderDataSources() map[string]*schema.Resource {
-	return map[string]*schema.Resource{
+	// Wrap all SDK data sources with panic recovery
+	return resources.WrapSDKDataSources(map[string]*schema.Resource{
 		resources.OktaIDaaSApp:                      dataSourceApp(),
 		resources.OktaIDaaSAppGroupAssignments:      dataSourceAppGroupAssignments(),
 		resources.OktaIDaaSAppMetadataSaml:          dataSourceAppMetadataSaml(),
@@ -240,6 +303,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSIdpSocial:                dataSourceIdpSocial(),
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
+		resources.OktaIDaaSPolicyRulePassword:       dataSourcePolicyRulePassword(),
 		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),
@@ -248,7 +312,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSUserProfileMappingSource: dataSourceUserProfileMappingSource(),
 		resources.OktaIDaaSUsers:                    dataSourceUsers(),
 		resources.OktaIDaaSUserSecurityQuestions:    dataSourceUserSecurityQuestions(),
-	}
+	})
 }
 
 func stringIsJSON(i interface{}, k cty.Path) diag.Diagnostics {

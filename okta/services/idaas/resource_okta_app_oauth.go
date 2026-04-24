@@ -7,14 +7,15 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 type (
@@ -140,6 +141,9 @@ func resourceAppOAuth() *schema.Resource {
 			}
 			return nil
 		},
+		ValidateRawResourceConfigFuncs: []schema.ValidateRawResourceConfigFunc{
+			validation.PreferWriteOnlyAttribute(cty.GetAttrPath("client_basic_secret"), cty.GetAttrPath("client_basic_secret_wo")),
+		},
 		Description: `This resource allows you to create and configure an OIDC Application.
 -> During an apply if there is change in status the app will first be
 activated or deactivated in accordance with the status change. Then, all
@@ -178,10 +182,24 @@ other arguments that changed will be applied.`,
 				Description: "OAuth client secret value, this is output only. This will be in plain text in your statefile unless you set omit_secret above.",
 			},
 			"client_basic_secret": {
-				Type:        schema.TypeString,
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"client_basic_secret_wo"},
+				Description:   "The user provided OAuth client secret key value. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_basic_secret_wo` instead to avoid persisting secrets in state.",
+			},
+			"client_basic_secret_wo": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				Sensitive:     true,
+				WriteOnly:     true,
+				ConflictsWith: []string{"client_basic_secret"},
+				Description:   "The user provided write-only OAuth client secret key value for Terraform 1.11+. Unlike `client_basic_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher.",
+			},
+			"client_basic_secret_wo_version": {
+				Type:        schema.TypeInt,
 				Optional:    true,
-				Sensitive:   true,
-				Description: "The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.",
+				Description: "Version number for the write-only client secret. Increment this value to trigger an update when changing `client_basic_secret_wo`.",
 			},
 			"token_endpoint_auth_method": {
 				Type:        schema.TypeString,
@@ -255,6 +273,21 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.",
 			},
+			"participate_slo": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Allows the app to participate in front-channel Single Logout. Note: You can only enable participate_slo for web and browser application types. When set to true, frontchannel_logout_uri must also be provided. Enable `SINGLE_LOGOUT_SUPPORT` feature flag in your org to use this property.",
+			},
+			"frontchannel_logout_uri": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "*Early Access Property*. URL where Okta sends the logout request. Required when participate_slo is true.",
+			},
+			"frontchannel_logout_session_required": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "*Early Access Property*. Determines whether Okta sends sid and iss in the logout request.",
+			},
 			"response_types": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
@@ -292,7 +325,7 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "TRUSTED",
-				Description: "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED",
+				Description: "*Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.",
 			},
 			"issuer_mode": {
 				Type:        schema.TypeString,
@@ -339,8 +372,9 @@ other arguments that changed will be applied.`,
 				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 			"jwks": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "JSON Web Key Set (JWKS) for application. Note: Inline JWKS may have compatibility issues with v6 SDK. Consider using jwks_uri instead.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"kid": {
@@ -381,13 +415,14 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "*Early Access Property*. Enable Federation Broker Mode.",
 			},
-			// lintignore:S018
 			"groups_claim": {
-				Type:        schema.TypeSet,
-				MaxItems:    1,
-				Description: "Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials)",
-				Optional:    true,
-				Elem:        groupsClaimResource,
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
+				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
+				Elem:          groupsClaimResource,
+				ConflictsWith: []string{"preconfigured_app"},
 			},
 			"app_settings_json": {
 				Type:             schema.TypeString,
@@ -401,12 +436,52 @@ other arguments that changed will be applied.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
-				Description: `The ID of the associated app_signon_policy. If this property is removed from the application the default sign-on-policy will be associated with this application.`,
+				Description: `The ID of the associated app_signon_policy. If this property is removed from the application, the default sign-on-policy will be associated with this application. From now on, there is no need to attach authentication_policy for applications of type SERVICE`,
 			},
 			"jwks_uri": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "URL reference to JWKS",
+			},
+			"preconfigured_app": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Tells Okta to use an existing application in their application catalog, as opposed to a custom application.",
+			},
+			"skip_authentication_policy": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Default:       false,
+				Description:   "When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.",
+				ConflictsWith: []string{"authentication_policy"},
+			},
+			"network": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "Network restrictions for the application client. Only one `network` block may be defined.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connection": {
+							Type:         schema.TypeString,
+							Required:     true,
+							Description:  "The network connection type. Can be `ANYWHERE` or `ZONE`.",
+							ValidateFunc: validation.StringInSlice([]string{"ANYWHERE", "ZONE"}, false),
+						},
+						"include": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to include. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones included if not specified.",
+						},
+						"exclude": {
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "The network zones to exclude. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones excluded if not specified.",
+						},
+					},
+				},
 			},
 		}),
 		Timeouts: &schema.ResourceTimeout{
@@ -448,136 +523,231 @@ var groupsClaimResource = &schema.Resource{
 }
 
 func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 	if err := validateAppOAuth(d, meta); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app := buildAppOAuth(d, true)
+	app, err := buildAppOAuthV6(d, true)
+	if err != nil {
+		return diag.Errorf("failed to build OAuth application: %v", err)
+	}
 	activate := d.Get("status").(string) == StatusActive
-	params := &query.Params{Activate: &activate}
-	appResp, _, err := client.Application.CreateApplication(ctx, app, params)
+
+	appResp, _, err := client.ApplicationAPI.CreateApplication(ctx).Application(app).Activate(activate).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
-	app, err = verifyOidcAppType(appResp)
+
+	oidcApp, err := verifyOidcAppTypeV6(*appResp)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(app.Id)
-	if !d.Get("omit_secret").(bool) {
-		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
+
+	d.SetId(oidcApp.GetId())
+	if !d.Get("omit_secret").(bool) && oidcApp.Credentials.OauthClient.HasClientSecret() {
+		_ = d.Set("client_secret", oidcApp.Credentials.OauthClient.GetClientSecret())
 	}
-	err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
+
+	err = handleAppLogo(ctx, d, meta, oidcApp.GetId(), oidcApp.Links)
 	if err != nil {
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 	}
+
 	err = setAppOauthGroupsClaim(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+
+	if d.Get("type") != "service" {
+		if !d.Get("skip_authentication_policy").(bool) {
+			err = createOrUpdateAuthenticationPolicy(ctx, d, meta, oidcApp.GetId())
+			if err != nil {
+				return diag.Errorf("failed to set authentication policy for an OAuth application: %v", err)
+			}
+		}
 	}
+
 	return resourceAppOAuthRead(ctx, d, meta)
 }
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	raw, ok := d.GetOk("groups_claim")
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
 		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return nil
 	}
 
-	raw, ok := d.GetOk("groups_claim")
+	apiSupplement := getAPISupplementFromMetadata(meta)
+	appID := d.Id()
+
 	if !ok {
+		gc := &sdk.AppOauthGroupClaim{
+			Name:      "",
+			Value:     "",
+			ValueType: "",
+		}
+		if d.Get("issuer_mode") != nil {
+			if d.Get("issuer_mode").(string) != "" {
+				gc.IssuerMode = d.Get("issuer_mode").(string)
+			} else {
+				return errors.New("issuer_mode must be set")
+			}
+		} else {
+			return errors.New("issuer_mode must be set")
+		}
+
+		if _, ok := d.GetOk("preconfigured_app"); !ok { // the internal api for setting app oauth groups claim doesn't work with most preconfigured i.e. existing apps
+			_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
+			if err != nil {
+				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+			}
+		} else {
+			logger(meta).Info("Skipping updating app oauth groups for preconfigured apps.")
+		}
 		return nil
 	}
-	groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
-	gc := &sdk.AppOauthGroupClaim{
-		Name:  groupsClaim["name"].(string),
-		Value: groupsClaim["value"].(string),
+
+	// For now, keep the old behavior but with warnings
+	// TODO: Remove in future version - functionality temporarily maintained for backward compatibility
+
+	groupsClaim := raw.([]interface{})[0].(map[string]interface{})
+	gc := buildGroupsClaimFromResource(groupsClaim)
+
+	// Set issuer mode from the resource data for groups_claim API compatibility
+	if issuerMode := d.Get("issuer_mode").(string); issuerMode != "" {
+		gc.IssuerMode = issuerMode
 	}
-	if d.Get("issuer_mode") != nil {
-		gc.IssuerMode = d.Get("issuer_mode").(string)
-	}
-	gct := groupsClaim["type"].(string)
-	if gct == "FILTER" {
-		gc.ValueType = "GROUPS"
-		gc.GroupFilterType = groupsClaim["filter_type"].(string)
-	} else {
-		gc.ValueType = gct
-	}
-	_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
+
+	_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
 	return err
 }
 
 func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
-	c := meta.(*config.Config)
-	if c.IsOAuth20Auth() {
-		logger(meta).Warn("updating groups_claim disabled with OAuth 2.0 API authentication")
+	if !d.HasChange("groups_claim") {
 		return nil
 	}
 
-	raw, ok := d.GetOk("groups_claim")
-	if !ok {
-		return nil
-	}
-	if len(raw.(*schema.Set).List()) == 0 {
-		gc := &sdk.AppOauthGroupClaim{
-			IssuerMode: d.Get("issuer_mode").(string),
-		}
-		_, err := getAPISupplementFromMetadata(meta).UpdateAppOauthGroupsClaim(ctx, d.Id(), gc)
-		return err
-	}
+	// Log deprecation warning
+	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
 	return setAppOauthGroupsClaim(ctx, d, meta)
 }
 
+func buildGroupsClaimFromResource(groupsClaim map[string]interface{}) *sdk.AppOauthGroupClaim {
+	gc := &sdk.AppOauthGroupClaim{
+		Name:  groupsClaim["name"].(string),
+		Value: groupsClaim["value"].(string),
+	}
+
+	// Map Terraform 'type' to API 'valueType'
+	claimType := groupsClaim["type"].(string)
+	switch claimType {
+	case "FILTER":
+		gc.ValueType = "GROUPS"
+	case "EXPRESSION":
+		gc.ValueType = "EXPRESSION"
+	default:
+		// Default to the provided type if it's a valid API value
+		gc.ValueType = claimType
+	}
+
+	if filterType, ok := groupsClaim["filter_type"]; ok && filterType.(string) != "" {
+		gc.GroupFilterType = filterType.(string)
+	}
+
+	return gc
+}
+
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	app := sdk.NewOpenIdConnectApplication()
-	err := fetchApp(ctx, d, meta, app)
+	client := getOktaV6ClientFromMetadata(meta)
+
+	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get OAuth application: %v", err)
 	}
-	if app.Id == "" {
+
+	app, err := verifyOidcAppTypeV6(*appResp)
+	if err != nil {
+		return diag.Errorf("failed to verify app type: %v", err)
+	}
+
+	if app.GetId() == "" {
 		d.SetId("")
 		return nil
 	}
-	setAuthenticationPolicy(ctx, meta, d, app.Links)
-	var rawProfile string
-	if app.Profile != nil {
-		p, _ := json.Marshal(app.Profile)
-		rawProfile = string(p)
-	}
-	if app.Credentials.UserNameTemplate != nil {
-		_ = d.Set("user_name_template", app.Credentials.UserNameTemplate.Template)
-		_ = d.Set("user_name_template_type", app.Credentials.UserNameTemplate.Type)
-		_ = d.Set("user_name_template_suffix", app.Credentials.UserNameTemplate.Suffix)
-		_ = d.Set("user_name_template_push_status", app.Credentials.UserNameTemplate.PushStatus)
-	}
-	appRead(d, app.Name, app.Status, app.SignOnMode, app.Label, app.Accessibility, app.Visibility, app.Settings.Notes)
-	_ = d.Set("profile", rawProfile)
-	// Not setting client_secret, it is only provided on create and update for auth methods that require it
-	if app.Credentials.OauthClient != nil {
-		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
-		_ = d.Set("token_endpoint_auth_method", app.Credentials.OauthClient.TokenEndpointAuthMethod)
-		_ = d.Set("auto_key_rotation", app.Credentials.OauthClient.AutoKeyRotation)
-		_ = d.Set("pkce_required", app.Credentials.OauthClient.PkceRequired)
-	}
-	err = setAppSettings(d, app.Settings.App)
-	if err != nil {
-		return diag.Errorf("failed to set OAuth application settings: %v", err)
-	}
-	_ = d.Set("logo_url", utils.LinksValue(app.Links, "logo", "href"))
-	if app.Settings.ImplicitAssignment != nil {
-		_ = d.Set("implicit_assignment", app.Settings.ImplicitAssignment)
+
+	if !d.Get("skip_authentication_policy").(bool) {
+		setAuthenticationPolicy(ctx, meta, d, app.Links)
 	} else {
-		_ = d.Set("implicit_assignment", false)
+		_ = d.Set("authentication_policy", "")
 	}
 
+	var rawProfile string
+	if profile := app.GetProfile(); profile != nil {
+		p, _ := json.Marshal(profile)
+		rawProfile = string(p)
+	}
+
+	credentials := app.GetCredentials()
+	if userTemplate := credentials.GetUserNameTemplate(); userTemplate.GetTemplate() != "" {
+		_ = d.Set("user_name_template", userTemplate.GetTemplate())
+		_ = d.Set("user_name_template_type", userTemplate.GetType())
+		_ = d.Set("user_name_template_suffix", userTemplate.GetUserSuffix())
+		_ = d.Set("user_name_template_push_status", userTemplate.GetPushStatus())
+	}
+
+	settings := app.GetSettings()
+	// Set basic app properties
+	_ = d.Set("name", app.GetName())
+	_ = d.Set("status", app.GetStatus())
+	_ = d.Set("sign_on_mode", app.GetSignOnMode())
+	_ = d.Set("label", app.GetLabel())
+
+	// Set accessibility properties
+	accessibility := app.GetAccessibility()
+	_ = d.Set("accessibility_self_service", accessibility.GetSelfService())
+	_ = d.Set("accessibility_error_redirect_url", accessibility.GetErrorRedirectUrl())
+	_ = d.Set("accessibility_login_redirect_url", accessibility.GetLoginRedirectUrl())
+
+	// Set visibility properties
+	visibility := app.GetVisibility()
+	_ = d.Set("auto_submit_toolbar", visibility.GetAutoSubmitToolbar())
+	hide := visibility.GetHide()
+	_ = d.Set("hide_ios", hide.GetIOS())
+	_ = d.Set("hide_web", hide.GetWeb())
+
+	// Set notes
+	notes := settings.GetNotes()
+	_ = d.Set("admin_note", notes.GetAdmin())
+	_ = d.Set("enduser_note", notes.GetEnduser())
+	_ = d.Set("profile", rawProfile)
+
+	// Not setting client_secret, it is only provided on create and update for auth methods that require it
+	oauthClient := credentials.GetOauthClient()
+	if oauthClient.GetClientId() != "" {
+		_ = d.Set("client_id", oauthClient.GetClientId())
+		_ = d.Set("token_endpoint_auth_method", oauthClient.GetTokenEndpointAuthMethod())
+		_ = d.Set("auto_key_rotation", oauthClient.GetAutoKeyRotation())
+		_ = d.Set("pkce_required", oauthClient.GetPkceRequired())
+	}
+
+	// Handle app settings from AdditionalProperties
+	if len(settings.AdditionalProperties) > 0 {
+		appSettingsJSON, _ := json.Marshal(settings.AdditionalProperties)
+		_ = d.Set("app_settings_json", string(appSettingsJSON))
+	}
+
+	_ = d.Set("logo_url", utils.LinksValue(app.Links, "logo", "href"))
+	_ = d.Set("implicit_assignment", settings.GetImplicitAssignment())
+
+	// Handle groups_claim with deprecation warning
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
 		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
@@ -586,77 +756,154 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		if err != nil {
 			return diag.FromErr(err)
 		}
+		if len(gc) > 0 {
+			logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+		}
 		_ = d.Set("groups_claim", gc)
 	}
 
-	return setOAuthClientSettings(d, app.Settings.OauthClient)
+	return setOAuthClientSettingsV6(d, settings.OauthClient)
 }
 
-func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) (*schema.Set, error) {
-	gc, resp, err := getAPISupplementFromMetadata(meta).GetAppOauthGroupsClaim(ctx, d.Id())
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
-		return nil, fmt.Errorf("failed to get groups claim for OAuth application: %w", err)
+func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
+	apiSupplement := getAPISupplementFromMetadata(meta)
+
+	gc, _, err := apiSupplement.GetAppOauthGroupsClaim(ctx, d.Id())
+	if err != nil {
+		// If groups claim doesn't exist, return empty list rather than error
+		return []interface{}{}, nil
 	}
+
 	if gc == nil || gc.Name == "" {
-		return nil, nil
+		return []interface{}{}, nil
 	}
-	elem := map[string]interface{}{
-		"name":  gc.Name,
-		"value": gc.Value,
-		"type":  gc.ValueType,
+
+	// Map API 'valueType' back to Terraform 'type'
+	terraformType := gc.ValueType
+	if gc.ValueType == "GROUPS" && gc.GroupFilterType != "" {
+		terraformType = "FILTER"
 	}
-	if gc.ValueType == "GROUPS" {
-		elem["type"] = "FILTER"
-		elem["filter_type"] = gc.GroupFilterType
-		elem["issuer_mode"] = gc.IssuerMode
+
+	groupsClaimMap := map[string]interface{}{
+		"type":        terraformType,
+		"name":        gc.Name,
+		"value":       gc.Value,
+		"issuer_mode": gc.IssuerMode,
 	}
-	return schema.NewSet(schema.HashResource(groupsClaimResource), []interface{}{elem}), nil
+
+	if gc.GroupFilterType != "" {
+		groupsClaimMap["filter_type"] = gc.GroupFilterType
+	}
+
+	return []interface{}{groupsClaimMap}, nil
 }
 
-func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
+func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenIdConnectApplicationSettingsClient) diag.Diagnostics {
 	if oauthClient == nil {
 		return nil
 	}
-	_ = d.Set("type", oauthClient.ApplicationType)
-	_ = d.Set("client_uri", oauthClient.ClientUri)
-	_ = d.Set("logo_uri", oauthClient.LogoUri)
-	_ = d.Set("tos_uri", oauthClient.TosUri)
-	_ = d.Set("policy_uri", oauthClient.PolicyUri)
-	_ = d.Set("login_uri", oauthClient.InitiateLoginUri)
-	_ = d.Set("jwks_uri", oauthClient.JwksUri)
-	if oauthClient.WildcardRedirect != "" {
-		_ = d.Set("wildcard_redirect", oauthClient.WildcardRedirect)
+
+	_ = d.Set("type", oauthClient.GetApplicationType())
+	_ = d.Set("client_uri", oauthClient.GetClientUri())
+	_ = d.Set("logo_uri", oauthClient.GetLogoUri())
+	_ = d.Set("tos_uri", oauthClient.GetTosUri())
+	_ = d.Set("policy_uri", oauthClient.GetPolicyUri())
+	_ = d.Set("login_uri", oauthClient.GetInitiateLoginUri())
+	_ = d.Set("jwks_uri", oauthClient.GetJwksUri())
+	_ = d.Set("wildcard_redirect", oauthClient.GetWildcardRedirect())
+	// Some orgs/APIs omit this value in responses, which can cause perpetual diffs
+	// if we overwrite state with an empty string. Only set when present.
+	if consentMethod := oauthClient.GetConsentMethod(); consentMethod != "" {
+		_ = d.Set("consent_method", consentMethod)
 	}
-	if oauthClient.ConsentMethod != "" { // Early Access Property, might be empty
-		_ = d.Set("consent_method", oauthClient.ConsentMethod)
-	}
-	if oauthClient.IssuerMode != "" {
-		_ = d.Set("issuer_mode", oauthClient.IssuerMode)
-	}
-	if oauthClient.RefreshToken != nil {
-		_ = d.Set("refresh_token_rotation", oauthClient.RefreshToken.RotationType)
-		if oauthClient.RefreshToken.LeewayPtr != nil {
-			_ = d.Set("refresh_token_leeway", oauthClient.RefreshToken.LeewayPtr)
+	_ = d.Set("issuer_mode", oauthClient.GetIssuerMode())
+	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
+	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
+	_ = d.Set("frontchannel_logout_session_required", oauthClient.GetFrontchannelLogoutSessionRequired())
+
+	if refreshToken := oauthClient.GetRefreshToken(); refreshToken.GetRotationType() != "" {
+		_ = d.Set("refresh_token_rotation", refreshToken.GetRotationType())
+		if refreshToken.HasLeeway() {
+			_ = d.Set("refresh_token_leeway", int(refreshToken.GetLeeway()))
 		}
 	}
-	if oauthClient.Jwks != nil {
-		jwks := oauthClient.Jwks.Keys
+
+	// Handle response and grant types
+	respTypes := make([]string, len(oauthClient.ResponseTypes))
+	for i, responseType := range oauthClient.ResponseTypes {
+		respTypes[i] = string(responseType)
+	}
+
+	grantTypes := make([]string, len(oauthClient.GrantTypes))
+	for i, grantType := range oauthClient.GrantTypes {
+		grantTypes[i] = string(grantType)
+	}
+
+	aggMap := map[string]interface{}{
+		"redirect_uris":             oauthClient.RedirectUris,
+		"response_types":            utils.ConvertStringSliceToSet(respTypes),
+		"grant_types":               utils.ConvertStringSliceToSet(grantTypes),
+		"post_logout_redirect_uris": utils.ConvertStringSliceToSet(oauthClient.PostLogoutRedirectUris),
+	}
+
+	if idpLogin := oauthClient.GetIdpInitiatedLogin(); idpLogin.GetMode() != "" {
+		_ = d.Set("login_mode", idpLogin.GetMode())
+		aggMap["login_scopes"] = utils.ConvertStringSliceToSet(idpLogin.DefaultScope)
+	}
+
+	err := utils.SetNonPrimitives(d, aggMap)
+	if err != nil {
+		return diag.Errorf("failed to set OAuth application properties: %v", err)
+	}
+
+	if network, ok := oauthClient.GetNetworkOk(); ok && network != nil {
+		networkMap := map[string]interface{}{
+			"connection": network.GetConnection(),
+			"include":    utils.ConvertStringSliceToSet(network.GetInclude()),
+			"exclude":    utils.ConvertStringSliceToSet(network.GetExclude()),
+		}
+		if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
+			return diag.Errorf("failed to set OAuth application network properties: %v", err)
+		}
+	}
+
+	jwk, ok := oauthClient.GetJwksOk()
+	if ok {
+		jwks := jwk.Keys
 		arr := make([]map[string]interface{}, len(jwks))
-		for i, jwk := range jwks {
-			if jwk.Kty == "RSA" && jwk.E != "" && jwk.N != "" {
+		for i, j := range jwks {
+			// Encryption key response (use=enc)
+			if j.OAuth2ClientJsonEncryptionKeyResponse != nil {
 				arr[i] = map[string]interface{}{
-					"kty": jwk.Kty,
-					"kid": jwk.Kid,
-					"e":   jwk.E,
-					"n":   jwk.N,
+					"kty": j.OAuth2ClientJsonEncryptionKeyResponse.Kty,
+					"kid": j.OAuth2ClientJsonEncryptionKeyResponse.Kid.Get(),
+					"e":   j.OAuth2ClientJsonEncryptionKeyResponse.E,
+					"n":   j.OAuth2ClientJsonEncryptionKeyResponse.N,
+					"use": j.OAuth2ClientJsonEncryptionKeyResponse.Use,
 				}
 			}
-			if jwk.Kty == "EC" && jwk.X != "" && jwk.Y != "" {
-				arr[i] = map[string]interface{}{
-					"kty": jwk.Kty,
-					"kid": jwk.Kid,
-					"x":   jwk.X,
-					"y":   jwk.Y,
+			// Signing key response (RSA or EC)
+			if j.OAuth2ClientJsonSigningKeyResponse != nil {
+				signingKey := j.OAuth2ClientJsonSigningKeyResponse
+				// RSA Signing key
+				if signingKey.OAuth2ClientJsonWebKeyRsaResponse != nil {
+					rsaKey := signingKey.OAuth2ClientJsonWebKeyRsaResponse
+					arr[i] = map[string]interface{}{
+						"kty": rsaKey.Kty,
+						"kid": rsaKey.Kid.Get(),
+						"e":   rsaKey.E,
+						"n":   rsaKey.N,
+					}
+				}
+				// EC Signing key
+				if signingKey.OAuth2ClientJsonWebKeyECResponse != nil {
+					ecKey := signingKey.OAuth2ClientJsonWebKeyECResponse
+					arr[i] = map[string]interface{}{
+						"kty": ecKey.Kty,
+						"kid": ecKey.Kid.Get(),
+						"x":   ecKey.X,
+						"y":   ecKey.Y,
+					}
 				}
 			}
 		}
@@ -664,29 +911,6 @@ func setOAuthClientSettings(d *schema.ResourceData, oauthClient *sdk.OpenIdConne
 		if err != nil {
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
 		}
-	}
-
-	respTypes := make([]string, len(oauthClient.ResponseTypes))
-	for i := range oauthClient.ResponseTypes {
-		respTypes[i] = string(*oauthClient.ResponseTypes[i])
-	}
-	grantTypes := make([]string, len(oauthClient.GrantTypes))
-	for i := range oauthClient.GrantTypes {
-		grantTypes[i] = string(*oauthClient.GrantTypes[i])
-	}
-	aggMap := map[string]interface{}{
-		"redirect_uris":             oauthClient.RedirectUris,
-		"response_types":            utils.ConvertStringSliceToSet(respTypes),
-		"grant_types":               utils.ConvertStringSliceToSet(grantTypes),
-		"post_logout_redirect_uris": utils.ConvertStringSliceToSet(oauthClient.PostLogoutRedirectUris),
-	}
-	if oauthClient.IdpInitiatedLogin != nil {
-		_ = d.Set("login_mode", oauthClient.IdpInitiatedLogin.Mode)
-		aggMap["login_scopes"] = utils.ConvertStringSliceToSet(oauthClient.IdpInitiatedLogin.DefaultScope)
-	}
-	err := utils.SetNonPrimitives(d, aggMap)
-	if err != nil {
-		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
 	return nil
 }
@@ -700,27 +924,40 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return nil
 	}
 
-	client := getOktaClientFromMetadata(meta)
-	if err := validateGrantTypes(d); err != nil {
+	client := getOktaV6ClientFromMetadata(meta)
+	if err = validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	if err := validateAppOAuth(d, meta); err != nil {
-		return diag.Errorf("failed to create OAuth application: %v", err)
+	if err = validateAppOAuth(d, meta); err != nil {
+		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
 
-	app := buildAppOAuth(d, false)
+	app, err := buildAppOAuthV6(d, false)
+	if err != nil {
+		return diag.Errorf("failed to build OAuth application: %v", err)
+	}
+
 	// When omit_secret is true on update, we make sure that do not include
 	// the client secret value in the api call.
 	// This is to ensure that when this is "toggled on", the apply which this occurs also does
 	// not do a final "reset" of the client secret value to the original stored in state.
 	if d.Get("omit_secret").(bool) {
-		app.Credentials.OauthClient.ClientSecret = ""
+		// Get the underlying OpenIdConnectApplication and modify the credentials
+		if oidcApp := app.OpenIdConnectApplication; oidcApp != nil {
+			credentials := oidcApp.GetCredentials()
+			oauthClient := credentials.GetOauthClient()
+			oauthClient.SetClientSecret("")
+			credentials.SetOauthClient(oauthClient)
+			oidcApp.SetCredentials(credentials)
+		}
 	}
-	appResp, _, err := client.Application.UpdateApplication(ctx, d.Id(), app)
+
+	appResp, _, err := client.ApplicationAPI.ReplaceApplication(ctx, d.Id()).Application(app).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
-	app, err = verifyOidcAppType(appResp)
+
+	updatedApp, err := verifyOidcAppTypeV6(*appResp)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -732,11 +969,12 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	// When `false`: We set the secret value to the value returned from the API
 	if d.Get("omit_secret").(bool) {
 		_ = d.Set("client_secret", "")
-	} else {
-		_ = d.Set("client_secret", app.Credentials.OauthClient.ClientSecret)
+	} else if updatedApp.Credentials.OauthClient.HasClientSecret() {
+		_ = d.Set("client_secret", updatedApp.Credentials.OauthClient.GetClientSecret())
 	}
+
 	if d.HasChange("logo") {
-		err = handleAppLogo(ctx, d, meta, app.Id, app.Links)
+		err = handleAppLogo(ctx, d, meta, updatedApp.GetId(), updatedApp.Links)
 		if err != nil {
 			o, _ := d.GetChange("logo")
 			_ = d.Set("logo", o)
@@ -747,9 +985,11 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 	}
-	err = createOrUpdateAuthenticationPolicy(ctx, d, meta, app.Id)
-	if err != nil {
-		return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+	if !d.Get("skip_authentication_policy").(bool) {
+		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
+		if err != nil {
+			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
+		}
 	}
 	return resourceAppOAuthRead(ctx, d, meta)
 }
@@ -762,9 +1002,8 @@ func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplication {
-	// Abstracts away name and SignOnMode which are constant for this app type.
-	app := sdk.NewOpenIdConnectApplication()
+func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplications200ResponseInner, error) {
+	app := v6okta.NewOpenIdConnectApplicationWithDefaults()
 	appType := d.Get("type").(string)
 	grantTypes := utils.ConvertInterfaceToStringSet(d.Get("grant_types"))
 	responseTypes := utils.ConvertInterfaceToStringSetNullable(d.Get("response_types"))
@@ -794,141 +1033,293 @@ func buildAppOAuth(d *schema.ResourceData, isNew bool) *sdk.OpenIdConnectApplica
 		}
 	}
 
-	app.Label = d.Get("label").(string)
+	app.SetLabel(d.Get("label").(string))
+	app.SetName("oidc_client")
+	if preConfigName, ok := d.GetOk("preconfigured_app"); ok && preConfigName != "" {
+		app.SetName(preConfigName.(string))
+	}
+	app.SetSignOnMode("OPENID_CONNECT")
+
+	// Build credentials
 	authMethod := d.Get("token_endpoint_auth_method").(string)
-	app.Credentials = &sdk.OAuthApplicationCredentials{
-		OauthClient: &sdk.ApplicationCredentialsOAuthClient{
-			AutoKeyRotation:         utils.BoolPtr(d.Get("auto_key_rotation").(bool)),
-			ClientId:                d.Get("client_id").(string),
-			TokenEndpointAuthMethod: authMethod,
-			ClientSecret:            d.Get("client_secret").(string),
-		},
-		UserNameTemplate: BuildUserNameTemplate(d),
+	oauthClient := v6okta.NewApplicationCredentialsOAuthClientWithDefaults()
+
+	// Use GetRawConfig to distinguish: not in config (default true) vs explicit true/false.
+	// GetOk cannot distinguish explicit false from unset, so false would never be sent if we used it.
+	var autoKeyRotation bool
+	if attr := d.GetRawConfig().GetAttr("auto_key_rotation"); attr.IsNull() {
+		autoKeyRotation = true // schema default when attribute is omitted
+	} else {
+		autoKeyRotation = attr.True()
+	}
+	oauthClient.SetAutoKeyRotation(autoKeyRotation)
+
+	if clientID := d.Get("client_id").(string); clientID != "" {
+		oauthClient.SetClientId(clientID)
+	}
+	oauthClient.SetTokenEndpointAuthMethod(authMethod)
+	if clientSecret := d.Get("client_secret").(string); clientSecret != "" {
+		oauthClient.SetClientSecret(clientSecret)
 	}
 
-	// pkce_required handled based on API docs
-	// see: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
-	var pkceRequired *bool
+	// Handle PKCE requirements
+	var pkceRequired bool
 	pkceVal := d.GetRawConfig().GetAttr("pkce_required")
 	if pkceVal.IsNull() {
-		if authMethod == "" {
-			diag.Errorf("'pkce_required' must be set to true when 'token_endpoint_auth_method' is none")
-			return app
+		if authMethod == "none" {
+			pkceRequired = true
 		} else if isNew && (appType == "native" || appType == "browser") {
-			pkceRequired = utils.BoolPtr(true)
+			pkceRequired = true
 		} else {
-			pkceRequired = utils.BoolPtr(false)
+			pkceRequired = false
 		}
 	} else {
 		switch {
 		case pkceVal.True():
-			pkceRequired = utils.BoolPtr(true)
+			pkceRequired = true
 		case pkceVal.False():
-			pkceRequired = utils.BoolPtr(false)
+			pkceRequired = false
 		}
 	}
-	app.Credentials.OauthClient.PkceRequired = pkceRequired
+	oauthClient.SetPkceRequired(pkceRequired)
 
-	if sec, ok := d.GetOk("client_basic_secret"); ok {
-		app.Credentials.OauthClient.ClientSecret = sec.(string)
+	// Try to get write-only attribute first, fall back to regular attribute
+	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
+	if !woVal.IsNull() {
+		oauthClient.SetClientSecret(woVal.AsString())
+	} else if sec, ok := d.GetOk("client_basic_secret"); ok {
+		oauthClient.SetClientSecret(sec.(string))
 	}
 
-	oktaRespTypes := make([]*sdk.OAuthResponseType, len(responseTypes))
-	for i := range responseTypes {
-		rt := sdk.OAuthResponseType(responseTypes[i])
-		oktaRespTypes[i] = &rt
+	credentials := v6okta.NewOAuthApplicationCredentialsWithDefaults()
+	credentials.SetOauthClient(*oauthClient)
+	credentials.SetUserNameTemplate(*BuildUserNameTemplateV6(d))
+	app.SetCredentials(*credentials)
+
+	// Build OAuth client settings
+	oauthClientSettings := v6okta.NewOpenIdConnectApplicationSettingsClientWithDefaults()
+	oauthClientSettings.SetApplicationType(appType)
+
+	// Convert grant and response types to v6 format
+	v6GrantTypes := make([]string, len(grantTypes))
+	copy(v6GrantTypes, grantTypes)
+
+	v6ResponseTypes := make([]string, len(responseTypes))
+	copy(v6ResponseTypes, responseTypes)
+
+	oauthClientSettings.SetGrantTypes(v6GrantTypes)
+	oauthClientSettings.SetResponseTypes(v6ResponseTypes)
+
+	if clientURI := d.Get("client_uri").(string); clientURI != "" {
+		oauthClientSettings.SetClientUri(clientURI)
 	}
-	oktaGrantTypes := make([]*sdk.OAuthGrantType, len(grantTypes))
-	for i := range grantTypes {
-		gt := sdk.OAuthGrantType(grantTypes[i])
-		oktaGrantTypes[i] = &gt
+	if consentMethod := d.Get("consent_method").(string); consentMethod != "" {
+		oauthClientSettings.SetConsentMethod(consentMethod)
 	}
-	app.Settings = &sdk.OpenIdConnectApplicationSettings{
-		ImplicitAssignment: utils.BoolPtr(d.Get("implicit_assignment").(bool)),
-		OauthClient: &sdk.OpenIdConnectApplicationSettingsClient{
-			ApplicationType:        appType,
-			ClientUri:              d.Get("client_uri").(string),
-			ConsentMethod:          d.Get("consent_method").(string),
-			GrantTypes:             oktaGrantTypes,
-			InitiateLoginUri:       d.Get("login_uri").(string),
-			LogoUri:                d.Get("logo_uri").(string),
-			PolicyUri:              d.Get("policy_uri").(string),
-			RedirectUris:           utils.ConvertInterfaceToStringArr(d.Get("redirect_uris")),
-			PostLogoutRedirectUris: utils.ConvertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")),
-			ResponseTypes:          oktaRespTypes,
-			TosUri:                 d.Get("tos_uri").(string),
-			IssuerMode:             d.Get("issuer_mode").(string),
-			IdpInitiatedLogin: &sdk.OpenIdConnectApplicationIdpInitiatedLogin{
-				DefaultScope: utils.ConvertInterfaceToStringSet(d.Get("login_scopes")),
-				Mode:         d.Get("login_mode").(string),
-			},
-			WildcardRedirect: d.Get("wildcard_redirect").(string),
-			JwksUri:          d.Get("jwks_uri").(string),
-		},
-		Notes: BuildAppNotes(d),
-		App:   BuildAppSettings(d),
+
+	if redirectUris := utils.ConvertInterfaceToStringArr(d.Get("redirect_uris")); len(redirectUris) > 0 {
+		oauthClientSettings.SetRedirectUris(redirectUris)
 	}
-	jwks := d.Get("jwks").([]interface{})
-	if len(jwks) > 0 {
-		keys := make([]*sdk.JsonWebKey, len(jwks))
-		for i := range jwks {
-			key := &sdk.JsonWebKey{
-				Kid: d.Get(fmt.Sprintf("jwks.%d.kid", i)).(string),
-				Kty: d.Get(fmt.Sprintf("jwks.%d.kty", i)).(string),
+
+	if postLogoutUris := utils.ConvertInterfaceToStringSetNullable(d.Get("post_logout_redirect_uris")); len(postLogoutUris) > 0 {
+		oauthClientSettings.SetPostLogoutRedirectUris(postLogoutUris)
+	}
+
+	if loginURI := d.Get("login_uri").(string); loginURI != "" {
+		oauthClientSettings.SetInitiateLoginUri(loginURI)
+	}
+	if logoURI := d.Get("logo_uri").(string); logoURI != "" {
+		oauthClientSettings.SetLogoUri(logoURI)
+	}
+	if policyURI := d.Get("policy_uri").(string); policyURI != "" {
+		oauthClientSettings.SetPolicyUri(policyURI)
+	}
+	if tosURI := d.Get("tos_uri").(string); tosURI != "" {
+		oauthClientSettings.SetTosUri(tosURI)
+	}
+	if issuerMode := d.Get("issuer_mode").(string); issuerMode != "" {
+		oauthClientSettings.SetIssuerMode(issuerMode)
+	}
+	if wildcardRedirect := d.Get("wildcard_redirect").(string); wildcardRedirect != "" {
+		oauthClientSettings.SetWildcardRedirect(wildcardRedirect)
+	}
+	if jwksURI := d.Get("jwks_uri").(string); jwksURI != "" {
+		oauthClientSettings.SetJwksUri(jwksURI)
+	}
+	if participateSlo, ok := d.GetOk("participate_slo"); ok {
+		oauthClientSettings.SetParticipateSlo(participateSlo.(bool))
+	}
+	if frontchannelLogoutURI := d.Get("frontchannel_logout_uri").(string); frontchannelLogoutURI != "" {
+		oauthClientSettings.SetFrontchannelLogoutUri(frontchannelLogoutURI)
+	}
+	if frontchannelLogoutSessionRequired, ok := d.GetOk("frontchannel_logout_session_required"); ok {
+		oauthClientSettings.SetFrontchannelLogoutSessionRequired(frontchannelLogoutSessionRequired.(bool))
+	}
+
+	// Handle JWKS if provided
+	if jwksList, ok := d.GetOk("jwks"); ok {
+		jwksData := jwksList.([]interface{})
+		if len(jwksData) > 0 {
+
+			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
+
+			var keyData []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
+			for _, jwk := range jwksData {
+				jwkMap := jwk.(map[string]interface{})
+				var k v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
+
+				kty := jwkMap["kty"].(string)
+				use := ""
+				if jwkMap["use"] != nil {
+					use = jwkMap["use"].(string)
+				}
+
+				// Determine key type based on kty and use
+				if use == "enc" {
+					// Encryption key (RSA only for encryption)
+					// Fields: e, kty, n, use, kid, status
+					key := v6okta.NewOAuth2ClientJsonEncryptionKeyResponseWithDefaults()
+					if e, ok := jwkMap["e"].(string); ok {
+						key.SetE(e)
+					}
+					if n, ok := jwkMap["n"].(string); ok {
+						key.SetN(n)
+					}
+					key.SetKty(kty)
+					key.SetUse("enc")
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(key)
+				} else if kty == "RSA" {
+					// RSA Signing key
+					// Fields: e, kty, n, kid, status (NO use, NO alg)
+					key := v6okta.NewOAuth2ClientJsonWebKeyRsaResponseWithDefaults()
+					if e, ok := jwkMap["e"].(string); ok {
+						key.SetE(e)
+					}
+					if n, ok := jwkMap["n"].(string); ok {
+						key.SetN(n)
+					}
+					key.SetKty(kty)
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					// Wrap RSA key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
+					signingKey := v6okta.OAuth2ClientJsonWebKeyRsaResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
+				} else if kty == "EC" {
+					// EC Signing key
+					// Fields: kty, x, y, kid, status (NO crv, NO use, NO alg)
+					key := v6okta.NewOAuth2ClientJsonWebKeyECResponseWithDefaults()
+					if x, ok := jwkMap["x"].(string); ok {
+						key.SetX(x)
+					}
+					if y, ok := jwkMap["y"].(string); ok {
+						key.SetY(y)
+					}
+					key.SetKty(kty)
+					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
+						key.SetKid(kid)
+					}
+					// Wrap EC key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
+					signingKey := v6okta.OAuth2ClientJsonWebKeyECResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
+				}
+
+				keyData = append(keyData, k)
 			}
-			if e, ok := d.Get(fmt.Sprintf("jwks.%d.e", i)).(string); ok {
-				key.E = e
-				key.N = d.Get(fmt.Sprintf("jwks.%d.n", i)).(string)
-			}
-			if x, ok := d.Get(fmt.Sprintf("jwks.%d.x", i)).(string); ok {
-				key.X = x
-				key.Y = d.Get(fmt.Sprintf("jwks.%d.y", i)).(string)
-			}
-			keys[i] = key
+			jwks.SetKeys(keyData)
+			oauthClientSettings.SetJwks(*jwks)
+
 		}
-		app.Settings.OauthClient.Jwks = &sdk.OpenIdConnectApplicationSettingsClientKeys{Keys: keys}
 	}
 
-	refresh := &sdk.OpenIdConnectApplicationSettingsRefreshToken{}
-	var hasRefresh bool
-	for _, grant_type := range grantTypes {
-		if grant_type == refreshToken {
+	// Handle network restrictions
+	if networkList, ok := d.GetOk("network"); ok {
+		networkData := networkList.([]interface{})
+		if len(networkData) > 0 {
+			networkMap := networkData[0].(map[string]interface{})
+			network := v6okta.NewOpenIdConnectApplicationNetwork(networkMap["connection"].(string))
+			if include := utils.ConvertInterfaceToStringSet(networkMap["include"]); len(include) > 0 {
+				network.SetInclude(include)
+			}
+			if exclude := utils.ConvertInterfaceToStringSet(networkMap["exclude"]); len(exclude) > 0 {
+				network.SetExclude(exclude)
+			}
+			oauthClientSettings.SetNetwork(*network)
+		}
+	}
+
+	// Handle IDP initiated login
+	loginScopes := utils.ConvertInterfaceToStringSet(d.Get("login_scopes"))
+	idpLogin := v6okta.NewOpenIdConnectApplicationIdpInitiatedLoginWithDefaults()
+	if loginScopes != nil {
+		idpLogin.SetDefaultScope(loginScopes)
+		if loginMode := d.Get("login_mode").(string); loginMode != "" {
+			idpLogin.SetMode(loginMode)
+		}
+		oauthClientSettings.SetIdpInitiatedLogin(*idpLogin)
+	}
+
+	// Handle refresh token settings
+	hasRefresh := false
+	for _, grantType := range grantTypes {
+		if grantType == refreshToken {
 			hasRefresh = true
 			break
 		}
 	}
-	if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
-		refresh.RotationType = rotate.(string)
-	}
-
-	leeway, ok := d.GetOk("refresh_token_leeway")
-	if ok {
-		refresh.LeewayPtr = utils.Int64Ptr(leeway.(int))
-	} else {
-		refresh.LeewayPtr = utils.Int64Ptr(0)
-	}
 
 	if hasRefresh {
-		app.Settings.OauthClient.RefreshToken = refresh
+		refresh := v6okta.NewOpenIdConnectApplicationSettingsRefreshTokenWithDefaults()
+		if rotate, ok := d.GetOk("refresh_token_rotation"); ok {
+			refresh.SetRotationType(rotate.(string))
+		}
+		if leeway, ok := d.GetOk("refresh_token_leeway"); ok {
+			refresh.SetLeeway(int32(leeway.(int)))
+		} else {
+			refresh.SetLeeway(0)
+		}
+		oauthClientSettings.SetRefreshToken(*refresh)
 	}
 
-	// TODO: need to put a warning
-	// if !hasRefresh && refresh != nil {
-	// 	return nil, errors.New("does not have refresh grant type but refresh_token_rotation and refresh_token_leeway exist in payload")
-	// }
-	// TODO unset refresh_token_rotation, refresh_token_leeway
+	// Build main settings
+	settings := v6okta.NewOpenIdConnectApplicationSettingsWithDefaults()
+	if implicitAssignment, ok := d.GetOk("implicit_assignment"); ok {
+		settings.SetImplicitAssignment(implicitAssignment.(bool))
+	}
+	settings.SetOauthClient(*oauthClientSettings)
+	settings.SetNotes(*BuildAppNotesV6(d))
 
-	app.Visibility = BuildAppVisibility(d)
-	app.Accessibility = BuildAppAccessibility(d)
+	// Handle app settings
+	if appSettingsJSON, ok := d.GetOk("app_settings_json"); ok {
+		var appSettings map[string]interface{}
+		if err := json.Unmarshal([]byte(appSettingsJSON.(string)), &appSettings); err != nil {
+			return v6okta.ListApplications200ResponseInner{}, fmt.Errorf("failed to unmarshal app_settings_json: %w", err)
+		}
+		settings.AdditionalProperties = appSettings
+	}
 
+	app.SetSettings(*settings)
+	visibility, err := BuildAppVisibilityV6(d)
+	if err != nil {
+		return v6okta.ListApplications200ResponseInner{}, err
+	}
+	app.SetVisibility(*visibility)
+	app.SetAccessibility(*BuildAppAccessibilityV6(d))
+
+	// Handle profile
 	if rawAttrs, ok := d.GetOk("profile"); ok {
 		var attrs map[string]interface{}
 		str := rawAttrs.(string)
-		_ = json.Unmarshal([]byte(str), &attrs)
-		app.Profile = attrs
+		if err := json.Unmarshal([]byte(str), &attrs); err != nil {
+			return v6okta.ListApplications200ResponseInner{}, fmt.Errorf("failed to unmarshal profile: %w", err)
+		}
+		app.SetProfile(attrs)
 	}
 
-	return app
+	return v6okta.OpenIdConnectApplicationAsListApplications200ResponseInner(app), nil
 }
 
 func validateGrantTypes(d *schema.ResourceData) error {
@@ -947,13 +1338,16 @@ func validateGrantTypes(d *schema.ResourceData) error {
 }
 
 func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
+	// Handle groups_claim validation with deprecation warning
 	raw, ok := d.GetOk("groups_claim")
 	if ok {
+		logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+
 		c := meta.(*config.Config)
 		if c.IsOAuth20Auth() {
 			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
 		} else {
-			groupsClaim := raw.(*schema.Set).List()[0].(map[string]interface{})
+			groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
 				return errors.New("'filter_type' in 'groups_claim' can only be set when 'type' is set to 'FILTER'")
 			}
@@ -1002,10 +1396,76 @@ func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func verifyOidcAppType(app sdk.App) (*sdk.OpenIdConnectApplication, error) {
-	oidcApp, ok := app.(*sdk.OpenIdConnectApplication)
-	if !ok {
-		return nil, fmt.Errorf("unexpected application response return from Okta: %v", app)
+func verifyOidcAppTypeV6(app v6okta.ListApplications200ResponseInner) (*v6okta.OpenIdConnectApplication, error) {
+	if app.OpenIdConnectApplication != nil {
+		return app.OpenIdConnectApplication, nil
 	}
-	return oidcApp, nil
+	return nil, fmt.Errorf("unexpected application response type from Okta - not an OpenIdConnectApplication")
+}
+
+func BuildUserNameTemplateV6(d *schema.ResourceData) *v6okta.ApplicationCredentialsUsernameTemplate {
+	template := v6okta.NewApplicationCredentialsUsernameTemplateWithDefaults()
+	if tmpl := d.Get("user_name_template").(string); tmpl != "" {
+		template.SetTemplate(tmpl)
+	}
+	if tmplType := d.Get("user_name_template_type").(string); tmplType != "" {
+		template.SetType(tmplType)
+	}
+	if suffix := d.Get("user_name_template_suffix").(string); suffix != "" {
+		template.SetUserSuffix(suffix)
+	}
+	if pushStatus := d.Get("user_name_template_push_status").(string); pushStatus != "" {
+		template.SetPushStatus(pushStatus)
+	}
+	return template
+}
+
+func BuildAppAccessibilityV6(d *schema.ResourceData) *v6okta.ApplicationAccessibility {
+	accessibility := v6okta.NewApplicationAccessibilityWithDefaults()
+	if selfService, ok := d.GetOk("accessibility_self_service"); ok {
+		accessibility.SetSelfService(selfService.(bool))
+	}
+	if errorURL := d.Get("accessibility_error_redirect_url").(string); errorURL != "" {
+		accessibility.SetErrorRedirectUrl(errorURL)
+	}
+	if loginURL := d.Get("accessibility_login_redirect_url").(string); loginURL != "" {
+		accessibility.SetLoginRedirectUrl(loginURL)
+	}
+	return accessibility
+}
+
+func BuildAppVisibilityV6(d *schema.ResourceData) (*v6okta.ApplicationVisibility, error) {
+	visibility := v6okta.NewApplicationVisibilityWithDefaults()
+	if autoSubmit, ok := d.GetOk("auto_submit_toolbar"); ok {
+		visibility.SetAutoSubmitToolbar(autoSubmit.(bool))
+	}
+
+	hide := v6okta.NewApplicationVisibilityHideWithDefaults()
+	if hideIOS, ok := d.GetOk("hide_ios"); ok {
+		hide.SetIOS(hideIOS.(bool))
+	}
+	if hideWeb, ok := d.GetOk("hide_web"); ok {
+		hide.SetWeb(hideWeb.(bool))
+	}
+	visibility.SetHide(*hide)
+
+	if appLinks, ok := d.GetOk("app_links_json"); ok {
+		var links map[string]bool
+		if err := json.Unmarshal([]byte(appLinks.(string)), &links); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal app_links_json: %w", err)
+		}
+		visibility.SetAppLinks(links)
+	}
+	return visibility, nil
+}
+
+func BuildAppNotesV6(d *schema.ResourceData) *v6okta.ApplicationSettingsNotes {
+	notes := v6okta.NewApplicationSettingsNotesWithDefaults()
+	if admin, ok := d.GetOk("admin_note"); ok {
+		notes.SetAdmin(admin.(string))
+	}
+	if enduser, ok := d.GetOk("enduser_note"); ok {
+		notes.SetEnduser(enduser.(string))
+	}
+	return notes
 }

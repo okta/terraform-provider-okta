@@ -1,0 +1,1 @@
+terraform import okta_realm.example <realm_id>

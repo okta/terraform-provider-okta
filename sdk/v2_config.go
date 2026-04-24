@@ -8,8 +8,8 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/go-jose/go-jose/v4"
 	"github.com/okta/terraform-provider-okta/sdk/cache"
-	"gopkg.in/square/go-jose.v2"
 )
 
 type config struct {

@@ -151,7 +151,11 @@ func findAuthenticator(ctx context.Context, meta interface{}, name, key string) 
 		return nil, err
 	}
 	for _, authenticator := range authenticators {
-		if key != "custom_otp" {
+		if key == "custom_app" {
+			if authenticator.Name == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
+				return authenticator, nil // TODO: update condition to include custom_otp as there can be more than 1 custom_otp type authenticator.
+			}
+		} else if key != "custom_otp" {
 			if authenticator.Name == name {
 				return authenticator, nil
 			}
@@ -169,5 +173,5 @@ func findAuthenticator(ctx context.Context, meta interface{}, name, key string) 
 	if key != "" {
 		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
 	}
-	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name)
+	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name) // authenticator names must be unique.
 }

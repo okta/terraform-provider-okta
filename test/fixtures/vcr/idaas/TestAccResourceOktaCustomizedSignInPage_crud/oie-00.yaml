@@ -7,14 +7,9 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: 21
-        transfer_encoding: []
-        trailer: {}
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
             {"name":"testBrand"}
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -28,37 +23,29 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
-        uncompressed: false
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:11 GMT
+                - Tue, 03 Mar 2026 07:31:45 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 201 Created
         code: 201
-        duration: 265.27075ms
+        duration: 1.188214s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 142
-        transfer_encoding: []
-        trailer: {}
+        content_length: 22
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
-            {"agreeToCustomPrivacyPolicy":false,"customPrivacyPolicyUrl":"","defaultApp":{},"locale":"en","name":"testBrand","removePoweredByOkta":false}
-        form: {}
+            {"name":"testBrand2"}
         headers:
             Accept:
                 - application/json
@@ -66,84 +53,72 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
-        method: PUT
+        url: https://oie-00.dne-okta.com/api/v1/brands
+        method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
-        uncompressed: true
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:12 GMT
+                - Tue, 03 Mar 2026 07:31:45 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 315.402ms
+        status: 201 Created
+        code: 201
+        duration: 1.191442791s
     - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
+        content_length: 142
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
+        body: |
+            {"agreeToCustomPrivacyPolicy":false,"customPrivacyPolicyUrl":"","defaultApp":{},"locale":"en","name":"testBrand","removePoweredByOkta":false}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
-        method: GET
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
+        method: PUT
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:12 GMT
+                - Tue, 03 Mar 2026 07:31:46 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 233.905ms
+        duration: 1.109464334s
     - id: 3
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2235
-        transfer_encoding: []
-        trailer: {}
+        content_length: 143
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
-            {"pageContent":"\u003c!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"\u003e\n\u003chtml\u003e\n\u003chead\u003e\n    \u003cmeta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e\n    \u003cmeta name=\"robots\" content=\"noindex,nofollow\" /\u003e\n    \u003c!-- Styles generated from theme --\u003e\n    \u003clink href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\"\u003e\n    \u003c!-- Favicon from theme --\u003e\n    \u003clink rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/\u003e\n\n    \u003ctitle\u003e{{pageTitle}}\u003c/title\u003e\n    {{{SignInWidgetResources}}}\n\n    \u003cstyle nonce=\"{{nonceValue}}\"\u003e\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    \u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n    \u003cdiv id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"\u003e\u003c/div\u003e\n    \u003cdiv id=\"okta-login-container\"\u003e\u003c/div\u003e\n\n    \u003c!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     --\u003e\n    {{{OktaUtil}}}\n\n    \u003cscript type=\"text/javascript\" nonce=\"{{nonceValue}}\"\u003e\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: '#okta-login-container' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    \u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n","widgetCustomizations":{"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G2"},"widgetVersion":"^6"}
-        form: {}
+            {"agreeToCustomPrivacyPolicy":false,"customPrivacyPolicyUrl":"","defaultApp":{},"locale":"en","name":"testBrand2","removePoweredByOkta":false}
         headers:
             Accept:
                 - application/json
@@ -151,14 +126,115 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
         method: PUT
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:46 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.130058667s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:47 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.060189458s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:47 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.087090292s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2235
+        host: oie-00.dne-okta.com
+        body: |
+            {"pageContent":"\u003c!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"\u003e\n\u003chtml\u003e\n\u003chead\u003e\n    \u003cmeta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e\n    \u003cmeta name=\"robots\" content=\"noindex,nofollow\" /\u003e\n    \u003c!-- Styles generated from theme --\u003e\n    \u003clink href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\"\u003e\n    \u003c!-- Favicon from theme --\u003e\n    \u003clink rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/\u003e\n\n    \u003ctitle\u003e{{pageTitle}}\u003c/title\u003e\n    {{{SignInWidgetResources}}}\n\n    \u003cstyle nonce=\"{{nonceValue}}\"\u003e\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    \u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n    \u003cdiv id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"\u003e\u003c/div\u003e\n    \u003cdiv id=\"okta-login-container\"\u003e\u003c/div\u003e\n\n    \u003c!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     --\u003e\n    {{{OktaUtil}}}\n\n    \u003cscript type=\"text/javascript\" nonce=\"{{nonceValue}}\"\u003e\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: '#okta-login-container' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    \u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n","widgetCustomizations":{"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G2"},"widgetVersion":"^6"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
         content_length: -1
         uncompressed: true
         body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2"}}'
@@ -168,190 +244,21 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:12 GMT
+                - Tue, 03 Mar 2026 07:31:48 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 337.21825ms
-    - id: 4
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 13 Mar 2025 23:35:13 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 210.07375ms
-    - id: 5
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 13 Mar 2025 23:35:13 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 229.237667ms
-    - id: 6
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 13 Mar 2025 23:35:13 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 221.695333ms
+        duration: 1.391802041s
     - id: 7
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
+        content_length: 179
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 13 Mar 2025 23:35:13 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 230.97275ms
-    - id: 8
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 2387
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
-            {"contentSecurityPolicySetting":{"mode":"report_only","reportUri":"","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"pageContent":"\u003c!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"\u003e\n\u003chtml\u003e\n\u003chead\u003e\n    \u003cmeta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e\n    \u003cmeta name=\"robots\" content=\"noindex,nofollow\" /\u003e\n    \u003c!-- Styles generated from theme --\u003e\n    \u003clink href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\"\u003e\n    \u003c!-- Favicon from theme --\u003e\n    \u003clink rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/\u003e\n\n    \u003ctitle\u003e{{pageTitle}}\u003c/title\u003e\n    {{{SignInWidgetResources}}}\n\n    \u003cstyle nonce=\"{{nonceValue}}\"\u003e\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    \u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n    \u003cdiv id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"\u003e\u003c/div\u003e\n    \u003cdiv id=\"okta-login-container\"\u003e\u003c/div\u003e\n\n    \u003c!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     --\u003e\n    {{{OktaUtil}}}\n\n    \u003cscript type=\"text/javascript\" nonce=\"{{nonceValue}}\"\u003e\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: '#okta-login-container' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    \u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n","widgetCustomizations":{"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G2"},"widgetVersion":"^6"}
-        form: {}
+            {"widgetCustomizations":{"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G3"}}
         headers:
             Accept:
                 - application/json
@@ -359,186 +266,647 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
         method: PUT
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2"},"contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]}}'
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3"}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:14 GMT
+                - Tue, 03 Mar 2026 07:31:50 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 407.743042ms
+        duration: 2.932416666s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.057426708s
     - id: 9
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"bndkwr3ex3VsnU6t81d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:14 GMT
+                - Tue, 03 Mar 2026 07:31:53 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 219.491417ms
+        duration: 1.078817208s
     - id: 10
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}},"contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]}}'
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:15 GMT
+                - Tue, 03 Mar 2026 07:31:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 230.443542ms
+        duration: 1.072574958s
     - id: 11
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7/pages/sign-in/customized
-        method: DELETE
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: 0
-        uncompressed: false
-        body: ""
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
             Date:
-                - Thu, 13 Mar 2025 23:35:15 GMT
+                - Tue, 03 Mar 2026 07:31:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 204 No Content
-        code: 204
-        duration: 259.405167ms
+        status: 200 OK
+        code: 200
+        duration: 1.100694s
     - id: 12
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/brands/bndkwr3ex3VsnU6t81d7
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.5755225s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 2.34965925s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.234714041s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test","helpUrl":"https://helpurltest.com","customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.061333417s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2387
+        host: oie-00.dne-okta.com
+        body: |
+            {"contentSecurityPolicySetting":{"mode":"report_only","reportUri":"","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"pageContent":"\u003c!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"\u003e\n\u003chtml\u003e\n\u003chead\u003e\n    \u003cmeta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /\u003e\n    \u003cmeta name=\"robots\" content=\"noindex,nofollow\" /\u003e\n    \u003c!-- Styles generated from theme --\u003e\n    \u003clink href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\"\u003e\n    \u003c!-- Favicon from theme --\u003e\n    \u003clink rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/\u003e\n\n    \u003ctitle\u003e{{pageTitle}}\u003c/title\u003e\n    {{{SignInWidgetResources}}}\n\n    \u003cstyle nonce=\"{{nonceValue}}\"\u003e\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    \u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n    \u003cdiv id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"\u003e\u003c/div\u003e\n    \u003cdiv id=\"okta-login-container\"\u003e\u003c/div\u003e\n\n    \u003c!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     --\u003e\n    {{{OktaUtil}}}\n\n    \u003cscript type=\"text/javascript\" nonce=\"{{nonceValue}}\"\u003e\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: '#okta-login-container' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    \u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n","widgetCustomizations":{"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G2"},"widgetVersion":"^6"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:31:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.193096791s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 279
+        host: oie-00.dne-okta.com
+        body: |
+            {"widgetCustomizations":{"customLink1Label":"Custom Link 1 URL","customLink1Url":"https://customlink1url.com","helpLabel":"Help URL Test Updated","helpUrl":"https://helpurltestupdated.com","showPasswordVisibilityToggle":false,"showUserIdentifier":false,"widgetGeneration":"G3"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test Updated","helpUrl":"https://helpurltestupdated.com","customLink1Label":"Custom Link 1 URL","customLink1Url":"https://customlink1url.com","customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.609286875s
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1imc1PEVjQVs1d7","name":"testBrand2","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.067083167s
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bndvq1nlzzmZFCVeg1d7","name":"testBrand","removePoweredByOkta":false,"customPrivacyPolicyUrl":null,"agreeToCustomPrivacyPolicy":false,"isDefault":false,"locale":"en","defaultApp":{"appInstanceId":null,"appLinkName":null,"classicApplicationUri":null},"_links":{"themes":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/themes","hints":{"allow":["GET"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.090679583s
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":null,"widgetVersion":null,"widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":"Help URL Test Updated","helpUrl":"https://helpurltestupdated.com","customLink1Label":"Custom Link 1 URL","customLink1Url":"https://customlink1url.com","customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G3","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.265182833s
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 2.123285917s
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"pageContent":"<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <meta name=\"robots\" content=\"noindex,nofollow\" />\n    <!-- Styles generated from theme -->\n    <link href=\"{{themedStylesUrl}}\" rel=\"stylesheet\" type=\"text/css\">\n    <!-- Favicon from theme -->\n    <link rel=\"shortcut icon\" href=\"{{faviconUrl}}\" type=\"image/x-icon\"/>\n\n    <title>{{pageTitle}}</title>\n    {{{SignInWidgetResources}}}\n\n    <style nonce=\"{{nonceValue}}\">\n        #login-bg-image-id {\n            background-image: {{bgImageUrl}}\n        }\n    </style>\n</head>\n<body>\n    <div id=\"login-bg-image-id\" class=\"login-bg-image tb--background\"></div>\n    <div id=\"okta-login-container\"></div>\n\n    <!--\n        \"OktaUtil\" defines a global OktaUtil object\n        that contains methods used to complete the Okta login flow.\n     -->\n    {{{OktaUtil}}}\n\n    <script type=\"text/javascript\" nonce=\"{{nonceValue}}\">\n        // \"config\" object contains default widget configuration\n        // with any custom overrides defined in your admin settings.\n        var config = OktaUtil.getSignInWidgetConfig();\n\n        // Render the Okta Sign-In Widget\n        var oktaSignIn = new OktaSignIn(config);\n        oktaSignIn.renderEl({ el: ''#okta-login-container'' },\n            OktaUtil.completeLogin,\n            function(error) {\n                // Logs errors that occur when configuring the widget.\n                // Remove or replace this with your own custom error handler.\n                console.log(error.message, error);\n            }\n        );\n    </script>\n</body>\n</html>\n","contentSecurityPolicySetting":{"reportUri":"","mode":"report_only","srcList":["https://idp.example.com/authorize","https://idp.example.com/authoriz"]},"widgetVersion":"^6","widgetCustomizations":{"signInLabel":null,"usernameLabel":null,"usernameInfoTip":null,"passwordLabel":null,"passwordInfoTip":null,"showPasswordVisibilityToggle":false,"showUserIdentifier":false,"forgotPasswordLabel":null,"forgotPasswordUrl":null,"unlockAccountLabel":null,"unlockAccountUrl":null,"helpLabel":null,"helpUrl":null,"customLink1Label":null,"customLink1Url":null,"customLink2Label":null,"customLink2Url":null,"authenticatorPageCustomLinkLabel":null,"authenticatorPageCustomLinkUrl":null,"classicRecoveryFlowEmailOrUsernameLabel":null,"widgetGeneration":"G2","postAuthKeepMeSignedInPrompt":{"title":null,"subtitle":null,"acceptButtonText":null,"rejectButtonText":null}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 03 Mar 2026 07:32:05 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.134647625s
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7/pages/sign-in/customized
         method: DELETE
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: 0
-        uncompressed: false
         body: ""
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Thu, 13 Mar 2025 23:35:15 GMT
+                - Tue, 03 Mar 2026 07:32:07 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 253.560583ms
+        duration: 2.192977625s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1imc1PEVjQVs1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 03 Mar 2026 07:32:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.134170792s
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7/pages/sign-in/customized
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 03 Mar 2026 07:32:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.160704167s
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/brands/bndvq1nlzzmZFCVeg1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 03 Mar 2026 07:32:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.100795333s

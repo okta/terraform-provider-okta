@@ -17,4 +17,5 @@ var AuthenticatorProviders = []string{
 	WebauthnFactor,
 	YubikeyTokenFactor,
 	SmartCardIdpFactor,
+	CustomAppFactor,
 }

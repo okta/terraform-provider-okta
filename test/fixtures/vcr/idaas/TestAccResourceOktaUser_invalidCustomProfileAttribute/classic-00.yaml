@@ -1,47 +1,38 @@
 ---
 version: 2
 interactions:
-    - id: 0
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 222
-        transfer_encoding: []
-        trailer: {}
-        host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: |
-            {"credentials":{"password":{}},"profile":{"email":"testAcc-1215177900@example.com","firstName":"TestAcc","lastName":"1215177900","login":"testAcc-1215177900@example.com","notValid":"this-isnt-valid","postalAddress":null}}
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-            Content-Type:
-                - application/json
-        url: https://classic-00.dne-okta.com/api/v1/users
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: false
-        body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: newUser","errorLink":"E0000001","errorId":"oaeGMpXEElLT7-vsPnBldhppg","errorCauses":[{"errorSummary":"Property name ''notValid'' is not defined in profile"}]}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Fri, 14 Mar 2025 03:21:38 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 400 Bad Request
-        code: 400
-        duration: 192.800875ms
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 222
+    host: classic-00.dne-okta.com
+    body: "{\"credentials\":{\"password\":{}},\"profile\":{\"email\":\"testAcc-1215177900@example.com\",\"firstName\":\"TestAcc\",\"lastName\":\"1215177900\",\"login\":\"testAcc-1215177900@example.com\",\"notValid\":\"this-isnt-valid\",\"postalAddress\":null}}\n"
+    headers:
+      Accept:
+      - application/json
+      Authorization:
+      - SSWS REDACTED
+      Content-Type:
+      - application/json
+    url: https://classic-00.dne-okta.com/api/v1/users
+    method: POST
+  response:
+    proto: HTTP/2.0
+    proto_major: 2
+    proto_minor: 0
+    content_length: -1
+    body: "{\"errorCode\":\"E0000001\",\"errorSummary\":\"Api validation failed: newUser\",\"errorLink\":\"E0000001\",\"errorId\":\"oaefhFnOi_dSHKabyDvfPWwrQ\",\"errorCauses\":[{\"errorSummary\":\"Property name 'notValid' is not defined in profile\"}]}"
+    headers:
+      Accept-Ch:
+      - Sec-CH-UA-Platform-Version
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 17 Dec 2025 11:06:12 GMT
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+    status: 400 Bad Request
+    code: 400
+    duration: 127.57725ms

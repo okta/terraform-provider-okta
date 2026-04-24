@@ -27,12 +27,12 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/cenkalti/backoff/v4"
+	"github.com/go-jose/go-jose/v4"
+	"github.com/go-jose/go-jose/v4/jwt"
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/okta/terraform-provider-okta/sdk/cache"
 	goCache "github.com/patrickmn/go-cache"
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 const (
@@ -352,7 +352,7 @@ func CreateClientAssertion(orgURL, clientID string, privateKeySinger jose.Signer
 		ID:       uuid.New().String(),
 	}
 	jwtBuilder := jwt.Signed(privateKeySinger).Claims(claims)
-	return jwtBuilder.CompactSerialize()
+	return jwtBuilder.Serialize()
 }
 
 func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertion string, scopes []string, maxRetries int32, maxBackoff int64, clientID string, signer jose.Signer) (*RequestAccessToken, string, *rsa.PrivateKey, error) {
@@ -511,7 +511,7 @@ func generateDpopJWT(privateKey *rsa.PrivateKey, httpMethod, URL, nonce, accessT
 		dpopClaims.AccessToken = base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	}
 	jwtBuilder := jwt.Signed(rsaSigner).Claims(dpopClaims)
-	return jwtBuilder.CompactSerialize()
+	return jwtBuilder.Serialize()
 }
 
 type DpopClaims struct {
@@ -759,6 +759,43 @@ func (re *RequestExecutor) doWithRetries(ctx context.Context, req *http.Request)
 		// Always rewind the request body when non-nil.
 		if bodyReader != nil {
 			req.Body = bodyReader()
+		}
+
+		// Re-authorize the request to create a new DPoP JWT and access token
+		if bOff.retryCount > 0 && re.config.Okta.Client.AuthorizationMode == "PrivateKey" || re.config.Okta.Client.AuthorizationMode == "JWT" {
+			// Clear the token cache to force fresh authorization
+			// This will get a new access token and potentially a new nonce
+			re.tokenCache.Delete(AccessTokenCacheKey)
+			re.tokenCache.Delete(DpopAccessTokenNonce)
+			re.tokenCache.Delete(DpopAccessTokenPrivateKey)
+
+			urlPath := req.URL.RequestURI()
+
+			auth, err := re.NewRequest(req.Method, urlPath, nil)
+			if err != nil {
+				return err
+			}
+
+			req.Header = req.Header.Clone() // Start with original headers
+
+			// Update only the authentication headers from the fresh auth request
+			req.Header.Set("Authorization", auth.Header.Get("Authorization"))
+			if dpopHeader := auth.Header.Get("Dpop"); dpopHeader != "" {
+				req.Header.Set("Dpop", dpopHeader)
+			}
+			if userAgentExt := auth.Header.Get("x-okta-user-agent-extended"); userAgentExt != "" {
+				req.Header.Set("x-okta-user-agent-extended", userAgentExt)
+			}
+
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
+		} else {
+			// Reuse the existing request headers and body
+			req.Header = req.Header.Clone()
+			if bodyReader != nil {
+				req.Body = bodyReader()
+			}
 		}
 		resp, err = re.httpClient.Do(req.WithContext(ctx))
 		if errors.Is(err, io.EOF) {

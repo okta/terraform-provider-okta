@@ -302,6 +302,12 @@ func resourceUser() *schema.Resource {
 				Sensitive:   true,
 				Description: "User Password Recovery Answer",
 			},
+			"realm_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "The Realm ID to associate the user with",
+			},
 			// lintignore:S018
 			"password_hash": {
 				Type:        schema.TypeSet,
@@ -346,6 +352,22 @@ func resourceUser() *schema.Resource {
 								"value of the password's SHA-512/SHA-256/SHA-1/MD5 digest. For BCRYPT, This is the actual radix64-encoded hashed password.",
 							Type:     schema.TypeString,
 							Required: true,
+						},
+					},
+				},
+			},
+			"type": {
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Description: "User type. When specified, the user will be assigned to the specified user type.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "User type ID",
 						},
 					},
 				},
@@ -431,7 +453,13 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 	userBody := sdk.CreateUserRequest{
 		Profile:     profile,
 		Credentials: uc,
+		Type:        buildUserTypeFromBlock(d),
 	}
+
+	if realmId, ok := d.GetOk("realm_id"); ok {
+		userBody.RealmId = utils.StringPtr(realmId.(string))
+	}
+
 	client := getOktaClientFromMetadata(meta)
 	user, _, err := client.User.CreateUser(ctx, userBody, qp)
 	if err != nil {
@@ -495,6 +523,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	// There are a few requests here so just making sure the state gets updated per successful downstream change
 	userChange := hasProfileChange(d)
+	realmChange := d.HasChange("realm_id")
 	passwordChange := d.HasChange("password")
 	passwordHashChange := d.HasChange("password_hash")
 	passwordHookChange := d.HasChange("password_inline_hook")
@@ -527,10 +556,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.Errorf("Only the status of a DEPROVISIONED user can be updated, we detected other change")
 	}
 
-	if userChange || passwordHashChange || passwordHookChange {
+	if userChange || realmChange || passwordHashChange || passwordHookChange {
 		profile := populateUserProfile(d)
 		userBody := sdk.User{
 			Profile: profile,
+			Type:    buildUserTypeFromBlock(d),
 		}
 		if passwordHashChange {
 			userBody.Credentials = &sdk.UserCredentials{
@@ -549,6 +579,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 				},
 			}
 		}
+
+		if realmId, ok := d.GetOk("realm_id"); ok {
+			userBody.RealmId = utils.StringPtr(realmId.(string))
+		}
+
 		_, _, err := client.User.UpdateUser(ctx, d.Id(), userBody, nil)
 		if err != nil {
 			return diag.Errorf("failed to update user: %v", err)
@@ -640,6 +675,21 @@ func buildPasswordCredentialHash(rawPasswordHash interface{}) *sdk.PasswordCrede
 	return h
 }
 
+func buildUserTypeFromBlock(d *schema.ResourceData) *sdk.UserType {
+	if rawType, ok := d.GetOk("type"); ok {
+		typeList := rawType.([]interface{})
+		if len(typeList) > 0 {
+			typeMap := typeList[0].(map[string]interface{})
+			if id, exists := typeMap["id"]; exists && id.(string) != "" {
+				return &sdk.UserType{
+					Id: id.(string),
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // Checks whether any profile keys have changed, this is necessary since the profile is not nested. Also, necessary
 // to give a sensible user readable error when they attempt to update a DEPROVISIONED user. Previously
 // this error always occurred when you set a user's status to DEPROVISIONED.
@@ -648,6 +698,10 @@ func hasProfileChange(d *schema.ResourceData) bool {
 		if d.HasChange(k) {
 			return true
 		}
+	}
+	// Check if type block has changed
+	if d.HasChange("type") {
+		return true
 	}
 	return false
 }

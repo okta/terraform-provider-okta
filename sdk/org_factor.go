@@ -38,6 +38,7 @@ const (
 	WebauthnFactor         = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
 	YubikeyTokenFactor     = "yubikey_token"
 	SmartCardIdpFactor     = "smart_card_idp"
+	CustomAppFactor        = "custom_app" // OIE only
 )
 
 // List of factors that are applicable to Okta Classic Engine

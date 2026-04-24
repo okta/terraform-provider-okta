@@ -2,13 +2,39 @@ package idaas_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
+
+func TestAccResourceOktaPolicyRuleIdpDiscovery_dynamic(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleIdpDiscovery, t.Name())
+	dynamicConfig := mgr.GetFixtures("dynamic.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleIdpDiscovery)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRuleIdpDiscovery),
+		Steps: []resource.TestStep{
+			{
+				Config: dynamicConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "selection_type", "DYNAMIC"),
+					resource.TestCheckResourceAttr(resourceName, "provider_expression", "login.identifier.substringAfter('@')"),
+					resource.TestCheckResourceAttr(resourceName, "idp_providers.#", "0"),
+				),
+			},
+		},
+	})
+}
 
 func TestAccResourceOktaPolicyRuleIdpDiscovery_crud(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleIdpDiscovery, t.Name())

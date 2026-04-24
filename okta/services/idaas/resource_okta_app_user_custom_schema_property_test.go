@@ -3,12 +3,10 @@ package idaas_test
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -29,8 +27,7 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testIndex"),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test"),
@@ -49,8 +46,7 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 			{
 				Config: updated,
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "index", "testAcc_"+strconv.Itoa(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "index", "testIndex_renamed"),
 					resource.TestCheckResourceAttr(resourceName, "title", "terraform acceptance test"),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform acceptance test updated 001"),
@@ -66,40 +62,7 @@ func TestAccResourceOktaAppUserSchemas_crud(t *testing.T) {
 func TestAccResourceOktaAppUserSchemas_array_enum_number(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "array"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	array_type  = "number"
-	array_enum  = ["0.011", "0.022", "0.033"]
-	array_one_of {
-	  title = "number point oh one one"
-	  const = "0.011"
-	}
-	array_one_of {
-	  title = "number point oh two two"
-	  const = "0.022"
-	}
-	array_one_of {
-	  title = "number point oh three three"
-	  const = "0.033"
-	}
-}
-`
+	config := mgr.GetFixtures("array_enum_number.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -109,7 +72,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "0.011"),
@@ -131,39 +93,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_enum_number(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "number"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	enum  		= ["0.011", "0.022", "0.033"]
-	one_of {
-	  title = "number point oh one one"
-	  const = "0.011"
-	}
-	one_of {
-	  title = "number point oh two two"
-	  const = "0.022"
-	}
-	one_of {
-	  title = "number point oh three three"
-	  const = "0.033"
-	}
-}
-`
+	config := mgr.GetFixtures("enum_number.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -173,7 +103,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "number"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "0.011"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "0.022"),
@@ -194,40 +123,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_array_enum_integer(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "array"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	array_type  = "integer"
-	array_enum  = [4, 5, 6]
-	array_one_of {
-		const = "4"
-		title = "integer four"
-	}
-	array_one_of {
-		const = "5"
-		title = "integer five"
-	}
-	array_one_of {
-		const = "6"
-		title = "integer six"
-	}
-}
-`
+	config := mgr.GetFixtures("array_enum_integer.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -237,7 +133,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "4"),
@@ -259,39 +154,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_enum_integer(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "integer"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	enum        = [4, 5, 6]
-	one_of {
-		const = "4"
-		title = "integer four"
-	}
-	one_of {
-		const = "5"
-		title = "integer five"
-	}
-	one_of {
-		const = "6"
-		title = "integer six"
-	}
-}
-`
+	config := mgr.GetFixtures("enum_integer.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -301,7 +164,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "integer"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "4"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "5"),
@@ -322,36 +184,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_array_enum_boolean(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "array"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	array_type  = "string"
-	array_enum  = ["true", "false"]
-	array_one_of {
-	  const = "true"
-	  title = "boolean True"
-	}
-	array_one_of {
-	  const = "false"
-	  title = "boolean False"
-	}
-}
-`
+	config := mgr.GetFixtures("array_enum_boolean.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -361,7 +194,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "true"),
@@ -380,35 +212,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_enum_boolean(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "string"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	enum  		= ["true", "false"]
-	one_of {
-	  title = "boolean True"
-	  const = "true"
-	}
-	one_of {
-	  title = "boolean False"
-	  const = "false"
-	}
-}
-`
+	config := mgr.GetFixtures("enum_boolean.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -418,7 +222,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "false"),
@@ -436,40 +239,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_array_enum_string(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "array"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	array_type  = "string"
-	array_enum  = ["one", "two", "three"]
-	array_one_of {
-	  title = "string One"
-	  const = "one"
-	}
-	array_one_of {
-	  title = "string Two"
-	  const = "two"
-	}
-	array_one_of {
-	  title = "string Three"
-	  const = "three"
-	}
-}
-`
+	config := mgr.GetFixtures("array_enum_string.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -479,7 +249,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", "one"),
@@ -501,39 +270,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_array_enum_json(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-}
-
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	type        = "array"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	array_type  = "object"
-	array_enum  = [
-		jsonencode({value="test_value_1"}),
-		jsonencode({value="test_value_2"})
-	]
-	array_one_of {
-	  const = jsonencode({value="test_value_1"})
-	  title = "object 1"
-	}
-	array_one_of {
-	  const = jsonencode({value="test_value_2"})
-	  title = "object 2"
-	}
-}
-`
+	config := mgr.GetFixtures("array_enum_json.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -543,7 +280,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "array"),
 					resource.TestCheckResourceAttr(resourceName, "array_type", "object"),
 					resource.TestCheckResourceAttr(resourceName, "array_enum.0", `{"value":"test_value_1"}`),
@@ -562,39 +298,7 @@ resource "okta_app_user_schema_property" "test" {
 func TestAccResourceOktaAppUserSchemas_enum_string(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppUserSchemaProperty)
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-	}
-	
-resource "okta_app_user_schema_property" "test" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid"
-	title       = "terraform acceptance test"
-	description = "testing"
-	required    = false
-	permissions = "READ_ONLY"
-	master      = "PROFILE_MASTER"
-	type  = "string"
-	enum  = ["one", "two", "three"]
-	one_of {
-	  title = "string One"
-	  const = "one"
-	}
-	one_of {
-	  title = "string Two"
-	  const = "two"
-	}
-	one_of {
-	  title = "string Three"
-	  const = "three"
-	}
-}
-`
+	config := mgr.GetFixtures("enum_string.tf", t)
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -604,7 +308,6 @@ resource "okta_app_user_schema_property" "test" {
 			{
 				Config: mgr.ConfigReplace(config),
 				Check: resource.ComposeTestCheckFunc(
-					testAppUserSchemasExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "type", "string"),
 					resource.TestCheckResourceAttr(resourceName, "enum.0", "one"),
 					resource.TestCheckResourceAttr(resourceName, "enum.1", "two"),
@@ -620,21 +323,6 @@ resource "okta_app_user_schema_property" "test" {
 			},
 		},
 	})
-}
-
-func testAppUserSchemasExists(resourceName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// Ensure we have enough information in state to look up in API
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
-		}
-
-		if exists, _ := testAppUserSchemaExists(rs.Primary.ID); !exists {
-			return fmt.Errorf("failed to find %s", rs.Primary.ID)
-		}
-		return nil
-	}
 }
 
 func testAppUserSchemaExists(index string) (bool, error) {
@@ -658,54 +346,8 @@ func testAppUserSchemaExists(index string) (bool, error) {
 // in create, update, delete for okta_app_user_schema_property resource is
 // operating correctly.
 func TestAccResourceOktaAppUserSchemas_parallel_api_calls(t *testing.T) {
-	if acctest.SkipVCRTest(t) {
-		return
-	}
-	config := `
-resource "okta_app_oauth" "test" {
-	label          = "testAcc_replace_with_uuid"
-	type           = "native"
-	grant_types    = ["authorization_code"]
-	redirect_uris  = ["http://d.com/"]
-	response_types = ["code"]
-}
-resource "okta_app_user_schema_property" "one" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid_one"
-	title       = "one"
-	type  = "string"
-	permissions = "%s"
-}
-resource "okta_app_user_schema_property" "two" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid_two"
-	title       = "two"
-	type  = "string"
-	permissions = "%s"
-}
-resource "okta_app_user_schema_property" "three" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid_three"
-	title       = "three"
-	type  = "string"
-	permissions = "%s"
-}
-resource "okta_app_user_schema_property" "four" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid_four"
-	title       = "four"
-	type  = "string"
-	permissions = "%s"
-}
-resource "okta_app_user_schema_property" "five" {
-	app_id      = okta_app_oauth.test.id
-	index       = "testAcc_replace_with_uuid_five"
-	title       = "five"
-	type  = "string"
-	permissions = "%s"
-}
-`
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppUserSchemaProperty, t.Name())
+	config := mgr.GetFixtures("parallel_api_calls.tf", t)
 	ro := make([]interface{}, 5)
 	for i := 0; i < 5; i++ {
 		ro[i] = "READ_ONLY"

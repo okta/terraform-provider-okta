@@ -23,9 +23,8 @@ func TestAccResourceOktaRateLimiting_crud(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "login", "ENFORCE"),
-					resource.TestCheckResourceAttr(resourceName, "authorize", "ENFORCE"),
-					resource.TestCheckResourceAttr(resourceName, "communications_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "default_mode", "ENFORCE"),
+					resource.TestCheckResourceAttr(resourceName, "use_case_mode_overrides.login_page", "ENFORCE"),
 				),
 			},
 		},

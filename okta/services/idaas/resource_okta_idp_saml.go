@@ -121,6 +121,12 @@ func resourceIdpSaml() *schema.Resource {
 				Description: "Specifies whether to verify a `SAMLResponse` message or Assertion element XML digital signature. It can be `RESPONSE`, `ASSERTION`, or `ANY`. Default: `ANY`",
 				Default:     "ANY",
 			},
+			"trust_claims": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Indicates whether to trust authentication claims from the IdP.",
+				Default:     false,
+			},
 		}),
 	}
 }
@@ -152,30 +158,54 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return nil
 	}
 	_ = d.Set("name", idp.Name)
-	_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
-	_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
-	if idp.Protocol.Endpoints.Sso != nil {
-		_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
-		_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
-		_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
+	if idp.Protocol != nil {
+		if idp.Protocol.Endpoints != nil {
+			if idp.Protocol.Endpoints.Acs != nil {
+				_ = d.Set("acs_binding", idp.Protocol.Endpoints.Acs.Binding)
+				_ = d.Set("acs_type", idp.Protocol.Endpoints.Acs.Type)
+			}
+			if idp.Protocol.Endpoints.Sso != nil {
+				_ = d.Set("sso_binding", idp.Protocol.Endpoints.Sso.Binding)
+				_ = d.Set("sso_destination", idp.Protocol.Endpoints.Sso.Destination)
+				_ = d.Set("sso_url", idp.Protocol.Endpoints.Sso.Url)
+			}
+		}
 	}
+
 	if idp.Policy.MaxClockSkewPtr != nil {
 		_ = d.Set("max_clock_skew", idp.Policy.MaxClockSkewPtr)
 	}
-	_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
-	_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
-	_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
-	_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
-	_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-	_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
-	_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
-	_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
-	_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
-	_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
-	_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
-	_ = d.Set("name_format", idp.Protocol.Settings.NameFormat)
-	_ = d.Set("honor_persistent_name_id", idp.Protocol.Settings.HonorPersistentNameId)
-	syncIdpSamlAlgo(d, idp.Protocol.Algorithms)
+
+	if idp.Policy.Provisioning != nil {
+		_ = d.Set("provisioning_action", idp.Policy.Provisioning.Action)
+		if idp.Policy.Provisioning.Conditions.Deprovisioned != nil {
+			_ = d.Set("deprovisioned_action", idp.Policy.Provisioning.Conditions.Deprovisioned.Action)
+		}
+		_ = d.Set("profile_master", idp.Policy.Provisioning.ProfileMaster)
+		_ = d.Set("suspended_action", idp.Policy.Provisioning.Conditions.Suspended.Action)
+	}
+	if idp.Policy.Subject != nil {
+		_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
+		_ = d.Set("subject_match_attribute", idp.Policy.Subject.MatchAttribute)
+		_ = d.Set("subject_filter", idp.Policy.Subject.Filter)
+		if idp.Policy.Subject.UserNameTemplate != nil {
+			_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+		}
+	}
+	if idp.Protocol != nil {
+		if idp.Protocol.Credentials != nil {
+			if idp.Protocol.Credentials.Trust != nil {
+				_ = d.Set("issuer", idp.Protocol.Credentials.Trust.Issuer)
+				_ = d.Set("audience", idp.Protocol.Credentials.Trust.Audience)
+				_ = d.Set("kid", idp.Protocol.Credentials.Trust.Kid)
+			}
+		}
+		if idp.Protocol.Settings != nil {
+			_ = d.Set("name_format", idp.Protocol.Settings.NameFormat)
+			_ = d.Set("honor_persistent_name_id", idp.Protocol.Settings.HonorPersistentNameId)
+		}
+		syncIdpSamlAlgo(d, idp.Protocol.Algorithms)
+	}
 	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
@@ -205,6 +235,9 @@ func resourceIdpSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	err = utils.SetNonPrimitives(d, setMap)
 	if err != nil {
 		return diag.Errorf("failed to set SAML identity provider properties: %v", err)
+	}
+	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
+		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
 	}
 	return nil
 }
@@ -276,6 +309,10 @@ func buildIdPSaml(d *schema.ResourceData) (sdk.IdentityProvider, error) {
 				HonorPersistentNameId: d.Get("honor_persistent_name_id").(bool),
 			},
 		},
+	}
+	trustClaims := d.GetRawConfig().GetAttr("trust_claims")
+	if !trustClaims.IsNull() {
+		idp.Policy.TrustClaims = utils.BoolPtr(d.Get("trust_claims").(bool))
 	}
 	if d.Get("status") != nil {
 		idp.Status = d.Get("status").(string)

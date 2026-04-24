@@ -2,6 +2,7 @@ package idaas
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -27,6 +28,10 @@ func resourcePolicyMfa() *schema.Resource {
 }
 
 func resourcePolicyMfaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := validateAuthenticators(ctx, d, meta); err != nil {
+		return diag.Errorf("invalid authenticator configuration: %v", err)
+	}
+
 	policy := buildMFAPolicy(d)
 	err := createPolicy(ctx, d, meta, policy)
 	if err != nil {
@@ -54,6 +59,10 @@ func resourcePolicyMfaRead(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourcePolicyMfaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := validateAuthenticators(ctx, d, meta); err != nil {
+		return diag.Errorf("invalid authenticator configuration: %v", err)
+	}
+
 	policy := buildMFAPolicy(d)
 	err := updatePolicy(ctx, d, meta, policy)
 	if err != nil {
@@ -66,6 +75,59 @@ func resourcePolicyMfaDelete(ctx context.Context, d *schema.ResourceData, meta i
 	err := deletePolicy(ctx, d, meta)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy: %v", err)
+	}
+	return nil
+}
+
+// getEnabledAuthenticators fetches all authenticators from Okta and returns a map of enabled ones
+func getEnabledAuthenticators(ctx context.Context, meta interface{}) (map[string]bool, error) {
+	client := getOktaClientFromMetadata(meta)
+	authenticators, _, err := client.Authenticator.ListAuthenticators(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list authenticators: %v", err)
+	}
+
+	enabled := make(map[string]bool)
+	for _, auth := range authenticators {
+		if auth.Status == "ACTIVE" {
+			enabled[auth.Key] = true
+		}
+	}
+	return enabled, nil
+}
+
+func validateAuthenticators(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	if d.Get("is_oie") != true {
+		return nil
+	}
+
+	enabledAuths, err := getEnabledAuthenticators(ctx, meta)
+	if err != nil {
+		return err
+	}
+
+	var invalidAuths []string
+	for _, key := range sdk.AuthenticatorProviders {
+		if key == "custom_app" || key == "external_idp" {
+			continue
+		}
+		rawFactor := d.Get(key).(map[string]interface{})
+		enroll := rawFactor["enroll"]
+		if enroll == nil {
+			continue
+		}
+		enrollString, ok := enroll.(string)
+		if !ok {
+			continue
+		}
+		if enrollString != "NOT_ALLOWED" && !enabledAuths[key] {
+			invalidAuths = append(invalidAuths, key)
+		}
+	}
+
+	if len(invalidAuths) > 0 {
+		return fmt.Errorf("the following authenticators are not enabled in your Okta org: %v. "+
+			"Either enable them in Okta or set enroll = \"NOT_ALLOWED\"", invalidAuths)
 	}
 	return nil
 }
@@ -92,6 +154,9 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 		authenticators := []*sdk.PolicyAuthenticator{}
 
 		for _, key := range sdk.AuthenticatorProviders {
+			if key == "custom_app" {
+				continue
+			}
 			rawFactor := d.Get(key).(map[string]interface{})
 			enroll := rawFactor["enroll"]
 			if enroll == nil {
@@ -100,9 +165,7 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 
 			authenticator := &sdk.PolicyAuthenticator{}
 			authenticator.Key = key
-			if enroll != nil {
-				authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
-			}
+			authenticator.Enroll = &sdk.Enroll{Self: enroll.(string)}
 			constraints := rawFactor["constraints"]
 			if constraints != nil {
 				c, ok := constraints.(string)
@@ -136,6 +199,40 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 					},
 				}
 				constraints := rawExternalIDP["constraints"]
+				if constraints != nil {
+					c, ok := constraints.(string)
+					if ok {
+						slice := strings.Split(c, ",")
+						sort.Strings(slice)
+						authenticator.Constraints = &sdk.PolicyAuthenticatorConstraints{AaguidGroups: slice}
+					}
+				}
+				authenticators = append(authenticators, authenticator)
+			}
+		}
+
+		if rawCustomApps, ok := d.Get("custom_app").([]interface{}); ok {
+			for _, rawCustomApp := range rawCustomApps {
+				if rawCustomApp == nil { // empty entry
+					continue
+				}
+				customApp := rawCustomApp.(map[string]interface{})
+				enroll := customApp["enroll"]
+				if enroll == nil {
+					continue
+				}
+				id := customApp["id"]
+				if id == nil {
+					continue
+				}
+				authenticator := &sdk.PolicyAuthenticator{
+					Key: "custom_app",
+					ID:  id.(string),
+					Enroll: &sdk.Enroll{
+						Self: enroll.(string),
+					},
+				}
+				constraints := customApp["constraints"]
 				if constraints != nil {
 					c, ok := constraints.(string)
 					if ok {
@@ -236,56 +333,123 @@ func syncFactor(d *schema.ResourceData, k string, f *sdk.PolicyFactor) {
 }
 
 func syncAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
-	externalIdps := make([]interface{}, 0)
+	if k == "external_idp" {
+		syncExternalIdpAuthenticator(d, k, authenticators)
+		return
+	}
+
+	if k == "custom_app" {
+		syncCustomAppAuthenticator(d, authenticators)
+		return
+	}
+
 	for _, authenticator := range authenticators {
 		if authenticator.Key == k {
-			if k != "external_idp" {
+			if authenticator.Constraints != nil {
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
+				// lintignore:R001
+				_ = d.Set(k, map[string]interface{}{
+					"enroll":      authenticator.Enroll.Self,
+					"constraints": strings.Join(aaguidGroups, ","),
+				})
+			} else {
+				// lintignore:R001
+				_ = d.Set(k, map[string]interface{}{
+					"enroll": authenticator.Enroll.Self,
+				})
+			}
+			return
+		}
+	}
+}
+
+func syncExternalIdpAuthenticator(d *schema.ResourceData, k string, authenticators []*sdk.PolicyAuthenticator) {
+	if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
+		for _, authenticator := range authenticators {
+			if authenticator.Key == k && authenticator.Enroll != nil {
 				if authenticator.Constraints != nil {
-					slice := authenticator.Constraints.AaguidGroups
-					sort.Strings(slice)
+					aaguidGroups := authenticator.Constraints.AaguidGroups
+					sort.Strings(aaguidGroups)
 					// lintignore:R001
-					_ = d.Set(k, map[string]interface{}{
+					_ = d.Set(k, map[string]any{
 						"enroll":      authenticator.Enroll.Self,
-						"constraints": strings.Join(slice, ","),
+						"constraints": strings.Join(aaguidGroups, ","),
 					})
 				} else {
 					// lintignore:R001
-					_ = d.Set(k, map[string]interface{}{
+					_ = d.Set(k, map[string]any{
 						"enroll": authenticator.Enroll.Self,
 					})
 				}
 				return
-			} else {
-				if idp, ok := d.GetOk("external_idp"); ok && idp != nil {
-					if authenticator.Constraints != nil {
-						slice := authenticator.Constraints.AaguidGroups
-						sort.Strings(slice)
-						// lintignore:R001
-						_ = d.Set(k, map[string]interface{}{
-							"enroll":      authenticator.Enroll.Self,
-							"constraints": strings.Join(slice, ","),
-						})
-					} else {
-						// lintignore:R001
-						_ = d.Set(k, map[string]interface{}{
-							"enroll": authenticator.Enroll.Self,
-						})
-					}
-				} else {
-					m := make(map[string]interface{})
-					m["enroll"] = authenticator.Enroll.Self
-					m["id"] = authenticator.ID
-					if authenticator.Constraints != nil {
-						slice := authenticator.Constraints.AaguidGroups
-						sort.Strings(slice)
-						m["constraints"] = strings.Join(slice, ",")
-					}
-				}
 			}
+		}
+		return
+	}
+
+	configuredIds := make(map[string]bool)
+	if rawIdps, ok := d.Get("external_idps").(*schema.Set); ok && rawIdps != nil {
+		for _, rawIdp := range rawIdps.List() {
+			if rawIdp == nil {
+				continue
+			}
+			idp := rawIdp.(map[string]any)
+			if id, ok := idp["id"].(string); ok && id != "" {
+				configuredIds[id] = true
+			}
+		}
+	}
+
+	externalIdps := make([]any, 0)
+	for _, authenticator := range authenticators {
+		if authenticator.Key == k && configuredIds[authenticator.ID] && authenticator.Enroll != nil {
+			m := make(map[string]any)
+			m["enroll"] = authenticator.Enroll.Self
+			m["id"] = authenticator.ID
+			if authenticator.Constraints != nil {
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
+				m["constraints"] = strings.Join(aaguidGroups, ",")
+			}
+			externalIdps = append(externalIdps, m)
 		}
 	}
 	if len(externalIdps) > 0 {
 		_ = d.Set("external_idps", externalIdps)
+	}
+}
+
+func syncCustomAppAuthenticator(d *schema.ResourceData, authenticators []*sdk.PolicyAuthenticator) {
+	configuredIds := make(map[string]bool)
+	if rawCustomApps, ok := d.Get("custom_app").([]any); ok {
+		for _, rawCustomApp := range rawCustomApps {
+			if rawCustomApp == nil {
+				continue
+			}
+			customApp := rawCustomApp.(map[string]any)
+			if id, ok := customApp["id"].(string); ok && id != "" {
+				configuredIds[id] = true
+			}
+		}
+	}
+
+	customApps := make([]any, 0)
+	for _, authenticator := range authenticators {
+		if authenticator.Key == "custom_app" && configuredIds[authenticator.ID] && authenticator.Enroll != nil {
+			m := make(map[string]any)
+			m["enroll"] = authenticator.Enroll.Self
+			m["id"] = authenticator.ID
+			if authenticator.Constraints != nil {
+				aaguidGroups := authenticator.Constraints.AaguidGroups
+				sort.Strings(aaguidGroups)
+				m["constraints"] = strings.Join(aaguidGroups, ",")
+			}
+			customApps = append(customApps, m)
+		}
+	}
+	if len(customApps) > 0 {
+		_ = d.Set("custom_app", customApps)
 	}
 }
 
@@ -306,6 +470,19 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 					return strings.HasSuffix(k, ".%") || new == ""
 				},
 				ConflictsWith: []string{"external_idps"},
+			}
+		} else if key == "custom_app" {
+			res[key] = &schema.Schema{
+				Description: "List of custom authenticators, specify entry like {\"enroll\": \"OPTIONAL\", \"id\": \"<id_of_custom_app>\"} to mark specific custom app optional, list must contain at least 1 entry.",
+				Optional:    true,
+				Type:        schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeMap,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+				},
+				DiffSuppressFunc: structure.SuppressJsonDiff,
 			}
 		} else {
 			res[key] = &schema.Schema{

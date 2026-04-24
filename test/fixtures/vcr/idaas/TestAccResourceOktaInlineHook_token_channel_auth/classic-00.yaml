@@ -1,0 +1,371 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 288
+        host: classic-00.dne-okta.com
+        body: |
+            {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"secret"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"Inline Hook Channel Auth","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.0"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.057201708s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.231908708s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.247967791s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:26.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.287022s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 296
+        host: classic-00.dne-okta.com
+        body: |
+            {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"secret_UPDATED"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"Inline Hook Channel Auth","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.0"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:32.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.204474917s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:32.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.217299375s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:32.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.088915125s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:32.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.052917042s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"ACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:32.000Z","_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"execute":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/execute","hints":{"allow":["POST"]}},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.268094417s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"caltvng0u17ukrb71697","status":"INACTIVE","name":"Inline Hook Channel Auth","type":"com.okta.oauth2.tokens.transform","version":"1.0.0","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-08-04T18:17:26.000Z","lastUpdated":"2025-08-04T18:17:40.000Z","_links":{"activate":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697"},"delete":{"href":"https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 04 Aug 2025 18:17:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.318324084s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/inlineHooks/caltvng0u17ukrb71697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 04 Aug 2025 18:17:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.126612875s

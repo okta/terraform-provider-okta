@@ -95,6 +95,7 @@ resource "okta_user" "test2" {
 - `preferred_language` (String) User preferred language
 - `primary_phone` (String) User primary phone number
 - `profile_url` (String) User online profile (web page)
+- `realm_id` (String) The Realm ID to associate the user with
 - `recovery_answer` (String, Sensitive) User Password Recovery Answer
 - `recovery_question` (String) User Password Recovery Question
 - `second_email` (String) User secondary email address, used for account recovery
@@ -106,6 +107,7 @@ resource "okta_user" "test2" {
 - `title` (String) User title
 - `user_type` (String) User employee type
 - `zip_code` (String) User zipcode or postal code
+- `type` (Block Set, Max: 1) Specifies a user type other than the default user type (see [below for nested schema](#nestedblock--type))
 
 ### Read-Only
 
@@ -125,6 +127,13 @@ Optional:
 - `salt` (String) Only required for salted hashes
 - `salt_order` (String) Specifies whether salt was pre- or postfixed to the password before hashing
 - `work_factor` (Number) Governs the strength of the hash and the time required to compute it. Only required for BCRYPT algorithm
+
+<a id="nestedblock--type"></a>
+### Nested Schema for `type`
+
+Optional:
+
+- `id` (String) ID of the user_type
 
 ## Import
 

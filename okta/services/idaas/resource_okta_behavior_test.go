@@ -3,6 +3,7 @@ package idaas_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -59,7 +60,17 @@ func TestAccResourceOktaBehavior_crud(t *testing.T) {
 }
 
 func doesBehaviorExist(id string) (bool, error) {
-	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
-	_, response, err := client.GetBehavior(context.Background(), id)
-	return utils.DoesResourceExist(response, err)
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV5()
+	_, response, err := client.BehaviorAPI.GetBehaviorDetectionRule(context.Background(), id).Execute()
+	if err != nil {
+		if 200 <= response.StatusCode && response.StatusCode <= 299 {
+			if strings.HasPrefix(err.Error(), "parsing time") {
+				return utils.DoesResourceExistV5(response, nil)
+			}
+			if strings.Contains(err.Error(), "cannot unmarshal number") {
+				return utils.DoesResourceExistV5(response, nil)
+			}
+		}
+	}
+	return utils.DoesResourceExistV5(response, err)
 }
