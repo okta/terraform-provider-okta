@@ -147,6 +147,7 @@ const (
 	OktaIDaaSSessionViolationPolicy                   = "okta_session_violation_policy"
 	OktaIDaaSSessionViolationPolicyRule               = "okta_session_violation_policy_rule"
 	OktaGovernanceCampaign                            = "okta_campaign"
+	OktaGovernanceCampaigns                           = "okta_campaigns"
 	OktaGovernanceEntitlement                         = "okta_entitlement"
 	OktaGovernanceEntitlementBundle                   = "okta_entitlement_bundle"
 	OktaGovernanceReview                              = "okta_review"
