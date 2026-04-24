@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -205,8 +206,9 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error creating Request conditions",
-			"Could not create Request conditions, unexpected error: "+err.Error(),
+			"Error creating Request Condition",
+			fmt.Sprintf("Could not create Request Condition (resource_id=%s): %s",
+				data.ResourceId.ValueString(), err.Error()),
 		)
 		return
 	}
@@ -219,8 +221,9 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 			requestConditionResp.GetId()).Execute()
 		if err != nil {
 			resp.Diagnostics.AddError(
-				"Error activating Request condition",
-				"Could not activate Request condition after creation: "+err.Error(),
+				"Error activating Request Condition",
+				fmt.Sprintf("Could not activate Request Condition (id=%s/%s): %s",
+					data.ResourceId.ValueString(), requestConditionResp.GetId(), err.Error()),
 			)
 			return
 		}
@@ -255,8 +258,9 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 			return
 		}
 		resp.Diagnostics.AddError(
-			"Error reading Request conditions",
-			"Could not read Request conditions, unexpected error: "+err.Error(),
+			"Error reading Request Condition",
+			fmt.Sprintf("Could not read Request Condition (id=%s/%s): %s",
+				data.ResourceId.ValueString(), data.Id.ValueString(), err.Error()),
 		)
 		return
 	}
@@ -288,8 +292,9 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error updating Request conditions",
-			"Could not update Request conditions, unexpected error: "+err.Error(),
+			"Error updating Request Condition",
+			fmt.Sprintf("Could not update Request Condition (id=%s/%s): %s",
+				data.ResourceId.ValueString(), state.Id.ValueString(), err.Error()),
 		)
 		return
 	}
@@ -307,8 +312,9 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 					state.Id.ValueString()).Execute()
 				if err != nil {
 					resp.Diagnostics.AddError(
-						"Error activating Request condition",
-						"Could not activate Request condition: "+err.Error(),
+						"Error activating Request Condition",
+						fmt.Sprintf("Could not activate Request Condition (id=%s/%s): %s",
+							data.ResourceId.ValueString(), state.Id.ValueString(), err.Error()),
 					)
 					return
 				}
@@ -319,8 +325,9 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 					state.Id.ValueString()).Execute()
 				if err != nil {
 					resp.Diagnostics.AddError(
-						"Error deactivating Request condition",
-						"Could not deactivate Request condition: "+err.Error(),
+						"Error deactivating Request Condition",
+						fmt.Sprintf("Could not deactivate Request Condition (id=%s/%s): %s",
+							data.ResourceId.ValueString(), state.Id.ValueString(), err.Error()),
 					)
 					return
 				}
@@ -348,14 +355,18 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	// If the request condition is active, attempt to deactivate it first.
 	// Request conditions must be INACTIVE before they can be deleted.
 	if !state.Status.IsNull() && state.Status.ValueString() == "ACTIVE" {
-		_, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().
+		_, apiResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().
 			RequestConditionsAPI.DeactivateResourceRequestConditionV2(ctx,
 			state.ResourceId.ValueString(),
 			state.Id.ValueString()).Execute()
 		if err != nil {
+			if apiResp != nil && apiResp.StatusCode == http.StatusNotFound {
+				return
+			}
 			resp.Diagnostics.AddError(
-				"Error deactivating Request condition before deletion",
-				"Could not deactivate Request condition: "+err.Error(),
+				"Error deactivating Request Condition before deletion",
+				fmt.Sprintf("Could not deactivate Request Condition (id=%s/%s): %s",
+					state.ResourceId.ValueString(), state.Id.ValueString(), err.Error()),
 			)
 			return
 		}
@@ -378,8 +389,9 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 			}
 		}
 		resp.Diagnostics.AddError(
-			"Error deleting Request conditions",
-			"Could not delete Request conditions, unexpected error: "+err.Error(),
+			"Error deleting Request Condition",
+			fmt.Sprintf("Could not delete Request Condition (id=%s/%s): %s",
+				state.ResourceId.ValueString(), state.Id.ValueString(), err.Error()),
 		)
 		return
 	}
@@ -468,6 +480,8 @@ func setRequesterSettings(settings governance.RequesterSettingsFullRequesterSett
 	return &setting, nil
 }
 
+// TODO: check if we need to guard against nil AccessScopeSettings/RequesterSettings here,
+// e.g. if user omits these blocks from HCL.
 func createRequestCondition(data requestConditionResourceModel) governance.RequestConditionCreatable {
 	req := governance.RequestConditionCreatable{}
 	req.Name = data.Name.ValueString()
@@ -564,6 +578,8 @@ func createRequestCondition(data requestConditionResourceModel) governance.Reque
 	return req
 }
 
+// TODO: check if we need to guard against nil AccessScopeSettings/RequesterSettings here,
+// e.g. if user omits these blocks from HCL.
 func createRequestConditionPatch(data requestConditionResourceModel) governance.RequestConditionPatchable {
 	var patch governance.RequestConditionPatchable
 	patch.Name = data.Name.ValueStringPointer()
