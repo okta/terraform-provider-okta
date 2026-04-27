@@ -231,7 +231,9 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 		}
 		if idp.Policy.Subject != nil {
 			_ = d.Set("subject_match_type", idp.Policy.Subject.MatchType)
-			_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+			if idp.Policy.Subject.UserNameTemplate != nil {
+				_ = d.Set("username_template", idp.Policy.Subject.UserNameTemplate.Template)
+			}
 			_ = d.Set("filter", idp.Policy.Subject.Filter)
 		}
 	}
@@ -255,13 +257,18 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 				return diag.Errorf("failed to set provider property 'slo_url': %v", err)
 			}
 		}
+
+		if idp.Protocol.Endpoints != nil {
+			syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
+			syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
+			syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
+			syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
+		}
+		syncIdpOidcAlgo(d, idp.Protocol.Algorithms)
 	}
-	syncEndpoint("authorization", idp.Protocol.Endpoints.Authorization, d)
-	syncEndpoint("token", idp.Protocol.Endpoints.Token, d)
-	syncEndpoint("user_info", idp.Protocol.Endpoints.UserInfo, d)
-	syncEndpoint("jwks", idp.Protocol.Endpoints.Jwks, d)
-	syncIdpOidcAlgo(d, idp.Protocol.Algorithms)
-	err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
+	if idp.Policy != nil && idp.Policy.Provisioning != nil {
+		err = syncGroupActions(d, idp.Policy.Provisioning.Groups)
+	}
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
 	}
@@ -272,15 +279,16 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if err != nil {
 		return diag.Errorf("failed to get identity provider profile mapping: %v", err)
 	}
-	if mapping != nil {
+	if mapping != nil && mapping.Target != nil {
 		_ = d.Set("user_type_id", mapping.Target.Id)
 	}
-	setMap := map[string]interface{}{
-		"scopes": utils.ConvertStringSliceToSet(idp.Protocol.Scopes),
+	setMap := map[string]interface{}{}
+	if idp.Protocol != nil {
+		setMap["scopes"] = utils.ConvertStringSliceToSet(idp.Protocol.Scopes)
 	}
-	if idp.Policy.AccountLink != nil {
+	if idp.Policy != nil && idp.Policy.AccountLink != nil {
 		_ = d.Set("account_link_action", idp.Policy.AccountLink.Action)
-		if idp.Policy.AccountLink.Filter != nil {
+		if idp.Policy.AccountLink.Filter != nil && idp.Policy.AccountLink.Filter.Groups != nil {
 			setMap["account_link_group_include"] = utils.ConvertStringSliceToSet(idp.Policy.AccountLink.Filter.Groups.Include)
 		}
 	}
@@ -288,10 +296,12 @@ func resourceIdpRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if err != nil {
 		return diag.Errorf("failed to set OIDC identity provider properties: %v", err)
 	}
-	if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
-		return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
+	if idp.Policy != nil {
+		if err = d.Set("trust_claims", idp.Policy.TrustClaims); err != nil {
+			return diag.Errorf("failed to set provider property 'Trust claims from this identity provider': %v", err)
+		}
 	}
-	if idp.Protocol.Settings != nil {
+	if idp.Protocol != nil && idp.Protocol.Settings != nil {
 		if err = d.Set("participate_slo", idp.Protocol.Settings.ParticipateSLO); err != nil {
 			return diag.Errorf("failed to set provider property 'participate_slo': %v", err)
 		}
