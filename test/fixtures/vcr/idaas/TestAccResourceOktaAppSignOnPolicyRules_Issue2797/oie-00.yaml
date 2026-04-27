@@ -1,0 +1,1609 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1069
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        body: |
+            {"accessibility":{"selfService":false},"credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_4171387368","settings":{"app":{},"implicitAssignment":false,"notes":{"admin":null,"enduser":null},"signOn":{"allowMultipleAcsEndpoints":false,"assertionSigned":false,"attributeStatements":[],"audience":"http://audience.com","audienceOverride":"","authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","defaultRelayState":"","destination":"http://its-about-the-journey.com","destinationOverride":"","digestAlgorithm":"SHA256","honorForceAuthn":false,"recipient":"http://here.com","recipientOverride":"","responseSigned":true,"samlSignedRequestEnabled":false,"signatureAlgorithm":"RSA_SHA256","slo":{"enabled":false},"ssoAcsUrl":"http://google.com","ssoAcsUrlOverride":"","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","subjectNameIdTemplate":"${user.userName}"}},"signOnMode":"SAML_2_0","visibility":{"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false}}}
+        form:
+            activate:
+                - "true"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps?activate=true
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 3.028087167s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"00otivnuq1X5554yc1d7","cell":"op3","_links":{"organization":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":true,"desktopMFAEnabled":true,"itpEnabled":true}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.08348875s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        form:
+            type:
+                - ACCESS_POLICY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies?type=ACCESS_POLICY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rsttivnuus97Z2Ua81d7","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuuz4MSxGin1d7","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuv2yDnkaOF1d7","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuwgnZVG5Un1d7","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:39.000Z","lastUpdated":"2026-01-06T09:19:39.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7","hints":{"allow":["GET"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rsttiw5aaeJ48m2Zv1d7","status":"ACTIVE","name":"Case-OKTA-1059814-1","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:27:38.000Z","lastUpdated":"2026-01-06T09:27:38.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttmdzj9uWJqn1Ci1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-01-08T05:12:17.000Z","lastUpdated":"2026-01-08T05:12:17.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttns08bchudC1Wi1d7","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2026-01-09T03:44:43.000Z","lastUpdated":"2026-01-09T03:44:43.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvifqwwqHh7gPr1d7","status":"ACTIVE","name":"TF - AMichaels Test","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-01-16T07:33:53.000Z","lastUpdated":"2026-01-16T07:33:53.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvno3t8GBjwDxN1d7","status":"ACTIVE","name":"MFA enroll policy","priority":1,"system":false,"conditions":null,"created":"2026-01-16T10:51:35.000Z","lastUpdated":"2026-01-16T10:51:35.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstuibbxieCTOq8vq1d7","status":"ACTIVE","name":"TF - Uber''s Test-22/02/26","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-02-01T07:50:33.000Z","lastUpdated":"2026-02-22T12:11:27.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstvl1nal4JFZXBM91d7","status":"ACTIVE","name":"TF - my_policy-dependson-migration","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-02-27T10:54:27.000Z","lastUpdated":"2026-02-27T10:54:27.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvl1nal4JFZXBM91d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvl1nal4JFZXBM91d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvl1nal4JFZXBM91d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvl1nal4JFZXBM91d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstvqxkf3jyEYyRVU1d7","status":"ACTIVE","name":"TF - my_policy-dependson-migration-03-03","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-03-03T11:52:21.000Z","lastUpdated":"2026-03-03T11:52:21.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvqxkf3jyEYyRVU1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvqxkf3jyEYyRVU1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvqxkf3jyEYyRVU1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstvqxkf3jyEYyRVU1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstw0brwuqFABb5641d7","status":"ACTIVE","name":"TF - my_policy-dependson-migration-03-08","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-03-08T21:43:54.000Z","lastUpdated":"2026-03-08T21:43:54.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0brwuqFABb5641d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0brwuqFABb5641d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0brwuqFABb5641d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0brwuqFABb5641d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstw0bt6prAbu63ci1d7","status":"ACTIVE","name":"TF - my_policy-dependson-migration-03-08-2","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-03-08T21:44:53.000Z","lastUpdated":"2026-03-08T21:44:53.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0bt6prAbu63ci1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0bt6prAbu63ci1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0bt6prAbu63ci1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw0bt6prAbu63ci1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstw2p3eilUYGOQh51d7","status":"ACTIVE","name":"Panic Test Policy 1","description":"This will panic","priority":1,"system":false,"conditions":null,"created":"2026-03-10T13:00:36.000Z","lastUpdated":"2026-03-10T13:00:36.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2p3eilUYGOQh51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2p3eilUYGOQh51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2p3eilUYGOQh51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2p3eilUYGOQh51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstw2sa2c4cY7gwlt1d7","status":"ACTIVE","name":"Panic Test Policy","description":"Testing panic handling","priority":1,"system":false,"conditions":null,"created":"2026-03-10T14:08:56.000Z","lastUpdated":"2026-03-10T14:08:56.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2sa2c4cY7gwlt1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2sa2c4cY7gwlt1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2sa2c4cY7gwlt1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstw2sa2c4cY7gwlt1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstx4cogh1GeluqXZ1d7","status":"ACTIVE","name":"Dynamic App Sign-On Policy","description":"Policy with dynamically defined rules","priority":1,"system":false,"conditions":null,"created":"2026-04-04T21:54:48.000Z","lastUpdated":"2026-04-04T21:54:48.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx4cogh1GeluqXZ1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx4cogh1GeluqXZ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx4cogh1GeluqXZ1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx4cogh1GeluqXZ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstx68vcp4EM5S7hN1d7","status":"ACTIVE","name":"Partner Admin Portal","priority":1,"system":false,"conditions":null,"created":"2026-04-06T17:23:43.000Z","lastUpdated":"2026-04-06T17:23:43.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx68vcp4EM5S7hN1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx68vcp4EM5S7hN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx68vcp4EM5S7hN1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstx68vcp4EM5S7hN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstxmwarevAJ1QINp1d7","status":"ACTIVE","name":"TF - my_policy-dependson-migration-2","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-04-16T08:22:07.000Z","lastUpdated":"2026-04-16T08:22:07.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxmwarevAJ1QINp1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxmwarevAJ1QINp1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxmwarevAJ1QINp1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxmwarevAJ1QINp1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstxvqvq6iST5SABI1d7","status":"ACTIVE","name":"Dynamic App Sign-On Policy Uber-22-04","description":"Policy with dynamically defined rules","priority":1,"system":false,"conditions":null,"created":"2026-04-22T15:57:06.000Z","lastUpdated":"2026-04-22T15:57:41.000Z","_links":{"mappings":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxvqvq6iST5SABI1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxvqvq6iST5SABI1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxvqvq6iST5SABI1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rstxvqvq6iST5SABI1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:08 GMT
+            Link:
+                - <https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.117604792s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies/rsttivnuvg01CxhjA1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 27 Apr 2026 11:28:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.150190084s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.168867459s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        form:
+            kid:
+                - OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata?kid=OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2355
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exky2qlhcjM7IiPfT1d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYx
+            HDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEy
+            ODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBG
+            cmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlk
+            Y3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIB
+            IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vab
+            f4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8a
+            umEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9
+            FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6
+            HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY
+            6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt
+            25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLt
+            UK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/
+            teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgj
+            UmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2355"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Mon, 27 Apr 2026 11:28:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.261322125s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2026-04-27T11:28:06.000Z","lastUpdated":"2026-04-27T11:28:06.000Z","expiresAt":"2036-04-27T11:28:06.000Z","kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk","use":"sig","x5c":["MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEyODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlkY3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLtUK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgjUmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT"],"x5t#S256":"ngNaaAf0jkxmo2HUPoGhH0GRMnXLxaUTxS_GdmXE67Q","e":"AQAB","n":"oaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch-Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL-XGu2nvER1Mtyph5-yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3_iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5_MrP3SauWgEcUihX9FP9-P4AKSA-i6Y9I3L_odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE-pJGnfTs8E3uVau22-r-JKNJ63Y0yKyi6UjeWtW89KiITzmCY6Q"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.306037458s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.394554167s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.084162416s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rultivnuvh8XJ9ZA51d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","system":true,"conditions":null,"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/rultivnuvh8XJ9ZA51d7","hints":{"allow":["GET","PUT"]}}},"type":"ACCESS_POLICY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.4014805s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 249
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        body: |
+            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE"}}},"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"}},"name":"testAcc_4171387368","priority":1,"type":"ACCESS_POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qtqxrcoiwweN1d7","status":"ACTIVE","name":"testAcc_4171387368","priority":1,"created":"2026-04-27T11:28:18.000Z","lastUpdated":"2026-04-27T11:28:18.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.197961333s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 251
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        body: |
+            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"1FA","type":"ASSURANCE"}}},"conditions":{"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"}},"name":"testAcc_4171387368_2","priority":2,"type":"ACCESS_POLICY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qj9w13TpIb9L1d7","status":"ACTIVE","name":"testAcc_4171387368_2","priority":2,"created":"2026-04-27T11:28:19.000Z","lastUpdated":"2026-04-27T11:28:19.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"1FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.220512542s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 27 Apr 2026 11:28:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.143189875s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05129525s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.190448s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.073319292s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        form:
+            kid:
+                - OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata?kid=OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2355
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exky2qlhcjM7IiPfT1d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYx
+            HDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEy
+            ODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBG
+            cmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlk
+            Y3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIB
+            IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vab
+            f4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8a
+            umEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9
+            FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6
+            HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY
+            6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt
+            25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLt
+            UK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/
+            teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgj
+            UmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2355"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Mon, 27 Apr 2026 11:28:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.361525208s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2026-04-27T11:28:06.000Z","lastUpdated":"2026-04-27T11:28:06.000Z","expiresAt":"2036-04-27T11:28:06.000Z","kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk","use":"sig","x5c":["MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEyODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlkY3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLtUK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgjUmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT"],"x5t#S256":"ngNaaAf0jkxmo2HUPoGhH0GRMnXLxaUTxS_GdmXE67Q","e":"AQAB","n":"oaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch-Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL-XGu2nvER1Mtyph5-yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3_iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5_MrP3SauWgEcUihX9FP9-P4AKSA-i6Y9I3L_odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE-pJGnfTs8E3uVau22-r-JKNJ63Y0yKyi6UjeWtW89KiITzmCY6Q"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.2090875s
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.076363792s
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.069814208s
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qtqxrcoiwweN1d7","status":"ACTIVE","name":"testAcc_4171387368","priority":1,"created":"2026-04-27T11:28:18.000Z","lastUpdated":"2026-04-27T11:28:18.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.030727041s
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qj9w13TpIb9L1d7","status":"INACTIVE","name":"testAcc_4171387368_2","priority":2,"created":"2026-04-27T11:28:19.000Z","lastUpdated":"2026-04-27T11:28:21.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"1FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"activate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.029907792s
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.037225208s
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.092043s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.076813834s
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        form:
+            kid:
+                - OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata?kid=OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2355
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exky2qlhcjM7IiPfT1d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYx
+            HDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEy
+            ODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBG
+            cmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlk
+            Y3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIB
+            IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vab
+            f4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8a
+            umEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9
+            FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6
+            HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY
+            6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt
+            25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLt
+            UK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/
+            teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgj
+            UmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2355"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Mon, 27 Apr 2026 11:28:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.287764375s
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2026-04-27T11:28:06.000Z","lastUpdated":"2026-04-27T11:28:06.000Z","expiresAt":"2036-04-27T11:28:06.000Z","kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk","use":"sig","x5c":["MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEyODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlkY3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLtUK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgjUmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT"],"x5t#S256":"ngNaaAf0jkxmo2HUPoGhH0GRMnXLxaUTxS_GdmXE67Q","e":"AQAB","n":"oaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch-Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL-XGu2nvER1Mtyph5-yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3_iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5_MrP3SauWgEcUihX9FP9-P4AKSA-i6Y9I3L_odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE-pJGnfTs8E3uVau22-r-JKNJ63Y0yKyi6UjeWtW89KiITzmCY6Q"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.265296958s
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.066397334s
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.137197708s
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qtqxrcoiwweN1d7","status":"ACTIVE","name":"testAcc_4171387368","priority":1,"created":"2026-04-27T11:28:18.000Z","lastUpdated":"2026-04-27T11:28:18.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.066072875s
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qj9w13TpIb9L1d7","status":"INACTIVE","name":"testAcc_4171387368_2","priority":2,"created":"2026-04-27T11:28:19.000Z","lastUpdated":"2026-04-27T11:28:21.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"1FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"activate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05755075s
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.112504375s
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.10877275s
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.172326291s
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        form:
+            kid:
+                - OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        headers:
+            Accept:
+                - application/xml
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata?kid=OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2355
+        body: |-
+            <?xml version="1.0" encoding="UTF-8"?><md:EntityDescriptor entityID="http://www.okta.com/exky2qlhcjM7IiPfT1d7" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"><md:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"><md:KeyDescriptor use="signing"><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEG
+            A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
+            MBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYx
+            HDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEy
+            ODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBG
+            cmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlk
+            Y3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIB
+            IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vab
+            f4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8a
+            umEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9
+            FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6
+            HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY
+            6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt
+            25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLt
+            UK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/
+            teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgj
+            UmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/exky2qlhcjM7IiPfT1d7/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2355"
+            Content-Type:
+                - application/xml;charset=ISO-8859-1
+            Date:
+                - Mon, 27 Apr 2026 11:28:46 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.297686875s
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/credentials/keys
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"kty":"RSA","created":"2026-04-27T11:28:06.000Z","lastUpdated":"2026-04-27T11:28:06.000Z","expiresAt":"2036-04-27T11:28:06.000Z","kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk","use":"sig","x5c":["MIIDwjCCAqqgAwIBAgIGAZ3OslGjMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxIjAgBgNVBAMMGWRjcC10Zi10ZXN0aW5nLTIwMjYtMDEtMDYxHDAaBgkqhkiG9w0BCQEWDWluZm9Ab2t0YS5jb20wHhcNMjYwNDI3MTEyNzA2WhcNMzYwNDI3MTEyODA2WjCBoTELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNhbiBGcmFuY2lzY28xDTALBgNVBAoMBE9rdGExFDASBgNVBAsMC1NTT1Byb3ZpZGVyMSIwIAYDVQQDDBlkY3AtdGYtdGVzdGluZy0yMDI2LTAxLTA2MRwwGgYJKoZIhvcNAQkBFg1pbmZvQG9rdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch+Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL+XGu2nvER1Mtyph5+yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3/iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5/MrP3SauWgEcUihX9FP9+P4AKSA+i6Y9I3L/odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE+pJGnfTs8E3uVau22+r+JKNJ63Y0yKyi6UjeWtW89KiITzmCY6QIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAheRlj3kw0oGp/+oXyzJ21Iq9iTtf2NuT7pZH4E/xt25mqdA0jRmkwpaC1fFL+ulXTvZAhiSaWoUNDfvp3F6e84tV40b0ombXgYKCYLTxUk2AF+LxsbzLtUK/7VMB6B80iPttfJz7qsJjNdCD/dGecHya0iOOdXOX3zEn5gGupBmbfmkzyS2rLH+0YBE2nKPX/teRyncghgeFTtxoQ0wgnodpU2sNme5qTA+DuNiRbWZr4XATnQt2HfcrQzAnqNUp88qZmLCjIPBgjUmimhxGliJlcngp1L4m+xfhBynel4MBXBPlpJyypTutXHZrhEbwdUPkA25lzo4HbwV1stwNT"],"x5t#S256":"ngNaaAf0jkxmo2HUPoGhH0GRMnXLxaUTxS_GdmXE67Q","e":"AQAB","n":"oaWMrIVsZeJfpjjwFnZMekZNu0Jnaxts6Vabf4Ch-Ou3aRHMVm6xD5o44cqpe0XZBQr9uxhrL-XGu2nvER1Mtyph5-yZBbJJttfXiqxmYKiZxt8aumEW0xvSgD3p3_iDTTZrcefa6DLcZkVpjEAPbqpRzA8SKzSs5ZgFM0gglJ5_MrP3SauWgEcUihX9FP9-P4AKSA-i6Y9I3L_odILl4nJZetvoLo2ChW80Fh7zED4VH65wL39NKwVsOSsQCak4eTYs8Ew6HwOHiDlC4RFpi2fFH96Xd6gNrTE-pJGnfTs8E3uVau22-r-JKNJ63Y0yKyi6UjeWtW89KiITzmCY6Q"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:47 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.237599291s
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:48 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.062262916s
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:49 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.135548s
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qtqxrcoiwweN1d7","status":"ACTIVE","name":"testAcc_4171387368","priority":1,"created":"2026-04-27T11:28:18.000Z","lastUpdated":"2026-04-27T11:28:18.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"2FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:50 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0663445s
+    - id: 39
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"ruly2qj9w13TpIb9L1d7","status":"INACTIVE","name":"testAcc_4171387368_2","priority":2,"created":"2026-04-27T11:28:19.000Z","lastUpdated":"2026-04-27T11:28:21.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}},"network":{"connection":"ANYWHERE"},"riskScore":{"level":"ANY"},"userType":{"include":[],"exclude":[]}},"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"factorMode":"1FA","type":"ASSURANCE","reauthenticateIn":"PT12H"},"keepMeSignedIn":{"postAuth":"NOT_ALLOWED"}}},"_links":{"activate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7","hints":{"allow":["GET","PUT","DELETE"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:52 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.034346167s
+    - id: 40
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oay2qlhckpCJ0nHr1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2:0oay2qlhckpCJ0nHr1d7","name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2","label":"testAcc_4171387368","status":"ACTIVE","lastUpdated":"2026-04-27T11:28:06.000Z","created":"2026-04-27T11:28:06.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":false,"web":false},"appLinks":{"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link":true}},"features":[],"signOnMode":"SAML_2_0","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"OOZxzTwlyG1w9r7kR4DbSI_ej73nqEovE0PLNR1VzVk"}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"signOn":{"defaultRelayState":null,"ssoAcsUrl":"http://google.com","idpIssuer":"http://www.okta.com/${org.externalKey}","audience":"http://audience.com","recipient":"http://here.com","destination":"http://its-about-the-journey.com","subjectNameIdTemplate":"${user.userName}","subjectNameIdFormat":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","responseSigned":true,"assertionSigned":false,"signatureAlgorithm":"RSA_SHA256","digestAlgorithm":"SHA256","honorForceAuthn":false,"authnContextClassRef":"urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport","spIssuer":null,"requestCompressed":false,"attributeStatements":[],"inlineHooks":[],"assertionEncryption":{"enabled":false},"allowMultipleAcsEndpoints":false,"acsEndpoints":[],"samlSignedRequestEnabled":false,"slo":{"enabled":false}}},"_links":{"help":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview-admin.dne-okta.com/app/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/setup/help/SAML_2_0/instructions","type":"text/html"},"metadata":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/sso/saml/metadata","type":"application/xml"},"uploadLogo":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2_link","href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/home/dcp-tf-testing-2026-01-06.oktapreview_testacc4171387368_2/0oay2qlhckpCJ0nHr1d7/alny2r9mvuMY882rl1d7","type":"text/html"}],"profileEnrollment":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"accessPolicy":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/users"},"deactivate":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.07005625s
+    - id: 41
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://dcp-tf-testing-2026-01-06.oktapreview.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"ACCESS_POLICY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.163025417s
+    - id: 42
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qtqxrcoiwweN1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 27 Apr 2026 11:28:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.065510458s
+    - id: 43
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules/ruly2qj9w13TpIb9L1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 27 Apr 2026 11:28:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.154574s
+    - id: 44
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 27 Apr 2026 11:28:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.144869917s
+    - id: 45
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://dcp-tf-testing-2026-01-06.oktapreview.dne-okta.com/api/v1/apps/0oay2qlhckpCJ0nHr1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 27 Apr 2026 11:28:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.284100708s
