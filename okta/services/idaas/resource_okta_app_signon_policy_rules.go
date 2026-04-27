@@ -867,7 +867,14 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 				fmt.Sprintf("Could not adopt rule '%s' (ID: %s, isSystem: %t): %s", rule.Name.ValueString(), ruleID, isSystem, err.Error()))
 			return policyRuleModel{}, diags
 		}
-		return r.updateRuleModelFromAPI(ctx, rule, updatedRule), diags
+		if err := r.syncRuleStatus(ctx, client, policyID, ruleID, updatedRule.Status, rule.Status.ValueString()); err != nil {
+			diags.AddError("Error setting status on app sign-on policy rule",
+				fmt.Sprintf("Could not set status for rule '%s': %s", rule.Name.ValueString(), err.Error()))
+			return policyRuleModel{}, diags
+		}
+		result := r.updateRuleModelFromAPI(ctx, rule, updatedRule)
+		result.Status = rule.Status
+		return result, diags
 	}
 	// Create new rule.
 	apiRule := r.buildAPIRuleFromModel(ctx, rule)
@@ -877,7 +884,14 @@ func (r *appSignOnPolicyRulesResource) createOrAdoptRule(ctx context.Context, cl
 			fmt.Sprintf("Could not create rule '%s': %s", rule.Name.ValueString(), err.Error()))
 		return policyRuleModel{}, diags
 	}
-	return r.updateRuleModelFromAPI(ctx, rule, createdRule), diags
+	if err := r.syncRuleStatus(ctx, client, policyID, createdRule.Id, createdRule.Status, rule.Status.ValueString()); err != nil {
+		diags.AddError("Error setting status on app sign-on policy rule",
+			fmt.Sprintf("Could not set status for rule '%s': %s", rule.Name.ValueString(), err.Error()))
+		return policyRuleModel{}, diags
+	}
+	result := r.updateRuleModelFromAPI(ctx, rule, createdRule)
+	result.Status = rule.Status
+	return result, diags
 }
 
 // normalizeAPIRuleForSystem strips conditions and preserves name/priority for system rules
@@ -932,7 +946,14 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 		if createdRule.Id != "" {
 			nameTracker.updateMapping(createdRule.Id, planRuleName)
 		}
-		return r.updateRuleModelFromAPI(ctx, planRule, createdRule), diags
+		if err := r.syncRuleStatus(ctx, client, policyID, createdRule.Id, createdRule.Status, planRule.Status.ValueString()); err != nil {
+			diags.AddError("Error setting status on app sign-on policy rule",
+				fmt.Sprintf("Could not set status for rule '%s': %s", planRuleName, err.Error()))
+			return policyRuleModel{}, diags
+		}
+		result := r.updateRuleModelFromAPI(ctx, planRule, createdRule)
+		result.Status = planRule.Status
+		return result, diags
 	}
 	// Rule exists in state - update it
 	if existingRule.ID.IsNull() {
@@ -967,8 +988,15 @@ func (r *appSignOnPolicyRulesResource) processRuleUpdate(
 			fmt.Sprintf("Could not update rule '%s': %s", targetName, err.Error()))
 		return policyRuleModel{}, diags
 	}
+	if err := r.syncRuleStatus(ctx, client, policyID, existingRuleID, updatedRule.Status, planRule.Status.ValueString()); err != nil {
+		diags.AddError("Error setting status on app sign-on policy rule",
+			fmt.Sprintf("Could not set status for rule '%s': %s", targetName, err.Error()))
+		return policyRuleModel{}, diags
+	}
 	nameTracker.updateMapping(existingRuleID, targetName)
-	return r.updateRuleModelFromAPI(ctx, planRule, updatedRule), diags
+	result := r.updateRuleModelFromAPI(ctx, planRule, updatedRule)
+	result.Status = planRule.Status
+	return result, diags
 }
 
 // buildPlannedIDsSet creates a set of rule IDs from the plan.
@@ -1063,6 +1091,22 @@ func (r *appSignOnPolicyRulesResource) deleteRule(ctx context.Context, client *s
 		}
 		return struct{}{}, nil
 	}, backoff.WithMaxElapsedTime(apiRetryTimeout))
+	return err
+}
+
+// syncRuleStatus calls the lifecycle endpoint when the desired status differs
+// from the current API status. The Okta API ignores the status field in the
+// rule body; status changes must go through /lifecycle/activate or
+// /lifecycle/deactivate.
+func (r *appSignOnPolicyRulesResource) syncRuleStatus(ctx context.Context, client *sdk.APISupplement, policyID, ruleID, currentStatus, desiredStatus string) error {
+	if desiredStatus == "" || desiredStatus == currentStatus {
+		return nil
+	}
+	if desiredStatus == StatusActive {
+		_, err := client.ActivateAppSignOnPolicyRule(ctx, policyID, ruleID)
+		return err
+	}
+	_, err := client.DeactivateAppSignOnPolicyRule(ctx, policyID, ruleID)
 	return err
 }
 

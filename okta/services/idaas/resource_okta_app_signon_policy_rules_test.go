@@ -10,6 +10,36 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
+// TestAccResourceOktaAppSignOnPolicyRules_Issue2797 verifies that setting
+// status = "INACTIVE" on a rule is applied correctly and does not cause a
+// "provider produced inconsistent result after apply" error.
+func TestAccResourceOktaAppSignOnPolicyRules_Issue2797(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("issue_2797.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.status", "INACTIVE"),
+				),
+			},
+			{
+				// Idempotency check — no diff expected on re-apply.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAppSignOnPolicyRules_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.policy_rules", resources.OktaIDaaSAppSignOnPolicyRules)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
