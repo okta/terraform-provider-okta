@@ -33,7 +33,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: "1.13.4"
+          terraform_version: "1.14.0"
 
       - name: Run VCR acceptance tests
         run: time make smoke-test-play-vcr-acc
