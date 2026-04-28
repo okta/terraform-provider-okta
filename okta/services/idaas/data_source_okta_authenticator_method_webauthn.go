@@ -163,6 +163,18 @@ func (d *authenticatorMethodWebauthnDataSource) Read(ctx context.Context, req da
 	data.ID = data.AuthenticatorID
 	data.Status = types.StringPointerValue(webauthn.Status)
 
+	data.UserVerification = types.StringNull()
+	data.UserVerificationForVerify = types.StringNull()
+	data.Attachment = types.StringNull()
+	data.EnableAutofillUI = types.BoolNull()
+	data.ResidentKeyRequirement = types.StringNull()
+	data.ShowSignInWithAPasskeyButton = types.BoolNull()
+	data.CertBasedAttestationValidation = types.BoolNull()
+	data.HardwareProtected = types.BoolNull()
+	data.FipsCompliant = types.BoolNull()
+	data.AllowSyncablePasskeys = types.BoolNull()
+	data.AaguidGroups = nil
+
 	settings := webauthn.Settings
 	if settings != nil {
 		data.UserVerification = types.StringPointerValue(settings.UserVerification)
@@ -188,18 +200,6 @@ func (d *authenticatorMethodWebauthnDataSource) Read(ctx context.Context, req da
 			})
 		}
 		data.AaguidGroups = groups
-	} else {
-		data.UserVerification = types.StringNull()
-		data.UserVerificationForVerify = types.StringNull()
-		data.Attachment = types.StringNull()
-		data.EnableAutofillUI = types.BoolNull()
-		data.ResidentKeyRequirement = types.StringNull()
-		data.ShowSignInWithAPasskeyButton = types.BoolNull()
-		data.CertBasedAttestationValidation = types.BoolNull()
-		data.HardwareProtected = types.BoolNull()
-		data.FipsCompliant = types.BoolNull()
-		data.AllowSyncablePasskeys = types.BoolNull()
-		data.AaguidGroups = nil
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
