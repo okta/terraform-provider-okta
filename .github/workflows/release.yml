@@ -30,6 +30,11 @@ jobs:
           go-version-file: "go.mod"
           cache: true
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.14.0"
+
       - name: Run VCR acceptance tests
         run: time make smoke-test-play-vcr-acc
         timeout-minutes: 30
