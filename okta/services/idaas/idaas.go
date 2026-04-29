@@ -127,6 +127,8 @@ func FWProviderResources() []func() resource.Resource {
 		newPostAuthSessionPolicyRuleResource,
 		newEntityRiskPolicyRuleResource,
 		newSessionViolationPolicyRuleResource,
+		newAuthenticatorWebauthnCustomAAGUIDResource,
+		newAuthenticatorMethodWebauthnResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -168,6 +170,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPostAuthSessionPolicyDataSource,
 		newEntityRiskPolicyDataSource,
 		newSessionViolationPolicyDataSource,
+		newAuthenticatorWebauthnCustomAAGUIDsDataSource,
+		newAuthenticatorMethodWebauthnDataSource,
 	}
 }
 

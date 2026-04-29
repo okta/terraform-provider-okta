@@ -161,4 +161,7 @@ const (
 	OktaGovernanceEndUserMyRequests                   = "okta_end_user_my_requests"
 	OktaIDaaSPushGroup                                = "okta_push_group"
 	OktaIDaaSPushGroups                               = "okta_push_groups"
+	OktaIDaaSAuthenticatorWebauthnCustomAAGUID        = "okta_authenticator_webauthn_custom_aaguid"
+	OktaIDaaSAuthenticatorWebauthnCustomAAGUIDs       = "okta_authenticator_webauthn_custom_aaguids"
+	OktaIDaaSAuthenticatorMethodWebauthn              = "okta_authenticator_method_webauthn"
 )
