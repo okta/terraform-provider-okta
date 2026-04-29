@@ -53,6 +53,11 @@ resource "okta_authenticator_method_webauthn" "example" {
 
 - `id` - The authenticator ID.
 - `status` - The status of the WebAuthn method (`ACTIVE` or `INACTIVE`).
+- `rp_id` - The Relying Party (RP) ID configuration for WebAuthn. Contains:
+  - `enabled` - Whether the RP ID is active and used for WebAuthn operations.
+  - `domain` - The RP domain configuration. Contains:
+    - `name` - The RP ID domain value used for WebAuthn operations.
+    - `validation_status` - The validation status of the domain.
 
 ## Import
 

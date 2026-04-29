@@ -39,6 +39,11 @@ data "okta_authenticator_method_webauthn" "example" {
 - `hardware_protected` - Whether the authenticator must store the private key on hardware.
 - `fips_compliant` - Whether the authenticator must be FIPS compliant.
 - `allow_syncable_passkeys` - Whether syncable passkeys are allowed.
+- `rp_id` - The Relying Party (RP) ID configuration for WebAuthn. Contains:
+  - `enabled` - Whether the RP ID is active and used for WebAuthn operations.
+  - `domain` - The RP domain configuration. Contains:
+    - `name` - The RP ID domain value used for WebAuthn operations.
+    - `validation_status` - The validation status of the domain.
 - `aaguid_groups` - The FIDO2 AAGUID groups. Each element contains:
   - `name` - The name of the AAGUID group.
   - `aaguids` - List of FIDO2 AAGUIDs in this group.

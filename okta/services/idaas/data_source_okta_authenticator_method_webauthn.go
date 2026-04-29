@@ -20,6 +20,16 @@ type authenticatorMethodWebauthnDataSource struct {
 	*config.Config
 }
 
+type rpIdDomainDataSourceModel struct {
+	Name             types.String `tfsdk:"name"`
+	ValidationStatus types.String `tfsdk:"validation_status"`
+}
+
+type rpIdDataSourceModel struct {
+	Enabled types.Bool                `tfsdk:"enabled"`
+	Domain  *rpIdDomainDataSourceModel `tfsdk:"domain"`
+}
+
 type aaguidGroupDataSourceModel struct {
 	Name    types.String   `tfsdk:"name"`
 	Aaguids []types.String `tfsdk:"aaguids"`
@@ -39,6 +49,7 @@ type authenticatorMethodWebauthnDataSourceModel struct {
 	HardwareProtected              types.Bool                    `tfsdk:"hardware_protected"`
 	FipsCompliant                  types.Bool                    `tfsdk:"fips_compliant"`
 	AllowSyncablePasskeys          types.Bool                    `tfsdk:"allow_syncable_passkeys"`
+	RpId                           *rpIdDataSourceModel          `tfsdk:"rp_id"`
 	AaguidGroups                   []aaguidGroupDataSourceModel  `tfsdk:"aaguid_groups"`
 }
 
@@ -104,6 +115,30 @@ func (d *authenticatorMethodWebauthnDataSource) Schema(ctx context.Context, req 
 			},
 		},
 		Blocks: map[string]schema.Block{
+			"rp_id": schema.SingleNestedBlock{
+				Description: "The Relying Party (RP) ID configuration for WebAuthn.",
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Computed:    true,
+						Description: "Whether the RP ID is active and used for WebAuthn operations.",
+					},
+				},
+				Blocks: map[string]schema.Block{
+					"domain": schema.SingleNestedBlock{
+						Description: "The RP domain configuration.",
+						Attributes: map[string]schema.Attribute{
+							"name": schema.StringAttribute{
+								Computed:    true,
+								Description: "The RP ID domain value used for WebAuthn operations.",
+							},
+							"validation_status": schema.StringAttribute{
+								Computed:    true,
+								Description: "The validation status of the domain.",
+							},
+						},
+					},
+				},
+			},
 			"aaguid_groups": schema.ListNestedBlock{
 				Description: "The AAGUID groups available to the WebAuthn authenticator.",
 				NestedObject: schema.NestedBlockObject{
@@ -173,6 +208,7 @@ func (d *authenticatorMethodWebauthnDataSource) Read(ctx context.Context, req da
 	data.HardwareProtected = types.BoolNull()
 	data.FipsCompliant = types.BoolNull()
 	data.AllowSyncablePasskeys = types.BoolNull()
+	data.RpId = nil
 	data.AaguidGroups = nil
 
 	settings := webauthn.Settings
@@ -187,6 +223,19 @@ func (d *authenticatorMethodWebauthnDataSource) Read(ctx context.Context, req da
 		data.HardwareProtected = types.BoolPointerValue(settings.HardwareProtected)
 		data.FipsCompliant = types.BoolPointerValue(settings.FipsCompliant)
 		data.AllowSyncablePasskeys = types.BoolPointerValue(settings.AllowSyncablePasskeys)
+
+		if settings.RpId != nil {
+			rpIdModel := &rpIdDataSourceModel{
+				Enabled: types.BoolPointerValue(settings.RpId.Enabled),
+			}
+			if settings.RpId.Domain != nil {
+				rpIdModel.Domain = &rpIdDomainDataSourceModel{
+					Name:             types.StringPointerValue(settings.RpId.Domain.Name),
+					ValidationStatus: types.StringPointerValue(settings.RpId.Domain.ValidationStatus),
+				}
+			}
+			data.RpId = rpIdModel
+		}
 
 		groups := make([]aaguidGroupDataSourceModel, 0, len(settings.AaguidGroups))
 		for _, g := range settings.AaguidGroups {

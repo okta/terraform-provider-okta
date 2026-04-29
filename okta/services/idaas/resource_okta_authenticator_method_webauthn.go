@@ -16,6 +16,16 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
+type rpIdDomainResourceModel struct {
+	Name             types.String `tfsdk:"name"`
+	ValidationStatus types.String `tfsdk:"validation_status"`
+}
+
+type rpIdResourceModel struct {
+	Enabled types.Bool              `tfsdk:"enabled"`
+	Domain  *rpIdDomainResourceModel `tfsdk:"domain"`
+}
+
 type authenticatorMethodWebauthnResourceModel struct {
 	ID                             types.String                  `tfsdk:"id"`
 	AuthenticatorID                types.String                  `tfsdk:"authenticator_id"`
@@ -30,6 +40,7 @@ type authenticatorMethodWebauthnResourceModel struct {
 	HardwareProtected              types.Bool                    `tfsdk:"hardware_protected"`
 	FipsCompliant                  types.Bool                    `tfsdk:"fips_compliant"`
 	AllowSyncablePasskeys          types.Bool                    `tfsdk:"allow_syncable_passkeys"`
+	RpId                           *rpIdResourceModel            `tfsdk:"rp_id"`
 	Status                         types.String                  `tfsdk:"status"`
 }
 
@@ -157,6 +168,30 @@ func (r *authenticatorMethodWebauthnResource) Schema(_ context.Context, _ resour
 			},
 		},
 		Blocks: map[string]schema.Block{
+			"rp_id": schema.SingleNestedBlock{
+				Description: "The Relying Party (RP) ID configuration for WebAuthn. This is read-only and managed by Okta.",
+				Attributes: map[string]schema.Attribute{
+					"enabled": schema.BoolAttribute{
+						Computed:    true,
+						Description: "Whether the RP ID is active and used for WebAuthn operations.",
+					},
+				},
+				Blocks: map[string]schema.Block{
+					"domain": schema.SingleNestedBlock{
+						Description: "The RP domain configuration.",
+						Attributes: map[string]schema.Attribute{
+							"name": schema.StringAttribute{
+								Computed:    true,
+								Description: "The RP ID domain value used for WebAuthn operations.",
+							},
+							"validation_status": schema.StringAttribute{
+								Computed:    true,
+								Description: "The validation status of the domain.",
+							},
+						},
+					},
+				},
+			},
 			"aaguid_group": schema.ListNestedBlock{
 				Description: "AAGUID groups for the WebAuthn authenticator.",
 				NestedObject: schema.NestedBlockObject{
@@ -456,6 +491,21 @@ func mapWebAuthnMethodToState(method *v6okta.AuthenticatorMethodWebAuthn, state 
 		state.HardwareProtected = types.BoolPointerValue(s.HardwareProtected)
 		state.FipsCompliant = types.BoolPointerValue(s.FipsCompliant)
 		state.AllowSyncablePasskeys = types.BoolPointerValue(s.AllowSyncablePasskeys)
+
+		if s.RpId != nil {
+			rpIdModel := &rpIdResourceModel{
+				Enabled: types.BoolPointerValue(s.RpId.Enabled),
+			}
+			if s.RpId.Domain != nil {
+				rpIdModel.Domain = &rpIdDomainResourceModel{
+					Name:             types.StringPointerValue(s.RpId.Domain.Name),
+					ValidationStatus: types.StringPointerValue(s.RpId.Domain.ValidationStatus),
+				}
+			}
+			state.RpId = rpIdModel
+		} else {
+			state.RpId = nil
+		}
 
 		if len(s.AaguidGroups) > 0 {
 			groups := make([]aaguidGroupModel, len(s.AaguidGroups))
