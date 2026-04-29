@@ -145,7 +145,7 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Default:     "ANY",
 			},
 			"identity_provider_ids": { // identity_provider must be SPECIFIC_IDP
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "When identity_provider is `SPECIFIC_IDP` then this is the list of IdP IDs to apply the rule on",
@@ -219,7 +219,7 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	if rule.Conditions.IdentityProvider != nil {
 		_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
 		if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
-			_ = d.Set("identity_provider_ids", utils.ConvertStringSliceToInterfaceSlice(rule.Conditions.IdentityProvider.IdpIds))
+			_ = d.Set("identity_provider_ids", utils.ConvertStringSliceToSet(rule.Conditions.IdentityProvider.IdpIds))
 		}
 	}
 
@@ -295,7 +295,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	if ok {
 		template.Conditions.IdentityProvider = &sdk.IdentityProviderPolicyRuleCondition{
 			Provider: provider.(string),
-			IdpIds:   utils.ConvertInterfaceToStringArr(d.Get("identity_provider_ids")),
+			IdpIds:   utils.ConvertInterfaceToStringSet(d.Get("identity_provider_ids")),
 		}
 	}
 
@@ -379,7 +379,7 @@ func validateSignOnPolicyRule(d *schema.ResourceData) error {
 		}
 	}
 	ip, ok := d.GetOk("identity_provider")
-	if ok && ip == "SPECIFIC_IDP" && len(utils.ConvertInterfaceToStringArrNullable(d.Get("identity_provider_ids"))) < 1 {
+	if ok && ip == "SPECIFIC_IDP" && len(utils.ConvertInterfaceToStringSetNullable(d.Get("identity_provider_ids"))) < 1 {
 		return errors.New("'identity_provider_ids' should have at least one element when 'identity_provider' is 'SPECIFIC_IDP'")
 	}
 	return nil
