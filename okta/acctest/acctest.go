@@ -22,7 +22,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
+	"github.com/hashicorp/terraform-plugin-mux/tf5to6server"
+	"github.com/hashicorp/terraform-plugin-mux/tf6muxserver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -595,6 +598,39 @@ func ProtoV5ProviderFactoriesForTestAcc(t *testing.T) map[string]func() (tfproto
 			return provider(), err
 		},
 	}
+}
+
+// ProtoV6ProviderFactoriesForTestAcc is for ProtoV6ProviderFactories argument in acc tests
+// that require resources using SingleNestedAttribute / ListNestedAttribute (proto v6 only).
+func ProtoV6ProviderFactoriesForTestAcc(t *testing.T) map[string]func() (tfprotov6.ProviderServer, error) {
+	return map[string]func() (tfprotov6.ProviderServer, error){
+		"okta": func() (tfprotov6.ProviderServer, error) {
+			provider, err := ProvidersForTestV6(t.Name())
+			return provider(), err
+		},
+	}
+}
+
+func ProvidersForTestV6(testName string) (func() tfprotov6.ProviderServer, error) {
+	ctx := context.Background()
+
+	pluginSDKProvider := GetPluginSDKProvider(testName)
+	upgradedSDKProvider, err := tf5to6server.UpgradeServer(ctx, pluginSDKProvider.GRPCProvider)
+	if err != nil {
+		return nil, err
+	}
+	providers := []func() tfprotov6.ProviderServer{
+		// SDKv2 provider upgraded to protocol v6
+		func() tfprotov6.ProviderServer { return upgradedSDKProvider },
+		// Framework provider at protocol v6
+		providerserver.NewProtocol6(NewFrameworkTestProvider(testName, pluginSDKProvider)),
+	}
+	muxServer, err := tf6muxserver.NewMuxServer(ctx, providers...)
+	if err != nil {
+		return nil, err
+	}
+
+	return muxServer.ProviderServer, nil
 }
 
 func ProvidersForTest(testName string) (func() tfprotov5.ProviderServer, error) {

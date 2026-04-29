@@ -127,6 +127,17 @@ func FWProviderResources() []func() resource.Resource {
 		newPostAuthSessionPolicyRuleResource,
 		newEntityRiskPolicyRuleResource,
 		newSessionViolationPolicyRuleResource,
+		newIdentitySourceSessionResource,
+		newIdentitySourceSessionImportResource,
+		newIdentitySourceBulkGroupMembershipsUpsertResource,
+		newIdentitySourceBulkGroupMembershipsDeleteResource,
+		newIdentitySourceBulkGroupsUpsertResource,
+		newIdentitySourceBulkGroupsDeleteResource,
+		newIdentitySourceBulkUpsertResource,
+		newIdentitySourceBulkDeleteResource,
+		newIdentitySourceGroupMembershipResource,
+		newIdentitySourceUserResource,
+		newIdentitySourceGroupResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -168,6 +179,10 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPostAuthSessionPolicyDataSource,
 		newEntityRiskPolicyDataSource,
 		newSessionViolationPolicyDataSource,
+		newIdentitySourceGroupsDataSource,
+		newIdentitySourceGroupMembershipsDataSource,
+		newIdentitySourceSessionsDataSource,
+		newIdentitySourceUsersDataSource,
 	}
 }
 

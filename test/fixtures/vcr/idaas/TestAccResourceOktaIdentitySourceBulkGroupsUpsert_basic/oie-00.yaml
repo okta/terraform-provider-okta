@@ -1,0 +1,134 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"apsxtf4135zesnnwa1d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"CREATED","importType":"INCREMENTAL","created":"2026-04-21T13:58:40.000Z","lastUpdated":"2026-04-21T13:58:40.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 21 Apr 2026 13:58:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.117111375s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 140
+        host: oie-00.dne-okta.com
+        body: |
+            {"profiles":[{"externalId":"GROUPEXT123456784C2IF","profile":{"description":"Test group for identity source","displayName":"Test Group"}}]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxtf4135zesnnwa1d7/bulk-groups-upsert
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Tue, 21 Apr 2026 13:58:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 202 Accepted
+        code: 202
+        duration: 1.823368167s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxtf4135zesnnwa1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"apsxtf4135zesnnwa1d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"IN_PROGRESS","importType":"INCREMENTAL","created":"2026-04-21T13:58:40.000Z","lastUpdated":"2026-04-21T13:58:41.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 21 Apr 2026 13:58:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.107254209s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxtf4135zesnnwa1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 21 Apr 2026 13:58:44 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.150290666s
