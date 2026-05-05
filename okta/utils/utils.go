@@ -850,8 +850,40 @@ func LogoFileIsValid() schema.SchemaValidateDiagFunc {
 		if stat.Size() > 1<<20 { // should be less than 1 MB in size.
 			return diag.Errorf("file '%s' should be less than 1 MB in size", v)
 		}
-		return nil
+
+		var diags diag.Diagnostics
+		if !logoFileLooksSupported(v) {
+			diags = append(diags, diag.Diagnostic{
+				Severity:      diag.Warning,
+				Summary:       "Unable to verify logo file matches one of the supported formats (PNG, JPG, GIF)",
+				Detail:        "This may fail during terraform apply.",
+				AttributePath: k,
+			})
+		}
+		return diags
 	}
+}
+
+// logoFileLooksSupported reads the first bytes of the file and reports whether
+// they sniff as one of the formats Okta accepts for app logos. A false return
+// is best-effort — the file may still be valid (e.g. an unreadable file or an
+// edge-case encoding); callers should treat it as "unverified", not "invalid".
+func logoFileLooksSupported(path string) bool {
+	f, err := os.Open(path)
+	if err != nil {
+		return true // can't sniff; don't warn on top of whatever os.Stat already caught
+	}
+	defer f.Close()
+	buf := make([]byte, 512)
+	n, err := f.Read(buf)
+	if err != nil && err != io.EOF {
+		return true
+	}
+	switch http.DetectContentType(buf[:n]) {
+	case "image/png", "image/jpeg", "image/gif":
+		return true
+	}
+	return false
 }
 
 // NewExponentialBackOffWithContext helper to dry up creating a backoff object that is exponential and has context
