@@ -346,8 +346,10 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 	state.SourceGroupId = types.StringPointerValue(groupPushMapping.SourceGroupId)
 	state.TargetGroupId = types.StringPointerValue(groupPushMapping.TargetGroupId)
 	state.Status = types.StringPointerValue(groupPushMapping.Status)
+	state.AppConfig = types.ObjectNull(appConfigAttrTypes)
 
-	// Preserve app_config in state from the API response
+	// Preserve app_config in state only when the API returns at least one concrete value.
+	// Some mappings return an empty app_config envelope, which must stay null in state.
 	if groupPushMapping.HasAppConfig() {
 		apiAppConfig := groupPushMapping.GetAppConfig()
 		appConfigAttrs := map[string]attr.Value{
@@ -357,9 +359,14 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 			"group_type":         types.StringNull(),
 			"sam_account_name":   types.StringNull(),
 		}
+		hasConcreteValue := false
 
 		if apiAppConfig.HasType() {
-			appConfigAttrs["type"] = types.StringValue(apiAppConfig.GetType())
+			typeValue := apiAppConfig.GetType()
+			if typeValue != "" {
+				appConfigAttrs["type"] = types.StringValue(typeValue)
+				hasConcreteValue = true
+			}
 		}
 
 		// Map camelCase additional properties back to underscore attributes
@@ -369,13 +376,19 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 				continue
 			}
 			if strVal, ok := val.(string); ok {
+				if strVal == "" {
+					continue
+				}
 				appConfigAttrs[underscoreKey] = types.StringValue(strVal)
+				hasConcreteValue = true
 			}
 		}
 
-		appConfigObj, objDiags := types.ObjectValue(appConfigAttrTypes, appConfigAttrs)
-		diags.Append(objDiags...)
-		state.AppConfig = appConfigObj
+		if hasConcreteValue {
+			appConfigObj, objDiags := types.ObjectValue(appConfigAttrTypes, appConfigAttrs)
+			diags.Append(objDiags...)
+			state.AppConfig = appConfigObj
+		}
 	}
 
 	return diags
