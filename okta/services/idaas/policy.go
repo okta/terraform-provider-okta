@@ -127,6 +127,43 @@ func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}
 	return policy, nil
 }
 
+func setDefaultPasswordPolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}) (*v6okta.PasswordPolicy, error) {
+	policies, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ListPolicies(ctx).Type_("PASSWORD").Execute()
+	if err != nil {
+		return nil, fmt.Errorf("failed to list password policies: %v", err)
+	}
+	var policy *v6okta.PasswordPolicy
+	for _, p := range policies {
+		pp := p.PasswordPolicy
+		if pp == nil {
+			continue
+		}
+		if pp.HasSystem() && pp.GetSystem() && (strings.Contains(pp.GetName(), "Default") || strings.Contains(pp.GetDescription(), "default")) {
+			policy = pp
+			break
+		}
+	}
+	if policy == nil {
+		return nil, fmt.Errorf("cannot find default PASSWORD policy")
+	}
+	groups, _, err := getOktaClientFromMetadata(meta).Group.ListGroups(ctx, &query.Params{Q: "Everyone"})
+	if err != nil {
+		return nil, fmt.Errorf("failed to find default group for default password policy: %v", err)
+	}
+	for _, g := range groups {
+		if g.Profile.Name == "Everyone" {
+			_ = d.Set("default_included_group_id", g.Id)
+		}
+	}
+	_ = d.Set("name", policy.GetName())
+	_ = d.Set("description", policy.GetDescription())
+	if policy.Priority != nil {
+		_ = d.Set("priority", 1) // hardcoded to 1 as any other value will result in HTTP 403 response, "Cannot modify the priority attribute because it is read-only."
+	}
+	d.SetId(policy.GetId())
+	return policy, nil
+}
+
 func buildDefaultPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return utils.BuildSchema(defaultPolicySchema, target)
 }

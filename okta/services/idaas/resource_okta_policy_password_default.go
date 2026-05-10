@@ -17,12 +17,12 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 		DeleteContext: utils.ResourceFuncNoOp,
 		Importer: &schema.ResourceImporter{
 			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				policy, err := setDefaultPolicy(ctx, d, meta, "PASSWORD")
+				policy, err := setDefaultPasswordPolicyV6(ctx, d, meta)
 				if err != nil {
 					return nil, err
 				}
 				if policy.Conditions != nil && policy.Conditions.AuthProvider != nil {
-					_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
+					_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.GetProvider())
 				}
 				return []*schema.ResourceData{d}, nil
 			},
@@ -201,12 +201,12 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 
 func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if d.Id() == "" {
-		policy, err := setDefaultPolicy(ctx, d, meta, "PASSWORD")
+		policy, err := setDefaultPasswordPolicyV6(ctx, d, meta)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 		if policy.Conditions != nil && policy.Conditions.AuthProvider != nil {
-			_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.Provider)
+			_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.GetProvider())
 		}
 	}
 	if _, err := replacePolicyV6(ctx, d, meta, buildDefaultPasswordPolicy(d)); err != nil {
@@ -239,24 +239,52 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 		}
 	}
 	if pw != nil && pw.Complexity != nil {
-		if pw.Complexity.Dictionary != nil && pw.Complexity.Dictionary.Common != nil { _ = d.Set("password_dictionary_lookup", pw.Complexity.Dictionary.Common.GetExclude()) }
-		if pw.Complexity.MinLength != nil { _ = d.Set("password_min_length", int(*pw.Complexity.MinLength)) }
-		if pw.Complexity.MinLowerCase != nil { _ = d.Set("password_min_lowercase", int(*pw.Complexity.MinLowerCase)) }
-		if pw.Complexity.MinUpperCase != nil { _ = d.Set("password_min_uppercase", int(*pw.Complexity.MinUpperCase)) }
-		if pw.Complexity.MinNumber != nil { _ = d.Set("password_min_number", int(*pw.Complexity.MinNumber)) }
-		if pw.Complexity.MinSymbol != nil { _ = d.Set("password_min_symbol", int(*pw.Complexity.MinSymbol)) }
-		if pw.Complexity.ExcludeUsername != nil { _ = d.Set("password_exclude_username", *pw.Complexity.ExcludeUsername) }
+		if pw.Complexity.Dictionary != nil && pw.Complexity.Dictionary.Common != nil {
+			_ = d.Set("password_dictionary_lookup", pw.Complexity.Dictionary.Common.GetExclude())
+		}
+		if pw.Complexity.MinLength != nil {
+			_ = d.Set("password_min_length", int(*pw.Complexity.MinLength))
+		}
+		if pw.Complexity.MinLowerCase != nil {
+			_ = d.Set("password_min_lowercase", int(*pw.Complexity.MinLowerCase))
+		}
+		if pw.Complexity.MinUpperCase != nil {
+			_ = d.Set("password_min_uppercase", int(*pw.Complexity.MinUpperCase))
+		}
+		if pw.Complexity.MinNumber != nil {
+			_ = d.Set("password_min_number", int(*pw.Complexity.MinNumber))
+		}
+		if pw.Complexity.MinSymbol != nil {
+			_ = d.Set("password_min_symbol", int(*pw.Complexity.MinSymbol))
+		}
+		if pw.Complexity.ExcludeUsername != nil {
+			_ = d.Set("password_exclude_username", *pw.Complexity.ExcludeUsername)
+		}
 	}
 	if pw != nil && pw.Age != nil {
-		if pw.Age.MaxAgeDays != nil { _ = d.Set("password_max_age_days", int(*pw.Age.MaxAgeDays)) }
-		if pw.Age.ExpireWarnDays != nil { _ = d.Set("password_expire_warn_days", int(*pw.Age.ExpireWarnDays)) }
-		if pw.Age.MinAgeMinutes != nil { _ = d.Set("password_min_age_minutes", int(*pw.Age.MinAgeMinutes)) }
-		if pw.Age.HistoryCount != nil { _ = d.Set("password_history_count", int(*pw.Age.HistoryCount)) }
+		if pw.Age.MaxAgeDays != nil {
+			_ = d.Set("password_max_age_days", int(*pw.Age.MaxAgeDays))
+		}
+		if pw.Age.ExpireWarnDays != nil {
+			_ = d.Set("password_expire_warn_days", int(*pw.Age.ExpireWarnDays))
+		}
+		if pw.Age.MinAgeMinutes != nil {
+			_ = d.Set("password_min_age_minutes", int(*pw.Age.MinAgeMinutes))
+		}
+		if pw.Age.HistoryCount != nil {
+			_ = d.Set("password_history_count", int(*pw.Age.HistoryCount))
+		}
 	}
 	if pw != nil && pw.Lockout != nil {
-		if pw.Lockout.MaxAttempts != nil { _ = d.Set("password_max_lockout_attempts", int(*pw.Lockout.MaxAttempts)) }
-		if pw.Lockout.AutoUnlockMinutes != nil { _ = d.Set("password_auto_unlock_minutes", int(*pw.Lockout.AutoUnlockMinutes)) }
-		if pw.Lockout.ShowLockoutFailures != nil { _ = d.Set("password_show_lockout_failures", *pw.Lockout.ShowLockoutFailures) }
+		if pw.Lockout.MaxAttempts != nil {
+			_ = d.Set("password_max_lockout_attempts", int(*pw.Lockout.MaxAttempts))
+		}
+		if pw.Lockout.AutoUnlockMinutes != nil {
+			_ = d.Set("password_auto_unlock_minutes", int(*pw.Lockout.AutoUnlockMinutes))
+		}
+		if pw.Lockout.ShowLockoutFailures != nil {
+			_ = d.Set("password_show_lockout_failures", *pw.Lockout.ShowLockoutFailures)
+		}
 	}
 	if factors != nil && factors.RecoveryQuestion != nil && factors.RecoveryQuestion.Properties != nil &&
 		factors.RecoveryQuestion.Properties.Complexity != nil && factors.RecoveryQuestion.Properties.Complexity.MinLength != nil {
@@ -266,10 +294,18 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 		factors.OktaEmail.Properties.RecoveryToken != nil && factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes != nil {
 		_ = d.Set("recovery_email_token", int(*factors.OktaEmail.Properties.RecoveryToken.TokenLifetimeMinutes))
 	}
-	if factors != nil && factors.OktaSms != nil { _ = d.Set("sms_recovery", factors.OktaSms.GetStatus()) }
-	if factors != nil && factors.OktaEmail != nil { _ = d.Set("email_recovery", factors.OktaEmail.GetStatus()) }
-	if factors != nil && factors.RecoveryQuestion != nil { _ = d.Set("question_recovery", factors.RecoveryQuestion.GetStatus()) }
-	if factors != nil && factors.OktaCall != nil { _ = d.Set("call_recovery", factors.OktaCall.GetStatus()) }
+	if factors != nil && factors.OktaSms != nil {
+		_ = d.Set("sms_recovery", factors.OktaSms.GetStatus())
+	}
+	if factors != nil && factors.OktaEmail != nil {
+		_ = d.Set("email_recovery", factors.OktaEmail.GetStatus())
+	}
+	if factors != nil && factors.RecoveryQuestion != nil {
+		_ = d.Set("question_recovery", factors.RecoveryQuestion.GetStatus())
+	}
+	if factors != nil && factors.OktaCall != nil {
+		_ = d.Set("call_recovery", factors.OktaCall.GetStatus())
+	}
 	if policy.Settings != nil && policy.Settings.Delegation != nil && policy.Settings.Delegation.Options != nil && policy.Settings.Delegation.Options.SkipUnlock != nil {
 		_ = d.Set("skip_unlock", *policy.Settings.Delegation.Options.SkipUnlock)
 	}
@@ -285,18 +321,24 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 	}
 	if pw != nil && pw.BreachedProtection != nil {
 		bp := pw.BreachedProtection
-		if bp.HasLogoutEnabled() { _ = d.Set("breached_password_logout_enabled", bp.GetLogoutEnabled()) }
-		if bp.HasExpireAfterDays() { _ = d.Set("breached_password_expire_after_days", int(bp.GetExpireAfterDays())) }
-		if bp.HasDelegatedWorkflowId() { _ = d.Set("breached_password_delegated_workflow_id", bp.GetDelegatedWorkflowId()) }
+		if bp.HasLogoutEnabled() {
+			_ = d.Set("breached_password_logout_enabled", bp.GetLogoutEnabled())
+		}
+		if bp.HasExpireAfterDays() {
+			_ = d.Set("breached_password_expire_after_days", int(bp.GetExpireAfterDays()))
+		}
+		if bp.HasDelegatedWorkflowId() {
+			_ = d.Set("breached_password_delegated_workflow_id", bp.GetDelegatedWorkflowId())
+		}
 	}
 	return nil
 }
 
 func buildDefaultPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 	template := v6okta.NewPasswordPolicy(d.Get("name").(string), "PASSWORD")
-	template.SetStatus(d.Get("status").(string))
+	// template.SetStatus(d.Get("status").(string))
 	template.SetDescription(d.Get("description").(string))
-	template.SetPriority(int32(d.Get("priority").(int)))
+	template.SetPriority(1) // default priority is 1
 	authProvider := &v6okta.PasswordPolicyAuthenticationProviderCondition{}
 	authProvider.SetProvider(d.Get("default_auth_provider").(string))
 	template.Conditions = &v6okta.PasswordPolicyConditions{
