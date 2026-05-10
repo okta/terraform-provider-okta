@@ -12,10 +12,10 @@ resource "okta_identity_source_bulk_upsert" "test" {
     external_id = "USEREXT00000000001"
 
     profile {
-      user_name    = "test.user@example.com"
-      first_name   = "Test"
-      last_name    = "User"
-      email        = "test.user@example.com"
+      user_name  = "test.user@example.com"
+      first_name = "Test"
+      last_name  = "User"
+      email      = "test.user@example.com"
     }
   }
 }

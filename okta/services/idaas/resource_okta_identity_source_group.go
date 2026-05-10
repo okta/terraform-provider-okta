@@ -110,7 +110,7 @@ func (r *identitySourceGroupResource) Schema(_ context.Context, _ resource.Schem
 
 func (r *identitySourceGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Import ID format: {identity_source_id}/{id}
-	parts := strings.SplitN(req.ID, "/", 2)
+	parts := strings.Split(req.ID, "/")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		resp.Diagnostics.AddError(
 			"Invalid import ID",
@@ -131,10 +131,10 @@ func (r *identitySourceGroupResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	id := state.ID.ValueString()
-	identity_source_id := state.IdentitySourceId.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
-	result, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceGroup(ctx, identity_source_id, id).Execute()
+	result, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceGroup(ctx, identitySourceId, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
@@ -156,12 +156,12 @@ func (r *identitySourceGroupResource) Create(ctx context.Context, req resource.C
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	identity_source_id := plan.IdentitySourceId.ValueString()
+	identitySourceId := plan.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
 	// Build request body from plan
-	createReq := client.IdentitySourceAPI.CreateIdentitySourceGroups(ctx, identity_source_id)
+	createReq := client.IdentitySourceAPI.CreateIdentitySourceGroups(ctx, identitySourceId)
 	body := okta.NewGroupsRequestSchemaWithDefaults()
 	body.SetExternalId(plan.ExternalId.ValueString())
 	if plan.Profile != nil {
@@ -201,12 +201,12 @@ func (r *identitySourceGroupResource) Update(ctx context.Context, req resource.U
 	}
 
 	id := state.ID.ValueString()
-	identity_source_id := state.IdentitySourceId.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
 	// Build request body from plan — only send changed fields
-	updateReq := client.IdentitySourceAPI.UpdateIdentitySourceGroups(ctx, identity_source_id, id)
+	updateReq := client.IdentitySourceAPI.UpdateIdentitySourceGroups(ctx, identitySourceId, id)
 	updateBody := okta.NewGroupsRequestSchemaWithDefaults()
 	updateBody.SetExternalId(plan.ExternalId.ValueString())
 	if plan.Profile != nil {
@@ -242,10 +242,10 @@ func (r *identitySourceGroupResource) Delete(ctx context.Context, req resource.D
 	}
 
 	id := state.ID.ValueString()
-	identity_source_id := state.IdentitySourceId.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
-	httpResp, err := client.IdentitySourceAPI.DeleteIdentitySourceGroup(ctx, identity_source_id, id).Execute()
+	httpResp, err := client.IdentitySourceAPI.DeleteIdentitySourceGroup(ctx, identitySourceId, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return

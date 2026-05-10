@@ -163,6 +163,7 @@ const (
 	OktaIDaaSPushGroups                               = "okta_push_groups"
 	OktaIDaaSIdentitySourceSession                    = "okta_identity_source_session"
 	OktaIDaaSIdentitySourceSessionImport              = "okta_identity_source_session_import"
+	OktaIDaaSIdentitySourceImport                     = "okta_identity_source_import"
 	OktaIDaaSIdentitySourceBulkUpsert                 = "okta_identity_source_bulk_upsert"
 	OktaIDaaSIdentitySourceBulkDelete                 = "okta_identity_source_bulk_delete"
 	OktaIDaaSIdentitySourceBulkGroupsUpsert           = "okta_identity_source_bulk_groups_upsert"

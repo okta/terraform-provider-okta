@@ -37,5 +37,5 @@ data "okta_identity_source_sessions" "by_id" {
 
 - `created` (String) Timestamp when the session was created (RFC3339).
 - `import_type` (String) The type of import. All imports are `INCREMENTAL`.
-- `last_updated` (String) Timestamp when the session was last updated (RFC3339).
+- `last_updated` (String) The timestamp when the identity source session was created (RFC3339).
 - `status` (String) The current status of the identity source session.

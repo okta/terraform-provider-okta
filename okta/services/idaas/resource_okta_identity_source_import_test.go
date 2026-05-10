@@ -9,10 +9,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccResourceOktaIdentitySourceBulkGroupsUpsert_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSIdentitySourceBulkGroupsUpsert, t.Name())
+func TestAccResourceOktaIdentitySourceImport_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSIdentitySourceImport, t.Name())
 	config := mgr.GetFixtures("resource.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdentitySourceBulkGroupsUpsert)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdentitySourceImport)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -25,6 +25,8 @@ func TestAccResourceOktaIdentitySourceBulkGroupsUpsert_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "identity_source_id", "0oaxc95befZNgrJl71d7"),
+					resource.TestCheckResourceAttrSet(resourceName, "session_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "session_status"),
 				),
 			},
 		},
