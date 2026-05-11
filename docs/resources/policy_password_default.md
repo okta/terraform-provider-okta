@@ -21,6 +21,9 @@ resource "okta_policy_password_default" "default" {
 
 ### Optional
 
+- `breached_password_delegated_workflow_id` (String) The ID of the workflow to run when a breached password is found during a sign-in attempt.
+- `breached_password_expire_after_days` (Number) Number of days after a breached password is detected before the user's password expires. Valid values: 0 through 10. If set to 0, expiry is immediate. Only applicable when `breached_password_logout_enabled` is `true`.
+- `breached_password_logout_enabled` (Boolean) If `true`, the user's sessions are terminated immediately when their credentials are detected as part of a breach. Requires `breached_password_expire_after_days` to also be configured. Default: `false`
 - `call_recovery` (String) Enable or disable voice call recovery: ACTIVE or INACTIVE. Default: `INACTIVE`
 - `email_recovery` (String) Enable or disable email password recovery: ACTIVE or INACTIVE. Default: `ACTIVE`
 - `password_auto_unlock_minutes` (Number) Number of minutes before a locked account is unlocked: 0 = no limit. Default: `0`

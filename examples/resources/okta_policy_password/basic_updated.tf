@@ -25,6 +25,8 @@ resource "okta_policy_password" "test" {
   question_min_length                    = 10
   recovery_email_token                   = 20160
   sms_recovery                           = "ACTIVE"
-  #call_recovery                          = "ACTIVE"
+  breached_password_expire_after_days    = 6
+  breached_password_logout_enabled       = true
+  breached_password_delegated_workflow_id = "1074260"
   groups_included = [data.okta_group.all.id]
 }
