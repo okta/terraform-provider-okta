@@ -336,9 +336,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 
 func buildDefaultPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 	template := v6okta.NewPasswordPolicy(d.Get("name").(string), "PASSWORD")
-	// template.SetStatus(d.Get("status").(string))
 	template.SetDescription(d.Get("description").(string))
-	template.SetPriority(1) // default priority is 1
 	authProvider := &v6okta.PasswordPolicyAuthenticationProviderCondition{}
 	authProvider.SetProvider(d.Get("default_auth_provider").(string))
 	template.Conditions = &v6okta.PasswordPolicyConditions{

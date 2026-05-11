@@ -157,9 +157,6 @@ func setDefaultPasswordPolicyV6(ctx context.Context, d *schema.ResourceData, met
 	}
 	_ = d.Set("name", policy.GetName())
 	_ = d.Set("description", policy.GetDescription())
-	if policy.Priority != nil {
-		_ = d.Set("priority", 1) // hardcoded to 1 as any other value will result in HTTP 403 response, "Cannot modify the priority attribute because it is read-only."
-	}
 	d.SetId(policy.GetId())
 	return policy, nil
 }
