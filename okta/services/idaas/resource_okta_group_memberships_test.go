@@ -79,8 +79,8 @@ func TestAccResourceOktaGroupMembershipsGH2775(t *testing.T) {
 	})
 }
 
-// TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
-func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
+// TestAccResourceOktaGroupMembershipsIssue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
+func TestAccResourceOktaGroupMembershipsIssue1072(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
