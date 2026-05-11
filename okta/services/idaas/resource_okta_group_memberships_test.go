@@ -37,7 +37,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaGroupMemberships_import(t *testing.T) {
+func TestAccResourceOktaGroupMembershipsGH2775(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupMemberships, t.Name())
 	baseConfig := mgr.GetFixtures("import_base.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupMemberships)
