@@ -31,12 +31,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:17 GMT
+                - Mon, 11 May 2026 16:41:30 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.171633458s
+        duration: 1.3003425s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -67,12 +67,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:18 GMT
+                - Mon, 11 May 2026 16:41:32 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.22707775s
+        duration: 1.078541875s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -97,19 +97,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:20.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:33.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:20 GMT
+                - Mon, 11 May 2026 16:41:33 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.322863584s
+        duration: 1.246524083s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -122,7 +122,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/activate
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/activate
         method: POST
       response:
         proto: HTTP/2.0
@@ -134,12 +134,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 11 May 2026 13:27:21 GMT
+                - Mon, 11 May 2026 16:41:34 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.160598667s
+        duration: 1.108336125s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -152,7 +152,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -160,19 +160,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:21.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:34.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:22 GMT
+                - Mon, 11 May 2026 16:41:35 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.225513542s
+        duration: 1.12356125s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -203,12 +203,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:24 GMT
+                - Mon, 11 May 2026 16:41:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.092538291s
+        duration: 1.076772542s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -239,12 +239,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:26 GMT
+                - Mon, 11 May 2026 16:41:39 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.122789584s
+        duration: 1.079415666s
     - id: 7
       request:
         proto: HTTP/1.1
@@ -257,7 +257,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -265,19 +265,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:21.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:34.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:27 GMT
+                - Mon, 11 May 2026 16:41:40 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.0884095s
+        duration: 1.065185208s
     - id: 8
       request:
         proto: HTTP/1.1
@@ -308,12 +308,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:28 GMT
+                - Mon, 11 May 2026 16:41:41 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.083131416s
+        duration: 1.174307709s
     - id: 9
       request:
         proto: HTTP/1.1
@@ -344,12 +344,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:29 GMT
+                - Mon, 11 May 2026 16:41:43 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.0913915s
+        duration: 1.0933085s
     - id: 10
       request:
         proto: HTTP/1.1
@@ -362,7 +362,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -370,19 +370,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:21.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:34.000Z","settings":{"password":{"complexity":{"minLength":8,"minLowerCase":1,"minUpperCase":1,"minNumber":1,"minSymbol":0,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":[]},"age":{"maxAgeDays":0,"expireWarnDays":0,"minAgeMinutes":0,"historyCount":5},"lockout":{"maxAttempts":10,"autoUnlockMinutes":0,"userLockoutNotificationChannels":[],"showLockoutFailures":false},"breachedProtection":{"expireAfterDays":null,"logoutEnabled":false,"delegatedWorkflowId":null}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":4}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":60}}},"okta_sms":{"status":"INACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:30 GMT
+                - Mon, 11 May 2026 16:41:44 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.095502s
+        duration: 1.071851333s
     - id: 11
       request:
         proto: HTTP/1.1
@@ -413,12 +413,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:32 GMT
+                - Mon, 11 May 2026 16:41:45 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.197859417s
+        duration: 1.063982042s
     - id: 12
       request:
         proto: HTTP/1.1
@@ -435,7 +435,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: PUT
       response:
         proto: HTTP/2.0
@@ -443,19 +443,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:34.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"ACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:47.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:34 GMT
+                - Mon, 11 May 2026 16:41:47 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.77313775s
+        duration: 1.634112917s
     - id: 13
       request:
         proto: HTTP/1.1
@@ -468,7 +468,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/deactivate
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -480,12 +480,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 11 May 2026 13:27:35 GMT
+                - Mon, 11 May 2026 16:41:48 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.212344167s
+        duration: 1.122184917s
     - id: 14
       request:
         proto: HTTP/1.1
@@ -498,7 +498,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -506,19 +506,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:35.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:48.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:36 GMT
+                - Mon, 11 May 2026 16:41:49 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.085321833s
+        duration: 1.15027825s
     - id: 15
       request:
         proto: HTTP/1.1
@@ -549,12 +549,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:38 GMT
+                - Mon, 11 May 2026 16:41:51 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.197637917s
+        duration: 1.095330666s
     - id: 16
       request:
         proto: HTTP/1.1
@@ -585,12 +585,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:39 GMT
+                - Mon, 11 May 2026 16:41:52 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.1607785s
+        duration: 1.063501167s
     - id: 17
       request:
         proto: HTTP/1.1
@@ -603,7 +603,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -611,19 +611,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:35.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:48.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:40 GMT
+                - Mon, 11 May 2026 16:41:53 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.090774209s
+        duration: 1.065609s
     - id: 18
       request:
         proto: HTTP/1.1
@@ -654,12 +654,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:41 GMT
+                - Mon, 11 May 2026 16:41:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.153936458s
+        duration: 1.06584s
     - id: 19
       request:
         proto: HTTP/1.1
@@ -690,12 +690,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:43 GMT
+                - Mon, 11 May 2026 16:41:56 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.147957708s
+        duration: 1.112326291s
     - id: 20
       request:
         proto: HTTP/1.1
@@ -708,7 +708,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -716,19 +716,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00pym961o0YQ11TI51d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T13:27:20.000Z","lastUpdated":"2026-05-11T13:27:35.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
+        body: '{"id":"00pymiaw5hFrMjKxW1d7","status":"INACTIVE","name":"testAcc_3624467569","description":"Terraform Acceptance Test Password Policy Updated","priority":4,"system":false,"conditions":{"people":{"groups":{"include":["00gnkw1sdqL30MdGk1d7"]}},"authProvider":{"provider":"OKTA"}},"created":"2026-05-11T16:41:33.000Z","lastUpdated":"2026-05-11T16:41:48.000Z","settings":{"password":{"complexity":{"minLength":12,"minLowerCase":0,"minUpperCase":0,"minNumber":0,"minSymbol":1,"excludeUsername":false,"dictionary":{"common":{"exclude":false}},"excludeAttributes":["firstName","lastName"]},"age":{"maxAgeDays":60,"expireWarnDays":15,"minAgeMinutes":60,"historyCount":0},"lockout":{"maxAttempts":10,"autoUnlockMinutes":2,"userLockoutNotificationChannels":["EMAIL"],"showLockoutFailures":true},"breachedProtection":{"expireAfterDays":6,"logoutEnabled":true,"delegatedWorkflowId":"1074260"}},"recovery":{"factors":{"recovery_question":{"status":"ACTIVE","properties":{"complexity":{"minLength":10}}},"okta_email":{"status":"ACTIVE","properties":{"recoveryToken":{"tokenLifetimeMinutes":20160}}},"okta_sms":{"status":"ACTIVE"},"okta_call":{"status":"INACTIVE"}}},"delegation":{"options":{"skipUnlock":false}}},"_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/mappings","hints":{"allow":["GET","POST"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"PASSWORD"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:44 GMT
+                - Mon, 11 May 2026 16:41:57 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.18235975s
+        duration: 1.115733583s
     - id: 21
       request:
         proto: HTTP/1.1
@@ -759,12 +759,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 11 May 2026 13:27:45 GMT
+                - Mon, 11 May 2026 16:41:58 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.141033292s
+        duration: 1.065615167s
     - id: 22
       request:
         proto: HTTP/1.1
@@ -777,7 +777,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/policies/00pym961o0YQ11TI51d7
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pymiaw5hFrMjKxW1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -789,9 +789,9 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 11 May 2026 13:27:47 GMT
+                - Mon, 11 May 2026 16:42:00 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.210897084s
+        duration: 1.254440708s

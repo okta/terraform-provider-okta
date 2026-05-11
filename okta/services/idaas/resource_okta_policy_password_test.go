@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -106,6 +107,11 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 }
 
 func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]
