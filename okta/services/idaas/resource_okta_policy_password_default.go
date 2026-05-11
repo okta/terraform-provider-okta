@@ -258,7 +258,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 			_ = d.Set("password_min_symbol", int(*pw.Complexity.MinSymbol))
 		}
 		if pw.Complexity.ExcludeUsername != nil {
-			_ = d.Set("password_exclude_username", *pw.Complexity.ExcludeUsername)
+			_ = d.Set("password_exclude_username", pw.Complexity.ExcludeUsername)
 		}
 	}
 	if pw != nil && pw.Age != nil {
@@ -283,7 +283,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 			_ = d.Set("password_auto_unlock_minutes", int(*pw.Lockout.AutoUnlockMinutes))
 		}
 		if pw.Lockout.ShowLockoutFailures != nil {
-			_ = d.Set("password_show_lockout_failures", *pw.Lockout.ShowLockoutFailures)
+			_ = d.Set("password_show_lockout_failures", pw.Lockout.ShowLockoutFailures)
 		}
 	}
 	if factors != nil && factors.RecoveryQuestion != nil && factors.RecoveryQuestion.Properties != nil &&
@@ -307,7 +307,7 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 		_ = d.Set("call_recovery", factors.OktaCall.GetStatus())
 	}
 	if policy.Settings != nil && policy.Settings.Delegation != nil && policy.Settings.Delegation.Options != nil && policy.Settings.Delegation.Options.SkipUnlock != nil {
-		_ = d.Set("skip_unlock", *policy.Settings.Delegation.Options.SkipUnlock)
+		_ = d.Set("skip_unlock", policy.Settings.Delegation.Options.SkipUnlock)
 	}
 	if pw != nil && pw.Complexity != nil {
 		for _, v := range pw.Complexity.ExcludeAttributes {
