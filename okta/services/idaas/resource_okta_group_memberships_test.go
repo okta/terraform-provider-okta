@@ -37,7 +37,7 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 	})
 }
 
-func TestAccResourceOktaGroupMembershipsGH2775(t *testing.T) {
+func TestAccResourceOktaGroupMemberships_GH2775(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupMemberships, t.Name())
 	baseConfig := mgr.GetFixtures("import_base.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupMemberships)
@@ -79,8 +79,8 @@ func TestAccResourceOktaGroupMembershipsGH2775(t *testing.T) {
 	})
 }
 
-// TestAccResourceOktaGroupMembershipsIssue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
-func TestAccResourceOktaGroupMembershipsIssue1072(t *testing.T) {
+// TestAccResourceOktaGroupMemberships_Issue1072 addresses https://github.com/okta/terraform-provider-okta/issues/1072
+func TestAccResourceOktaGroupMemberships_Issue1072(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
