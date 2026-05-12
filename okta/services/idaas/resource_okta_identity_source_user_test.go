@@ -25,7 +25,7 @@ func TestAccResourceOktaIdentitySourceUser_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "identity_source_id", "0oaxc95befZNgrJl71d7"),
-					resource.TestCheckResourceAttr(resourceName, "external_id", "USEREXT123456TESTUSER2"),
+					resource.TestCheckResourceAttr(resourceName, "id", "USEREXT123456TESTUSER2"),
 					resource.TestCheckResourceAttrSet(resourceName, "created"),
 				),
 			},

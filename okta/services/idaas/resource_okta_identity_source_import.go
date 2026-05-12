@@ -111,18 +111,7 @@ func (r *identitySourceImportResource) Metadata(_ context.Context, req resource.
 }
 
 func (r *identitySourceImportResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	cfg, ok := req.ProviderData.(*config.Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			"Expected *config.Config, got something else. Please report this issue to the provider developers.",
-		)
-		return
-	}
-	r.Config = cfg
+	r.Config = resourceConfiguration(req, resp)
 }
 
 func (r *identitySourceImportResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -582,6 +571,3 @@ func (r *identitySourceImportResource) Delete(_ context.Context, _ resource.Dele
 		"Removing this resource from configuration does not undo the import that was triggered in Okta.",
 	)
 }
-
-// Ensure diag is used
-var _ diag.Diagnostics

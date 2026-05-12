@@ -127,7 +127,6 @@ func FWProviderResources() []func() resource.Resource {
 		newPostAuthSessionPolicyRuleResource,
 		newEntityRiskPolicyRuleResource,
 		newSessionViolationPolicyRuleResource,
-		newIdentitySourceSessionResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceUserResource,

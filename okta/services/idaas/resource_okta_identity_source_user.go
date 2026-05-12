@@ -31,12 +31,11 @@ type identitySourceUserResource struct {
 	Config *config.Config
 }
 
-// IdentitySourceUserModel describes the resource data model.
+// identitySourceUserModel describes the resource data model.
 type identitySourceUserModel struct {
 	ID               types.String                         `tfsdk:"id"`
 	IdentitySourceId types.String                         `tfsdk:"identity_source_id"`
 	Created          types.String                         `tfsdk:"created"`
-	ExternalId       types.String                         `tfsdk:"external_id"`
 	LastUpdated      types.String                         `tfsdk:"last_updated"`
 	Profile          *IdentitySourceUserModelProfileModel `tfsdk:"profile"`
 }
@@ -61,29 +60,18 @@ func (r *identitySourceUserResource) Metadata(_ context.Context, req resource.Me
 }
 
 func (r *identitySourceUserResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	cfg, ok := req.ProviderData.(*config.Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			"Expected *config.Config, got something else. Please report this issue to the provider developers.",
-		)
-		return
-	}
-	r.Config = cfg
+	r.Config = resourceConfiguration(req, resp)
 }
 
 func (r *identitySourceUserResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages an Okta IdentitySourceUser resource.",
+		Description: "Manages an Okta Identity Source User.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The unique identifier for the resource.",
-				Computed:    true,
+				Description: "The external ID of the user in the identity source. Used as the resource identifier.",
+				Required:    true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"identity_source_id": schema.StringAttribute{
@@ -96,10 +84,6 @@ func (r *identitySourceUserResource) Schema(_ context.Context, _ resource.Schema
 			"created": schema.StringAttribute{
 				Description: "The timestamp when the user was created in the identity source",
 				Computed:    true,
-			},
-			"external_id": schema.StringAttribute{
-				Description: "The external ID of the user in the identity source",
-				Optional:    true,
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "The timestamp when the user was last updated in the identity source",
@@ -145,18 +129,18 @@ func (r *identitySourceUserResource) Schema(_ context.Context, _ resource.Schema
 }
 
 func (r *identitySourceUserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Import ID format: {identity_source_id}/{external_id}
+	// Import ID format: {identity_source_id}/{id}
 	parts := strings.Split(req.ID, "/")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		resp.Diagnostics.AddError(
 			"Invalid import ID",
-			"Import ID must be in the format: {identity_source_id}/{external_id}",
+			"Import ID must be in the format: {identity_source_id}/{id}",
 		)
 		return
 	}
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("identity_source_id"), parts[0])...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("external_id"), parts[1])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[1])...)
 }
 
 func (r *identitySourceUserResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -166,7 +150,7 @@ func (r *identitySourceUserResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	externalId := state.ExternalId.ValueString()
+	externalId := state.ID.ValueString()
 	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
@@ -179,11 +163,8 @@ func (r *identitySourceUserResource) Read(ctx context.Context, req resource.Read
 		resp.Diagnostics.AddError("Error reading identity_source_user", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
-	state.ExternalId = types.StringValue(result.GetExternalId())
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
-	state.ID = types.StringValue(result.GetId())
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -195,13 +176,13 @@ func (r *identitySourceUserResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	identitySourceId := plan.IdentitySourceId.ValueString()
+	externalId := plan.ID.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
-	// Build request body from plan
 	createReq := client.IdentitySourceAPI.CreateIdentitySourceUser(ctx, identitySourceId)
 	body := okta.NewUserRequestSchemaWithDefaults()
-	body.SetExternalId(plan.ExternalId.ValueString())
+	body.SetExternalId(externalId)
 	if plan.Profile != nil {
 		nestedProfile := okta.NewIdentitySourceUserProfileForUpsertRequiredWithDefaults()
 		if !plan.Profile.Email.IsNull() && !plan.Profile.Email.IsUnknown() {
@@ -233,11 +214,9 @@ func (r *identitySourceUserResource) Create(ctx context.Context, req resource.Cr
 		resp.Diagnostics.AddError("Error creating identity_source_user", err.Error())
 		return
 	}
-	// Create returns no body (204); set ID from the plan field.
-	plan.ID = plan.ExternalId
-	// Fetch computed fields via a follow-up Read (Create returned no body).
-	id := plan.ID.ValueString()
-	readResult, _, readErr := client.IdentitySourceAPI.GetIdentitySourceUser(ctx, plan.IdentitySourceId.ValueString(), id).Execute()
+	// Fetch computed fields
+	//via a follow-up Read (Create returned no body).
+	readResult, _, readErr := client.IdentitySourceAPI.GetIdentitySourceUser(ctx, identitySourceId, externalId).Execute()
 	if readErr == nil {
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
@@ -245,6 +224,7 @@ func (r *identitySourceUserResource) Create(ctx context.Context, req resource.Cr
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
+
 func (r *identitySourceUserResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan identitySourceUserModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -258,15 +238,14 @@ func (r *identitySourceUserResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	externalId := state.ExternalId.ValueString()
+	externalId := state.ID.ValueString()
 	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
-	// Build request body from plan — only send changed fields
 	updateReq := client.IdentitySourceAPI.ReplaceExistingIdentitySourceUser(ctx, identitySourceId, externalId)
 	updateBody := okta.NewUserRequestSchemaWithDefaults()
-	updateBody.SetExternalId(plan.ExternalId.ValueString())
+	updateBody.SetExternalId(externalId)
 	if plan.Profile != nil {
 		nestedProfile := okta.NewIdentitySourceUserProfileForUpsertRequiredWithDefaults()
 		if !plan.Profile.Email.IsNull() && !plan.Profile.Email.IsUnknown() {
@@ -299,10 +278,7 @@ func (r *identitySourceUserResource) Update(ctx context.Context, req resource.Up
 		resp.Diagnostics.AddError("Error updating identity_source_user", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	state.ID = types.StringValue(result.GetId())
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
-	state.ExternalId = types.StringValue(result.GetExternalId())
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 	state.Profile = plan.Profile
 
@@ -316,7 +292,7 @@ func (r *identitySourceUserResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	externalId := state.ExternalId.ValueString()
+	externalId := state.ID.ValueString()
 	identitySourceId := state.IdentitySourceId.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()

@@ -13,7 +13,7 @@ Manages an individual user in an Okta Identity Source. This resource creates or 
 ```terraform
 resource "okta_identity_source_user" "example" {
   identity_source_id = "<identity-source-id>"
-  external_id        = "USEREXT123456EXAMPLE"
+  id                 = "USEREXT123456EXAMPLE"
 
   profile {
     user_name  = "jdoe@example.com"
@@ -28,16 +28,15 @@ resource "okta_identity_source_user" "example" {
 
 ### Required
 
+- `id` (String) The external ID of the user in the identity source. Used as the resource identifier. Forces replacement when changed.
 - `identity_source_id` (String) ID of the identity source. Forces replacement when changed.
 
 ### Optional
 
-- `external_id` (String) The external ID of the user in the identity source.
 - `profile` (Block, Optional) User profile attributes. (see [below for nested schema](#nested-schema-for-profile))
 
 ### Read-Only
 
-- `id` (String) The unique identifier for the resource (set to the external ID).
 - `created` (String) Timestamp when the user was created in the identity source (RFC3339).
 - `last_updated` (String) Timestamp when the user was last updated in the identity source (RFC3339).
 
@@ -55,7 +54,7 @@ Optional:
 
 ## Import
 
-Import using `{identity_source_id}/{external_id}`:
+Import using `{identity_source_id}/{id}`:
 
 ```shell
 terraform import okta_identity_source_user.example <identity-source-id>/<external-id>

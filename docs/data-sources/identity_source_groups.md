@@ -19,6 +19,10 @@ data "okta_identity_source_groups" "example" {
 output "group_okta_id" {
   value = data.okta_identity_source_groups.example.id
 }
+
+output "group_display_name" {
+  value = data.okta_identity_source_groups.example.profile.display_name
+}
 ```
 
 ## Schema
@@ -35,3 +39,12 @@ output "group_okta_id" {
 ### Read-Only
 
 - `id` (String) Okta-assigned ID of the group (populated after read).
+
+### Blocks
+
+#### `profile`
+
+Profile information for the group, populated from the identity source.
+
+- `display_name` (String) Display name of the group.
+- `description` (String) Description of the group.

@@ -22,6 +22,8 @@ func TestAccDataSourceOktaIdentitySourceGroups_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_identity_source_groups.test", "id"),
 					resource.TestCheckResourceAttrSet("data.okta_identity_source_groups.test", "external_id"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_groups.test", "profile.display_name", "West Coast users-2"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_groups.test", "profile.description", "All users West of The Rockies"),
 				),
 			},
 		},

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -53,18 +52,7 @@ func (r *identitySourceGroupResource) Metadata(_ context.Context, req resource.M
 }
 
 func (r *identitySourceGroupResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-	cfg, ok := req.ProviderData.(*config.Config)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			"Expected *config.Config, got something else. Please report this issue to the provider developers.",
-		)
-		return
-	}
-	r.Config = cfg
+	r.Config = resourceConfiguration(req, resp)
 }
 
 func (r *identitySourceGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
@@ -254,6 +242,3 @@ func (r *identitySourceGroupResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 }
-
-// Ensure diag is used
-var _ diag.Diagnostics
