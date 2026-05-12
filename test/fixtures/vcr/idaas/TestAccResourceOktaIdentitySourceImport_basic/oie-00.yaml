@@ -20,19 +20,19 @@ interactions:
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"id":"aps1mp0rtTest001d77","identitySourceId":"0oaxc95befZNgrJl71d7","status":"CREATED","importType":"INCREMENTAL","created":"2026-05-09T10:00:00.000Z","lastUpdated":"2026-05-09T10:00:00.000Z"}'
+        body: '{"id":"apsyofrdjpnHboweG1d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"CREATED","importType":"INCREMENTAL","created":"2026-05-13T05:52:24.000Z","lastUpdated":"2026-05-13T05:52:24.000Z"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 09 May 2026 10:00:00 GMT
+                - Wed, 13 May 2026 05:52:24 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 201 Created
         code: 201
-        duration: 1.100000000s
+        duration: 1.087761542s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -49,7 +49,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/aps1mp0rtTest001d77/bulk-upsert
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsyofrdjpnHboweG1d7/bulk-upsert
         method: POST
       response:
         proto: HTTP/2.0
@@ -63,12 +63,12 @@ interactions:
             Content-Length:
                 - "0"
             Date:
-                - Fri, 09 May 2026 10:00:02 GMT
+                - Wed, 13 May 2026 05:52:25 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 202 Accepted
         code: 202
-        duration: 1.100000000s
+        duration: 1.907424875s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -85,7 +85,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/aps1mp0rtTest001d77/bulk-group-memberships-upsert
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsyofrdjpnHboweG1d7/bulk-group-memberships-upsert
         method: POST
       response:
         proto: HTTP/2.0
@@ -99,12 +99,12 @@ interactions:
             Content-Length:
                 - "0"
             Date:
-                - Fri, 09 May 2026 10:00:03 GMT
+                - Wed, 13 May 2026 05:52:28 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 202 Accepted
         code: 202
-        duration: 1.100000000s
+        duration: 2.0308065s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -117,26 +117,27 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/aps1mp0rtTest001d77/start-import
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsyofrdjpnHboweG1d7/start-import
         method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"id":"aps1mp0rtTest001d77","identitySourceId":"0oaxc95befZNgrJl71d7","status":"IN_PROGRESS","importType":"INCREMENTAL","created":"2026-05-09T10:00:00.000Z","lastUpdated":"2026-05-09T10:00:04.000Z"}'
+        uncompressed: true
+        body: '{"id":"apsyofrdjpnHboweG1d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"TRIGGERED","importType":"INCREMENTAL","created":"2026-05-13T05:52:24.000Z","lastUpdated":"2026-05-13T05:52:29.000Z"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 09 May 2026 10:00:04 GMT
+                - Wed, 13 May 2026 05:52:29 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.100000000s
+        duration: 1.107223s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -149,7 +150,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/aps1mp0rtTest001d77
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsyofrdjpnHboweG1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -157,16 +158,16 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"aps1mp0rtTest001d77","identitySourceId":"0oaxc95befZNgrJl71d7","status":"IN_PROGRESS","importType":"INCREMENTAL","created":"2026-05-09T10:00:00.000Z","lastUpdated":"2026-05-09T10:00:04.000Z"}'
+        body: '{"id":"apsyofrdjpnHboweG1d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"TRIGGERED","importType":"INCREMENTAL","created":"2026-05-13T05:52:24.000Z","lastUpdated":"2026-05-13T05:52:29.000Z"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 09 May 2026 10:00:05 GMT
+                - Wed, 13 May 2026 05:52:30 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.100000000s
+        duration: 1.071013167s

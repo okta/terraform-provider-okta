@@ -127,10 +127,12 @@ func FWProviderResources() []func() resource.Resource {
 		newPostAuthSessionPolicyRuleResource,
 		newEntityRiskPolicyRuleResource,
 		newSessionViolationPolicyRuleResource,
-		newIdentitySourceImportResource,
-		newIdentitySourceGroupMembershipResource,
-		newIdentitySourceUserResource,
+		newAuthenticatorWebauthnCustomAAGUIDResource,
+		newAuthenticatorMethodWebauthnResource,
 		newIdentitySourceGroupResource,
+		newIdentitySourceGroupMembershipResource,
+		newIdentitySourceImportResource,
+		newIdentitySourceUserResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -172,8 +174,10 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPostAuthSessionPolicyDataSource,
 		newEntityRiskPolicyDataSource,
 		newSessionViolationPolicyDataSource,
-		newIdentitySourceGroupsDataSource,
+		newAuthenticatorWebauthnCustomAAGUIDsDataSource,
+		newAuthenticatorMethodWebauthnDataSource,
 		newIdentitySourceGroupMembershipsDataSource,
+		newIdentitySourceGroupsDataSource,
 		newIdentitySourceSessionsDataSource,
 		newIdentitySourceUsersDataSource,
 	}
@@ -311,6 +315,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSIdpSocial:                dataSourceIdpSocial(),
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
+		resources.OktaIDaaSPolicyRulePassword:       dataSourcePolicyRulePassword(),
 		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),

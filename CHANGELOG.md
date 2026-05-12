@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.10.0 (April 27, 2026)
+
+### ENHANCEMENTS
+* Added `self_service_password_requirements` support to `okta_policy_rule_password` resource [#2752](https://github.com/okta/terraform-provider-okta/pull/2752) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### Bug Fixes
+* Fixed `status = "INACTIVE"` not being applied on rules in `okta_app_signon_policy_rules` resource [#2798](https://github.com/okta/terraform-provider-okta/pull/2798) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed 409 conflict error when updating `okta_request_condition` resource [#2784](https://github.com/okta/terraform-provider-okta/pull/2784) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed `resource_id` change now correctly triggers resource replacement in `okta_request_condition` [#2782](https://github.com/okta/terraform-provider-okta/pull/2782) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed `LINUX` os_type and `OTHER` os_expression inconsistency in `okta_app_signon_policy_rules` resource [#2779](https://github.com/okta/terraform-provider-okta/pull/2779) by [aditya-okta](https://github.com/aditya-okta)
+
 ## 6.9.0 (April 9, 2026)
 
 ### ENHANCEMENTS

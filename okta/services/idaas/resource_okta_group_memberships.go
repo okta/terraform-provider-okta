@@ -30,8 +30,34 @@ func resourceGroupMemberships() *schema.Resource {
 				if len(importID) == 2 {
 					d.Set("track_all_users", importID[1] == "true")
 				}
-				d.SetId(importID[0])
-				d.Set("group_id", importID[0])
+				groupId := importID[0]
+				d.SetId(groupId)
+				d.Set("group_id", groupId)
+
+				// Fetch current group members so the state is populated on import,
+				// preventing Terraform from treating existing members as pending additions.
+				client := getOktaClientFromMetadata(meta)
+				groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
+				if err != nil {
+					return nil, fmt.Errorf("error fetching group users during import: %w ID is %v", err, groupId)
+				}
+
+				userIDs := make([]string, 0, len(groupUsers))
+				for _, user := range groupUsers {
+					userIDs = append(userIDs, user.Id)
+				}
+				for resp.HasNextPage() {
+					groupUsers = nil
+					resp, err = resp.Next(ctx, &groupUsers)
+					if err != nil {
+						return nil, fmt.Errorf("error fetching group users during import: %w", err)
+					}
+					for _, user := range groupUsers {
+						userIDs = append(userIDs, user.Id)
+					}
+				}
+				d.Set("users", utils.ConvertStringSliceToSet(userIDs))
+
 				return []*schema.ResourceData{d}, nil
 			},
 		},

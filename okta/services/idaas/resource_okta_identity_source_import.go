@@ -290,11 +290,15 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 	}
 	sessionId := session.GetId()
 
-	// cleanupSession deletes the session if any subsequent step fails, so a re-apply
-	// isn't blocked by the "only one active session per 5 minutes" rate limit.
-	cleanupSession := func() {
-		_, _ = client.IdentitySourceAPI.DeleteIdentitySourceSession(ctx, identitySourceId, sessionId).Execute()
-	}
+	// Defer session cleanup so that panics or early returns after this point don't leave
+	// a stranded session that would block re-apply for 5 minutes.
+	// succeeded is flipped to true only when the import is triggered successfully.
+	succeeded := false
+	defer func() {
+		if !succeeded {
+			_, _ = client.IdentitySourceAPI.DeleteIdentitySourceSession(ctx, identitySourceId, sessionId).Execute()
+		}
+	}()
 
 	// 2. Upsert users
 	if plan.UpsertUsers != nil {
@@ -338,7 +342,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceDataForUpsert(ctx, identitySourceId, sessionId).BulkUpsertRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading upsert users", err.Error())
 			return "", "", diags
 		}
@@ -370,7 +373,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceGroupsForUpsert(ctx, identitySourceId, sessionId).BulkGroupUpsertRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading upsert groups", err.Error())
 			return "", "", diags
 		}
@@ -393,7 +395,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceDataForDelete(ctx, identitySourceId, sessionId).BulkDeleteRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading delete users", err.Error())
 			return "", "", diags
 		}
@@ -413,7 +414,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceGroupsDataForDelete(ctx, identitySourceId, sessionId).BulkGroupDeleteRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading delete groups", err.Error())
 			return "", "", diags
 		}
@@ -444,7 +444,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceGroupMembershipsForUpsert(ctx, identitySourceId, sessionId).BulkGroupMembershipsUpsertRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading upsert group memberships", err.Error())
 			return "", "", diags
 		}
@@ -475,7 +474,6 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 		}
 		req := client.IdentitySourceAPI.UploadIdentitySourceGroupMembershipsForDelete(ctx, identitySourceId, sessionId).BulkGroupMembershipsDeleteRequestBody(*body)
 		if _, err := req.Execute(); err != nil {
-			cleanupSession()
 			diags.AddError("Error uploading delete group memberships", err.Error())
 			return "", "", diags
 		}
@@ -484,11 +482,11 @@ func (r *identitySourceImportResource) runImport(ctx context.Context, plan *iden
 	// 8. Trigger import
 	result, _, err := client.IdentitySourceAPI.StartImportFromIdentitySource(ctx, identitySourceId, sessionId).Execute()
 	if err != nil {
-		cleanupSession()
 		diags.AddError("Error triggering identity source import", err.Error())
 		return "", "", diags
 	}
 
+	succeeded = true
 	return sessionId, result.GetStatus(), diags
 }
 

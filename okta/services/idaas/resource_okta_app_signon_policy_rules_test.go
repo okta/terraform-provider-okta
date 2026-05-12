@@ -10,6 +10,36 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
 )
 
+// TestAccResourceOktaAppSignOnPolicyRules_Issue2797 verifies that setting
+// status = "INACTIVE" on a rule is applied correctly and does not cause a
+// "provider produced inconsistent result after apply" error.
+func TestAccResourceOktaAppSignOnPolicyRules_Issue2797(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("issue_2797.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.status", "INACTIVE"),
+				),
+			},
+			{
+				// Idempotency check — no diff expected on re-apply.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAppSignOnPolicyRules_crud(t *testing.T) {
 	resourceName := fmt.Sprintf("%s.policy_rules", resources.OktaIDaaSAppSignOnPolicyRules)
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
@@ -124,6 +154,37 @@ func TestAccResourceOktaAppSignOnPolicyRules_dynamicValues(t *testing.T) {
 			},
 			{
 				// Second apply: idempotency check — no changes expected.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRules_Issue2774 tests that LINUX is accepted
+// as a valid os_type in platform_include blocks. It was missing from validOSTypes.
+func TestAccResourceOktaAppSignOnPolicyRules_Issue2774(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("issue_2774.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.platform_include.0.os_type", "LINUX"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.platform_include.0.type", "DESKTOP"),
+				),
+			},
+			{
+				// Idempotency check — no changes expected after first apply.
 				Config:   config,
 				PlanOnly: true,
 			},
