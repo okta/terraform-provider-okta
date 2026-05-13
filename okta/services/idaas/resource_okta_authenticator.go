@@ -318,7 +318,8 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
-	if d.Get("type").(string) == "security_key" {
+	// WebAuthn is a built-in authenticator and doesn't need provider configuration
+	if d.Get("type").(string) == "security_key" && d.Get("key").(string) != "webauthn" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 			Configuration: &sdk.AuthenticatorProviderConfiguration{
@@ -400,8 +401,14 @@ func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
 
 func validateAuthenticator(d *schema.ResourceData) error {
 	typ := d.Get("type").(string)
+	key := d.Get("key").(string)
 	if typ == "security_key" {
-		if d.Get("key").(string) != "custom_otp" {
+		// WebAuthn is a built-in authenticator and doesn't need provider configuration
+		if key == "webauthn" {
+			// WebAuthn authenticators don't require provider fields
+			return nil
+		}
+		if key != "custom_otp" {
 			h := d.Get("provider_hostname").(string)
 			_, pok := d.GetOk("provider_auth_port")
 			s := d.Get("provider_shared_secret").(string)
@@ -445,7 +452,8 @@ func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.Resource
 	if authenticator.Provider != nil {
 		_ = d.Set("provider_type", authenticator.Provider.Type)
 
-		if authenticator.Type == "security_key" {
+		// WebAuthn is a built-in authenticator and doesn't have provider configuration
+		if authenticator.Type == "security_key" && authenticator.Key != "webauthn" {
 			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
 			if authenticator.Provider.Configuration.AuthPortPtr != nil {
 				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
