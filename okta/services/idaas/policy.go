@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -125,6 +127,40 @@ func setDefaultPolicy(ctx context.Context, d *schema.ResourceData, m interface{}
 	return policy, nil
 }
 
+func setDefaultPasswordPolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}) (*v6okta.PasswordPolicy, error) {
+	policies, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ListPolicies(ctx).Type_("PASSWORD").Execute()
+	if err != nil {
+		return nil, fmt.Errorf("failed to list password policies: %v", err)
+	}
+	var policy *v6okta.PasswordPolicy
+	for _, p := range policies {
+		pp := p.PasswordPolicy
+		if pp == nil {
+			continue
+		}
+		if pp.HasSystem() && pp.GetSystem() && (strings.Contains(pp.GetName(), "Default") || strings.Contains(pp.GetDescription(), "default")) {
+			policy = pp
+			break
+		}
+	}
+	if policy == nil {
+		return nil, fmt.Errorf("cannot find default PASSWORD policy")
+	}
+	groups, _, err := getOktaClientFromMetadata(meta).Group.ListGroups(ctx, &query.Params{Q: "Everyone"})
+	if err != nil {
+		return nil, fmt.Errorf("failed to find default group for default password policy: %v", err)
+	}
+	for _, g := range groups {
+		if g.Profile.Name == "Everyone" {
+			_ = d.Set("default_included_group_id", g.Id)
+		}
+	}
+	_ = d.Set("name", policy.GetName())
+	_ = d.Set("description", policy.GetDescription())
+	d.SetId(policy.GetId())
+	return policy, nil
+}
+
 func buildDefaultPolicySchema(target map[string]*schema.Schema) map[string]*schema.Schema {
 	return utils.BuildSchema(defaultPolicySchema, target)
 }
@@ -168,6 +204,28 @@ func createPolicy(ctx context.Context, d *schema.ResourceData, m interface{}, te
 	return policyActivate(ctx, d, m)
 }
 
+func createPolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}, template *v6okta.PasswordPolicy) (*v6okta.PasswordPolicy, error) {
+	if err := ensureNotDefaultPolicy(d); err != nil {
+		return nil, err
+	}
+	req := v6okta.PasswordPolicyAsCreatePolicyRequest(template)
+	result, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.CreatePolicy(ctx).Policy(req).Execute()
+	if err != nil {
+		return nil, err
+	}
+	policy := result.PasswordPolicy
+	if policy == nil {
+		return nil, fmt.Errorf("no password policy in create response")
+	}
+	d.SetId(policy.GetId())
+	if template.Priority != nil && policy.Priority != nil {
+		if err = utils.ValidatePriority(int64(*template.Priority), int64(*policy.Priority)); err != nil {
+			return nil, err
+		}
+	}
+	return policy, policyActivate(ctx, d, meta)
+}
+
 func ensureNotDefaultPolicy(d *schema.ResourceData) error {
 	return utils.EnsureNotDefault(d, "Policy")
 }
@@ -196,6 +254,23 @@ func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk
 		return nil, nil
 	}
 	return policy, err
+}
+
+func getPolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}) (*v6okta.PasswordPolicy, error) {
+	inner, resp, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.GetPolicy(ctx, d.Id()).Execute()
+	if err != nil {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
+			d.SetId("")
+			return nil, nil
+		}
+		return nil, err
+	}
+	policy := inner.PasswordPolicy
+	if policy == nil {
+		d.SetId("")
+		return nil, nil
+	}
+	return policy, nil
 }
 
 // activate or deactivate a policy according to the terraform schema status field
@@ -250,6 +325,35 @@ func deletePolicy(ctx context.Context, d *schema.ResourceData, m interface{}) er
 	// remove the policy resource from terraform
 	d.SetId("")
 	return nil
+}
+
+func deletePolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+	_, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.DeletePolicy(ctx, d.Id()).Execute()
+	return err
+}
+
+func replacePolicyV6(ctx context.Context, d *schema.ResourceData, meta interface{}, template *v6okta.PasswordPolicy) (*v6okta.PasswordPolicy, error) {
+	req := v6okta.PasswordPolicyAsCreatePolicyRequest(template)
+	result, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicy(ctx, d.Id()).Policy(req).Execute()
+	if err != nil {
+		return nil, err
+	}
+	policy := result.PasswordPolicy
+	if template.Priority != nil && policy != nil && policy.Priority != nil {
+		if err = utils.ValidatePriority(int64(*template.Priority), int64(*policy.Priority)); err != nil {
+			return nil, err
+		}
+	}
+	return policy, policyActivate(ctx, d, meta)
+}
+
+func syncPolicyFromUpstreamV6(d *schema.ResourceData, policy *v6okta.PasswordPolicy) {
+	_ = d.Set("name", policy.GetName())
+	_ = d.Set("description", policy.GetDescription())
+	_ = d.Set("status", policy.GetStatus())
+	if policy.Priority != nil {
+		_ = d.Set("priority", int(*policy.Priority))
+	}
 }
 
 func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error {

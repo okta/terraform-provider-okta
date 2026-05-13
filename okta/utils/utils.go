@@ -869,6 +869,11 @@ func Int64Ptr(what int) *int64 {
 	return &result
 }
 
+func Int32Ptr(what int) *int32 {
+	result := int32(what)
+	return &result
+}
+
 func ResourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
