@@ -22,30 +22,30 @@ type rpIdDomainResourceModel struct {
 }
 
 type rpIdResourceModel struct {
-	Enabled types.Bool              `tfsdk:"enabled"`
+	Enabled types.Bool               `tfsdk:"enabled"`
 	Domain  *rpIdDomainResourceModel `tfsdk:"domain"`
 }
 
 type authenticatorMethodWebauthnResourceModel struct {
-	ID                             types.String                  `tfsdk:"id"`
-	AuthenticatorID                types.String                  `tfsdk:"authenticator_id"`
-	UserVerification               types.String                  `tfsdk:"user_verification"`
-	UserVerificationForVerify      types.String                  `tfsdk:"user_verification_for_verify"`
-	Attachment                     types.String                  `tfsdk:"attachment"`
-	AaguidGroups                   []aaguidGroupModel            `tfsdk:"aaguid_group"`
-	EnableAutofillUI               types.Bool                    `tfsdk:"enable_autofill_ui"`
-	ResidentKeyRequirement         types.String                  `tfsdk:"resident_key_requirement"`
-	ShowSignInWithAPasskeyButton   types.Bool                    `tfsdk:"show_sign_in_with_a_passkey_button"`
-	CertBasedAttestationValidation types.Bool                    `tfsdk:"cert_based_attestation_validation"`
-	HardwareProtected              types.Bool                    `tfsdk:"hardware_protected"`
-	FipsCompliant                  types.Bool                    `tfsdk:"fips_compliant"`
-	AllowSyncablePasskeys          types.Bool                    `tfsdk:"allow_syncable_passkeys"`
-	RpId                           *rpIdResourceModel            `tfsdk:"rp_id"`
-	Status                         types.String                  `tfsdk:"status"`
+	ID                             types.String       `tfsdk:"id"`
+	AuthenticatorID                types.String       `tfsdk:"authenticator_id"`
+	UserVerification               types.String       `tfsdk:"user_verification"`
+	UserVerificationForVerify      types.String       `tfsdk:"user_verification_for_verify"`
+	Attachment                     types.String       `tfsdk:"attachment"`
+	AaguidGroups                   []aaguidGroupModel `tfsdk:"aaguid_group"`
+	EnableAutofillUI               types.Bool         `tfsdk:"enable_autofill_ui"`
+	ResidentKeyRequirement         types.String       `tfsdk:"resident_key_requirement"`
+	ShowSignInWithAPasskeyButton   types.Bool         `tfsdk:"show_sign_in_with_a_passkey_button"`
+	CertBasedAttestationValidation types.Bool         `tfsdk:"cert_based_attestation_validation"`
+	HardwareProtected              types.Bool         `tfsdk:"hardware_protected"`
+	FipsCompliant                  types.Bool         `tfsdk:"fips_compliant"`
+	AllowSyncablePasskeys          types.Bool         `tfsdk:"allow_syncable_passkeys"`
+	RpId                           *rpIdResourceModel `tfsdk:"rp_id"`
+	Status                         types.String       `tfsdk:"status"`
 }
 
 type aaguidGroupModel struct {
-	Name    types.String `tfsdk:"name"`
+	Name    types.String   `tfsdk:"name"`
 	Aaguids []types.String `tfsdk:"aaguids"`
 }
 

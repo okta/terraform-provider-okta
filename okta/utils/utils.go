@@ -13,6 +13,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"sort"
@@ -947,4 +948,29 @@ func ConvertStringSlice(slice []string) []types.String {
 		result[i] = types.StringValue(v)
 	}
 	return result
+}
+
+// ExtractAfterCursor parses the `after` cursor from the Link header of an API response.
+// Link header format: <url>; rel="next", <url>; rel="self"
+func ExtractAfterCursor(httpResp *v6okta.APIResponse) string {
+	if httpResp == nil {
+		return ""
+	}
+	for _, part := range strings.Split(httpResp.Header.Get("Link"), ",") {
+		part = strings.TrimSpace(part)
+		if !strings.Contains(part, `rel="next"`) {
+			continue
+		}
+		start := strings.Index(part, "<")
+		end := strings.Index(part, ">")
+		if start < 0 || end <= start {
+			continue
+		}
+		u, err := url.Parse(part[start+1 : end])
+		if err != nil {
+			continue
+		}
+		return u.Query().Get("after")
+	}
+	return ""
 }

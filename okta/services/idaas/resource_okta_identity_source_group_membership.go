@@ -1,0 +1,227 @@
+package idaas
+
+import (
+	"context"
+	"net/http"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	okta "github.com/okta/okta-sdk-golang/v6/okta"
+
+	"github.com/okta/terraform-provider-okta/okta/config"
+)
+
+// Ensure interface compliance
+var (
+	_ resource.Resource                = &identitySourceGroupMembershipResource{}
+	_ resource.ResourceWithConfigure   = &identitySourceGroupMembershipResource{}
+	_ resource.ResourceWithImportState = &identitySourceGroupMembershipResource{}
+)
+
+// IdentitySourceGroupMembershipResource defines the resource implementation.
+type identitySourceGroupMembershipResource struct {
+	Config *config.Config
+}
+
+// IdentitySourceGroupMembershipModel describes the resource data model.
+type identitySourceGroupMembershipModel struct {
+	ID                types.String `tfsdk:"id"`
+	IdentitySourceId  types.String `tfsdk:"identity_source_id"`
+	GroupOrExternalId types.String `tfsdk:"group_or_external_id"`
+	MemberExternalIds types.List   `tfsdk:"member_external_ids"`
+	MemberExternalId  types.String `tfsdk:"member_external_id"`
+}
+
+func newIdentitySourceGroupMembershipResource() resource.Resource {
+	return &identitySourceGroupMembershipResource{}
+}
+
+func (r *identitySourceGroupMembershipResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_identity_source_group_membership"
+}
+
+func (r *identitySourceGroupMembershipResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(req, resp)
+}
+
+func (r *identitySourceGroupMembershipResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Manages an Okta IdentitySourceGroupMembership resource.",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier for the resource.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"identity_source_id": schema.StringAttribute{
+				Description: "ID of the identity source",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"group_or_external_id": schema.StringAttribute{
+				Description: "External ID of the identity source group",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"member_external_ids": schema.ListAttribute{
+				Description: "A list of app user external IDs that are members of the group in Okta (read-only, populated after creation)",
+				ElementType: types.StringType,
+				Computed:    true,
+			},
+			"member_external_id": schema.StringAttribute{
+				Description: "The external ID of the user to be added as a member of the group in Okta",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+		},
+	}
+}
+
+func (r *identitySourceGroupMembershipResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Import ID format: {identity_source_id}/{group_or_external_id}/{id}
+	parts := strings.Split(req.ID, "/")
+	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Import ID must be in the format: {identity_source_id}/{group_or_external_id}/{id}",
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("identity_source_id"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("group_or_external_id"), parts[1])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[2])...)
+}
+
+func (r *identitySourceGroupMembershipResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state identitySourceGroupMembershipModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
+	groupOrExternalId := state.GroupOrExternalId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	// Read via list — search for the ID in the MemberExternalIds array.
+	result, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceGroupMemberships(ctx, identitySourceId, groupOrExternalId).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error reading identity_source_group_membership", err.Error())
+		return
+	}
+	// Search the list for our ID — if not found the resource has been deleted externally.
+	found := false
+	for _, item := range result.GetMemberExternalIds() {
+		if item == id {
+			found = true
+			break
+		}
+	}
+	if !found {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	// Populate member_external_ids from the response.
+	memberIds := result.GetMemberExternalIds()
+	listVal, diags := types.ListValueFrom(ctx, types.StringType, memberIds)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	state.MemberExternalIds = listVal
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+func (r *identitySourceGroupMembershipResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan identitySourceGroupMembershipModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	identitySourceId := plan.IdentitySourceId.ValueString()
+	groupOrExternalId := plan.GroupOrExternalId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+
+	// Build request body from plan
+	createReq := client.IdentitySourceAPI.CreateIdentitySourceGroupsMemberships(ctx, identitySourceId, groupOrExternalId)
+	body := okta.NewMembershipRequestSchemaWithDefaults()
+	body.SetMemberExternalId(plan.MemberExternalId.ValueString())
+	createReq = createReq.MembershipRequestSchema(*body)
+	_, err := createReq.Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error creating identity_source_group_membership", err.Error())
+		return
+	}
+	// Create returns no body (204); set ID from the plan field.
+	plan.ID = plan.MemberExternalId
+
+	// Fetch member_external_ids via a follow-up Read (Create returned no body).
+	readResult, _, readErr := client.IdentitySourceAPI.GetIdentitySourceGroupMemberships(ctx, identitySourceId, groupOrExternalId).Execute()
+	if readErr == nil {
+		memberIds := readResult.GetMemberExternalIds()
+		listVal, diags := types.ListValueFrom(ctx, types.StringType, memberIds)
+		resp.Diagnostics.Append(diags...)
+		if !resp.Diagnostics.HasError() {
+			plan.MemberExternalIds = listVal
+		}
+	} else {
+		plan.MemberExternalIds, _ = types.ListValueFrom(ctx, types.StringType, []string{})
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+}
+func (r *identitySourceGroupMembershipResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	resp.Diagnostics.AddWarning(
+		"Update Not Supported",
+		"This resource does not support in-place updates. Changes will require resource replacement.",
+	)
+}
+
+func (r *identitySourceGroupMembershipResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state identitySourceGroupMembershipModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
+	groupOrExternalId := state.GroupOrExternalId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	httpResp, err := client.IdentitySourceAPI.DeleteIdentitySourceGroupMemberships(ctx, identitySourceId, groupOrExternalId, id).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return
+		}
+		resp.Diagnostics.AddError("Error deleting identity_source_group_membership", err.Error())
+		return
+	}
+}
+
+// Ensure diag is used
+var _ diag.Diagnostics

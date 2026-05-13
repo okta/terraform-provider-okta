@@ -1,0 +1,244 @@
+package idaas
+
+import (
+	"context"
+	"net/http"
+	"strings"
+
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	okta "github.com/okta/okta-sdk-golang/v6/okta"
+
+	"github.com/okta/terraform-provider-okta/okta/config"
+)
+
+// Ensure interface compliance
+var (
+	_ resource.Resource                = &identitySourceGroupResource{}
+	_ resource.ResourceWithConfigure   = &identitySourceGroupResource{}
+	_ resource.ResourceWithImportState = &identitySourceGroupResource{}
+)
+
+// IdentitySourceGroupResource defines the resource implementation.
+type identitySourceGroupResource struct {
+	Config *config.Config
+}
+
+// IdentitySourceGroupModel describes the resource data model.
+type identitySourceGroupModel struct {
+	ID               types.String                          `tfsdk:"id"`
+	IdentitySourceId types.String                          `tfsdk:"identity_source_id"`
+	ExternalId       types.String                          `tfsdk:"external_id"`
+	Profile          *IdentitySourceGroupModelProfileModel `tfsdk:"profile"`
+}
+
+// IdentitySourceGroupModelProfileModel is the nested model for profile.
+type IdentitySourceGroupModelProfileModel struct {
+	Description types.String `tfsdk:"description"`
+	DisplayName types.String `tfsdk:"display_name"`
+}
+
+func newIdentitySourceGroupResource() resource.Resource {
+	return &identitySourceGroupResource{}
+}
+
+func (r *identitySourceGroupResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_identity_source_group"
+}
+
+func (r *identitySourceGroupResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(req, resp)
+}
+
+func (r *identitySourceGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Manages an Okta IdentitySourceGroup resource.",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier for the resource.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"identity_source_id": schema.StringAttribute{
+				Description: "ID of the identity source",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
+			"external_id": schema.StringAttribute{
+				Description: "The external ID of the identity source group",
+				Optional:    true,
+			},
+		},
+		Blocks: map[string]schema.Block{
+			"profile": schema.SingleNestedBlock{
+				Description: "Contains a set of external group attributes and their values that are mapped to Okta standard properties. See the group [`profile` object](https://developer.okta.com/docs/api/openapi/okta-managemen...",
+				Attributes: map[string]schema.Attribute{
+					"description": schema.StringAttribute{
+						Description: "Description of the group",
+						Optional:    true,
+					},
+					"display_name": schema.StringAttribute{
+						Description: "Name of the group",
+						Optional:    true,
+					},
+				},
+			},
+		},
+	}
+}
+
+func (r *identitySourceGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Import ID format: {identity_source_id}/{id}
+	parts := strings.Split(req.ID, "/")
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Import ID must be in the format: {identity_source_id}/{id}",
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("identity_source_id"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[1])...)
+}
+
+func (r *identitySourceGroupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state identitySourceGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	result, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceGroup(ctx, identitySourceId, id).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error reading identity_source_group", err.Error())
+		return
+	}
+	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.ExternalId = types.StringValue(result.GetExternalId())
+	state.ID = types.StringValue(result.GetId())
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+func (r *identitySourceGroupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan identitySourceGroupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	identitySourceId := plan.IdentitySourceId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+
+	// Build request body from plan
+	createReq := client.IdentitySourceAPI.CreateIdentitySourceGroups(ctx, identitySourceId)
+	body := okta.NewGroupsRequestSchemaWithDefaults()
+	body.SetExternalId(plan.ExternalId.ValueString())
+	if plan.Profile != nil {
+		nestedProfile := okta.NewIdentitySourceGroupProfileForUpsertWithDefaults()
+		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
+			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.DisplayName.IsNull() && !plan.Profile.DisplayName.IsUnknown() {
+			nestedProfile.SetDisplayName(plan.Profile.DisplayName.ValueString())
+		}
+		body.SetProfile(*nestedProfile)
+	}
+	createReq = createReq.GroupsRequestSchema(*body)
+	result, _, err := createReq.Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error creating identity_source_group", err.Error())
+		return
+	}
+	// Set ID from API response
+	plan.ID = types.StringValue(result.GetId())
+
+	// Map computed fields from response back to plan (scalar types only)
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+}
+func (r *identitySourceGroupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan identitySourceGroupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state identitySourceGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+
+	// Build request body from plan — only send changed fields
+	updateReq := client.IdentitySourceAPI.UpdateIdentitySourceGroups(ctx, identitySourceId, id)
+	updateBody := okta.NewGroupsRequestSchemaWithDefaults()
+	updateBody.SetExternalId(plan.ExternalId.ValueString())
+	if plan.Profile != nil {
+		nestedProfile := okta.NewIdentitySourceGroupProfileForUpsertWithDefaults()
+		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
+			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.DisplayName.IsNull() && !plan.Profile.DisplayName.IsUnknown() {
+			nestedProfile.SetDisplayName(plan.Profile.DisplayName.ValueString())
+		}
+		updateBody.SetProfile(*nestedProfile)
+	}
+	updateReq = updateReq.GroupsRequestSchema(*updateBody)
+
+	result, _, err := updateReq.Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error updating identity_source_group", err.Error())
+		return
+	}
+	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.ID = types.StringValue(result.GetId())
+	state.ExternalId = types.StringValue(result.GetExternalId())
+	state.Profile = plan.Profile
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+func (r *identitySourceGroupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state identitySourceGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	id := state.ID.ValueString()
+	identitySourceId := state.IdentitySourceId.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	httpResp, err := client.IdentitySourceAPI.DeleteIdentitySourceGroup(ctx, identitySourceId, id).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return
+		}
+		resp.Diagnostics.AddError("Error deleting identity_source_group", err.Error())
+		return
+	}
+}
