@@ -224,15 +224,17 @@ The only difference is that these fields are immutable and can not be managed: '
 			"keep_me_signed_in": {
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Controls the post-authentication Keep Me Signed In (KMSI) prompt. Requires the KMSI feature to be enabled on the Okta org.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"post_auth": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"ALLOWED", "NOT_ALLOWED"}, false),
 							Description:  "Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.",
+							Default:      "NOT_ALLOWED",
 						},
 						"post_auth_prompt_frequency": {
 							Type:        schema.TypeString,
