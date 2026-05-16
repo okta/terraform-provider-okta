@@ -299,3 +299,31 @@ func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, chec
 	}
 	return nil
 }
+
+func buildKeepMeSignedIn(d *schema.ResourceData) *sdk.KeepMeSignedIn {
+	v, ok := d.GetOk("keep_me_signed_in")
+	if !ok {
+		return nil
+	}
+	list := v.([]interface{})
+	if len(list) == 0 || list[0] == nil {
+		return nil
+	}
+	m := list[0].(map[string]interface{})
+	return &sdk.KeepMeSignedIn{
+		PostAuth:                m["post_auth"].(string),
+		PostAuthPromptFrequency: m["post_auth_prompt_frequency"].(string),
+	}
+}
+
+func flattenKeepMeSignedIn(k *sdk.KeepMeSignedIn) []interface{} {
+	if k == nil {
+		return nil
+	}
+	return []interface{}{
+		map[string]interface{}{
+			"post_auth":                  k.PostAuth,
+			"post_auth_prompt_frequency": k.PostAuthPromptFrequency,
+		},
+	}
+}

@@ -3,6 +3,7 @@ package sdk
 
 type AccessPolicyRuleApplicationSignOn struct {
 	Access             string              `json:"access,omitempty"`
+	KeepMeSignedIn     *KeepMeSignedIn     `json:"keepMeSignedIn,omitempty"`
 	VerificationMethod *VerificationMethod `json:"verificationMethod,omitempty"`
 }
 

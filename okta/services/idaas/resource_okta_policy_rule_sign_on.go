@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -150,6 +151,27 @@ func resourcePolicySignOnRule() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "When identity_provider is `SPECIFIC_IDP` then this is the list of IdP IDs to apply the rule on",
 			},
+			"keep_me_signed_in": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Description: "Controls the post-authentication Keep Me Signed In (KMSI) prompt. Requires the KMSI feature to be enabled on the Okta org.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"post_auth": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"ALLOWED", "NOT_ALLOWED"}, false),
+							Description:  "Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.",
+						},
+						"post_auth_prompt_frequency": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).",
+						},
+					},
+				},
+			},
 		}),
 	}
 }
@@ -194,6 +216,7 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	if rule.Actions.SignOn.PrimaryFactor != "" {
 		_ = d.Set("primary_factor", rule.Actions.SignOn.PrimaryFactor)
 	}
+	_ = d.Set("keep_me_signed_in", flattenKeepMeSignedIn(rule.Actions.SignOn.KeepMeSignedIn))
 	if rule.Conditions != nil {
 		if rule.Conditions.RiskScore != nil {
 			curRiscLevel, riscLevelSet := d.GetOk("risc_level")
@@ -331,6 +354,7 @@ func buildSignOnPolicyRule(d *schema.ResourceData) sdk.SdkPolicyRule {
 	if ok {
 		template.Actions.SignOn.PrimaryFactor = pf.(string)
 	}
+	template.Actions.SignOn.KeepMeSignedIn = buildKeepMeSignedIn(d)
 	factorSeq := d.Get("factor_sequence").([]interface{})
 	if len(factorSeq) == 0 {
 		return template
