@@ -308,6 +308,36 @@ func resourceUser() *schema.Resource {
 				Computed:    true,
 				Description: "The Realm ID to associate the user with",
 			},
+			"created": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the user was created",
+			},
+			"activated": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the user status transitioned to ACTIVE",
+			},
+			"status_changed": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the user's status last changed",
+			},
+			"last_login": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp of the user's last login",
+			},
+			"last_updated": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the user was last updated",
+			},
+			"password_changed": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The timestamp when the user's password was last changed",
+			},
 			// lintignore:S018
 			"password_hash": {
 				Type:        schema.TypeSet,

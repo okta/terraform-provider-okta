@@ -42,6 +42,8 @@ func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
+					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
 				),
 			},
 			{
@@ -172,6 +174,8 @@ func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "title", "Director"),
 					resource.TestCheckResourceAttr(resourceName, "user_type", "Employee"),
 					resource.TestCheckResourceAttr(resourceName, "zip_code", "11111"),
+					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
 				),
 			},
 			{
