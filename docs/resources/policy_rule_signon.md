@@ -105,7 +105,6 @@ resource "okta_policy_rule_signon" "example" {
 	- 'factor_type' - (Required) Factor type of the additional authentication step. (see [below for nested schema](#nestedblock--factor_sequence))
 - `identity_provider` (String) Apply rule based on the IdP used: `ANY`, `OKTA` or `SPECIFIC_IDP`. Default: `ANY`. ~> **WARNING**: Use of `identity_provider` requires a feature flag to be enabled.
 - `identity_provider_ids` (List of String) When identity_provider is `SPECIFIC_IDP` then this is the list of IdP IDs to apply the rule on
-- `keep_me_signed_in` (Block List, Max: 1) Controls the post-authentication Keep Me Signed In (KMSI) prompt. Requires the KMSI feature to be enabled on the Okta org. (see [below for nested schema](#nestedblock--keep_me_signed_in))
 - `mfa_prompt` (String) Prompt for MFA based on the device used, a factor session lifetime, or every sign-on attempt: `DEVICE`, `SESSION` or`ALWAYS`.
 - `mfa_lifetime` (Number) Elapsed time before the next MFA challenge. Only applicable when the `mfa_prompt` is set to `SESSION` or `ALWAYS`.
 - `mfa_remember_device` (Boolean) Remember MFA device. Default: `false`
@@ -147,17 +146,6 @@ Required:
 
 - `factor_type` (String) Type of a Factor
 - `provider` (String) Factor provider
-
-<a id="nestedblock--keep_me_signed_in"></a>
-### Nested Schema for `keep_me_signed_in`
-
-Required:
-
-- `post_auth` (String) Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.
-
-Optional:
-
-- `post_auth_prompt_frequency` (String) How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).
 
 ## Import
 

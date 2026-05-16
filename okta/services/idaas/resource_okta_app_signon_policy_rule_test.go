@@ -693,3 +693,63 @@ resource "okta_app_signon_policy_rule" "test" {
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in tests the keep_me_signed_in
+// (KMSI) attribute. This test verifies:
+// 1. Rules can be created with keep_me_signed_in set to ALLOWED with a prompt frequency
+// 2. Rules can be updated to change keep_me_signed_in to NOT_ALLOWED
+// 3. Import works correctly with keep_me_signed_in
+func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("keep_me_signed_in.tf", t)
+	updatedConfig := mgr.GetFixtures("keep_me_signed_in_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create rule with keep_me_signed_in ALLOWED and prompt frequency
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+				),
+			},
+			{
+				// Step 2: Update rule to change keep_me_signed_in to NOT_ALLOWED
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+				),
+			},
+			{
+				// Step 3: Import and verify keep_me_signed_in is preserved
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find app sign on policy rule %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.Attributes["id"]), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
