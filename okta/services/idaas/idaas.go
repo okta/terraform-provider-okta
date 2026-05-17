@@ -172,6 +172,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newSessionViolationPolicyDataSource,
 		newAuthenticatorWebauthnCustomAAGUIDsDataSource,
 		newAuthenticatorMethodWebauthnDataSource,
+		newAuthorizationServerPolicyRulesDataSource,
 	}
 }
 
