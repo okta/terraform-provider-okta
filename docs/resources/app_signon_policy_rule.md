@@ -121,6 +121,19 @@ resource "okta_app_signon_policy_rule" "test" {
 #### More examples can be
 #### found [here](https://developer.okta.com/docs/reference/api/policy/#verification-method-json-examples).
 
+### Rule with Keep Me Signed In (KMSI)
+
+resource "okta_app_signon_policy_rule" "kmsi" {
+  policy_id = data.okta_app_signon_policy.test.id
+  name      = "testAcc_replace_with_uuid"
+  access    = "ALLOW"
+
+  keep_me_signed_in {
+    post_auth                  = "ALLOWED"
+    post_auth_prompt_frequency = "PT168H"
+  }
+}
+
 ### Complex example
 
 resource "okta_app_saml" "test" {
@@ -342,6 +355,7 @@ resource "okta_app_signon_policy_rule" "test" {
 - `groups_excluded` (Set of String) List of group IDs to exclude
 - `groups_included` (Set of String) List of group IDs to include
 - `inactivity_period` (String) The inactivity duration after which the end user must re-authenticate. Use the ISO 8601 Period format for recurring time intervals.
+- `keep_me_signed_in` (Block List, Max: 1) Controls the post-authentication Keep Me Signed In (KMSI) prompt. Requires the KMSI feature to be enabled on the Okta org. (see [below for nested schema](#nestedblock--keep_me_signed_in))
 - `network_connection` (String) Network selection mode: ANYWHERE, ZONE, ON_NETWORK, or OFF_NETWORK.
 - `network_excludes` (List of String) The zones to exclude
 - `network_includes` (List of String) The zones to include
@@ -370,6 +384,17 @@ Optional:
 - `os_expression` (String) Only available with OTHER OS type
 - `os_type` (String)
 - `type` (String)
+
+<a id="nestedblock--keep_me_signed_in"></a>
+### Nested Schema for `keep_me_signed_in`
+
+Required:
+
+- `post_auth` (String) Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.
+
+Optional:
+
+- `post_auth_prompt_frequency` (String) How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).
 
 <a id="nestedblock--chains"></a>
 ### Nested Schema for `chains`

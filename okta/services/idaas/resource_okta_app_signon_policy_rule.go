@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -220,6 +221,29 @@ The only difference is that these fields are immutable and can not be managed: '
 				Optional:    true,
 				Description: "An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class",
 			},
+			"keep_me_signed_in": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Computed:    true,
+				MaxItems:    1,
+				Description: "Controls the post-authentication Keep Me Signed In (KMSI) prompt. Requires the KMSI feature to be enabled on the Okta org.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"post_auth": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"ALLOWED", "NOT_ALLOWED"}, false),
+							Description:  "Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.",
+							Default:      "NOT_ALLOWED",
+						},
+						"post_auth_prompt_frequency": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).",
+						},
+					},
+				},
+			},
 			"risk_score": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -325,6 +349,7 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 				_ = d.Set("chains", chainArr)
 			}
 		}
+		_ = d.Set("keep_me_signed_in", flattenKeepMeSignedIn(rule.Actions.AppSignOn.KeepMeSignedIn))
 	}
 	if rule.Conditions != nil {
 		if rule.Conditions.ElCondition != nil {
@@ -472,6 +497,7 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		}
 	}
 	rule.Actions.AppSignOn.VerificationMethod.Chains = chains
+	rule.Actions.AppSignOn.KeepMeSignedIn = buildKeepMeSignedIn(d)
 	rule.Conditions = &sdk.AccessPolicyRuleConditions{
 		Network: buildPolicyNetworkCondition(d),
 		Platform: &sdk.PlatformPolicyRuleCondition{

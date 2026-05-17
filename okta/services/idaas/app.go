@@ -457,7 +457,11 @@ func deleteApplication(ctx context.Context, d *schema.ResourceData, m interface{
 	// which is required before deleting the app.
 	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
-		_, err := client.Application.DeleteApplication(ctx, d.Id())
+		resp, err := client.Application.DeleteApplication(ctx, d.Id())
+		//Explicitly retry on HTTP 500 Internal Server Error
+		if resp != nil && resp.StatusCode == 500 {
+			return err // retry
+		}
 		if doNotRetry(m, err) {
 			return backoff.Permanent(err)
 		}
