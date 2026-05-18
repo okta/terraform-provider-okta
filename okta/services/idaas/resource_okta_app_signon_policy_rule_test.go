@@ -747,6 +747,15 @@ func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in(t *testing.T) {
 					if len(s) != 1 {
 						return errors.New("failed to import resource into state")
 					}
+					if s[0] == nil {
+						return errors.New("imported state is nil")
+					}
+					if v, ok := s[0].Attributes["keep_me_signed_in.#"]; !ok || v != "1" {
+						return fmt.Errorf("expected keep_me_signed_in.# to be '1', got '%s'", v)
+					}
+					if v, ok := s[0].Attributes["keep_me_signed_in.0.post_auth"]; !ok || (v != "ALLOWED" && v != "NOT_ALLOWED") {
+						return fmt.Errorf("expected keep_me_signed_in.0.post_auth to be 'ALLOWED' or 'NOT_ALLOWED', got '%s'", v)
+					}
 					return nil
 				},
 			},
