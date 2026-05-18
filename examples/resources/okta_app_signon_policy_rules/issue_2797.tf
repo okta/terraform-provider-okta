@@ -21,17 +21,17 @@ resource "okta_app_signon_policy_rules" "test" {
   policy_id = data.okta_app_signon_policy.test.id
 
   rule {
-    name       = "testAcc_replace_with_uuid"
-    priority   = 1
+    name        = "testAcc_replace_with_uuid"
+    priority    = 1
     factor_mode = "2FA"
-    status     = "ACTIVE"
+    status      = "ACTIVE"
   }
 
   rule {
-    name       = "testAcc_replace_with_uuid_2"
-    priority   = 2
+    name        = "testAcc_replace_with_uuid_2"
+    priority    = 2
     factor_mode = "1FA"
-    access     = "ALLOW"
-    status     = "INACTIVE"
+    access      = "ALLOW"
+    status      = "INACTIVE"
   }
 }

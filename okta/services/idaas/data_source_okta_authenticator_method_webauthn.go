@@ -26,7 +26,7 @@ type rpIdDomainDataSourceModel struct {
 }
 
 type rpIdDataSourceModel struct {
-	Enabled types.Bool                `tfsdk:"enabled"`
+	Enabled types.Bool                 `tfsdk:"enabled"`
 	Domain  *rpIdDomainDataSourceModel `tfsdk:"domain"`
 }
 
@@ -36,21 +36,21 @@ type aaguidGroupDataSourceModel struct {
 }
 
 type authenticatorMethodWebauthnDataSourceModel struct {
-	ID                             types.String                  `tfsdk:"id"`
-	AuthenticatorID                types.String                  `tfsdk:"authenticator_id"`
-	Status                         types.String                  `tfsdk:"status"`
-	UserVerification               types.String                  `tfsdk:"user_verification"`
-	UserVerificationForVerify      types.String                  `tfsdk:"user_verification_for_verify"`
-	Attachment                     types.String                  `tfsdk:"attachment"`
-	EnableAutofillUI               types.Bool                    `tfsdk:"enable_autofill_ui"`
-	ResidentKeyRequirement         types.String                  `tfsdk:"resident_key_requirement"`
-	ShowSignInWithAPasskeyButton   types.Bool                    `tfsdk:"show_sign_in_with_a_passkey_button"`
-	CertBasedAttestationValidation types.Bool                    `tfsdk:"cert_based_attestation_validation"`
-	HardwareProtected              types.Bool                    `tfsdk:"hardware_protected"`
-	FipsCompliant                  types.Bool                    `tfsdk:"fips_compliant"`
-	AllowSyncablePasskeys          types.Bool                    `tfsdk:"allow_syncable_passkeys"`
-	RpId                           *rpIdDataSourceModel          `tfsdk:"rp_id"`
-	AaguidGroups                   []aaguidGroupDataSourceModel  `tfsdk:"aaguid_groups"`
+	ID                             types.String                 `tfsdk:"id"`
+	AuthenticatorID                types.String                 `tfsdk:"authenticator_id"`
+	Status                         types.String                 `tfsdk:"status"`
+	UserVerification               types.String                 `tfsdk:"user_verification"`
+	UserVerificationForVerify      types.String                 `tfsdk:"user_verification_for_verify"`
+	Attachment                     types.String                 `tfsdk:"attachment"`
+	EnableAutofillUI               types.Bool                   `tfsdk:"enable_autofill_ui"`
+	ResidentKeyRequirement         types.String                 `tfsdk:"resident_key_requirement"`
+	ShowSignInWithAPasskeyButton   types.Bool                   `tfsdk:"show_sign_in_with_a_passkey_button"`
+	CertBasedAttestationValidation types.Bool                   `tfsdk:"cert_based_attestation_validation"`
+	HardwareProtected              types.Bool                   `tfsdk:"hardware_protected"`
+	FipsCompliant                  types.Bool                   `tfsdk:"fips_compliant"`
+	AllowSyncablePasskeys          types.Bool                   `tfsdk:"allow_syncable_passkeys"`
+	RpId                           *rpIdDataSourceModel         `tfsdk:"rp_id"`
+	AaguidGroups                   []aaguidGroupDataSourceModel `tfsdk:"aaguid_groups"`
 }
 
 func (d *authenticatorMethodWebauthnDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {

@@ -273,7 +273,6 @@ func TestAccResourceOktaNetworkZone_ipNormalization(t *testing.T) {
 	})
 }
 
-
 func doesNetworkZoneExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
 	_, response, err := client.NetworkZone.GetNetworkZone(context.Background(), id)

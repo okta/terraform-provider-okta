@@ -48,7 +48,7 @@ resource "okta_app_signon_policy_rules" "test_chains" {
             }
           ],
           "reauthenticateIn" : "PT43800H"
-        }),
+      }),
       jsonencode(
         {
           "authenticationMethods" : [

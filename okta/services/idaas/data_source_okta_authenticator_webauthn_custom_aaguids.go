@@ -22,9 +22,9 @@ type authenticatorWebauthnCustomAAGUIDsDataSource struct {
 }
 
 type customAAGUIDsDataSourceModel struct {
-	ID              types.String             `tfsdk:"id"`
-	AuthenticatorID types.String             `tfsdk:"authenticator_id"`
-	CustomAAGUIDs   []customAAGUIDItemModel  `tfsdk:"custom_aaguids"`
+	ID              types.String            `tfsdk:"id"`
+	AuthenticatorID types.String            `tfsdk:"authenticator_id"`
+	CustomAAGUIDs   []customAAGUIDItemModel `tfsdk:"custom_aaguids"`
 }
 
 type customAAGUIDItemModel struct {

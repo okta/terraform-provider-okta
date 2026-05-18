@@ -1,0 +1,202 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"apsxrbwlwhDSpgeB91d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"CREATED","importType":"INCREMENTAL","created":"2026-04-19T20:30:31.000Z","lastUpdated":"2026-04-19T20:30:31.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 20:30:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.211602541s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 188
+        host: oie-00.dne-okta.com
+        body: |
+            {"entityType":"USERS","profiles":[{"externalId":"USEREXT00000000001","profile":{"email":"test.user@example.com","firstName":"Test","lastName":"User","userName":"test.user@example.com"}}]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxrbwlwhDSpgeB91d7/bulk-upsert
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "0"
+            Date:
+                - Sun, 19 Apr 2026 20:30:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 202 Accepted
+        code: 202
+        duration: 1.935314917s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxrbwlwhDSpgeB91d7/start-import
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"apsxrbwlwhDSpgeB91d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"TRIGGERED","importType":"INCREMENTAL","created":"2026-04-19T20:30:31.000Z","lastUpdated":"2026-04-19T20:30:34.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 20:30:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.250984s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxrbwlwhDSpgeB91d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"apsxrbwlwhDSpgeB91d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"TRIGGERED","importType":"INCREMENTAL","created":"2026-04-19T20:30:31.000Z","lastUpdated":"2026-04-19T20:30:34.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 20:30:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.238404167s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxrbwlwhDSpgeB91d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"apsxrbwlwhDSpgeB91d7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"TRIGGERED","importType":"INCREMENTAL","created":"2026-04-19T20:30:31.000Z","lastUpdated":"2026-04-19T20:30:34.000Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 20:30:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.147919958s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsxrbwlwhDSpgeB91d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: importSessionId","errorLink":"E0000001","errorId":"oaeCvJxtXDbTBCgsdhf12mhvQ","errorCauses":[{"errorSummary":"Only a session that is in CREATED or IN_PROGRESS status can be canceled."}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 20:30:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 400 Bad Request
+        code: 400
+        duration: 1.112247417s

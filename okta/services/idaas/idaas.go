@@ -129,6 +129,10 @@ func FWProviderResources() []func() resource.Resource {
 		newSessionViolationPolicyRuleResource,
 		newAuthenticatorWebauthnCustomAAGUIDResource,
 		newAuthenticatorMethodWebauthnResource,
+		newIdentitySourceGroupResource,
+		newIdentitySourceGroupMembershipResource,
+		newIdentitySourceImportResource,
+		newIdentitySourceUserResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -172,6 +176,10 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newSessionViolationPolicyDataSource,
 		newAuthenticatorWebauthnCustomAAGUIDsDataSource,
 		newAuthenticatorMethodWebauthnDataSource,
+		newIdentitySourceGroupMembershipsDataSource,
+		newIdentitySourceGroupsDataSource,
+		newIdentitySourceSessionsDataSource,
+		newIdentitySourceUsersDataSource,
 	}
 }
 

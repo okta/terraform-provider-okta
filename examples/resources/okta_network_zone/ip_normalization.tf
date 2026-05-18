@@ -2,7 +2,7 @@
 resource "okta_network_zone" "ip_network_zone_single" {
   name     = "testAcc_replace_with_uuid Single"
   type     = "IP"
-  gateways = ["192.168.1.1"]  // API returns as "192.168.1.1-192.168.1.1"
+  gateways = ["192.168.1.1"] // API returns as "192.168.1.1-192.168.1.1"
   usage    = "POLICY"
   status   = "ACTIVE"
 }
@@ -29,7 +29,7 @@ resource "okta_network_zone" "ip_network_zone_range" {
 resource "okta_network_zone" "ip_network_zone_changing_single" {
   name     = "testAcc_replace_with_uuid Changing Single"
   type     = "IP"
-  gateways = ["192.168.1.1"]  // API returns as "192.168.1.1-192.168.1.1", will change to "192.168.1.2"
+  gateways = ["192.168.1.1"] // API returns as "192.168.1.1-192.168.1.1", will change to "192.168.1.2"
   usage    = "POLICY"
   status   = "ACTIVE"
 }
@@ -54,22 +54,22 @@ resource "okta_network_zone" "ip_network_zone_changing_range" {
 
 // Resource with mixed notation types
 resource "okta_network_zone" "ip_network_zone_mixed" {
-  name     = "testAcc_replace_with_uuid Mixed"
-  type     = "IP"
+  name = "testAcc_replace_with_uuid Mixed"
+  type = "IP"
   gateways = [
-    "192.168.1.1",             // Single IP - API returns as "192.168.1.1-192.168.1.1"
-    "10.0.0.0/24",            // CIDR
-    "172.16.0.1-172.16.0.10"  // Range
+    "192.168.1.1",           // Single IP - API returns as "192.168.1.1-192.168.1.1"
+    "10.0.0.0/24",           // CIDR
+    "172.16.0.1-172.16.0.10" // Range
   ]
-  usage    = "POLICY"
-  status   = "ACTIVE"
+  usage  = "POLICY"
+  status = "ACTIVE"
 }
 
 // Resources that should remain unchanged
 resource "okta_network_zone" "ip_network_zone_unchanged_single" {
   name     = "testAcc_replace_with_uuid Unchanged Single"
   type     = "IP"
-  gateways = ["192.168.2.1"]  // API returns as "192.168.2.1-192.168.2.1"
+  gateways = ["192.168.2.1"] // API returns as "192.168.2.1-192.168.2.1"
   usage    = "POLICY"
   status   = "ACTIVE"
 }
