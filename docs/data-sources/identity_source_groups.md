@@ -32,10 +32,6 @@ output "group_display_name" {
 - `identity_source_id` (String) ID of the identity source.
 - `external_id` (String) The external ID of the group in the identity source.
 
-### Optional
-
-- `id` (String) Okta-assigned ID of the group. May be provided to pre-populate or verify the Okta ID.
-
 ### Read-Only
 
 - `id` (String) Okta-assigned ID of the group (populated after read).

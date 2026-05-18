@@ -74,13 +74,16 @@ func (r *identitySourceGroupResource) Schema(_ context.Context, _ resource.Schem
 				},
 			},
 			"external_id": schema.StringAttribute{
-				Description: "The external ID of the identity source group",
-				Optional:    true,
+				Description: "The external ID of the group in the upstream identity provider. Acts as the natural key for this resource.",
+				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"profile": schema.SingleNestedBlock{
-				Description: "Contains a set of external group attributes and their values that are mapped to Okta standard properties. See the group [`profile` object](https://developer.okta.com/docs/api/openapi/okta-managemen...",
+				Description: "Contains a set of external group attributes and their values that are mapped to Okta standard properties.",
 				Attributes: map[string]schema.Attribute{
 					"description": schema.StringAttribute{
 						Description: "Description of the group",
@@ -131,9 +134,22 @@ func (r *identitySourceGroupResource) Read(ctx context.Context, req resource.Rea
 		resp.Diagnostics.AddError("Error reading identity_source_group", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.ExternalId = types.StringValue(result.GetExternalId())
 	state.ID = types.StringValue(result.GetId())
+	if result.HasProfile() {
+		ap := result.GetProfile().AdditionalProperties
+		profileModel := &IdentitySourceGroupModelProfileModel{
+			DisplayName: types.StringNull(),
+			Description: types.StringNull(),
+		}
+		if dn, ok := ap["displayName"].(string); ok {
+			profileModel.DisplayName = types.StringValue(dn)
+		}
+		if desc, ok := ap["description"].(string); ok {
+			profileModel.Description = types.StringValue(desc)
+		}
+		state.Profile = profileModel
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

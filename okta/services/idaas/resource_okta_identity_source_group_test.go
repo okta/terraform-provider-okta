@@ -36,8 +36,6 @@ func TestAccResourceOktaIdentitySourceGroup_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateIdFunc: importStateIdForIdentitySourceGroup(resourceName),
 				ImportStateVerify: true,
-				// profile is not returned by the GET endpoint — Read cannot restore it
-				ImportStateVerifyIgnore: []string{"profile"},
 			},
 		},
 	})

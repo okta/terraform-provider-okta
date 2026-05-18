@@ -6,7 +6,7 @@ description: |-
 
 # Resource: okta_identity_source_group
 
-Manages a group within an Okta Identity Source. Groups created here are staged for import via a session; use [`okta_identity_source_session_import`](identity_source_session_import.md) to trigger the actual sync into Okta.
+Manages a group within an Okta Identity Source. Groups created here are staged for import via a session; use [`okta_identity_source_import`](identity_source_import.md) to trigger the actual sync into Okta.
 
 ## Example Usage
 
@@ -27,10 +27,10 @@ resource "okta_identity_source_group" "example" {
 ### Required
 
 - `identity_source_id` (String) ID of the identity source. Forces replacement when changed.
+- `external_id` (String) The external ID of the group in the upstream identity provider. Acts as the natural key for this resource. Forces replacement when changed.
 
 ### Optional
 
-- `external_id` (String) The external ID of the identity source group as defined in the upstream identity provider.
 - `profile` (Block, Optional) Display attributes for the group. (see [below for nested schema](#nested-schema-for-profile))
 
 ### Read-Only

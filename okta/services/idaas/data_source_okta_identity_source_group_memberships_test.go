@@ -22,6 +22,12 @@ func TestAccDataSourceOktaIdentitySourceGroupMemberships_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "identity_source_id", "0oaxc95befZNgrJl71d7"),
 					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "group_external_id", "GROUPEXT123456784C2IF"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "id", "0oaxc95befZNgrJl71d7/GROUPEXT123456784C2IF"),
+					// Verify members are populated and span both pages of the paginated response.
+					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "member_external_ids.#", "3"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "member_external_ids.0", "EXT001"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "member_external_ids.1", "EXT002"),
+					resource.TestCheckResourceAttr("data.okta_identity_source_group_memberships.test", "member_external_ids.2", "EXT003"),
 				),
 			},
 		},

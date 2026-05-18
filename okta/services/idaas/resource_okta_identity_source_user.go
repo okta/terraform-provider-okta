@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -165,6 +164,7 @@ func (r *identitySourceUserResource) Read(ctx context.Context, req resource.Read
 	}
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
+	state.Profile = profileFromUserResponse(result)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -215,13 +215,20 @@ func (r *identitySourceUserResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	// Fetch computed fields
-	//via a follow-up Read (Create returned no body).
-	readResult, _, readErr := client.IdentitySourceAPI.GetIdentitySourceUser(ctx, identitySourceId, externalId).Execute()
-	if readErr == nil {
-		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
-		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
+	//via a follow-up Read (Create returned no response).
+	readResult, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceUser(ctx, identitySourceId, externalId).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error reading identity_source_user", err.Error())
+		return
 	}
 
+	plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
+	plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
+	plan.Profile = profileFromUserResponse(readResult)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
@@ -306,5 +313,40 @@ func (r *identitySourceUserResource) Delete(ctx context.Context, req resource.De
 	}
 }
 
-// Ensure diag is used
-var _ diag.Diagnostics
+func profileFromUserResponse(result *okta.UserResponseSchema) *IdentitySourceUserModelProfileModel {
+	if result == nil || !result.HasProfile() {
+		return nil
+	}
+	p := result.GetProfile()
+	profile := &IdentitySourceUserModelProfileModel{
+		Email:       types.StringNull(),
+		FirstName:   types.StringNull(),
+		HomeAddress: types.StringNull(),
+		LastName:    types.StringNull(),
+		MobilePhone: types.StringNull(),
+		SecondEmail: types.StringNull(),
+		UserName:    types.StringNull(),
+	}
+	if val := p.GetEmail(); val != "" {
+		profile.Email = types.StringValue(val)
+	}
+	if val := p.GetFirstName(); val != "" {
+		profile.FirstName = types.StringValue(val)
+	}
+	if val := p.GetHomeAddress(); val != "" {
+		profile.HomeAddress = types.StringValue(val)
+	}
+	if val := p.GetLastName(); val != "" {
+		profile.LastName = types.StringValue(val)
+	}
+	if val := p.GetMobilePhone(); val != "" {
+		profile.MobilePhone = types.StringValue(val)
+	}
+	if val := p.GetSecondEmail(); val != "" {
+		profile.SecondEmail = types.StringValue(val)
+	}
+	if val := p.GetUserName(); val != "" {
+		profile.UserName = types.StringValue(val)
+	}
+	return profile
+}

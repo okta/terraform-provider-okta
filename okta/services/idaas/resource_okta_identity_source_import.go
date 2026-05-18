@@ -3,7 +3,6 @@ package idaas
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -531,7 +530,6 @@ func (r *identitySourceImportResource) Read(ctx context.Context, req resource.Re
 	state.SessionStatus = types.StringValue(result.GetStatus())
 	// Keep session_id in sync in case it was set via import
 	state.SessionId = types.StringValue(result.GetId())
-	_ = result.GetLastUpdated().Format(time.RFC3339) // ensure time import is used
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

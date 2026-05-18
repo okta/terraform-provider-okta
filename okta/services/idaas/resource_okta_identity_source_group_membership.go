@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -180,17 +179,18 @@ func (r *identitySourceGroupMembershipResource) Create(ctx context.Context, req 
 	plan.ID = plan.MemberExternalId
 
 	// Fetch member_external_ids via a follow-up Read (Create returned no body).
-	readResult, _, readErr := client.IdentitySourceAPI.GetIdentitySourceGroupMemberships(ctx, identitySourceId, groupOrExternalId).Execute()
-	if readErr == nil {
-		memberIds := readResult.GetMemberExternalIds()
-		listVal, diags := types.ListValueFrom(ctx, types.StringType, memberIds)
-		resp.Diagnostics.Append(diags...)
-		if !resp.Diagnostics.HasError() {
-			plan.MemberExternalIds = listVal
-		}
-	} else {
-		plan.MemberExternalIds, _ = types.ListValueFrom(ctx, types.StringType, []string{})
+	readResult, _, err := client.IdentitySourceAPI.GetIdentitySourceGroupMemberships(ctx, identitySourceId, groupOrExternalId).Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error reading identity_source_group_membership after create", err.Error())
+		return
 	}
+	memberIds := readResult.GetMemberExternalIds()
+	listVal, diags := types.ListValueFrom(ctx, types.StringType, memberIds)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	plan.MemberExternalIds = listVal
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -222,6 +222,3 @@ func (r *identitySourceGroupMembershipResource) Delete(ctx context.Context, req 
 		return
 	}
 }
-
-// Ensure diag is used
-var _ diag.Diagnostics

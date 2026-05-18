@@ -24,14 +24,14 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"memberExternalIds":[]}'
+        body: '{"memberExternalIds":["EXT001","EXT002"]}'
         headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
                 - Sun, 19 Apr 2026 19:09:52 GMT
+            Link:
+                - '<https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200>; rel="next"'
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
@@ -45,6 +45,8 @@ interactions:
         content_length: 0
         host: oie-00.dne-okta.com
         form:
+            after:
+                - page2cursor
             limit:
                 - "200"
         headers:
@@ -52,7 +54,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -60,19 +62,17 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"memberExternalIds":[]}'
+        body: '{"memberExternalIds":["EXT003"]}'
         headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Sun, 19 Apr 2026 19:09:54 GMT
+                - Sun, 19 Apr 2026 19:09:52 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.130653833s
+        duration: 1.102041084s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -96,19 +96,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"memberExternalIds":[]}'
+        body: '{"memberExternalIds":["EXT001","EXT002"]}'
         headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Sun, 19 Apr 2026 19:09:55 GMT
+                - Sun, 19 Apr 2026 19:09:54 GMT
+            Link:
+                - '<https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200>; rel="next"'
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.119621834s
+        duration: 1.130653833s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -117,6 +117,8 @@ interactions:
         content_length: 0
         host: oie-00.dne-okta.com
         form:
+            after:
+                - page2cursor
             limit:
                 - "200"
         headers:
@@ -124,7 +126,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?limit=200
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200
         method: GET
       response:
         proto: HTTP/2.0
@@ -132,19 +134,17 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"memberExternalIds":[]}'
+        body: '{"memberExternalIds":["EXT003"]}'
         headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Sun, 19 Apr 2026 19:09:56 GMT
+                - Sun, 19 Apr 2026 19:09:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.220824541s
+        duration: 1.082041084s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -168,10 +168,190 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"memberExternalIds":[]}'
+        body: '{"memberExternalIds":["EXT001","EXT002"]}'
         headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 19:09:55 GMT
+            Link:
+                - '<https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200>; rel="next"'
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.119621834s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            after:
+                - page2cursor
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"memberExternalIds":["EXT003"]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 19:09:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.072041084s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"memberExternalIds":["EXT001","EXT002"]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 19:09:56 GMT
+            Link:
+                - '<https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200>; rel="next"'
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.220623834s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            after:
+                - page2cursor
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"memberExternalIds":["EXT003"]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 19:09:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.062041084s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"memberExternalIds":["EXT001","EXT002"]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 19 Apr 2026 19:09:57 GMT
+            Link:
+                - '<https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200>; rel="next"'
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.169421834s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            after:
+                - page2cursor
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/groups/GROUPEXT123456784C2IF/membership?after=page2cursor&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"memberExternalIds":["EXT003"]}'
+        headers:
             Content-Type:
                 - application/json
             Date:
@@ -180,4 +360,4 @@ interactions:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.169244959s
+        duration: 1.052041084s
