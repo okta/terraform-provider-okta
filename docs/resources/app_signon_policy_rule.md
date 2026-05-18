@@ -388,12 +388,9 @@ Optional:
 <a id="nestedblock--keep_me_signed_in"></a>
 ### Nested Schema for `keep_me_signed_in`
 
-Required:
-
-- `post_auth` (String) Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.
-
 Optional:
 
+- `post_auth` (String) Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.
 - `post_auth_prompt_frequency` (String) How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).
 
 <a id="nestedblock--chains"></a>
