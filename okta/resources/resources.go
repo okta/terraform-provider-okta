@@ -167,6 +167,7 @@ const (
 	OktaGovernanceCatalogEntryDefault                 = "okta_catalog_entry_default"
 	OktaGovernanceCatalogEntryUserAccessRequestFields = "okta_catalog_entry_user_access_request_fields"
 	OktaGovernanceEndUserMyRequests                   = "okta_end_user_my_requests"
+	OktaGovernanceResourceOwners                     = "okta_resource_owners"
 	OktaIDaaSPushGroup                                = "okta_push_group"
 	OktaIDaaSPushGroups                               = "okta_push_groups"
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUID        = "okta_authenticator_webauthn_custom_aaguid"
