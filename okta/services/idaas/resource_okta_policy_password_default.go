@@ -27,7 +27,13 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Configures default password policy. This resource allows you to configure default password policy.",
+		Description: "Configures the default password policy. This resource allows you to configure the default password policy.\n\n" +
+			"~> **Important:** If your configuration also manages other `okta_policy_password` resources, add " +
+			"`depends_on = [okta_policy_password.<last_policy>]` pointing to the last non-default policy in your " +
+			"dependency chain. The default policy's `priority` is read-only and shifts whenever other password policies " +
+			"are created or deleted. Using `depends_on` ensures all sibling policies are fully created before this " +
+			"resource is read or updated, so the provider sees the correct priority value and the Okta API does not " +
+			"reject the request with E0000077.",
 		Schema: buildDefaultPolicySchema(map[string]*schema.Schema{
 			"default_auth_provider": {
 				Type:        schema.TypeString,
@@ -208,8 +214,30 @@ func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.Resource
 		if policy.Conditions != nil && policy.Conditions.AuthProvider != nil {
 			_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.GetProvider())
 		}
+		// Populate read-only computed fields so buildDefaultPasswordPolicy can
+		// include them in the PUT body (the API requires them to be present).
+		if policy.Priority != nil {
+			_ = d.Set("priority", int(*policy.Priority))
+		}
+		_ = d.Set("status", policy.GetStatus())
 	}
-	if _, err := replacePolicyV6(ctx, d, meta, buildDefaultPasswordPolicy(d)); err != nil {
+	// Refresh priority and status immediately before the PUT. The default
+	// policy's priority is read-only and changes whenever other password
+	// policies are created or deleted. Reading it here (rather than relying
+	// on state populated earlier in this function or during the plan phase)
+	// avoids E0000077 caused by a stale priority in the request body.
+	if current, err := getPolicyV6(ctx, d, meta); err == nil && current != nil {
+		if current.Priority != nil {
+			_ = d.Set("priority", int(*current.Priority))
+		}
+		_ = d.Set("status", current.GetStatus())
+	}
+	// Use ReplacePolicy directly rather than replacePolicyV6 to avoid
+	// calling policyActivate: the default policy is a system policy whose
+	// status is always ACTIVE and cannot be changed via the lifecycle endpoints.
+	template := buildDefaultPasswordPolicy(d)
+	req := v6okta.PasswordPolicyAsCreatePolicyRequest(template)
+	if _, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicy(ctx, d.Id()).Policy(req).Execute(); err != nil {
 		return diag.Errorf("failed to update default password policy: %v", err)
 	}
 	return resourcePolicyPasswordDefaultRead(ctx, d, meta)
@@ -222,6 +250,13 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 	}
 	if policy == nil {
 		return nil
+	}
+
+	_ = d.Set("name", policy.GetName())
+	_ = d.Set("description", policy.GetDescription())
+	_ = d.Set("status", policy.GetStatus())
+	if policy.Priority != nil {
+		_ = d.Set("priority", int(*policy.Priority))
 	}
 
 	var pw *v6okta.PasswordPolicyPasswordSettings
@@ -336,6 +371,13 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 
 func buildDefaultPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 	template := v6okta.NewPasswordPolicy(d.Get("name").(string), "PASSWORD")
+	// The Okta API requires `priority` (with its exact current value) and
+	// `conditions` in the PUT body; omitting priority triggers E0000077.
+	// `priority` is read from state, which is refreshed immediately before this
+	// call by a pre-PUT GET in resourcePolicyPasswordDefaultUpdate.
+	if p := d.Get("priority").(int); p != 0 {
+		template.SetPriority(int32(p))
+	}
 	template.SetDescription(d.Get("description").(string))
 	authProvider := &v6okta.PasswordPolicyAuthenticationProviderCondition{}
 	authProvider.SetProvider(d.Get("default_auth_provider").(string))

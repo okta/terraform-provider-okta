@@ -1375,7 +1375,7 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		var chainStrings []string
 		for _, chain := range vm.Chains {
 			if jsonBytes, err := json.Marshal(chain); err == nil {
-				chainStrings = append(chainStrings, string(jsonBytes))
+				chainStrings = append(chainStrings, utils.NormalizeDataJSON(string(jsonBytes)))
 			}
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
@@ -1562,7 +1562,7 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 		var chainStrings []string
 		for _, chain := range vm.Chains {
 			if jsonBytes, err := json.Marshal(chain); err == nil {
-				chainStrings = append(chainStrings, string(jsonBytes))
+				chainStrings = append(chainStrings, utils.NormalizeDataJSON(string(jsonBytes)))
 			}
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
