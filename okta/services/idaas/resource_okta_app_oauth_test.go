@@ -564,6 +564,88 @@ resource "okta_app_oauth" "test" {
 	})
 }
 
+func TestAccResourceOktaAppOauth_dpopBoundAccessTokens(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	enabled := `
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_replace_with_uuid"
+  type                       = "web"
+  dpop_bound_access_tokens   = true
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  skip_authentication_policy = true
+}
+`
+	disabled := `
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_replace_with_uuid"
+  type                       = "web"
+  dpop_bound_access_tokens   = false
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  skip_authentication_policy = true
+}
+`
+	omitted := `
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_replace_with_uuid"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  skip_authentication_policy = true
+  enduser_note               = "dpop omitted update"
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(enabled),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "true"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(disabled),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "false"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(omitted),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "false"),
+					resource.TestCheckResourceAttr(resourceName, "enduser_note", "dpop omitted update"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import schema into state")
+					}
+					if expected, ok := s[0].Attributes["dpop_bound_access_tokens"]; !ok || expected != "false" {
+						return errors.New("expected imported app to include dpop_bound_access_tokens")
+					}
+
+					return nil
+				},
+			},
+		},
+	})
+}
+
 // TestAccResourceOktaAppOauth_config_combinations
 // W.R.T. https://github.com/okta/terraform-provider-okta/issues/1325
 // Documentation of the the API behavior of pkce_required when the app type is
@@ -1072,7 +1154,6 @@ resource "okta_app_oauth" "test" {
 		},
 	})
 }
-
 
 // TestAccResourceOktaAppOauth_preconfigured tests creating and updating OAuth applications
 // using preconfigured apps from the Okta Integration Network (test1-test3), as well as

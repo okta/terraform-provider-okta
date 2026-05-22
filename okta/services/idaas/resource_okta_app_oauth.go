@@ -255,6 +255,12 @@ other arguments that changed will be applied.`,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
 				Computed:    true,
 			},
+			"dpop_bound_access_tokens": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: "Indicates that the client application uses Demonstrating Proof-of-Possession (DPoP) for token requests. If true, the authorization server rejects token requests from this client that don't contain the DPoP header.",
+			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -820,6 +826,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
 	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
 	_ = d.Set("frontchannel_logout_session_required", oauthClient.GetFrontchannelLogoutSessionRequired())
+	_ = d.Set("dpop_bound_access_tokens", oauthClient.GetDpopBoundAccessTokens())
 
 	if refreshToken := oauthClient.GetRefreshToken(); refreshToken.GetRotationType() != "" {
 		_ = d.Set("refresh_token_rotation", refreshToken.GetRotationType())
@@ -1099,6 +1106,16 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	// Build OAuth client settings
 	oauthClientSettings := v6okta.NewOpenIdConnectApplicationSettingsClientWithDefaults()
 	oauthClientSettings.SetApplicationType(appType)
+	dpopVal := d.GetRawConfig().GetAttr("dpop_bound_access_tokens")
+	if dpopVal.IsNull() {
+		if isNew {
+			oauthClientSettings.DpopBoundAccessTokens = nil
+		} else {
+			oauthClientSettings.SetDpopBoundAccessTokens(d.Get("dpop_bound_access_tokens").(bool))
+		}
+	} else {
+		oauthClientSettings.SetDpopBoundAccessTokens(dpopVal.True())
+	}
 
 	// Convert grant and response types to v6 format
 	v6GrantTypes := make([]string, len(grantTypes))

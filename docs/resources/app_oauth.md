@@ -84,6 +84,7 @@ resource "okta_app_oauth" "example" {
 - `client_id` (String) OAuth client ID. If set during creation, app is created with this id.
 - `client_uri` (String) URI to a web page providing information about the client.
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.
+- `dpop_bound_access_tokens` (Boolean) Indicates that the client application uses Demonstrating Proof-of-Possession (DPoP) for token requests. If `true`, the authorization server rejects token requests from this client that don't contain the DPoP header.
 - `enduser_note` (String) Application notes for end users.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
 - `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials, and is not supported when `preconfigured_app` is set) (see [below for nested schema](#nestedblock--groups_claim))
