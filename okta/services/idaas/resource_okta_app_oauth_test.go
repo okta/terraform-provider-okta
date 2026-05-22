@@ -1155,6 +1155,7 @@ resource "okta_app_oauth" "test" {
 	})
 }
 
+
 // TestAccResourceOktaAppOauth_preconfigured tests creating and updating OAuth applications
 // using preconfigured apps from the Okta Integration Network (test1-test3), as well as
 // custom OAuth apps (test4-test5). groups_claim is not supported for preconfigured apps
