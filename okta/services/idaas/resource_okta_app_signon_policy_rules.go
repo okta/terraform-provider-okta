@@ -1370,7 +1370,7 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		rule.InactivityPeriod = types.StringValue(vm.InactivityPeriod)
 	}
 
-	// Convert chains to JSON strings.
+	// Convert chains to JSON strings and normalize key order so it matches Terraform's jsonencode output.
 	if len(vm.Chains) > 0 {
 		var chainStrings []string
 		for _, chain := range vm.Chains {
@@ -1557,7 +1557,7 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 		rule.Constraints, _ = types.ListValueFrom(ctx, types.StringType, constraintStrings)
 	}
 
-	// Convert chains to JSON strings.
+	// Convert chains to JSON strings and normalize key order so it matches Terraform's jsonencode output.
 	if len(vm.Chains) > 0 {
 		var chainStrings []string
 		for _, chain := range vm.Chains {
