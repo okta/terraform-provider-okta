@@ -178,8 +178,13 @@ func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, 
 		} else {
 			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
 		}
-		retryableClient.ErrorHandler = errHandler
-		retryableClient.CheckRetry = checkRetry
+		if c.PrivateKey != "" {
+			retryableClient.CheckRetry = checkRetryDeferOn429
+			retryableClient.ErrorHandler = errHandlerPassThrough429
+		} else {
+			retryableClient.ErrorHandler = errHandler
+			retryableClient.CheckRetry = checkRetry
+		}
 		httpClient = retryableClient.StandardClient()
 		c.Logger.Info(fmt.Sprintf("v3 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
