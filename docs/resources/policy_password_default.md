@@ -8,7 +8,7 @@ description: |-
 
 Configures the default password policy. This resource allows you to configure the default password policy.
 
--> **Note:** If your configuration also manages other `okta_policy_password` resources, add
+~> **Note:** If your configuration also manages other `okta_policy_password` resources, add
 `depends_on = [okta_policy_password.<last_policy>]` pointing to the last non-default policy in your
 dependency chain. The default policy's `priority` is read-only and shifts whenever other password policies
 are created or deleted. Using `depends_on` ensures all sibling policies are fully created before this

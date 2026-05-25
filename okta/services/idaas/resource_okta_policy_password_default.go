@@ -27,7 +27,7 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Configures the default password policy. This resource allows you to configure the default password policy.\n\n" +
+		Description: "Configures the default password policy. This resource allows you to configure the default password policy." +
 			"~> **Important:** If your configuration also manages other `okta_policy_password` resources, add " +
 			"`depends_on = [okta_policy_password.<last_policy>]` pointing to the last non-default policy in your " +
 			"dependency chain. The default policy's `priority` is read-only and shifts whenever other password policies " +
@@ -214,19 +214,17 @@ func resourcePolicyPasswordDefaultUpdate(ctx context.Context, d *schema.Resource
 		if policy.Conditions != nil && policy.Conditions.AuthProvider != nil {
 			_ = d.Set("default_auth_provider", policy.Conditions.AuthProvider.GetProvider())
 		}
-		// Populate read-only computed fields so buildDefaultPasswordPolicy can
-		// include them in the PUT body (the API requires them to be present).
-		if policy.Priority != nil {
-			_ = d.Set("priority", int(*policy.Priority))
-		}
-		_ = d.Set("status", policy.GetStatus())
 	}
 	// Refresh priority and status immediately before the PUT. The default
 	// policy's priority is read-only and changes whenever other password
 	// policies are created or deleted. Reading it here (rather than relying
 	// on state populated earlier in this function or during the plan phase)
 	// avoids E0000077 caused by a stale priority in the request body.
-	if current, err := getPolicyV6(ctx, d, meta); err == nil && current != nil {
+	current, err := getPolicyV6(ctx, d, meta)
+	if err != nil {
+		return diag.Errorf("failed to refresh default password policy before update: %v", err)
+	}
+	if current != nil {
 		if current.Priority != nil {
 			_ = d.Set("priority", int(*current.Priority))
 		}
