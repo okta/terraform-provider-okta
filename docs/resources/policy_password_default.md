@@ -1,18 +1,33 @@
 ---
 page_title: "Resource: okta_policy_password_default"
 description: |-
-  Configures default password policy. This resource allows you to configure default password policy.
+  Configures the default password policy. This resource allows you to configure the default password policy.
 ---
 
 # Resource: okta_policy_password_default
 
-Configures default password policy. This resource allows you to configure default password policy.
+Configures the default password policy. This resource allows you to configure the default password policy.
+
+~> **Note:** If your configuration also manages other `okta_policy_password` resources, add
+`depends_on = [okta_policy_password.<last_policy>]` pointing to the last non-default policy in your
+dependency chain. The default policy's `priority` is read-only and shifts whenever other password policies
+are created or deleted. Using `depends_on` ensures all sibling policies are fully created before this
+resource is read or updated, so the provider sees the correct priority value and the Okta API does not
+reject the request with E0000077.
 
 ## Example Usage
 
 ```terraform
-resource "okta_policy_password_default" "default" {
+resource "okta_policy_password" "custom" {
+  name            = "Custom Password Policy"
+  groups_included = [okta_group.example.id]
+  status          = "ACTIVE"
+  priority        = 1
+}
 
+resource "okta_policy_password_default" "default" {
+  password_history_count = 5
+  depends_on             = [okta_policy_password.custom]
 }
 ```
 
