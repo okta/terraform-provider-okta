@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -326,6 +328,7 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY_RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.use", "sig"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "owfoXNHcAlAVpIO41840ZU2tZraLGw3yEr3xZvAti7oEZPUKCytk88IDgH7440JOuz8GC_D6vtduWOqnEt0j0_faJnhKHgfj7DTWBOCxzSdjrM-Uyj6-e_XLFvZXzYsQvt52PnBJUV15G1W9QTjlghT_pFrW0xrTtbO1c281u1HJdPd5BeIyPb0pGbciySlx53OqGyxrAxPAt5P5h-n36HJkVsSQtNvgptLyOwWYkX50lgnh2szbJ0_O581bqkNBy9uqlnVeK1RZDQUl4mk8roWYhsx_JOgjpC3YyeXA6hHsT5xWZos_gNx98AHivNaAjzIzvyVItX2-hP0Aoscfff"),
 				),
@@ -336,8 +339,67 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 					ensureResourceExists(ecResourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kty", "EC"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kid", "SIGNING_KEY_EC"),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.use", "sig"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.x", "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.y", "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppOauth_jwksUsePreservedWhenAddingKey(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	rsa1 := oauthAppJwkRSA()
+	rsa2 := oauthAppJwkRSA2()
+	ec1 := oauthAppJwkEC()
+	ec2 := oauthAppJwkEC2()
+
+	mixedKeys := map[string]oauthAppJwkExpectation{
+		rsa1.Kid: rsa1,
+		ec1.Kid:  ec1,
+	}
+	expandedKeys := map[string]oauthAppJwkExpectation{
+		rsa1.Kid: rsa1,
+		rsa2.Kid: rsa2,
+		ec1.Kid:  ec1,
+		ec2.Kid:  ec2,
+	}
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(oauthAppWithJwksConfig([]oauthAppJwkExpectation{rsa1, ec1})),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", rsa1.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.use", "sig"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.kid", ec1.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.use", "sig"),
+					checkOAuthAppJwks(resourceName, mixedKeys),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(oauthAppWithJwksConfig([]oauthAppJwkExpectation{rsa1, ec1, rsa2, ec2})),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", rsa1.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.use", "sig"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.kid", ec1.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.use", "sig"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.2.kid", rsa2.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.2.use", "sig"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.3.kid", ec2.Kid),
+					resource.TestCheckResourceAttr(resourceName, "jwks.3.use", "sig"),
+					checkOAuthAppJwks(resourceName, expandedKeys),
 				),
 			},
 		},
@@ -364,6 +426,202 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 			},
 		},
 	})
+}
+
+type oauthAppJwkExpectation struct {
+	Kty string
+	Kid string
+	Use string
+	E   string
+	N   string
+	X   string
+	Y   string
+}
+
+func oauthAppJwkRSA() oauthAppJwkExpectation {
+	return oauthAppJwkExpectation{
+		Kty: "RSA",
+		Kid: "SIGNING_KEY_RSA",
+		Use: "sig",
+		E:   "AQAB",
+		N:   "owfoXNHcAlAVpIO41840ZU2tZraLGw3yEr3xZvAti7oEZPUKCytk88IDgH7440JOuz8GC_D6vtduWOqnEt0j0_faJnhKHgfj7DTWBOCxzSdjrM-Uyj6-e_XLFvZXzYsQvt52PnBJUV15G1W9QTjlghT_pFrW0xrTtbO1c281u1HJdPd5BeIyPb0pGbciySlx53OqGyxrAxPAt5P5h-n36HJkVsSQtNvgptLyOwWYkX50lgnh2szbJ0_O581bqkNBy9uqlnVeK1RZDQUl4mk8roWYhsx_JOgjpC3YyeXA6hHsT5xWZos_gNx98AHivNaAjzIzvyVItX2-hP0Aoscfff",
+	}
+}
+
+func oauthAppJwkRSA2() oauthAppJwkExpectation {
+	return oauthAppJwkExpectation{
+		Kty: "RSA",
+		Kid: "SIGNING_KEY_RSA_2",
+		Use: "sig",
+		E:   "AQAB",
+		N:   "rn3forF-5wn2dPulKfanijxAqZ3GhkFfv8SmxvWnatHrJ10eV-Tfb7ijc52qy5W9X1dZuHM1GqeqoTBjP9RgImLHJ8Y4elwSWaI-XWHSvfey1TXIvJA6cCCaURjVV-hwHhRWBz9E0zL_pOJmbsB66rsxLVrkldgtlRlf4Bb-4xBtbMu3xK78A38WgwwNFVDnvYGRzW4J3cFx3gndQ94BlZUxBpoiOpxx1-oCaVYcDCjkvHcvMDO8orvZAKbg8qudAfWa4L1PHdfZxYGifFWS9Z8hEKmn3Bt43JxpZQDhfFhHPR3FdSuiI6FySwWT8wlyn8XcAmCb-fS2Z-ScjxGrVw",
+	}
+}
+
+func oauthAppJwkEC() oauthAppJwkExpectation {
+	return oauthAppJwkExpectation{
+		Kty: "EC",
+		Kid: "SIGNING_KEY_EC",
+		Use: "sig",
+		X:   "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I",
+		Y:   "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo",
+	}
+}
+
+func oauthAppJwkEC2() oauthAppJwkExpectation {
+	return oauthAppJwkExpectation{
+		Kty: "EC",
+		Kid: "SIGNING_KEY_EC_2",
+		Use: "sig",
+		X:   "6W5vGNPWhkhubooDOK_6Y2wLnT086jEZZEDRXKtxHuM",
+		Y:   "1hpsUnXd1LZQEvbGia_k4jIeOwZMFMIorV488GqNXcA",
+	}
+}
+
+func oauthAppWithJwksConfig(keys []oauthAppJwkExpectation) string {
+	var blocks strings.Builder
+	for _, k := range keys {
+		switch k.Kty {
+		case "RSA":
+			fmt.Fprintf(&blocks, `
+  jwks {
+    kty = %q
+    kid = %q
+    use = %q
+    e   = %q
+    n   = %q
+  }
+`, k.Kty, k.Kid, k.Use, k.E, k.N)
+		case "EC":
+			fmt.Fprintf(&blocks, `
+  jwks {
+    kty = %q
+    kid = %q
+    use = %q
+    x   = %q
+    y   = %q
+  }
+`, k.Kty, k.Kid, k.Use, k.X, k.Y)
+		default:
+			panic(fmt.Sprintf("unsupported test JWKS kty %q", k.Kty))
+		}
+	}
+
+	return fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_replace_with_uuid"
+  type                       = "service"
+  response_types             = ["token"]
+  grant_types                = ["client_credentials"]
+  token_endpoint_auth_method = "private_key_jwt"
+  skip_authentication_policy = true
+  enduser_note               = "inline jwks acceptance"
+%s
+}
+`, blocks.String())
+}
+
+func checkOAuthAppJwks(resourceName string, expected map[string]oauthAppJwkExpectation) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(_ *terraform.State) error {
+			return nil
+		}
+	}
+
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+
+		appResp, _, err := iDaaSAPIClientForTestUtil.OktaSDKClientV6().ApplicationAPI.GetApplication(context.Background(), rs.Primary.ID).Execute()
+		if err != nil {
+			return err
+		}
+		if appResp == nil || appResp.OpenIdConnectApplication == nil {
+			return fmt.Errorf("expected %s to be an OpenID Connect application", resourceName)
+		}
+
+		settings := appResp.OpenIdConnectApplication.GetSettings()
+		oauthClient := settings.GetOauthClient()
+		jwks, ok := oauthClient.GetJwksOk()
+		if !ok || jwks == nil {
+			return fmt.Errorf("expected %s to have inline JWKS", resourceName)
+		}
+
+		actual := make(map[string]oauthAppJwkExpectation)
+		for _, key := range jwks.GetKeys() {
+			jwk, err := oauthAppJwkFromResponse(key)
+			if err != nil {
+				return err
+			}
+			actual[jwk.Kid] = jwk
+		}
+
+		if len(actual) != len(expected) {
+			return fmt.Errorf("expected %d JWKS keys, got %d: %#v", len(expected), len(actual), actual)
+		}
+		for kid, expectedJwk := range expected {
+			actualJwk, ok := actual[kid]
+			if !ok {
+				return fmt.Errorf("expected JWKS key %q to exist, got %#v", kid, actual)
+			}
+			if actualJwk != expectedJwk {
+				return fmt.Errorf("unexpected JWKS key %q: expected %#v, got %#v", kid, expectedJwk, actualJwk)
+			}
+		}
+
+		return nil
+	}
+}
+
+func oauthAppJwkFromResponse(key v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner) (oauthAppJwkExpectation, error) {
+	if key.OAuth2ClientJsonEncryptionKeyResponse != nil {
+		enc := key.OAuth2ClientJsonEncryptionKeyResponse
+		return oauthAppJwkExpectation{
+			Kty: enc.GetKty(),
+			Kid: enc.GetKid(),
+			Use: enc.GetUse(),
+			E:   enc.GetE(),
+			N:   enc.GetN(),
+		}, nil
+	}
+
+	if key.OAuth2ClientJsonSigningKeyResponse == nil {
+		return oauthAppJwkExpectation{}, errors.New("expected JWKS key response to contain a signing or encryption key")
+	}
+
+	signingKey := key.OAuth2ClientJsonSigningKeyResponse
+	if signingKey.OAuth2ClientJsonWebKeyRsaResponse != nil {
+		rsa := signingKey.OAuth2ClientJsonWebKeyRsaResponse
+		use, ok := rsa.AdditionalProperties["use"].(string)
+		if !ok || use == "" {
+			return oauthAppJwkExpectation{}, fmt.Errorf("RSA JWKS key %q has empty or non-string use: %#v", rsa.GetKid(), rsa.AdditionalProperties["use"])
+		}
+		return oauthAppJwkExpectation{
+			Kty: rsa.GetKty(),
+			Kid: rsa.GetKid(),
+			Use: use,
+			E:   rsa.GetE(),
+			N:   rsa.GetN(),
+		}, nil
+	}
+	if signingKey.OAuth2ClientJsonWebKeyECResponse != nil {
+		ec := signingKey.OAuth2ClientJsonWebKeyECResponse
+		use, ok := ec.AdditionalProperties["use"].(string)
+		if !ok || use == "" {
+			return oauthAppJwkExpectation{}, fmt.Errorf("EC JWKS key %q has empty or non-string use: %#v", ec.GetKid(), ec.AdditionalProperties["use"])
+		}
+		return oauthAppJwkExpectation{
+			Kty: ec.GetKty(),
+			Kid: ec.GetKid(),
+			Use: use,
+			X:   ec.GetX(),
+			Y:   ec.GetY(),
+		}, nil
+	}
+
+	return oauthAppJwkExpectation{}, errors.New("expected signing JWKS key response to contain an RSA or EC key")
 }
 
 // createDoesAppExist is a compatibility wrapper for other test files
@@ -1072,7 +1330,6 @@ resource "okta_app_oauth" "test" {
 		},
 	})
 }
-
 
 // TestAccResourceOktaAppOauth_preconfigured tests creating and updating OAuth applications
 // using preconfigured apps from the Okta Integration Network (test1-test3), as well as
