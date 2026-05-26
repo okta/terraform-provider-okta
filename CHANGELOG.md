@@ -1,5 +1,25 @@
 # Changelog
 
+## 6.11.0 (May 26, 2026)
+
+### FEATURES
+* Added diff suppression to `okta_network_zone` [#2308](https://github.com/okta/terraform-provider-okta/pull/2308) by [exitcode0](https://github.com/exitcode0)
+* Added setup-terraform step to fix expired hc-install GPG key [#2803](https://github.com/okta/terraform-provider-okta/pull/2803) by [aditya-okta](https://github.com/aditya-okta)
+* Changed identity_provider in `okta_policy_rule_sign_on` to be of TypeSet [#2802](https://github.com/terraform-provider-okta/pull/2802) by [emanor-okta](https://github.com/emanor-okta)
+* Added authenticator methods and webauth custom aaguids [#2772](https://github.com/terraform-provider-okta/pull/2772) by [pranav-okta](https://github.com/pranav-okta)
+* Added **terraform import** support for `okta_profile_mapping` [#2809](https://github.com/terraform-provider-okta/pull/2809) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added AD support as destination for `okta_push_group` [#2712](https://github.com/terraform-provider-okta/pull/2712) by [Dogers](https://github.com/Dogers)
+* Added support for breached password protection settings in `okta_policy_password` [#2813](https://github.com/terraform-provider-okta/pull/2813) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added computed timestamp fields to `okta_user`[#2817](https://github.com/terraform-provider-okta/pull/2817) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added support for **Option to stay signed in** to `okta_app_signon_policy_rule` [#2818](https://github.com/terraform-provider-okta/pull/2818) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added `identity_source` resources, data sources, tests, and docs [#2811](https://github.com/terraform-provider-okta/pull/2811) by [aditya-okta](https://github.com/aditya-okta)
+
+### BUG FIXES
+* Fixed priority mismatch for `okta_resource_condition` [#2786](https://github.com/okta/terraform-provider-okta/pull/2786) by [yoclaire](https://github.com/yoclaire)
+* Fixed importing users when importing `okta_group_memberships` [#2810](https://github.com/terraform-provider-okta/pull/2810) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Fixed normalization chains JSON key order to prevent inconsistent result after apply [#2816](https://github.com/terraform-provider-okta/pull/2816) by [tanasegabriel](https://github.com/tanasegabriel)
+* Fixed priority modification for `okta_policy_password_default` [#2829](https://github.com/terraform-provider-okta/pull/2829) by [aditya-okta](https://github.com/aditya-okta)
+
 ## 6.10.0 (April 27, 2026)
 
 ### ENHANCEMENTS
