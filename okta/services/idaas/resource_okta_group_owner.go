@@ -2,7 +2,6 @@ package idaas
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -59,10 +58,16 @@ func (r *groupOwnerResource) Schema(_ context.Context, _ resource.SchemaRequest,
 			"group_id": schema.StringAttribute{
 				Description: "The id of the group",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"id_of_group_owner": schema.StringAttribute{
 				Description: "The user id of the group owner",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"id": schema.StringAttribute{
 				Description: "The id of the group owner resource",
@@ -86,6 +91,9 @@ func (r *groupOwnerResource) Schema(_ context.Context, _ resource.SchemaRequest,
 			"type": schema.StringAttribute{
 				Description: "The entity type of the owner. Enum: \"GROUP\" \"USER\"",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 		},
 	}
@@ -158,16 +166,16 @@ func (r *groupOwnerResource) Read(ctx context.Context, req resource.ReadRequest,
 	if err != nil {
 		// If the group was deleted, Okta also deletes its owners automatically.
 		// Treat 404 as resource gone and remove from state without error.
-		if suppressErr := utils.SuppressErrorOn404_V5(apiResp, err); suppressErr == nil {
-			resp.State.RemoveResource(ctx)
-			return
+		if apiResp != nil && apiResp.Response != nil {
+			if suppressErr := utils.SuppressErrorOn404_V5(apiResp, err); suppressErr == nil {
+				resp.State.RemoveResource(ctx)
+				return
+			}
 		}
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("Error retrieving the list of owners for okta_group '%s'", state.GroupID.ValueString()),
 			fmt.Sprintf("Error returned: %s", err.Error()),
 		)
-		// Clear the state since we couldn't read the resource
-		resp.State.RemoveResource(ctx)
 		return
 	}
 
@@ -204,7 +212,6 @@ func (r *groupOwnerResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 	apiResp, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.DeleteGroupOwner(ctx, state.GroupID.ValueString(), state.ID.ValueString()).Execute()
 	if err != nil {
-		// remove 404 errors from err, if it's nil after, it means the err was a 404
 		if err := utils.SuppressErrorOn404_V5(apiResp, err); err == nil {
 			// If the group no longer exists, owners were already removed; treat as successful delete
 			return
@@ -217,45 +224,15 @@ func (r *groupOwnerResource) Delete(ctx context.Context, req resource.DeleteRequ
 	}
 }
 
-func (r *groupOwnerResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var state groupOwnerResourceModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	createReqBody, err := buildCreateGroupOwnerRequest(state)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"failed to build group owner request",
-			err.Error(),
-		)
-		return
-	}
-
-	createdGroupOwner, apiResp, err := r.OktaIDaaSClient.OktaSDKClientV5().GroupOwnerAPI.AssignGroupOwner(ctx, state.GroupID.ValueString()).AssignGroupOwnerRequestBody(createReqBody).Execute()
-	if err != nil {
-		if isAlreadyAssignedOwnerError(apiResp, err) {
-			// Delegate to Read to populate full state consistently
-			r.Read(ctx, resource.ReadRequest{State: req.State}, &resource.ReadResponse{State: resp.State, Diagnostics: resp.Diagnostics})
-			return
-		}
-		resp.Diagnostics.AddError(
-			"failed to update/assign group owner",
-			err.Error(),
-		)
-		return
-	}
-
-	resp.Diagnostics.Append(mapGroupOwnerToState(createdGroupOwner, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+// Update should never be called — all required attributes (group_id,
+// id_of_group_owner, type) have RequiresReplace, and the Okta API has no
+// update endpoint for group owner assignments. If Terraform reaches this
+// method it indicates a schema configuration error.
+func (r *groupOwnerResource) Update(_ context.Context, _ resource.UpdateRequest, resp *resource.UpdateResponse) {
+	resp.Diagnostics.AddError(
+		"unexpected update call on okta_group_owner",
+		"All attributes require replacement; update is not supported by the Okta API. This is a provider bug.",
+	)
 }
 
 func (r *groupOwnerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -307,6 +284,7 @@ func mapGroupOwnerToState(data *okta.GroupOwner, state *groupOwnerResourceModel)
 	var diags diag.Diagnostics
 
 	state.ID = types.StringPointerValue(data.Id)
+	state.IdOfGroupOwner = types.StringPointerValue(data.Id)
 	state.DisplayName = types.StringPointerValue(data.DisplayName)
 	state.OriginId = types.StringPointerValue(data.OriginId)
 	state.OriginType = types.StringPointerValue(data.OriginType)
@@ -314,33 +292,4 @@ func mapGroupOwnerToState(data *okta.GroupOwner, state *groupOwnerResourceModel)
 	state.Type = types.StringPointerValue(data.Type)
 
 	return diags
-}
-
-// isAlreadyAssignedOwnerError returns true if the error response indicates that the provided owner is already assigned to the group.
-// It checks the HTTP 400 status and looks for the full phrase: "Provided owner is already assigned to this group" in the error causes
-// (case-insensitive). This avoids relying on generic error codes.
-func isAlreadyAssignedOwnerError(apiResp *okta.APIResponse, err error) bool {
-	if err == nil {
-		return false
-	}
-	if apiResp == nil || apiResp.StatusCode != 400 {
-		return false
-	}
-	needle := "provided owner is already assigned to this group"
-	// The Okta V5 SDK wraps errors as GenericOpenAPIError where Model() may be an okta.Error
-	var oae okta.GenericOpenAPIError
-	if errors.As(err, &oae) {
-		if m := oae.Model(); m != nil {
-			if oe, ok := m.(okta.Error); ok {
-				for _, cause := range oe.GetErrorCauses() {
-					if strings.Contains(strings.ToLower(cause.GetErrorSummary()), needle) {
-						return true
-					}
-				}
-			}
-		}
-	}
-	// Fallback to string search when we can't unpack a model
-	msg := strings.ToLower(err.Error())
-	return strings.Contains(msg, needle)
 }

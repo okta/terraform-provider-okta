@@ -1,0 +1,358 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - POST_AUTH_SESSION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstr909e8uuUhvE8n1d7","status":"ACTIVE","name":"Post Auth Policy","description":"Enables post auth policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:36 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.381959666s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulr909e8wwKN0FVJ1d7","status":"ACTIVE","name":"testAcc-4271605334","priority":10,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2026-03-23T14:04:43.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}}},"actions":{"postAuthSession":{}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"POST_AUTH_SESSION"},{"id":"rulr909e8vw1oKoVi1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","system":true,"conditions":null,"actions":{"postAuthSession":{"failureActions":[]}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8vw1oKoVi1d7","hints":{"allow":["GET","PUT"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.239249167s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - POST_AUTH_SESSION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstr909e8uuUhvE8n1d7","status":"ACTIVE","name":"Post Auth Policy","description":"Enables post auth policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:39 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.289613167s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulr909e8wwKN0FVJ1d7","status":"ACTIVE","name":"testAcc-4271605334","priority":10,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2026-03-23T14:04:43.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}}},"actions":{"postAuthSession":{}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"POST_AUTH_SESSION"},{"id":"rulr909e8vw1oKoVi1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","system":true,"conditions":null,"actions":{"postAuthSession":{"failureActions":[]}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8vw1oKoVi1d7","hints":{"allow":["GET","PUT"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.204067833s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - POST_AUTH_SESSION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstr909e8uuUhvE8n1d7","status":"ACTIVE","name":"Post Auth Policy","description":"Enables post auth policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:43 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.299714333s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulr909e8wwKN0FVJ1d7","status":"ACTIVE","name":"testAcc-4271605334","priority":10,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2026-03-23T14:04:43.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}}},"actions":{"postAuthSession":{}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"POST_AUTH_SESSION"},{"id":"rulr909e8vw1oKoVi1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","system":true,"conditions":null,"actions":{"postAuthSession":{"failureActions":[]}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8vw1oKoVi1d7","hints":{"allow":["GET","PUT"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.241058708s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - POST_AUTH_SESSION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstr909e8uuUhvE8n1d7","status":"ACTIVE","name":"Post Auth Policy","description":"Enables post auth policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:47 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.303880875s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulr909e8wwKN0FVJ1d7","status":"ACTIVE","name":"testAcc-4271605334","priority":10,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2026-03-23T14:04:43.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}}},"actions":{"postAuthSession":{}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"POST_AUTH_SESSION"},{"id":"rulr909e8vw1oKoVi1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","system":true,"conditions":null,"actions":{"postAuthSession":{"failureActions":[]}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8vw1oKoVi1d7","hints":{"allow":["GET","PUT"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:48 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.206700583s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - POST_AUTH_SESSION
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rstr909e8uuUhvE8n1d7","status":"ACTIVE","name":"Post Auth Policy","description":"Enables post auth policy evaluation for the org.","priority":1,"system":true,"conditions":null,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:50 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=POST_AUTH_SESSION>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.264265125s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"rulr909e8wwKN0FVJ1d7","status":"ACTIVE","name":"testAcc-4271605334","priority":10,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2026-03-23T14:04:43.000Z","system":false,"conditions":{"people":{"users":{"exclude":[]}}},"actions":{"postAuthSession":{}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8wwKN0FVJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"POST_AUTH_SESSION"},{"id":"rulr909e8vw1oKoVi1d7","status":"ACTIVE","name":"Catch-all Rule","priority":99,"created":"2025-10-24T06:49:52.000Z","lastUpdated":"2025-10-24T06:49:52.000Z","system":true,"conditions":null,"actions":{"postAuthSession":{"failureActions":[]}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstr909e8uuUhvE8n1d7/rules/rulr909e8vw1oKoVi1d7","hints":{"allow":["GET","PUT"]}}},"type":"POST_AUTH_SESSION"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Mar 2026 14:44:51 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.215223459s

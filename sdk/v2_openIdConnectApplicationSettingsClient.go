@@ -19,4 +19,5 @@ type OpenIdConnectApplicationSettingsClient struct {
 	TosUri                 string                                        `json:"tos_uri,omitempty"`
 	WildcardRedirect       string                                        `json:"wildcard_redirect,omitempty"`
 	JwksUri                string                                        `json:"jwks_uri,omitempty"`
+	Network                *OpenIdConnectApplicationNetwork              `json:"network,omitempty"`
 }

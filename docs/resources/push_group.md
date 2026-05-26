@@ -39,6 +39,7 @@ resource "okta_push_group" "ad_sample" {
   source_group_id = okta_group.test.id
   status          = "ACTIVE"
   app_config = {
+    type               = "ACTIVE_DIRECTORY"
     distinguished_name = "CN=Test,OU=Groups,DC=example,DC=com"
     group_scope        = "DOMAIN_LOCAL"
     group_type         = "SECURITY"
@@ -72,6 +73,7 @@ resource "okta_push_group" "ad_sample" {
 
 Optional:
 
+- `type` (String)
 - `distinguished_name` (String)
 - `group_scope` (String)
 - `group_type` (String)

@@ -13,4 +13,7 @@ resource "okta_app_oauth" "test" {
   participate_slo                      = true
   frontchannel_logout_uri              = "https://*.example.com/logout"
   frontchannel_logout_session_required = true
+  network {
+    connection = "ANYWHERE"
+  }
 }

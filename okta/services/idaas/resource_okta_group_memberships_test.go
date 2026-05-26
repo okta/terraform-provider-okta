@@ -1,11 +1,13 @@
 package idaas_test
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
@@ -30,6 +32,48 @@ func TestAccResourceOktaGroupMemberships_crud(t *testing.T) {
 			},
 			{
 				Config: remove,
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaGroupMemberships_GH2775(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSGroupMemberships, t.Name())
+	baseConfig := mgr.GetFixtures("import_base.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroupMemberships)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: baseConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
+					resource.TestCheckResourceAttr(resourceName, "users.#", "2"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					if s[0].Attributes["group_id"] == "" {
+						return errors.New("group_id is empty after import")
+					}
+					if s[0].ID != s[0].Attributes["group_id"] {
+						return errors.New("group_id does not match imported resource ID")
+					}
+					if s[0].Attributes["users.#"] == "" || s[0].Attributes["users.#"] == "0" {
+						return errors.New("users is empty after import")
+					}
+
+					return nil
+				},
 			},
 		},
 	})

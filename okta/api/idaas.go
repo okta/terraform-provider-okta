@@ -38,6 +38,10 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV3() *okta.APIClient
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
+	// HTTPClient returns the underlying *http.Client used by the SDK clients.
+	// Data sources that make raw HTTP calls should use this client so that the
+	// VCR recorder transport is honoured during acceptance tests.
+	HTTPClient() *http.Client
 }
 
 type OktaAPIConfig struct {
@@ -85,6 +89,10 @@ func (c *iDaaSAPIClient) OktaSDKClientV2() *sdk.Client {
 
 func (c *iDaaSAPIClient) OktaSDKSupplementClient() *sdk.APISupplement {
 	return c.oktaSDKSupplementClient
+}
+
+func (c *iDaaSAPIClient) HTTPClient() *http.Client {
+	return c.oktaSDKClientV6.GetConfig().HTTPClient
 }
 
 func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error) {

@@ -19,6 +19,9 @@ resource "okta_app_oauth" "test" {
   consent_method             = "TRUSTED"
   issuer_mode                = "ORG_URL"
   wildcard_redirect          = "DISABLED"
+  network {
+    connection = "ANYWHERE"
+  }
 
   profile = <<JSON
    {

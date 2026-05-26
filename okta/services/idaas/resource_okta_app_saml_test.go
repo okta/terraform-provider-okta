@@ -587,3 +587,150 @@ func TestAccResourceOktaAppSaml_Issue2171AcsEndpointsWithIndex(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSaml_skipAuthenticationPolicy(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
+	config := `
+resource "okta_app_saml" "test" {
+	label                    = "testAcc_replace_with_uuid"
+	sso_url                  = "http://google.com"
+	recipient                = "http://here.com"
+	destination              = "http://its-about-the-journey.com"
+	audience                 = "http://audience.com"
+	subject_name_id_template = "$${source.login}"
+	subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	response_signed          = true
+	assertion_signed         = true
+	signature_algorithm      = "RSA_SHA1"
+	digest_algorithm         = "SHA1"
+	honor_force_authn        = true
+	authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "sso_url", "http://google.com"),
+					resource.TestCheckResourceAttr(resourceName, "recipient", "http://here.com"),
+					resource.TestCheckResourceAttr(resourceName, "destination", "http://its-about-the-journey.com"),
+					resource.TestCheckResourceAttr(resourceName, "audience", "http://audience.com"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "metadata_url"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppSaml_skipAuthenticationPolicyUpdate(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
+	config := `
+resource "okta_app_saml" "test" {
+	label                    = "testAcc_replace_with_uuid"
+	sso_url                  = "http://google.com"
+	recipient                = "http://here.com"
+	destination              = "http://its-about-the-journey.com"
+	audience                 = "http://audience.com"
+	subject_name_id_template = "$${source.login}"
+	subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	response_signed          = true
+	assertion_signed         = true
+	signature_algorithm      = "RSA_SHA1"
+	digest_algorithm         = "SHA1"
+	honor_force_authn        = true
+	authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+	skip_authentication_policy = false
+}`
+	updatedConfig := `
+resource "okta_app_saml" "test" {
+	label                    = "testAcc_replace_with_uuid"
+	sso_url                  = "http://google.com"
+	recipient                = "http://here.com"
+	destination              = "http://its-about-the-journey.com"
+	audience                 = "http://audience.com"
+	subject_name_id_template = "$${source.login}"
+	subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	response_signed          = true
+	assertion_signed         = true
+	signature_algorithm      = "RSA_SHA1"
+	digest_algorithm         = "SHA1"
+	honor_force_authn        = true
+	authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "false"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(updatedConfig),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaAppSaml_skipAuthenticationPolicyOffice365(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
+	config := `
+resource "okta_app_saml" "test" {
+	label                    = "office365"
+	sso_url                  = "http://google.com"
+	recipient                = "http://here.com"
+	destination              = "http://its-about-the-journey.com"
+	audience                 = "http://audience.com"
+	subject_name_id_template = "$${source.login}"
+	subject_name_id_format   = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+	response_signed          = true
+	assertion_signed         = true
+	signature_algorithm      = "RSA_SHA1"
+	digest_algorithm         = "SHA1"
+	honor_force_authn        = true
+	authn_context_class_ref  = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+	skip_authentication_policy = true
+}`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(config),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "label", "office365"),
+					resource.TestCheckResourceAttr(resourceName, "skip_authentication_policy", "true"),
+					resource.TestCheckResourceAttrSet(resourceName, "logo_url"),
+					resource.TestCheckResourceAttrSet(resourceName, "metadata_url"),
+				),
+			},
+		},
+	})
+}

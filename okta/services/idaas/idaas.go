@@ -99,6 +99,7 @@ func FWProviderResources() []func() resource.Resource {
 		newCustomizedSigninResource,
 		newPreviewSigninResource,
 		newGroupOwnerResource,
+		newGroupOwnersResource,
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
 		newFeaturesResource,
@@ -123,6 +124,15 @@ func FWProviderResources() []func() resource.Resource {
 		newAppSignOnPolicyRulesResource,
 		newPushGroupResource,
 		newUserRiskResource,
+		newPostAuthSessionPolicyRuleResource,
+		newEntityRiskPolicyRuleResource,
+		newSessionViolationPolicyRuleResource,
+		newAuthenticatorWebauthnCustomAAGUIDResource,
+		newAuthenticatorMethodWebauthnResource,
+		newIdentitySourceGroupResource,
+		newIdentitySourceGroupMembershipResource,
+		newIdentitySourceImportResource,
+		newIdentitySourceUserResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -159,7 +169,17 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
 		newAdminRoleCustomDataSource,
+		newOAuthAuthorizationServerDataSource,
 		newUserRiskDataSource,
+		newPostAuthSessionPolicyDataSource,
+		newEntityRiskPolicyDataSource,
+		newSessionViolationPolicyDataSource,
+		newAuthenticatorWebauthnCustomAAGUIDsDataSource,
+		newAuthenticatorMethodWebauthnDataSource,
+		newIdentitySourceGroupMembershipsDataSource,
+		newIdentitySourceGroupsDataSource,
+		newIdentitySourceSessionsDataSource,
+		newIdentitySourceUsersDataSource,
 	}
 }
 
@@ -295,6 +315,7 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSIdpSocial:                dataSourceIdpSocial(),
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
+		resources.OktaIDaaSPolicyRulePassword:       dataSourcePolicyRulePassword(),
 		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),

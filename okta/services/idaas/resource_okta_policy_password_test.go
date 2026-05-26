@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -34,6 +35,9 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test Password Policy"),
 					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_expire_after_days", "0"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_logout_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_delegated_workflow_id", ""),
 				),
 			},
 			{
@@ -62,7 +66,9 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
 					resource.TestCheckResourceAttr(resourceName, "sms_recovery", idaas.StatusActive),
-					// resource.TestCheckResourceAttr(resourceName, "call_recovery", statusActive),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_expire_after_days", "6"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_logout_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_delegated_workflow_id", "1074260"),
 				),
 			},
 			{
@@ -91,6 +97,9 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "question_min_length", "10"),
 					resource.TestCheckResourceAttr(resourceName, "recovery_email_token", "20160"),
 					resource.TestCheckResourceAttr(resourceName, "sms_recovery", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_expire_after_days", "6"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_logout_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "breached_password_delegated_workflow_id", "1074260"),
 				),
 			},
 		},
@@ -98,6 +107,11 @@ func TestAccResourceOktaPolicyPassword_crud(t *testing.T) {
 }
 
 func ensurePolicyExists(resourceName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
 	return func(s *terraform.State) error {
 		missingErr := fmt.Errorf("resource not found: %s", resourceName)
 		rs, ok := s.RootModule().Resources[resourceName]

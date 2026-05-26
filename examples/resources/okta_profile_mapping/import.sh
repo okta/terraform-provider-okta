@@ -1,0 +1,1 @@
+terraform import okta_profile_mapping.test <okta_profile_mapping_id>

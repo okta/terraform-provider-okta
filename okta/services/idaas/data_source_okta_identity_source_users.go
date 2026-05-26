@@ -1,0 +1,152 @@
+package idaas
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	okta "github.com/okta/okta-sdk-golang/v6/okta"
+
+	"github.com/okta/terraform-provider-okta/okta/config"
+)
+
+var (
+	_ datasource.DataSource              = &identitySourceUsersDataSource{}
+	_ datasource.DataSourceWithConfigure = &identitySourceUsersDataSource{}
+)
+
+// identitySourceUserProfileAttrTypes defines the attribute types for the profile object.
+var identitySourceUserProfileAttrTypes = map[string]attr.Type{
+	"email":        types.StringType,
+	"first_name":   types.StringType,
+	"home_address": types.StringType,
+	"last_name":    types.StringType,
+	"mobile_phone": types.StringType,
+	"second_email": types.StringType,
+	"user_name":    types.StringType,
+}
+
+// IdentitySourceUsersDataSource defines the data source implementation.
+type identitySourceUsersDataSource struct {
+	Config *config.Config
+}
+
+// IdentitySourceUsersDataSourceModel describes the data source data model.
+type identitySourceUsersDataSourceModel struct {
+	ID               types.String `tfsdk:"id"`
+	IdentitySourceId types.String `tfsdk:"identity_source_id"`
+	Created          types.String `tfsdk:"created"`
+	ExternalId       types.String `tfsdk:"external_id"`
+	LastUpdated      types.String `tfsdk:"last_updated"`
+	Profile          types.Object `tfsdk:"profile"`
+}
+
+func newIdentitySourceUsersDataSource() datasource.DataSource {
+	return &identitySourceUsersDataSource{}
+}
+
+func (d *identitySourceUsersDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_identity_source_users"
+}
+
+func (d *identitySourceUsersDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.Config = dataSourceConfiguration(req, resp)
+}
+
+func (d *identitySourceUsersDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		MarkdownDescription: "Data source for the Okta `identity_source_users` resource.",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				MarkdownDescription: "Unique identifier of the identity source user.",
+				Optional:            true,
+				Computed:            true,
+			},
+			"identity_source_id": schema.StringAttribute{
+				MarkdownDescription: "ID of the identity source",
+				Required:            true,
+			},
+			"external_id": schema.StringAttribute{
+				MarkdownDescription: "The external ID of the user in the identity source.",
+				Required:            true,
+			},
+			"created": schema.StringAttribute{
+				MarkdownDescription: "The timestamp when the user was created in the identity source",
+				Computed:            true,
+			},
+			"last_updated": schema.StringAttribute{
+				MarkdownDescription: "The timestamp when the user was last updated in the identity source",
+				Computed:            true,
+			},
+			"profile": schema.ObjectAttribute{
+				MarkdownDescription: "Contains a set of external user attributes and their values that are mapped to Okta standard and custom profile properties.",
+				Computed:            true,
+				AttributeTypes:      identitySourceUserProfileAttrTypes,
+			},
+		},
+	}
+}
+
+func (d *identitySourceUsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state identitySourceUsersDataSourceModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	identitySourceId := state.IdentitySourceId.ValueString()
+	externalId := state.ExternalId.ValueString()
+
+	client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
+	result, httpResp, err := client.IdentitySourceAPI.GetIdentitySourceUser(ctx, identitySourceId, externalId).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.Diagnostics.AddError(
+				"Identity source user not found",
+				fmt.Sprintf("No user with external ID %q found in identity source %q.", externalId, identitySourceId),
+			)
+			return
+		}
+		resp.Diagnostics.AddError(
+			"Failed to read identity_source_users",
+			fmt.Sprintf("Error reading identity source user: %s", err.Error()),
+		)
+		return
+	}
+
+	mapIdentitySourceUsersResponseToState(ctx, result, &state, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+// mapIdentitySourceUsersResponseToState maps the API response to the data source state model.
+func mapIdentitySourceUsersResponseToState(ctx context.Context, response *okta.UserResponseSchema, state *identitySourceUsersDataSourceModel, diags *diag.Diagnostics) {
+	state.ID = types.StringValue(response.GetId())
+	state.ExternalId = types.StringValue(response.GetExternalId())
+	state.Created = types.StringValue(response.GetCreated().Format(time.RFC3339))
+	state.LastUpdated = types.StringValue(response.GetLastUpdated().Format(time.RFC3339))
+
+	profile := response.GetProfile()
+	profileObj, d := types.ObjectValue(identitySourceUserProfileAttrTypes, map[string]attr.Value{
+		"email":        types.StringValue(profile.GetEmail()),
+		"first_name":   types.StringValue(profile.GetFirstName()),
+		"home_address": types.StringValue(profile.GetHomeAddress()),
+		"last_name":    types.StringValue(profile.GetLastName()),
+		"mobile_phone": types.StringValue(profile.GetMobilePhone()),
+		"second_email": types.StringValue(profile.GetSecondEmail()),
+		"user_name":    types.StringValue(profile.GetUserName()),
+	})
+	diags.Append(d...)
+	state.Profile = profileObj
+}

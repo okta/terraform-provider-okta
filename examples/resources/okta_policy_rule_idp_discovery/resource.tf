@@ -4,6 +4,7 @@ data "okta_policy" "idp_discovery_policy" {
   type = "IDP_DISCOVERY"
 }
 
+# Example 1: Specific IdP routing - route to a named OIDC IdP
 resource "okta_policy_rule_idp_discovery" "example" {
   policy_id                 = data.okta_policy.idp_discovery_policy.id
   name                      = "example"
@@ -47,4 +48,15 @@ resource "okta_policy_rule_idp_discovery" "example" {
     match_type = "EQUALS"
     value      = "Articulate"
   }
+}
+
+# Example 2: Dynamic IdP routing - select IdP based on an expression
+resource "okta_policy_rule_idp_discovery" "dynamic_example" {
+  policy_id           = data.okta_policy.idp_discovery_policy.id
+  name                = "dynamic-idp-routing"
+  network_connection  = "ANYWHERE"
+  priority            = 2
+  status              = "ACTIVE"
+  selection_type      = "DYNAMIC"
+  provider_expression = "login.identifier.substringAfter('@')"
 }

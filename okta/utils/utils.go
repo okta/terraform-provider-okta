@@ -13,6 +13,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"sort"
@@ -25,6 +26,7 @@ import (
 
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/okta-sdk-golang/v4/okta"
@@ -423,14 +425,14 @@ func SuppressErrorOn404_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to suppressErrorOn404 when migration complete
 func SuppressErrorOn404_V5(resp *v5okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V5(resp, err)
 }
 
 func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
-	if resp != nil && resp.StatusCode == http.StatusNotFound {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	return ResponseErr_V6(resp, err)
@@ -548,7 +550,7 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
@@ -559,7 +561,7 @@ func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
 func ResponseErr_V6(resp *v6okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
-		if resp != nil {
+		if resp != nil && resp.Response != nil {
 			msg += fmt.Sprintf(", Status: %s", resp.Status)
 		}
 		return errors.New(msg)
@@ -868,6 +870,11 @@ func Int64Ptr(what int) *int64 {
 	return &result
 }
 
+func Int32Ptr(what int) *int32 {
+	result := int32(what)
+	return &result
+}
+
 func ResourceFuncNoOp(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
@@ -937,4 +944,38 @@ func StrMaxLength(max int) schema.SchemaValidateDiagFunc {
 		}
 		return nil
 	}
+}
+
+// Helper function to convert []string to []types.String
+func ConvertStringSlice(slice []string) []types.String {
+	result := make([]types.String, len(slice))
+	for i, v := range slice {
+		result[i] = types.StringValue(v)
+	}
+	return result
+}
+
+// ExtractAfterCursor parses the `after` cursor from the Link header of an API response.
+// Link header format: <url>; rel="next", <url>; rel="self"
+func ExtractAfterCursor(httpResp *v6okta.APIResponse) string {
+	if httpResp == nil {
+		return ""
+	}
+	for _, part := range strings.Split(httpResp.Header.Get("Link"), ",") {
+		part = strings.TrimSpace(part)
+		if !strings.Contains(part, `rel="next"`) {
+			continue
+		}
+		start := strings.Index(part, "<")
+		end := strings.Index(part, ">")
+		if start < 0 || end <= start {
+			continue
+		}
+		u, err := url.Parse(part[start+1 : end])
+		if err != nil {
+			continue
+		}
+		return u.Query().Get("after")
+	}
+	return ""
 }

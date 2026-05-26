@@ -1,0 +1,326 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - IDP_DISCOVERY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00pnkw1sew5kdoN4o1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:37.000Z","lastUpdated":"2025-06-26T15:51:37.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:00 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 8.977782166s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - IDP_DISCOVERY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00pnkw1sew5kdoN4o1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:37.000Z","lastUpdated":"2025-06-26T15:51:37.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:02 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.38812725s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 323
+        host: oie-00.dne-okta.com
+        body: |
+            {"actions":{"idp":{"idpSelectionType":"DYNAMIC","matchCriteria":[{"providerExpression":"login.identifier.substringAfter('@')"}],"providers":[],"shouldFallBackToOkta":false}},"conditions":{"network":{"connection":"ANYWHERE"}},"name":"testAcc_1445710770","priority":1,"status":"ACTIVE","system":false,"type":"IDP_DISCOVERY"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0prx764pzcjh6CijQ1d7","status":"ACTIVE","name":"testAcc_1445710770","priority":1,"created":"2026-04-07T09:14:08.000Z","lastUpdated":"2026-04-07T09:14:08.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"userIdentifier":{"patterns":[]},"app":{"include":[],"exclude":[]}},"actions":{"idp":{"providers":[],"matchCriteria":[{"providerExpression":"login.identifier.substringAfter(''@'')","propertyName":"name"}],"idpSelectionType":"DYNAMIC"}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"IDP_DISCOVERY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 5.068523291s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0prx764pzcjh6CijQ1d7","status":"ACTIVE","name":"testAcc_1445710770","priority":1,"created":"2026-04-07T09:14:08.000Z","lastUpdated":"2026-04-07T09:14:08.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"userIdentifier":{"patterns":[]},"app":{"include":[],"exclude":[]}},"actions":{"idp":{"providers":[],"matchCriteria":[{"providerExpression":"login.identifier.substringAfter(''@'')","propertyName":"name"}],"idpSelectionType":"DYNAMIC"}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"IDP_DISCOVERY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.275840167s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - IDP_DISCOVERY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00pnkw1sew5kdoN4o1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:37.000Z","lastUpdated":"2025-06-26T15:51:37.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:12 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.2515805s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - IDP_DISCOVERY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00pnkw1sew5kdoN4o1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:37.000Z","lastUpdated":"2025-06-26T15:51:37.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:14 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.259329458s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0prx764pzcjh6CijQ1d7","status":"ACTIVE","name":"testAcc_1445710770","priority":1,"created":"2026-04-07T09:14:08.000Z","lastUpdated":"2026-04-07T09:14:08.000Z","system":false,"conditions":{"network":{"connection":"ANYWHERE"},"userIdentifier":{"patterns":[]},"app":{"include":[],"exclude":[]}},"actions":{"idp":{"providers":[],"matchCriteria":[{"providerExpression":"login.identifier.substringAfter(''@'')","propertyName":"name"}],"idpSelectionType":"DYNAMIC"}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"type":"IDP_DISCOVERY"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.238585708s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            type:
+                - IDP_DISCOVERY
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"id":"00pnkw1sew5kdoN4o1d7","status":"ACTIVE","name":"Idp Discovery Policy","description":"The default IdP Discovery Policy","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:37.000Z","lastUpdated":"2025-06-26T15:51:37.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules","hints":{"allow":["GET","POST"]}}},"type":"IDP_DISCOVERY"}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 07 Apr 2026 09:14:17 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/policies?type=IDP_DISCOVERY>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.266899542s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/policies/00pnkw1sew5kdoN4o1d7/rules/0prx764pzcjh6CijQ1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 07 Apr 2026 09:14:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.657241792s
