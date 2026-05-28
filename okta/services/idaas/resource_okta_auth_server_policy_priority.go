@@ -228,6 +228,11 @@ func (r *authServerPolicyPriorityResource) applyPriorities(ctx context.Context, 
 			return diags
 		}
 
+		// Skip update if priority is already correct
+		if policy.PriorityPtr != nil && *policy.PriorityPtr == priority {
+			continue
+		}
+
 		policy.PriorityPtr = &priority
 		_, _, err = client.AuthorizationServer.UpdateAuthorizationServerPolicy(ctx, authServerID, policyID, *policy)
 		if err != nil {
