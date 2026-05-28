@@ -12,7 +12,7 @@ Retrieves the request settings for a resource.
 
 ```terraform
 data "okta_request_setting_resource" "test" {
-  resource_id="<id>"
+  id="<id>"
 }
 ```
 
