@@ -118,6 +118,39 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaIdpSaml_account_link_auto exercises the Read path when account_link_action
+// is set to AUTO without account_link_group_include. Regression test for OKTA-1131393 where
+// the provider panicked with a nil pointer dereference when the Okta API returned
+// accountLink.filter.groups = null (filter non-null, groups null inside it).
+func TestAccResourceOktaIdpSaml_account_link_auto(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSIdpSaml, t.Name())
+	config := mgr.GetFixtures("account_link_auto.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpSaml)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpSaml, createDoesIdpExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "account_link_action", "AUTO"),
+					resource.TestCheckNoResourceAttr(resourceName, "account_link_group_include"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"issuer_mode"},
+			},
+		},
+	})
+}
+
 // TestAccResourceOktaIdpSaml_minimal_example was used to prove that the PR
 // https://github.com/okta/terraform-provider-okta/pull/1355 was correct. This
 // test would fail if the org was missing the mappings api feature. And pass if
