@@ -8,9 +8,9 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccDataSourceOktaRequestCondition_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.OktaGovernanceRequestCondition, t.Name())
-	config := mgr.GetFixtures("datasource.tf", t)
+func TestAccDataSourceOktaRequestConditions_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", resources.OktaGovernanceRequestConditions, t.Name())
+	config := mgr.GetFixtures("datasource_list.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -20,10 +20,9 @@ func TestAccDataSourceOktaRequestCondition_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_request_condition.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_request_condition.test", "name", "request-condition-test"),
-					resource.TestCheckResourceAttr("data.okta_request_condition.test", "access_scope_settings.type", "RESOURCE_DEFAULT"),
-					resource.TestCheckResourceAttr("data.okta_request_condition.test", "requester_settings.type", "EVERYONE"),
+					resource.TestCheckResourceAttrSet("data.okta_request_conditions.test", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_request_conditions.test", "resource_id"),
+					resource.TestCheckResourceAttrSet("data.okta_request_conditions.test", "conditions.#"),
 				),
 			},
 		},
