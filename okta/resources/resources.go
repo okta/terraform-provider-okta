@@ -89,6 +89,7 @@ const (
 	OktaIDaaSIdentitySourceSessions                   = "okta_identity_source_sessions"
 	OktaIDaaSIdentitySourceUser                       = "okta_identity_source_user"
 	OktaIDaaSIdentitySourceUsers                      = "okta_identity_source_users"
+	OktaIDaaSIamAssigneesUser                         = "okta_iam_assignees_user"
 	OktaIDaaSIdpMetadataSaml                          = "okta_idp_metadata_saml"
 	OktaIDaaSIdpOidc                                  = "okta_idp_oidc"
 	OktaIDaaSIdpSaml                                  = "okta_idp_saml"
