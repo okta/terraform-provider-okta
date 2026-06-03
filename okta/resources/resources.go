@@ -81,6 +81,7 @@ const (
 	OktaIDaaSGroupRule                                = "okta_group_rule"
 	OktaIDaaSGroups                                   = "okta_groups"
 	OktaIDaaSGroupSchemaProperty                      = "okta_group_schema_property"
+	OktaIDaaSIamAssigneesUser                         = "okta_iam_assignees_user"
 	OktaIDaaSIdentitySourceGroup                      = "okta_identity_source_group"
 	OktaIDaaSIdentitySourceGroupMembership            = "okta_identity_source_group_membership"
 	OktaIDaaSIdentitySourceGroupMemberships           = "okta_identity_source_group_memberships"
