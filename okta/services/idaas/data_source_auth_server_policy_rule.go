@@ -104,7 +104,7 @@ type AuthorizationServersPoliciesRuleDataSourceModelConditionsModelScopesModel s
 	Include types.List `tfsdk:"include"`
 }
 
-func NewAuthorizationServersPoliciesRuleDataSource() datasource.DataSource {
+func newAuthorizationServersPoliciesRuleDataSource() datasource.DataSource {
 	return &authorizationServersPoliciesRuleDataSource{}
 }
 
