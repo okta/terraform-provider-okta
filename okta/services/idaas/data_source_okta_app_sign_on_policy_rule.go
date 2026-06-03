@@ -185,12 +185,12 @@ type PoliciesRuleAccessPolicyDataSourceModelConditionsModelUserTypeModel struct 
 	Include types.List `tfsdk:"include"`
 }
 
-func NewPoliciesRuleAccessPolicyDataSource() datasource.DataSource {
+func newPoliciesRuleAccessPolicyDataSource() datasource.DataSource {
 	return &policiesRuleAccessPolicyDataSource{}
 }
 
 func (d *policiesRuleAccessPolicyDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_policies_rule_access_policy"
+	resp.TypeName = req.ProviderTypeName + "_app_sign_on_policy_rule"
 }
 
 func (d *policiesRuleAccessPolicyDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -248,14 +248,14 @@ func (d *policiesRuleAccessPolicyDataSource) Schema(_ context.Context, _ datasou
 						},
 						Blocks: map[string]schema.Block{
 							"keep_me_signed_in": schema.SingleNestedBlock{
-								Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Controls how often the post-authentication prompt is presented to users",
+								Description: "Controls how often the post-authentication prompt is presented to users",
 								Attributes: map[string]schema.Attribute{
 									"post_auth": schema.StringAttribute{
-										Description: "Whether the post-authentication [Keep Me Signed In (KMSI)](https://help.",
+										Description: "Whether the post-authentication Keep Me Signed In (KMSI) flow is allowed.",
 										Computed:    true,
 									},
 									"post_auth_prompt_frequency": schema.StringAttribute{
-										Description: "A time duration specified as an [ISO 8601 duration](https://en.",
+										Description: "A time duration specified as an ISO 8601 duration",
 										Computed:    true,
 									},
 								},
@@ -277,7 +277,7 @@ func (d *policiesRuleAccessPolicyDataSource) Schema(_ context.Context, _ datasou
 				Description: "Conditions",
 				Blocks: map[string]schema.Block{
 					"device": schema.SingleNestedBlock{
-						Description: "<x-lifecycle class='oie'></x-lifecycle> Specifies the device condition to match on",
+						Description: "Specifies the device condition to match on",
 						Attributes: map[string]schema.Attribute{
 							"managed": schema.BoolAttribute{
 								Description: "Indicates if the device is managed.",
@@ -290,7 +290,7 @@ func (d *policiesRuleAccessPolicyDataSource) Schema(_ context.Context, _ datasou
 						},
 						Blocks: map[string]schema.Block{
 							"assurance": schema.SingleNestedBlock{
-								Description: "Specifies [device assurance policies](https://developer.",
+								Description: "Specifies device assurance policies in the policy rule.",
 								Attributes: map[string]schema.Attribute{
 									"include": schema.ListAttribute{
 										Description: "Specifies the device assurance policy ID",
@@ -302,7 +302,7 @@ func (d *policiesRuleAccessPolicyDataSource) Schema(_ context.Context, _ datasou
 						},
 					},
 					"el_condition": schema.SingleNestedBlock{
-						Description: "Specifies [Okta Expression Language](https://developer.",
+						Description: "Specifies Okta Expression Language expressions",
 						Attributes: map[string]schema.Attribute{
 							"condition": schema.StringAttribute{
 								Description: "expression to match",
@@ -459,13 +459,13 @@ func (d *policiesRuleAccessPolicyDataSource) Schema(_ context.Context, _ datasou
 								Computed:    true,
 							},
 							"min_risk_level": schema.StringAttribute{
-								Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>The minimum risk level to match.",
+								Description: "The minimum risk level to match.",
 								Computed:    true,
 							},
 						},
 					},
 					"user_type": schema.SingleNestedBlock{
-						Description: "<x-lifecycle class='oie'></x-lifecycle> Specifies which user types to include and/or exclude",
+						Description: "Specifies which user types to include and/or exclude",
 						Attributes: map[string]schema.Attribute{
 							"exclude": schema.ListAttribute{
 								Description: "The user types to exclude",

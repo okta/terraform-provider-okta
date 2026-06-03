@@ -7,8 +7,8 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaPoliciesRuleAccessPolicy_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", "okta_policies_rule_access_policy", t.Name())
+func TestAccDataSourceOktaAppSignOnPolicyRule_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", "okta_app_sign_on_policy_rule", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -19,11 +19,11 @@ func TestAccDataSourceOktaPoliciesRuleAccessPolicy_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.okta_policies_rule_access_policy.test", "id"),
-					resource.TestCheckResourceAttrSet("data.okta_policies_rule_access_policy.test", "name"),
-					resource.TestCheckResourceAttrSet("data.okta_policies_rule_access_policy.test", "status"),
-					resource.TestCheckResourceAttrSet("data.okta_policies_rule_access_policy.test", "priority"),
-					resource.TestCheckResourceAttr("data.okta_policies_rule_access_policy.test", "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet("data.okta_app_sign_on_policy_rule.test", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_app_sign_on_policy_rule.test", "name"),
+					resource.TestCheckResourceAttrSet("data.okta_app_sign_on_policy_rule.test", "status"),
+					resource.TestCheckResourceAttrSet("data.okta_app_sign_on_policy_rule.test", "priority"),
+					resource.TestCheckResourceAttr("data.okta_app_sign_on_policy_rule.test", "status", "ACTIVE"),
 				),
 			},
 		},

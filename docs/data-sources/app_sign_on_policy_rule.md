@@ -1,19 +1,31 @@
 ---
-page_title: "Data Source: okta_policies_rule_access_policy"
+page_title: "Data Source: okta_app_sign_on_policy_rule"
 description: |-
   Retrieves an app sign-on (access) policy rule by ID from Okta.
 ---
 
-# Data Source: okta_policies_rule_access_policy
+# Data Source: okta_app_sign_on_policy_rule
 
 Retrieves an app sign-on (access) policy rule by `ruleId` from Okta.
+
+~> **WARNING:** This feature is only available as a part of the 
+Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) 
+for further information.
+
+-> Inside the product a sign-on policy rule is referenced as an _authentication
+policy rule_, in the public API the parent policy is of type
+[`ACCESS_POLICY`](https://developer.okta.com/docs/reference/api/policy/#policy-object).
 
 ## Example Usage
 
 ```terraform
-data "okta_policies_rule_access_policy" "example" {
+data "okta_app_signon_policy" "example" {
+  app_id = "<app id>"
+}
+
+data "okta_app_sign_on_policy_rule" "example" {
   id        = "<rule id>"
-  policy_id = "<policy id>"
+  policy_id = data.okta_app_signon_policy.example.id
 }
 ```
 
@@ -69,7 +81,7 @@ data "okta_policies_rule_access_policy" "example" {
 - `platform` (Block) Specifies a particular platform or device to match on
   - `exclude` (List of Block) Platforms to exclude
     - `type` (String) The type of platform
-    - `os` (Block) OS condition
+    - `os` (Block) OS
       - `expression` (String) OS expression
       - `type` (String) The type of operating system
       - `version` (Block) OS version condition
@@ -77,7 +89,7 @@ data "okta_policies_rule_access_policy" "example" {
         - `value` (String) Version value
   - `include` (List of Block) Platforms to include
     - `type` (String) The type of platform
-    - `os` (Block) OS condition
+    - `os` (Block) OS
       - `expression` (String) OS expression
       - `type` (String) The type of operating system
       - `version` (Block) OS version condition

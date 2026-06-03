@@ -35,7 +35,7 @@ resource "okta_app_signon_policy_rule" "test" {
   }
 }
 
-data "okta_policies_rule_access_policy" "test" {
+data "okta_app_sign_on_policy_rule" "test" {
   id        = okta_app_signon_policy_rule.test.id
   policy_id = data.okta_app_signon_policy.test.id
 }

@@ -1,4 +1,4 @@
-data "okta_policies_rule_access_policy" "example" {
+data "okta_app_sign_on_policy_rule" "example" {
   id        = "<rule id>"
   policy_id = "<policy id>"
 }
