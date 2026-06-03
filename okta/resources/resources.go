@@ -173,5 +173,4 @@ const (
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUID        = "okta_authenticator_webauthn_custom_aaguid"
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUIDs       = "okta_authenticator_webauthn_custom_aaguids"
 	OktaIDaaSAuthenticatorMethodWebauthn              = "okta_authenticator_method_webauthn"
-	OktaIDaaSPoliciesRuleSignOn                       = "okta_policies_rule_sign_on"
 )

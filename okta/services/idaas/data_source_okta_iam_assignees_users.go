@@ -49,7 +49,7 @@ type iamAssigneesUserDataSourceModel struct {
 	Items []iamAssigneesUserItemModel `tfsdk:"items"`
 }
 
-func NewIamAssigneesUserDataSource() datasource.DataSource {
+func newIamAssigneesUserDataSource() datasource.DataSource {
 	return &iamAssigneesUserDataSource{}
 }
 
