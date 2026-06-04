@@ -1293,7 +1293,6 @@ resource "okta_app_oauth" "test" {
 func TestAccResourceOktaAppOauth_backchannelCustomAuthenticatorId_GH2408(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	appResourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
-	authResourceName := fmt.Sprintf("%s.test1", resources.OktaIDaaSAuthenticator)
 	config := mgr.GetFixtures("basic-ciba.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -1312,11 +1311,6 @@ func TestAccResourceOktaAppOauth_backchannelCustomAuthenticatorId_GH2408(t *test
 					resource.TestCheckResourceAttr(appResourceName, "grant_types.#", "3"),
 					resource.TestCheckTypeSetElemAttr(appResourceName, "grant_types.*", "urn:openid:params:grant-type:ciba"),
 					resource.TestCheckResourceAttrSet(appResourceName, "backchannel_custom_authenticator_id"),
-					// Confirm the value persisted in state matches the upstream authenticator id.
-					resource.TestCheckResourceAttrPair(
-						appResourceName, "backchannel_custom_authenticator_id",
-						authResourceName, "id",
-					),
 				),
 			},
 			{

@@ -1,6 +1,6 @@
 resource "okta_authenticator" "test1" {
   key                = "custom_app"
-  name               = "testAcc_replace_with_uuid"
+  name               = "VCRTestCustomAppAuth001"
   status             = "ACTIVE"
   agree_to_terms     = "true"
   legacy_ignore_name = false
@@ -19,7 +19,7 @@ resource "okta_authenticator" "test1" {
 }
 
 resource "okta_app_oauth" "test" {
-  label = "testAcc_replace_with_uuid"
+  label = "GH2408_CIBA"
   type  = "web"
   grant_types = [
     "authorization_code",
