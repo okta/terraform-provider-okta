@@ -180,7 +180,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newIdentitySourceGroupsDataSource,
 		newIdentitySourceSessionsDataSource,
 		newIdentitySourceUsersDataSource,
-		NewPoliciesRuleAccessPolicyDataSource,
+		newPoliciesRuleAccessPolicyDataSource,
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 	}
