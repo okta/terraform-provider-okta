@@ -443,6 +443,11 @@ other arguments that changed will be applied.`,
 				Optional:    true,
 				Description: "URL reference to JWKS",
 			},
+			"backchannel_custom_authenticator_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The ID of the custom authenticator that authenticates the user. Applies when 'urn:openid:params:grant-type:ciba' is one of the configured grant_types.",
+			},
 			"preconfigured_app": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -811,6 +816,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	_ = d.Set("login_uri", oauthClient.GetInitiateLoginUri())
 	_ = d.Set("jwks_uri", oauthClient.GetJwksUri())
 	_ = d.Set("wildcard_redirect", oauthClient.GetWildcardRedirect())
+	_ = d.Set("backchannel_custom_authenticator_id", oauthClient.GetBackchannelCustomAuthenticatorId())
 	// Some orgs/APIs omit this value in responses, which can cause perpetual diffs
 	// if we overwrite state with an empty string. Only set when present.
 	if consentMethod := oauthClient.GetConsentMethod(); consentMethod != "" {
@@ -1145,6 +1151,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	}
 	if jwksURI := d.Get("jwks_uri").(string); jwksURI != "" {
 		oauthClientSettings.SetJwksUri(jwksURI)
+	}
+	if backchannelAuthID := d.Get("backchannel_custom_authenticator_id").(string); backchannelAuthID != "" {
+		oauthClientSettings.SetBackchannelCustomAuthenticatorId(backchannelAuthID)
 	}
 	if participateSlo, ok := d.GetOk("participate_slo"); ok {
 		oauthClientSettings.SetParticipateSlo(participateSlo.(bool))
