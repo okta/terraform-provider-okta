@@ -218,7 +218,7 @@ func (r *trustedServerResource) Update(ctx context.Context, req resource.UpdateR
 	}
 }
 
-func mapTrustedServersToState(data []okta.AuthorizationServer, state *trustedServerResourceModel) diag.Diagnostics {
+func mapTrustedServersToState(_ []okta.AuthorizationServer, state *trustedServerResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 	state.ID = types.StringValue(state.AuthSeverID.ValueString())
 	return diags
