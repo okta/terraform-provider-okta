@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v5"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -103,6 +104,7 @@ type policyRuleModel struct {
 	Chains                    types.List             `tfsdk:"chains"`
 	RiskScore                 types.String           `tfsdk:"risk_score"`
 	PlatformInclude           []platformIncludeModel `tfsdk:"platform_include"`
+	KeepMeSignedIn            []keepMeSignedInModel  `tfsdk:"keep_me_signed_in"`
 }
 
 // platformIncludeModel represents platform conditions in the rule.
@@ -110,6 +112,13 @@ type platformIncludeModel struct {
 	Type         types.String `tfsdk:"type"`
 	OsType       types.String `tfsdk:"os_type"`
 	OsExpression types.String `tfsdk:"os_expression"`
+}
+
+// keepMeSignedInModel represents the post-authentication Keep Me Signed In
+// (a.k.a. "Option to stay signed in") prompt configuration on a rule.
+type keepMeSignedInModel struct {
+	PostAuth                types.String `tfsdk:"post_auth"`
+	PostAuthPromptFrequency types.String `tfsdk:"post_auth_prompt_frequency"`
 }
 
 // reauthFrequencyModifier is a plan modifier that suppresses changes to
@@ -548,6 +557,14 @@ func (r *appSignOnPolicyRulesResource) policyRuleObjectType() types.ObjectType {
 					},
 				},
 			},
+			"keep_me_signed_in": types.ListType{
+				ElemType: types.ObjectType{
+					AttrTypes: map[string]attr.Type{
+						"post_auth":                  types.StringType,
+						"post_auth_prompt_frequency": types.StringType,
+					},
+				},
+			},
 		},
 	}
 }
@@ -578,7 +595,8 @@ func (r *appSignOnPolicyRulesResource) buildSchema() schema.Schema {
 				NestedObject: schema.NestedBlockObject{
 					Attributes: r.buildRuleAttributes(),
 					Blocks: map[string]schema.Block{
-						"platform_include": r.buildPlatformIncludeBlock(),
+						"platform_include":  r.buildPlatformIncludeBlock(),
+						"keep_me_signed_in": r.buildKeepMeSignedInBlock(),
 					},
 				},
 			},
@@ -616,6 +634,28 @@ func (r *appSignOnPolicyRulesResource) buildPlatformIncludeBlock() schema.ListNe
 		},
 	}
 }
+func (r *appSignOnPolicyRulesResource) buildKeepMeSignedInBlock() schema.ListNestedBlock {
+	return schema.ListNestedBlock{
+		Description: "Controls the post-authentication Keep Me Signed In (KMSI) prompt, also known as the \"Option to stay signed in\". Requires the KMSI feature to be enabled on the Okta org.",
+		Validators:  []validator.List{listvalidator.SizeAtMost(1)},
+		NestedObject: schema.NestedBlockObject{
+			Attributes: map[string]schema.Attribute{
+				"post_auth": schema.StringAttribute{
+					Optional:    true,
+					Computed:    true,
+					Default:     stringdefault.StaticString("NOT_ALLOWED"),
+					Description: "Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.",
+					Validators:  []validator.String{stringvalidator.OneOf("ALLOWED", "NOT_ALLOWED")},
+				},
+				"post_auth_prompt_frequency": schema.StringAttribute{
+					Optional:    true,
+					Description: "How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).",
+				},
+			},
+		},
+	}
+}
+
 func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"id": schema.StringAttribute{
@@ -1138,6 +1178,7 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIInactivityPeriod(&apiRule, rule)
 	r.setAPIConstraints(ctx, &apiRule, rule)
 	r.setAPIChains(ctx, &apiRule, rule)
+	r.setAPIKeepMeSignedIn(&apiRule, rule)
 	r.setAPINetworkConditions(ctx, &apiRule, rule)
 	r.setAPIPlatformConditions(&apiRule, rule)
 	r.setAPICustomExpression(&apiRule, rule)
@@ -1146,6 +1187,20 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIPeopleConditions(ctx, &apiRule, rule)
 	r.setAPIUserTypeConditions(ctx, &apiRule, rule)
 	return apiRule
+}
+
+// setAPIKeepMeSignedIn maps the keep_me_signed_in block on the model into the
+// AppSignOn action's KeepMeSignedIn struct. When the block is omitted, the field
+// is left nil (omitempty), meaning the API treats it as unset.
+func (r *appSignOnPolicyRulesResource) setAPIKeepMeSignedIn(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
+	if len(rule.KeepMeSignedIn) == 0 {
+		return
+	}
+	k := rule.KeepMeSignedIn[0]
+	apiRule.Actions.AppSignOn.KeepMeSignedIn = &sdk.KeepMeSignedIn{
+		PostAuth:                k.PostAuth.ValueString(),
+		PostAuthPromptFrequency: k.PostAuthPromptFrequency.ValueString(),
+	}
 }
 func (r *appSignOnPolicyRulesResource) setAPIPriority(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.Priority.IsNull() && !rule.Priority.IsUnknown() {
@@ -1380,6 +1435,18 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
+
+	// Keep Me Signed In ("Option to stay signed in"): hydrate from API when present
+	// so admin-UI changes show up as planned drift. When the API has no KMSI but
+	// the previous state had one, clear it so users see the removal in plan.
+	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+		rule.KeepMeSignedIn = []keepMeSignedInModel{{
+			PostAuth:                types.StringValue(kmsi.PostAuth),
+			PostAuthPromptFrequency: types.StringValue(kmsi.PostAuthPromptFrequency),
+		}}
+	} else if len(rule.KeepMeSignedIn) > 0 {
+		rule.KeepMeSignedIn = nil
+	}
 }
 func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Conditions == nil {
@@ -1566,6 +1633,14 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 			}
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
+	}
+
+	// Keep Me Signed In ("Option to stay signed in"): hydrate from API when present.
+	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+		rule.KeepMeSignedIn = []keepMeSignedInModel{{
+			PostAuth:                types.StringValue(kmsi.PostAuth),
+			PostAuthPromptFrequency: types.StringValue(kmsi.PostAuthPromptFrequency),
+		}}
 	}
 }
 func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {

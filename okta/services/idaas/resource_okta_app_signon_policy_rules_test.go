@@ -226,3 +226,57 @@ func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in verifies that the
+// keep_me_signed_in (KMSI / "Option to stay signed in") block on the plural
+// resource:
+//  1. Round-trips on create with post_auth = "ALLOWED" and a prompt frequency.
+//  2. Updates correctly when changed to post_auth = "NOT_ALLOWED".
+//  3. Stays idempotent on re-apply (no plan diff).
+func TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("keep_me_signed_in.tf", t)
+	updatedConfig := mgr.GetFixtures("keep_me_signed_in_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create with KMSI ALLOWED + prompt frequency.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+				),
+			},
+			{
+				// Step 2: Idempotency on create config.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				// Step 3: Update KMSI to NOT_ALLOWED.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+				),
+			},
+			{
+				// Step 4: Idempotency on updated config.
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
