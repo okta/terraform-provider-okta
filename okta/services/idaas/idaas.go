@@ -169,6 +169,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPushGroupDataSource,
 		newPushGroupsDataSource,
 		newAdminRoleCustomDataSource,
+		newResourceSetDataSource,
 		newOAuthAuthorizationServerDataSource,
 		newUserRiskDataSource,
 		newPostAuthSessionPolicyDataSource,
