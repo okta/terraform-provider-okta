@@ -17,18 +17,67 @@ data "okta_app_signon_policy" "test" {
   app_id = okta_app_saml.test.id
 }
 
-# Rule with Keep Me Signed In - updated to NOT_ALLOWED
+# Same four rules as keep_me_signed_in.tf but with the keep_me_signed_in values
+# flipped to verify in-place updates of the block:
+#   - rule[0]: NOT_ALLOWED            -> ALLOWED (PT168H)
+#   - rule[1]: ALLOWED (PT50H)        -> NOT_ALLOWED (frequency cleared)
+#   - rule[2]: ALLOWED (PT168H)       -> ALLOWED (PT50H)  (frequency changed)
+#   - rule[3]: NOT_ALLOWED            -> ALLOWED (PT168H)
 resource "okta_app_signon_policy_rules" "test" {
   policy_id = data.okta_app_signon_policy.test.id
 
   rule {
-    name     = "testAcc_replace_with_uuid"
-    priority = 1
-    status   = "ACTIVE"
-    access   = "ALLOW"
+    name               = "Rule1-replace_with_uuid"
+    priority           = 1
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth                  = "ALLOWED"
+      post_auth_prompt_frequency = "PT168H"
+    }
+  }
+
+  rule {
+    name               = "Rule2-replace_with_uuid"
+    priority           = 2
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
 
     keep_me_signed_in {
       post_auth = "NOT_ALLOWED"
+    }
+  }
+
+  rule {
+    name               = "Rule3-replace_with_uuid"
+    priority           = 3
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth                  = "ALLOWED"
+      post_auth_prompt_frequency = "PT50H"
+    }
+  }
+
+  rule {
+    name               = "Rule4-replace_with_uuid"
+    priority           = 4
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth                  = "ALLOWED"
+      post_auth_prompt_frequency = "PT168H"
     }
   }
 }

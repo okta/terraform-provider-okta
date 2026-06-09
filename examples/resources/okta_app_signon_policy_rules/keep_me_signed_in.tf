@@ -17,19 +17,67 @@ data "okta_app_signon_policy" "test" {
   app_id = okta_app_saml.test.id
 }
 
-# Rule with Keep Me Signed In - ALLOWED with prompt frequency
+# Multiple rules exercising the keep_me_signed_in ("Option to stay signed in")
+# block in different combinations:
+#   - rule[0]: NOT_ALLOWED with no prompt frequency
+#   - rule[1]: ALLOWED with a 50h prompt frequency
+#   - rule[2]: ALLOWED with a 168h (7 day) prompt frequency
+#   - rule[3]: NOT_ALLOWED with no prompt frequency (regression case for the
+#              "null -> empty string" inconsistent-result-after-apply bug)
 resource "okta_app_signon_policy_rules" "test" {
   policy_id = data.okta_app_signon_policy.test.id
 
   rule {
-    name     = "testAcc_replace_with_uuid"
-    priority = 1
-    status   = "ACTIVE"
-    access   = "ALLOW"
+    name               = "Rule1-replace_with_uuid"
+    priority           = 1
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth = "NOT_ALLOWED"
+    }
+  }
+
+  rule {
+    name               = "Rule2-replace_with_uuid"
+    priority           = 2
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth                  = "ALLOWED"
+      post_auth_prompt_frequency = "PT50H"
+    }
+  }
+
+  rule {
+    name               = "Rule3-replace_with_uuid"
+    priority           = 3
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
 
     keep_me_signed_in {
       post_auth                  = "ALLOWED"
       post_auth_prompt_frequency = "PT168H"
+    }
+  }
+
+  rule {
+    name               = "Rule4-replace_with_uuid"
+    priority           = 4
+    status             = "ACTIVE"
+    factor_mode        = "2FA"
+    inactivity_period  = "PT1H"
+    network_connection = "ANYWHERE"
+
+    keep_me_signed_in {
+      post_auth = "NOT_ALLOWED"
     }
   }
 }

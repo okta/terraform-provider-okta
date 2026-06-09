@@ -89,7 +89,7 @@ resource "okta_app_signon_policy_rules" "example" {
   - `device_is_managed` (Boolean) - Require device to be managed by a device management system.
   - `device_assurances_included` (Set of Strings) - Set of device assurance policy IDs to include.
   - `custom_expression` (String) - Custom Okta Expression Language condition for advanced matching.
-  - `risk_score` (String) - Risk score level to match: `ANY`, `LOW`, `MEDIUM`, or `HIGH`. Defaults to `ANY`.
+  - `risk_score` (String) - Risk score level to match: `ANY`, `LOW`, `MEDIUM`, or `HIGH`. Optional and computed; the `riskScore` condition is only sent to the API when explicitly configured. Leave this unset on orgs that do not have the risk scoring feature, otherwise the API rejects the rule with `Invalid condition type specified: riskScore`.
   - `constraints` (List of Strings) - List of authenticator constraints as JSON-encoded strings.
   - `platform_include` (Block Set) - Platform conditions to include. Each platform block supports:
     - `type` (String) - Platform type: `ANY`, `MOBILE`, or `DESKTOP`.

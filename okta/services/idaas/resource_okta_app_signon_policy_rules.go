@@ -114,8 +114,6 @@ type platformIncludeModel struct {
 	OsExpression types.String `tfsdk:"os_expression"`
 }
 
-// keepMeSignedInModel represents the post-authentication Keep Me Signed In
-// (a.k.a. "Option to stay signed in") prompt configuration on a rule.
 type keepMeSignedInModel struct {
 	PostAuth                types.String `tfsdk:"post_auth"`
 	PostAuthPromptFrequency types.String `tfsdk:"post_auth_prompt_frequency"`
@@ -792,10 +790,14 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Description: "List of authentication method chain objects as JSON-encoded strings. Use with `type = \"AUTH_METHOD_CHAIN\"` only.",
 		},
 		"risk_score": schema.StringAttribute{
-			Optional:    true,
-			Computed:    true,
-			Default:     stringdefault.StaticString("ANY"),
-			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH.",
+			Optional: true,
+			Computed: true,
+			// No static default. Sending a riskScore condition to an org that does
+			// not have the risk scoring feature causes the API to reject the rule
+			// with "Invalid condition type specified: riskScore". The condition is
+			// only sent when the user explicitly configures it (see setAPIRiskScore),
+			// mirroring the singular okta_app_signon_policy_rule resource.
+			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH. Only sent to the API when explicitly configured; omit on orgs without the risk scoring feature.",
 			Validators:  []validator.String{stringvalidator.OneOf(validRiskScores...)},
 		},
 	}
@@ -1440,9 +1442,18 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 	// so admin-UI changes show up as planned drift. When the API has no KMSI but
 	// the previous state had one, clear it so users see the removal in plan.
 	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+		// post_auth_prompt_frequency is Optional (not Computed), so a null in the
+		// config/plan must remain null after apply. When post_auth is NOT_ALLOWED
+		// the API returns an empty frequency; mapping that to types.StringValue("")
+		// would change null -> "" and produce an "inconsistent result after apply"
+		// error. Preserve null when the API frequency is empty.
+		promptFrequency := types.StringNull()
+		if kmsi.PostAuthPromptFrequency != "" {
+			promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+		}
 		rule.KeepMeSignedIn = []keepMeSignedInModel{{
 			PostAuth:                types.StringValue(kmsi.PostAuth),
-			PostAuthPromptFrequency: types.StringValue(kmsi.PostAuthPromptFrequency),
+			PostAuthPromptFrequency: promptFrequency,
 		}}
 	} else if len(rule.KeepMeSignedIn) > 0 {
 		rule.KeepMeSignedIn = nil
@@ -1474,6 +1485,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
+	} else {
+		rule.RiskScore = types.StringNull()
 	}
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
@@ -1635,11 +1648,14 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 
-	// Keep Me Signed In ("Option to stay signed in"): hydrate from API when present.
 	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+		promptFrequency := types.StringNull()
+		if kmsi.PostAuthPromptFrequency != "" {
+			promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+		}
 		rule.KeepMeSignedIn = []keepMeSignedInModel{{
 			PostAuth:                types.StringValue(kmsi.PostAuth),
-			PostAuthPromptFrequency: types.StringValue(kmsi.PostAuthPromptFrequency),
+			PostAuthPromptFrequency: promptFrequency,
 		}}
 	}
 }
@@ -1661,6 +1677,8 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
+	} else {
+		rule.RiskScore = types.StringNull()
 	}
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
