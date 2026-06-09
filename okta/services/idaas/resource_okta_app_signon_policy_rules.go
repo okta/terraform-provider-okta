@@ -1438,25 +1438,33 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
 
-	// Keep Me Signed In ("Option to stay signed in"): hydrate from API when present
-	// so admin-UI changes show up as planned drift. When the API has no KMSI but
-	// the previous state had one, clear it so users see the removal in plan.
-	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
-		// post_auth_prompt_frequency is Optional (not Computed), so a null in the
-		// config/plan must remain null after apply. When post_auth is NOT_ALLOWED
-		// the API returns an empty frequency; mapping that to types.StringValue("")
-		// would change null -> "" and produce an "inconsistent result after apply"
-		// error. Preserve null when the API frequency is empty.
-		promptFrequency := types.StringNull()
-		if kmsi.PostAuthPromptFrequency != "" {
-			promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+	// Keep Me Signed In ("Option to stay signed in"): the block is Optional and,
+	// unlike the SDKv2 singular resource, cannot be Computed in the plugin
+	// framework, so its block count after apply must match the configured/planned
+	// count. Only refresh values from the API when the user actually configured
+	// the block. The org returns a default KMSI object (post_auth = NOT_ALLOWED)
+	// even when the block is omitted; hydrating that would change the block count
+	// from 0 to 1 and produce an "inconsistent result after apply" error (and a
+	// perpetual diff on refresh).
+	if len(rule.KeepMeSignedIn) > 0 {
+		if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+			// post_auth_prompt_frequency is Optional (not Computed), so a null in the
+			// config/plan must remain null after apply. When post_auth is NOT_ALLOWED
+			// the API returns an empty frequency; mapping that to types.StringValue("")
+			// would change null -> "" and produce an "inconsistent result after apply"
+			// error. Preserve null when the API frequency is empty.
+			promptFrequency := types.StringNull()
+			if kmsi.PostAuthPromptFrequency != "" {
+				promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+			}
+			rule.KeepMeSignedIn = []keepMeSignedInModel{{
+				PostAuth:                types.StringValue(kmsi.PostAuth),
+				PostAuthPromptFrequency: promptFrequency,
+			}}
+		} else {
+			// The configured block no longer exists on the API; surface the removal.
+			rule.KeepMeSignedIn = nil
 		}
-		rule.KeepMeSignedIn = []keepMeSignedInModel{{
-			PostAuth:                types.StringValue(kmsi.PostAuth),
-			PostAuthPromptFrequency: promptFrequency,
-		}}
-	} else if len(rule.KeepMeSignedIn) > 0 {
-		rule.KeepMeSignedIn = nil
 	}
 }
 func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
