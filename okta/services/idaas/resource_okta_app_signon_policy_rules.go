@@ -1448,12 +1448,14 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 	// perpetual diff on refresh).
 	if len(rule.KeepMeSignedIn) > 0 {
 		if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
-			// post_auth_prompt_frequency is Optional (not Computed), so a null in the
-			// config/plan must remain null after apply. When post_auth is NOT_ALLOWED
-			// the API returns an empty frequency; mapping that to types.StringValue("")
-			// would change null -> "" and produce an "inconsistent result after apply"
-			// error. Preserve null when the API frequency is empty.
-			promptFrequency := types.StringNull()
+			// post_auth_prompt_frequency is Optional (not Computed), so its
+			// config/plan value must be preserved after apply. When post_auth is
+			// NOT_ALLOWED the API ignores and returns an empty frequency; forcing
+			// that to null (or "") would change the planned value (e.g. "PT168H" ->
+			// null) and produce an "inconsistent result after apply" error. Only
+			// adopt the API value when it is non-empty; otherwise keep the user's
+			// planned value (which may itself be null when the user omitted it).
+			promptFrequency := rule.KeepMeSignedIn[0].PostAuthPromptFrequency
 			if kmsi.PostAuthPromptFrequency != "" {
 				promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
 			}
