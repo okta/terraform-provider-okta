@@ -255,6 +255,12 @@ other arguments that changed will be applied.`,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
 				Computed:    true,
 			},
+			"dpop_bound_access_tokens": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: "Requires the client to send a Demonstrating Proof-of-Possession (DPoP) header when requesting tokens. When true, the authorization server rejects token requests from this client that lack the DPoP header. Defaults to false (the Okta API default) when omitted. Note: when true, the API disallows `client_credentials` and `implicit` in `grant_types`.",
+			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -822,6 +828,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	if consentMethod := oauthClient.GetConsentMethod(); consentMethod != "" {
 		_ = d.Set("consent_method", consentMethod)
 	}
+	_ = d.Set("dpop_bound_access_tokens", oauthClient.GetDpopBoundAccessTokens())
 	_ = d.Set("issuer_mode", oauthClient.GetIssuerMode())
 	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
 	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
@@ -1121,6 +1128,11 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	}
 	if consentMethod := d.Get("consent_method").(string); consentMethod != "" {
 		oauthClientSettings.SetConsentMethod(consentMethod)
+	}
+
+	dpopVal := d.GetRawConfig().GetAttr("dpop_bound_access_tokens")
+	if !dpopVal.IsNull() {
+		oauthClientSettings.SetDpopBoundAccessTokens(dpopVal.True())
 	}
 
 	if redirectUris := utils.ConvertInterfaceToStringArr(d.Get("redirect_uris")); len(redirectUris) > 0 {
