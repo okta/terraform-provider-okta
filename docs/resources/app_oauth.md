@@ -42,6 +42,7 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "RSA"
     kid = "SIGNING_KEY_RSA"
+    use = "sig"
     e   = "AQAB"
     n   = "xyz"
   }
@@ -49,6 +50,7 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "EC"
     kid = "SIGNING_KEY_EC"
+    use = "sig"
     x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
     y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
   }
@@ -161,6 +163,7 @@ Optional:
 
 - `e` (String) RSA Exponent
 - `n` (String) RSA Modulus
+- `use` (String) Intended use of the public key. Valid values are `sig` and `enc`. Defaults to `sig` for signing keys.
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point
 
@@ -290,6 +293,7 @@ resource "okta_app_oauth" "app" {
   jwks {
     kty = local.jwks.kty
     kid = local.jwks.kid
+    use = "sig"
     e   = local.jwks.e
     n   = local.jwks.n
   }
