@@ -25,6 +25,7 @@ type AccessPolicyRuleConditions struct {
 	Users                 *UserPolicyRuleCondition                       `json:"users,omitempty"`
 	ElCondition           *AccessPolicyRuleCustomCondition               `json:"elCondition,omitempty"`
 	UserType              *UserTypeCondition                             `json:"userType,omitempty"`
+	Office365Client       *Office365ClientCondition                      `json:"office365Client,omitempty"`
 }
 
 func NewAccessPolicyRuleConditions() *AccessPolicyRuleConditions {
