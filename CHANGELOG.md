@@ -1,5 +1,23 @@
 # Changelog
 
+## 6.12.0 (June 10, 2026)
+
+### FEATURES
+* Added new data source `okta_signon_policy_rule` to read sign-on policy rules [#2846](https://github.com/okta/terraform-provider-okta/pull/2846) by [aditya-okta](https://github.com/aditya-okta)
+* Added new data source `okta_auth_server_policy_rule` to read authorization server policy rules [#2848](https://github.com/okta/terraform-provider-okta/pull/2848) by [aditya-okta](https://github.com/aditya-okta)
+* Added new data source `okta_assignees_users` to list users assignable to a resource [#2851](https://github.com/okta/terraform-provider-okta/pull/2851) by [aditya-okta](https://github.com/aditya-okta)
+* Added `backchannel_custom_authenticator_id` attribute to `okta_app_oauth` for Client Initiated Backchannel Authentication (CIBA) support [#2855](https://github.com/okta/terraform-provider-okta/pull/2855) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added `keep_me_signed_in` support to `okta_app_signon_policy_rules` resource [#2858](https://github.com/okta/terraform-provider-okta/pull/2858) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### BUG FIXES
+* Fixed nil pointer dereference in `okta_idp_saml`, `okta_idp_social`, and `okta_idp_oidc` when `accountLink.filter.groups` is null [#2843](https://github.com/okta/terraform-provider-okta/pull/2843) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed documentation for `okta_request_setting_resource` [#2844](https://github.com/okta/terraform-provider-okta/pull/2844) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed `okta_authenticator` validation error when updating WebAuthn authenticators [#2763](https://github.com/okta/terraform-provider-okta/pull/2763) by [trosborn](https://github.com/trosborn)
+* Fixed `groups_included` field being ignored in `okta_policy_password` resource [#2856](https://github.com/okta/terraform-provider-okta/pull/2856) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Fixed documentation for `okta_request_setting_organization` [#2852](https://github.com/okta/terraform-provider-okta/pull/2852) by [aditya-okta](https://github.com/aditya-okta)
+* Deferred 429 retries to SDK for DPoP requests, improving handling of rate-limited DPoP-bound traffic [#2841](https://github.com/okta/terraform-provider-okta/pull/2841) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Fixed `okta_app_signon_policy_rules` to work in organizations without Risk Scoring [#2858](https://github.com/okta/terraform-provider-okta/pull/2858) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 ## 6.11.0 (May 26, 2026)
 
 ### FEATURES
