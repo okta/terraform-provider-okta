@@ -11,11 +11,11 @@ Principal Rate Limits provides operations to manage Principal Rate Limits for yo
 ## Example Usage
 
 ```terraform
-resource "okta_principal_rate_limits" example{
-  principal_id = <principal_id>
-  principal_type = "SSWS_TOKEN"
-  default_percentage = 49
-  default_concurrency_percentage =75
+resource "okta_principal_rate_limits" "example" {
+  principal_id                   = "<principal_id>"
+  principal_type                 = "SSWS_TOKEN"
+  default_percentage             = 49
+  default_concurrency_percentage = 75
 }
 ```
 
