@@ -21,6 +21,7 @@ func FWProviderResources() []func() resource.Resource {
 		newRequestV2Resource,
 		newEndUserMyRequestsResource,
 		newEntitlementBundleResource,
+		newDelegateAppointmentsResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -41,6 +42,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newCatalogEntryUserAccessRequestFieldsDataSource,
 		newEndUserMyRequestsDataSource,
 		newEntitlementBundleDataSource,
+		newDelegateAppointmentsDataSource,
 	}
 }
 
