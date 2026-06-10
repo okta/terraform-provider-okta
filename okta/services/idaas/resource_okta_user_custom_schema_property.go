@@ -40,6 +40,7 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 		Schema: utils.BuildSchema(
 			userBaseSchemaSchema,
 			userSchemaSchema,
+			userSchemaDefaultSchema,
 			userTypeSchema,
 			userPatternSchema,
 			map[string]*schema.Schema{

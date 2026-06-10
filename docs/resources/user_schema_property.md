@@ -43,6 +43,8 @@ resource "okta_user_schema_property" "example" {
   title       = "customPropertyName"
   type        = "string"
   description = "My custom property name"
+  enum        = ["PRIMARY", "SECONDARY"]
+  default     = "PRIMARY"
   master      = "OKTA"
   scope       = "SELF"
   user_type   = data.okta_user_type.example.id
@@ -65,6 +67,7 @@ resource "okta_user_schema_property" "example" {
 	- 'const' - (Required) value mapping to member of 'enum'.
 	- 'title' - (Required) display name for the enum value. (see [below for nested schema](#nestedblock--array_one_of))
 - `array_type` (String) The type of the array elements if `type` is set to `array`
+- `default` (String) Default value for the schema property. For `number`, `integer`, and `boolean` types, provide the value as a string. For `array` and `object` types, provide a JSON encoded value.
 - `description` (String) The description of the user schema property.
 - `enum` (List of String) Array of values a primitive property can be set to. See `array_enum` for arrays.
 - `external_name` (String) External name of the user schema property.
