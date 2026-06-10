@@ -15,6 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // TestAccResourceOktaAppSignOnPolicyRule_crud can flap when all the tests are
@@ -758,6 +759,104 @@ func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in(t *testing.T) {
 					}
 					return nil
 				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in_drift reproduces the
+// customer scenario from OKTA-1172311:
+//  1. Apply a rule WITHOUT a keep_me_signed_in block.
+//  2. An admin enables "Option to stay signed in" out-of-band (we simulate this
+//     by patching the rule directly through the Okta API).
+//  3. Re-apply the SAME Terraform config (still no keep_me_signed_in block).
+//
+// The fix-line: KMSI must NOT be silently cleared on the re-apply, because the
+// schema is Optional+Computed and the user did not explicitly request a change.
+func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in_drift(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	// Reuse the basic fixture — it has no keep_me_signed_in block, which is the
+	// drift precondition we need.
+	config := mgr.GetFixtures("basic.tf", t)
+
+	var policyID, ruleID string
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Apply without keep_me_signed_in. Capture IDs for
+				// the out-of-band mutation.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("resource not found: %s", resourceName)
+						}
+						ruleID = rs.Primary.ID
+						policyID = rs.Primary.Attributes["policy_id"]
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Out-of-band, an admin flips KMSI on via API. Then re-apply
+				// the exact same Terraform config and assert the API-side value is
+				// preserved (i.e., Terraform did not clobber it).
+				PreConfig: func() {
+					if policyID == "" || ruleID == "" {
+						t.Fatalf("policy_id or rule_id not captured from previous step")
+					}
+					ctx := context.Background()
+					client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
+					rule, _, err := client.GetAppSignOnPolicyRule(ctx, policyID, ruleID)
+					if err != nil {
+						t.Fatalf("failed to fetch rule for out-of-band mutation: %v", err)
+					}
+					if rule.Actions == nil || rule.Actions.AppSignOn == nil {
+						t.Fatalf("rule fetched for mutation has no AppSignOn action")
+					}
+					rule.Actions.AppSignOn.KeepMeSignedIn = &sdk.KeepMeSignedIn{
+						PostAuth:                "ALLOWED",
+						PostAuthPromptFrequency: "PT168H",
+					}
+					if _, _, err := client.UpdateAppSignOnPolicyRule(ctx, policyID, ruleID, *rule); err != nil {
+						t.Fatalf("failed to enable KMSI out-of-band: %v", err)
+					}
+				},
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					// After Terraform refresh + apply, the rule should still have
+					// KMSI enabled. The Read function flattens the API value into
+					// state, and because the schema is Optional+Computed, an
+					// unspecified block in config must not blow that value away.
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// Belt-and-braces: verify against the API directly to rule out
+					// any flattener-only success.
+					func(s *terraform.State) error {
+						client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
+						rule, _, err := client.GetAppSignOnPolicyRule(context.Background(), policyID, ruleID)
+						if err != nil {
+							return fmt.Errorf("failed to verify rule via API: %v", err)
+						}
+						if rule.Actions == nil || rule.Actions.AppSignOn == nil || rule.Actions.AppSignOn.KeepMeSignedIn == nil {
+							return errors.New("expected KeepMeSignedIn to be preserved on the API rule, but it was cleared")
+						}
+						if got := rule.Actions.AppSignOn.KeepMeSignedIn.PostAuth; got != "ALLOWED" {
+							return fmt.Errorf("expected KeepMeSignedIn.PostAuth = ALLOWED, got %q", got)
+						}
+						return nil
+					},
+				),
 			},
 		},
 	})

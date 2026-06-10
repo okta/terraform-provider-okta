@@ -42,6 +42,19 @@ resource "okta_app_signon_policy_rules" "example" {
     access = "DENY"
     status = "ACTIVE"
   }
+
+  rule {
+    name     = "KMSI Rule"
+    priority = 4
+    access   = "ALLOW"
+    status   = "ACTIVE"
+
+    # Allow the "Option to stay signed in" prompt after authentication.
+    keep_me_signed_in {
+      post_auth                  = "ALLOWED"
+      post_auth_prompt_frequency = "PT168H"
+    }
+  }
 }
 ```
 
@@ -76,12 +89,15 @@ resource "okta_app_signon_policy_rules" "example" {
   - `device_is_managed` (Boolean) - Require device to be managed by a device management system.
   - `device_assurances_included` (Set of Strings) - Set of device assurance policy IDs to include.
   - `custom_expression` (String) - Custom Okta Expression Language condition for advanced matching.
-  - `risk_score` (String) - Risk score level to match: `ANY`, `LOW`, `MEDIUM`, or `HIGH`. Defaults to `ANY`.
+  - `risk_score` (String) - Risk score level to match: `ANY`, `LOW`, `MEDIUM`, or `HIGH`. Optional and computed; the `riskScore` condition is only sent to the API when explicitly configured. Leave this unset on orgs that do not have the risk scoring feature, otherwise the API rejects the rule with `Invalid condition type specified: riskScore`.
   - `constraints` (List of Strings) - List of authenticator constraints as JSON-encoded strings.
   - `platform_include` (Block Set) - Platform conditions to include. Each platform block supports:
     - `type` (String) - Platform type: `ANY`, `MOBILE`, or `DESKTOP`.
     - `os_type` (String) - OS type: `ANY`, `IOS`, `ANDROID`, `WINDOWS`, `OSX`, `MACOS`, `CHROMEOS`, or `OTHER`.
     - `os_expression` (String) - Custom OS expression for advanced matching.
+  - `keep_me_signed_in` (Block List, Max: 1) - Controls the post-authentication Keep Me Signed In (KMSI) prompt, also known as the "Option to stay signed in". Requires the KMSI feature to be enabled on the Okta org. Each block supports:
+    - `post_auth` (String) - Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`. Defaults to `NOT_ALLOWED`.
+    - `post_auth_prompt_frequency` (String) - How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).
   - `system` (Boolean, Computed) - Whether this is a system rule (e.g., Catch-all Rule). System rules cannot be modified.
   - `chains` (Block List) Authentication method chains. Only supports 5 items in the array. Each chain can support maximum 3 steps. To be used only with verification method type `AUTH_METHOD_CHAIN`.(see [below for nested schema](#nestedblock--chains))
 

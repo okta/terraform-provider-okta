@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v5"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -103,6 +104,7 @@ type policyRuleModel struct {
 	Chains                    types.List             `tfsdk:"chains"`
 	RiskScore                 types.String           `tfsdk:"risk_score"`
 	PlatformInclude           []platformIncludeModel `tfsdk:"platform_include"`
+	KeepMeSignedIn            []keepMeSignedInModel  `tfsdk:"keep_me_signed_in"`
 }
 
 // platformIncludeModel represents platform conditions in the rule.
@@ -110,6 +112,11 @@ type platformIncludeModel struct {
 	Type         types.String `tfsdk:"type"`
 	OsType       types.String `tfsdk:"os_type"`
 	OsExpression types.String `tfsdk:"os_expression"`
+}
+
+type keepMeSignedInModel struct {
+	PostAuth                types.String `tfsdk:"post_auth"`
+	PostAuthPromptFrequency types.String `tfsdk:"post_auth_prompt_frequency"`
 }
 
 // reauthFrequencyModifier is a plan modifier that suppresses changes to
@@ -548,6 +555,14 @@ func (r *appSignOnPolicyRulesResource) policyRuleObjectType() types.ObjectType {
 					},
 				},
 			},
+			"keep_me_signed_in": types.ListType{
+				ElemType: types.ObjectType{
+					AttrTypes: map[string]attr.Type{
+						"post_auth":                  types.StringType,
+						"post_auth_prompt_frequency": types.StringType,
+					},
+				},
+			},
 		},
 	}
 }
@@ -578,7 +593,8 @@ func (r *appSignOnPolicyRulesResource) buildSchema() schema.Schema {
 				NestedObject: schema.NestedBlockObject{
 					Attributes: r.buildRuleAttributes(),
 					Blocks: map[string]schema.Block{
-						"platform_include": r.buildPlatformIncludeBlock(),
+						"platform_include":  r.buildPlatformIncludeBlock(),
+						"keep_me_signed_in": r.buildKeepMeSignedInBlock(),
 					},
 				},
 			},
@@ -616,6 +632,28 @@ func (r *appSignOnPolicyRulesResource) buildPlatformIncludeBlock() schema.ListNe
 		},
 	}
 }
+func (r *appSignOnPolicyRulesResource) buildKeepMeSignedInBlock() schema.ListNestedBlock {
+	return schema.ListNestedBlock{
+		Description: "Controls the post-authentication Keep Me Signed In (KMSI) prompt, also known as the \"Option to stay signed in\". Requires the KMSI feature to be enabled on the Okta org.",
+		Validators:  []validator.List{listvalidator.SizeAtMost(1)},
+		NestedObject: schema.NestedBlockObject{
+			Attributes: map[string]schema.Attribute{
+				"post_auth": schema.StringAttribute{
+					Optional:    true,
+					Computed:    true,
+					Default:     stringdefault.StaticString("NOT_ALLOWED"),
+					Description: "Whether the post-authentication KMSI flow is allowed. Valid values: `ALLOWED`, `NOT_ALLOWED`.",
+					Validators:  []validator.String{stringvalidator.OneOf("ALLOWED", "NOT_ALLOWED")},
+				},
+				"post_auth_prompt_frequency": schema.StringAttribute{
+					Optional:    true,
+					Description: "How often the post-auth prompt is presented, as an ISO-8601 duration (e.g. `PT168H`).",
+				},
+			},
+		},
+	}
+}
+
 func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.Attribute {
 	return map[string]schema.Attribute{
 		"id": schema.StringAttribute{
@@ -752,10 +790,14 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Description: "List of authentication method chain objects as JSON-encoded strings. Use with `type = \"AUTH_METHOD_CHAIN\"` only.",
 		},
 		"risk_score": schema.StringAttribute{
-			Optional:    true,
-			Computed:    true,
-			Default:     stringdefault.StaticString("ANY"),
-			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH.",
+			Optional: true,
+			Computed: true,
+			// No static default. Sending a riskScore condition to an org that does
+			// not have the risk scoring feature causes the API to reject the rule
+			// with "Invalid condition type specified: riskScore". The condition is
+			// only sent when the user explicitly configures it (see setAPIRiskScore),
+			// mirroring the singular okta_app_signon_policy_rule resource.
+			Description: "Risk score level to match: ANY, LOW, MEDIUM, or HIGH. Only sent to the API when explicitly configured; omit on orgs without the risk scoring feature.",
 			Validators:  []validator.String{stringvalidator.OneOf(validRiskScores...)},
 		},
 	}
@@ -1138,6 +1180,7 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIInactivityPeriod(&apiRule, rule)
 	r.setAPIConstraints(ctx, &apiRule, rule)
 	r.setAPIChains(ctx, &apiRule, rule)
+	r.setAPIKeepMeSignedIn(&apiRule, rule)
 	r.setAPINetworkConditions(ctx, &apiRule, rule)
 	r.setAPIPlatformConditions(&apiRule, rule)
 	r.setAPICustomExpression(&apiRule, rule)
@@ -1146,6 +1189,20 @@ func (r *appSignOnPolicyRulesResource) buildAPIRuleFromModel(ctx context.Context
 	r.setAPIPeopleConditions(ctx, &apiRule, rule)
 	r.setAPIUserTypeConditions(ctx, &apiRule, rule)
 	return apiRule
+}
+
+// setAPIKeepMeSignedIn maps the keep_me_signed_in block on the model into the
+// AppSignOn action's KeepMeSignedIn struct. When the block is omitted, the field
+// is left nil (omitempty), meaning the API treats it as unset.
+func (r *appSignOnPolicyRulesResource) setAPIKeepMeSignedIn(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
+	if len(rule.KeepMeSignedIn) == 0 {
+		return
+	}
+	k := rule.KeepMeSignedIn[0]
+	apiRule.Actions.AppSignOn.KeepMeSignedIn = &sdk.KeepMeSignedIn{
+		PostAuth:                k.PostAuth.ValueString(),
+		PostAuthPromptFrequency: k.PostAuthPromptFrequency.ValueString(),
+	}
 }
 func (r *appSignOnPolicyRulesResource) setAPIPriority(apiRule *sdk.AccessPolicyRule, rule policyRuleModel) {
 	if !rule.Priority.IsNull() && !rule.Priority.IsUnknown() {
@@ -1380,6 +1437,37 @@ func (r *appSignOnPolicyRulesResource) updateRuleActionsFromAPI(ctx context.Cont
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
+
+	// Keep Me Signed In ("Option to stay signed in"): the block is Optional and,
+	// unlike the SDKv2 singular resource, cannot be Computed in the plugin
+	// framework, so its block count after apply must match the configured/planned
+	// count. Only refresh values from the API when the user actually configured
+	// the block. The org returns a default KMSI object (post_auth = NOT_ALLOWED)
+	// even when the block is omitted; hydrating that would change the block count
+	// from 0 to 1 and produce an "inconsistent result after apply" error (and a
+	// perpetual diff on refresh).
+	if len(rule.KeepMeSignedIn) > 0 {
+		if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+			// post_auth_prompt_frequency is Optional (not Computed), so its
+			// config/plan value must be preserved after apply. When post_auth is
+			// NOT_ALLOWED the API ignores and returns an empty frequency; forcing
+			// that to null (or "") would change the planned value (e.g. "PT168H" ->
+			// null) and produce an "inconsistent result after apply" error. Only
+			// adopt the API value when it is non-empty; otherwise keep the user's
+			// planned value (which may itself be null when the user omitted it).
+			promptFrequency := rule.KeepMeSignedIn[0].PostAuthPromptFrequency
+			if kmsi.PostAuthPromptFrequency != "" {
+				promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+			}
+			rule.KeepMeSignedIn = []keepMeSignedInModel{{
+				PostAuth:                types.StringValue(kmsi.PostAuth),
+				PostAuthPromptFrequency: promptFrequency,
+			}}
+		} else {
+			// The configured block no longer exists on the API; surface the removal.
+			rule.KeepMeSignedIn = nil
+		}
+	}
 }
 func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Conditions == nil {
@@ -1407,6 +1495,8 @@ func (r *appSignOnPolicyRulesResource) updateRuleConditionsFromAPI(ctx context.C
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
+	} else {
+		rule.RiskScore = types.StringNull()
 	}
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {
@@ -1567,6 +1657,17 @@ func (r *appSignOnPolicyRulesResource) convertAPIActionsToModel(ctx context.Cont
 		}
 		rule.Chains, _ = types.ListValueFrom(ctx, types.StringType, chainStrings)
 	}
+
+	if kmsi := apiRule.Actions.AppSignOn.KeepMeSignedIn; kmsi != nil {
+		promptFrequency := types.StringNull()
+		if kmsi.PostAuthPromptFrequency != "" {
+			promptFrequency = types.StringValue(kmsi.PostAuthPromptFrequency)
+		}
+		rule.KeepMeSignedIn = []keepMeSignedInModel{{
+			PostAuth:                types.StringValue(kmsi.PostAuth),
+			PostAuthPromptFrequency: promptFrequency,
+		}}
+	}
 }
 func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.Context, rule *policyRuleModel, apiRule *sdk.AccessPolicyRule) {
 	if apiRule.Conditions == nil {
@@ -1586,6 +1687,8 @@ func (r *appSignOnPolicyRulesResource) convertAPIConditionsToModel(ctx context.C
 	// Risk score
 	if c.RiskScore != nil {
 		rule.RiskScore = types.StringValue(c.RiskScore.Level)
+	} else {
+		rule.RiskScore = types.StringNull()
 	}
 	// Custom expression
 	if c.ElCondition != nil && c.ElCondition.Condition != "" {

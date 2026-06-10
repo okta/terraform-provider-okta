@@ -226,3 +226,95 @@ func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in verifies that the
+// keep_me_signed_in (KMSI / "Option to stay signed in") block on the plural
+// resource round-trips correctly across multiple rules. The config defines four
+// rules covering every keep_me_signed_in combination:
+//   - rule[0]: NOT_ALLOWED with no prompt frequency
+//   - rule[1]: ALLOWED with a 50h prompt frequency
+//   - rule[2]: ALLOWED with a 168h prompt frequency
+//   - rule[3]: NOT_ALLOWED with no prompt frequency (regression case for the
+//     "null -> empty string" inconsistent-result-after-apply bug)
+//
+// It then updates all four rules (flipping post_auth and frequency values) and
+// asserts the changes are applied and remain idempotent on re-apply.
+func TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("keep_me_signed_in.tf", t)
+	updatedConfig := mgr.GetFixtures("keep_me_signed_in_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create four rules with varying KMSI settings.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "4"),
+					// rule[0]: NOT_ALLOWED, no frequency. The Optional (non-Computed)
+					// frequency is null, so it is absent from state (not "").
+					resource.TestCheckResourceAttr(resourceName, "rule.0.access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth_prompt_frequency"),
+					// rule[1]: ALLOWED, PT50H.
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth_prompt_frequency", "PT50H"),
+					// rule[2]: ALLOWED, PT168H.
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// rule[3]: NOT_ALLOWED, no frequency. This is the exact scenario
+					// from the bug report (rule[3].keep_me_signed_in[0].
+					// post_auth_prompt_frequency was null, but now ""): it must stay
+					// null after apply, i.e. absent from state.
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth_prompt_frequency"),
+				),
+			},
+			{
+				// Step 2: Idempotency on create config.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				// Step 3: Update all four rules, flipping post_auth and frequency.
+				// rule[1] clears its frequency (ALLOWED PT50H -> NOT_ALLOWED), which
+				// is the regression scenario: the API returns an empty frequency and
+				// the provider must keep the Optional (non-Computed) attribute null
+				// instead of "" to avoid an "inconsistent result after apply" error.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "4"),
+					// rule[0]: NOT_ALLOWED -> ALLOWED (PT168H).
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// rule[1]: ALLOWED (PT50H) -> NOT_ALLOWED, frequency cleared
+					// (null, so absent from state).
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth_prompt_frequency"),
+					// rule[2]: ALLOWED (PT168H) -> ALLOWED (PT50H).
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth_prompt_frequency", "PT50H"),
+					// rule[3]: NOT_ALLOWED -> ALLOWED (PT168H).
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+				),
+			},
+			{
+				// Step 4: Idempotency on updated config.
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
