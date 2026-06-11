@@ -28,11 +28,6 @@ func TestAccDataSourceOktaResourceSet_read(t *testing.T) {
 					resource.TestCheckResourceAttr(datasourceName, "description", "test resource set for data source"),
 					resource.TestCheckResourceAttrSet(datasourceName, "resources.#"),
 				),
-				// VCR recording rewrites hostnames in API responses, causing
-				// drift between the config hostname and the state hostname for
-				// okta_resource_set resources. During VCR playback, hostnames
-				// are consistent so the plan is empty.
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
