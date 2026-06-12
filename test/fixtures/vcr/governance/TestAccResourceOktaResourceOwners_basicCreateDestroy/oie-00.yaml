@@ -1,0 +1,116 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 204
+        host: oie-00.dne-okta.com
+        body: |
+            {"principalOrns":["orn:oktapreview:directory:00o3q4zilpjjJlLLu1d7:users:00uyvt5eolDcxFG3s1d7"],"resourceOrns":["orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[{"parentResourceOrn":"orn:oktapreview:idp:00o3q4zilpjjJlLLu1d7:apps:saasure:0oa3q4zilxagApEOW1d7","principals":[{"id":"pri1c018z3HjvF9Q91d7","type":"users","orn":"orn:oktapreview:directory:00o3q4zilpjjJlLLu1d7:users:00uyvt5eolDcxFG3s1d7","profile":{"id":"00uyvt5eolDcxFG3s1d7","name":"TestAcc ResourceOwner1","email":"testAcc-resource-owner1-966524992@example.com","logo":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/admin/user/profile/view/00uyvt5eolDcxFG3s1d7","hints":{}}}}}],"resource":{"id":"enbe1l39ckVceLqn11d6","type":"entitlement-bundles","orn":"orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6","profile":{"id":"enbe1l39ckVceLqn11d6","name":"Read Only - Test bundle","description":"Read Only - Test bundle","logo":[]}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 18 May 2026 14:08:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.3338145s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            filter:
+                - parentResourceOrn eq "orn:oktapreview:idp:00o3q4zilpjjJlLLu1d7:apps:saasure:0oa3q4zilxagApEOW1d7" AND resource.orn eq "orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00o3q4zilpjjJlLLu1d7%3Aapps%3Asaasure%3A0oa3q4zilxagApEOW1d7%22+AND+resource.orn+eq+%22orn%3Aoktapreview%3Agovernance%3A00o3q4zilpjjJlLLu1d7%3Aentitlement-bundles%3Aenbe1l39ckVceLqn11d6%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[{"parentResourceOrn":"orn:oktapreview:idp:00o3q4zilpjjJlLLu1d7:apps:saasure:0oa3q4zilxagApEOW1d7","principals":[{"id":"pri1c018z3HjvF9Q91d7","type":"users","orn":"orn:oktapreview:directory:00o3q4zilpjjJlLLu1d7:users:00uyvt5eolDcxFG3s1d7","profile":{"id":"00uyvt5eolDcxFG3s1d7","name":"TestAcc ResourceOwner1","email":"testAcc-resource-owner1-966524992@example.com","logo":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/admin/user/profile/view/00uyvt5eolDcxFG3s1d7","hints":{}}}}}],"resource":{"id":"enbe1l39ckVceLqn11d6","type":"entitlement-bundles","orn":"orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6","profile":{"id":"enbe1l39ckVceLqn11d6","name":"Read Only - Test bundle","description":"Read Only - Test bundle","logo":[]}}}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00o3q4zilpjjJlLLu1d7:apps:saasure:0oa3q4zilxagApEOW1d7%22%20AND%20resource.orn%20eq%20%22orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6%22&limit=20","hints":{}}},"metadata":{"total":1}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 18 May 2026 14:08:57 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00o3q4zilpjjJlLLu1d7:apps:saasure:0oa3q4zilxagApEOW1d7%22%20AND%20resource.orn%20eq%20%22orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6%22&limit=20>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 878.136166ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 129
+        host: oie-00.dne-okta.com
+        body: |
+            {"principalOrns":[],"resourceOrns":["orn:oktapreview:governance:00o3q4zilpjjJlLLu1d7:entitlement-bundles:enbe1l39ckVceLqn11d6"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 11
+        body: '{"data":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "11"
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 18 May 2026 14:08:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 730.553208ms

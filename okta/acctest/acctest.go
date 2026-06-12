@@ -203,7 +203,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	idaasTestClient := NewVcrIDaaSClient(d)
 	cfg.SetIdaasAPIClient(idaasTestClient)
 
-	idaaSRec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
+	idaaSRec, err := newVCRRecorder(mgr.IdaasCassettePath(), idaasTestClient.Transport(), mgr)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
@@ -213,7 +213,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	governanceTestClient := NewVcrGovernanceClient(d)
 	cfg.SetGovernanceAPIClient(governanceTestClient)
 
-	governanceRec, err := newVCRRecorder(mgr, governanceTestClient.Transport())
+	governanceRec, err := newVCRRecorder(mgr.GovernanceCassettePath(), governanceTestClient.Transport(), mgr)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
@@ -226,8 +226,27 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	return cfg, nil
 }
 
-func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder.Recorder, err error) {
+func newVCRRecorder(cassettePath string, transport http.RoundTripper, mgr *vcrManager) (rec *recorder.Recorder, err error) {
 	// Defines how VCR will match requests to responses.
+
+	// In playback mode, a test may only exercise one of the two services
+	// (e.g. a governance-only data source test makes no IDaaS calls). The
+	// missing service's cassette won't exist on disk, which would fail
+	// recorder.New with ErrCassetteNotFound. Write a stub empty cassette so
+	// the recorder loads; any actual call to that service during playback
+	// will fail with "interaction not found", which is the correct behavior.
+	if mgr.IsPlaying() {
+		cassetteFile := fmt.Sprintf("%s.yaml", cassettePath)
+		if _, statErr := os.Stat(cassetteFile); os.IsNotExist(statErr) {
+			if mkErr := os.MkdirAll(filepath.Dir(cassetteFile), 0o755); mkErr != nil {
+				return nil, mkErr
+			}
+			if wErr := os.WriteFile(cassetteFile, []byte("---\nversion: 2\ninteractions: []\n"), 0o644); wErr != nil {
+				return nil, wErr
+			}
+			defer os.Remove(cassetteFile)
+		}
+	}
 
 	vcrOpts := []recorder.Option{
 		recorder.WithMatcher(vcrMatcher()),
@@ -236,42 +255,61 @@ func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder
 		recorder.WithSkipRequestLatency(true),
 		recorder.WithRealTransport(transport),
 	}
-	rec, err = recorder.New(mgr.CassettePath(), vcrOpts...)
+	rec, err = recorder.New(cassettePath, vcrOpts...)
 
 	return
 }
 
-// closeRecorder closes the VCR recorder to save the cassette file
+// closeRecorder closes the VCR recorder to save the cassette file. Both the
+// IDaaS and Governance recorders are stopped so cross-service tests
+// (e.g. governance tests that also create okta_user resources) have all
+// interactions persisted. Each recorder writes to its own per-service
+// cassette path; cassettes that captured zero interactions are removed so
+// fixture directories don't accumulate empty files.
 func closeRecorder(t *testing.T, vcr *vcrManager) {
 	providerConfigsLock.RLock()
-	config, ok := providerConfigs[vcr.TestAndCassetteNameKey()]
+	cfg, ok := providerConfigs[vcr.TestAndCassetteNameKey()]
 	providerConfigsLock.RUnlock()
-	if ok {
-		// don't record failing test runs (unless explicitly allowed for error response testing)
-		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
-			// If a test succeeds, write new seed/yaml to files
-			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
-				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
-				rt := rtIDaasHelper.Transport()
-				err := rt.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
-				}
-			} else {
-				rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
-				rtGovernance := rtGovernanceHelper.Transport()
-				err := rtGovernance.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
-				}
-			}
-			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
-		}
-		// Clean up test config
-		providerConfigsLock.Lock()
-		delete(providerConfigs, t.Name())
-		providerConfigsLock.Unlock()
+	if !ok {
+		return
 	}
+
+	// don't record failing test runs (unless explicitly allowed for error response testing)
+	shouldWrite := !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true"
+	if shouldWrite {
+		stopRecorderForClient(t, cfg.OktaIDaaSClient, vcr.IdaasCassettePath())
+		stopRecorderForClient(t, cfg.OktaGovernanceClient, vcr.GovernanceCassettePath())
+	}
+
+	// Clean up test config
+	providerConfigsLock.Lock()
+	delete(providerConfigs, t.Name())
+	providerConfigsLock.Unlock()
+}
+
+// stopRecorderForClient stops the VCR recorder attached to the given client's
+// transport and prunes the resulting cassette file if it ended up with zero
+// interactions. client may be any type; callers pass the IDaaS or Governance
+// client interface and we type-assert it down to HttpClientHelper.
+func stopRecorderForClient(t *testing.T, client any, cassettePath string) {
+	helper, ok := client.(HttpClientHelper)
+	if !ok {
+		return
+	}
+	rec, ok := helper.Transport().(*recorder.Recorder)
+	if !ok {
+		return
+	}
+	if err := rec.Stop(); err != nil {
+		t.Error(err)
+		return
+	}
+	cassetteFile := fmt.Sprintf("%s.yaml", cassettePath)
+	if c, err := cassette.Load(cassettePath); err == nil && len(c.Interactions) == 0 {
+		_ = os.Remove(cassetteFile)
+		return
+	}
+	fmt.Printf("=== VCR WROTE CASSETTE %s\n", cassetteFile)
 }
 
 func (m *vcrManager) SetCurrentCassette(name string) {
@@ -316,20 +354,41 @@ func (m *vcrManager) HasGovernanceCassettesToPlay() bool {
 	return m.VCRModeName == "play" && len(files) > 0
 }
 
-// CassettePath the path to what would be the current cassette.
+// CassettePath the path to what would be the current cassette for the package
+// where the test lives (idaas vs governance). Kept for callers that need a
+// single "primary" path; transports should use IdaasCassettePath /
+// GovernanceCassettePath so each service writes to its own fixture dir.
 func (m *vcrManager) CassettePath() string {
 	wd, _ := os.Getwd()
 	if strings.Contains(strings.ToLower(wd), "governance") {
-		return path.Join(m.GovernanceCassettesPath, m.CurrentCassette)
+		return m.GovernanceCassettePath()
 	}
+	return m.IdaasCassettePath()
+}
+
+// IdaasCassettePath is the cassette path for IDaaS API interactions.
+func (m *vcrManager) IdaasCassettePath() string {
 	return path.Join(m.IdaaSCassettesPath, m.CurrentCassette)
 }
 
+// GovernanceCassettePath is the cassette path for Governance API interactions.
+func (m *vcrManager) GovernanceCassettePath() string {
+	return path.Join(m.GovernanceCassettesPath, m.CurrentCassette)
+}
+
 // AttemptedWriteOfExistingCassette given a vcr mode of record the current
-// cassette file exists.
+// cassette file exists in either the IDaaS or Governance fixture dir.
+// A re-record requires the existing cassette(s) to be removed first.
 func (m *vcrManager) AttemptedWriteOfExistingCassette() bool {
-	_, err := os.Stat(fmt.Sprintf("%s.yaml", m.CassettePath()))
-	return m.VCRModeName == "record" && err == nil
+	if m.VCRModeName != "record" {
+		return false
+	}
+	for _, p := range []string{m.IdaasCassettePath(), m.GovernanceCassettePath()} {
+		if _, err := os.Stat(fmt.Sprintf("%s.yaml", p)); err == nil {
+			return true
+		}
+	}
+	return false
 }
 
 // AttemptedWriteIsMissingCassetteName Tests if cassette name is present for recording
@@ -362,27 +421,24 @@ func (m *vcrManager) Cassettes() []string {
 		return []string{os.Getenv("OKTA_VCR_CASSETTE")}
 	}
 
+	seen := map[string]struct{}{}
 	cassettes := []string{}
-	idaasFiles, err := os.ReadDir(path.Join(m.IdaaSCassettesPath))
-	if err != nil {
-		return cassettes
-	}
-	cassettes = append(cassettes, m.getCassettes(idaasFiles, cassettes)...)
-	governanceFiles, err := os.ReadDir(path.Join(m.GovernanceCassettesPath))
-	if err != nil {
-		return cassettes
-	}
-	cassettes = append(cassettes, m.getCassettes(governanceFiles, cassettes)...)
-	return cassettes
-}
-
-func (m *vcrManager) getCassettes(files []os.DirEntry, cassettes []string) []string {
-	for _, file := range files {
-		if strings.HasPrefix(file.Name(), ".") {
+	for _, dir := range []string{m.IdaaSCassettesPath, m.GovernanceCassettesPath} {
+		files, err := os.ReadDir(dir)
+		if err != nil {
 			continue
 		}
-		parts := strings.Split(file.Name(), ".")
-		cassettes = append(cassettes, parts[0])
+		for _, file := range files {
+			if strings.HasPrefix(file.Name(), ".") {
+				continue
+			}
+			name := strings.Split(file.Name(), ".")[0]
+			if _, dup := seen[name]; dup {
+				continue
+			}
+			seen[name] = struct{}{}
+			cassettes = append(cassettes, name)
+		}
 	}
 	return cassettes
 }

@@ -338,13 +338,15 @@ func buildReviewerGroupProfile(profile *governance.ReviewerGroupProfile) groupPr
 	}
 }
 
-func buildUserProfileModel(profile *governance.PrincipalProfile) userProfileModel {
+func buildUserProfileModel(profile *governance.PrincipalProfileEnriched) userProfileModel {
 	userProfile := userProfileModel{}
 	if profile == nil {
 		return userProfileModel{}
 	}
 	userProfile.Id = types.StringValue(profile.Id)
-	userProfile.Email = types.StringValue(profile.Email)
+	if profile.Email != nil {
+		userProfile.Email = types.StringValue(*profile.Email)
+	}
 	if profile.FirstName != nil {
 		userProfile.FirstName = types.StringValue(*profile.FirstName)
 	}
@@ -373,14 +375,19 @@ func convertLinks(links *governance.ReviewLinks) *linksModel {
 	}
 }
 
-func convertPrincipalProfile(p *governance.PrincipalProfile) *principalProfileModel {
+func convertPrincipalProfile(p *governance.PrincipalProfileEnriched) *principalProfileModel {
 	if p == nil {
 		return nil
 	}
 
+	email := ""
+	if p.Email != nil {
+		email = *p.Email
+	}
+
 	return &principalProfileModel{
 		Id:        p.GetId(),
-		Email:     p.GetEmail(),
+		Email:     email,
 		FirstName: p.FirstName,
 		LastName:  p.LastName,
 		Login:     p.Login,

@@ -166,7 +166,7 @@ func (r *entitlementBundleResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	// Read API call logic
-	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, data.Id.ValueString()).Execute()
+	getEntitlementBundleResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetEntitlementBundle(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading campaign",
