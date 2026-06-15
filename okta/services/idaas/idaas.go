@@ -183,6 +183,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPoliciesRuleAccessPolicyDataSource,
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
+		newIamResourceSetDataSource,
 	}
 }
 
