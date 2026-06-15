@@ -393,6 +393,13 @@ func setRequestedBy(by governance.TargetPrincipal) *entitlementParentModel {
 	}
 }
 
+func setRequestedByClientCredential(by governance.ClientCredentialPrincipal) *entitlementParentModel {
+	return &entitlementParentModel{
+		Type:       types.StringValue(by.GetType()),
+		ExternalID: types.StringValue(by.GetExternalId()),
+	}
+}
+
 func setRequested(getRequested governance.Requested) *requested {
 	var reqResource requested
 	reqResource.EntryId = types.StringValue(getRequested.GetEntryId())
@@ -406,11 +413,9 @@ func setRequested(getRequested governance.Requested) *requested {
 
 func createRequestReq(data requestV2ResourceModel) governance.RequestCreatable2 {
 	var reqCreatable governance.RequestCreatable2
-	reqCreatable.Requested = governance.RequestResourceCreatable{
-		RequestResourceCatalogEntryCreatable: &governance.RequestResourceCatalogEntryCreatable{
-			Type:    data.Requested.Type.ValueString(),
-			EntryId: data.Requested.EntryId.ValueString(),
-		},
+	reqCreatable.Requested = governance.RequestResourceCatalogEntryCreatable{
+		Type:    data.Requested.Type.ValueString(),
+		EntryId: data.Requested.EntryId.ValueString(),
 	}
 	reqCreatable.RequestedFor = governance.TargetPrincipal{
 		ExternalId: data.RequestedFor.ExternalID.ValueString(),

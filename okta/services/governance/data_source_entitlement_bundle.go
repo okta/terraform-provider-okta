@@ -186,7 +186,7 @@ func (d *entitlementBundleDataSource) Read(ctx context.Context, req datasource.R
 		resp.Diagnostics.AddError("Missing entitlement Id", "The 'id' attribute must be set in the configuration.")
 		return
 	}
-	readEntitlementBundleResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetentitlementBundle(ctx, entitlementId).Execute()
+	readEntitlementBundleResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementBundlesAPI.GetEntitlementBundle(ctx, entitlementId).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to read entitlement bundle",

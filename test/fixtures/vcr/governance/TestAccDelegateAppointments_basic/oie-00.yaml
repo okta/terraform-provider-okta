@@ -1,0 +1,258 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            filter:
+                - delegatorId eq "00uxh48r7spvNXo2g1d7"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/delegates?filter=delegatorId+eq+%2200uxh48r7spvNXo2g1d7%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/delegates?filter=delegatorId%20eq%20%2200uxh48r7spvNXo2g1d7%22&limit=20","hints":{}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.121447167s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 134
+        host: oie-00.dne-okta.com
+        body: |
+            {"delegates":{"appointments":[{"delegate":{"externalId":"00uxh4hk2eI9OD9Ee1d7","type":"OKTA_USER"},"note":"Covering while on PTO"}]}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/principal-settings/00uxh48r7spvNXo2g1d7
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"delegates":{"appointments":[{"delegator":{"externalId":"00uxh48r7spvNXo2g1d7","type":"OKTA_USER"},"id":"gda1aapefvg6sCx4t1d7","delegate":{"externalId":"00uxh4hk2eI9OD9Ee1d7","type":"OKTA_USER"},"note":"Covering while on PTO","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-04-13T06:08:28Z","lastUpdated":"2026-04-13T06:08:28Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7"}]}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.38979725s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            filter:
+                - delegatorId eq "00uxh48r7spvNXo2g1d7"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/delegates?filter=delegatorId+eq+%2200uxh48r7spvNXo2g1d7%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[{"delegator":{"externalId":"00uxh48r7spvNXo2g1d7","type":"OKTA_USER"},"id":"gda1aapefvg6sCx4t1d7","delegate":{"externalId":"00uxh4hk2eI9OD9Ee1d7","type":"OKTA_USER"},"note":"Covering while on PTO","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-04-13T06:08:28Z","lastUpdated":"2026-04-13T06:08:28Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7"}],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/delegates?filter=delegatorId%20eq%20%2200uxh48r7spvNXo2g1d7%22&limit=20","hints":{}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.080910125s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            filter:
+                - delegatorId eq "00uxh48r7spvNXo2g1d7"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/delegates?filter=delegatorId+eq+%2200uxh48r7spvNXo2g1d7%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[{"delegator":{"externalId":"00uxh48r7spvNXo2g1d7","type":"OKTA_USER"},"id":"gda1aapefvg6sCx4t1d7","delegate":{"externalId":"00uxh4hk2eI9OD9Ee1d7","type":"OKTA_USER"},"note":"Covering while on PTO","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-04-13T06:08:28Z","lastUpdated":"2026-04-13T06:08:28Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7"}],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/delegates?filter=delegatorId%20eq%20%2200uxh48r7spvNXo2g1d7%22&limit=20","hints":{}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 693.811458ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 130
+        host: oie-00.dne-okta.com
+        body: |
+            {"delegates":{"appointments":[{"delegate":{"externalId":"00uxh4zu6gSS2SEry1d7","type":"OKTA_USER"},"note":"Switched delegate"}]}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/principal-settings/00uxh48r7spvNXo2g1d7
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"delegates":{"appointments":[{"delegator":{"externalId":"00uxh48r7spvNXo2g1d7","type":"OKTA_USER"},"id":"gda1aapefvg6sCx4t1d7","delegate":{"externalId":"00uxh4zu6gSS2SEry1d7","type":"OKTA_USER"},"note":"Switched delegate","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-04-13T06:08:28Z","lastUpdated":"2026-04-13T06:08:36Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7"}]}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 970.682667ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            filter:
+                - delegatorId eq "00uxh48r7spvNXo2g1d7"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/delegates?filter=delegatorId+eq+%2200uxh48r7spvNXo2g1d7%22
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"data":[{"delegator":{"externalId":"00uxh48r7spvNXo2g1d7","type":"OKTA_USER"},"id":"gda1aapefvg6sCx4t1d7","delegate":{"externalId":"00uxh4zu6gSS2SEry1d7","type":"OKTA_USER"},"note":"Switched delegate","createdBy":"00u5m6b6h6YuejsVW1d7","created":"2026-04-13T06:08:28Z","lastUpdated":"2026-04-13T06:08:36Z","lastUpdatedBy":"00u5m6b6h6YuejsVW1d7"}],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/delegates?filter=delegatorId%20eq%20%2200uxh48r7spvNXo2g1d7%22&limit=20","hints":{}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 877.682292ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 34
+        host: oie-00.dne-okta.com
+        body: |
+            {"delegates":{"appointments":[]}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/principal-settings/00uxh48r7spvNXo2g1d7
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"delegates":{"appointments":[]}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 13 Apr 2026 06:08:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 736.988084ms
