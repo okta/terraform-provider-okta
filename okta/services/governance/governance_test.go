@@ -1,7 +1,10 @@
 package governance_test
 
 import (
+	"context"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -32,12 +35,35 @@ func init() {
 	// calling Fatalf on a bare testing.T{}.
 	if os.Getenv("TF_ACC") != "" {
 		t := &testing.T{}
-		governanceAPIClientForTestUtil = GovernanceClientForTest(t)
+		cfg := configForTest(t)
+		governanceAPIClientForTestUtil = cfg.OktaGovernanceClient
+
+		// Expose org ID and ORN domain as TF variables so fixtures can construct ORNs.
+		// ORN format: orn:{domain}:{service}:{orgId}:{resourceType}:{appName}:{resourceId}
+		// Domain is derived from OKTA_BASE_URL (e.g., "oktapreview.com" → "oktapreview")
+		if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+			os.Setenv("TF_VAR_org_id", "00o_vcr_placeholder")
+			os.Setenv("TF_VAR_orn_domain", "oktapreview")
+		} else {
+			orgSettings, _, err := cfg.OktaIDaaSClient.OktaSDKClientV3().OrgSettingAPI.GetOrgSettings(context.Background()).Execute()
+			if err != nil {
+				// Log but don't fatal — tests that need org_id will fail
+				// with a clear error from the Okta API rather than a panic here.
+				fmt.Printf("WARNING: failed to fetch org settings for TF_VAR_org_id: %v\n", err)
+			} else if orgSettings != nil {
+				os.Setenv("TF_VAR_org_id", orgSettings.GetId())
+			}
+			// Derive ORN domain from base URL (strip ".com" suffix)
+			baseURL := os.Getenv("OKTA_BASE_URL")
+			if baseURL != "" {
+				os.Setenv("TF_VAR_orn_domain", strings.TrimSuffix(baseURL, ".com"))
+			}
+		}
 	}
 }
 
-// GovernanceClientForTest creates a governance API client for testing
-func GovernanceClientForTest(t *testing.T) api.OktaGovernanceClient {
+// configForTest creates a full Config with both IDaaS and Governance clients for testing.
+func configForTest(t *testing.T) *config.Config {
 	p := provider.Provider()
 	d := resourceDataForTest(t, p.Schema)
 	cfg := config.NewConfig(d)
@@ -45,7 +71,12 @@ func GovernanceClientForTest(t *testing.T) api.OktaGovernanceClient {
 	if err != nil {
 		t.Fatalf("Failed to load API client: %v", err)
 	}
-	return cfg.OktaGovernanceClient
+	return cfg
+}
+
+// GovernanceClientForTest creates a governance API client for testing
+func GovernanceClientForTest(t *testing.T) api.OktaGovernanceClient {
+	return configForTest(t).OktaGovernanceClient
 }
 
 // resourceDataForTest creates a ResourceData for testing with config values from environment

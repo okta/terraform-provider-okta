@@ -1,0 +1,31 @@
+---
+page_title: "{{.Type}}: {{.Name}}"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Type}}: {{.Name}}
+
+{{ .Description | trimspace }}
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{ tffile .ExampleFile }}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Import
+
+Import is supported using the format `parent_resource_orn/resource_orn`:
+
+```shell
+terraform import okta_resource_owners.example "orn:okta:idp:00o...:apps:salesforce:0oa.../orn:okta:governance:00o...:entitlement-bundles:enb..."
+```
+
+The `parent_resource_orn` can be found from:
+- The `target_resource_orn` attribute of an `okta_entitlement_bundle` resource or data source
+- The Okta Admin Console under governance settings
