@@ -37,7 +37,6 @@ func TestAccLabel_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "label_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "name"),
 				),
 			},

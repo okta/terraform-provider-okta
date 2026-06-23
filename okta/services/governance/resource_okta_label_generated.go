@@ -17,8 +17,10 @@ package governance
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -45,10 +47,9 @@ type labelResource struct {
 
 // LabelModel describes the resource data model.
 type labelModel struct {
-	ID      types.String            `tfsdk:"id"`
-	LabelId types.String            `tfsdk:"label_id"`
-	Name    types.String            `tfsdk:"name"`
-	Values  []LabelModelValuesModel `tfsdk:"values"`
+	ID     types.String            `tfsdk:"id"`
+	Name   types.String            `tfsdk:"name"`
+	Values []LabelModelValuesModel `tfsdk:"values"`
 }
 
 // LabelModelValuesModel is the nested model for values.
@@ -62,7 +63,7 @@ type LabelModelValuesModelMetadataModel struct {
 	AdditionalProperties types.Map `tfsdk:"additional_properties"`
 }
 
-func NewLabelResource() resource.Resource {
+func newLabelResource() resource.Resource {
 	return &labelResource{}
 }
 
@@ -84,10 +85,6 @@ func (r *labelResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"label_id": schema.StringAttribute{
-				Description: "The ID of a label",
-				Required:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Key name of the label",
@@ -144,8 +141,28 @@ func (r *labelResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	state.LabelId = types.StringValue(string(result.GetLabelId()))
 	state.Name = types.StringValue(string(result.GetName()))
+	valuesItems0 := result.GetValues()
+	var valuesSlice0 []LabelModelValuesModel
+	for _, item0 := range valuesItems0 {
+		elem := LabelModelValuesModel{}
+		if metadataRaw1, ok := item0.GetMetadataOk(); ok {
+			metadataModel1 := &LabelModelValuesModelMetadataModel{}
+			if m := metadataRaw1.GetAdditionalPropertiesField(); len(m) > 0 {
+				additionalPropertiesVals := make(map[string]attr.Value, len(m))
+				for k, v := range m {
+					additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+				}
+				metadataModel1.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+			} else {
+				metadataModel1.AdditionalProperties = types.MapNull(types.StringType)
+			}
+			elem.Metadata = metadataModel1
+		}
+		elem.Name = types.StringValue(string(item0.GetName()))
+		valuesSlice0 = append(valuesSlice0, elem)
+	}
+	state.Values = valuesSlice0
 
 	state.ID = types.StringValue(string(result.GetLabelId()))
 
@@ -165,7 +182,7 @@ func (r *labelResource) Create(ctx context.Context, req resource.CreateRequest, 
 	createReq := client.LabelsAPI.CreateLabel(ctx)
 	body := governance.NewLabelCreateWithDefaults()
 	body.SetName(plan.Name.ValueString())
-	if len(plan.Values) > 0 {
+	{
 		var valuesSlice []governance.LabelValueCreate
 		for _, item := range plan.Values {
 			nestedItem := governance.NewLabelValueCreateWithDefaults()
@@ -189,8 +206,28 @@ func (r *labelResource) Create(ctx context.Context, req resource.CreateRequest, 
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetLabelId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
-	plan.LabelId = types.StringValue(string(result.GetLabelId()))
 	plan.Name = types.StringValue(string(result.GetName()))
+	valuesItems0 := result.GetValues()
+	var valuesSlice0 []LabelModelValuesModel
+	for _, item0 := range valuesItems0 {
+		elem := LabelModelValuesModel{}
+		if metadataRaw1, ok := item0.GetMetadataOk(); ok {
+			metadataModel1 := &LabelModelValuesModelMetadataModel{}
+			if m := metadataRaw1.GetAdditionalPropertiesField(); len(m) > 0 {
+				additionalPropertiesVals := make(map[string]attr.Value, len(m))
+				for k, v := range m {
+					additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+				}
+				metadataModel1.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+			} else {
+				metadataModel1.AdditionalProperties = types.MapNull(types.StringType)
+			}
+			elem.Metadata = metadataModel1
+		}
+		elem.Name = types.StringValue(string(item0.GetName()))
+		valuesSlice0 = append(valuesSlice0, elem)
+	}
+	plan.Values = valuesSlice0
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -219,7 +256,6 @@ func (r *labelResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
 	state.ID = types.StringValue(string(result.GetLabelId()))
-	state.LabelId = types.StringValue(string(result.GetLabelId()))
 	state.Name = types.StringValue(string(result.GetName()))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

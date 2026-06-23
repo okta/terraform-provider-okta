@@ -97,7 +97,7 @@ type resourceLabelDataSourceModel struct {
 	Items []resourceLabelItemModel `tfsdk:"items"`
 }
 
-func NewResourceLabelDataSource() datasource.DataSource {
+func newResourceLabelDataSource() datasource.DataSource {
 	return &resourceLabelDataSource{}
 }
 

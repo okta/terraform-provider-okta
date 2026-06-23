@@ -13,7 +13,7 @@ type OktaGovernanceClient interface {
 }
 
 func oktaGovernanceSDKClient(c *OktaAPIConfig) (client *governance.OktaGovernanceAPIClient, err error) {
-	config, _, _ := getV5ClientConfig(c)
+	config, _, _ := getV6ClientConfig(c)
 	client = governance.NewAPIClient(config)
 	return client, nil
 }

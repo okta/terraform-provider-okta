@@ -17,8 +17,10 @@ package governance
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -56,7 +58,7 @@ type LabelDataSourceModelValuesModelMetadataModel struct {
 	AdditionalProperties types.Map `tfsdk:"additional_properties"`
 }
 
-func NewLabelDataSource() datasource.DataSource {
+func newLabelDataSource() datasource.DataSource {
 	return &labelDataSource{}
 }
 
@@ -139,6 +141,28 @@ func (d *labelDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	state.ID = types.StringValue(string(result.GetLabelId()))
 	state.LabelId = types.StringValue(string(result.GetLabelId()))
 	state.Name = types.StringValue(string(result.GetName()))
+	valuesItems0 := result.GetValues()
+	var valuesSlice0 []LabelDataSourceModelValuesModel
+	for _, item0 := range valuesItems0 {
+		elem := LabelDataSourceModelValuesModel{}
+		elem.LabelValueId = types.StringValue(string(item0.GetLabelValueId()))
+		if metadataRaw1, ok := item0.GetMetadataOk(); ok {
+			metadataModel1 := &LabelDataSourceModelValuesModelMetadataModel{}
+			if m := metadataRaw1.GetAdditionalPropertiesField(); len(m) > 0 {
+				additionalPropertiesVals := make(map[string]attr.Value, len(m))
+				for k, v := range m {
+					additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+				}
+				metadataModel1.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+			} else {
+				metadataModel1.AdditionalProperties = types.MapNull(types.StringType)
+			}
+			elem.Metadata = metadataModel1
+		}
+		elem.Name = types.StringValue(string(item0.GetName()))
+		valuesSlice0 = append(valuesSlice0, elem)
+	}
+	state.Values = valuesSlice0
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
