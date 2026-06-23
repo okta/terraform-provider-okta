@@ -47,9 +47,10 @@ type labelResource struct {
 
 // LabelModel describes the resource data model.
 type labelModel struct {
-	ID     types.String            `tfsdk:"id"`
-	Name   types.String            `tfsdk:"name"`
-	Values []LabelModelValuesModel `tfsdk:"values"`
+	ID      types.String            `tfsdk:"id"`
+	LabelId types.String            `tfsdk:"label_id"`
+	Name    types.String            `tfsdk:"name"`
+	Values  []LabelModelValuesModel `tfsdk:"values"`
 }
 
 // LabelModelValuesModel is the nested model for values.
@@ -85,6 +86,10 @@ func (r *labelResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
+			},
+			"label_id": schema.StringAttribute{
+				Description: "The ID of a label",
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Key name of the label",
@@ -141,28 +146,30 @@ func (r *labelResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.LabelId = types.StringValue(string(result.GetLabelId()))
 	state.Name = types.StringValue(string(result.GetName()))
-	valuesItems0 := result.GetValues()
-	var valuesSlice0 []LabelModelValuesModel
-	for _, item0 := range valuesItems0 {
-		elem := LabelModelValuesModel{}
-		if metadataRaw1, ok := item0.GetMetadataOk(); ok {
-			metadataModel1 := &LabelModelValuesModelMetadataModel{}
-			if m := metadataRaw1.GetAdditionalPropertiesField(); len(m) > 0 {
-				additionalPropertiesVals := make(map[string]attr.Value, len(m))
-				for k, v := range m {
-					additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+	if apiList := result.GetValues(); len(apiList) > 0 {
+		valuesList0 := make([]LabelModelValuesModel, 0, len(apiList))
+		for _, apiItem := range apiList {
+			valuesItem0 := &LabelModelValuesModel{}
+			if metadataRaw2, ok := apiItem.GetMetadataOk(); ok {
+				metadataModel2 := &LabelModelValuesModelMetadataModel{}
+				if m := metadataRaw2.GetAdditionalPropertiesField(); len(m) > 0 {
+					additionalPropertiesVals := make(map[string]attr.Value, len(m))
+					for k, v := range m {
+						additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					}
+					metadataModel2.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+				} else {
+					metadataModel2.AdditionalProperties = types.MapNull(types.StringType)
 				}
-				metadataModel1.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
-			} else {
-				metadataModel1.AdditionalProperties = types.MapNull(types.StringType)
+				valuesItem0.Metadata = metadataModel2
 			}
-			elem.Metadata = metadataModel1
+			valuesItem0.Name = types.StringValue(string(apiItem.GetName()))
+			valuesList0 = append(valuesList0, *valuesItem0)
 		}
-		elem.Name = types.StringValue(string(item0.GetName()))
-		valuesSlice0 = append(valuesSlice0, elem)
+		state.Values = valuesList0
 	}
-	state.Values = valuesSlice0
 
 	state.ID = types.StringValue(string(result.GetLabelId()))
 
@@ -182,12 +189,22 @@ func (r *labelResource) Create(ctx context.Context, req resource.CreateRequest, 
 	createReq := client.LabelsAPI.CreateLabel(ctx)
 	body := governance.NewLabelCreateWithDefaults()
 	body.SetName(plan.Name.ValueString())
-	{
+	if len(plan.Values) > 0 {
 		var valuesSlice []governance.LabelValueCreate
 		for _, item := range plan.Values {
 			nestedItem := governance.NewLabelValueCreateWithDefaults()
 			if item.Metadata != nil {
 				innerMetadata := governance.NewLabelMetadataWithDefaults()
+				if !item.Metadata.AdditionalProperties.IsNull() && !item.Metadata.AdditionalProperties.IsUnknown() {
+					additionalPropertiesMap := make(map[string]interface{})
+					for k, v := range item.Metadata.AdditionalProperties.Elements() {
+						if sv, ok := v.(types.String); ok {
+							additionalPropertiesMap[k] = sv.ValueString()
+						}
+					}
+					innerMetadata.SetAdditionalPropertiesField(additionalPropertiesMap)
+				}
+
 				nestedItem.SetMetadata(*innerMetadata)
 			}
 			if !item.Name.IsNull() && !item.Name.IsUnknown() {
@@ -206,59 +223,16 @@ func (r *labelResource) Create(ctx context.Context, req resource.CreateRequest, 
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetLabelId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	plan.LabelId = types.StringValue(string(result.GetLabelId()))
 	plan.Name = types.StringValue(string(result.GetName()))
-	valuesItems0 := result.GetValues()
-	var valuesSlice0 []LabelModelValuesModel
-	for _, item0 := range valuesItems0 {
-		elem := LabelModelValuesModel{}
-		if metadataRaw1, ok := item0.GetMetadataOk(); ok {
-			metadataModel1 := &LabelModelValuesModelMetadataModel{}
-			if m := metadataRaw1.GetAdditionalPropertiesField(); len(m) > 0 {
-				additionalPropertiesVals := make(map[string]attr.Value, len(m))
-				for k, v := range m {
-					additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-				}
-				metadataModel1.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
-			} else {
-				metadataModel1.AdditionalProperties = types.MapNull(types.StringType)
-			}
-			elem.Metadata = metadataModel1
-		}
-		elem.Name = types.StringValue(string(item0.GetName()))
-		valuesSlice0 = append(valuesSlice0, elem)
-	}
-	plan.Values = valuesSlice0
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *labelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan labelModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state labelModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-	id := state.ID.ValueString()
-
-	client := r.Config.OktaGovernanceClient.OktaGovernanceSDKClient()
-
-	// Build request body from plan — only send changed fields
-	updateReq := client.LabelsAPI.UpdateLabel(ctx, id)
-	result, _, err := updateReq.Execute()
-	if err != nil {
-		resp.Diagnostics.AddError("Error updating label", err.Error())
-		return
-	}
-	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
-	state.ID = types.StringValue(string(result.GetLabelId()))
-	state.Name = types.StringValue(string(result.GetName()))
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.AddWarning(
+		"Update Not Supported",
+		"This resource does not support in-place updates. Changes will require resource replacement.",
+	)
 }
 
 func (r *labelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
