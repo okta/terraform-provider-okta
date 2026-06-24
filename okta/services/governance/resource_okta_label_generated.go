@@ -55,8 +55,9 @@ type labelModel struct {
 
 // LabelModelValuesModel is the nested model for values.
 type LabelModelValuesModel struct {
-	Metadata *LabelModelValuesModelMetadataModel `tfsdk:"metadata"`
-	Name     types.String                        `tfsdk:"name"`
+	LabelValueId types.String                        `tfsdk:"label_value_id"`
+	Metadata     *LabelModelValuesModelMetadataModel `tfsdk:"metadata"`
+	Name         types.String                        `tfsdk:"name"`
 }
 
 // LabelModelValuesModelMetadataModel is the nested model for metadata.
@@ -101,6 +102,10 @@ func (r *labelResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description: "List of label values",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
+						"label_value_id": schema.StringAttribute{
+							Description: "The ID of a label value",
+							Computed:    true,
+						},
 						"name": schema.StringAttribute{
 							Description: "The label value",
 							Required:    true,
@@ -165,6 +170,7 @@ func (r *labelResource) Read(ctx context.Context, req resource.ReadRequest, resp
 				}
 				valuesItem0.Metadata = metadataModel2
 			}
+			valuesItem0.LabelValueId = types.StringValue(string(apiItem.GetLabelValueId()))
 			valuesItem0.Name = types.StringValue(string(apiItem.GetName()))
 			valuesList0 = append(valuesList0, *valuesItem0)
 		}
@@ -225,14 +231,133 @@ func (r *labelResource) Create(ctx context.Context, req resource.CreateRequest, 
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 	plan.LabelId = types.StringValue(string(result.GetLabelId()))
 	plan.Name = types.StringValue(string(result.GetName()))
+	if apiList := result.GetValues(); len(apiList) > 0 {
+		valuesList := make([]LabelModelValuesModel, 0, len(apiList))
+		for _, apiItem := range apiList {
+			valuesItem := &LabelModelValuesModel{}
+			if metadataRaw, ok := apiItem.GetMetadataOk(); ok {
+				metadataModel := &LabelModelValuesModelMetadataModel{}
+				if m := metadataRaw.GetAdditionalPropertiesField(); len(m) > 0 {
+					additionalPropertiesVals := make(map[string]attr.Value, len(m))
+					for k, v := range m {
+						additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					}
+					metadataModel.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+				} else {
+					metadataModel.AdditionalProperties = types.MapNull(types.StringType)
+				}
+				valuesItem.Metadata = metadataModel
+			}
+			valuesItem.LabelValueId = types.StringValue(string(apiItem.GetLabelValueId()))
+			valuesItem.Name = types.StringValue(string(apiItem.GetName()))
+			valuesList = append(valuesList, *valuesItem)
+		}
+		plan.Values = valuesList
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *labelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	resp.Diagnostics.AddWarning(
-		"Update Not Supported",
-		"This resource does not support in-place updates. Changes will require resource replacement.",
-	)
+	var plan, state labelModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	id := state.ID.ValueString()
+
+	var patches []governance.PatchLabelsInner
+
+	// Update label name if changed
+	if plan.Name.ValueString() != state.Name.ValueString() {
+		nameVal := plan.Name.ValueString()
+		op := governance.NewPatchLabelOperation(governance.LABELPATCHOP_REPLACE, "/name", "LABEL-CATEGORY")
+		op.SetValue(nameVal)
+		patches = append(patches, governance.PatchLabelOperationAsPatchLabelsInner(op))
+	}
+
+	// Build maps for value diff (keyed by name)
+	stateValuesByName := make(map[string]LabelModelValuesModel, len(state.Values))
+	for _, v := range state.Values {
+		stateValuesByName[v.Name.ValueString()] = v
+	}
+	planValuesByName := make(map[string]LabelModelValuesModel, len(plan.Values))
+	for _, v := range plan.Values {
+		planValuesByName[v.Name.ValueString()] = v
+	}
+
+	// REMOVE values that are in state but not in plan
+	for valueName, sv := range stateValuesByName {
+		if _, exists := planValuesByName[valueName]; !exists {
+			labelValueId := sv.LabelValueId.ValueString()
+			op := governance.NewPatchLabelValueOperation(
+				governance.LABELVALUEPATCHOP_REMOVE,
+				fmt.Sprintf("/values/%s", labelValueId),
+				"LABEL-VALUE",
+			)
+			patches = append(patches, governance.PatchLabelValueOperationAsPatchLabelsInner(op))
+		}
+	}
+
+	// ADD values that are in plan but not in state
+	for valueName, pv := range planValuesByName {
+		if _, exists := stateValuesByName[valueName]; !exists {
+			op := governance.NewPatchLabelValueOperation(
+				governance.LABELVALUEPATCHOP_ADD,
+				"/values/-",
+				"LABEL-VALUE",
+			)
+			valueUpdate := governance.NewLabelValueUpdate()
+			valueUpdate.SetName(pv.Name.ValueString())
+			op.SetValue(*valueUpdate)
+			patches = append(patches, governance.PatchLabelValueOperationAsPatchLabelsInner(op))
+		}
+	}
+
+	if len(patches) == 0 {
+		resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+		return
+	}
+
+	client := r.Config.OktaGovernanceClient.OktaGovernanceSDKClient()
+	result, httpResp, err := client.LabelsAPI.UpdateLabel(ctx, id).PatchLabelsInner(patches).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error updating label", err.Error())
+		return
+	}
+
+	// Map response back to plan
+	plan.LabelId = types.StringValue(string(result.GetLabelId()))
+	plan.Name = types.StringValue(string(result.GetName()))
+	if apiList := result.GetValues(); len(apiList) > 0 {
+		valuesList := make([]LabelModelValuesModel, 0, len(apiList))
+		for _, apiItem := range apiList {
+			valuesItem := &LabelModelValuesModel{}
+			if metadataRaw, ok := apiItem.GetMetadataOk(); ok {
+				metadataModel := &LabelModelValuesModelMetadataModel{}
+				if m := metadataRaw.GetAdditionalPropertiesField(); len(m) > 0 {
+					additionalPropertiesVals := make(map[string]attr.Value, len(m))
+					for k, v := range m {
+						additionalPropertiesVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					}
+					metadataModel.AdditionalProperties, _ = types.MapValue(types.StringType, additionalPropertiesVals)
+				} else {
+					metadataModel.AdditionalProperties = types.MapNull(types.StringType)
+				}
+				valuesItem.Metadata = metadataModel
+			}
+			valuesItem.LabelValueId = types.StringValue(string(apiItem.GetLabelValueId()))
+			valuesItem.Name = types.StringValue(string(apiItem.GetName()))
+			valuesList = append(valuesList, *valuesItem)
+		}
+		plan.Values = valuesList
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *labelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
