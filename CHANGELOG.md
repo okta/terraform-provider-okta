@@ -1,10 +1,5 @@
 # Changelog
 
-## Unreleased
-
-### BUG FIXES
-* Fixed `okta_app_oauth` leaving `type` empty in state when importing preconfigured OIN OIDC apps, which caused the next plan to force replacement of the live app [#2870](https://github.com/okta/terraform-provider-okta/pull/2870) ([#2868](https://github.com/okta/terraform-provider-okta/issues/2868)) by [exitcode0](https://github.com/exitcode0)
-
 ## 6.12.0 (June 10, 2026)
 
 ### FEATURES
