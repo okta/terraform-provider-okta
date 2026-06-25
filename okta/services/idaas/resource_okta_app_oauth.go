@@ -767,25 +767,17 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		_ = d.Set("groups_claim", gc)
 	}
 
-	// Populate the immutable, ForceNew "type" attribute. This is handled
-	// separately from setOAuthClientSettingsV6 because that helper early-returns
-	// when settings.OauthClient is nil, which happens for preconfigured OIN OIDC
-	// apps. Leaving "type" unset in state makes a subsequent plan show
-	// `type = "..." # forces replacement` and destroy/recreate a live app
-	// (see GH-2868). setOAuthAppType is also a no-op clobber-guard: it never
-	// overwrites a known "type" with an empty value when the API omits
-	// application_type.
+	// Set "type" separately: setOAuthClientSettingsV6 early-returns on a nil
+	// OauthClient, which preconfigured OIN OIDC apps have (GH-2868).
 	setOAuthAppType(d, settings.OauthClient)
 
 	return setOAuthClientSettingsV6(d, settings.OauthClient)
 }
 
-// setOAuthAppType sets the "type" attribute from the OAuth client's
-// application_type. Okta's public GET /apps/{id} omits settings.oauthClient
-// (nil) and/or its application_type for preconfigured OIN OIDC apps, so this
-// only writes "type" when a concrete value is available and otherwise preserves
-// whatever is already in state/config. "type" is Required + ForceNew, so
-// clobbering it with "" would force an unwanted replacement on the next plan.
+// setOAuthAppType sets "type" from the OAuth client's application_type, but only
+// when present. Preconfigured OIN OIDC apps can return a nil OauthClient or empty
+// application_type; since "type" is Required + ForceNew, overwriting it with ""
+// would force replacement on import (GH-2868).
 func setOAuthAppType(d *schema.ResourceData, oauthClient *v6okta.OpenIdConnectApplicationSettingsClient) {
 	if oauthClient == nil {
 		return
@@ -833,9 +825,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 		return nil
 	}
 
-	// "type" is populated by setOAuthAppType (called from resourceAppOAuthRead)
-	// so that preconfigured OIN OIDC apps, which can have a nil oauthClient or an
-	// empty application_type, still round-trip cleanly on import (GH-2868).
+	// "type" is handled by setOAuthAppType (GH-2868).
 	_ = d.Set("client_uri", oauthClient.GetClientUri())
 	_ = d.Set("logo_uri", oauthClient.GetLogoUri())
 	_ = d.Set("tos_uri", oauthClient.GetTosUri())

@@ -6,11 +6,9 @@ import (
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 )
 
-// TestSetOAuthAppType verifies that the "type" attribute is populated correctly
-// on read/import, including the preconfigured OIN OIDC app cases that regressed
-// in GH-2868 (nil oauthClient or empty application_type). The key invariant is
-// that "type" is Required + ForceNew, so it must never be clobbered with an
-// empty value, otherwise a post-import plan destroys and recreates the live app.
+// TestSetOAuthAppType verifies "type" is never clobbered with an empty value
+// when the API omits application_type/oauthClient (GH-2868); "type" is ForceNew,
+// so an empty write would force replacement on import.
 func TestSetOAuthAppType(t *testing.T) {
 	newClient := func(appType *string) *v6okta.OpenIdConnectApplicationSettingsClient {
 		c := v6okta.NewOpenIdConnectApplicationSettingsClientWithDefaults()
