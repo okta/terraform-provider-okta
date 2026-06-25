@@ -9,13 +9,13 @@ import (
 )
 
 func TestAccDataSourceOktaResourceLabel_read(t *testing.T) {
-	mgr := acctest.NewFixtureManager("data-sources", "okta_resource_label", t.Name())
+	mgr := newFixtureManager("data-sources", "okta_resource_label", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 	resourceName := "data.okta_resource_label.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               acctest.TestAccErrorChecks(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{

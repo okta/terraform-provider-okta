@@ -131,7 +131,7 @@ func (d *labelDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	id := state.ID.ValueString()
 	result, httpResp, err := client.LabelsAPI.GetLabel(ctx, id).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.Diagnostics.AddError("Not Found", "label with the given ID was not found.")
 			return
 		}

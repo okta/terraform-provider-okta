@@ -148,7 +148,7 @@ func (d *resourceLabelDataSource) Read(ctx context.Context, req datasource.ReadR
 	{
 		results, httpResp, err := client.LabelsAPI.ListLabelResources(ctx).Execute()
 		if err != nil {
-			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 				resp.Diagnostics.AddError("Not Found", "No resource_label resources were found.")
 				return
 			}

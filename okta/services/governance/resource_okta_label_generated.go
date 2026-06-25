@@ -143,7 +143,7 @@ func (r *labelResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	client := r.Config.OktaGovernanceClient.OktaGovernanceSDKClient()
 	result, httpResp, err := client.LabelsAPI.GetLabel(ctx, id).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
 			return
 		}
@@ -322,7 +322,7 @@ func (r *labelResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	client := r.Config.OktaGovernanceClient.OktaGovernanceSDKClient()
 	result, httpResp, err := client.LabelsAPI.UpdateLabel(ctx, id).PatchLabelsInner(patches).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
 			return
 		}
@@ -371,7 +371,7 @@ func (r *labelResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	client := r.Config.OktaGovernanceClient.OktaGovernanceSDKClient()
 	httpResp, err := client.LabelsAPI.DeleteLabel(ctx, id).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
 		resp.Diagnostics.AddError("Error deleting label", err.Error())

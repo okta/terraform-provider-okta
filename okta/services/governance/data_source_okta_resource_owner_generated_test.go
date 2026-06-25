@@ -8,10 +8,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaLabel_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", "okta_label", t.Name())
+func TestAccDataSourceOktaResourceOwner_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", "okta_resource_owner", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-	resourceName := "data.okta_label.test"
+	resourceName := "data.okta_resource_owner.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -22,8 +22,7 @@ func TestAccDataSourceOktaLabel_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "label_id"),
-					resource.TestCheckResourceAttrSet(resourceName, "name"),
+					resource.TestCheckResourceAttrSet(resourceName, "parent_resource_orn"),
 				),
 			},
 		},
