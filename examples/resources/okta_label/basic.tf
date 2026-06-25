@@ -1,7 +1,7 @@
 resource "okta_label" "test" {
-  label_id = "replace_with_uuid"
-  name = "test-name"
+  name = "test-label-replace_with_uuid"
+
   values {
-    name = "test-name"
+    name = "test-value"
   }
 }

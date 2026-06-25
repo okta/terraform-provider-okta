@@ -24,12 +24,12 @@ import (
 )
 
 func TestAccLabel_basic(t *testing.T) {
-	mgr := acctest.NewFixtureManager("resources", "okta_label", t.Name())
+	mgr := newFixtureManager("resources", "okta_label", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", "okta_label")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               acctest.TestAccErrorChecks(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
