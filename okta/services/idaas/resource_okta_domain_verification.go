@@ -16,8 +16,20 @@ func resourceDomainVerification() *schema.Resource {
 		CreateContext: resourceDomainVerificationCreate,
 		ReadContext:   utils.ResourceFuncNoOp,
 		DeleteContext: utils.ResourceFuncNoOp,
-		Importer:      nil,
-		Description:   "Verifies the Domain. This is replacement for the `verify` field from the `okta_domain` resource. The resource won't be created if the domain could not be verified. The provider will make several requests to verify the domain until the API returns `VERIFIED` verification status. ",
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				domain, _, err := getOktaClientFromMetadata(meta).Domain.GetDomain(ctx, d.Id())
+				if err != nil {
+					return nil, fmt.Errorf("failed to get domain for import: %v", err)
+				}
+				if !IsDomainValidated(domain.ValidationStatus) {
+					return nil, fmt.Errorf("cannot import domain verification: domain %q is not verified (current validation status: %s)", d.Id(), domain.ValidationStatus)
+				}
+				_ = d.Set("domain_id", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
+		Description: "Verifies the Domain. This is replacement for the `verify` field from the `okta_domain` resource. The resource won't be created if the domain could not be verified. The provider will make several requests to verify the domain until the API returns `VERIFIED` verification status. ",
 		Schema: map[string]*schema.Schema{
 			"domain_id": {
 				Type:        schema.TypeString,
@@ -30,6 +42,13 @@ func resourceDomainVerification() *schema.Resource {
 }
 
 func resourceDomainVerificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	domainId := d.Get("domain_id").(string)
+	// Verifying an already-verified domain returns a 400, so check the current
+	// state first and skip verification if it has already been validated.
+	if domain, _, err := getOktaClientFromMetadata(meta).Domain.GetDomain(ctx, domainId); err == nil && domain != nil && IsDomainValidated(domain.ValidationStatus) {
+		d.SetId(domainId)
+		return nil
+	}
 	boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
 	err := backoff.Retry(func() error {
 		domain, _, err := getOktaClientFromMetadata(meta).Domain.VerifyDomain(ctx, d.Get("domain_id").(string))
