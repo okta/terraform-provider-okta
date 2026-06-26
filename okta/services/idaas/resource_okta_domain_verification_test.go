@@ -34,7 +34,7 @@ func TestDomainValidationString(t *testing.T) {
 	}
 }
 
-func TestAccResourceOktaDomainVerification_import(t *testing.T) {
+func TestAccResourceOktaDomainVerification_alreadyVerified(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSDomainVerification, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSDomainVerification)

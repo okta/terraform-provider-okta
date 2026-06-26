@@ -10,7 +10,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
 
-func TestAccResourceOktaEmailDomainVerification_import(t *testing.T) {
+func TestAccResourceOktaEmailDomainVerification_alreadyVerified(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSEmailDomainVerification, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSEmailDomainVerification)
