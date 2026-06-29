@@ -1075,6 +1075,7 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 	ExcludedResources := make([]governance.ResourceSettingsMutableExcludedResourcesInner, 0, len(d.ResourceSettings.ExcludedResources))
 	for _, ex := range d.ResourceSettings.ExcludedResources {
 		x := ex.ResourceId.ValueString()
+		// ResourceTypeExclude was renamed from ResourceType in okta-governance-sdk-golang v1.0.1 → v1.1.0.
 		var resourceType *governance.ResourceTypeExclude
 		if !ex.ResourceType.IsNull() && ex.ResourceType.ValueString() != "" {
 			rt := governance.ResourceTypeExclude(ex.ResourceType.ValueString())
