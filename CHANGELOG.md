@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.13.0 (June 30, 2026)
+
+### FEATURES
+
+* Added Resource Set data source `okta_iam_resource_set` [#2861](https://github.com/okta/terraform-provider-okta/pull/2861) by [@pranav-okta](https://github.com/pranav-okta)
+* Added Labels, and Resource Owners resources `okta_label`, `okta_resource_owner`, and `okta_resource_owners_catalog_resource` [#2867](https://github.com/okta/terraform-provider-okta/pull/2867) by [@pranav-okta](https://github.com/pranav-okta)
+
 ## 6.12.0 (June 10, 2026)
 
 ### FEATURES
