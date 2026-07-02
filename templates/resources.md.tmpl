@@ -12,7 +12,7 @@ description: |-
 
 ## Example Usage
 
-{{ printf "{{tffile %q}}" .ExampleFile }}
+{{ tffile .ExampleFile }}
 
 {{- end }}
 
@@ -24,6 +24,6 @@ description: |-
 
 Import is supported using the following syntax:
 
-{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+{{ codefile "shell" .ImportFile }}
 
 {{- end }}

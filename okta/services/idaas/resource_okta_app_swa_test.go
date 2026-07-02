@@ -1,6 +1,7 @@
 package idaas_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -80,6 +81,61 @@ func TestAccResourceOktaAppSwaApplication_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "button_field", "btn-login-updated"),
 					resource.TestCheckResourceAttr(resourceName, "password_field", "txtbox-password-updated"),
 					resource.TestCheckResourceAttr(resourceName, "username_field", "txtbox-username-updated"),
+				),
+			},
+		},
+	})
+}
+
+// createDoesSwaAppWithSettingsJSONExist uses the v2 SDK to check existence of an
+// app_settings_json-based SWA app. The v6 SDK (used by createDoesAppExist) cannot
+// unmarshal preconfigured apps like office365 (AUTO_LOGIN sign-on mode) because
+// it expects required fields like buttonField from BrowserPluginApplication.
+func createDoesSwaAppWithSettingsJSONExist() func(string) (bool, error) {
+	return func(id string) (bool, error) {
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
+		app := sdk.NewSwaApplicationWithApplicationSettingsJSON()
+		_, resp, err := client.Application.GetApplication(context.Background(), id, app, nil)
+		if resp != nil && resp.StatusCode == 404 {
+			return false, nil
+		}
+		if err != nil {
+			return false, err
+		}
+		return app.Id != "", nil
+	}
+}
+
+func TestAccResourceOktaAppSwaApplication_appSettingsJSON(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSwa, t.Name())
+	config := mgr.GetFixtures("app_settings_json.tf", t)
+	updatedConfig := mgr.GetFixtures("app_settings_json_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSwa)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSwa, createDoesSwaAppWithSettingsJSONExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesSwaAppWithSettingsJSONExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
+					resource.TestCheckResourceAttrSet(resourceName, "app_settings_json"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesSwaAppWithSettingsJSONExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusInactive),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "office365"),
+					resource.TestCheckResourceAttrSet(resourceName, "app_settings_json"),
 				),
 			},
 		},

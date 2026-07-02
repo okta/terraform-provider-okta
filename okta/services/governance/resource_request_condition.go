@@ -2,14 +2,19 @@ package governance
 
 import (
 	"context"
+	"net/http"
 	"strings"
 	"time"
+
+	"github.com/okta/terraform-provider-okta/okta/api"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/okta/okta-governance-sdk-golang/governance"
@@ -92,6 +97,9 @@ func (r *requestConditionResource) Schema(ctx context.Context, req resource.Sche
 			"resource_id": schema.StringAttribute{
 				Required:    true,
 				Description: "The id of the resource in Okta ID format.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"approval_sequence_id": schema.StringAttribute{
 				Required:    true,
@@ -193,7 +201,7 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 	if resp.Diagnostics.HasError() {
 		return
 	}
-
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	requestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.CreateResourceRequestConditionV2(ctx, data.ResourceId.ValueString()).RequestConditionCreatable(createRequestCondition(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -218,7 +226,36 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
+	// The API may ignore the priority field on create and return a default
+	// value (e.g. always 0). Save the planned priority so we can restore it
+	// after applying the API response to state, since even the follow-up
+	// PATCH response returns 0 for this field.
+	plannedPriority := data.Priority
+
+	// If the planned priority differs from what the API returned, issue a
+	// follow-up PATCH to attempt to set the correct value server-side.
+	if !plannedPriority.IsNull() && plannedPriority.ValueInt32() != requestConditionResp.GetPriority() {
+		_, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
+			RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx,
+			data.ResourceId.ValueString(),
+			requestConditionResp.GetId()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error setting priority on Request condition",
+				"Could not update priority after creation: "+err.Error(),
+			)
+			return
+		}
+	}
+
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
+
+	// Restore the planned priority: the API always returns 0 for this field,
+	// even after a successful PATCH, so we preserve the planned value to
+	// avoid a "Provider produced inconsistent result after apply" error.
+	if !plannedPriority.IsNull() && data.Priority.ValueInt32() == 0 && plannedPriority.ValueInt32() != 0 {
+		data.Priority = plannedPriority
+	}
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -237,9 +274,20 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	// Save the prior-state priority: the API always returns 0 for this field
+	// regardless of what was configured, so we preserve the known priority to
+	// avoid a spurious non-empty plan after apply.
+	priorPriority := data.Priority
+
 	// Read API call logic
-	readRequestConditionResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
+	readRequestConditionResp, httpResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			// Resource was deleted outside Terraform — remove from state so
+			// the next plan recreates it rather than erroring on every refresh.
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Error reading Request conditions",
 			"Could not read Request conditions, unexpected error: "+err.Error(),
@@ -251,6 +299,13 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Restore the prior-state priority when the API returns 0 but the
+	// configuration had a non-zero value.
+	if !priorPriority.IsNull() && data.Priority.ValueInt32() == 0 && priorPriority.ValueInt32() != 0 {
+		data.Priority = priorPriority
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -269,7 +324,12 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	// Save planned priority before the API call: the update API also returns
+	// 0 for priority in the response, so we preserve the planned value.
+	plannedPriority := data.Priority
+
 	// Update API call logic
+	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
 	updatedRequestCondition, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.UpdateResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).RequestConditionPatchable(createRequestConditionPatch(data)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -280,7 +340,7 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Handle status changes
-	if !data.Status.IsNull() && !state.Status.IsNull() {
+	if !data.Status.IsNull() {
 		oldStatus := state.Status.ValueString()
 		newStatus := data.Status.ValueString()
 
@@ -318,21 +378,20 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	// Restore the planned priority: the update API also returns 0 for this
+	// field, so we preserve the planned value to keep state consistent.
+	if !plannedPriority.IsNull() && data.Priority.ValueInt32() == 0 && plannedPriority.ValueInt32() != 0 {
+		data.Priority = plannedPriority
+	}
+
 	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *requestConditionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data, state requestConditionResourceModel
+	var state requestConditionResourceModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Read Terraform prior state Data into the model
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -354,8 +413,21 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Delete API call logic
-	_, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, data.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+	deleteResp, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.DeleteResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
 	if err != nil {
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusNotFound {
+			// Already deleted outside Terraform — treat as success.
+			return
+		}
+		if deleteResp != nil && deleteResp.StatusCode == http.StatusInternalServerError {
+			// The governance API sometimes returns 500 even when the delete
+			// succeeded. Verify by attempting a GET — if the resource is gone
+			// (404) we can safely treat the delete as successful.
+			_, verifyResp, _ := r.OktaGovernanceClient.OktaGovernanceSDKClient().RequestConditionsAPI.GetResourceRequestConditionV2(ctx, state.ResourceId.ValueString(), state.Id.ValueString()).Execute()
+			if verifyResp != nil && verifyResp.StatusCode == http.StatusNotFound {
+				return
+			}
+		}
 		resp.Diagnostics.AddError(
 			"Error deleting Request conditions",
 			"Could not delete Request conditions, unexpected error: "+err.Error(),
@@ -553,7 +625,6 @@ func createRequestConditionPatch(data requestConditionResourceModel) governance.
 	if !data.Priority.IsNull() {
 		patch.Priority = data.Priority.ValueInt32Pointer()
 	}
-	patch.ApprovalSequenceId = data.ApprovalSequenceId.ValueStringPointer()
 	var accessScopeSettings governance.AccessScopeSettingsCreatableAccessScopeSettings
 	if data.AccessScopeSettings.Type.ValueString() == "GROUPS" {
 		if accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings == nil {

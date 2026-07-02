@@ -12,24 +12,19 @@ resource "okta_campaign" "test" {
 
   schedule_settings {
     type             = "ONE_OFF"
-    start_date       = "2025-10-04T13:43:40.000Z"
+    start_date       = "2026-10-04T13:43:40.000Z"
     duration_in_days = 21
     time_zone        = "America/Vancouver"
   }
 
   resource_settings {
     type                                    = "APPLICATION"
-    include_entitlements                    = true
+    include_entitlements                    = false
     individually_assigned_apps_only         = false
     individually_assigned_groups_only       = false
     only_include_out_of_policy_entitlements = false
     target_resources {
-      resource_id                          = "0oao01ardu8r8qUP91d7"
-      resource_type                        = "APPLICATION"
-      include_all_entitlements_and_bundles = true
-    }
-    target_resources {
-      resource_id                          = "0oanlpd3xkLkePi3W1d7"
+      resource_id                          = "0oaws4am895IZbn6Q1d7"
       resource_type                        = "APPLICATION"
       include_all_entitlements_and_bundles = false
     }

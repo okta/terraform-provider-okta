@@ -52,6 +52,7 @@ type SdkSignOnPolicyRuleSignOnActions struct {
 	RequireFactor           *bool                                      `json:"requireFactor,omitempty"`
 	Session                 *OktaSignOnPolicyRuleSignonSessionActions  `json:"session,omitempty"`
 	Challenge               *SdkSignOnPolicyRuleSignOnActionsChallenge `json:"challenge,omitempty"`
+	KeepMeSignedIn          *KeepMeSignedIn                            `json:"keepMeSignedIn,omitempty"`
 }
 
 type SdkSignOnPolicyRuleSignOnActionsChallenge struct {

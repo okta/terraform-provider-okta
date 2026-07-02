@@ -38,6 +38,10 @@ type OktaIDaaSClient interface {
 	OktaSDKClientV3() *okta.APIClient
 	OktaSDKClientV2() *sdk.Client
 	OktaSDKSupplementClient() *sdk.APISupplement
+	// HTTPClient returns the underlying *http.Client used by the SDK clients.
+	// Data sources that make raw HTTP calls should use this client so that the
+	// VCR recorder transport is honoured during acceptance tests.
+	HTTPClient() *http.Client
 }
 
 type OktaAPIConfig struct {
@@ -85,6 +89,10 @@ func (c *iDaaSAPIClient) OktaSDKClientV2() *sdk.Client {
 
 func (c *iDaaSAPIClient) OktaSDKSupplementClient() *sdk.APISupplement {
 	return c.oktaSDKSupplementClient
+}
+
+func (c *iDaaSAPIClient) HTTPClient() *http.Client {
+	return c.oktaSDKClientV6.GetConfig().HTTPClient
 }
 
 func NewOktaIDaaSAPIClient(c *OktaAPIConfig) (client OktaIDaaSClient, err error) {
@@ -170,8 +178,13 @@ func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, 
 		} else {
 			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
 		}
-		retryableClient.ErrorHandler = errHandler
-		retryableClient.CheckRetry = checkRetry
+		if c.PrivateKey != "" {
+			retryableClient.CheckRetry = checkRetryDeferOn429
+			retryableClient.ErrorHandler = errHandlerPassThrough429
+		} else {
+			retryableClient.ErrorHandler = errHandler
+			retryableClient.CheckRetry = checkRetry
+		}
 		httpClient = retryableClient.StandardClient()
 		c.Logger.Info(fmt.Sprintf("v3 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {

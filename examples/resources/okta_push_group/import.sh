@@ -1,0 +1,1 @@
+terraform import okta_push_group.example <app_id>/<push_group_mapping_id>

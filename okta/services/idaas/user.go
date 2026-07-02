@@ -181,6 +181,44 @@ var userProfileDataSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Computed: true,
 	},
+	"created": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"activated": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"status_changed": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"last_login": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"last_updated": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"password_changed": {
+		Type:     schema.TypeString,
+		Computed: true,
+	},
+	"type": {
+		Type:        schema.TypeList,
+		Computed:    true,
+		Description: "User type",
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"id": {
+					Type:        schema.TypeString,
+					Computed:    true,
+					Description: "User type ID",
+				},
+			},
+		},
+	},
 }
 
 func buildUserDataSourceSchema(target map[string]*schema.Schema) map[string]*schema.Schema {
@@ -407,8 +445,36 @@ func flattenUser(u *sdk.User, filteredCustomAttributes []string) map[string]inte
 		attrs["realm_id"] = u.RealmId
 	}
 
+	if u.Created != nil {
+		attrs["created"] = u.Created.Format(time.RFC3339)
+	}
+	if u.Activated != nil {
+		attrs["activated"] = u.Activated.Format(time.RFC3339)
+	}
+	if u.StatusChanged != nil {
+		attrs["status_changed"] = u.StatusChanged.Format(time.RFC3339)
+	}
+	if u.LastLogin != nil {
+		attrs["last_login"] = u.LastLogin.Format(time.RFC3339)
+	}
+	if u.LastUpdated != nil {
+		attrs["last_updated"] = u.LastUpdated.Format(time.RFC3339)
+	}
+	if u.PasswordChanged != nil {
+		attrs["password_changed"] = u.PasswordChanged.Format(time.RFC3339)
+	}
+
 	data, _ := json.Marshal(customAttributes)
 	attrs["custom_profile_attributes"] = string(data)
+
+	// Add user type if present
+	if u.Type != nil {
+		attrs["type"] = []interface{}{
+			map[string]interface{}{
+				"id": u.Type.Id,
+			},
+		}
+	}
 
 	return attrs
 }

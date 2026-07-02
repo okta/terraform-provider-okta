@@ -42,6 +42,7 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"),
 					resource.TestCheckResourceAttr(resourceName, "honor_persistent_name_id", "true"),
 					resource.TestCheckResourceAttrSet(resourceName, "kid"),
+					resource.TestCheckResourceAttr(resourceName, "trust_claims", "true"),
 				),
 			},
 			{
@@ -63,6 +64,7 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name_format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"),
 					resource.TestCheckResourceAttr(resourceName, "honor_persistent_name_id", "false"),
 					resource.TestCheckResourceAttrSet(resourceName, "kid"),
+					resource.TestCheckResourceAttr(resourceName, "trust_claims", "false"),
 				),
 			},
 			{
@@ -111,6 +113,39 @@ func TestAccResourceOktaIdpSaml_crud(t *testing.T) {
 					}
 					return nil
 				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaIdpSaml_account_link_auto exercises the Read path when account_link_action
+// is set to AUTO without account_link_group_include. Regression test for OKTA-1131393 where
+// the provider panicked with a nil pointer dereference when the Okta API returned
+// accountLink.filter.groups = null (filter non-null, groups null inside it).
+func TestAccResourceOktaIdpSaml_account_link_auto(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSIdpSaml, t.Name())
+	config := mgr.GetFixtures("account_link_auto.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSIdpSaml)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSIdpSaml, createDoesIdpExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "account_link_action", "AUTO"),
+					resource.TestCheckNoResourceAttr(resourceName, "account_link_group_include"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"issuer_mode"},
 			},
 		},
 	})

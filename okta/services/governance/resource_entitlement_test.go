@@ -10,7 +10,6 @@ import (
 )
 
 func TestAccEntitlement_basic(t *testing.T) {
-	t.Skip("Skipping Entitlement tests")
 	mgr := newFixtureManager("resources", resources.OktaGovernanceEntitlement, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceEntitlement)

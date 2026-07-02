@@ -24,7 +24,10 @@ func resourceProfileMapping() *schema.Resource {
 		ReadContext:   resourceProfileMappingRead,
 		UpdateContext: resourceProfileMappingUpdate,
 		DeleteContext: resourceProfileMappingDelete,
-		Description:   "Manages a profile mapping. This resource allows you to manage a profile mapping by source and target IDs. -> **NOTE:** If using this resource with OAuth2 scopes, this resource requires `okta.profileMappings.manage` scope.",
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+		Description: "Manages a profile mapping. This resource allows you to manage a profile mapping by source and target IDs. -> **NOTE:** If using this resource with OAuth2 scopes, this resource requires `okta.profileMappings.manage` scope.",
 		Schema: map[string]*schema.Schema{
 			"source_id": {
 				Type:        schema.TypeString,

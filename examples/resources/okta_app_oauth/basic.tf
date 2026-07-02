@@ -15,4 +15,7 @@ resource "okta_app_oauth" "test" {
     value = "aa"
     name  = "bb"
   }
+  network {
+    connection = "ANYWHERE"
+  }
 }

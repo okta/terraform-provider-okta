@@ -25,6 +25,7 @@ type IdentityProviderPolicy struct {
 	MaxClockSkewPtr *int64                `json:"maxClockSkew,omitempty"`
 	Provisioning    *Provisioning         `json:"provisioning,omitempty"`
 	Subject         *PolicySubject        `json:"subject,omitempty"`
+	TrustClaims     *bool                 `json:"trustClaims,omitempty"`
 }
 
 func NewIdentityProviderPolicy() *IdentityProviderPolicy {

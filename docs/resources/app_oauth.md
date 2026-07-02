@@ -78,13 +78,15 @@ resource "okta_app_oauth" "example" {
 				UI.
 				See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object"
 - `auto_submit_toolbar` (Boolean) Display auto submit toolbar
-- `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value, this can be set when token_endpoint_auth_method is client_secret_basic. This does nothing when `omit_secret is set to true.
+- `client_basic_secret` (String, Sensitive) The user provided OAuth client secret key value. When set, this secret will be stored in the Terraform state file. For Terraform 1.11+, consider using `client_basic_secret_wo` instead to avoid persisting secrets in state. Either `client_basic_secret` or `client_basic_secret_wo` can be specified, but not both.
+- `client_basic_secret_wo` (String, Sensitive, Write-Only) The user provided write-only OAuth client secret key value for Terraform 1.11+. Unlike `client_basic_secret`, this secret will not be persisted in the Terraform state file, providing improved security. Only use this attribute with Terraform 1.11 or higher. Either `client_basic_secret` or `client_basic_secret_wo` can be specified, but not both.
+- `client_basic_secret_wo_version` (Number, Optional) Version number for the write-only client secret. Increment this value to trigger an update when changing `client_basic_secret_wo`.
 - `client_id` (String) OAuth client ID. If set during creation, app is created with this id.
 - `client_uri` (String) URI to a web page providing information about the client.
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.
 - `enduser_note` (String) Application notes for end users.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
-- `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials) (see [below for nested schema](#nestedblock--groups_claim))
+- `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials, and is not supported when `preconfigured_app` is set) (see [below for nested schema](#nestedblock--groups_claim))
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `implicit_assignment` (Boolean) *Early Access Property*. Enable Federation Broker Mode.
@@ -96,10 +98,12 @@ resource "okta_app_oauth" "example" {
 - `login_uri` (String) URI that initiates login.
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 - `logo_uri` (String) URI that references a logo for the client.
+- `network` (Block List, Max: 1) Network restrictions for the application client. Only one `network` block may be defined. (see [below for nested schema](#nestedblock--network))
 - `omit_secret` (Boolean) This tells the provider not manage the client_secret value in state. When this is false (the default), it will cause the auto-generated client_secret to be persisted in the client_secret attribute in state. This also means that every time an update to this app is run, this value is also set on the API. If this changes from false => true, the `client_secret` is dropped from state and the secret at the time of the apply is what remains. If this is ever changes from true => false your app will be recreated, due to the need to regenerate a secret we can store in state.
 - `pkce_required` (Boolean) Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object
 - `policy_uri` (String) URI to web page providing client policy document.
 - `post_logout_redirect_uris` (Set of String) List of URIs for redirection after logout. Note: see okta_app_oauth_post_logout_redirect_uri for appending to this list in a decentralized way.
+- `preconfigured_app` (String) Tells Okta to use an existing application in their application catalog, as opposed to a custom application. Note: `groups_claim` is not supported when using `preconfigured_app`.
 - `profile` (String) Custom JSON that represents an OAuth application's profile
 - `redirect_uris` (List of String) List of URIs for use in the redirect-based flow. This is required for all application types except service. Note: see okta_app_oauth_redirect_uri for appending to this list in a decentralized way.
 - `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token
@@ -159,6 +163,19 @@ Optional:
 - `n` (String) RSA Modulus
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point
+
+
+<a id="nestedblock--network"></a>
+### Nested Schema for `network`
+
+Required:
+
+- `connection` (String) The network connection type. Can be `ANYWHERE` or `ZONE`.
+
+Optional:
+
+- `exclude` (Set of String) The network zones to exclude. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones excluded if not specified.
+- `include` (Set of String) The network zones to include. Only applicable when `connection` is `ZONE`. Accepts `ALL_IP_ZONES` or specific zone IDs. Defaults to no zones included if not specified.
 
 
 <a id="nestedblock--timeouts"></a>

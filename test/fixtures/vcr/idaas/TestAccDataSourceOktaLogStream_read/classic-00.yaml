@@ -7,14 +7,9 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: 303
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
             {"_links":{"self":{"href":""}},"created":"0001-01-01T00:00:00Z","id":"","lastUpdated":"0001-01-01T00:00:00Z","name":"testAcc_530667077 Splunk","settings":{"edition":"aws","host":"acme.splunkcloud.com","token":"58A7C8D6-4E2F-4C3B-8F5B-D4E2F3A4B5C6"},"status":"ACTIVE","type":"splunk_cloud_logstreaming"}
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -28,37 +23,30 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:03 GMT
+                - Fri, 13 Feb 2026 09:09:30 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 349.230792ms
+        duration: 1.302044708s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 287
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
         body: |
             {"_links":{"self":{"href":""}},"created":"0001-01-01T00:00:00Z","id":"","lastUpdated":"0001-01-01T00:00:00Z","name":"testAcc_530667077 AWS","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"status":"ACTIVE","type":"aws_eventbridge"}
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -72,77 +60,61 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:03 GMT
+                - Fri, 13 Feb 2026 09:09:31 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 943.835292ms
+        duration: 1.843247s
     - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:03 GMT
+                - Fri, 13 Feb 2026 09:09:32 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 242.057292ms
+        duration: 1.19770575s
     - id: 3
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -154,245 +126,197 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}]'
+        body: '[{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}]'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:04 GMT
+                - Fri, 13 Feb 2026 09:09:32 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/logStreams?limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 290.290667ms
+        duration: 1.264816083s
     - id: 4
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}]'
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:04 GMT
-            Link:
-                - <https://classic-00.dne-okta.com/api/v1/logStreams?limit=20>; rel="self"
+                - Fri, 13 Feb 2026 09:09:33 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 297.226833ms
+        duration: 1.206190875s
     - id: 5
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '[{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}]'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:04 GMT
+                - Fri, 13 Feb 2026 09:09:33 GMT
+            Link:
+                - <https://classic-00.dne-okta.com/api/v1/logStreams?limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 381.602625ms
+        duration: 1.271632916s
     - id: 6
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:04 GMT
+                - Fri, 13 Feb 2026 09:09:35 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 305.658625ms
+        duration: 1.220762s
     - id: 7
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:05 GMT
+                - Fri, 13 Feb 2026 09:09:35 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 347.963708ms
+        duration: 1.261838709s
     - id: 8
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:05 GMT
+                - Fri, 13 Feb 2026 09:09:36 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 219.44075ms
+        duration: 1.201228334s
     - id: 9
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -404,79 +328,30 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}]'
+        body: '[{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}]'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:05 GMT
+                - Fri, 13 Feb 2026 09:09:36 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/logStreams?limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 315.638791ms
+        duration: 1.255035958s
     - id: 10
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Fri, 14 Mar 2025 03:05:05 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 218.341875ms
-    - id: 11
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
@@ -488,53 +363,75 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: -1
         uncompressed: true
-        body: '[{"id":"0oakwu016vvTFjtR31d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oakwufik4xrxD6r11d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2025-03-14T03:05:03.000Z","created":"2025-03-14T03:05:03.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate","method":"POST"}}}]'
+        body: '[{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}},{"id":"0oauzje9hwngUytd61d7","type":"splunk_cloud_logstreaming","name":"testAcc_530667077 Splunk","lastUpdated":"2026-02-13T09:09:30.000Z","created":"2026-02-13T09:09:30.000Z","status":"ACTIVE","settings":{"host":"acme.splunkcloud.com","edition":"aws"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate","method":"POST"}}}]'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 14 Mar 2025 03:05:05 GMT
+                - Fri, 13 Feb 2026 09:09:37 GMT
             Link:
                 - <https://classic-00.dne-okta.com/api/v1/logStreams?limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 441.458042ms
+        duration: 1.200636583s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: classic-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"0oauzjdcphboX7cJm1d7","type":"aws_eventbridge","name":"testAcc_530667077 AWS","lastUpdated":"2026-02-13T09:09:31.000Z","created":"2026-02-13T09:09:31.000Z","status":"ACTIVE","settings":{"accountId":"123456789012","eventSourceName":"testAcc_530667077_AWS","region":"eu-west-3"},"_links":{"self":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7","method":"GET"},"deactivate":{"href":"https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate","method":"POST"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 13 Feb 2026 09:09:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.203608459s
     - id: 12
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7/lifecycle/deactivate
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: 0
-        uncompressed: false
         body: ""
         headers:
             Accept-Ch:
@@ -542,40 +439,31 @@ interactions:
             Content-Length:
                 - "0"
             Date:
-                - Fri, 14 Mar 2025 03:05:06 GMT
+                - Fri, 13 Feb 2026 09:09:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 233.182166ms
+        duration: 1.062126875s
     - id: 13
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7/lifecycle/deactivate
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: 0
-        uncompressed: false
         body: ""
         headers:
             Accept-Ch:
@@ -583,87 +471,69 @@ interactions:
             Content-Length:
                 - "0"
             Date:
-                - Fri, 14 Mar 2025 03:05:06 GMT
+                - Fri, 13 Feb 2026 09:09:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 236.661042ms
+        duration: 1.062917333s
     - id: 14
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwufik4xrxD6r11d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzje9hwngUytd61d7
         method: DELETE
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: 0
-        uncompressed: false
         body: ""
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Fri, 14 Mar 2025 03:05:06 GMT
+                - Fri, 13 Feb 2026 09:09:40 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 281.026292ms
+        duration: 1.143815792s
     - id: 15
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 0
-        transfer_encoding: []
-        trailer: {}
         host: classic-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oakwu016vvTFjtR31d7
+        url: https://classic-00.dne-okta.com/api/v1/logStreams/0oauzjdcphboX7cJm1d7
         method: DELETE
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
         content_length: 0
-        uncompressed: false
         body: ""
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Fri, 14 Mar 2025 03:05:07 GMT
+                - Fri, 13 Feb 2026 09:09:41 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 910.316834ms
+        duration: 2.496209375s

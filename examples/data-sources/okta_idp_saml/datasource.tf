@@ -28,6 +28,7 @@ resource "okta_idp_saml" "test" {
   issuer                   = "https://idp.example.com"
   request_signature_scope  = "REQUEST"
   response_signature_scope = "ANY"
+  trust_claims             = true
 }
 
 data "okta_idp_saml" "test" {

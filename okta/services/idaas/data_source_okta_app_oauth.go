@@ -154,6 +154,32 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: \"SUBDOMAIN\", \"DISABLED\".",
 			},
+			"network": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Network restrictions for the application client.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"connection": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "The network connection type. Can be `ANYWHERE` or `ZONE`.",
+						},
+						"include": {
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "IP zones to include when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.",
+						},
+						"exclude": {
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+							Description: "IP zones to exclude when `connection` is `ZONE`. Can be `ALL_IP_ZONES` or specific zone IDs.",
+						},
+					},
+				},
+			},
 		}),
 		Description: "Get a OIDC application from Okta.",
 	}
@@ -246,6 +272,17 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 	err = utils.SetNonPrimitives(d, aggMap)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
+	}
+	if app.Settings.OauthClient != nil && app.Settings.OauthClient.Network != nil {
+		network := app.Settings.OauthClient.Network
+		networkMap := map[string]interface{}{
+			"connection": network.Connection,
+			"include":    utils.ConvertStringSliceToSet(network.Include),
+			"exclude":    utils.ConvertStringSliceToSet(network.Exclude),
+		}
+		if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
+			return diag.Errorf("failed to set OAuth application network properties: %v", err)
+		}
 	}
 	p, _ := json.Marshal(app.Links)
 	_ = d.Set("links", string(p))

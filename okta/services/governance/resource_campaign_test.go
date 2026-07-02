@@ -33,3 +33,55 @@ func TestAccCampaignResource_basic(t *testing.T) {
 		},
 	})
 }
+
+// TestAccCampaignResource_requiresReplace verifies that mutating any attribute
+// that cannot be updated in-place (e.g. name) causes Terraform to destroy and
+// re-create the campaign instead of attempting an in-place update that the API
+// would reject. The test captures the resource ID after the initial create and
+// asserts it differs after the attribute change, confirming a replace occurred.
+func TestAccCampaignResource_requiresReplace(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceCampaign, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	updatedConfig := mgr.GetFixtures("updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceCampaign)
+
+	var idBeforeReplace string
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create the campaign and capture its ID.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "Monthly access review of sales team"),
+					resource.TestCheckResourceAttr(resourceName, "campaign_type", "RESOURCE"),
+					resource.TestCheckResourceAttrWith(resourceName, "id", func(id string) error {
+						idBeforeReplace = id
+						return nil
+					}),
+				),
+			},
+			{
+				// Step 2: change `name` — a RequiresReplace attribute.
+				// Terraform must destroy the old campaign and create a new one
+				// rather than attempting an unsupported in-place update.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "Quarterly access review of sales team"),
+					resource.TestCheckResourceAttr(resourceName, "campaign_type", "RESOURCE"),
+					// The resource ID must differ, proving a replace (destroy+create) occurred.
+					resource.TestCheckResourceAttrWith(resourceName, "id", func(id string) error {
+						if id == idBeforeReplace {
+							return fmt.Errorf("expected campaign ID to change after replace, but it remained %q", id)
+						}
+						return nil
+					}),
+				),
+			},
+		},
+	})
+}

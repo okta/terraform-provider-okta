@@ -12,7 +12,7 @@ Manages request settings. This resource allows you to read and configure an Okta
 
 ```terraform
 resource "okta_request_setting_resource" "test"{
-  resource_id="<resource_id>"
+  id="<resource_id>"
   risk_settings {
     default_setting {
       request_submission_type= "ALLOWED_WITH_OVERRIDES"
@@ -30,7 +30,7 @@ resource "okta_request_setting_resource" "test"{
 
 ### Required
 
-- `resource_id`(String)
+- `id`(String)
 
 ### Optional
 

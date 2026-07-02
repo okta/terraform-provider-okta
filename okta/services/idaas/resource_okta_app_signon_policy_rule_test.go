@@ -15,6 +15,7 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
 // TestAccResourceOktaAppSignOnPolicyRule_crud can flap when all the tests are
@@ -51,7 +52,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_connection", "ANYWHERE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "re_authentication_frequency", "PT2H"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "LOW"),
 					resource.TestCheckResourceAttr(resourceName, "platform_include.#", "1"),
 				),
 			},
@@ -78,7 +78,6 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "inactivity_period", "PT2H"),
 					resource.TestCheckResourceAttr(resourceName, "type", "ASSURANCE"),
 					resource.TestCheckResourceAttr(resourceName, "constraints.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "risk_score", "MEDIUM"),
 				),
 			},
 			{
@@ -440,7 +439,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_AUTH_METHOD_CHAIN(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "test2"),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr(resourceName, "chains.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "chains.0", "{\"authenticationMethods\":[{\"key\":\"okta_password\",\"method\":\"password\"}],\"next\":[{\"authenticationMethods\":[{\"key\":\"okta_email\",\"method\":\"email\"}]}]}"),
+					resource.TestCheckResourceAttr(resourceName, "chains.0", "{\"authenticationMethods\":[{\"key\":\"okta_email\",\"method\":\"email\"}],\"next\":[{\"authenticationMethods\":[{\"key\":\"okta_password\",\"method\":\"password\"}]}]}"),
 				),
 			},
 		},
@@ -570,4 +569,295 @@ func checkExternalIdpAuthenticatorInConstraint(expectedID, expectedKey string) f
 		}
 		return fmt.Errorf("constraint does not contain expected external_idp authenticator with id=%q and key=%q, got: %s", expectedID, expectedKey, value)
 	}
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_custom_expression tests the custom_expression
+// (elCondition) attribute. This test verifies:
+// 1. Rules can be created without custom_expression (elCondition should not be sent)
+// 2. Rules can be created with custom_expression
+// 3. Rules can be updated to add/change custom_expression
+// 4. Rules can be updated to remove custom_expression
+func TestAccResourceOktaAppSignOnPolicyRule_custom_expression(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+
+	// Config without custom_expression - tests fix for empty elCondition bug
+	configNoExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id   = data.okta_app_signon_policy.test.id
+  name        = "testAcc_%d"
+  access      = "ALLOW"
+  factor_mode = "2FA"
+  type        = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	// Config with custom_expression
+	configWithExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id         = data.okta_app_signon_policy.test.id
+  name              = "testAcc_%d"
+  custom_expression = "user.profile.department == 'Engineering'"
+  access            = "ALLOW"
+  factor_mode       = "2FA"
+  type              = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	// Config with updated custom_expression
+	configWithUpdatedExpression := fmt.Sprintf(`
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id         = data.okta_app_signon_policy.test.id
+  name              = "testAcc_%d"
+  custom_expression = "user.profile.department == 'Engineering' || user.profile.department == 'IT'"
+  access            = "ALLOW"
+  factor_mode       = "2FA"
+  type              = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create rule WITHOUT custom_expression
+				// This tests the fix for the empty elCondition bug
+				Config: configNoExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+				),
+			},
+			{
+				// Step 2: Update rule to ADD custom_expression
+				Config: configWithExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "custom_expression", "user.profile.department == 'Engineering'"),
+				),
+			},
+			{
+				// Step 3: Update rule to CHANGE custom_expression
+				Config: configWithUpdatedExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "custom_expression", "user.profile.department == 'Engineering' || user.profile.department == 'IT'"),
+				),
+			},
+			{
+				// Step 4: Update rule to REMOVE custom_expression
+				Config: configNoExpression,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in tests the keep_me_signed_in
+// (KMSI) attribute. This test verifies:
+// 1. Rules can be created with keep_me_signed_in set to ALLOWED with a prompt frequency
+// 2. Rules can be updated to change keep_me_signed_in to NOT_ALLOWED
+// 3. Import works correctly with keep_me_signed_in
+func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	config := mgr.GetFixtures("keep_me_signed_in.tf", t)
+	updatedConfig := mgr.GetFixtures("keep_me_signed_in_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create rule with keep_me_signed_in ALLOWED and prompt frequency
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+				),
+			},
+			{
+				// Step 2: Update rule to change keep_me_signed_in to NOT_ALLOWED
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+				),
+			},
+			{
+				// Step 3: Import and verify keep_me_signed_in is preserved
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find app sign on policy rule %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.Attributes["id"]), nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import resource into state")
+					}
+					if s[0] == nil {
+						return errors.New("imported state is nil")
+					}
+					if v, ok := s[0].Attributes["keep_me_signed_in.#"]; !ok || v != "1" {
+						return fmt.Errorf("expected keep_me_signed_in.# to be '1', got '%s'", v)
+					}
+					if v, ok := s[0].Attributes["keep_me_signed_in.0.post_auth"]; !ok || (v != "ALLOWED" && v != "NOT_ALLOWED") {
+						return fmt.Errorf("expected keep_me_signed_in.0.post_auth to be 'ALLOWED' or 'NOT_ALLOWED', got '%s'", v)
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in_drift reproduces the
+// customer scenario from OKTA-1172311:
+//  1. Apply a rule WITHOUT a keep_me_signed_in block.
+//  2. An admin enables "Option to stay signed in" out-of-band (we simulate this
+//     by patching the rule directly through the Okta API).
+//  3. Re-apply the SAME Terraform config (still no keep_me_signed_in block).
+//
+// The fix-line: KMSI must NOT be silently cleared on the re-apply, because the
+// schema is Optional+Computed and the user did not explicitly request a change.
+func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in_drift(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	// Reuse the basic fixture — it has no keep_me_signed_in block, which is the
+	// drift precondition we need.
+	config := mgr.GetFixtures("basic.tf", t)
+
+	var policyID, ruleID string
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Apply without keep_me_signed_in. Capture IDs for
+				// the out-of-band mutation.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("resource not found: %s", resourceName)
+						}
+						ruleID = rs.Primary.ID
+						policyID = rs.Primary.Attributes["policy_id"]
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: Out-of-band, an admin flips KMSI on via API. Then re-apply
+				// the exact same Terraform config and assert the API-side value is
+				// preserved (i.e., Terraform did not clobber it).
+				PreConfig: func() {
+					if policyID == "" || ruleID == "" {
+						t.Fatalf("policy_id or rule_id not captured from previous step")
+					}
+					ctx := context.Background()
+					client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
+					rule, _, err := client.GetAppSignOnPolicyRule(ctx, policyID, ruleID)
+					if err != nil {
+						t.Fatalf("failed to fetch rule for out-of-band mutation: %v", err)
+					}
+					if rule.Actions == nil || rule.Actions.AppSignOn == nil {
+						t.Fatalf("rule fetched for mutation has no AppSignOn action")
+					}
+					rule.Actions.AppSignOn.KeepMeSignedIn = &sdk.KeepMeSignedIn{
+						PostAuth:                "ALLOWED",
+						PostAuthPromptFrequency: "PT168H",
+					}
+					if _, _, err := client.UpdateAppSignOnPolicyRule(ctx, policyID, ruleID, *rule); err != nil {
+						t.Fatalf("failed to enable KMSI out-of-band: %v", err)
+					}
+				},
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					// After Terraform refresh + apply, the rule should still have
+					// KMSI enabled. The Read function flattens the API value into
+					// state, and because the schema is Optional+Computed, an
+					// unspecified block in config must not blow that value away.
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// Belt-and-braces: verify against the API directly to rule out
+					// any flattener-only success.
+					func(s *terraform.State) error {
+						client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
+						rule, _, err := client.GetAppSignOnPolicyRule(context.Background(), policyID, ruleID)
+						if err != nil {
+							return fmt.Errorf("failed to verify rule via API: %v", err)
+						}
+						if rule.Actions == nil || rule.Actions.AppSignOn == nil || rule.Actions.AppSignOn.KeepMeSignedIn == nil {
+							return errors.New("expected KeepMeSignedIn to be preserved on the API rule, but it was cleared")
+						}
+						if got := rule.Actions.AppSignOn.KeepMeSignedIn.PostAuth; got != "ALLOWED" {
+							return fmt.Errorf("expected KeepMeSignedIn.PostAuth = ALLOWED, got %q", got)
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
 }

@@ -251,7 +251,7 @@ interactions:
         content_length: 513
         host: oie-00.dne-okta.com
         body: |
-            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"constraints":[{"knowledge":{"reauthenticateIn":"PT2H","types":["password"],"required":true},"possession":{"authenticationMethods":[{"key":"external_idp","id":"auttixlvpvfch3xmO1d7","method":"idp"}],"required":true,"userPresence":"OPTIONAL"}}],"factorMode":"2FA","reauthenticateIn":"PT2H","type":"ASSURANCE"}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{},"elCondition":{}},"name":"test-rule","priority":0,"type":"ACCESS_POLICY"}
+            {"actions":{"appSignOn":{"access":"ALLOW","verificationMethod":{"constraints":[{"knowledge":{"reauthenticateIn":"PT2H","types":["password"],"required":true},"possession":{"authenticationMethods":[{"key":"external_idp","id":"auttixlvpvfch3xmO1d7","method":"idp"}],"required":true,"userPresence":"OPTIONAL"}}],"factorMode":"2FA","reauthenticateIn":"PT2H","type":"ASSURANCE"}}},"conditions":{"network":{"connection":"ANYWHERE"},"platform":{}},"name":"test-rule","priority":0,"type":"ACCESS_POLICY"}
         headers:
             Accept:
                 - application/json

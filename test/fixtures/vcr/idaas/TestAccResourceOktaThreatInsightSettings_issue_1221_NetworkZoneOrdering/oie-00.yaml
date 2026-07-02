@@ -9,7 +9,7 @@ interactions:
         content_length: 266
         host: oie-00.dne-okta.com
         body: |
-            {"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"name":"testAcc_1303341752-3","proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"status":"ACTIVE","type":"IP","usage":"POLICY"}
+            {"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"name":"testAcc_1303341752-1","proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"status":"ACTIVE","type":"IP","usage":"POLICY"}
         headers:
             Accept:
                 - application/json
@@ -25,19 +25,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou502r4auG8A2KB1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:39.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uu0bx7IV50Vb1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:45.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:39 GMT
+                - Wed, 18 Feb 2026 06:35:45 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 2.31995s
+        duration: 1.075857708s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -62,19 +62,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4znxmc8kfnNnM1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:39.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uvdpfNgnj2US1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:45.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:39 GMT
+                - Wed, 18 Feb 2026 06:35:45 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 2.320865083s
+        duration: 1.092477292s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -83,7 +83,7 @@ interactions:
         content_length: 266
         host: oie-00.dne-okta.com
         body: |
-            {"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"name":"testAcc_1303341752-1","proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"status":"ACTIVE","type":"IP","usage":"POLICY"}
+            {"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"name":"testAcc_1303341752-3","proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"status":"ACTIVE","type":"IP","usage":"POLICY"}
         headers:
             Accept:
                 - application/json
@@ -99,19 +99,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4zxm1rRoNhoPf1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:39.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uwaseyYnRaWr1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:46.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:39 GMT
+                - Wed, 18 Feb 2026 06:35:46 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 2.358079958s
+        duration: 1.870796833s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -124,7 +124,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/activate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/activate
         method: POST
       response:
         proto: HTTP/2.0
@@ -132,19 +132,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou502r4auG8A2KB1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uu0bx7IV50Vb1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:40 GMT
+                - Wed, 18 Feb 2026 06:35:46 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.412405s
+        duration: 1.069036458s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -157,7 +157,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/activate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/activate
         method: POST
       response:
         proto: HTTP/2.0
@@ -165,19 +165,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4zxm1rRoNhoPf1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uvdpfNgnj2US1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:40 GMT
+                - Wed, 18 Feb 2026 06:35:46 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.376962959s
+        duration: 1.074718083s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -190,7 +190,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/activate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/activate
         method: POST
       response:
         proto: HTTP/2.0
@@ -198,19 +198,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4znxmc8kfnNnM1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uwaseyYnRaWr1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:46.000Z","lastUpdated":"2026-02-18T06:35:47.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:40 GMT
+                - Wed, 18 Feb 2026 06:35:47 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.416062458s
+        duration: 1.076846417s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -223,7 +223,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -231,19 +231,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou502r4auG8A2KB1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uu0bx7IV50Vb1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:41 GMT
+                - Wed, 18 Feb 2026 06:35:48 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.076974458s
+        duration: 1.067911708s
     - id: 7
       request:
         proto: HTTP/1.1
@@ -256,7 +256,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -264,19 +264,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4zxm1rRoNhoPf1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uvdpfNgnj2US1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:41 GMT
+                - Wed, 18 Feb 2026 06:35:48 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.08470425s
+        duration: 1.069029292s
     - id: 8
       request:
         proto: HTTP/1.1
@@ -289,7 +289,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -297,19 +297,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4znxmc8kfnNnM1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uwaseyYnRaWr1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:46.000Z","lastUpdated":"2026-02-18T06:35:47.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:41 GMT
+                - Wed, 18 Feb 2026 06:35:48 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.083259375s
+        duration: 1.115718166s
     - id: 9
       request:
         proto: HTTP/1.1
@@ -318,7 +318,7 @@ interactions:
         content_length: 105
         host: oie-00.dne-okta.com
         body: |
-            {"action":"block","excludeZones":["nzou4zxm1rRoNhoPf1d7","nzou4znxmc8kfnNnM1d7","nzou502r4auG8A2KB1d7"]}
+            {"action":"block","excludeZones":["nzov4uu0bx7IV50Vb1d7","nzov4uvdpfNgnj2US1d7","nzov4uwaseyYnRaWr1d7"]}
         headers:
             Accept:
                 - application/json
@@ -334,19 +334,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"action":"block","excludeZones":["nzou4znxmc8kfnNnM1d7","nzou502r4auG8A2KB1d7","nzou4zxm1rRoNhoPf1d7"],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-01-23T07:36:42.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
+        body: '{"action":"block","excludeZones":["nzov4uwaseyYnRaWr1d7","nzov4uvdpfNgnj2US1d7","nzov4uu0bx7IV50Vb1d7"],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-02-18T06:35:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:42 GMT
+                - Wed, 18 Feb 2026 06:35:50 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.0825665s
+        duration: 1.137838458s
     - id: 10
       request:
         proto: HTTP/1.1
@@ -359,7 +359,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -367,19 +367,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou502r4auG8A2KB1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uvdpfNgnj2US1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:44 GMT
+                - Wed, 18 Feb 2026 06:35:51 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.395832334s
+        duration: 1.06550225s
     - id: 11
       request:
         proto: HTTP/1.1
@@ -392,7 +392,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -400,19 +400,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4zxm1rRoNhoPf1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uwaseyYnRaWr1d7","name":"testAcc_1303341752-3","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:46.000Z","lastUpdated":"2026-02-18T06:35:47.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:44 GMT
+                - Wed, 18 Feb 2026 06:35:51 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.396747625s
+        duration: 1.068567958s
     - id: 12
       request:
         proto: HTTP/1.1
@@ -425,7 +425,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7
         method: GET
       response:
         proto: HTTP/2.0
@@ -433,19 +433,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4znxmc8kfnNnM1d7","name":"testAcc_1303341752-2","status":"ACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:40.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        body: '{"type":"IP","id":"nzov4uu0bx7IV50Vb1d7","name":"testAcc_1303341752-1","status":"ACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:46.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:44 GMT
+                - Wed, 18 Feb 2026 06:35:51 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.397330916s
+        duration: 1.071009417s
     - id: 13
       request:
         proto: HTTP/1.1
@@ -466,19 +466,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"action":"block","excludeZones":["nzou4znxmc8kfnNnM1d7","nzou502r4auG8A2KB1d7","nzou4zxm1rRoNhoPf1d7"],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-01-23T07:36:42.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
+        body: '{"action":"block","excludeZones":["nzov4uwaseyYnRaWr1d7","nzov4uvdpfNgnj2US1d7","nzov4uu0bx7IV50Vb1d7"],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-02-18T06:35:50.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:45 GMT
+                - Wed, 18 Feb 2026 06:35:52 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.06567825s
+        duration: 1.063509209s
     - id: 14
       request:
         proto: HTTP/1.1
@@ -503,19 +503,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"action":"none","excludeZones":[],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-01-23T07:36:46.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
+        body: '{"action":"none","excludeZones":[],"created":"2025-10-07T06:36:55.000Z","lastUpdated":"2026-02-18T06:35:53.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/threats/configuration","hints":{"allow":["GET","POST"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:46 GMT
+                - Wed, 18 Feb 2026 06:35:53 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.08572925s
+        duration: 1.126339375s
     - id: 15
       request:
         proto: HTTP/1.1
@@ -528,7 +528,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/deactivate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -536,19 +536,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4zxm1rRoNhoPf1d7","name":"testAcc_1303341752-1","status":"INACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:47.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"type":"IP","id":"nzov4uvdpfNgnj2US1d7","name":"testAcc_1303341752-2","status":"INACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:54.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:47 GMT
+                - Wed, 18 Feb 2026 06:35:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.238812667s
+        duration: 1.206250166s
     - id: 16
       request:
         proto: HTTP/1.1
@@ -561,7 +561,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/deactivate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -569,19 +569,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou502r4auG8A2KB1d7","name":"testAcc_1303341752-3","status":"INACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:47.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"type":"IP","id":"nzov4uu0bx7IV50Vb1d7","name":"testAcc_1303341752-1","status":"INACTIVE","usage":"POLICY","created":"2026-02-18T06:35:45.000Z","lastUpdated":"2026-02-18T06:35:55.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"1.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"2.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:47 GMT
+                - Wed, 18 Feb 2026 06:35:55 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.241752083s
+        duration: 1.97711375s
     - id: 17
       request:
         proto: HTTP/1.1
@@ -594,7 +594,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/deactivate
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -602,19 +602,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"type":"IP","id":"nzou4znxmc8kfnNnM1d7","name":"testAcc_1303341752-2","status":"INACTIVE","usage":"POLICY","created":"2026-01-23T07:36:39.000Z","lastUpdated":"2026-01-23T07:36:47.000Z","system":false,"gateways":[{"type":"RANGE","value":"2.3.4.5-2.3.4.15"},{"type":"CIDR","value":"2.2.3.4/24"}],"proxies":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        body: '{"type":"IP","id":"nzov4uwaseyYnRaWr1d7","name":"testAcc_1303341752-3","status":"INACTIVE","usage":"POLICY","created":"2026-02-18T06:35:46.000Z","lastUpdated":"2026-02-18T06:35:55.000Z","system":false,"gateways":[{"type":"CIDR","value":"3.2.3.4/24"},{"type":"RANGE","value":"2.3.4.5-2.3.4.15"}],"proxies":[{"type":"CIDR","value":"4.2.3.4/24"},{"type":"RANGE","value":"3.3.4.5-3.3.4.15"}],"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7","hints":{"allow":["GET","PUT","DELETE"]}}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 23 Jan 2026 07:36:47 GMT
+                - Wed, 18 Feb 2026 06:35:55 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.475505708s
+        duration: 1.994918625s
     - id: 18
       request:
         proto: HTTP/1.1
@@ -627,7 +627,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou502r4auG8A2KB1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uvdpfNgnj2US1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -639,12 +639,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Fri, 23 Jan 2026 07:36:48 GMT
+                - Wed, 18 Feb 2026 06:35:56 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.089055083s
+        duration: 1.0813925s
     - id: 19
       request:
         proto: HTTP/1.1
@@ -657,7 +657,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4zxm1rRoNhoPf1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uu0bx7IV50Vb1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -669,12 +669,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Fri, 23 Jan 2026 07:36:48 GMT
+                - Wed, 18 Feb 2026 06:35:56 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.092927875s
+        duration: 1.11485925s
     - id: 20
       request:
         proto: HTTP/1.1
@@ -687,7 +687,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/zones/nzou4znxmc8kfnNnM1d7
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzov4uwaseyYnRaWr1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -699,9 +699,9 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Fri, 23 Jan 2026 07:36:49 GMT
+                - Wed, 18 Feb 2026 06:35:57 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.086419833s
+        duration: 1.865765917s

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"strings"
 
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -49,7 +50,11 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Use with type `IP`",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateFunc:     validateIPaddress,
+					DiffSuppressFunc: suppressIPDiff,
+				},
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -60,7 +65,11 @@ func resourceNetworkZone() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Array of values in CIDR/range form depending on the way it's been declared (i.e. CIDR will contain /suffix). Please check API docs for examples. Can not be set if `usage` is set to `BLOCKLIST`. Use with type `IP`",
-				Elem:        &schema.Schema{Type: schema.TypeString},
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateFunc:     validateIPaddress,
+					DiffSuppressFunc: suppressIPDiff,
+				},
 			},
 			"type": {
 				Type:        schema.TypeString,
@@ -70,6 +79,7 @@ func resourceNetworkZone() *schema.Resource {
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Default:      "ACTIVE",
 				Description:  "Network Status - can either be `ACTIVE` or `INACTIVE` only",
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "INACTIVE"}, false),
 			},
@@ -97,6 +107,16 @@ func resourceNetworkZone() *schema.Resource {
 				Description: "List of ip service excluded. Use with type `DYNAMIC_V2`",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"set_usage_as_exempt_list": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Set this parameter to true in your request when you update the DefaultExemptIpZone to allow IPs through the blocklist.",
+			},
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates a system Network Zone",
+			},
 		},
 	}
 }
@@ -110,6 +130,14 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	if d.Get("name").(string) == "DefaultExemptIpZone" {
+		return diag.Errorf("the DefaultExemptIpZone is a built-in Okta network zone and cannot be created. " +
+			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
+	}
+	if d.Get("name").(string) == "BlockedIpZone" {
+		return diag.Errorf("the BlockedIpZone is a built-in Okta network zone and cannot be created. " +
+			"Please use 'terraform import okta_network_zone.<resource_name> <zone_id>' to manage it")
+	}
 	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.CreateNetworkZone(ctx).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to create network zone: %v", err)
@@ -120,17 +148,21 @@ func resourceNetworkZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 	d.SetId(nzID)
 	if d.Get("status").(string) == "ACTIVE" {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+		zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
 		if err != nil {
 			return diag.Errorf("failed to activate network zone: %v", err)
 		}
 	} else {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+		zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 		if err != nil {
 			return diag.Errorf("failed to deactivate network zone: %v", err)
 		}
 	}
-	return resourceNetworkZoneRead(ctx, d, meta)
+	err = mapNetworkZoneToState(d, zone)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
 }
 
 func resourceNetworkZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -164,25 +196,41 @@ func resourceNetworkZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	_, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
+	zone, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ReplaceNetworkZone(ctx, d.Id()).Zone(payload).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update network zone: %v", err)
 	}
-	if d.Get("status").(string) == "ACTIVE" {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
-		if err != nil {
-			return diag.Errorf("failed to activate network zone: %v", err)
-		}
-	} else {
-		_, _, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
-		if err != nil {
-			return diag.Errorf("failed to deactivate network zone: %v", err)
+
+	name := d.Get("name").(string)
+
+	if name != "DefaultExemptIpZone" && name != "BlockedIpZone" {
+		if d.Get("status").(string) == "ACTIVE" {
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.ActivateNetworkZone(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to activate network zone: %v", err)
+			}
+		} else {
+			zone, _, err = getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
+			if err != nil {
+				return diag.Errorf("failed to deactivate network zone: %v", err)
+			}
 		}
 	}
-	return resourceNetworkZoneRead(ctx, d, meta)
+	// Read the zone state from the API
+	err = mapNetworkZoneToState(d, zone)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	// The GET API does not return useAsExemptList, so persist it from the config
+	return nil
 }
 
 func resourceNetworkZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// System zones (e.g. DefaultExemptIpZone, BlockedIpZone) cannot be deleted
+	// from Okta, so just remove them from state.
+	if d.Get("system").(bool) || d.Get("name").(string) == "DefaultExemptIpZone" {
+		return nil
+	}
 	_, resp, err := getOktaV6ClientFromMetadata(meta).NetworkZoneAPI.DeactivateNetworkZone(ctx, d.Id()).Execute()
 	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return diag.Errorf("failed to deactivate network zone: %v", err)
@@ -203,6 +251,10 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 		ipnz.SetName(d.Get("name").(string))
 		ipnz.SetType(zoneType)
 		ipnz.SetUsage(d.Get("usage").(string))
+		if d.Get("name").(string) == "BlockedIpZone" {
+			ipnz.SetSystem(d.Get("system").(bool))
+		}
+
 		if values, ok := d.GetOk("gateways"); ok {
 			ipnz.SetGateways(buildAddressObjList(values.(*schema.Set)))
 		}
@@ -211,6 +263,9 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 		}
 		if status, ok := d.GetOk("status"); ok {
 			ipnz.SetStatus(status.(string))
+		}
+		if usageAsExemptList, ok := d.GetOk("set_usage_as_exempt_list"); ok {
+			ipnz.SetUseAsExemptList(usageAsExemptList.(bool))
 		}
 		resp.IPNetworkZone = &ipnz
 		return resp, nil
@@ -262,17 +317,17 @@ func buildNetworkZone(d *schema.ResourceData) (v6okta.ListNetworkZones200Respons
 }
 
 func buildAddressObjList(values *schema.Set) []v6okta.NetworkZoneAddress {
-	var addressType string
 	var addressObjList []v6okta.NetworkZoneAddress
 	for _, value := range values.List() {
-		if strings.Contains(value.(string), "/") {
-			addressType = "CIDR"
-		} else {
-			addressType = "RANGE"
-		}
+		addr := value.(string)
 		obj := v6okta.NetworkZoneAddress{}
-		obj.SetType(addressType)
-		obj.SetValue(value.(string))
+		// Let API handle the type - if it contains "/" it's CIDR, otherwise RANGE
+		if strings.Contains(addr, "/") {
+			obj.SetType("CIDR")
+		} else {
+			obj.SetType("RANGE")
+		}
+		obj.SetValue(addr)
 		addressObjList = append(addressObjList, obj)
 	}
 	return addressObjList
@@ -301,7 +356,15 @@ func flattenAddresses(gateways []v6okta.NetworkZoneAddress) interface{} {
 	}
 	arr := make([]interface{}, len(gateways))
 	for i := range gateways {
-		arr[i] = gateways[i].GetValue()
+		value := gateways[i].GetValue()
+		// If it's a range with same start/end IP, convert to single IP
+		if strings.Contains(value, "-") {
+			parts := strings.Split(value, "-")
+			if len(parts) == 2 && parts[0] == parts[1] {
+				value = parts[0]
+			}
+		}
+		arr[i] = value
 	}
 	return schema.NewSet(schema.HashString, arr)
 }
@@ -413,10 +476,42 @@ func mapNetworkZoneToState(d *schema.ResourceData, data *v6okta.ListNetworkZones
 		_ = d.Set("type", v.GetType())
 		_ = d.Set("status", v.GetStatus())
 		_ = d.Set("usage", v.GetUsage())
+		_ = d.Set("system", v.GetSystem())
 		err = utils.SetNonPrimitives(d, map[string]interface{}{
 			"gateways": flattenAddresses(v.GetGateways()),
 			"proxies":  flattenAddresses(v.GetProxies()),
 		})
 	}
 	return err
+}
+
+func validateIPaddress(v interface{}, k string) (warnings []string, errors []error) {
+	addr := v.(string)
+	if strings.Contains(addr, "/") {
+		if _, _, err := net.ParseCIDR(addr); err != nil {
+			errors = append(errors, fmt.Errorf("invalid CIDR format: %v", addr))
+		}
+	} else if strings.Contains(addr, "-") {
+		parts := strings.Split(addr, "-")
+		if len(parts) != 2 || net.ParseIP(parts[0]) == nil || net.ParseIP(parts[1]) == nil {
+			errors = append(errors, fmt.Errorf("invalid IP range format: %v", addr))
+		}
+	} else if net.ParseIP(addr) == nil {
+		errors = append(errors, fmt.Errorf("invalid IP address format: %v", addr))
+	}
+	return
+}
+
+func suppressIPDiff(k, old, new string, d *schema.ResourceData) bool {
+	if old == new {
+		return true
+	}
+	// Handle case where API returns range format for single IP
+	if strings.Contains(old, "-") {
+		parts := strings.Split(old, "-")
+		if len(parts) == 2 && parts[0] == parts[1] && parts[0] == new {
+			return true
+		}
+	}
+	return false
 }

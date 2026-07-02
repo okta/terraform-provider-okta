@@ -1,0 +1,91 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"apsERRtest0001ERRd7","identitySourceId":"0oaxc95befZNgrJl71d7","status":"CREATED","importType":"INCREMENTAL","created":"2026-05-13T06:00:00.000Z","lastUpdated":"2026-05-13T06:00:00.000Z"}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 May 2026 06:00:00 GMT
+        status: 201 Created
+        code: 201
+        duration: 1s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 193
+        host: oie-00.dne-okta.com
+        body: |
+            {"entityType":"USERS","profiles":[{"externalId":"USEREXT123456TESTUSER3","profile":{"email":"testuser3@example.com","firstName":"Test","lastName":"User3","userName":"testuser3@example.com"}}]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsERRtest0001ERRd7/bulk-upsert
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"errorCode":"E0000001","errorSummary":"Api validation failed: entityType","errorLink":"E0000001","errorId":"oaelERRtest001","errorCauses":[{"errorSummary":"entityType: The field entityType is not valid."}]}'
+        headers:
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 13 May 2026 06:00:01 GMT
+        status: 400 Bad Request
+        code: 400
+        duration: 1s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/identity-sources/0oaxc95befZNgrJl71d7/sessions/apsERRtest0001ERRd7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Content-Length:
+                - "0"
+            Date:
+                - Wed, 13 May 2026 06:00:01 GMT
+        status: 204 No Content
+        code: 204
+        duration: 1s

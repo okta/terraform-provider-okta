@@ -40,8 +40,13 @@ func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClie
 		} else {
 			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
 		}
-		retryableClient.ErrorHandler = errHandler
-		retryableClient.CheckRetry = checkRetry
+		if c.PrivateKey != "" {
+			retryableClient.CheckRetry = checkRetryDeferOn429
+			retryableClient.ErrorHandler = errHandlerPassThrough429
+		} else {
+			retryableClient.ErrorHandler = errHandler
+			retryableClient.CheckRetry = checkRetry
+		}
 		httpClient = retryableClient.StandardClient()
 		c.Logger.Info(fmt.Sprintf("v6 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
@@ -156,8 +161,13 @@ func getV5ClientConfig(c *OktaAPIConfig) (*v5okta.Configuration, *v5okta.APIClie
 		} else {
 			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
 		}
-		retryableClient.ErrorHandler = errHandler
-		retryableClient.CheckRetry = checkRetry
+		if c.PrivateKey != "" {
+			retryableClient.CheckRetry = checkRetryDeferOn429
+			retryableClient.ErrorHandler = errHandlerPassThrough429
+		} else {
+			retryableClient.ErrorHandler = errHandler
+			retryableClient.CheckRetry = checkRetry
+		}
 		httpClient = retryableClient.StandardClient()
 		c.Logger.Info(fmt.Sprintf("v5 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
@@ -270,6 +280,35 @@ func errHandler(resp *http.Response, err error, numTries int) (*http.Response, e
 		return resp, fmt.Errorf("%v: giving up after %d attempt(s)", err, numTries)
 	}
 	return resp, nil
+}
+
+// isDPoPRequest reports whether the request that produced resp carried a DPoP proof.
+// PrivateKey auth only emits the Dpop header when the token endpoint returned a
+// DPoP-bound access token, so this distinguishes orgs that enforce DPoP from ones
+// that don't.
+func isDPoPRequest(resp *http.Response) bool {
+	return resp != nil && resp.Request != nil && resp.Request.Header.Get("Dpop") != ""
+}
+
+// checkRetryDeferOn429 returns false on a DPoP-bound 429 so retryablehttp surfaces
+// the response to the SDK's RequestExecutor.doWithRetries, which regenerates the
+// DPoP proof JWT with a fresh `jti` per RFC 9449 before retrying. Non-DPoP requests
+// (and non-429 cases) flow through the standard checkRetry.
+func checkRetryDeferOn429(ctx context.Context, resp *http.Response, err error) (bool, error) {
+	if resp != nil && resp.StatusCode == http.StatusTooManyRequests && isDPoPRequest(resp) {
+		return false, nil
+	}
+	return checkRetry(ctx, resp, err)
+}
+
+// errHandlerPassThrough429 returns the raw DPoP-bound 429 response (body open) so
+// the SDK's retry path can read it. Non-DPoP terminal cases delegate to errHandler
+// for the usual SDK-error wrapping.
+func errHandlerPassThrough429(resp *http.Response, err error, numTries int) (*http.Response, error) {
+	if err == nil && resp != nil && resp.StatusCode == http.StatusTooManyRequests && isDPoPRequest(resp) {
+		return resp, nil
+	}
+	return errHandler(resp, err, numTries)
 }
 
 // Used to make http client retry on provided list of response status codes

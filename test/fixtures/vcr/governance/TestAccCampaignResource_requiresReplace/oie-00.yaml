@@ -1,0 +1,242 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1241
+        host: oie-00.dne-okta.com
+        body: |
+            {"campaignType":"RESOURCE","description":"Multi app campaign","name":"Monthly access review of sales team","notificationSettings":{"notifyReviewPeriodEnd":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewerWhenOverdue":false,"notifyReviewerWhenReviewAssigned":false},"principalScopeSettings":{"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false,"type":"USERS"},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"resourceSettings":{"excludedResources":[],"includeAdminRoles":false,"includeEntitlements":false,"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"onlyIncludeOutOfPolicyEntitlements":false,"targetResources":[{"includeAllEntitlementsAndBundles":false,"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION"}],"type":"APPLICATION"},"reviewerSettings":{"bulkDecisionDisabled":true,"justificationRequired":true,"reassignmentDisabled":false,"reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"type":"USER"},"scheduleSettings":{"durationInDays":21,"recurrence":{"interval":""},"startDate":"2026-10-04T13:43:40Z","timeZone":"America/Vancouver","type":"ONE_OFF"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2257
+        body: '{"_links":{"launchCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/launch","hints":{}},"endCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/end","hints":{}},"reviews":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici19ncpoc2PQjvPQ1d7%22","hints":{}},"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7","hints":{}}},"id":"ici19ncpoc2PQjvPQ1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-03-29T13:51:30Z","lastUpdated":"2026-03-29T13:51:30Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","name":"Monthly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2026-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2026-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetTypes":["APPLICATION"],"targetResources":[{"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false,"includeBundlesHavingSameEntitlementValues":false,"includeAllAppServiceAccounts":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":false,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false,"includeAllOktaServiceAccounts":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2257"
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 29 Mar 2026 13:51:30 GMT
+            Location:
+                - https://dcp-tf-testing-2026-01-06-admin.oktapreview.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.316400833s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"launchCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/launch","hints":{}},"endCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/end","hints":{}},"reviews":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici19ncpoc2PQjvPQ1d7%22","hints":{}},"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7","hints":{}}},"id":"ici19ncpoc2PQjvPQ1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-03-29T13:51:30Z","lastUpdated":"2026-03-29T13:51:30Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","name":"Monthly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2026-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2026-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetTypes":["APPLICATION"],"targetResources":[{"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false,"includeBundlesHavingSameEntitlementValues":false,"includeAllAppServiceAccounts":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":false,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false,"includeAllOktaServiceAccounts":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 29 Mar 2026 13:51:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.122616958s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"launchCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/launch","hints":{}},"endCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7/end","hints":{}},"reviews":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici19ncpoc2PQjvPQ1d7%22","hints":{}},"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7","hints":{}}},"id":"ici19ncpoc2PQjvPQ1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-03-29T13:51:30Z","lastUpdated":"2026-03-29T13:51:30Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","name":"Monthly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2026-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2026-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetTypes":["APPLICATION"],"targetResources":[{"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false,"includeBundlesHavingSameEntitlementValues":false,"includeAllAppServiceAccounts":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":false,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false,"includeAllOktaServiceAccounts":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 29 Mar 2026 13:51:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.135623667s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns/ici19ncpoc2PQjvPQ1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Sun, 29 Mar 2026 13:51:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.163720083s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1243
+        host: oie-00.dne-okta.com
+        body: |
+            {"campaignType":"RESOURCE","description":"Multi app campaign","name":"Quarterly access review of sales team","notificationSettings":{"notifyReviewPeriodEnd":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewerWhenOverdue":false,"notifyReviewerWhenReviewAssigned":false},"principalScopeSettings":{"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false,"type":"USERS"},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"resourceSettings":{"excludedResources":[],"includeAdminRoles":false,"includeEntitlements":false,"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"onlyIncludeOutOfPolicyEntitlements":false,"targetResources":[{"includeAllEntitlementsAndBundles":false,"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION"}],"type":"APPLICATION"},"reviewerSettings":{"bulkDecisionDisabled":true,"justificationRequired":true,"reassignmentDisabled":false,"reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"type":"USER"},"scheduleSettings":{"durationInDays":21,"recurrence":{"interval":""},"startDate":"2026-10-04T13:43:40Z","timeZone":"America/Vancouver","type":"ONE_OFF"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 2259
+        body: '{"_links":{"launchCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7/launch","hints":{}},"endCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7/end","hints":{}},"reviews":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici19nco40ikyCZ3K1d7%22","hints":{}},"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7","hints":{}}},"id":"ici19nco40ikyCZ3K1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-03-29T13:51:41Z","lastUpdated":"2026-03-29T13:51:41Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","name":"Quarterly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2026-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2026-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetTypes":["APPLICATION"],"targetResources":[{"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false,"includeBundlesHavingSameEntitlementValues":false,"includeAllAppServiceAccounts":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":false,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false,"includeAllOktaServiceAccounts":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "2259"
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 29 Mar 2026 13:51:41 GMT
+            Location:
+                - https://dcp-tf-testing-2026-01-06-admin.oktapreview.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.301590958s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"_links":{"launchCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7/launch","hints":{}},"endCampaign":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7/end","hints":{}},"reviews":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/reviews?filter=campaignId%20eq%20%22ici19nco40ikyCZ3K1d7%22","hints":{}},"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7","hints":{}}},"id":"ici19nco40ikyCZ3K1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-03-29T13:51:41Z","lastUpdated":"2026-03-29T13:51:41Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7","name":"Quarterly access review of sales team","description":"Multi app campaign","campaignType":"RESOURCE","scheduleSettings":{"type":"ONE_OFF","startDate":"2026-10-04T06:43:40-07:00","durationInDays":21,"timeZone":"America/Vancouver","endDate":"2026-10-25T06:43:40-07:00"},"resourceSettings":{"type":"APPLICATION","targetTypes":["APPLICATION"],"targetResources":[{"resourceId":"0oaws4am895IZbn6Q1d7","resourceType":"APPLICATION","includeAllEntitlementsAndBundles":false,"includeBundlesHavingSameEntitlementValues":false,"includeAllAppServiceAccounts":false}],"excludedResources":[],"individuallyAssignedAppsOnly":false,"individuallyAssignedGroupsOnly":false,"includeEntitlements":false,"onlyIncludeOutOfPolicyEntitlements":false,"includeAdminRoles":false,"includeAllOktaServiceAccounts":false},"principalScopeSettings":{"type":"USERS","excludedUserIds":[],"userIds":[],"groupIds":[],"includeOnlyActiveUsers":false,"onlyIncludeUsersWithSODConflicts":false},"reviewerSettings":{"type":"USER","reviewerId":"00uwvhe0y85W3Iq6x1d7","selfReviewDisabled":true,"justificationRequired":true,"bulkDecisionDisabled":true,"reassignmentDisabled":false},"notificationSettings":{"notifyReviewerWhenReviewAssigned":false,"notifyReviewerAtCampaignEnd":false,"notifyReviewerWhenOverdue":false,"notifyReviewerDuringMidpointOfReview":false,"notifyReviewPeriodEnd":false},"remediationSettings":{"accessApproved":"NO_ACTION","accessRevoked":"NO_ACTION","noResponse":"NO_ACTION"},"status":"SCHEDULED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 29 Mar 2026 13:51:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.08217575s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/campaigns/ici19nco40ikyCZ3K1d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Sun, 29 Mar 2026 13:51:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.193828333s

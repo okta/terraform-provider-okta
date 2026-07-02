@@ -42,6 +42,8 @@ func TestAccResourceOktaUser_customProfileAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "custom_profile_attributes", "{\"customAttribute123\":\"testing-custom-attribute\"}"),
+					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
 				),
 			},
 			{
@@ -172,6 +174,8 @@ func TestAccResourceOktaUser_updateAllAttributes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "title", "Director"),
 					resource.TestCheckResourceAttr(resourceName, "user_type", "Employee"),
 					resource.TestCheckResourceAttr(resourceName, "zip_code", "11111"),
+					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
 				),
 			},
 			{
@@ -433,6 +437,74 @@ resource "okta_user" "test" {
 					resource.TestCheckResourceAttr(resourceName, "login", email),
 					resource.TestCheckResourceAttr(resourceName, "email", email),
 					resource.TestCheckResourceAttr(resourceName, "admin_roles.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaUser_withUserType(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSUser, t.Name())
+	config := mgr.GetFixtures("user_with_type.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUser)
+	userTypeResourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserType)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
+					resource.TestCheckResourceAttrPair(resourceName, "type.0.id", userTypeResourceName, "id"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccResourceOktaUser_addUserTypeLater(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSUser, t.Name())
+	configWithoutType := mgr.GetFixtures("basic.tf", t)
+	configWithType := mgr.GetFixtures("user_with_type.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUser)
+	userTypeResourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserType)
+	email := fmt.Sprintf("testAcc-%d@example.com", mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: configWithoutType,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "type.0.id"),
+				),
+			},
+			{
+				Config: configWithType,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "first_name", "TestAcc"),
+					resource.TestCheckResourceAttr(resourceName, "last_name", "Smith"),
+					resource.TestCheckResourceAttr(resourceName, "login", email),
+					resource.TestCheckResourceAttr(resourceName, "email", email),
+					resource.TestCheckResourceAttr(resourceName, "type.#", "1"),
+					resource.TestCheckResourceAttrPair(resourceName, "type.0.id", userTypeResourceName, "id"),
 				),
 			},
 		},

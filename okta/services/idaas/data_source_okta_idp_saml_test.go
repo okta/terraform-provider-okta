@@ -26,12 +26,14 @@ func TestAccDataSourceOktaIdpSaml_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_idp_saml.test", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_idp_saml.test", "trust_claims"),
 				),
 			},
 			{
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_idp_saml.test", "id"),
+					resource.TestCheckResourceAttrSet("data.okta_idp_saml.test", "trust_claims"),
 				),
 			},
 		},

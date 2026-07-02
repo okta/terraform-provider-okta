@@ -46,5 +46,6 @@ resource "okta_event_hook_verification" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `verification_status` (String) The verification status of the event hook.
 
 

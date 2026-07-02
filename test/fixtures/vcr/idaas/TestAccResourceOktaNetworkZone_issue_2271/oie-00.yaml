@@ -1,0 +1,139 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzotivlj3iItmtmnC1d7","name":"DefaultExemptIpZone","status":"ACTIVE","usage":"POLICY","created":"2026-01-06T09:20:55.000Z","lastUpdated":"2026-02-17T14:15:10.000Z","system":true,"gateways":[{"type":"CIDR","value":"1.2.3.4/32"},{"type":"CIDR","value":"4.5.6.7/32"}],"proxies":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Feb 2026 20:00:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.320427083s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzotivlj3iItmtmnC1d7","name":"DefaultExemptIpZone","status":"ACTIVE","usage":"POLICY","created":"2026-01-06T09:20:55.000Z","lastUpdated":"2026-02-17T14:15:10.000Z","system":true,"gateways":[{"type":"CIDR","value":"1.2.3.4/32"},{"type":"CIDR","value":"4.5.6.7/32"}],"proxies":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Feb 2026 20:00:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.241080042s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 188
+        host: oie-00.dne-okta.com
+        body: |
+            {"gateways":[{"type":"CIDR","value":"1.2.3.4/32"},{"type":"CIDR","value":"4.5.6.7/32"}],"name":"DefaultExemptIpZone","status":"ACTIVE","type":"IP","usage":"POLICY","useAsExemptList":true}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzotivlj3iItmtmnC1d7","name":"DefaultExemptIpZone","status":"ACTIVE","usage":"POLICY","created":"2026-01-06T09:20:55.000Z","lastUpdated":"2026-02-17T14:15:10.000Z","system":true,"useAsBlackList":false,"useAsExemptList":true,"gateways":[{"type":"CIDR","value":"1.2.3.4/32"},{"type":"CIDR","value":"4.5.6.7/32"}],"proxies":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Feb 2026 20:00:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.242385333s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"IP","id":"nzotivlj3iItmtmnC1d7","name":"DefaultExemptIpZone","status":"ACTIVE","usage":"POLICY","created":"2026-01-06T09:20:55.000Z","lastUpdated":"2026-02-17T14:15:10.000Z","system":true,"gateways":[{"type":"CIDR","value":"1.2.3.4/32"},{"type":"CIDR","value":"4.5.6.7/32"}],"proxies":null,"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/zones/nzotivlj3iItmtmnC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Feb 2026 20:00:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.234475583s

@@ -62,3 +62,42 @@ func TestAccResourceOktaDefaultPasswordPolicy_crud(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaDefaultPasswordPolicy_issue_2804 reproduces GH-2804 / OKTA-1167884.
+// When more than one password policy exists, the default policy's priority becomes 2.
+// Earlier versions of the provider sent the read-only `priority` attribute back in the
+// PUT body, which the Okta API rejects with E0000077. The default-policy update path
+// must omit `priority` so this scenario succeeds.
+func TestAccResourceOktaDefaultPasswordPolicy_issue_2804(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyPasswordDefault, t.Name())
+	config := mgr.GetFixtures("issue_2804.tf", t)
+	updatedConfig := mgr.GetFixtures("issue_2804_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyPasswordDefault)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "priority", "2"),
+					resource.TestCheckResourceAttr(resourceName, "password_history_count", "5"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "priority", "2"),
+					resource.TestCheckResourceAttr(resourceName, "password_history_count", "0"),
+				),
+			},
+		},
+	})
+}
