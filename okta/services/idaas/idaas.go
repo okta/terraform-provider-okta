@@ -133,6 +133,7 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		NewIamRoleResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -190,7 +191,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 func ProviderResources() map[string]*schema.Resource {
 	// Wrap all SDK resources with panic recovery
 	return resources.WrapSDKResources(map[string]*schema.Resource{
-		resources.OktaIDaaSAdminRoleCustom:               resourceAdminRoleCustom(),
 		resources.OktaIDaaSAdminRoleCustomAssignments:    resourceAdminRoleCustomAssignments(),
 		resources.OktaIDaaSAdminRoleTargets:              resourceAdminRoleTargets(),
 		resources.OktaIDaaSAppAutoLogin:                  resourceAppAutoLogin(),
