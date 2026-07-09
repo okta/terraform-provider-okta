@@ -21,6 +21,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	okta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -41,6 +43,7 @@ type orgCaptchaResource struct {
 
 // OrgCaptchaModel describes the resource data model.
 type orgCaptchaModel struct {
+	ID           types.String `tfsdk:"id"`
 	CaptchaId    types.String `tfsdk:"captcha_id"`
 	EnabledPages types.List   `tfsdk:"enabled_pages"`
 }
@@ -61,6 +64,13 @@ func (r *orgCaptchaResource) Schema(_ context.Context, _ resource.SchemaRequest,
 	resp.Schema = schema.Schema{
 		Description: "As an option to increase org security, Okta supports CAPTCHA services to prevent automated sign-in attempts.",
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier for the resource.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 			"captcha_id": schema.StringAttribute{
 				Description: "The unique key of the associated CAPTCHA instance",
 				Optional:    true,
@@ -94,6 +104,8 @@ func (r *orgCaptchaResource) Read(ctx context.Context, req resource.ReadRequest,
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.CaptchaId = types.StringValue(string(result.GetCaptchaId()))
 
+	state.ID = types.StringValue("org_captcha")
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
@@ -125,6 +137,7 @@ func (r *orgCaptchaResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("Error creating org_captcha", err.Error())
 		return
 	}
+	plan.ID = types.StringValue("org_captcha")
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 	plan.CaptchaId = types.StringValue(string(result.GetCaptchaId()))
 
@@ -165,6 +178,7 @@ func (r *orgCaptchaResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
+	state.ID = types.StringValue("org_captcha")
 	state.CaptchaId = types.StringValue(string(result.GetCaptchaId()))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

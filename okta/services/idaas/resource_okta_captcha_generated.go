@@ -117,9 +117,8 @@ func (r *captchaResource) Read(ctx context.Context, req resource.ReadRequest, re
 		resp.Diagnostics.AddError("Error reading captcha", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only)
+	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Name = types.StringValue(string(result.GetName()))
-	// secret_key is not returned by the API — preserve existing state value to avoid drift
 	state.SiteKey = types.StringValue(string(result.GetSiteKey()))
 	state.Type = types.StringValue(string(result.GetType()))
 
@@ -152,9 +151,8 @@ func (r *captchaResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
-	// Map response fields back to plan (scalar types only)
+	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 	plan.Name = types.StringValue(string(result.GetName()))
-	// secret_key is not returned by the API — keep value from plan
 	plan.SiteKey = types.StringValue(string(result.GetSiteKey()))
 	plan.Type = types.StringValue(string(result.GetType()))
 
@@ -189,13 +187,12 @@ func (r *captchaResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Error updating captcha", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only)
+	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
 	state.ID = types.StringValue(string(result.GetId()))
 	state.Name = types.StringValue(string(result.GetName()))
-	// secret_key is not returned by the API — use plan value
-	state.SecretKey = plan.SecretKey
 	state.SiteKey = types.StringValue(string(result.GetSiteKey()))
 	state.Type = types.StringValue(string(result.GetType()))
+	state.SecretKey = plan.SecretKey
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
