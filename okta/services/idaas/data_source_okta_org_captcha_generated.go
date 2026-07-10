@@ -36,17 +36,11 @@ type orgCaptchaDataSource struct {
 	Config *config.Config
 }
 
-// OrgCaptchaItemModel is one element returned by the list endpoint.
-type orgCaptchaItemModel struct {
+// OrgCaptchaDataSourceModel describes the data source data model.
+type orgCaptchaDataSourceModel struct {
 	ID           types.String `tfsdk:"id"`
 	CaptchaId    types.String `tfsdk:"captcha_id"`
 	EnabledPages types.List   `tfsdk:"enabled_pages"`
-}
-
-// OrgCaptchaDataSourceModel describes the data source data model.
-type orgCaptchaDataSourceModel struct {
-	ID    types.String          `tfsdk:"id"`
-	Items []orgCaptchaItemModel `tfsdk:"items"`
 }
 
 func newOrgCaptchaDataSource() datasource.DataSource {
@@ -70,24 +64,14 @@ func (d *orgCaptchaDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 				Optional:            true,
 				Computed:            true,
 			},
-		},
-		Blocks: map[string]schema.Block{
-			"items": schema.ListNestedBlock{
-				MarkdownDescription: "List of org_captcha items.",
-				NestedObject: schema.NestedBlockObject{
-					Attributes: map[string]schema.Attribute{
-						"id": schema.StringAttribute{Computed: true},
-						"captcha_id": schema.StringAttribute{
-							MarkdownDescription: "The unique key of the associated CAPTCHA instance",
-							Computed:            true,
-						},
-						"enabled_pages": schema.ListAttribute{
-							MarkdownDescription: "An array of pages that have CAPTCHA enabled",
-							ElementType:         types.StringType,
-							Computed:            true,
-						},
-					},
-				},
+			"captcha_id": schema.StringAttribute{
+				MarkdownDescription: "The unique key of the associated CAPTCHA instance",
+				Computed:            true,
+			},
+			"enabled_pages": schema.ListAttribute{
+				MarkdownDescription: "An array of pages that have CAPTCHA enabled",
+				ElementType:         types.StringType,
+				Computed:            true,
 			},
 		},
 	}
@@ -102,20 +86,18 @@ func (d *orgCaptchaDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	}
 
 	client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
-	{
-		results, httpResp, err := client.CAPTCHAAPI.GetOrgCaptchaSettings(ctx).Execute()
-		if err != nil {
-			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-				resp.Diagnostics.AddError("Not Found", "No org_captcha resources were found.")
-				return
-			}
-			resp.Diagnostics.AddError("Error listing org_captcha", err.Error())
+	result, httpResp, err := client.CAPTCHAAPI.GetOrgCaptchaSettings(ctx).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.Diagnostics.AddError("Not Found", "org_captcha with the given ID was not found.")
 			return
 		}
-		result := results
-		_ = result
-		state.ID = types.StringValue("okta_org_captcha_list")
+		resp.Diagnostics.AddError("Error reading org_captcha", err.Error())
+		return
 	}
+	state.ID = types.StringValue("org_captcha")
+	_ = result // IDExpr may not reference result; prevent "declared and not used"
+	state.CaptchaId = types.StringValue(string(result.GetCaptchaId()))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -38,11 +38,10 @@ type captchaDataSource struct {
 
 // CaptchaDataSourceModel describes the data source data model.
 type captchaDataSourceModel struct {
-	ID        types.String `tfsdk:"id"`
-	Name      types.String `tfsdk:"name"`
-	SecretKey types.String `tfsdk:"secret_key"`
-	SiteKey   types.String `tfsdk:"site_key"`
-	Type      types.String `tfsdk:"type"`
+	ID      types.String `tfsdk:"id"`
+	Name    types.String `tfsdk:"name"`
+	SiteKey types.String `tfsdk:"site_key"`
+	Type    types.String `tfsdk:"type"`
 }
 
 func newCaptchaDataSource() datasource.DataSource {
@@ -67,10 +66,6 @@ func (d *captchaDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the CAPTCHA instance",
-				Computed:            true,
-			},
-			"secret_key": schema.StringAttribute{
-				MarkdownDescription: "The secret key issued from the CAPTCHA provider to perform server-side validation for a CAPTCHA token",
 				Computed:            true,
 			},
 			"site_key": schema.StringAttribute{
@@ -106,7 +101,6 @@ func (d *captchaDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	}
 	state.ID = types.StringValue(string(result.GetId()))
 	state.Name = types.StringValue(string(result.GetName()))
-	state.SecretKey = types.StringValue(string(result.GetSecretKey()))
 	state.SiteKey = types.StringValue(string(result.GetSiteKey()))
 	state.Type = types.StringValue(string(result.GetType()))
 

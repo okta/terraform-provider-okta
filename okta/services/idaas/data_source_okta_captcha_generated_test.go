@@ -23,7 +23,6 @@ func TestAccDataSourceOktaCaptcha_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "name"),
-					resource.TestCheckResourceAttrSet(resourceName, "secret_key"),
 					resource.TestCheckResourceAttrSet(resourceName, "site_key"),
 					resource.TestCheckResourceAttrSet(resourceName, "type"),
 				),
