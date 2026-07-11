@@ -133,6 +133,8 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		newInlineHookResource,
+		newEventHookResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -232,7 +234,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSEmailSender:                   resourceEmailSender(),
 		resources.OktaIDaaSEmailSenderVerification:       resourceEmailSenderVerification(),
 		resources.OktaIDaaSEmailSMTPServer:               resourceEmailSMTP(),
-		resources.OktaIDaaSEventHook:                     resourceEventHook(),
 		resources.OktaIDaaSEventHookVerification:         resourceEventHookVerification(),
 		resources.OktaIDaaSFactor:                        resourceFactor(),
 		resources.OktaIDaaSFactorTotp:                    resourceFactorTOTP(),
@@ -245,7 +246,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSIdpSaml:                       resourceIdpSaml(),
 		resources.OktaIDaaSIdpSamlKey:                    resourceIdpSigningKey(),
 		resources.OktaIDaaSIdpSocial:                     resourceIdpSocial(),
-		resources.OktaIDaaSInlineHook:                    resourceInlineHook(),
 		resources.OktaIDaaSLinkDefinition:                resourceLinkDefinition(),
 		resources.OktaIDaaSLinkValue:                     resourceLinkValue(),
 		resources.OktaIDaaSNetworkZone:                   resourceNetworkZone(),
