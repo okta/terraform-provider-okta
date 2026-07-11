@@ -140,18 +140,17 @@ func resourceUserGroupMembershipsRead(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
 
-	// Legacy behavior: check if all managed groups are still present.
-	ok, err := checkIfUserHasGroups(ctx, client, userId, groups)
+	// Legacy behavior: if any managed groups were removed externally, shrink the
+	// state to the surviving subset so Terraform plans to add them back rather
+	// than recreating the entire resource.
+	changed, newGroupIDs, err := checkIfGroupsHaveBeenRemoved(ctx, client, userId, &groups)
 	if err != nil {
-		return diag.Errorf("unable to complete group check for user: %v", err)
+		return diag.Errorf("an error occurred checking group ids for user %q, error: %+v", userId, err)
 	}
-	if ok {
-		return nil
-	} else {
-		d.SetId("")
-		logger(meta).Info("user (%s) did not have expected group memberships or did not exist", userId)
-		return nil
+	if changed {
+		d.Set("groups", utils.ConvertStringSliceToSet(*newGroupIDs))
 	}
+	return nil
 }
 
 func resourceUserGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -185,6 +184,58 @@ func resourceUserGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceD
 		return diag.FromErr(err)
 	}
 	return nil
+}
+
+// checkIfGroupsHaveBeenRemoved returns true when any of the tracked groups are
+// no longer in the user's actual memberships. The returned slice contains only
+// the groups that are still present, so the caller can narrow state and let
+// Terraform plan to re-add the missing ones.
+func checkIfGroupsHaveBeenRemoved(ctx context.Context, client *v6okta.APIClient, userId string, groups *[]string) (bool, *[]string, error) {
+	noop := []string{}
+	if groups == nil || len(*groups) == 0 {
+		return false, &noop, nil
+	}
+
+	// Ledger of managed groups. When all have been found in the API response
+	// we can stop paginating early.
+	remaining := toStrIndexedMap(groups)
+
+	userGroups, resp, err := client.UserResourcesAPI.ListUserGroups(ctx, userId).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
+		return false, &noop, fmt.Errorf("unable to list groups for user (%s) from API, error: %+v", userId, err)
+	}
+
+	for _, group := range userGroups {
+		delete(*remaining, group.GetId())
+		if len(*remaining) == 0 {
+			return false, &noop, nil
+		}
+	}
+
+	for resp.HasNextPage() {
+		userGroups = nil
+		resp, err = resp.Next(&userGroups)
+		if err != nil {
+			return false, &noop, fmt.Errorf("unable to list groups for user (%s) from API, error: %+v", userId, err)
+		}
+		for _, group := range userGroups {
+			delete(*remaining, group.GetId())
+			if len(*remaining) == 0 {
+				return false, &noop, nil
+			}
+		}
+	}
+
+	// Any IDs still in remaining were not found — they have been removed.
+	// Build the surviving subset in the original order.
+	newGroups := []string{}
+	for _, groupId := range *groups {
+		if _, missing := (*remaining)[groupId]; !missing {
+			newGroups = append(newGroups, groupId)
+		}
+	}
+
+	return true, &newGroups, nil
 }
 
 // checkIfGroupsHaveChanged returns true when the user's actual group memberships
