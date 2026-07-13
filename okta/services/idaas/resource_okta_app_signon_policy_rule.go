@@ -261,6 +261,15 @@ The only difference is that these fields are immutable and can not be managed: '
 				Optional:    true,
 				Description: "Use with verification method = `AUTH_METHOD_CHAIN` only",
 			},
+			"office365_client_include": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Office 365 client types to include. Valid values: WEB, MODERN_AUTH, EXCHANGE_ACTIVE_SYNC, AAD_JOIN. This condition is specific to Office 365 applications.",
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"WEB", "MODERN_AUTH", "EXCHANGE_ACTIVE_SYNC", "AAD_JOIN"}, false)),
+				},
+			},
 		},
 	}
 }
@@ -390,6 +399,13 @@ func resourceAppSignOnPolicyRuleRead(ctx context.Context, d *schema.ResourceData
 			_ = d.Set("risk_score", rule.Conditions.RiskScore.Level)
 		}
 		_ = utils.SetNonPrimitives(d, m)
+		var office365Includes []interface{}
+		if rule.Conditions.Office365Client != nil {
+			for _, v := range rule.Conditions.Office365Client.Include {
+				office365Includes = append(office365Includes, v)
+			}
+		}
+		_ = d.Set("office365_client_include", schema.NewSet(schema.HashString, office365Includes))
 	}
 	return nil
 }
@@ -567,6 +583,12 @@ func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {
 		rule.Conditions.UserType = &sdk.UserTypeCondition{
 			Exclude: utils.ConvertInterfaceToStringSetNullable(userTypesExcluded),
 			Include: utils.ConvertInterfaceToStringSetNullable(userTypesIncluded),
+		}
+	}
+	office365ClientInclude, office365ClientIncludeOk := d.GetOk("office365_client_include")
+	if office365ClientIncludeOk {
+		rule.Conditions.Office365Client = &sdk.Office365ClientCondition{
+			Include: utils.ConvertInterfaceToStringSetNullable(office365ClientInclude),
 		}
 	}
 	return rule
