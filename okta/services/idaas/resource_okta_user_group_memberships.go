@@ -2,9 +2,7 @@ package idaas
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
@@ -20,47 +18,7 @@ func resourceUserGroupMemberships() *schema.Resource {
 		ReadContext:   resourceUserGroupMembershipsRead,
 		UpdateContext: resourceUserGroupMembershipsUpdate,
 		DeleteContext: resourceUserGroupMembershipsDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-				importID := strings.Split(d.Id(), "/")
-				if len(importID) > 2 {
-					return nil, errors.New("invalid format used for import ID, format must be 'user_id' or 'user_id/true'")
-				}
-				if len(importID) == 2 {
-					d.Set("track_all_groups", importID[1] == "true")
-				}
-				userId := importID[0]
-				d.SetId(userId)
-				d.Set("user_id", userId)
-
-				client := getOktaV6ClientFromMetadata(meta)
-				userGroups, resp, err := client.UserResourcesAPI.ListUserGroups(ctx, userId).Execute()
-				if err != nil {
-					return nil, fmt.Errorf("error fetching user groups during import: %w ID is %v", err, userId)
-				}
-				groupIDs := make([]string, 0, len(userGroups))
-				for _, group := range userGroups {
-					if group.GetType() != "BUILT_IN" {
-						groupIDs = append(groupIDs, group.GetId())
-					}
-				}
-				for resp.HasNextPage() {
-					userGroups = nil
-					resp, err = resp.Next(&userGroups)
-					if err != nil {
-						return nil, fmt.Errorf("error fetching user groups during import: %w", err)
-					}
-					for _, group := range userGroups {
-						if group.GetType() != "BUILT_IN" {
-							groupIDs = append(groupIDs, group.GetId())
-						}
-					}
-				}
-				d.Set("groups", utils.ConvertStringSliceToSet(groupIDs))
-
-				return []*schema.ResourceData{d}, nil
-			},
-		},
+		Importer:      nil,
 		Description: `Resource to manage a set of group memberships for a specific user.
 This resource allows you to bulk manage groups for a single user, independent of
 the user schema itself. This allows you to manage group membership in terraform
