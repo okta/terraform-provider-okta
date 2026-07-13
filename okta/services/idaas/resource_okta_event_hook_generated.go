@@ -177,9 +177,6 @@ func (r *eventHookResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			"verification_status": schema.StringAttribute{
 				Description: "Verification status of the event hook.",
 				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 		Blocks: map[string]schema.Block{

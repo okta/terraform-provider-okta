@@ -1,20 +1,17 @@
 resource "okta_event_hook" "example" {
   name = "testAcc_replace_with_uuid"
-  events = [
-    "user.lifecycle.create",
-    "user.lifecycle.delete.initiated",
-  ]
 
-  channel = {
+  channel {
     type    = "HTTP"
     version = "1.0.0"
-    uri     = "https://eoj5lz4z8m0m1jk.m.pipedream.net"
+    config {
+      uri = "https://eoj5lz4z8m0m1jk.m.pipedream.net"
+    }
   }
 
-  auth = {
-    type  = "HEADER"
-    key   = "Authorization"
-    value = "value"
+  events {
+    type  = "EVENT_TYPE"
+    items = ["user.lifecycle.create", "user.lifecycle.delete.initiated"]
   }
 }
 
