@@ -231,6 +231,8 @@ resource "okta_app_saml" "test" {
 - `single_logout_certificate` (String) x509 encoded certificate that the Service Provider uses to sign Single Logout requests. Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 - `single_logout_issuer` (String) The issuer of the Service Provider that generates the Single Logout request
 - `single_logout_url` (String) The location where the logout response is sent
+- `skip_metadata` (Boolean) Skip reading SAML metadata during read operations, this can improve performance for large numbers of applications. When enabled, the following computed attributes will be omitted from state: metadata, metadata_url, http_post_binding, http_redirect_binding, entity_key, entity_url, certificate. Default is `false`.
+- `skip_keys` (Boolean) Skip reading/writing key credentials during read/write operations, this can improve performance for large numbers of applications. When enabled, the following computed attributes will be omitted from state: key_id, keys. Default is `false`.
 - `sp_issuer` (String) SAML SP issuer ID
 - `sso_url` (String) Single Sign On URL
 - `status` (String) Status of application. By default, it is `ACTIVE`
