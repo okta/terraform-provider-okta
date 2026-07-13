@@ -84,12 +84,6 @@ to track all groups that are added/removed from the user make use of the
 				Description: "The list of Okta group IDs which the user should have membership managed for.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"track_all_groups": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "The resource concerns itself with all groups added/deleted to the user; even those managed outside of the resource.",
-			},
 		},
 	}
 }
