@@ -88,14 +88,14 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 279
+        content_length: 133
         transfer_encoding: []
         trailer: {}
         host: oie-00.dne-okta.com
         remote_addr: ""
         request_uri: ""
         body: |
-            {"channel":{"config":{"authScheme":{"key":"Authorization","type":"HEADER","value":"123"},"method":"POST","uri":"https://example.com/test"},"type":"HTTP","version":"1.0.0"},"name":"testAcc_3847364127","status":"ACTIVE","type":"com.okta.oauth2.tokens.transform","version":"1.0.1"}
+            {"channel":{"type":"HTTP","version":"1.0.0"},"name":"testAcc_3847364127","type":"com.okta.oauth2.tokens.transform","version":"1.0.1"}
         form: {}
         headers:
             Accept:
@@ -1018,47 +1018,6 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/inlineHooks/calkwr3zt7815UERb1d7/lifecycle/deactivate
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        transfer_encoding: []
-        trailer: {}
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"calkwr3zt7815UERb1d7","status":"INACTIVE","name":"testAcc_3847364127","type":"com.okta.oauth2.tokens.transform","version":"1.0.1","channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/test","headers":[],"method":"POST","authScheme":{"type":"HEADER","key":"Authorization"}}},"created":"2025-03-13T23:33:18.000Z","lastUpdated":"2025-03-13T23:33:24.000Z","_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/inlineHooks/calkwr3zt7815UERb1d7/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/inlineHooks/calkwr3zt7815UERb1d7"},"delete":{"href":"https://oie-00.dne-okta.com/api/v1/inlineHooks/calkwr3zt7815UERb1d7","hints":{"allow":["DELETE"]}}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Thu, 13 Mar 2025 23:33:24 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 352.089333ms
-    - id: 25
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        transfer_encoding: []
-        trailer: {}
-        host: oie-00.dne-okta.com
-        remote_addr: ""
-        request_uri: ""
-        body: ""
-        form: {}
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
         url: https://oie-00.dne-okta.com/api/v1/authorizationServers/auskwqxwsvqwB6hrD1d7/policies/00pkwr26yarROmlg71d7
         method: GET
       response:
@@ -1082,7 +1041,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 222.137541ms
-    - id: 26
+    - id: 25
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1121,7 +1080,7 @@ interactions:
         status: 204 No Content
         code: 204
         duration: 187.518875ms
-    - id: 27
+    - id: 26
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1165,7 +1124,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 357.628042ms
-    - id: 28
+    - id: 27
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1206,7 +1165,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 359.032125ms
-    - id: 29
+    - id: 28
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1247,7 +1206,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 472.77625ms
-    - id: 30
+    - id: 29
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1288,7 +1247,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 259.134833ms
-    - id: 31
+    - id: 30
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1329,7 +1288,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 405.167ms
-    - id: 32
+    - id: 31
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1370,7 +1329,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 237.411875ms
-    - id: 33
+    - id: 32
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1411,7 +1370,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 438.197542ms
-    - id: 34
+    - id: 33
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1452,7 +1411,7 @@ interactions:
         status: 200 OK
         code: 200
         duration: 190.442584ms
-    - id: 35
+    - id: 34
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1491,7 +1450,7 @@ interactions:
         status: 204 No Content
         code: 204
         duration: 281.898834ms
-    - id: 36
+    - id: 35
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1530,7 +1489,7 @@ interactions:
         status: 204 No Content
         code: 204
         duration: 270.292417ms
-    - id: 37
+    - id: 36
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -1569,7 +1528,7 @@ interactions:
         status: 204 No Content
         code: 204
         duration: 273.107209ms
-    - id: 38
+    - id: 37
       request:
         proto: HTTP/1.1
         proto_major: 1
