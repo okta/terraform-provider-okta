@@ -86,7 +86,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 
 func FWProviderResources() []func() resource.Resource {
 	rawResources := []func() resource.Resource{
-		newTrustedOriginCompatResource,
+		newTrustedOriginResource,
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
