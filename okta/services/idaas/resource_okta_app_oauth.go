@@ -419,8 +419,8 @@ other arguments that changed will be applied.`,
 				Type:          schema.TypeList,
 				MaxItems:      1,
 				Optional:      true,
-				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. Use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.",
-				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: This field will be removed in a future version. Use Authorization Server Claims instead).",
+				Deprecated:    "The groups_claim field is deprecated and will be removed in a future version. NOTE: This field requires SSWS API token authentication and is silently skipped when the provider is configured with OAuth 2.0 credentials (private_key or access_token). Use Authorization Server Claims (okta_auth_server_claim) instead.",
+				Description:   "Groups claim for an OpenID Connect client application (DEPRECATED: Requires SSWS API token auth - silently no-ops with OAuth 2.0 credentials. Use Authorization Server Claims instead).",
 				Elem:          groupsClaimResource,
 				ConflictsWith: []string{"preconfigured_app"},
 			},
@@ -528,6 +528,7 @@ var groupsClaimResource = &schema.Resource{
 }
 
 func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
 	client := getOktaV6ClientFromMetadata(meta)
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
@@ -561,9 +562,9 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 	}
 
-	err = setAppOauthGroupsClaim(ctx, d, meta)
-	if err != nil {
-		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	diags = append(diags, setAppOauthGroupsClaim(ctx, d, meta)...)
+	if diags.HasError() {
+		return diags
 	}
 
 	if d.Get("type") != "service" {
@@ -575,10 +576,10 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 		}
 	}
 
-	return resourceAppOAuthRead(ctx, d, meta)
+	return append(diags, resourceAppOAuthRead(ctx, d, meta)...)
 }
 
-func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	raw, ok := d.GetOk("groups_claim")
 	// Log deprecation warning
 	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
@@ -586,7 +587,17 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
 		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
-		return nil
+		return diag.Diagnostics{
+			{
+				Severity: diag.Warning,
+				Summary:  "groups_claim not applied: OAuth 2.0 authentication does not support this field",
+				Detail: "The groups_claim block was configured but will NOT be written to the app because the " +
+					"Okta provider is using OAuth 2.0 credentials (private_key or access_token). " +
+					"groups_claim requires SSWS API token authentication. " +
+										"The app was created/updated successfully but the groups claim is absent from its Sign On configuration. " +
+					"To configure a groups claim, switch to SSWS token auth or use okta_auth_server_claim (requires Custom Authorization Server).",
+			},
+		}
 	}
 
 	apiSupplement := getAPISupplementFromMetadata(meta)
@@ -602,16 +613,16 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 			if d.Get("issuer_mode").(string) != "" {
 				gc.IssuerMode = d.Get("issuer_mode").(string)
 			} else {
-				return errors.New("issuer_mode must be set")
+				return diag.Errorf("issuer_mode must be set")
 			}
 		} else {
-			return errors.New("issuer_mode must be set")
+			return diag.Errorf("issuer_mode must be set")
 		}
 
 		if _, ok := d.GetOk("preconfigured_app"); !ok { // the internal api for setting app oauth groups claim doesn't work with most preconfigured i.e. existing apps
 			_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
 			if err != nil {
-				return fmt.Errorf("failed to update groups claim for an OAuth application: %v", err)
+				return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
 			}
 		} else {
 			logger(meta).Info("Skipping updating app oauth groups for preconfigured apps.")
@@ -631,10 +642,10 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	_, err := apiSupplement.UpdateAppOauthGroupsClaim(ctx, appID, gc)
-	return err
+	return diag.FromErr(err)
 }
 
-func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) error {
+func updateAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if !d.HasChange("groups_claim") {
 		return nil
 	}
@@ -671,6 +682,7 @@ func buildGroupsClaimFromResource(groupsClaim map[string]interface{}) *sdk.AppOa
 }
 
 func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
 	client := getOktaV6ClientFromMetadata(meta)
 
 	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, d.Id()).Execute()
@@ -756,6 +768,16 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
 		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
+		if _, ok := d.GetOk("groups_claim"); ok {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "groups_claim not read: OAuth 2.0 authentication does not support this field",
+				Detail: "The groups_claim block is configured but cannot be read from the app because the " +
+					"Okta provider is using OAuth 2.0 credentials (private_key or access_token). " +
+					"The provider's state for groups_claim may not reflect the actual app configuration. " +
+					"groups_claim requires SSWS API token authentication.",
+			})
+		}
 	} else {
 		gc, err := flattenGroupsClaim(ctx, d, meta)
 		if err != nil {
@@ -767,7 +789,7 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		_ = d.Set("groups_claim", gc)
 	}
 
-	return setOAuthClientSettingsV6(d, settings.OauthClient)
+	return append(diags, setOAuthClientSettingsV6(d, settings.OauthClient)...)
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
@@ -922,6 +944,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 }
 
 func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
 	additionalChanges, err := AppUpdateStatus(ctx, d, meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -987,9 +1010,9 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 			return diag.Errorf("failed to upload logo for OAuth application: %v", err)
 		}
 	}
-	err = updateAppOauthGroupsClaim(ctx, d, meta)
-	if err != nil {
-		return diag.Errorf("failed to update groups claim for an OAuth application: %v", err)
+	diags = append(diags, updateAppOauthGroupsClaim(ctx, d, meta)...)
+	if diags.HasError() {
+		return diags
 	}
 	if !d.Get("skip_authentication_policy").(bool) {
 		err = createOrUpdateAuthenticationPolicy(ctx, d, meta, updatedApp.GetId())
@@ -997,7 +1020,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 			return diag.Errorf("failed to set authentication policy an OAuth application: %v", err)
 		}
 	}
-	return resourceAppOAuthRead(ctx, d, meta)
+	return append(diags, resourceAppOAuthRead(ctx, d, meta)...)
 }
 
 func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -1354,7 +1377,7 @@ func validateAppOAuth(d *schema.ResourceData, meta interface{}) error {
 
 		c := meta.(*config.Config)
 		if c.IsOAuth20Auth() {
-			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication")
+			logger(meta).Warn("groups_claim arguments are disabled with OAuth 2.0 API authentication: the groups_claim block will be silently ignored. Switch to SSWS API token auth or use okta_auth_server_claim instead.")
 		} else {
 			groupsClaim := raw.([]interface{})[0].(map[string]interface{})
 			if groupsClaim["type"].(string) == "EXPRESSION" && groupsClaim["filter_type"].(string) != "" {
