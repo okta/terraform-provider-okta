@@ -114,10 +114,12 @@ func (r *oauth2V1ClientsRoleCustomResource) Schema(_ context.Context, _ resource
 			},
 			"resource_set": schema.StringAttribute{
 				Description: "Resource set ID",
+				Optional:    true,
 				Computed:    true,
 			},
 			"role": schema.StringAttribute{
 				Description: "Role ID",
+				Optional:    true,
 				Computed:    true,
 			},
 			"status": schema.StringAttribute{
