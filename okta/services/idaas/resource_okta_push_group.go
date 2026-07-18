@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -224,8 +225,12 @@ func (r *pushGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
+	groupPushMapping, httpResp, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.GetGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Execute()
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error reading Okta push group mapping ", err.Error())
 		return
 	}
@@ -290,17 +295,23 @@ func (r *pushGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	if state.Status.ValueString() != "INACTIVE" {
-		_, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.UpdateGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Body(v6okta.UpdateGroupPushMappingRequest{
+		_, httpResp, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.UpdateGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Body(v6okta.UpdateGroupPushMappingRequest{
 			Status: "INACTIVE",
 		}).Execute()
 		if err != nil {
+			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+				return
+			}
 			resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
 			return
 		}
 	}
 
-	_, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.DeleteGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).DeleteTargetGroup(state.DeleteTargetGroupOnDestroy.ValueBool()).Execute()
+	httpResp, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.DeleteGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).DeleteTargetGroup(state.DeleteTargetGroupOnDestroy.ValueBool()).Execute()
 	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return
+		}
 		resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
 		return
 	}
