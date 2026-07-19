@@ -3,6 +3,7 @@ package fwprovider
 import (
 	"context"
 	"fmt"
+	"github.com/okta/terraform-provider-okta/okta/services/okta4ai"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -239,6 +240,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	var sources []func() datasource.DataSource
 	sources = append(sources, idaas.FWProviderDataSources()...)
 	sources = append(sources, governance.FWProviderDataSources()...)
+	sources = append(sources, okta4ai.FWProviderDataSources()...)
 
 	// Wrap all data sources with SafeDataSource for panic recovery
 	return resources.WrapDataSources(sources)
@@ -251,7 +253,42 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	// Append resources from various modules
 	res = append(res, idaas.FWProviderResources()...)
 	res = append(res, governance.FWProviderResources()...)
+	res = append(res, okta4ai.FWProviderResources()...)
 
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(res)
+}
+
+// dataSourceConfiguration extracts the configured provider config from the datasource request
+func dataSourceConfiguration(req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) *config.Config {
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	client, ok := req.ProviderData.(*config.Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected DataSource Configure Type",
+			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+	return client
+}
+
+// resourceConfiguration extracts the configured provider config from the resource request
+func resourceConfiguration(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *config.Config {
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	client, ok := req.ProviderData.(*config.Config)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *config.Config, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+	return client
 }

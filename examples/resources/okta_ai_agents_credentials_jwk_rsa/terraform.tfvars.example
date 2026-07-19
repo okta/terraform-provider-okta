@@ -1,0 +1,83 @@
+# Example Terraform Variables for okta_ai_agents_credentials_jwk_rsa
+
+okta_org_name = "your-okta-org"        # Replace with your org
+okta_base_url = "okta.com"             # okta.com or oktapreview.com
+# okta_api_token set via environment: export TF_VAR_okta_api_token="..."
+
+agent_id = "00u1a2b3c4d5e6f7g8h9i"    # Replace with your AI Agent ID
+
+# RSA-2048 Public Key Components (base64url encoded, no padding)
+# Generated from: openssl genrsa 2048 | openssl rsa -pubout
+rsa_modulus = "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw"
+
+rsa_exponent = "AQAB"  # Standard RSA exponent (65537 in hex = 0x10001)
+
+# ============================================================================
+# Usage:
+# ============================================================================
+#
+# 1. Copy this file to terraform.tfvars:
+#    cp terraform.tfvars.example terraform.tfvars
+#
+# 2. Edit with your actual values:
+#    nano terraform.tfvars
+#
+# 3. Set API token via environment:
+#    export TF_VAR_okta_api_token="your-api-token"
+#    OR
+#    export OKTA_API_TOKEN="your-api-token"
+#
+# 4. Run Terraform:
+#    terraform init
+#    terraform plan
+#    terraform apply
+#
+# ============================================================================
+# Generating RSA Keys:
+# ============================================================================
+#
+# Using Python:
+#   from cryptography.hazmat.primitives.asymmetric import rsa
+#   from cryptography.hazmat.backends import default_backend
+#   import base64
+#
+#   # Generate key
+#   private_key = rsa.generate_private_key(
+#     public_exponent=65537,
+#     key_size=2048,
+#     backend=default_backend()
+#   )
+#   public_key = private_key.public_key()
+#
+#   # Get numbers
+#   numbers = public_key.public_numbers()
+#   n = base64.urlsafe_b64encode(
+#     numbers.n.to_bytes(256, 'big')
+#   ).decode().rstrip('=')
+#   e = base64.urlsafe_b64encode(
+#     numbers.e.to_bytes(3, 'big')
+#   ).decode().rstrip('=')
+#
+#   print(f'n={n}')
+#   print(f'e={e}')
+#
+# Using OpenSSL:
+#   openssl genrsa -out private.pem 2048
+#   openssl rsa -in private.pem -pubout -out public.pem
+#   openssl rsa -in public.pem -pubin -text -noout
+#
+# ============================================================================
+# Security Notes:
+# ============================================================================
+#
+# - Never commit terraform.tfvars to version control
+# - Add to .gitignore:
+#   echo "terraform.tfvars" >> .gitignore
+#
+# - Use environment variables for sensitive values:
+#   export TF_VAR_okta_api_token="your-token"
+#
+# - Store private keys securely (not in Terraform)
+# - Only upload public key components (n, e) to Terraform
+#
+# ============================================================================

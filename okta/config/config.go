@@ -33,6 +33,7 @@ type (
 		MinWait              int
 		OktaIDaaSClient      api.OktaIDaaSClient
 		OktaGovernanceClient api.OktaGovernanceClient
+		Okta4AIClient        api.Okta4AIClient
 		OrgName              string
 		Parallelism          int
 		PrivateKey           string
@@ -240,8 +241,13 @@ func (c *Config) LoadAPIClient() (err error) {
 	if err != nil {
 		return err
 	}
+	okta4aiClient, err := api.NewOkta4AIAPIClient(iDaaSConfig)
+	if err != nil {
+		return fmt.Errorf("failed to initialize Okta4AI API client: %v", err)
+	}
 	c.SetIdaasAPIClient(idaasClient)
 	c.SetGovernanceAPIClient(governanceClient)
+	c.SetOkta4AI(okta4aiClient)
 	return
 }
 
@@ -252,6 +258,10 @@ func (c *Config) SetIdaasAPIClient(client api.OktaIDaaSClient) {
 
 func (c *Config) SetGovernanceAPIClient(client api.OktaGovernanceClient) {
 	c.OktaGovernanceClient = client
+}
+
+func (c *Config) SetOkta4AI(client api.Okta4AIClient) {
+	c.Okta4AIClient = client
 }
 
 func (c *Config) VerifyCredentials(ctx context.Context) error {

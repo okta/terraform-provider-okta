@@ -2,6 +2,8 @@ module github.com/okta/terraform-provider-okta
 
 go 1.26.2
 
+replace github.com/okta4AI/okta4AI-for-ai-sdk-golang => /Users/aditya.anand/GolandProjects/okta-for-ai-sdk-golang/okta4AI
+
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/cenkalti/backoff v2.2.1+incompatible
@@ -29,6 +31,7 @@ require (
 	github.com/okta/okta-sdk-golang/v4 v4.1.2
 	github.com/okta/okta-sdk-golang/v5 v5.0.6
 	github.com/okta/okta-sdk-golang/v6 v6.1.6
+	github.com/okta4AI/okta4AI-for-ai-sdk-golang v0.0.0-00010101000000-000000000000
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/text v0.35.0
