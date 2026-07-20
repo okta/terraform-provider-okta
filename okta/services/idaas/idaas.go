@@ -133,6 +133,7 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		newThreatsConfigurationResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -184,6 +185,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
+		newThreatsConfigurationDataSource,
 	}
 }
 
