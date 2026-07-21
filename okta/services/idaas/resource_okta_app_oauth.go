@@ -767,7 +767,24 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 		_ = d.Set("groups_claim", gc)
 	}
 
+	// Set "type" separately: setOAuthClientSettingsV6 early-returns on a nil
+	// OauthClient, which preconfigured OIN OIDC apps have (GH-2868).
+	setOAuthAppType(d, settings.OauthClient)
+
 	return setOAuthClientSettingsV6(d, settings.OauthClient)
+}
+
+// setOAuthAppType sets "type" from the OAuth client's application_type, but only
+// when present. Preconfigured OIN OIDC apps can return a nil OauthClient or empty
+// application_type; since "type" is Required + ForceNew, overwriting it with ""
+// would force replacement on import (GH-2868).
+func setOAuthAppType(d *schema.ResourceData, oauthClient *v6okta.OpenIdConnectApplicationSettingsClient) {
+	if oauthClient == nil {
+		return
+	}
+	if appType := oauthClient.GetApplicationType(); appType != "" {
+		_ = d.Set("type", appType)
+	}
 }
 
 func flattenGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
@@ -808,7 +825,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 		return nil
 	}
 
-	_ = d.Set("type", oauthClient.GetApplicationType())
+	// "type" is handled by setOAuthAppType (GH-2868).
 	_ = d.Set("client_uri", oauthClient.GetClientUri())
 	_ = d.Set("logo_uri", oauthClient.GetLogoUri())
 	_ = d.Set("tos_uri", oauthClient.GetTosUri())
