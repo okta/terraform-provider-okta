@@ -47,17 +47,24 @@ type apiServersAuthorizationServerResource struct {
 
 // ApiServersAuthorizationServerModel describes the resource data model.
 type apiServersAuthorizationServerModel struct {
-	ID          types.String                                     `tfsdk:"id"`
-	ApiServerId types.String                                     `tfsdk:"api_server_id"`
-	Issuer      types.String                                     `tfsdk:"issuer"`
-	LastUpdated types.String                                     `tfsdk:"last_updated"`
-	Metadata    *ApiServersAuthorizationServerModelMetadataModel `tfsdk:"metadata"`
-	Orn         types.String                                     `tfsdk:"orn"`
-	Status      types.String                                     `tfsdk:"status"`
+	ID                    types.String                                     `tfsdk:"id"`
+	ApiServerId           types.String                                     `tfsdk:"api_server_id"`
+	Issuer                types.String                                     `tfsdk:"issuer"`
+	LastUpdated           types.String                                     `tfsdk:"last_updated"`
+	Metadata              *ApiServersAuthorizationServerModelMetadataModel `tfsdk:"metadata"`
+	Orn                   types.String                                     `tfsdk:"orn"`
+	Status                types.String                                     `tfsdk:"status"`
+	AuthorizationEndpoint types.String                                     `tfsdk:"authorization_endpoint"`
+	GrantTypesSupported   types.List                                       `tfsdk:"grant_types_supported"`
+	TokenEndpoint         types.String                                     `tfsdk:"token_endpoint"`
+	Type                  types.String                                     `tfsdk:"type"`
 }
 
 // ApiServersAuthorizationServerModelMetadataModel is the nested model for metadata.
 type ApiServersAuthorizationServerModelMetadataModel struct {
+	AuthorizationEndpoint types.String `tfsdk:"authorization_endpoint"`
+	GrantTypesSupported   types.List   `tfsdk:"grant_types_supported"`
+	TokenEndpoint         types.String `tfsdk:"token_endpoint"`
 }
 
 func NewApiServersAuthorizationServerResource() resource.Resource {
@@ -108,6 +115,27 @@ func (r *apiServersAuthorizationServerResource) Schema(_ context.Context, _ reso
 				Description: "Current status of the authorization server",
 				Required:    true,
 			},
+			"authorization_endpoint": schema.StringAttribute{
+				Description: "URL of the authorization endpoint",
+				Required:    true,
+				Sensitive:   true,
+			},
+			"grant_types_supported": schema.ListAttribute{
+				Description: "OAuth 2.",
+				ElementType: types.StringType,
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"token_endpoint": schema.StringAttribute{
+				Description: "URL of the token endpoint",
+				Required:    true,
+				Sensitive:   true,
+			},
+			"type": schema.StringAttribute{
+				Description: "Type",
+				Required:    true,
+				Sensitive:   true,
+			},
 		},
 		Blocks: map[string]schema.Block{
 			"metadata": schema.SingleNestedBlock{
@@ -119,7 +147,6 @@ func (r *apiServersAuthorizationServerResource) Schema(_ context.Context, _ reso
 					},
 					"grant_types_supported": schema.ListAttribute{
 						Description: "OAuth 2.",
-						ElementType: types.StringType,
 						Optional:    true,
 					},
 					"token_endpoint": schema.StringAttribute{
@@ -172,7 +199,13 @@ func (r *apiServersAuthorizationServerResource) Read(ctx context.Context, req re
 	state.Status = types.StringValue(string(result.GetStatus()))
 	if metadataRaw0, ok := result.GetMetadataOk(); ok {
 		metadataModel0 := &ApiServersAuthorizationServerModelMetadataModel{}
-		_ = metadataRaw0
+		metadataModel0.AuthorizationEndpoint = types.StringValue(string(metadataRaw0.GetAuthorizationEndpoint()))
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetGrantTypesSupported())
+			resp.Diagnostics.Append(listDiags...)
+			metadataModel0.GrantTypesSupported = listVal
+		}
+		metadataModel0.TokenEndpoint = types.StringValue(string(metadataRaw0.GetTokenEndpoint()))
 		state.Metadata = metadataModel0
 	}
 
@@ -194,7 +227,19 @@ func (r *apiServersAuthorizationServerResource) Create(ctx context.Context, req 
 	// Build request body from plan
 	createReq := client.ApiServerRegistrationAPI.AddApiServerAuthorizationServer(ctx, apiServerId)
 	body := okta4AI.NewAddManualAuthorizationServerRequestWithDefaults()
+	body.SetAuthorizationEndpoint(plan.AuthorizationEndpoint.ValueString())
+	if !plan.GrantTypesSupported.IsNull() && !plan.GrantTypesSupported.IsUnknown() {
+		var grantTypesSupportedSlice []string
+		for _, item := range plan.GrantTypesSupported.Elements() {
+			if sv, ok := item.(types.String); ok {
+				grantTypesSupportedSlice = append(grantTypesSupportedSlice, sv.ValueString())
+			}
+		}
+		body.SetGrantTypesSupported(grantTypesSupportedSlice)
+	}
 	body.SetIssuer(plan.Issuer.ValueString())
+	body.SetTokenEndpoint(plan.TokenEndpoint.ValueString())
+	body.SetType(plan.Type.ValueString())
 	createReq = createReq.Body(*body)
 	_, err := createReq.Execute()
 	if err != nil {
@@ -232,6 +277,19 @@ func (r *apiServersAuthorizationServerResource) Update(ctx context.Context, req 
 
 	// Build request body from plan — only send changed fields
 	updateReq := client.ApiServerRegistrationAPI.UpdateApiServerAuthorizationServer(ctx, apiServerId, id)
+	updateBody := okta4AI.NewPatchManualAuthorizationServerRequestWithDefaults()
+	updateBody.SetAuthorizationEndpoint(plan.AuthorizationEndpoint.ValueString())
+	if !plan.GrantTypesSupported.IsNull() && !plan.GrantTypesSupported.IsUnknown() {
+		var grantTypesSupportedSlice []string
+		for _, item := range plan.GrantTypesSupported.Elements() {
+			if sv, ok := item.(types.String); ok {
+				grantTypesSupportedSlice = append(grantTypesSupportedSlice, sv.ValueString())
+			}
+		}
+		updateBody.SetGrantTypesSupported(grantTypesSupportedSlice)
+	}
+	updateBody.SetTokenEndpoint(plan.TokenEndpoint.ValueString())
+	updateReq = updateReq.Body(*updateBody)
 	_, err := updateReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating api_servers_authorization_server", err.Error())
@@ -244,6 +302,14 @@ func (r *apiServersAuthorizationServerResource) Update(ctx context.Context, req 
 	state.Metadata = plan.Metadata
 	state.Orn = plan.Orn
 	state.Status = plan.Status
+	state.AuthorizationEndpoint = plan.AuthorizationEndpoint
+	state.GrantTypesSupported = plan.GrantTypesSupported
+	state.TokenEndpoint = plan.TokenEndpoint
+	state.Type = plan.Type
+	state.AuthorizationEndpoint = plan.AuthorizationEndpoint
+	state.GrantTypesSupported = plan.GrantTypesSupported
+	state.TokenEndpoint = plan.TokenEndpoint
+	state.Type = plan.Type
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -54,7 +54,6 @@ type mcpServerDataSourceModel struct {
 type McpServerDataSourceModelDetectedMetadataModel struct {
 	LastRefreshedAt types.String `tfsdk:"last_refreshed_at"`
 	ResourceName    types.String `tfsdk:"resource_name"`
-	ScopesSupported types.List   `tfsdk:"scopes_supported"`
 }
 
 // McpServerDataSourceModelMetadataModel is the nested model for metadata.
@@ -88,11 +87,11 @@ func (d *mcpServerDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Computed:            true,
 			},
 			"created": schema.StringAttribute{
-				MarkdownDescription: "Timestamp when the MCP server was created",
+				MarkdownDescription: "Timestamp when the resource server was created",
 				Computed:            true,
 			},
 			"last_updated": schema.StringAttribute{
-				MarkdownDescription: "Timestamp when the MCP server was last updated",
+				MarkdownDescription: "Timestamp when the resource server was last updated",
 				Computed:            true,
 			},
 			"orn": schema.StringAttribute{
@@ -100,11 +99,11 @@ func (d *mcpServerDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Computed:            true,
 			},
 			"resource_url": schema.StringAttribute{
-				MarkdownDescription: "The URL of the MCP server resource",
+				MarkdownDescription: "The URL of the resource server",
 				Computed:            true,
 			},
 			"status": schema.StringAttribute{
-				MarkdownDescription: "Current status of the MCP server in its lifecycle",
+				MarkdownDescription: "Current status of the resource server in its lifecycle",
 				Computed:            true,
 			},
 		},
@@ -120,22 +119,17 @@ func (d *mcpServerDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 						Description: "Canonical resource name of the MCP server as reported by the server itself (auto-detected).",
 						Computed:    true,
 					},
-					"scopes_supported": schema.ListAttribute{
-						Description: "List of OAuth scopes supported by the MCP server.",
-						ElementType: types.StringType,
-						Computed:    true,
-					},
 				},
 			},
 			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the MCP server that can be edited by an admin.",
+				Description: "Metadata about the resource server.",
 				Attributes: map[string]schema.Attribute{
 					"description": schema.StringAttribute{
-						Description: "Description of the MCP server",
+						Description: "Description of the resource server",
 						Computed:    true,
 					},
 					"display_name": schema.StringAttribute{
-						Description: "Human-readable display name for the MCP server",
+						Description: "Human-readable display name for the resource server",
 						Computed:    true,
 					},
 				},
@@ -180,11 +174,6 @@ func (d *mcpServerDataSource) Read(ctx context.Context, req datasource.ReadReque
 			detectedMetadataModel0.LastRefreshedAt = types.StringValue(t.Format(time.RFC3339))
 		}
 		detectedMetadataModel0.ResourceName = types.StringValue(string(detectedMetadataRaw0.GetResourceName()))
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, detectedMetadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			detectedMetadataModel0.ScopesSupported = listVal
-		}
 		state.DetectedMetadata = detectedMetadataModel0
 	}
 	if metadataRaw0, ok := result.GetMetadataOk(); ok {

@@ -1,7 +1,8 @@
 package api
 
 import (
-	"github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
+	_ "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
+	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 )
 
 var _ Okta4AIClient = &okta4AIAPIClient{}

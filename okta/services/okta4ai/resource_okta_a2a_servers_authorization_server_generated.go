@@ -127,7 +127,6 @@ func (r *a2aServersAuthorizationServerResource) Schema(_ context.Context, _ reso
 					},
 					"grant_types_supported": schema.ListAttribute{
 						Description: "OAuth 2.",
-						ElementType: types.StringType,
 						Optional:    true,
 					},
 					"token_endpoint": schema.StringAttribute{

@@ -35,46 +35,47 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &apiServerResource{}
-	_ resource.ResourceWithConfigure   = &apiServerResource{}
-	_ resource.ResourceWithImportState = &apiServerResource{}
+	_ resource.Resource                = &aiAgentResource{}
+	_ resource.ResourceWithConfigure   = &aiAgentResource{}
+	_ resource.ResourceWithImportState = &aiAgentResource{}
 )
 
-// ApiServerResource defines the resource implementation.
-type apiServerResource struct {
+// AiAgentResource defines the resource implementation.
+type aiAgentResource struct {
 	Config *config.Config
 }
 
-// ApiServerModel describes the resource data model.
-type apiServerModel struct {
-	ID          types.String                 `tfsdk:"id"`
-	Created     types.String                 `tfsdk:"created"`
-	LastUpdated types.String                 `tfsdk:"last_updated"`
-	Metadata    *ApiServerModelMetadataModel `tfsdk:"metadata"`
-	Orn         types.String                 `tfsdk:"orn"`
-	ResourceUrl types.String                 `tfsdk:"resource_url"`
-	Status      types.String                 `tfsdk:"status"`
+// AiAgentModel describes the resource data model.
+type aiAgentModel struct {
+	ID          types.String              `tfsdk:"id"`
+	Created     types.String              `tfsdk:"created"`
+	LastUpdated types.String              `tfsdk:"last_updated"`
+	Profile     *AiAgentModelProfileModel `tfsdk:"profile"`
+	Status      types.String              `tfsdk:"status"`
+	ResourceUrl types.String              `tfsdk:"resource_url"`
 }
 
-// ApiServerModelMetadataModel is the nested model for metadata.
-type ApiServerModelMetadataModel struct {
+// AiAgentModelProfileModel is the nested model for profile.
+type AiAgentModelProfileModel struct {
+	Description types.String `tfsdk:"description"`
+	Name        types.String `tfsdk:"name"`
 }
 
-func NewApiServerResource() resource.Resource {
-	return &apiServerResource{}
+func NewAiAgentResource() resource.Resource {
+	return &aiAgentResource{}
 }
 
-func (r *apiServerResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_api_server"
+func (r *aiAgentResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_ai_agent"
 }
 
-func (r *apiServerResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *aiAgentResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *apiServerResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The API Server Registrations API provides registration and management operations for third-party API servers as resource servers.",
+		Description: "The AI Agent Registrations API provides registration and lifecycle management operations for AI agents.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique identifier for the resource.",
@@ -84,53 +85,47 @@ func (r *apiServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				},
 			},
 			"created": schema.StringAttribute{
-				Description: "Timestamp when the resource server was created",
-				//Required:    true,
-				Computed: true,
+				Description: "Timestamp when the AI agent was created",
+				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
-				Description: "Timestamp when the resource server was last updated",
-				//Required:    true,
-				Computed: true,
-			},
-			"orn": schema.StringAttribute{
-				Description: "The [ORN](https://developer.",
-				//Required:    true,
-				Computed: true,
-			},
-			"resource_url": schema.StringAttribute{
-				Description: "The URL of the resource server",
-				Required:    true,
+				Description: "Timestamp when the AI agent was updated",
+				Computed:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Current status of the resource server in its lifecycle",
-				//Required:    true,
-				Computed: true,
+				Description: "When an AI agent is created, it's in the `STAGED` status.",
+				Optional:    true,
+				Computed:    true,
+			},
+			"resource_url": schema.StringAttribute{
+				Description: "The resource URL for the agent-to-agent (A2A) server associated with this AI agent.",
+				Optional:    true,
+				Sensitive:   true,
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the resource server.",
+			"profile": schema.SingleNestedBlock{
+				Description: "AI agent profile",
 				Attributes: map[string]schema.Attribute{
 					"description": schema.StringAttribute{
-						Description: "Description of the resource server",
+						Description: "Description of the AI agent",
 						Optional:    true,
 					},
-					"display_name": schema.StringAttribute{
-						Description: "Human-readable display name for the resource server",
-						Optional:    true,
+					"name": schema.StringAttribute{
+						Description: "Unique name of the AI agent",
+						Required:    true,
 					},
 				},
 			},
 		},
 	}
 }
-func (r *apiServerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *aiAgentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state apiServerModel
+func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state aiAgentModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -138,25 +133,24 @@ func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	result, httpResp, err := client.ApiServerRegistrationAPI.GetApiServer(ctx, id).Execute()
+	result, httpResp, err := client.AgentRegistrationAPI.GetAIAgent(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading api_server", err.Error())
+		resp.Diagnostics.AddError("Error reading ai_agent", err.Error())
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
-	state.Orn = types.StringValue(string(result.GetOrn()))
-	state.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok {
-		metadataModel0 := &ApiServerModelMetadataModel{}
-		_ = metadataRaw0
-		state.Metadata = metadataModel0
+	if profileRaw0, ok := result.GetProfileOk(); ok {
+		profileModel0 := &AiAgentModelProfileModel{}
+		profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
+		profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		state.Profile = profileModel0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
@@ -164,8 +158,8 @@ func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *apiServerResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan apiServerModel
+func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan aiAgentModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -174,13 +168,23 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan
-	createReq := client.ApiServerRegistrationAPI.RegisterApiServer(ctx)
-	body := okta4AI.NewCreateApiServerRequestWithDefaults()
+	createReq := client.AgentRegistrationAPI.RegisterAIAgent(ctx)
+	body := okta4AI.NewCreateAIAgentRequestWithDefaults()
+	if plan.Profile != nil {
+		nestedProfile := okta4AI.NewAIAgentProfileWithDefaults()
+		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
+			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.Name.IsNull() && !plan.Profile.Name.IsUnknown() {
+			nestedProfile.SetName(plan.Profile.Name.ValueString())
+		}
+		body.SetProfile(*nestedProfile)
+	}
 	body.SetResourceUrl(plan.ResourceUrl.ValueString())
 	createReq = createReq.Body(*body)
 	httpResp, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating api_server", err.Error())
+		resp.Diagnostics.AddError("Error creating ai_agent", err.Error())
 		return
 	}
 
@@ -196,16 +200,16 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 	for {
 		select {
 		case <-timeout:
-			resp.Diagnostics.AddError("Timeout waiting for api_server operation", "Operation did not reach STAGED status within 10 minutes")
+			resp.Diagnostics.AddError("Timeout waiting for ai_agent operation", "Operation did not reach STAGED status within 10 minutes")
 			return
 		case <-ctx.Done():
-			resp.Diagnostics.AddError("Context cancelled", "Waiting for api_server operation was cancelled")
+			resp.Diagnostics.AddError("Context cancelled", "Waiting for ai_agent operation was cancelled")
 			return
 		case <-ticker.C:
 			opResp, _, opErr := client.WorkloadPrincipalOperationsAPI.
 				GetWorkloadPrincipalOperation(ctx, workloadOperationsID).Execute()
 			if opErr != nil {
-				resp.Diagnostics.AddError("Error polling api_server operation status", opErr.Error())
+				resp.Diagnostics.AddError("Error polling ai_agent operation status", opErr.Error())
 				return
 			}
 			status := string(opResp.Resource.GetStatus())
@@ -225,23 +229,22 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 
 	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
-	readResult, _, readErr := client.ApiServerRegistrationAPI.GetApiServer(ctx, id).Execute()
+	readResult, _, readErr := client.AgentRegistrationAPI.GetAIAgent(ctx, id).Execute()
 	if readErr == nil {
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
-		plan.Orn = types.StringValue(string(readResult.GetOrn()))
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *apiServerResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan apiServerModel
+func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan aiAgentModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state apiServerModel
+	var state aiAgentModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -251,25 +254,37 @@ func (r *apiServerResource) Update(ctx context.Context, req resource.UpdateReque
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan — only send changed fields
-	updateReq := client.ApiServerRegistrationAPI.UpdateApiServer(ctx, id)
+	updateReq := client.AgentRegistrationAPI.ReplaceAIAgent(ctx, id)
+	updateBody := okta4AI.NewUpdateAIAgentRequestWithDefaults()
+	if plan.Profile != nil {
+		nestedProfile := okta4AI.NewAIAgentProfileWithDefaults()
+		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
+			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.Name.IsNull() && !plan.Profile.Name.IsUnknown() {
+			nestedProfile.SetName(plan.Profile.Name.ValueString())
+		}
+		updateBody.SetProfile(*nestedProfile)
+	}
+	updateReq = updateReq.Body(*updateBody)
 	_, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating api_server", err.Error())
+		resp.Diagnostics.AddError("Error updating ai_agent", err.Error())
 		return
 	}
 	// No result to use — copy all plan fields back to state (including write-only).
 	state.Created = plan.Created
 	state.LastUpdated = plan.LastUpdated
-	state.Metadata = plan.Metadata
-	state.Orn = plan.Orn
-	state.ResourceUrl = plan.ResourceUrl
+	state.Profile = plan.Profile
 	state.Status = plan.Status
+	state.ResourceUrl = plan.ResourceUrl
+	state.ResourceUrl = plan.ResourceUrl
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *apiServerResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state apiServerModel
+func (r *aiAgentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state aiAgentModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -277,12 +292,12 @@ func (r *apiServerResource) Delete(ctx context.Context, req resource.DeleteReque
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	httpResp, err := client.ApiServerRegistrationAPI.DeleteApiServer(ctx, id).Execute()
+	httpResp, err := client.AgentRegistrationAPI.DeleteAIAgent(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting api_server", err.Error())
+		resp.Diagnostics.AddError("Error deleting ai_agent", err.Error())
 		return
 	}
 }

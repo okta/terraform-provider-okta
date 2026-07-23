@@ -40,7 +40,6 @@ type aiAgentProviderDataSource struct {
 // AiAgentProviderDataSourceModel describes the data source data model.
 type aiAgentProviderDataSourceModel struct {
 	ID                      types.String                                 `tfsdk:"id"`
-	Configuration           types.Object                                 `tfsdk:"configuration"`
 	IntegrationDate         types.String                                 `tfsdk:"integration_date"`
 	LastImportDate          types.String                                 `tfsdk:"last_import_date"`
 	NextScheduledImportDate types.String                                 `tfsdk:"next_scheduled_import_date"`
@@ -85,10 +84,6 @@ func (d *aiAgentProviderDataSource) Schema(_ context.Context, _ datasource.Schem
 				MarkdownDescription: "Unique identifier of the ai_agent_provider.",
 				Required:            true,
 			},
-			"configuration": schema.ObjectAttribute{
-				MarkdownDescription: "Configuration",
-				Computed:            true,
-			},
 			"integration_date": schema.StringAttribute{
 				MarkdownDescription: "The date and time when the AI agent provider was integrated",
 				Computed:            true,
@@ -132,7 +127,6 @@ func (d *aiAgentProviderDataSource) Schema(_ context.Context, _ datasource.Schem
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
-						ElementType: types.StringType,
 						Computed:    true,
 					},
 				},

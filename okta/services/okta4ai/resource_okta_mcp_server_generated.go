@@ -62,7 +62,6 @@ type mcpServerModel struct {
 type McpServerModelDetectedMetadataModel struct {
 	LastRefreshedAt types.String `tfsdk:"last_refreshed_at"`
 	ResourceName    types.String `tfsdk:"resource_name"`
-	ScopesSupported types.List   `tfsdk:"scopes_supported"`
 }
 
 func NewMcpServerResource() resource.Resource {
@@ -94,12 +93,12 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Computed:    true,
 			},
 			"created": schema.StringAttribute{
-				Description: "Timestamp when the MCP server was created",
+				Description: "Timestamp when the resource server was created",
 				Required:    true,
 				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
-				Description: "Timestamp when the MCP server was last updated",
+				Description: "Timestamp when the resource server was last updated",
 				Required:    true,
 				Computed:    true,
 			},
@@ -109,20 +108,20 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Computed:    true,
 			},
 			"resource_url": schema.StringAttribute{
-				Description: "The URL of the MCP server resource",
+				Description: "The URL of the resource server",
 				Required:    true,
 			},
 			"status": schema.StringAttribute{
-				Description: "Current status of the MCP server in its lifecycle",
+				Description: "Current status of the resource server in its lifecycle",
 				Required:    true,
 			},
 			"description": schema.StringAttribute{
-				Description: "Description of the MCP server",
+				Description: "Description of the resource server",
 				Optional:    true,
 				Sensitive:   true,
 			},
 			"display_name": schema.StringAttribute{
-				Description: "Human-readable display name for the MCP server",
+				Description: "Human-readable display name for the resource server",
 				Optional:    true,
 				Sensitive:   true,
 			},
@@ -138,12 +137,6 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 					},
 					"resource_name": schema.StringAttribute{
 						Description: "Canonical resource name of the MCP server as reported by the server itself (auto-detected).",
-						Computed:    true,
-					},
-					"scopes_supported": schema.ListAttribute{
-						Description: "List of OAuth scopes supported by the MCP server.",
-						ElementType: types.StringType,
-						Required:    true,
 						Computed:    true,
 					},
 				},
@@ -186,11 +179,6 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 			detectedMetadataModel0.LastRefreshedAt = types.StringValue(t.Format(time.RFC3339))
 		}
 		detectedMetadataModel0.ResourceName = types.StringValue(string(detectedMetadataRaw0.GetResourceName()))
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, detectedMetadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			detectedMetadataModel0.ScopesSupported = listVal
-		}
 		state.DetectedMetadata = detectedMetadataModel0
 	}
 
@@ -252,7 +240,7 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 
 	// Build request body from plan — only send changed fields
 	updateReq := client.MCPServerRegistrationAPI.UpdateMCPServer(ctx, id)
-	updateBody := okta4AI.NewPatchMCPServerRequestWithDefaults()
+	updateBody := okta4AI.NewPatchResourceServerRequestBaseWithDefaults()
 	updateBody.SetDescription(plan.Description.ValueString())
 	updateBody.SetDisplayName(plan.DisplayName.ValueString())
 	updateReq = updateReq.Body(*updateBody)

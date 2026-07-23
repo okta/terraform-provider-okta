@@ -22,6 +22,8 @@ func TestAccDataSourceOktaPotentialConnection_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "connection_type"),
+					resource.TestCheckResourceAttrSet(resourceName, "resource_indicator"),
 				),
 			},
 		},

@@ -38,17 +38,17 @@ type delegationLinkDataSource struct {
 
 // DelegationLinkDataSourceModel describes the data source data model.
 type delegationLinkDataSourceModel struct {
-	ID   types.String                         `tfsdk:"id"`
+	ID   types.String                            `tfsdk:"id"`
 	From *DelegationLinkDataSourceModelFromModel `tfsdk:"from"`
 	To   *DelegationLinkDataSourceModelToModel   `tfsdk:"to"`
 }
 
 // DelegationLinkDataSourceModelFromModel is the nested model for from.
 type DelegationLinkDataSourceModelFromModel struct {
-	Type               types.String `tfsdk:"type"`
-	ClientOrn          types.String `tfsdk:"client_orn"`
-	AppInstanceOrn     types.String `tfsdk:"app_instance_orn"`
-	TokenType          types.String `tfsdk:"token_type"`
+	AppInstanceOrn types.String `tfsdk:"app_instance_orn"`
+	ClientOrn      types.String `tfsdk:"client_orn"`
+	TokenType      types.String `tfsdk:"token_type"`
+	Type           types.String `tfsdk:"type"`
 }
 
 // DelegationLinkDataSourceModelToModel is the nested model for to.
@@ -80,22 +80,22 @@ func (d *delegationLinkDataSource) Schema(_ context.Context, _ datasource.Schema
 		},
 		Blocks: map[string]schema.Block{
 			"from": schema.SingleNestedBlock{
-				Description: "The source token for the delegation link",
+				Description: "From",
 				Attributes: map[string]schema.Attribute{
-					"type": schema.StringAttribute{
-						Description: "The type of token source (OKTA_AUTHORIZATION_SERVER or SAML_APPLICATION)",
+					"app_instance_orn": schema.StringAttribute{
+						Description: "The [ORN](https://developer.",
 						Computed:    true,
 					},
 					"client_orn": schema.StringAttribute{
-						Description: "The ORN of the OAuth 2.0 client (for OKTA_AUTHORIZATION_SERVER type)",
-						Computed:    true,
-					},
-					"app_instance_orn": schema.StringAttribute{
-						Description: "The ORN of the SAML app instance (for SAML_APPLICATION type)",
+						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the OAuth 2.",
 						Computed:    true,
 					},
 					"token_type": schema.StringAttribute{
-						Description: "The type of token accepted (ACCESS_TOKEN or SAML_ASSERTION)",
+						Description: "The type of token accepted by the delegation link",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of token source",
 						Computed:    true,
 					},
 				},
@@ -137,16 +137,10 @@ func (d *delegationLinkDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 	state.ID = types.StringValue(string(result.GetId()))
-
-	// Handle 'from' union type - extract fields
-	// Note: Union type structure is populated with available fields based on discriminator
 	if _, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkDataSourceModelFromModel{}
-		// The union type is returned but SDK method names may vary
-		// Attempt to extract fields generically
 		state.From = fromModel0
 	}
-
 	if toRaw0, ok := result.GetToOk(); ok {
 		toModel0 := &DelegationLinkDataSourceModelToModel{}
 		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))

@@ -47,7 +47,6 @@ type aiAgentProviderResource struct {
 // AiAgentProviderModel describes the resource data model.
 type aiAgentProviderModel struct {
 	ID                      types.String                       `tfsdk:"id"`
-	Configuration           types.Object                       `tfsdk:"configuration"`
 	IntegrationDate         types.String                       `tfsdk:"integration_date"`
 	LastImportDate          types.String                       `tfsdk:"last_import_date"`
 	NextScheduledImportDate types.String                       `tfsdk:"next_scheduled_import_date"`
@@ -58,6 +57,7 @@ type aiAgentProviderModel struct {
 	SourceOrn               types.String                       `tfsdk:"source_orn"`
 	SourceType              types.String                       `tfsdk:"source_type"`
 	Status                  types.String                       `tfsdk:"status"`
+	Configuration           types.Map                          `tfsdk:"configuration"`
 }
 
 // AiAgentProviderModelOwnersModel is the nested model for owners.
@@ -95,10 +95,6 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"configuration": schema.ObjectAttribute{
-				Description: "Configuration",
-				Optional:    true,
-			},
 			"integration_date": schema.StringAttribute{
 				Description: "The date and time when the AI agent provider was integrated",
 				Optional:    true,
@@ -131,6 +127,12 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 				Description: "The status of the AI agent provider",
 				Required:    true,
 			},
+			"configuration": schema.MapAttribute{
+				Description: "Configuration",
+				ElementType: types.StringType,
+				Required:    true,
+				Sensitive:   true,
+			},
 		},
 		Blocks: map[string]schema.Block{
 			"owners": schema.SingleNestedBlock{
@@ -142,7 +144,6 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
-						ElementType: types.StringType,
 						Optional:    true,
 					},
 				},
@@ -336,6 +337,7 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
 	state.Status = types.StringValue(string(result.GetStatus()))
+	state.Configuration = plan.Configuration
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

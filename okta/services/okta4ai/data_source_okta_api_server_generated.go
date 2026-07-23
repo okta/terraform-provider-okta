@@ -75,11 +75,11 @@ func (d *apiServerDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Required:            true,
 			},
 			"created": schema.StringAttribute{
-				MarkdownDescription: "Timestamp when the API server was created",
+				MarkdownDescription: "Timestamp when the resource server was created",
 				Computed:            true,
 			},
 			"last_updated": schema.StringAttribute{
-				MarkdownDescription: "Timestamp when the API server was last updated",
+				MarkdownDescription: "Timestamp when the resource server was last updated",
 				Computed:            true,
 			},
 			"orn": schema.StringAttribute{
@@ -87,24 +87,24 @@ func (d *apiServerDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Computed:            true,
 			},
 			"resource_url": schema.StringAttribute{
-				MarkdownDescription: "The URL of the API server",
+				MarkdownDescription: "The URL of the resource server",
 				Computed:            true,
 			},
 			"status": schema.StringAttribute{
-				MarkdownDescription: "Current status of the API server",
+				MarkdownDescription: "Current status of the resource server in its lifecycle",
 				Computed:            true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the API server that can be edited by an admin",
+				Description: "Metadata about the resource server.",
 				Attributes: map[string]schema.Attribute{
 					"description": schema.StringAttribute{
-						Description: "Description of the API server",
+						Description: "Description of the resource server",
 						Computed:    true,
 					},
 					"display_name": schema.StringAttribute{
-						Description: "Human-readable display name for the API server",
+						Description: "Human-readable display name for the resource server",
 						Computed:    true,
 					},
 				},

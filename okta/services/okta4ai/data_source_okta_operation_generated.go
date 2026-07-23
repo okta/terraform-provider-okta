@@ -17,9 +17,11 @@ package okta4ai
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -43,7 +45,7 @@ type operationDataSourceModel struct {
 	Completed         types.String                               `tfsdk:"completed"`
 	Created           types.String                               `tfsdk:"created"`
 	ErrorDetails      *OperationDataSourceModelErrorDetailsModel `tfsdk:"error_details"`
-	OperationMetadata types.Object                               `tfsdk:"operation_metadata"`
+	OperationMetadata types.Map                                  `tfsdk:"operation_metadata"`
 	Resource          *OperationDataSourceModelResourceModel     `tfsdk:"resource"`
 	Started           types.String                               `tfsdk:"started"`
 	Status            types.String                               `tfsdk:"status"`
@@ -91,8 +93,9 @@ func (d *operationDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				MarkdownDescription: "Timestamp of when the operation was created",
 				Computed:            true,
 			},
-			"operation_metadata": schema.ObjectAttribute{
+			"operation_metadata": schema.MapAttribute{
 				MarkdownDescription: "Flexible metadata for the workload principal operation",
+				ElementType:         types.StringType,
 				Computed:            true,
 			},
 			"started": schema.StringAttribute{
@@ -168,6 +171,15 @@ func (d *operationDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 	if t := result.GetCreated(); !t.IsZero() {
 		state.Created = types.StringValue(t.Format(time.RFC3339))
+	}
+	if m := result.GetOperationMetadata(); len(m) > 0 {
+		operationMetadataVals := make(map[string]attr.Value, len(m))
+		for k, v := range m {
+			operationMetadataVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		state.OperationMetadata, _ = types.MapValue(types.StringType, operationMetadataVals)
+	} else {
+		state.OperationMetadata = types.MapNull(types.StringType)
 	}
 	if t := result.GetStarted(); !t.IsZero() {
 		state.Started = types.StringValue(t.Format(time.RFC3339))

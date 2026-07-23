@@ -8,10 +8,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaAiAgent_read(t *testing.T) {
-	mgr := acctest.NewFixtureManager("data-sources", "okta_ai_agent", t.Name())
+func TestAccDataSourceOktaAiAgentsConnectionIdentityAssertionAppInstance_read(t *testing.T) {
+	mgr := acctest.NewFixtureManager("data-sources", "okta_ai_agents_connection_identity_assertion_app_instance", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-	resourceName := "data.okta_ai_agent.test"
+	resourceName := "data.okta_ai_agents_connection_identity_assertion_app_instance.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -22,8 +22,11 @@ func TestAccDataSourceOktaAiAgent_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "created"),
-					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
+					resource.TestCheckResourceAttrSet(resourceName, "client_id_at_resource"),
+					resource.TestCheckResourceAttrSet(resourceName, "connection_type"),
+					resource.TestCheckResourceAttrSet(resourceName, "orn"),
+					resource.TestCheckResourceAttrSet(resourceName, "resource_indicator"),
+					resource.TestCheckResourceAttrSet(resourceName, "scope_condition"),
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
 				),
 			},

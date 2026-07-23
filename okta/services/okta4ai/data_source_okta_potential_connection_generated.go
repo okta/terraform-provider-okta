@@ -40,14 +40,79 @@ type potentialConnectionDataSource struct {
 
 // PotentialConnectionItemModel is one element returned by the list endpoint.
 type potentialConnectionItemModel struct {
-	ID   types.String `tfsdk:"id"`
-	Data types.List   `tfsdk:"data"`
+	ID                types.String `tfsdk:"id"`
+	ConnectionType    types.String `tfsdk:"connection_type"`
+	ResourceIndicator types.String `tfsdk:"resource_indicator"`
+}
+
+// PotentialConnectionDataSourceModelAppModel is the nested model for app.
+type PotentialConnectionDataSourceModelAppModel struct {
+	Logo types.String `tfsdk:"logo"`
+	Name types.String `tfsdk:"name"`
+	Orn  types.String `tfsdk:"orn"`
+}
+
+// PotentialConnectionDataSourceModelAppInstanceModel is the nested model for app_instance.
+type PotentialConnectionDataSourceModelAppInstanceModel struct {
+	Logo types.String `tfsdk:"logo"`
+	Name types.String `tfsdk:"name"`
+	Orn  types.String `tfsdk:"orn"`
+}
+
+// PotentialConnectionDataSourceModelAuthorizationServerModel is the nested model for authorization_server.
+type PotentialConnectionDataSourceModelAuthorizationServerModel struct {
+	IssuerUrl types.String `tfsdk:"issuer_url"`
+	Logo      types.String `tfsdk:"logo"`
+	Name      types.String `tfsdk:"name"`
+	Orn       types.String `tfsdk:"orn"`
+}
+
+// PotentialConnectionDataSourceModelResourceModel is the nested model for resource.
+type PotentialConnectionDataSourceModelResourceModel struct {
+	ApiServerId        types.String                                                            `tfsdk:"api_server_id"`
+	AppInstanceId      types.String                                                            `tfsdk:"app_instance_id"`
+	AppInstanceName    types.String                                                            `tfsdk:"app_instance_name"`
+	ClientAuthSettings *PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModel `tfsdk:"client_auth_settings"`
+	EndpointUrl        types.String                                                            `tfsdk:"endpoint_url"`
+	Logo               types.String                                                            `tfsdk:"logo"`
+	McpServerId        types.String                                                            `tfsdk:"mcp_server_id"`
+	Name               types.String                                                            `tfsdk:"name"`
+	Orn                types.String                                                            `tfsdk:"orn"`
+	ResourceType       types.String                                                            `tfsdk:"resource_type"`
+	ResourceUrl        types.String                                                            `tfsdk:"resource_url"`
+}
+
+// PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModel is the nested model for client_auth_settings.
+type PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModel struct {
+	Name               types.String                                                                                   `tfsdk:"name"`
+	OauthConfiguration *PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModelOauthConfigurationModel `tfsdk:"oauth_configuration"`
+	Orn                types.String                                                                                   `tfsdk:"orn"`
+}
+
+// PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModelOauthConfigurationModel is the nested model for oauth_configuration.
+type PotentialConnectionDataSourceModelResourceModelClientAuthSettingsModelOauthConfigurationModel struct {
+	Scopes types.List `tfsdk:"scopes"`
+}
+
+// PotentialConnectionDataSourceModelSecretModel is the nested model for secret.
+type PotentialConnectionDataSourceModelSecretModel struct {
+	Description types.String `tfsdk:"description"`
+	Name        types.String `tfsdk:"name"`
+	Orn         types.String `tfsdk:"orn"`
+	Path        types.String `tfsdk:"path"`
+}
+
+// PotentialConnectionDataSourceModelServiceAccountModel is the nested model for service_account.
+type PotentialConnectionDataSourceModelServiceAccountModel struct {
+	Name types.String `tfsdk:"name"`
+	Orn  types.String `tfsdk:"orn"`
 }
 
 // PotentialConnectionDataSourceModel describes the data source data model.
 type potentialConnectionDataSourceModel struct {
-	ID    types.String                   `tfsdk:"id"`
-	Items []potentialConnectionItemModel `tfsdk:"items"`
+	ID     types.String                   `tfsdk:"id"`
+	Filter types.String                   `tfsdk:"filter"`
+	Items  []potentialConnectionItemModel `tfsdk:"items"`
 }
 
 func NewPotentialConnectionDataSource() datasource.DataSource {
@@ -71,6 +136,10 @@ func (d *potentialConnectionDataSource) Schema(_ context.Context, _ datasource.S
 				Optional:            true,
 				Computed:            true,
 			},
+			"filter": schema.StringAttribute{
+				MarkdownDescription: "A required [filter](/#filter) expression to return a specific type of potential connections.  The expression supports the `eq` [operator](/#operators) and the following `connectionType` values: * `IDENTITY_ASSERTION_CUSTOM_AS` * `STS_VAULT_SECRET` * `STS_SERVICE_ACCOUNT`  You can combine multiple expressions using the `and` operator to narrow results. For example, filter by connection type and app instance ORN for `STS_SERVICE_ACCOUNT` connections.  > **Note:** This operation requires [URL encoding](https://developer.mozilla.org/en-US/docs/Glossary/Percent-encoding). See [Special characters](https://developer.okta.com/docs/api/#special-characters). ",
+				Required:            true,
+			},
 		},
 		Blocks: map[string]schema.Block{
 			"items": schema.ListNestedBlock{
@@ -78,9 +147,12 @@ func (d *potentialConnectionDataSource) Schema(_ context.Context, _ datasource.S
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{Computed: true},
-						"data": schema.ListAttribute{
-							MarkdownDescription: "Potential connections that can be established",
-							ElementType:         types.StringType,
+						"connection_type": schema.StringAttribute{
+							MarkdownDescription: "Type of connection authentication method",
+							Computed:            true,
+						},
+						"resource_indicator": schema.StringAttribute{
+							MarkdownDescription: "Resource indicator used when requesting tokens",
 							Computed:            true,
 						},
 					},
@@ -100,7 +172,8 @@ func (d *potentialConnectionDataSource) Read(ctx context.Context, req datasource
 
 	client := d.Config.Okta4AIClient.Okta4AISDKClient()
 	{
-		results, httpResp, err := client.AgentPotentialConnectionsAPI.ListPotentialConnectionsByType(ctx).Execute()
+		filter := state.Filter.ValueString()
+		results, httpResp, err := client.AgentPotentialConnectionsAPI.ListPotentialConnectionsByType(ctx).Filter(filter).Execute()
 		if err != nil {
 			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 				resp.Diagnostics.AddError("Not Found", "No potential_connection resources were found.")
@@ -115,7 +188,18 @@ func (d *potentialConnectionDataSource) Read(ctx context.Context, req datasource
 			_ = _i
 			_ = result
 			item := potentialConnectionItemModel{}
-			item.ID = types.StringValue(fmt.Sprintf("%d", _i))
+			// For union types, try to extract ID from variant; fall back to index if not available
+			if obj, ok := result.GetActualInstance().(interface{ Get() string }); ok {
+				item.ID = types.StringValue(string(obj.Get()))
+			} else {
+				item.ID = types.StringValue(fmt.Sprintf("%d", _i))
+			}
+			if obj, ok := result.GetActualInstance().(interface{ GetConnectionType() string }); ok {
+				item.ConnectionType = types.StringValue(string(obj.GetConnectionType()))
+			}
+			if obj, ok := result.GetActualInstance().(interface{ GetResourceIndicator() string }); ok {
+				item.ResourceIndicator = types.StringValue(string(obj.GetResourceIndicator()))
+			}
 			state.Items = append(state.Items, item)
 		}
 		sort.Slice(state.Items, func(i, j int) bool {

@@ -8,10 +8,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaAiAgent_read(t *testing.T) {
-	mgr := acctest.NewFixtureManager("data-sources", "okta_ai_agent", t.Name())
+func TestAccDataSourceOktaAiAgentsCredentialsJwkRsa_read(t *testing.T) {
+	mgr := acctest.NewFixtureManager("data-sources", "okta_ai_agents_credentials_jwk_rsa", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-	resourceName := "data.okta_ai_agent.test"
+	resourceName := "data.okta_ai_agents_credentials_jwk_rsa.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -22,9 +22,14 @@ func TestAccDataSourceOktaAiAgent_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "alg"),
 					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "e"),
+					resource.TestCheckResourceAttrSet(resourceName, "kid"),
 					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
+					resource.TestCheckResourceAttrSet(resourceName, "n"),
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
+					resource.TestCheckResourceAttrSet(resourceName, "use"),
 				),
 			},
 		},

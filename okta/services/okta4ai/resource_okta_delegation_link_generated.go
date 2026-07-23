@@ -45,17 +45,17 @@ type delegationLinkResource struct {
 
 // DelegationLinkModel describes the resource data model.
 type delegationLinkModel struct {
-	ID   types.String                 `tfsdk:"id"`
+	ID   types.String                  `tfsdk:"id"`
 	From *DelegationLinkModelFromModel `tfsdk:"from"`
 	To   *DelegationLinkModelToModel   `tfsdk:"to"`
 }
 
 // DelegationLinkModelFromModel is the nested model for from.
 type DelegationLinkModelFromModel struct {
-	Type               types.String `tfsdk:"type"`
-	ClientOrn          types.String `tfsdk:"client_orn"`
-	AppInstanceOrn     types.String `tfsdk:"app_instance_orn"`
-	TokenType          types.String `tfsdk:"token_type"`
+	AppInstanceOrn types.String `tfsdk:"app_instance_orn"`
+	ClientOrn      types.String `tfsdk:"client_orn"`
+	TokenType      types.String `tfsdk:"token_type"`
+	Type           types.String `tfsdk:"type"`
 }
 
 // DelegationLinkModelToModel is the nested model for to.
@@ -90,22 +90,22 @@ func (r *delegationLinkResource) Schema(_ context.Context, _ resource.SchemaRequ
 		},
 		Blocks: map[string]schema.Block{
 			"from": schema.SingleNestedBlock{
-				Description: "The source token for the delegation link",
+				Description: "From",
 				Attributes: map[string]schema.Attribute{
-					"type": schema.StringAttribute{
-						Description: "The type of token source (OKTA_AUTHORIZATION_SERVER or SAML_APPLICATION)",
-						Required:    true,
-					},
-					"client_orn": schema.StringAttribute{
-						Description: "The ORN of the OAuth 2.0 client (for OKTA_AUTHORIZATION_SERVER type)",
+					"app_instance_orn": schema.StringAttribute{
+						Description: "The [ORN](https://developer.",
 						Optional:    true,
 					},
-					"app_instance_orn": schema.StringAttribute{
-						Description: "The ORN of the SAML app instance (for SAML_APPLICATION type)",
+					"client_orn": schema.StringAttribute{
+						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the OAuth 2.",
 						Optional:    true,
 					},
 					"token_type": schema.StringAttribute{
-						Description: "The type of token accepted (ACCESS_TOKEN or SAML_ASSERTION)",
+						Description: "The type of token accepted by the delegation link",
+						Required:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "The type of token source",
 						Required:    true,
 					},
 				},
@@ -116,6 +116,7 @@ func (r *delegationLinkResource) Schema(_ context.Context, _ resource.SchemaRequ
 					"authorization_server_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the authorization server for the target resource.",
 						Optional:    true,
+						Computed:    true,
 					},
 					"resource_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the target resource",
@@ -149,11 +150,23 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-
-	// Note: 'from' is a union type returned by the API
-	// It's populated during Create but not re-fetched on Read since it's immutable
-	// Preserve the plan value in the state
-
+	if fromRaw0, ok := result.GetFromOk(); ok {
+		fromModel0 := &DelegationLinkModelFromModel{}
+		// Extract fields from union variant
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
+			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
+			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
+			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
+			fromModel0.Type = types.StringValue(string(obj.GetType()))
+		}
+		state.From = fromModel0
+	}
 	if toRaw0, ok := result.GetToOk(); ok {
 		toModel0 := &DelegationLinkModelToModel{}
 		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))
@@ -178,41 +191,43 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	// Build request body from plan
 	createReq := client.DelegationLinksAPI.CreateDelegationLink(ctx)
 	body := okta4AI.NewDelegationLinkCreatableWithDefaults()
+	if plan.From != nil {
+		var fromVal okta4AI.DelegationLinkFromCreatable
+		variantSet := false
 
-	// Note: 'from' is a union type (DelegationLinkFromCreatable) that requires:
-	// - Either an OktaAuthorizationServerDelegationLinkFromCreatable
-	// - Or a SamlApplicationDelegationLinkFromCreatable
-	if plan.From == nil {
-		resp.Diagnostics.AddError("Error creating delegation_link", "from field is required")
-		return
-	}
-
-	// Build from field based on type discriminator
-	fromType := plan.From.Type.ValueString()
-	if fromType == "OKTA_AUTHORIZATION_SERVER" {
-		// Create OktaAuthorizationServerDelegationLinkFromCreatable
-		nestedFrom := okta4AI.NewOktaAuthorizationServerDelegationLinkFromCreatableWithDefaults()
-		nestedFrom.SetType("OKTA_AUTHORIZATION_SERVER")
-		if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
-			nestedFrom.SetClientOrn(plan.From.ClientOrn.ValueString())
-		}
-		if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
-			nestedFrom.SetTokenType(plan.From.TokenType.ValueString())
-		}
-		body.SetFrom(okta4AI.OktaAuthorizationServerDelegationLinkFromCreatableAsDelegationLinkFromCreatable(nestedFrom))
-	} else if fromType == "SAML_APPLICATION" {
-		// Create SamlApplicationDelegationLinkFromCreatable
-		nestedFrom := okta4AI.NewSamlApplicationDelegationLinkFromCreatableWithDefaults()
-		nestedFrom.SetType("SAML_APPLICATION")
+		// Determine variant based on variant-specific fields
 		if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
-			nestedFrom.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
+			// SAML_APPLICATION variant
+			sub := okta4AI.NewSamlApplicationDelegationLinkFromCreatableWithDefaults()
+			sub.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
+			// Set common fields
+			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
+				sub.SetTokenType(plan.From.TokenType.ValueString())
+			}
+			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
+				sub.SetType(plan.From.Type.ValueString())
+			}
+			fromVal = okta4AI.SamlApplicationDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
+			variantSet = true
+		} else if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
+			// OKTA_AUTHORIZATION_SERVER variant
+			sub := okta4AI.NewOktaAuthorizationServerDelegationLinkFromCreatableWithDefaults()
+			sub.SetClientOrn(plan.From.ClientOrn.ValueString())
+			// Set common fields
+			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
+				sub.SetTokenType(plan.From.TokenType.ValueString())
+			}
+			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
+				sub.SetType(plan.From.Type.ValueString())
+			}
+			fromVal = okta4AI.OktaAuthorizationServerDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
+			variantSet = true
 		}
-		if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
-			nestedFrom.SetTokenType(plan.From.TokenType.ValueString())
-		}
-		body.SetFrom(okta4AI.SamlApplicationDelegationLinkFromCreatableAsDelegationLinkFromCreatable(nestedFrom))
-	}
 
+		if variantSet {
+			body.SetFrom(fromVal)
+		}
+	}
 	if plan.To != nil {
 		nestedTo := okta4AI.NewDelegationLinkToCreatableWithDefaults()
 		if !plan.To.AuthorizationServerOrn.IsNull() && !plan.To.AuthorizationServerOrn.IsUnknown() {
@@ -231,6 +246,8 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	}
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
+	to := result.GetTo()
+	plan.To.AuthorizationServerOrn = types.StringValue(string(to.GetAuthorizationServerOrn()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

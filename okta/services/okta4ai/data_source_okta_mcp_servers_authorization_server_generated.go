@@ -58,6 +58,13 @@ type McpServersAuthorizationServerDataSourceModelDetectedMetadataModel struct {
 	TokenEndpointAuthMethodsSupported            types.List   `tfsdk:"token_endpoint_auth_methods_supported"`
 }
 
+// McpServersAuthorizationServerDataSourceModelMetadataModel is the nested model for metadata.
+type McpServersAuthorizationServerDataSourceModelMetadataModel struct {
+	AuthorizationEndpoint types.String `tfsdk:"authorization_endpoint"`
+	GrantTypesSupported   types.List   `tfsdk:"grant_types_supported"`
+	TokenEndpoint         types.String `tfsdk:"token_endpoint"`
+}
+
 // McpServersAuthorizationServerDataSourceModel describes the data source data model.
 type mcpServersAuthorizationServerDataSourceModel struct {
 	ID          types.String                             `tfsdk:"id"`

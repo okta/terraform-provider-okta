@@ -39,34 +39,17 @@ type aiAgentDataSource struct {
 
 // AiAgentDataSourceModel describes the data source data model.
 type aiAgentDataSourceModel struct {
-	ID             types.String                               `tfsdk:"id"`
-	AppId          types.String                               `tfsdk:"app_id"`
-	Created        types.String                               `tfsdk:"created"`
-	ExternalId     types.String                               `tfsdk:"external_id"`
-	LastUpdated    types.String                               `tfsdk:"last_updated"`
-	OauthClient    *AiAgentDataSourceModelOauthClientModel    `tfsdk:"oauth_client"`
-	Platform       types.String                               `tfsdk:"platform"`
-	Profile        *AiAgentDataSourceModelProfileModel        `tfsdk:"profile"`
-	SignOnProvider *AiAgentDataSourceModelSignOnProviderModel `tfsdk:"sign_on_provider"`
-	Status         types.String                               `tfsdk:"status"`
-}
-
-// AiAgentDataSourceModelOauthClientModel is the nested model for oauth_client.
-type AiAgentDataSourceModelOauthClientModel struct {
-	ClientId types.String `tfsdk:"client_id"`
+	ID          types.String                        `tfsdk:"id"`
+	Created     types.String                        `tfsdk:"created"`
+	LastUpdated types.String                        `tfsdk:"last_updated"`
+	Profile     *AiAgentDataSourceModelProfileModel `tfsdk:"profile"`
+	Status      types.String                        `tfsdk:"status"`
 }
 
 // AiAgentDataSourceModelProfileModel is the nested model for profile.
 type AiAgentDataSourceModelProfileModel struct {
 	Description types.String `tfsdk:"description"`
-	ExternalId  types.String `tfsdk:"external_id"`
 	Name        types.String `tfsdk:"name"`
-	Platform    types.String `tfsdk:"platform"`
-}
-
-// AiAgentDataSourceModelSignOnProviderModel is the nested model for sign_on_provider.
-type AiAgentDataSourceModelSignOnProviderModel struct {
-	AppInstanceId types.String `tfsdk:"app_instance_id"`
 }
 
 func NewAiAgentDataSource() datasource.DataSource {
@@ -89,24 +72,12 @@ func (d *aiAgentDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 				MarkdownDescription: "Unique identifier of the ai_agent.",
 				Required:            true,
 			},
-			"app_id": schema.StringAttribute{
-				MarkdownDescription: "The ID of the connected app for the AI agent.",
-				Computed:            true,
-			},
 			"created": schema.StringAttribute{
 				MarkdownDescription: "Timestamp when the AI agent was created",
 				Computed:            true,
 			},
-			"external_id": schema.StringAttribute{
-				MarkdownDescription: "Unique external ID for an AI agent",
-				Computed:            true,
-			},
 			"last_updated": schema.StringAttribute{
 				MarkdownDescription: "Timestamp when the AI agent was updated",
-				Computed:            true,
-			},
-			"platform": schema.StringAttribute{
-				MarkdownDescription: "The hosting platform of the AI agent.",
 				Computed:            true,
 			},
 			"status": schema.StringAttribute{
@@ -115,15 +86,6 @@ func (d *aiAgentDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"oauth_client": schema.SingleNestedBlock{
-				Description: "The workload principal's OAuth client identity.",
-				Attributes: map[string]schema.Attribute{
-					"client_id": schema.StringAttribute{
-						Description: "The workload principal's OAuth `clientId`.",
-						Computed:    true,
-					},
-				},
-			},
 			"profile": schema.SingleNestedBlock{
 				Description: "AI agent profile",
 				Attributes: map[string]schema.Attribute{
@@ -131,25 +93,8 @@ func (d *aiAgentDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 						Description: "Description of the AI agent",
 						Computed:    true,
 					},
-					"external_id": schema.StringAttribute{
-						Description: "Unique external ID for an AI agent",
-						Computed:    true,
-					},
 					"name": schema.StringAttribute{
 						Description: "Unique name of the AI agent",
-						Computed:    true,
-					},
-					"platform": schema.StringAttribute{
-						Description: "The hosting platform of the AI agent.",
-						Computed:    true,
-					},
-				},
-			},
-			"sign_on_provider": schema.SingleNestedBlock{
-				Description: "The sign-on provider bound to the workload principal.",
-				Attributes: map[string]schema.Attribute{
-					"app_instance_id": schema.StringAttribute{
-						Description: "ID of the app instance bound to the workload principal.",
 						Computed:    true,
 					},
 				},
@@ -178,33 +123,18 @@ func (d *aiAgentDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 	state.ID = types.StringValue(string(result.GetId()))
-	state.AppId = types.StringValue(string(result.GetAppId()))
 	if t := result.GetCreated(); !t.IsZero() {
 		state.Created = types.StringValue(t.Format(time.RFC3339))
 	}
-	state.ExternalId = types.StringValue(string(result.GetExternalId()))
 	if t := result.GetLastUpdated(); !t.IsZero() {
 		state.LastUpdated = types.StringValue(t.Format(time.RFC3339))
 	}
-	state.Platform = types.StringValue(string(result.GetPlatform()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok {
-		oauthClientModel0 := &AiAgentDataSourceModelOauthClientModel{}
-		oauthClientModel0.ClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-		state.OauthClient = oauthClientModel0
-	}
 	if profileRaw0, ok := result.GetProfileOk(); ok {
 		profileModel0 := &AiAgentDataSourceModelProfileModel{}
 		profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
-		profileModel0.ExternalId = types.StringValue(string(profileRaw0.GetExternalId()))
 		profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
-		profileModel0.Platform = types.StringValue(string(profileRaw0.GetPlatform()))
 		state.Profile = profileModel0
-	}
-	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok {
-		signOnProviderModel0 := &AiAgentDataSourceModelSignOnProviderModel{}
-		signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
-		state.SignOnProvider = signOnProviderModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
