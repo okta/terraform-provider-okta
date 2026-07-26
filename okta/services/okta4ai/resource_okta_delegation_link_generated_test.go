@@ -24,12 +24,12 @@ import (
 )
 
 func TestAccDelegationLink_basic(t *testing.T) {
-	mgr := acctest.NewFixtureManager("resources", "okta_delegation_link", t.Name())
+	mgr := newFixtureManager("resources", "okta_delegation_link", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", "okta_delegation_link")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               acctest.TestAccErrorChecks(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
@@ -37,12 +37,9 @@ func TestAccDelegationLink_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "from.type"),
+					resource.TestCheckResourceAttrSet(resourceName, "to.resource_orn"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

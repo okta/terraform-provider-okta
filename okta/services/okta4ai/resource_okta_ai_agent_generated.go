@@ -94,7 +94,6 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			},
 			"status": schema.StringAttribute{
 				Description: "When an AI agent is created, it's in the `STAGED` status.",
-				Optional:    true,
 				Computed:    true,
 			},
 			"resource_url": schema.StringAttribute{
@@ -226,6 +225,7 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	opResp := workloadOperationsResp.(*okta4AI.WorkloadPrincipalOperationResponse)
 	result := opResp.Resource
 	plan.ID = types.StringValue(string(result.GetId()))
+	plan.Status = types.StringValue(string(result.GetStatus()))
 
 	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
@@ -233,6 +233,13 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	if readErr == nil {
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
+		plan.Status = types.StringValue(string(readResult.GetStatus()))
+		if profileRaw, ok := readResult.GetProfileOk(); ok {
+			plan.Profile = &AiAgentModelProfileModel{
+				Description: types.StringValue(string(profileRaw.GetDescription())),
+				Name:        types.StringValue(string(profileRaw.GetName())),
+			}
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

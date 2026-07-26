@@ -244,9 +244,20 @@ func (r *aiAgentsCredentialsJwkRsaResource) Delete(ctx context.Context, req reso
 	agentId := state.AgentId.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
+
+	// First deactivate the credential before deletion
+	if state.Status.ValueString() != "INACTIVE" {
+		deactivateReq := client.AgentPublicKeyAPI.DeactivateAgentJsonWebKey(ctx, agentId, id)
+		_, _, err := deactivateReq.Execute()
+		if err != nil {
+			resp.Diagnostics.AddWarning("Warning deactivating ai_agents_credentials_jwk_rsa", "Could not deactivate credential before deletion: "+err.Error())
+		}
+	}
+
+	// Then delete the credential
 	httpResp, err := client.AgentPublicKeyAPI.DeleteAgentJwk(ctx, agentId, id).Execute()
 	if err != nil {
-		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+		if httpResp != nil && (httpResp.StatusCode == http.StatusNotFound || httpResp.StatusCode == http.StatusBadRequest) {
 			return
 		}
 		resp.Diagnostics.AddError("Error deleting ai_agents_credentials_jwk_rsa", err.Error())

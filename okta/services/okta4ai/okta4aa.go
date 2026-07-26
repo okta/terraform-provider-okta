@@ -27,5 +27,9 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewAiAgentDataSource,
 		NewApiServersAuthorizationServerDataSource,
 		NewPotentialConnectionDataSource,
+		NewApiServerDataSource,
+		NewA2aServerDataSource,
+		NewA2aServersAuthorizationServerDataSource,
+		NewMcpServerDataSource,
 	}
 }

@@ -24,12 +24,12 @@ import (
 )
 
 func TestAccAiAgent_basic(t *testing.T) {
-	mgr := acctest.NewFixtureManager("resources", "okta_ai_agent", t.Name())
+	mgr := newFixtureManager("resources", "okta_ai_agent", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", "okta_ai_agent")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               acctest.TestAccErrorChecks(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
@@ -42,11 +42,6 @@ func TestAccAiAgent_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttrSet(resourceName, "resource_url"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

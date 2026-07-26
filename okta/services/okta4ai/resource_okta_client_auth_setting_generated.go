@@ -143,7 +143,6 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 				Attributes: map[string]schema.Attribute{
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes to request when obtaining tokens.",
-						ElementType: types.StringType,
 						Optional:    true,
 					},
 				},

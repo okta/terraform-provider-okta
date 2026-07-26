@@ -126,7 +126,6 @@ func (d *clientAuthSettingDataSource) Schema(_ context.Context, _ datasource.Sch
 				Attributes: map[string]schema.Attribute{
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes to request when obtaining tokens.",
-						ElementType: types.StringType,
 						Computed:    true,
 					},
 				},

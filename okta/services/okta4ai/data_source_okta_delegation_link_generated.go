@@ -137,8 +137,20 @@ func (d *delegationLinkDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 	state.ID = types.StringValue(string(result.GetId()))
-	if _, ok := result.GetFromOk(); ok {
+	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkDataSourceModelFromModel{}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
+			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
+			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
+			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
+			fromModel0.Type = types.StringValue(string(obj.GetType()))
+		}
 		state.From = fromModel0
 	}
 	if toRaw0, ok := result.GetToOk(); ok {

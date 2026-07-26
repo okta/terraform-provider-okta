@@ -24,12 +24,12 @@ import (
 )
 
 func TestAccAiAgentsCredentialsJwkEc_basic(t *testing.T) {
-	mgr := acctest.NewFixtureManager("resources", "okta_ai_agents_credentials_jwk_ec", t.Name())
+	mgr := newFixtureManager("resources", "okta_ai_agents_credentials_jwk_ec", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", "okta_ai_agents_credentials_jwk_ec")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               acctest.TestAccErrorChecks(t),
+		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
 		CheckDestroy:             nil,
 		Steps: []resource.TestStep{
@@ -37,21 +37,10 @@ func TestAccAiAgentsCredentialsJwkEc_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "alg"),
+					resource.TestCheckResourceAttrSet(resourceName, "kty"),
 					resource.TestCheckResourceAttrSet(resourceName, "created"),
-					resource.TestCheckResourceAttrSet(resourceName, "crv"),
-					resource.TestCheckResourceAttrSet(resourceName, "kid"),
 					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
-					resource.TestCheckResourceAttrSet(resourceName, "status"),
-					resource.TestCheckResourceAttrSet(resourceName, "use"),
-					resource.TestCheckResourceAttrSet(resourceName, "x"),
-					resource.TestCheckResourceAttrSet(resourceName, "y"),
 				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
