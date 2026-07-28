@@ -121,9 +121,13 @@ func checkIfUserHasGroups(ctx context.Context, client *sdk.Client, userId string
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return groups for user (%s) from API", userId)
 	}
-	var nextUserGroups []*sdk.Group
-
 	for resp.HasNextPage() {
+		// NOTE: declare the page slice inside the loop. Decoding into a slice
+		// that already holds non-nil pointers makes encoding/json reuse those
+		// pointers and overwrite the structs in place, which would corrupt the
+		// entries already appended to userGroups.
+		var nextUserGroups []*sdk.Group
+
 		resp, err = resp.Next(ctx, &nextUserGroups)
 
 		if err := utils.SuppressErrorOn404(resp, err); err != nil {
