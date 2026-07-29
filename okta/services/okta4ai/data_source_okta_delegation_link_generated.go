@@ -84,19 +84,23 @@ func (d *delegationLinkDataSource) Schema(_ context.Context, _ datasource.Schema
 				Attributes: map[string]schema.Attribute{
 					"app_instance_orn": schema.StringAttribute{
 						Description: "The [ORN](https://developer.",
+						Optional:    true,
 						Computed:    true,
 					},
 					"client_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the OAuth 2.",
+						Optional:    true,
 						Computed:    true,
 					},
 					"token_type": schema.StringAttribute{
 						Description: "The type of token accepted by the delegation link",
+						Optional:    true,
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of token source",
-						Computed:    true,
+						//Required:    true,
+						Computed: true,
 					},
 				},
 			},
@@ -105,10 +109,12 @@ func (d *delegationLinkDataSource) Schema(_ context.Context, _ datasource.Schema
 				Attributes: map[string]schema.Attribute{
 					"authorization_server_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the authorization server for the target resource.",
+						Optional:    true,
 						Computed:    true,
 					},
 					"resource_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the target resource",
+						Optional:    true,
 						Computed:    true,
 					},
 				},

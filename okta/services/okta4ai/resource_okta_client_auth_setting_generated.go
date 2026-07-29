@@ -98,12 +98,10 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 			},
 			"created": schema.StringAttribute{
 				Description: "Timestamp when the client authentication settings were created",
-				Required:    true,
 				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "Timestamp when the client authentication settings were last updated",
-				Required:    true,
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
@@ -143,7 +141,9 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 				Attributes: map[string]schema.Attribute{
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes to request when obtaining tokens.",
+						ElementType: types.StringType,
 						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -212,7 +212,30 @@ func (r *clientAuthSettingResource) Create(ctx context.Context, req resource.Cre
 	createReq := client.ResourceServerClientAuthSettingsAPI.CreateClientAuthSettings(ctx)
 	body := okta4AI.NewClientAuthSettingsCreatableWithDefaults()
 	body.SetAuthorizationServerOrn(plan.AuthorizationServerOrn.ValueString())
+	if plan.ClientCredentials != nil {
+		nestedClientCredentials := okta4AI.NewClientAuthSettingsCreatableClientCredentialsWithDefaults()
+		if !plan.ClientCredentials.ClientId.IsNull() && !plan.ClientCredentials.ClientId.IsUnknown() {
+			nestedClientCredentials.SetClientId(plan.ClientCredentials.ClientId.ValueString())
+		}
+		if !plan.ClientCredentials.ClientSecret.IsNull() && !plan.ClientCredentials.ClientSecret.IsUnknown() {
+			nestedClientCredentials.SetClientSecret(plan.ClientCredentials.ClientSecret.ValueString())
+		}
+		body.SetClientCredentials(*nestedClientCredentials)
+	}
 	body.SetName(plan.Name.ValueString())
+	if plan.OauthConfiguration != nil {
+		nestedOauthConfiguration := okta4AI.NewClientAuthSettingsCreatableOauthConfigurationWithDefaults()
+		if !plan.OauthConfiguration.Scopes.IsNull() && !plan.OauthConfiguration.Scopes.IsUnknown() {
+			var scopesSlice []string
+			for _, elem := range plan.OauthConfiguration.Scopes.Elements() {
+				if sv, ok := elem.(types.String); ok {
+					scopesSlice = append(scopesSlice, sv.ValueString())
+				}
+			}
+			nestedOauthConfiguration.SetScopes(scopesSlice)
+		}
+		body.SetOauthConfiguration(*nestedOauthConfiguration)
+	}
 	body.SetProtocol(plan.Protocol.ValueString())
 	if !plan.Purpose.IsNull() && !plan.Purpose.IsUnknown() {
 		var purposeSlice []string
@@ -239,6 +262,20 @@ func (r *clientAuthSettingResource) Create(ctx context.Context, req resource.Cre
 	plan.Name = types.StringValue(string(result.GetName()))
 	plan.Protocol = types.StringValue(string(result.GetProtocol()))
 	plan.ResourceOrn = types.StringValue(string(result.GetResourceOrn()))
+	if clientCredentialsRaw0, ok := result.GetClientCredentialsOk(); ok {
+		clientCredentialsModel0 := &ClientAuthSettingModelClientCredentialsModel{}
+		clientCredentialsModel0.ClientId = types.StringValue(string(clientCredentialsRaw0.GetClientId()))
+		plan.ClientCredentials = clientCredentialsModel0
+	}
+	if oauthConfigurationRaw0, ok := result.GetOauthConfigurationOk(); ok {
+		oauthConfigurationModel0 := &ClientAuthSettingModelOauthConfigurationModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthConfigurationRaw0.GetScopes())
+			resp.Diagnostics.Append(listDiags...)
+			oauthConfigurationModel0.Scopes = listVal
+		}
+		plan.OauthConfiguration = oauthConfigurationModel0
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -269,6 +306,19 @@ func (r *clientAuthSettingResource) Update(ctx context.Context, req resource.Upd
 		updateBody.SetClientCredentials(*nestedClientCredentials)
 	}
 	updateBody.SetName(plan.Name.ValueString())
+	if plan.OauthConfiguration != nil {
+		nestedOauthConfiguration := okta4AI.NewClientAuthSettingsPatchableOauthConfigurationWithDefaults()
+		if !plan.OauthConfiguration.Scopes.IsNull() && !plan.OauthConfiguration.Scopes.IsUnknown() {
+			var scopesSlice []string
+			for _, elem := range plan.OauthConfiguration.Scopes.Elements() {
+				if sv, ok := elem.(types.String); ok {
+					scopesSlice = append(scopesSlice, sv.ValueString())
+				}
+			}
+			nestedOauthConfiguration.SetScopes(scopesSlice)
+		}
+		updateBody.SetOauthConfiguration(*nestedOauthConfiguration)
+	}
 	updateReq = updateReq.ClientAuthSettingsPatchable(*updateBody)
 	result, _, err := updateReq.Execute()
 	if err != nil {

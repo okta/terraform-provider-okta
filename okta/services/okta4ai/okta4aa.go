@@ -13,6 +13,7 @@ func FWProviderResources() []func() resource.Resource {
 		NewAiAgentResource,
 		NewAiAgentsCredentialsJwkEcResource,
 		NewApiServerResource,
+		NewClientAuthSettingResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -31,5 +32,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewA2aServerDataSource,
 		NewA2aServersAuthorizationServerDataSource,
 		NewMcpServerDataSource,
+		NewClientAuthSettingDataSource,
 	}
 }

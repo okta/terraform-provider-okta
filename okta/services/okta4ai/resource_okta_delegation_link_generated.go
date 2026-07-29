@@ -102,7 +102,7 @@ func (r *delegationLinkResource) Schema(_ context.Context, _ resource.SchemaRequ
 					},
 					"token_type": schema.StringAttribute{
 						Description: "The type of token accepted by the delegation link",
-						Required:    true,
+						Optional:    true,
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of token source",
@@ -152,7 +152,6 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkModelFromModel{}
-		// Extract fields from union variant
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
 			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
 		}
@@ -194,26 +193,11 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	if plan.From != nil {
 		var fromVal okta4AI.DelegationLinkFromCreatable
 		variantSet := false
-
-		// Determine variant based on variant-specific fields
-		if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
-			// SAML_APPLICATION variant
-			sub := okta4AI.NewSamlApplicationDelegationLinkFromCreatableWithDefaults()
-			sub.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
-			// Set common fields
-			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
-				sub.SetTokenType(plan.From.TokenType.ValueString())
-			}
-			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
-				sub.SetType(plan.From.Type.ValueString())
-			}
-			fromVal = okta4AI.SamlApplicationDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
-			variantSet = true
-		} else if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
-			// OKTA_AUTHORIZATION_SERVER variant
+		if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
 			sub := okta4AI.NewOktaAuthorizationServerDelegationLinkFromCreatableWithDefaults()
-			sub.SetClientOrn(plan.From.ClientOrn.ValueString())
-			// Set common fields
+			if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
+				sub.SetClientOrn(plan.From.ClientOrn.ValueString())
+			}
 			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
 				sub.SetTokenType(plan.From.TokenType.ValueString())
 			}
@@ -222,11 +206,24 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 			}
 			fromVal = okta4AI.OktaAuthorizationServerDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
 			variantSet = true
+		} else if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
+			sub := okta4AI.NewSamlApplicationDelegationLinkFromCreatableWithDefaults()
+			if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
+				sub.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
+			}
+			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
+				sub.SetTokenType(plan.From.TokenType.ValueString())
+			}
+			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
+				sub.SetType(plan.From.Type.ValueString())
+			}
+			fromVal = okta4AI.SamlApplicationDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
+			variantSet = true
 		}
-
 		if variantSet {
 			body.SetFrom(fromVal)
 		}
+
 	}
 	if plan.To != nil {
 		nestedTo := okta4AI.NewDelegationLinkToCreatableWithDefaults()
@@ -246,9 +243,29 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	}
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
-	to := result.GetTo()
-	plan.To.AuthorizationServerOrn = types.StringValue(string(to.GetAuthorizationServerOrn()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	if fromRaw0, ok := result.GetFromOk(); ok {
+		fromModel0 := &DelegationLinkModelFromModel{}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
+			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
+			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
+			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
+		}
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
+			fromModel0.Type = types.StringValue(string(obj.GetType()))
+		}
+		plan.From = fromModel0
+	}
+	if toRaw0, ok := result.GetToOk(); ok {
+		toModel0 := &DelegationLinkModelToModel{}
+		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))
+		toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		plan.To = toModel0
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }

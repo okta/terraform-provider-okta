@@ -117,6 +117,7 @@ func (d *clientAuthSettingDataSource) Schema(_ context.Context, _ datasource.Sch
 				Attributes: map[string]schema.Attribute{
 					"client_id": schema.StringAttribute{
 						Description: "OAuth client ID",
+						Optional:    true,
 						Computed:    true,
 					},
 				},
@@ -126,6 +127,8 @@ func (d *clientAuthSettingDataSource) Schema(_ context.Context, _ datasource.Sch
 				Attributes: map[string]schema.Attribute{
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes to request when obtaining tokens.",
+						ElementType: types.StringType,
+						Optional:    true,
 						Computed:    true,
 					},
 				},
