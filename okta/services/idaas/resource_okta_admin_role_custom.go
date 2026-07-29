@@ -199,7 +199,40 @@ func flattenPermissions(permissions []*sdk.Permission) interface{} {
 	for i := range permissions {
 		arr[i] = permissions[i].Label
 	}
+	// The Okta API auto-expands some permissions, returning additional labels
+	// alongside the ones that were configured. Normalize them back to the
+	// user's intended configuration to avoid perpetual state drift.
+	normalized := normalizePermissions(utils.ConvertInterfaceArrToStringArr(arr))
+	arr = make([]interface{}, len(normalized))
+	for i, label := range normalized {
+		arr[i] = label
+	}
 	return schema.NewSet(schema.HashString, arr)
+}
+
+func normalizePermissions(apiPermissions []string) []string {
+	present := make(map[string]bool, len(apiPermissions))
+	for _, perm := range apiPermissions {
+		present[perm] = true
+	}
+
+	// Suppress an expanded permission only when its original is also present.
+	suppressed := make(map[string]bool)
+	if present["okta.workflows.read"] {
+		suppressed["okta.workflows.flows.read"] = true
+	}
+	if present["okta.workflows.invoke"] {
+		suppressed["okta.workflows.flows.invoke"] = true
+	}
+
+	result := make([]string, 0, len(apiPermissions))
+	for _, perm := range apiPermissions {
+		if suppressed[perm] {
+			continue
+		}
+		result = append(result, perm)
+	}
+	return result
 }
 
 func addCustomRolePermissions(ctx context.Context, client *sdk.APISupplement, roleIdOrLabel string, permissions []string) error {
