@@ -1,5 +1,43 @@
 # Changelog
 
+## 6.14.0 (July 29, 2026)
+
+### FEATURES
+* Migrated `okta_trusted_origin` resource to Terraform Plugin Framework with new `okta_trusted_origin` data source [#2884](https://github.com/okta/terraform-provider-okta/pull/2884) by
+[@pranav-okta](https://github.com/pranav-okta)
+* Added new resource `okta_org_captcha` for managing org-wide CAPTCHA settings [#2885](https://github.com/okta/terraform-provider-okta/pull/2885) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_captcha` to read CAPTCHA configurations [#2885](https://github.com/okta/terraform-provider-okta/pull/2885) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_org_captcha` to read org-wide CAPTCHA settings [#2885](https://github.com/okta/terraform-provider-okta/pull/2885) by [@pranav-okta](https://github.com/pranav-okta)
+* Added 13 new OAuth2 v1 client role assignment resources [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [@pranav-okta](https://github.com/pranav-okta):
+  * `okta_oauth2_v1_clients_role_access_certifications_admin`
+  * `okta_oauth2_v1_clients_role_access_requests_admin`
+  * `okta_oauth2_v1_clients_role_api_access_management_admin`
+  * `okta_oauth2_v1_clients_role_app_admin`
+  * `okta_oauth2_v1_clients_role_custom`
+  * `okta_oauth2_v1_clients_role_group_membership_admin`
+  * `okta_oauth2_v1_clients_role_help_desk_admin`
+  * `okta_oauth2_v1_clients_role_org_admin`
+  * `okta_oauth2_v1_clients_role_read_only_admin`
+  * `okta_oauth2_v1_clients_role_report_admin`
+  * `okta_oauth2_v1_clients_role_super_admin`
+  * `okta_oauth2_v1_clients_role_user_admin`
+  * `okta_oauth2_v1_clients_role_workflows_admin`
+
+### ENHANCEMENTS
+* Added new `IFRAME_EMBED` scope type to `okta_trusted_origin` resource [#2884](https://github.com/okta/terraform-provider-okta/pull/2884) by [@pranav-okta](https://github.com/pranav-okta)
+
+### DEPRECATIONS
+* Deprecated resource `okta_captcha_org_wide_settings`. Use `okta_org_captcha` instead. This resource will be removed in a future version [#2885](https://github.com/okta/terraform-provider-okta/pull/2885) by
+  [@pranav-okta](https://github.com/pranav-okta)
+* Deprecated attribute `groups_claim` of `okta_app_oauth` with OAuth 2.0 tokens. Added an error message for this. [#2889](https://github.com/okta/terraform-provider-okta/pull/2889) by [@pranav-okta](https://github.com/pranav-okta)
+
+### BREAKING CHANGES
+* `okta_trusted_origin`: `active` attribute replaced by `status` (values: `ACTIVE`/`INACTIVE`) [#2884](https://github.com/okta/terraform-provider-okta/pull/2884) by
+[@pranav-okta](https://github.com/pranav-okta)
+* `okta_trusted_origin`: `scopes` changed from a list of strings to a list of blocks with `type` and `allowed_okta_apps` attributes [#2884](https://github.com/okta/terraform-provider-okta/pull/2884) by
+[@pranav-okta](https://github.com/pranav-okta)
+
+
 ## 6.13.0 (June 30, 2026)
 
 ### FEATURES
