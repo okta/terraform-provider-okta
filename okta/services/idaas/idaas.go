@@ -225,6 +225,7 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
 		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
 		resources.OktaIDaaSBehavior:                      resourceBehavior(),
+		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 		resources.OktaIDaaSDomain:                        resourceDomain(),
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
 		resources.OktaIDaaSDomainVerification:            resourceDomainVerification(),
