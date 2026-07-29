@@ -86,7 +86,7 @@ resource "okta_app_oauth" "example" {
 - `consent_method` (String) *Early Access Property*. Indicates whether user consent is required or implicit. Valid values: REQUIRED, TRUSTED. Default value is TRUSTED. Note: Enable `API_ACCESS_MANAGEMENT`, `API_ACCESS_MANAGEMENT_CONSENT` feature flags in your org to use this property.
 - `enduser_note` (String) Application notes for end users.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types. Conditional validation params found here https://developer.okta.com/docs/api/resources/apps#credentials-settings-details. Defaults to minimum requirements per app type.
-- `groups_claim` (Block Set, Max: 1) Groups claim for an OpenID Connect client application (argument is ignored when API auth is done with OAuth 2.0 credentials, and is not supported when `preconfigured_app` is set) (see [below for nested schema](#nestedblock--groups_claim))
+- `groups_claim` (Block Set, Max: 1) **DEPRECATED.** Groups claim for an OpenID Connect client application. **Requires SSWS API token authentication** — when the provider is configured with OAuth 2.0 credentials (`private_key` or `access_token`), this block is silently skipped and the claim is never written to the app. A Terraform-visible warning is emitted in this case. Not supported when `preconfigured_app` is set. Use `okta_auth_server_claim` (requires Custom Authorization Server / API Access Management subscription) instead. (see [below for nested schema](#nestedblock--groups_claim))
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users
 - `implicit_assignment` (Boolean) *Early Access Property*. Enable Federation Broker Mode.
