@@ -22,10 +22,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccCaptcha_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_captcha", t.Name())
+func TestAccOrgCaptcha_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", "okta_org_captcha", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", "okta_captcha")
+	resourceName := fmt.Sprintf("%s.test", "okta_org_captcha")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
@@ -35,17 +35,8 @@ func TestAccCaptcha_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
-					resource.TestCheckResourceAttrSet(resourceName, "name"),
-					resource.TestCheckResourceAttrSet(resourceName, "site_key"),
-					resource.TestCheckResourceAttrSet(resourceName, "type"),
+					resource.TestCheckResourceAttrSet(resourceName, "captcha_id"),
 				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"secret_key"},
 			},
 		},
 	})

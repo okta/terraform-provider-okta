@@ -134,6 +134,8 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		newCaptchaResource,
+		newOrgCaptchaResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -185,6 +187,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
+		newCaptchaDataSource,
+		newOrgCaptchaDataSource,
 	}
 }
 
@@ -222,7 +226,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
 		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
 		resources.OktaIDaaSBehavior:                      resourceBehavior(),
-		resources.OktaIDaaSCaptcha:                       resourceCaptcha(),
 		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 		resources.OktaIDaaSDomain:                        resourceDomain(),
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
