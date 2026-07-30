@@ -43,6 +43,35 @@ func TestAccResourceOktaAdminRoleCustom_crud(t *testing.T) {
 		})
 }
 
+func TestAccResourceOktaAdminRoleCustom_workflowPermissionNoDrift(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAdminRoleCustom, t.Name())
+	config := mgr.GetFixtures("workflow_permissions.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAdminRoleCustom)
+	acctest.OktaResourceTest(
+		t, resource.TestCase{
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAdminRoleCustom, doesAdminRoleCustomExist),
+			Steps: []resource.TestStep{
+				{
+					Config: config,
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+						resource.TestCheckResourceAttr(resourceName, "description", "workflow permission drift check"),
+						resource.TestCheckResourceAttr(resourceName, "permissions.#", "1"),
+						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.invoke"),
+					),
+				},
+				{
+					Config:             config,
+					PlanOnly:           true,
+					ExpectNonEmptyPlan: false,
+				},
+			},
+		})
+}
+
 func doesAdminRoleCustomExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetCustomRole(context.Background(), id)

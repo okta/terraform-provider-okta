@@ -135,7 +135,13 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.Errorf("failed to list permissions for custom admin role: %v", err)
 	}
-	_ = d.Set("permissions", flattenPermissions(perms.Permissions))
+	// The Okta API can return both the legacy workflow permission labels
+	// (okta.workflows.invoke / okta.workflows.read) and their newer aliases
+	// (okta.workflows.flows.invoke / okta.workflows.flows.read). Keep whichever
+	// form is already recorded in state so we don't introduce perpetual drift.
+	statePermissions := utils.ConvertInterfaceToStringSetNullable(d.Get("permissions"))
+	apiPermissions := reconcileWorkflowPermissions(statePermissions, perms.Permissions)
+	_ = d.Set("permissions", flattenPermissions(apiPermissions))
 	return nil
 }
 
@@ -199,40 +205,52 @@ func flattenPermissions(permissions []*sdk.Permission) interface{} {
 	for i := range permissions {
 		arr[i] = permissions[i].Label
 	}
-	// The Okta API auto-expands some permissions, returning additional labels
-	// alongside the ones that were configured. Normalize them back to the
-	// user's intended configuration to avoid perpetual state drift.
-	normalized := normalizePermissions(utils.ConvertInterfaceArrToStringArr(arr))
-	arr = make([]interface{}, len(normalized))
-	for i, label := range normalized {
-		arr[i] = label
-	}
 	return schema.NewSet(schema.HashString, arr)
 }
 
-func normalizePermissions(apiPermissions []string) []string {
-	present := make(map[string]bool, len(apiPermissions))
-	for _, perm := range apiPermissions {
-		present[perm] = true
+// reconcileWorkflowPermissions removes a redundant workflow permission alias
+// from the API response when state already tracks the other form. The Okta API
+// exposes the same workflow permission under a legacy label and a newer alias:
+//
+//	okta.workflows.invoke <-> okta.workflows.flows.invoke
+//	okta.workflows.read   <-> okta.workflows.flows.read
+//
+// Whichever form the user already has in state wins, so the opposite form is
+// discarded from the API response before it is written back to state.
+func reconcileWorkflowPermissions(statePermissions []string, apiPermissions []*sdk.Permission) []*sdk.Permission {
+	inState := make(map[string]bool, len(statePermissions))
+	for _, p := range statePermissions {
+		inState[p] = true
 	}
 
-	// Suppress an expanded permission only when its original is also present.
-	suppressed := make(map[string]bool)
-	if present["okta.workflows.read"] {
-		suppressed["okta.workflows.flows.read"] = true
-	}
-	if present["okta.workflows.invoke"] {
-		suppressed["okta.workflows.flows.invoke"] = true
+	existingToNew := map[string]string{
+		"okta.workflows.invoke": "okta.workflows.flows.invoke",
+		"okta.workflows.read":   "okta.workflows.flows.read",
 	}
 
-	result := make([]string, 0, len(apiPermissions))
-	for _, perm := range apiPermissions {
-		if suppressed[perm] {
+	discard := make(map[string]bool)
+	for legacy, modern := range existingToNew {
+		switch {
+		case inState[legacy]:
+			// state uses the legacy label, discard the newer alias from the API response
+			discard[modern] = true
+		case inState[modern]:
+			// state uses the newer alias, discard the legacy label from the API response
+			discard[legacy] = true
+		}
+	}
+	if len(discard) == 0 {
+		return apiPermissions
+	}
+
+	filtered := make([]*sdk.Permission, 0, len(apiPermissions))
+	for _, p := range apiPermissions {
+		if p != nil && discard[p.Label] {
 			continue
 		}
-		result = append(result, perm)
+		filtered = append(filtered, p)
 	}
-	return result
+	return filtered
 }
 
 func addCustomRolePermissions(ctx context.Context, client *sdk.APISupplement, roleIdOrLabel string, permissions []string) error {
