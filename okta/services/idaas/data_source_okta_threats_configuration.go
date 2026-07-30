@@ -18,6 +18,7 @@ package idaas
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -115,7 +116,7 @@ func (d *threatsConfigurationDataSource) Read(ctx context.Context, req datasourc
 	{
 		results, httpResp, err := client.ThreatInsightAPI.GetCurrentConfiguration(ctx).Execute()
 		if err != nil {
-			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
 				resp.Diagnostics.AddError("Not Found", "No threats_configuration resources were found.")
 				return
 			}
@@ -123,7 +124,19 @@ func (d *threatsConfigurationDataSource) Read(ctx context.Context, req datasourc
 			return
 		}
 		result := results
-		_ = result
+		excludeZones, diags := types.ListValueFrom(ctx, types.StringType, result.GetExcludeZones())
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		item := threatsConfigurationItemModel{
+			ID:           types.StringValue("threats_configuration"),
+			Action:       types.StringValue(result.GetAction()),
+			Created:      types.StringValue(result.GetCreated().Format(time.RFC3339)),
+			ExcludeZones: excludeZones,
+			LastUpdated:  types.StringValue(result.GetLastUpdated().Format(time.RFC3339)),
+		}
+		state.Items = []threatsConfigurationItemModel{item}
 		state.ID = types.StringValue("okta_threats_configuration_list")
 	}
 
