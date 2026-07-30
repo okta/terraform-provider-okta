@@ -86,6 +86,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 
 func FWProviderResources() []func() resource.Resource {
 	rawResources := []func() resource.Resource{
+		newTrustedOriginResource,
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -133,6 +134,8 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		newCaptchaResource,
+		newOrgCaptchaResource,
 		newThreatsConfigurationResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
@@ -185,6 +188,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
+		newCaptchaDataSource,
+		newOrgCaptchaDataSource,
 		newThreatsConfigurationDataSource,
 	}
 }
@@ -223,7 +228,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
 		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
 		resources.OktaIDaaSBehavior:                      resourceBehavior(),
-		resources.OktaIDaaSCaptcha:                       resourceCaptcha(),
 		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 		resources.OktaIDaaSDomain:                        resourceDomain(),
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
@@ -273,7 +277,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
 		resources.OktaIDaaSTheme:                      resourceTheme(),
 		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
 		resources.OktaIDaaSUser:                       resourceUser(),
 		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
 		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
