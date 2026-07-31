@@ -43,9 +43,10 @@ func TestAccResourceOktaAdminRoleCustom_crud(t *testing.T) {
 		})
 }
 
-func TestAccResourceOktaAdminRoleCustom_workflowPermissionNoDrift(t *testing.T) {
+func TestAccResourceOktaAdminRoleCustom_workflowPermissionAliasMigration(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAdminRoleCustom, t.Name())
-	config := mgr.GetFixtures("workflow_permissions.tf", t)
+	legacy := mgr.GetFixtures("workflow_permission_legacy.tf", t)
+	alias := mgr.GetFixtures("workflow_permission_alias.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAdminRoleCustom)
 	acctest.OktaResourceTest(
 		t, resource.TestCase{
@@ -55,16 +56,26 @@ func TestAccResourceOktaAdminRoleCustom_workflowPermissionNoDrift(t *testing.T) 
 			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAdminRoleCustom, doesAdminRoleCustomExist),
 			Steps: []resource.TestStep{
 				{
-					Config: config,
+					Config: legacy,
 					Check: resource.ComposeTestCheckFunc(
-						resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
-						resource.TestCheckResourceAttr(resourceName, "description", "workflow permission drift check"),
 						resource.TestCheckResourceAttr(resourceName, "permissions.#", "1"),
-						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.invoke"),
+						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.read"),
 					),
 				},
 				{
-					Config:             config,
+					// Swap to the alias label. Post-apply the framework runs a
+					// refresh + plan and fails on a non-empty plan, which is
+					// exactly the regression: the old logic deleted the
+					// permission here, requiring a second apply to re-add it.
+					Config: alias,
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "permissions.#", "1"),
+						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.flows.read"),
+					),
+				},
+				{
+					// Explicit no-drift assertion after the migration.
+					Config:             alias,
 					PlanOnly:           true,
 					ExpectNonEmptyPlan: false,
 				},
