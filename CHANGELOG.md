@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.14.0 (Unreleased)
+
+### BREAKING CHANGES
+
+* **`okta_template_sms`**: Migrated from the legacy SDKv2 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `translations` attribute has changed from a set of objects (`{language, template}`) to a `map(string)`. The `type` and `template` attributes are now optional (previously required). New computed attributes `created` and `last_updated` are available. Existing configurations must update the `translations` block accordingly.
+* **`okta_email_template_settings`**: Migrated from the legacy Framework + SDKv3 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `recipients` attribute is now optional (previously required). The `brand_id` and `template_name` attributes now force resource replacement when changed.
+
+### FEATURES
+
+* Added new resource `okta_brands_templates_email_customization` for managing email template customizations per brand [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+
+### ENHANCEMENTS
+
+* Migrated `okta_template_sms` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_email_template_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+
 ## 6.13.0 (June 30, 2026)
 
 ### FEATURES
