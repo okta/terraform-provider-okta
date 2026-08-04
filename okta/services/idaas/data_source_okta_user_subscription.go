@@ -23,52 +23,50 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta "github.com/okta/okta-sdk-golang/v6/okta"
-
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 var (
-	_ datasource.DataSource              = &roleSubscriptionDataSource{}
-	_ datasource.DataSourceWithConfigure = &roleSubscriptionDataSource{}
+	_ datasource.DataSource              = &userSubscriptionDataSource{}
+	_ datasource.DataSourceWithConfigure = &userSubscriptionDataSource{}
 )
 
-// RoleSubscriptionDataSource defines the data source implementation.
-type roleSubscriptionDataSource struct {
+// UserSubscriptionDataSource defines the data source implementation.
+type userSubscriptionDataSource struct {
 	Config *config.Config
 }
 
-// RoleSubscriptionDataSourceModel describes the data source data model.
-type roleSubscriptionDataSourceModel struct {
+// UserSubscriptionDataSourceModel describes the data source data model.
+type userSubscriptionDataSourceModel struct {
 	ID               types.String `tfsdk:"id"`
-	RoleRef          types.String `tfsdk:"role_ref"`
+	UserId           types.String `tfsdk:"user_id"`
 	Channels         types.List   `tfsdk:"channels"`
 	NotificationType types.String `tfsdk:"notification_type"`
 	Status           types.String `tfsdk:"status"`
 }
 
-func newRoleSubscriptionDataSource() datasource.DataSource {
-	return &roleSubscriptionDataSource{}
+func newUserSubscriptionDataSource() datasource.DataSource {
+	return &userSubscriptionDataSource{}
 }
 
-func (d *roleSubscriptionDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_role_subscription"
+func (d *userSubscriptionDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_user_subscription"
 }
 
-func (d *roleSubscriptionDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *userSubscriptionDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *roleSubscriptionDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *userSubscriptionDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Retrieves a subscription by `notificationType` for a specified Role",
+		MarkdownDescription: "Retrieves a subscription by `notificationType` for a specified user.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the role_subscription.",
+				MarkdownDescription: "Unique identifier of the user_subscription.",
 				Required:            true,
 			},
-			"role_ref": schema.StringAttribute{
-				MarkdownDescription: "A reference to an existing role",
+			"user_id": schema.StringAttribute{
+				MarkdownDescription: "ID of an existing Okta user",
 				Required:            true,
 			},
 			"channels": schema.ListAttribute{
@@ -88,8 +86,8 @@ func (d *roleSubscriptionDataSource) Schema(_ context.Context, _ datasource.Sche
 	}
 }
 
-func (d *roleSubscriptionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state roleSubscriptionDataSourceModel
+func (d *userSubscriptionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state userSubscriptionDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -98,15 +96,14 @@ func (d *roleSubscriptionDataSource) Read(ctx context.Context, req datasource.Re
 
 	client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
 	id := state.ID.ValueString()
-	roleRefStr := state.RoleRef.ValueString()
-	roleRef := okta.StringAsListSubscriptionsRoleRoleRefParameter(&roleRefStr)
-	result, httpResp, err := client.SubscriptionAPI.GetSubscriptionsNotificationTypeRole(ctx, roleRef, id).Execute()
+	userId := state.UserId.ValueString()
+	result, httpResp, err := client.SubscriptionAPI.GetSubscriptionsNotificationTypeUser(ctx, id, userId).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.Diagnostics.AddError("Not Found", "role_subscription with the given ID was not found.")
+			resp.Diagnostics.AddError("Not Found", "user_subscription with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading role_subscription", err.Error())
+		resp.Diagnostics.AddError("Error reading user_subscription", err.Error())
 		return
 	}
 	state.ID = types.StringValue(string(result.GetNotificationType()))

@@ -1,5 +1,22 @@
 # Changelog
 
+## 6.15.0 (Unreleased)
+
+### BREAKING CHANGES
+
+* **`okta_role_subscription`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `role_type` attribute has been renamed to `role_ref`. The `status` attribute has been removed; use `notification_type` and manage subscription state directly.
+* **`okta_role_subscription` (data source)**: `role_type` renamed to `role_ref`. `notification_type` moved from required input to computed output; pass the notification type as `id` instead. New computed attribute `channels` added.
+
+### FEATURES
+
+* Added new resource `okta_user_subscription` for managing notification subscriptions for individual users [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_user_subscription` to read a user's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_role_subscription` to read a role's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+
+### ENHANCEMENTS
+
+* Migrated `okta_role_subscription` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+
 ## 6.14.0 (Jul 30, 2026)
 
 ### FEATURES

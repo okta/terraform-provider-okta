@@ -149,6 +149,8 @@ func FWProviderResources() []func() resource.Resource {
 		newOauth2V1ClientsRoleSuperAdminResource,
 		newOauth2V1ClientsRoleUserAdminResource,
 		newOauth2V1ClientsRoleWorkflowsAdminResource,
+		newRoleSubscriptionResource,
+		newUserSubscriptionResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -202,6 +204,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newIamResourceSetDataSource,
 		newCaptchaDataSource,
 		newOrgCaptchaDataSource,
+		newRoleSubscriptionDataSource,
+		newUserSubscriptionDataSource,
 	}
 }
 
@@ -283,7 +287,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
 		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
 		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
 		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
 		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
 		resources.OktaIDaaSTheme:                      resourceTheme(),
@@ -336,7 +339,6 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
 		resources.OktaIDaaSPolicyRulePassword:       dataSourcePolicyRulePassword(),
-		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),
 		resources.OktaIDaaSTrustedOrigins:           dataSourceTrustedOrigins(),
