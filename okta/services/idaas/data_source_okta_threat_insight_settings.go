@@ -18,7 +18,6 @@ package idaas
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -28,17 +27,17 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &threatsConfigurationDataSource{}
-	_ datasource.DataSourceWithConfigure = &threatsConfigurationDataSource{}
+	_ datasource.DataSource              = &threatInsightSettingsDataSource{}
+	_ datasource.DataSourceWithConfigure = &threatInsightSettingsDataSource{}
 )
 
-// ThreatsConfigurationDataSource defines the data source implementation.
-type threatsConfigurationDataSource struct {
+// ThreatInsightSettingsDataSource defines the data source implementation.
+type threatInsightSettingsDataSource struct {
 	Config *config.Config
 }
 
-// ThreatsConfigurationItemModel is one element returned by the list endpoint.
-type threatsConfigurationItemModel struct {
+// ThreatInsightSettingsItemModel is one element returned by the list endpoint.
+type threatInsightSettingsItemModel struct {
 	ID           types.String `tfsdk:"id"`
 	Action       types.String `tfsdk:"action"`
 	Created      types.String `tfsdk:"created"`
@@ -46,37 +45,37 @@ type threatsConfigurationItemModel struct {
 	LastUpdated  types.String `tfsdk:"last_updated"`
 }
 
-// ThreatsConfigurationDataSourceModel describes the data source data model.
-type threatsConfigurationDataSourceModel struct {
-	ID    types.String                    `tfsdk:"id"`
-	Items []threatsConfigurationItemModel `tfsdk:"items"`
+// ThreatInsightSettingsDataSourceModel describes the data source data model.
+type threatInsightSettingsDataSourceModel struct {
+	ID    types.String                     `tfsdk:"id"`
+	Items []threatInsightSettingsItemModel `tfsdk:"items"`
 }
 
-func newThreatsConfigurationDataSource() datasource.DataSource {
-	return &threatsConfigurationDataSource{}
+func newThreatInsightSettingsDataSource() datasource.DataSource {
+	return &threatInsightSettingsDataSource{}
 }
 
-func (d *threatsConfigurationDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_threats_configuration"
+func (d *threatInsightSettingsDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_threat_insight_settings"
 }
 
-func (d *threatsConfigurationDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *threatInsightSettingsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *threatsConfigurationDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *threatInsightSettingsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Retrieves the ThreatInsight configuration for the org",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the threats_configuration.",
+				MarkdownDescription: "Unique identifier of the threat_insight_settings.",
 				Optional:            true,
 				Computed:            true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"items": schema.ListNestedBlock{
-				MarkdownDescription: "List of threats_configuration items.",
+				MarkdownDescription: "List of threat_insight_settings items.",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.StringAttribute{Computed: true},
@@ -104,8 +103,8 @@ func (d *threatsConfigurationDataSource) Schema(_ context.Context, _ datasource.
 	}
 }
 
-func (d *threatsConfigurationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state threatsConfigurationDataSourceModel
+func (d *threatInsightSettingsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state threatInsightSettingsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -116,28 +115,16 @@ func (d *threatsConfigurationDataSource) Read(ctx context.Context, req datasourc
 	{
 		results, httpResp, err := client.ThreatInsightAPI.GetCurrentConfiguration(ctx).Execute()
 		if err != nil {
-			if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
-				resp.Diagnostics.AddError("Not Found", "No threats_configuration resources were found.")
+			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+				resp.Diagnostics.AddError("Not Found", "No threat_insight_settings resources were found.")
 				return
 			}
-			resp.Diagnostics.AddError("Error listing threats_configuration", err.Error())
+			resp.Diagnostics.AddError("Error listing threat_insight_settings", err.Error())
 			return
 		}
 		result := results
-		excludeZones, diags := types.ListValueFrom(ctx, types.StringType, result.GetExcludeZones())
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
-		item := threatsConfigurationItemModel{
-			ID:           types.StringValue("threats_configuration"),
-			Action:       types.StringValue(result.GetAction()),
-			Created:      types.StringValue(result.GetCreated().Format(time.RFC3339)),
-			ExcludeZones: excludeZones,
-			LastUpdated:  types.StringValue(result.GetLastUpdated().Format(time.RFC3339)),
-		}
-		state.Items = []threatsConfigurationItemModel{item}
-		state.ID = types.StringValue("okta_threats_configuration_list")
+		_ = result
+		state.ID = types.StringValue("okta_threat_insight_settings_list")
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

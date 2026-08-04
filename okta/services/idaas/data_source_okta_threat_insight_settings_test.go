@@ -8,10 +8,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaThreatsConfiguration_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", "okta_threats_configuration", t.Name())
+func TestAccDataSourceOktaThreatInsightSettings_read(t *testing.T) {
+	mgr := newFixtureManager("data-sources", "okta_threat_insight_settings", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-	resourceName := "data.okta_threats_configuration.test"
+	resourceName := "data.okta_threat_insight_settings.test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
