@@ -264,10 +264,10 @@ The only difference is that these fields are immutable and can not be managed: '
 			"office365_client_include": {
 				Type:        schema.TypeSet,
 				Optional:    true,
-				Description: "Office 365 client types to include. Valid values: WEB, MODERN_AUTH, EXCHANGE_ACTIVE_SYNC, AAD_JOIN. This condition is specific to Office 365 applications.",
+				Description: "Office 365 client types to include. Valid values: WEB, MODERN_AUTH, ACTIVE_SYNC, AAD_JOIN, CERT_BASED_AUTH. This condition is specific to Office 365 applications.",
 				Elem: &schema.Schema{
 					Type:             schema.TypeString,
-					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"WEB", "MODERN_AUTH", "EXCHANGE_ACTIVE_SYNC", "AAD_JOIN"}, false)),
+					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"WEB", "MODERN_AUTH", "ACTIVE_SYNC", "AAD_JOIN", "CERT_BASED_AUTH"}, false)),
 				},
 			},
 		},
