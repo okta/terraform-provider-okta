@@ -18,11 +18,8 @@
 The Terraform Okta provider is a plugin for Terraform that allows for the full lifecycle management of Okta resources.
 This provider is maintained internally by the Okta development team.
 
-## :tada: __It's Official__ :tada:
-We’re excited to announce that with v6.1.0, the Terraform Okta provider now officially supports the Okta Governance API.
-
 > [!CAUTION]
-> With this release, all 5.x versions of the provider will soon be **deprecated**.
+> **DO NOT UPGRADE. Since v6.14.0 contains breaking changes, we recommend using the v6.13.0 and we will address this in our next release.**
 
 ## Examples
 
