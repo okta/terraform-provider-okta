@@ -238,7 +238,6 @@ func (p *FrameworkProvider) Configure(ctx context.Context, req provider.Configur
 func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	var sources []func() datasource.DataSource
 	sources = append(sources, idaas.FWProviderDataSources()...)
-	sources = append(sources, idaas.FWProviderGeneratedDataSources()...)
 	sources = append(sources, governance.FWProviderDataSources()...)
 
 	// Wrap all data sources with SafeDataSource for panic recovery
@@ -251,7 +250,6 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 
 	// Append resources from various modules
 	res = append(res, idaas.FWProviderResources()...)
-	res = append(res, idaas.FWProviderGeneratedResources()...)
 	res = append(res, governance.FWProviderResources()...)
 
 	// Wrap all resources with SafeResource for panic recovery

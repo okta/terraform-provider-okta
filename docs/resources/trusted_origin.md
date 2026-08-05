@@ -14,9 +14,7 @@ Creates a Trusted Origin. This resource allows you to create and configure a Tru
 resource "okta_trusted_origin" "example" {
   name   = "example"
   origin = "https://example.com"
-  scopes {
-    type = "CORS"
-  }
+  scopes = ["CORS"]
 }
 ```
 
@@ -25,29 +23,17 @@ resource "okta_trusted_origin" "example" {
 
 ### Required
 
-- `name` (String) Unique name for the trusted origin
-- `origin` (String) Unique origin URL for the trusted origin.
-- `scopes` (Block List, Min: 1) Array of scope types that this trusted origin is used for (see [below for nested schema](#nestedblock--scopes))
+- `name` (String) Unique name for this trusted origin
+- `origin` (String) Unique origin URL for this trusted origin
+- `scopes` (List of String) Scopes of the Trusted Origin - can either be `CORS` and/or `REDIRECT`
 
 ### Optional
 
-- `status` (String) Status of the trusted origin. Values: ACTIVE, INACTIVE
+- `active` (Boolean) Whether the Trusted Origin is active or not - can only be issued post-creation. By default, it is `true`.
 
 ### Read-Only
 
-- `id` (String) The unique identifier for the resource.
-- `created` (String) Timestamp when the trusted origin was created
-- `created_by` (String) The ID of the user who created the trusted origin
-- `last_updated` (String) Timestamp when the trusted origin was last updated
-- `last_updated_by` (String) The ID of the user who last updated the trusted origin
-
-<a id="nestedblock--scopes"></a>
-### Nested Schema for `scopes`
-
-Optional:
-
-- `type` (String) The scope type. Supported values: `CORS`, `REDIRECT`, `IFRAME_EMBED`
-- `allowed_okta_apps` (List of String) The allowed Okta apps for the trusted origin scope
+- `id` (String) The ID of this resource.
 
 ## Import
 
