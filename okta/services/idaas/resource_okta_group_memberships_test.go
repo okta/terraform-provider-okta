@@ -81,8 +81,8 @@ func TestAccResourceOktaGroupMemberships_GH2775(t *testing.T) {
 }
 
 // TestAccResourceOktaGroupMemberships_Issue2866 addresses https://github.com/okta/terraform-provider-okta/issues/2866
-// Verifies that a 403 from Okta during okta_group_memberships Update is surfaced as an apply error
-// rather than being silently swallowed and reported as a successful apply.
+// Verifies that an API error (e.g. 403 E0000006 on a group with an Application Administrator role binding)
+// during okta_group_memberships Update is surfaced as an apply error rather than being silently swallowed.
 func TestAccResourceOktaGroupMemberships_Issue2866(t *testing.T) {
 	step1 := `
 resource "okta_group" "test" {
@@ -118,7 +118,7 @@ resource "okta_group_memberships" "test" {
 			},
 			{
 				Config:      step2,
-				ExpectError: regexp.MustCompile(`E0000006`),
+				ExpectError: regexp.MustCompile(`You do not have permission to perform the requested action`),
 			},
 		},
 	})
