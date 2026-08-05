@@ -196,12 +196,12 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 
 	err := addGroupMembers(ctx, client, groupId, usersToAdd)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 
 	err = removeGroupMembers(ctx, client, groupId, usersToRemove)
 	if err != nil {
-		diag.FromErr(err)
+		return diag.FromErr(err)
 	}
 
 	return nil
