@@ -134,8 +134,6 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
-		newCaptchaResource,
-		newOrgCaptchaResource,
 		newOauth2V1ClientsRoleAccessCertificationsAdminResource,
 		newOauth2V1ClientsRoleAccessRequestsAdminResource,
 		newOauth2V1ClientsRoleApiAccessManagementAdminResource,
@@ -200,8 +198,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
-		newCaptchaDataSource,
-		newOrgCaptchaDataSource,
 	}
 }
 
@@ -239,6 +235,7 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
 		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
 		resources.OktaIDaaSBehavior:                      resourceBehavior(),
+		resources.OktaIDaaSCaptcha:                       resourceCaptcha(),
 		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 		resources.OktaIDaaSDomain:                        resourceDomain(),
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
