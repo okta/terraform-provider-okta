@@ -164,6 +164,7 @@ const (
 	OktaGovernancePrincipalEntitlements               = "okta_principal_entitlements"
 	OktaGovernanceRequestCondition                    = "okta_request_condition"
 	OktaGovernanceRequestSequence                     = "okta_request_sequence"
+	OktaGovernanceRequestSequences                    = "okta_request_sequences"
 	OktaGovernanceRequestSettingOrganization          = "okta_request_setting_organization"
 	OktaGovernanceRequestSettingResource              = "okta_request_setting_resource"
 	OktaGovernanceRequestV2                           = "okta_request_v2"
