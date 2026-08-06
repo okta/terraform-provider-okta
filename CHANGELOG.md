@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.14.0 (Unreleased)
+## 7.0.0 (Unreleased)
 
 ### BREAKING CHANGES
 
