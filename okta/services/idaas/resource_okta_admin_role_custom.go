@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -135,7 +136,13 @@ func resourceAdminRoleCustomRead(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.Errorf("failed to list permissions for custom admin role: %v", err)
 	}
-	_ = d.Set("permissions", flattenPermissions(perms.Permissions))
+	// The Okta API can return both the legacy workflow permission labels
+	// (okta.workflows.invoke / okta.workflows.read) and their newer aliases
+	// (okta.workflows.flows.invoke / okta.workflows.flows.read). Keep whichever
+	// form is already recorded in state so we don't introduce perpetual drift.
+	statePermissions := utils.ConvertInterfaceToStringSetNullable(d.Get("permissions"))
+	apiPermissions := reconcileWorkflowPermissions(statePermissions, perms.Permissions)
+	_ = d.Set("permissions", flattenPermissions(apiPermissions))
 	return nil
 }
 
@@ -155,8 +162,33 @@ func resourceAdminRoleCustomUpdate(ctx context.Context, d *schema.ResourceData, 
 	oldSet := oldPermissions.(*schema.Set)
 	newSet := newPermissions.(*schema.Set)
 
-	permissionsToAdd := utils.ConvertInterfaceArrToStringArr(newSet.Difference(oldSet).List())
-	permissionsToRemove := utils.ConvertInterfaceArrToStringArr(oldSet.Difference(newSet).List())
+	// okta.workflows.flows.* is an alias of okta.workflows.* for the same
+	// underlying permission. Diffing on the raw labels reports an alias swap
+	// (e.g. okta.workflows.read -> okta.workflows.flows.read) as an add + a
+	// remove that cancel out, deleting the permission and forcing a second
+	// apply. Diff on the de-aliased label so a swap is a no-op.
+	canonical := func(p string) string {
+		return strings.Replace(p, "okta.workflows.flows.", "okta.workflows.", 1)
+	}
+	oldByCanon := map[string]string{}
+	for _, p := range utils.ConvertInterfaceArrToStringArr(oldSet.List()) {
+		oldByCanon[canonical(p)] = p
+	}
+
+	var permissionsToAdd, permissionsToRemove []string
+	newCanon := map[string]bool{}
+	for _, p := range utils.ConvertInterfaceArrToStringArr(newSet.List()) {
+		c := canonical(p)
+		newCanon[c] = true
+		if _, ok := oldByCanon[c]; !ok {
+			permissionsToAdd = append(permissionsToAdd, p)
+		}
+	}
+	for c, p := range oldByCanon {
+		if !newCanon[c] {
+			permissionsToRemove = append(permissionsToRemove, p)
+		}
+	}
 
 	err := addCustomRolePermissions(ctx, client, d.Id(), permissionsToAdd)
 	if err != nil {
@@ -200,6 +232,46 @@ func flattenPermissions(permissions []*sdk.Permission) interface{} {
 		arr[i] = permissions[i].Label
 	}
 	return schema.NewSet(schema.HashString, arr)
+}
+
+// reconcileWorkflowPermissions removes a redundant workflow permission alias
+// from the API response when state already tracks the other form. The Okta API
+// exposes 2 variations of the same workflow permission
+//
+//	okta.workflows.invoke <-> okta.workflows.flows.invoke
+//	okta.workflows.read   <-> okta.workflows.flows.read
+func reconcileWorkflowPermissions(statePermissions []string, apiPermissions []*sdk.Permission) []*sdk.Permission {
+	inState := make(map[string]bool, len(statePermissions))
+	for _, p := range statePermissions {
+		inState[p] = true
+	}
+
+	existingToNew := map[string]string{
+		"okta.workflows.invoke": "okta.workflows.flows.invoke",
+		"okta.workflows.read":   "okta.workflows.flows.read",
+	}
+
+	discard := make(map[string]bool)
+	for legacy, modern := range existingToNew {
+		switch {
+		case inState[legacy]:
+			discard[modern] = true // state uses the legacy label, discard the newer alias from the API response
+		case inState[modern]:
+			discard[legacy] = true // state uses the newer alias, discard the legacy label from the API response
+		}
+	}
+	if len(discard) == 0 {
+		return apiPermissions
+	}
+
+	filtered := make([]*sdk.Permission, 0, len(apiPermissions))
+	for _, p := range apiPermissions {
+		if p != nil && discard[p.Label] {
+			continue
+		}
+		filtered = append(filtered, p)
+	}
+	return filtered
 }
 
 func addCustomRolePermissions(ctx context.Context, client *sdk.APISupplement, roleIdOrLabel string, permissions []string) error {
