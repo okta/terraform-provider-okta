@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.14.0 (Unreleased)
+## 7.0.0 (Unreleased)
 
 ### BREAKING CHANGES
 
@@ -15,6 +15,11 @@
 
 * Migrated `okta_template_sms` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Migrated `okta_email_template_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+
+## 6.14.0 (Jul 30, 2026)
+
+### FEATURES
+* Adds support for office365Client config in `okta_ap_signon_policy_rule` resource [#2644](https://github.com/okta/terraform-provider-okta/pull/2644) by [aditya-okta](https://github.com/aditya-okta)
 
 ## 6.13.0 (June 30, 2026)
 
