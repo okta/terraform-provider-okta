@@ -16,10 +16,20 @@
 * Migrated `okta_template_sms` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Migrated `okta_email_template_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 
+## 6.15.0 (Aug 5, 2026)
+### BUG FIXES
+* Updates documentation for `okta_ap_signon_policy_rule` resource to include `office365_client_include` [#2916](https://github.com/okta/terraform-provider-okta/pull/2916) by [aditya-okta](https://github.com/aditya-okta)
+* Updates documentation for `oauthv1 client role` resources [#2917](https://github.com/okta/terraform-provider-okta/pull/2917) by [pranav-okta](https://github.com/pranav-okta)
+* Normalize Workflow Permission Expansion for `okta_admin_role_custom` resources [#2902](https://github.com/okta/terraform-provider-okta/pull/2902) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Normalize chains JSON keys during plan phase for `okta_app_signon_policy_rules` resource [#2906](https://github.com/okta/terraform-provider-okta/pull/2906) by [aditya-okta](https://github.com/aditya-okta)
+* Resolved breaking changes reported in v6.14.0 [#2915](https://github.com/okta/terraform-provider-okta/pull/2915), [#2914](#https://github.com/okta/terraform-provider-okta/pull/2914) by [pranav-okta](https://github.com/pranav-okta)
+
 ## 6.14.0 (Jul 30, 2026)
 
 ### FEATURES
 * Adds support for office365Client config in `okta_ap_signon_policy_rule` resource [#2644](https://github.com/okta/terraform-provider-okta/pull/2644) by [aditya-okta](https://github.com/aditya-okta)
+* Adds new resources for oauthv1 clients [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [pranav-okta](https://github.com/pranav-okta)
+
 
 ## 6.13.0 (June 30, 2026)
 
