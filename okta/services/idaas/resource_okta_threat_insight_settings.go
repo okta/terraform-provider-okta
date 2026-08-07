@@ -159,10 +159,38 @@ func (r *threatInsightSettingsResource) Create(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *threatInsightSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	resp.Diagnostics.AddWarning(
-		"Update Not Supported",
-		"This resource does not support in-place updates. Changes will require resource replacement.",
-	)
+	var plan threatInsightSettingsModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+
+	updateReq := client.ThreatInsightAPI.UpdateConfiguration(ctx)
+	body := okta.NewThreatInsightConfigurationWithDefaults()
+	body.SetAction(plan.Action.ValueString())
+	if !plan.ExcludeZones.IsNull() && !plan.ExcludeZones.IsUnknown() {
+		var excludeZonesSlice []string
+		for _, item := range plan.ExcludeZones.Elements() {
+			if sv, ok := item.(types.String); ok {
+				excludeZonesSlice = append(excludeZonesSlice, sv.ValueString())
+			}
+		}
+		body.SetExcludeZones(excludeZonesSlice)
+	}
+	updateReq = updateReq.ThreatInsightConfiguration(*body)
+	result, _, err := updateReq.Execute()
+	if err != nil {
+		resp.Diagnostics.AddError("Error updating threat_insight_settings", err.Error())
+		return
+	}
+	plan.ID = types.StringValue("threat_insight_settings")
+	plan.Action = types.StringValue(string(result.GetAction()))
+	plan.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
+	plan.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (r *threatInsightSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

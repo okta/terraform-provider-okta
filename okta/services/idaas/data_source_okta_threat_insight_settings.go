@@ -18,6 +18,7 @@ package idaas
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -112,20 +113,36 @@ func (d *threatInsightSettingsDataSource) Read(ctx context.Context, req datasour
 	}
 
 	client := d.Config.OktaIDaaSClient.OktaSDKClientV6()
-	{
-		results, httpResp, err := client.ThreatInsightAPI.GetCurrentConfiguration(ctx).Execute()
-		if err != nil {
-			if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-				resp.Diagnostics.AddError("Not Found", "No threat_insight_settings resources were found.")
-				return
-			}
-			resp.Diagnostics.AddError("Error listing threat_insight_settings", err.Error())
+	result, httpResp, err := client.ThreatInsightAPI.GetCurrentConfiguration(ctx).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.Diagnostics.AddError("Not Found", "No threat_insight_settings resources were found.")
 			return
 		}
-		result := results
-		_ = result
-		state.ID = types.StringValue("okta_threat_insight_settings_list")
+		resp.Diagnostics.AddError("Error listing threat_insight_settings", err.Error())
+		return
 	}
+
+	excludeZones := result.GetExcludeZones()
+	excludeZoneVals := make([]types.String, len(excludeZones))
+	for i, z := range excludeZones {
+		excludeZoneVals[i] = types.StringValue(z)
+	}
+	excludeZoneList, diags := types.ListValueFrom(ctx, types.StringType, excludeZoneVals)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	item := threatInsightSettingsItemModel{
+		ID:           types.StringValue("threat_insight_settings"),
+		Action:       types.StringValue(string(result.GetAction())),
+		Created:      types.StringValue(result.GetCreated().Format(time.RFC3339)),
+		LastUpdated:  types.StringValue(result.GetLastUpdated().Format(time.RFC3339)),
+		ExcludeZones: excludeZoneList,
+	}
+	state.Items = []threatInsightSettingsItemModel{item}
+	state.ID = types.StringValue("okta_threat_insight_settings_list")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

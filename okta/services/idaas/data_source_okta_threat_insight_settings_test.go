@@ -16,7 +16,7 @@ func TestAccDataSourceOktaThreatInsightSettings_read(t *testing.T) {
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactoriesForTestAcc(t),
 		Steps: []resource.TestStep{
 			{
 				Config: config,

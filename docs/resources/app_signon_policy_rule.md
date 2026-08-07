@@ -370,6 +370,7 @@ resource "okta_app_signon_policy_rule" "test" {
 - `users_excluded` (Set of String) Set of User IDs to exclude
 - `users_included` (Set of String) Set of User IDs to include
 - `chains` (Block List) Authentication method chains. Only supports 5 items in the array. Each chain can support maximum 3 steps. To be used only with verification method type `AUTH_METHOD_CHAIN`.(see [below for nested schema](#nestedblock--chains))
+- `office365_client_include` (Set of String) Set of Office 365 Client IDs to include. Only available with Office 365 applications. Valid values include `WEB`, `MODERN_AUTH`, `ACTIVE_SYNC`, `AAD_JOIN`, `CERT_BASED_AUTH`.
 
 ### Read-Only
 
