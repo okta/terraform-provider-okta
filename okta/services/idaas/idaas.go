@@ -103,7 +103,6 @@ func FWProviderResources() []func() resource.Resource {
 		newGroupOwnersResource,
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
-		newBrandsTemplatesEmailCustomizationResource,
 		newTemplateSmsResource,
 		newFeaturesResource,
 		newRealmResource,
