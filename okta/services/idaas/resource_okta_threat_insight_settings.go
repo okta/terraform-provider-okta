@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"time"
 
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -33,8 +34,9 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource              = &threatInsightSettingsResource{}
-	_ resource.ResourceWithConfigure = &threatInsightSettingsResource{}
+	_ resource.Resource                = &threatInsightSettingsResource{}
+	_ resource.ResourceWithConfigure   = &threatInsightSettingsResource{}
+	_ resource.ResourceWithImportState = &threatInsightSettingsResource{}
 )
 
 // ThreatInsightSettingsResource defines the resource implementation.
@@ -47,7 +49,7 @@ type threatInsightSettingsModel struct {
 	ID           types.String `tfsdk:"id"`
 	Action       types.String `tfsdk:"action"`
 	Created      types.String `tfsdk:"created"`
-	ExcludeZones types.List   `tfsdk:"exclude_zones"`
+	ExcludeZones types.Set    `tfsdk:"exclude_zones"`
 	LastUpdated  types.String `tfsdk:"last_updated"`
 }
 
@@ -65,7 +67,7 @@ func (r *threatInsightSettingsResource) Configure(_ context.Context, req resourc
 
 func (r *threatInsightSettingsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "[Okta ThreatInsight](https://help.",
+		Description: "Manages Okta ThreatInsight Settings. Configure how Okta responds to authentication requests from suspicious IP addresses.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique identifier for the resource.",
@@ -82,7 +84,7 @@ func (r *threatInsightSettingsResource) Schema(_ context.Context, _ resource.Sch
 				Description: "Timestamp when the ThreatInsight Configuration object was created",
 				Computed:    true,
 			},
-			"exclude_zones": schema.ListAttribute{
+			"exclude_zones": schema.SetAttribute{
 				Description: "Accepts a list of [Network Zone](/openapi/okta-management/management/networkzone/) IDs.",
 				ElementType: types.StringType,
 				Optional:    true,
@@ -93,6 +95,9 @@ func (r *threatInsightSettingsResource) Schema(_ context.Context, _ resource.Sch
 			},
 		},
 	}
+}
+func (r *threatInsightSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
 func (r *threatInsightSettingsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -115,6 +120,12 @@ func (r *threatInsightSettingsResource) Read(ctx context.Context, req resource.R
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Action = types.StringValue(string(result.GetAction()))
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
+	{
+		rawExcludeZones := result.GetExcludeZones()
+		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+		state.ExcludeZones = mappedExcludeZones
+	}
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
 	state.ID = types.StringValue("threat_insight_settings")
@@ -154,6 +165,12 @@ func (r *threatInsightSettingsResource) Create(ctx context.Context, req resource
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 	plan.Action = types.StringValue(string(result.GetAction()))
 	plan.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
+	{
+		rawExcludeZones := result.GetExcludeZones()
+		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+		plan.ExcludeZones = mappedExcludeZones
+	}
 	plan.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -165,11 +182,18 @@ func (r *threatInsightSettingsResource) Update(ctx context.Context, req resource
 		return
 	}
 
+	var state threatInsightSettingsModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
+	// Build request body from plan — only send changed fields
 	updateReq := client.ThreatInsightAPI.UpdateConfiguration(ctx)
-	body := okta.NewThreatInsightConfigurationWithDefaults()
-	body.SetAction(plan.Action.ValueString())
+	updateBody := okta.NewThreatInsightConfigurationWithDefaults()
+	updateBody.SetAction(plan.Action.ValueString())
 	if !plan.ExcludeZones.IsNull() && !plan.ExcludeZones.IsUnknown() {
 		var excludeZonesSlice []string
 		for _, item := range plan.ExcludeZones.Elements() {
@@ -177,20 +201,27 @@ func (r *threatInsightSettingsResource) Update(ctx context.Context, req resource
 				excludeZonesSlice = append(excludeZonesSlice, sv.ValueString())
 			}
 		}
-		body.SetExcludeZones(excludeZonesSlice)
+		updateBody.SetExcludeZones(excludeZonesSlice)
 	}
-	updateReq = updateReq.ThreatInsightConfiguration(*body)
+	updateReq = updateReq.ThreatInsightConfiguration(*updateBody)
 	result, _, err := updateReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating threat_insight_settings", err.Error())
 		return
 	}
-	plan.ID = types.StringValue("threat_insight_settings")
-	plan.Action = types.StringValue(string(result.GetAction()))
-	plan.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
-	plan.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
+	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
+	state.ID = types.StringValue("threat_insight_settings")
+	state.Action = types.StringValue(string(result.GetAction()))
+	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
+	{
+		rawExcludeZones := result.GetExcludeZones()
+		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+		state.ExcludeZones = mappedExcludeZones
+	}
+	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (r *threatInsightSettingsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
