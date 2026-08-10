@@ -122,9 +122,13 @@ func (r *threatInsightSettingsResource) Read(ctx context.Context, req resource.R
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	{
 		rawExcludeZones := result.GetExcludeZones()
-		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
-		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
-		state.ExcludeZones = mappedExcludeZones
+		if len(rawExcludeZones) == 0 {
+			state.ExcludeZones = types.SetNull(types.StringType)
+		} else {
+			mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+			resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+			state.ExcludeZones = mappedExcludeZones
+		}
 	}
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
@@ -167,9 +171,13 @@ func (r *threatInsightSettingsResource) Create(ctx context.Context, req resource
 	plan.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	{
 		rawExcludeZones := result.GetExcludeZones()
-		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
-		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
-		plan.ExcludeZones = mappedExcludeZones
+		if len(rawExcludeZones) == 0 {
+			plan.ExcludeZones = types.SetNull(types.StringType)
+		} else {
+			mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+			resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+			plan.ExcludeZones = mappedExcludeZones
+		}
 	}
 	plan.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
@@ -215,9 +223,13 @@ func (r *threatInsightSettingsResource) Update(ctx context.Context, req resource
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	{
 		rawExcludeZones := result.GetExcludeZones()
-		mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
-		resp.Diagnostics.Append(mappedExcludeZonesDiags...)
-		state.ExcludeZones = mappedExcludeZones
+		if len(rawExcludeZones) == 0 {
+			state.ExcludeZones = types.SetNull(types.StringType)
+		} else {
+			mappedExcludeZones, mappedExcludeZonesDiags := types.SetValueFrom(ctx, types.StringType, rawExcludeZones)
+			resp.Diagnostics.Append(mappedExcludeZonesDiags...)
+			state.ExcludeZones = mappedExcludeZones
+		}
 	}
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 
