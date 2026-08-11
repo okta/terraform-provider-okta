@@ -32,7 +32,7 @@ resource "okta_email_template_settings" "example" {
 
 ### Read-Only
 
-- `id` (String) The ID of the resource. This is a compound ID of the brand ID and the template name.
+- `id` (String) The ID of this resource. Format: `<brand_id>/<template_name>`.
 
 ## Import
 

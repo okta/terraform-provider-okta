@@ -81,23 +81,23 @@ func (r *templateSmsResource) Schema(_ context.Context, _ resource.SchemaRequest
 				},
 			},
 			"created": schema.StringAttribute{
-				Description: "Created",
+				Description: "Timestamp when the template was created.",
 				Computed:    true,
 			},
 			"last_updated": schema.StringAttribute{
-				Description: "LastUpdated",
+				Description: "Timestamp when the template was last updated.",
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "Human-readable name of the Template",
+				Description: "Human-readable name of the template.",
 				Optional:    true,
 			},
 			"template": schema.StringAttribute{
-				Description: "Text of the Template, including any [macros](https://developer.",
+				Description: "Text of the template, including any [macros](https://developer.okta.com/docs/reference/api/sms-templates/#sms-template-macros). Maximum length is 160 characters.",
 				Optional:    true,
 			},
 			"translations": schema.MapAttribute{
-				Description: "- Template translations are optionally provided when you want to localize the SMS messages.",
+				Description: "Optional translations for the SMS template. Keys are two-letter ISO 639-1 language codes; values are the translated template text.",
 				ElementType: types.StringType,
 				Optional:    true,
 			},
@@ -166,6 +166,13 @@ func (r *templateSmsResource) Create(ctx context.Context, req resource.CreateReq
 	body.SetName(plan.Name.ValueString())
 	body.SetTemplate(plan.Template.ValueString())
 	body.SetType(plan.Type.ValueString())
+	if !plan.Translations.IsNull() && !plan.Translations.IsUnknown() {
+		raw := make(map[string]interface{})
+		for k, v := range plan.Translations.Elements() {
+			raw[k] = v.(types.String).ValueString()
+		}
+		body.SetTranslations(raw)
+	}
 	createReq = createReq.SmsTemplate(*body)
 	result, _, err := createReq.Execute()
 	if err != nil {
@@ -214,6 +221,13 @@ func (r *templateSmsResource) Update(ctx context.Context, req resource.UpdateReq
 	updateBody.SetName(plan.Name.ValueString())
 	updateBody.SetTemplate(plan.Template.ValueString())
 	updateBody.SetType(plan.Type.ValueString())
+	if !plan.Translations.IsNull() && !plan.Translations.IsUnknown() {
+		raw := make(map[string]interface{})
+		for k, v := range plan.Translations.Elements() {
+			raw[k] = v.(types.String).ValueString()
+		}
+		updateBody.SetTranslations(raw)
+	}
 	updateReq = updateReq.SmsTemplate(*updateBody)
 	result, _, err := updateReq.Execute()
 	if err != nil {

@@ -18,7 +18,9 @@ package idaas
 import (
 	"context"
 	"net/http"
+	"strings"
 
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -32,8 +34,9 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource              = &emailTemplateSettingsResource{}
-	_ resource.ResourceWithConfigure = &emailTemplateSettingsResource{}
+	_ resource.Resource                = &emailTemplateSettingsResource{}
+	_ resource.ResourceWithConfigure   = &emailTemplateSettingsResource{}
+	_ resource.ResourceWithImportState = &emailTemplateSettingsResource{}
 )
 
 // EmailTemplateSettingsResource defines the resource implementation.
@@ -66,7 +69,7 @@ func (r *emailTemplateSettingsResource) Schema(_ context.Context, _ resource.Sch
 		Description: "These endpoints allow you to programmatically manage email customizations.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Description: "The unique identifier for the resource.",
+				Description: "The ID of this resource. Format: `<brand_id>/<template_name>`.",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
@@ -116,9 +119,24 @@ func (r *emailTemplateSettingsResource) Read(ctx context.Context, req resource.R
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Recipients = types.StringValue(string(result.GetRecipients()))
 
-	state.ID = types.StringValue("email_template_settings")
+	state.ID = types.StringValue(brandId + "/" + templateName)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+}
+
+func (r *emailTemplateSettingsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Import ID format: {brand_id}/{template_name}
+	parts := strings.SplitN(req.ID, "/", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		resp.Diagnostics.AddError(
+			"Invalid import ID",
+			"Import ID must be in the format: {brand_id}/{template_name}",
+		)
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("brand_id"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("template_name"), parts[1])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), req.ID)...)
 }
 
 func (r *emailTemplateSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -142,7 +160,7 @@ func (r *emailTemplateSettingsResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("Error creating email_template_settings", err.Error())
 		return
 	}
-	plan.ID = types.StringValue("email_template_settings")
+	plan.ID = types.StringValue(brandId + "/" + templateName)
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 	plan.Recipients = types.StringValue(string(result.GetRecipients()))
 
@@ -176,7 +194,7 @@ func (r *emailTemplateSettingsResource) Update(ctx context.Context, req resource
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
-	state.ID = types.StringValue("email_template_settings")
+	state.ID = types.StringValue(brandId + "/" + templateName)
 	state.Recipients = types.StringValue(string(result.GetRecipients()))
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
