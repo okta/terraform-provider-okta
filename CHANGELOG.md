@@ -9,6 +9,8 @@
 * **`okta_threat_insight_settings`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `network_excludes` attribute has been renamed to `exclude_zones`. New computed attributes `created` and `last_updated` added.
 * **`okta_role_subscription`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `role_type` attribute has been renamed to `role_ref`. The `status` attribute has been removed; use `notification_type` and manage subscription state directly.
 * **`okta_role_subscription` (data source)**: `role_type` renamed to `role_ref`. `notification_type` moved from required input to computed output; pass the notification type as `id` instead. New computed attribute `channels` added.
+* **`okta_template_sms`**: Migrated from the legacy SDKv2 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `translations` attribute has changed from a set of objects (`{language, template}`) to a `map(string)`. The `type` and `template` attributes are now optional (previously required). New computed attributes `created` and `last_updated` are available. Existing configurations must update the `translations` block accordingly.
+* **`okta_email_template_settings`**: Migrated from the legacy Framework + SDKv3 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `recipients` attribute is now optional (previously required). The `brand_id` and `template_name` attributes now force resource replacement when changed.
 
 ### FEATURES
 
@@ -17,6 +19,7 @@
 * Added new resource `okta_user_subscription` for managing notification subscriptions for individual users [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Added new data source `okta_user_subscription` to read a user's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Added new data source `okta_role_subscription` to read a role's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new resource `okta_brands_templates_email_customization` for managing email template customizations per brand [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 
 ### ENHANCEMENTS
 
@@ -25,6 +28,8 @@
 * Migrated `okta_threat_insight_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Adds new resources for oauthv1 clients [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [pranav-okta](https://github.com/pranav-okta)
 * Migrated `okta_role_subscription` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_template_sms` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_email_template_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 
 
 ## 6.15.0 (Aug 5, 2026)
