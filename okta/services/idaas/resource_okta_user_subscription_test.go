@@ -23,10 +23,10 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccRoleSubscription_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_role_subscription", t.Name())
+func TestAccUserSubscription_basic(t *testing.T) {
+	mgr := newFixtureManager("resources", "okta_user_subscription", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", "okta_role_subscription")
+	resourceName := fmt.Sprintf("%s.test", "okta_user_subscription")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),

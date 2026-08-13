@@ -1,27 +1,26 @@
 ---
 page_title: "Resource: okta_role_subscription"
 description: |-
-  Manages group subscription.
-  This resource allows you to configure subscriptions of a Role with a specific type.
+  Manages role subscription.
+  This resource allows you to configure subscriptions of a Role with a specific notification type.
   Check configure email notifications https://help.okta.com/oie/en-us/Content/Topics/Security/custom-admin-role/administrator-email-settings.htm
   page regarding what notifications are available for specific admin roles.
 ---
 
 # Resource: okta_role_subscription
 
-Manages group subscription.
-		
-This resource allows you to configure subscriptions of a Role with a specific type. 
-Check [configure email notifications](https://help.okta.com/oie/en-us/Content/Topics/Security/custom-admin-role/administrator-email-settings.htm) 
+Manages role subscription.
+
+This resource allows you to configure subscriptions of a Role with a specific notification type.
+Check [configure email notifications](https://help.okta.com/oie/en-us/Content/Topics/Security/custom-admin-role/administrator-email-settings.htm)
 page regarding what notifications are available for specific admin roles.
 
 ## Example Usage
 
 ```terraform
 resource "okta_role_subscription" "test" {
-  role_type         = "SUPER_ADMIN"
+  role_ref          = "SUPER_ADMIN"
   notification_type = "APP_IMPORT"
-  status            = "unsubscribed"
 }
 ```
 
@@ -30,45 +29,46 @@ resource "okta_role_subscription" "test" {
 
 ### Required
 
-- `notification_type` (String) Type of the notification. Valid values: 
-	- 'CONNECTOR_AGENT' -  Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
-	- 'USER_LOCKED_OUT' - User lockouts.
-	- 'APP_IMPORT' - App user import status.
-	- 'LDAP_AGENT' - Disconnects and reconnects: LDAP agent.
-	- 'AD_AGENT' - Disconnects and reconnects: AD agent.
-	- 'OKTA_ANNOUNCEMENT' - Okta release notes and announcements.
-	- 'OKTA_UPDATE' - Scheduled system updates.
-	- 'IWA_AGENT' - Disconnects and reconnects: IWA agent.
-	- 'USER_DEPROVISION' - User deprovisions.
-	- 'REPORT_SUSPICIOUS_ACTIVITY' - User reporting of suspicious activity.
-	- 'RATELIMIT_NOTIFICATION' - Rate limit warning and violation.
-	- 'AGENT_AUTO_UPDATE_NOTIFICATION' - Agent auto-update notifications: AD Agent.
-- `role_type` (String) Type of the role. Valid values:
-	'API_ADMIN',
-	'APP_ADMIN',
-	'CUSTOM',
-	'GROUP_MEMBERSHIP_ADMIN',
-	'HELP_DESK_ADMIN',
-	'MOBILE_ADMIN',
-	'ORG_ADMIN',
-	'READ_ONLY_ADMIN',
-	'REPORT_ADMIN',
-	'SUPER_ADMIN',
-	'USER_ADMIN'
-	. See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types).
+- `role_ref` (String) A reference to an existing role. Valid values:
+	`API_ADMIN`,
+	`APP_ADMIN`,
+	`CUSTOM`,
+	`GROUP_MEMBERSHIP_ADMIN`,
+	`HELP_DESK_ADMIN`,
+	`MOBILE_ADMIN`,
+	`ORG_ADMIN`,
+	`READ_ONLY_ADMIN`,
+	`REPORT_ADMIN`,
+	`SUPER_ADMIN`,
+	`USER_ADMIN`.
+	See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types).
+- `notification_type` (String) Type of the notification. Valid values:
+	- `CONNECTOR_AGENT` - Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
+	- `USER_LOCKED_OUT` - User lockouts.
+	- `APP_IMPORT` - App user import status.
+	- `LDAP_AGENT` - Disconnects and reconnects: LDAP agent.
+	- `AD_AGENT` - Disconnects and reconnects: AD agent.
+	- `OKTA_ANNOUNCEMENT` - Okta release notes and announcements.
+	- `OKTA_UPDATE` - Scheduled system updates.
+	- `IWA_AGENT` - Disconnects and reconnects: IWA agent.
+	- `USER_DEPROVISION` - User deprovisions.
+	- `REPORT_SUSPICIOUS_ACTIVITY` - User reporting of suspicious activity.
+	- `RATELIMIT_NOTIFICATION` - Rate limit warning and violation.
+	- `AGENT_AUTO_UPDATE_NOTIFICATION` - Agent auto-update notifications: AD Agent.
 
 ### Optional
 
-- `status` (String) Subscription status. Valid values: `subscribed`, `unsubscribed`.
+- `channels` (List of String) An array of sources to send notifications to users.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The ID of this resource. Format: `<role_ref>/<notification_type>`.
+- `status` (String) The status of the subscription.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_role_subscription.example <role_type>/<notification_type>
+terraform import okta_role_subscription.example <role_ref>/<notification_type>
 ```
