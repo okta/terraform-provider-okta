@@ -147,6 +147,7 @@ func FWProviderResources() []func() resource.Resource {
 		newOauth2V1ClientsRoleUserAdminResource,
 		newOauth2V1ClientsRoleWorkflowsAdminResource,
 		newRoleSubscriptionResource,
+		newThreatInsightSettingsResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -199,6 +200,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
 		newRoleSubscriptionDataSource,
+		newThreatInsightSettingsDataSource,
 	}
 }
 
@@ -283,6 +285,7 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
 		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
 		resources.OktaIDaaSTheme:                      resourceTheme(),
+		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
 		resources.OktaIDaaSUser:                       resourceUser(),
 		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
 		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
