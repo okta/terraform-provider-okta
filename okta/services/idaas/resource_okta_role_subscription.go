@@ -97,7 +97,7 @@ func (r *roleSubscriptionResource) Schema(_ context.Context, _ resource.SchemaRe
 			},
 			"status": schema.StringAttribute{
 				Description: "The status of the subscription",
-				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -166,6 +166,17 @@ func (r *roleSubscriptionResource) Create(ctx context.Context, req resource.Crea
 	plan.ID = types.StringValue(roleRef + "/" + notificationType)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	readReq := resource.ReadRequest{State: resp.State}
+	readResp := &resource.ReadResponse{State: resp.State}
+	r.Read(ctx, readReq, readResp)
+	resp.Diagnostics.Append(readResp.Diagnostics...)
+	if !resp.Diagnostics.HasError() {
+		resp.State = readResp.State
+	}
 }
 func (r *roleSubscriptionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	resp.Diagnostics.AddWarning(
