@@ -53,3 +53,11 @@ resource "okta_org_captcha" "example" {
 ### Read-Only
 
 - `id` (String) The unique identifier for the resource.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+terraform import okta_org_captcha.example _
+```

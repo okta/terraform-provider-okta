@@ -18,6 +18,7 @@ import (
 	"context"
 	"net/http"
 
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -31,8 +32,9 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource              = &orgCaptchaResource{}
-	_ resource.ResourceWithConfigure = &orgCaptchaResource{}
+	_ resource.Resource                = &orgCaptchaResource{}
+	_ resource.ResourceWithConfigure   = &orgCaptchaResource{}
+	_ resource.ResourceWithImportState = &orgCaptchaResource{}
 )
 
 // OrgCaptchaResource defines the resource implementation.
@@ -81,6 +83,10 @@ func (r *orgCaptchaResource) Schema(_ context.Context, _ resource.SchemaRequest,
 			},
 		},
 	}
+}
+
+func (r *orgCaptchaResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
 func (r *orgCaptchaResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
