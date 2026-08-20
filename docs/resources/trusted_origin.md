@@ -22,21 +22,17 @@ resource "okta_trusted_origin" "example" {
 
 ## Upgrading from v6.x.x
 
-In v7.x.x, `okta_trusted_origin` needs to be defined differently than in v6.x.x, as illustrated by the following example:
-
-_v6.x.x_
+In v7.x.x, `scopes` changed from a list of strings to a block. Update existing configurations as follows:
 
 ```terraform
+# Before
 resource "okta_trusted_origin" "example" {
   name   = "example"
   origin = "https://example.com"
   scopes = ["CORS"]
 }
-```
 
-_v7.x.x_
-
-```terraform
+# After
 resource "okta_trusted_origin" "example" {
   name   = "example"
   origin = "https://example.com"
