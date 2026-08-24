@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.0.0 (Unreleased)
+## 7.0.0 (Aug 24, 2026)
 
 ### BREAKING CHANGES
 
