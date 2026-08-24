@@ -27,45 +27,43 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta "github.com/okta/okta-sdk-golang/v6/okta"
-
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &roleSubscriptionResource{}
-	_ resource.ResourceWithConfigure   = &roleSubscriptionResource{}
-	_ resource.ResourceWithImportState = &roleSubscriptionResource{}
+	_ resource.Resource                = &userSubscriptionResource{}
+	_ resource.ResourceWithConfigure   = &userSubscriptionResource{}
+	_ resource.ResourceWithImportState = &userSubscriptionResource{}
 )
 
-// RoleSubscriptionResource defines the resource implementation.
-type roleSubscriptionResource struct {
+// UserSubscriptionResource defines the resource implementation.
+type userSubscriptionResource struct {
 	Config *config.Config
 }
 
-// RoleSubscriptionModel describes the resource data model.
-type roleSubscriptionModel struct {
+// UserSubscriptionModel describes the resource data model.
+type userSubscriptionModel struct {
 	ID               types.String `tfsdk:"id"`
-	RoleRef          types.String `tfsdk:"role_ref"`
+	UserId           types.String `tfsdk:"user_id"`
 	NotificationType types.String `tfsdk:"notification_type"`
 	Channels         types.List   `tfsdk:"channels"`
 	Status           types.String `tfsdk:"status"`
 }
 
-func newRoleSubscriptionResource() resource.Resource {
-	return &roleSubscriptionResource{}
+func newUserSubscriptionResource() resource.Resource {
+	return &userSubscriptionResource{}
 }
 
-func (r *roleSubscriptionResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_role_subscription"
+func (r *userSubscriptionResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_user_subscription"
 }
 
-func (r *roleSubscriptionResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *userSubscriptionResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *roleSubscriptionResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *userSubscriptionResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Subscriptions API provides operations to manage email subscription settings for Okta administrator notifications.",
 		Attributes: map[string]schema.Attribute{
@@ -76,8 +74,8 @@ func (r *roleSubscriptionResource) Schema(_ context.Context, _ resource.SchemaRe
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"role_ref": schema.StringAttribute{
-				Description: "A reference to an existing role",
+			"user_id": schema.StringAttribute{
+				Description: "ID of an existing Okta user",
 				Required:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
@@ -102,68 +100,68 @@ func (r *roleSubscriptionResource) Schema(_ context.Context, _ resource.SchemaRe
 		},
 	}
 }
-func (r *roleSubscriptionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Import ID format: {role_ref}/{notification_type}
+func (r *userSubscriptionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Import ID format: {user_id}/{notification_type}
 	parts := strings.SplitN(req.ID, "/", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		resp.Diagnostics.AddError(
 			"Invalid import ID",
-			"Import ID must be in the format: {role_ref}/{notification_type}",
+			"Import ID must be in the format: {user_id}/{notification_type}",
 		)
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("role_ref"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("user_id"), parts[0])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("notification_type"), parts[1])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), req.ID)...)
 }
 
-func (r *roleSubscriptionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state roleSubscriptionModel
+func (r *userSubscriptionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state userSubscriptionModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	roleRef := state.RoleRef.ValueString()
+	userId := state.UserId.ValueString()
 	notificationType := state.NotificationType.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
-	result, httpResp, err := client.SubscriptionAPI.GetSubscriptionsNotificationTypeRole(ctx, okta.StringAsListSubscriptionsRoleRoleRefParameter(&roleRef), notificationType).Execute()
+	result, httpResp, err := client.SubscriptionAPI.GetSubscriptionsNotificationTypeUser(ctx, notificationType, userId).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading role_subscription", err.Error())
+		resp.Diagnostics.AddError("Error reading user_subscription", err.Error())
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Status = types.StringValue(string(result.GetStatus()))
 
-	state.ID = types.StringValue(roleRef + "/" + notificationType)
+	state.ID = types.StringValue(userId + "/" + notificationType)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *roleSubscriptionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan roleSubscriptionModel
+func (r *userSubscriptionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan userSubscriptionModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	roleRef := plan.RoleRef.ValueString()
+	userId := plan.UserId.ValueString()
 	notificationType := plan.NotificationType.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
 	// Build request body from plan
-	createReq := client.SubscriptionAPI.SubscribeByNotificationTypeRole(ctx, okta.StringAsListSubscriptionsRoleRoleRefParameter(&roleRef), notificationType)
+	createReq := client.SubscriptionAPI.SubscribeByNotificationTypeUser(ctx, notificationType, userId)
 	_, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating role_subscription", err.Error())
+		resp.Diagnostics.AddError("Error creating user_subscription", err.Error())
 		return
 	}
-	plan.ID = types.StringValue(roleRef + "/" + notificationType)
+	plan.ID = types.StringValue(userId + "/" + notificationType)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -178,29 +176,29 @@ func (r *roleSubscriptionResource) Create(ctx context.Context, req resource.Crea
 		resp.State = readResp.State
 	}
 }
-func (r *roleSubscriptionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *userSubscriptionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	resp.Diagnostics.AddWarning(
 		"Update Not Supported",
 		"This resource does not support in-place updates. Changes will require resource replacement.",
 	)
 }
 
-func (r *roleSubscriptionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state roleSubscriptionModel
+func (r *userSubscriptionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state userSubscriptionModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	roleRef := state.RoleRef.ValueString()
+	userId := state.UserId.ValueString()
 	notificationType := state.NotificationType.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
-	httpResp, err := client.SubscriptionAPI.UnsubscribeByNotificationTypeRole(ctx, okta.StringAsListSubscriptionsRoleRoleRefParameter(&roleRef), notificationType).Execute()
+	httpResp, err := client.SubscriptionAPI.UnsubscribeByNotificationTypeUser(ctx, notificationType, userId).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting role_subscription", err.Error())
+		resp.Diagnostics.AddError("Error deleting user_subscription", err.Error())
 		return
 	}
 }

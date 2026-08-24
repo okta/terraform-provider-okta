@@ -1,19 +1,19 @@
 ---
-page_title: "Data Source: okta_role_subscription"
+page_title: "Data Source: okta_user_subscription"
 description: |-
-  Retrieves a subscription by notification type for a specified role.
+  Retrieves a subscription by notification type for a specified user.
 ---
 
-# Data Source: okta_role_subscription
+# Data Source: okta_user_subscription
 
-Retrieves a subscription by notification type for a specified role.
+Retrieves a subscription by notification type for a specified user.
 
 ## Example Usage
 
 ```terraform
-data "okta_role_subscription" "example" {
-  role_ref = "SUPER_ADMIN"
-  id       = "APP_IMPORT"
+data "okta_user_subscription" "example" {
+  user_id = "usr00000000000001"
+  id      = "APP_IMPORT"
 }
 ```
 
@@ -35,22 +35,10 @@ data "okta_role_subscription" "example" {
 	- `REPORT_SUSPICIOUS_ACTIVITY` - User reporting of suspicious activity.
 	- `RATELIMIT_NOTIFICATION` - Rate limit warning and violation.
 	- `AGENT_AUTO_UPDATE_NOTIFICATION` - Agent auto-update notifications: AD Agent.
-- `role_ref` (String) A reference to an existing role. Valid values:
-	`API_ADMIN`,
-	`APP_ADMIN`,
-	`CUSTOM`,
-	`GROUP_MEMBERSHIP_ADMIN`,
-	`HELP_DESK_ADMIN`,
-	`MOBILE_ADMIN`,
-	`ORG_ADMIN`,
-	`READ_ONLY_ADMIN`,
-	`REPORT_ADMIN`,
-	`SUPER_ADMIN`,
-	`USER_ADMIN`.
-	See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types).
+- `user_id` (String) ID of an existing Okta user.
 
 ### Read-Only
 
-- `channels` (List of String) An array of sources used to send notifications to users.
+- `channels` (List of String) An array of sources used to send notifications to the user.
 - `notification_type` (String) The type of notification.
 - `status` (String) The status of the subscription.
