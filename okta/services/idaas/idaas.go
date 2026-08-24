@@ -86,6 +86,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 
 func FWProviderResources() []func() resource.Resource {
 	rawResources := []func() resource.Resource{
+		newTrustedOriginResource,
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -291,7 +292,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
 		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
 		resources.OktaIDaaSTheme:                      resourceTheme(),
-		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
 		resources.OktaIDaaSUser:                       resourceUser(),
 		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
 		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
