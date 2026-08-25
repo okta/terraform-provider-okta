@@ -9,6 +9,9 @@
 * **`okta_role_subscription`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `role_type` attribute has been renamed to `role_ref`. The `status` attribute has been removed; use `notification_type` and manage subscription state directly.
 * **`okta_role_subscription` (data source)**: `role_type` renamed to `role_ref`. `notification_type` moved from required input to computed output; pass the notification type as `id` instead. New computed attribute `channels` added.
 * **`okta_template_sms`**: Migrated from the legacy SDKv2 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `translations` attribute has changed from a set of objects (`{language, template}`) to a `map(string)`. The `type` and `template` attributes are now optional (previously required). New computed attributes `created` and `last_updated` are available. Existing configurations must update the `translations` block accordingly.
+* **`okta_trusted_origin`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `scopes` argument has changed type from a list of strings to a repeatable block: replace `scopes = ["CORS", "REDIRECT"]` with one `scopes { type = "CORS" }` block per scope. Each block also accepts the new optional `allowed_okta_apps` list, and at least one `scopes` block is required. The `active` boolean has been replaced by `status` (`ACTIVE`/`INACTIVE`); `active = false` becomes `status = "INACTIVE"`. New computed attributes `created`, `created_by`, `last_updated`, and `last_updated_by` added. Existing configurations must update the `scopes` blocks and replace `active` accordingly.
+* **`okta_captcha`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `name`, `type`, `site_key`, and `secret_key` attributes are now optional (previously required). `type` no longer forces resource replacement when changed; it is now updated in place.
+* **`okta_captcha_org_wide_settings`**: Deprecated in favour of the new `okta_org_captcha` resource, and will be removed in a future version. The replacement renames `enabled_for` (set of strings) to `enabled_pages` (list of strings); replace `enabled_for = ["SIGN_IN"]` with `enabled_pages = ["SIGN_IN"]` when moving to `okta_org_captcha`.
 
 ### FEATURES
 
@@ -17,6 +20,10 @@
 * Added new resource `okta_user_subscription` for managing notification subscriptions for individual users [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Added new data source `okta_user_subscription` to read a user's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Added new data source `okta_role_subscription` to read a role's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_trusted_origin` to read a single trusted origin by `id` [#2932](https://github.com/okta/terraform-provider-okta/pull/2932) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new resource `okta_org_captcha` for managing org-wide CAPTCHA settings, replacing `okta_captcha_org_wide_settings` [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_captcha` to read a CAPTCHA instance [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_org_captcha` to read the org-wide CAPTCHA settings [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
 
 ### ENHANCEMENTS
 
@@ -25,6 +32,8 @@
 * Migrated `okta_threat_insight_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
 * Adds new resources for oauthv1 clients [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [pranav-okta](https://github.com/pranav-okta)
 * Migrated `okta_role_subscription` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_trusted_origin` to Terraform Plugin Framework + Okta SDK v6 [#2932](https://github.com/okta/terraform-provider-okta/pull/2932) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_captcha` to Terraform Plugin Framework + Okta SDK v6 [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
 
 
 ## 6.15.0 (Aug 5, 2026)
