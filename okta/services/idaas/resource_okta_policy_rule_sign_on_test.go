@@ -1,11 +1,13 @@
 package idaas_test
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -24,6 +26,111 @@ func TestAccResourceOktaPolicyRuleSignon_defaultErrors(t *testing.T) {
 			{
 				Config:      config,
 				ExpectError: regexp.MustCompile("Default Rule is immutable"),
+			},
+		},
+	})
+}
+
+// https://github.com/okta/terraform-provider-okta/issues/2788
+// A policy's default rule can be imported and then updated. Previously any update
+// failed with "Default Rule is immutable" because the provider matched on the rule's
+// name instead of the API's system flag. This exercises its own policy rather than the
+// org's default Global Session Policy so the rule under test is disposable.
+func TestAccResourceOktaPolicyRuleSignon_GH2788_defaultRule(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRuleSignOn, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyRuleSignOn)
+	policyName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicySignOn)
+
+	baseConfig := `
+resource "okta_policy_signon" "test" {
+	name        = "testAcc_replace_with_uuid"
+	status      = "ACTIVE"
+	description = "Terraform Acceptance Test SignOn Policy"
+}`
+
+	importConfig := `
+resource "okta_policy_rule_signon" "test" {
+	policy_id        = okta_policy_signon.test.id
+	name             = "Default Rule"
+	status           = "ACTIVE"
+	mfa_required     = true
+	session_lifetime = 1440
+}`
+
+	updatedConfig := `
+resource "okta_policy_rule_signon" "test" {
+	policy_id        = okta_policy_signon.test.id
+	name             = "Default Rule"
+	status           = "ACTIVE"
+	mfa_required     = true
+	mfa_prompt       = "SESSION"
+	mfa_lifetime     = 15
+	session_idle     = 60
+	session_lifetime = 720
+}`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		// The default rule legitimately outlives its own removal from state; it only
+		// goes away with its parent policy, so the usual rule-destroy check would
+		// report a false failure.
+		CheckDestroy: nil,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(baseConfig),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(policyName, "name", acctest.BuildResourceName(mgr.Seed)),
+				),
+			},
+			{
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStatePersist: true,
+				Config:             mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, importConfig)),
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					policy, ok := s.RootModule().Resources[policyName]
+					if !ok {
+						return "", fmt.Errorf("failed to find sign-on policy %s", policyName)
+					}
+					policyID := policy.Primary.Attributes["id"]
+					rules, _, err := iDaaSAPIClientForTestUtil.OktaSDKClientV2().Policy.ListPolicyRules(context.Background(), policyID)
+					if err != nil {
+						return "", err
+					}
+					if len(rules) != 1 {
+						return "", fmt.Errorf("at this point, policy %q should only have one rule, its default rule", policyID)
+					}
+					return fmt.Sprintf("%s/%s", policyID, rules[0].Id), nil
+				},
+			},
+			{
+				// The GH-2788 regression: this apply used to fail outright.
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, importConfig)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", "Default Rule"),
+					resource.TestCheckResourceAttr(resourceName, "system", "true"),
+					resource.TestCheckResourceAttr(resourceName, "mfa_required", "true"),
+					resource.TestCheckResourceAttr(resourceName, "session_lifetime", "1440"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, updatedConfig)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "system", "true"),
+					resource.TestCheckResourceAttr(resourceName, "mfa_prompt", "SESSION"),
+					resource.TestCheckResourceAttr(resourceName, "session_idle", "60"),
+					resource.TestCheckResourceAttr(resourceName, "session_lifetime", "720"),
+				),
+			},
+			{
+				// Re-applying unchanged must produce an empty plan, i.e. the attributes
+				// Okta manages on a default rule don't cause a perpetual diff.
+				Config:   mgr.ConfigReplace(fmt.Sprintf("%s\n%s", baseConfig, updatedConfig)),
+				PlanOnly: true,
 			},
 		},
 	})

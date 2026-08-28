@@ -152,6 +152,7 @@ resource "okta_policy_rule_mfa" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `system` (Boolean) Whether this is the system (default) rule of its policy. Okta creates and deletes default rules itself; Terraform can update one but can not create, rename or delete it.
 
 <a id="nestedblock--app_exclude"></a>
 ### Nested Schema for `app_exclude`
