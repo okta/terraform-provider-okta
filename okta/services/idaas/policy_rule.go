@@ -255,18 +255,28 @@ func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, temp
 	// them from the payload. This keys off the API's `system` flag, synced into state
 	// by the read, rather than the configured name, which is not authoritative.
 	if d.Get("system").(bool) {
-		// Conditions can't be set on the default/system rule. A nil Conditions
-		// marshals to "conditions": null since that field has no omitempty, which is
-		// the same payload the profile enrollment resource has always sent for its
-		// own system rule. Should Okta ever reject it for this rule type, fetch the
-		// rule and send its conditions back verbatim instead.
-		template.Conditions = nil
-		template.System = utils.BoolPtr(true)
-		// usePersistentCookie is read-only on the default rule, and *bool plus
-		// omitempty means nil omits it from the request.
-		if template.Actions.SignOn != nil && template.Actions.SignOn.Session != nil {
-			template.Actions.SignOn.Session.UsePersistentCookie = nil
+		// A default rule's conditions are read-only. Okta rejects the PUT with
+		// "Cannot modify the conditions object because it is read-only" for any value
+		// that differs from the current one, and since SdkPolicyRule.Conditions has no
+		// omitempty a nil would be sent as "conditions": null and count as a change.
+		// So fetch the rule and echo its conditions back verbatim. This GET is
+		// deliberately inside the system-rule branch: ordinary rules must not pay for
+		// it, and adding an unconditional request would invalidate every existing VCR
+		// cassette that replays a rule update.
+		upstream, err := getPolicyRule(ctx, d, m)
+		if err != nil {
+			return err
 		}
+		if upstream == nil {
+			// The rule is gone upstream and the ID has been cleared.
+			return nil
+		}
+		template.Conditions = upstream.Conditions
+		template.System = utils.BoolPtr(true)
+		// usePersistentCookie must still be SENT. It is read-only in the sense that
+		// its value can't change, but omitting it makes Okta return a 500. The schema
+		// default (false) matches what a default rule reports, so the value built from
+		// config is already correct; it just must not be stripped.
 	}
 
 	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
@@ -286,6 +296,14 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
+	}
+	// Only drive the lifecycle when the status actually changed. Re-activating an
+	// already-active rule is a wasted call for an ordinary rule, and on a policy's
+	// default rule it fails outright with "Cannot modify the status attribute because
+	// it is read-only". The read syncs status from the API, so GetChange's old value
+	// is upstream truth rather than a guess.
+	if oldStatus, newStatus := d.GetChange("status"); oldStatus == newStatus {
+		return nil
 	}
 	if d.Get("status").(string) == StatusActive {
 		_, err := client.ActivatePolicyRule(ctx, policyID, d.Id())
