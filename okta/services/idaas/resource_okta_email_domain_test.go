@@ -31,6 +31,7 @@ func TestAccResourceOktaEmailDomain_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "domain", domainName),
 					resource.TestCheckResourceAttr(resourceName, "display_name", "test"),
 					resource.TestCheckResourceAttr(resourceName, "user_name", "fff"),
+					resource.TestCheckResourceAttr(resourceName, "validation_subdomain", "mail"),
 					resource.TestCheckResourceAttrSet(resourceName, "dns_validation_records.0.record_type"),
 					resource.TestCheckResourceAttrSet(resourceName, "dns_validation_records.0.value"),
 					resource.TestCheckResourceAttrSet(resourceName, "dns_validation_records.0.fqdn"),
