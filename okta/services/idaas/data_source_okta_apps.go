@@ -189,9 +189,21 @@ func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	}
 
 	// Convert the list of applications to the Terraform schema.
+	skipped := 0
 	for _, app := range applicationList {
 		oktaApp, ok := app.GetActualInstance().(OktaApp)
 		if !ok {
+			// The SDK's ListApplications200ResponseInner union returns a nil
+			// instance for applications whose signOnMode matches none of its
+			// discriminator values -- its UnmarshalJSON ends with "No match
+			// found or unmarshal failed - return nil to allow partial
+			// unmarshalling". Okta first-party applications (Admin Console,
+			// Okta Dashboard, Okta Browser Plugin, Platform Single Sign-On
+			// for macOS) fall into this bucket. Dropping them without a
+			// diagnostic makes the data source silently under-report: a user
+			// cannot distinguish "the org has N applications" from "the org
+			// has more, but N were representable". Count them and say so.
+			skipped++
 			continue
 		}
 
@@ -242,6 +254,19 @@ func (d *appsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 			EndUserNote: types.StringValue(userNotes),
 			Visibility:  visibility,
 		})
+	}
+
+	if skipped > 0 {
+		resp.Diagnostics.AddWarning(
+			"Some applications were omitted from the results",
+			fmt.Sprintf(
+				"%d of %d applications returned by the Okta API could not be decoded into a supported application type and were omitted from the results. "+
+					"This typically affects Okta first-party applications (for example the Admin Console, Okta Dashboard, Okta Browser Plugin, or Platform Single Sign-On for macOS), "+
+					"whose signOnMode does not match any discriminator value known to the SDK. "+
+					"These applications exist in the org but cannot currently be read or managed through this data source.",
+				skipped, len(applicationList),
+			),
+		)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
