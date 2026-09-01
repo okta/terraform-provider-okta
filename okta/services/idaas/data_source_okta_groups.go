@@ -106,7 +106,7 @@ func dataSourceGroupsRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	if q, ok := d.GetOk("q"); ok {
 		qp.Limit = 10000 // keeping this here to avoid potentially changing datasource ID generation behavior
-		apiRequest = apiRequest.Q(q.(string))
+		apiRequest = apiRequest.Q(q.(string)).Limit(10000)
 		qp.Q = q.(string)
 	}
 
