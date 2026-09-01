@@ -75,15 +75,15 @@ resource "okta_request_condition" "example_active" {
 ### Nested Schema for `access_scope_settings`
 Required:
 - `type` (String) Enum: `RESOURCE_DEFAULT`, `GROUPS`, `ENTITLEMENT_BUNDLES`.
-- `id` (Block List) Defines access scope configuration.
-  Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID).
+- `id` (Block Set) Defines access scope configuration.
+  Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID). Using a set prevents spurious diffs when group order changes.
 
 <a id="nestedblock--requester_settings"></a>
 ### Nested Schema for `requester_settings`
 Required:
 - `type` (String) Enum: `EVERYONE`, `TEAMS`, `GROUPS`.
-- `id` (Block List) Defines requester settings.
-  Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID).
+- `id` (Block Set) Defines requester settings.
+  Each block specifies a type (e.g., GROUPS) and one or more ids blocks containing an id (the group or entitlement bundle ID). Using a set prevents spurious diffs when group order changes.
 
 <a id="nestedblock--access_duration_settings"></a>
 ### Nested Schema for `access_duration_settings`
