@@ -109,6 +109,7 @@ resource "okta_app_oauth" "example" {
 - `refresh_token_leeway` (Number) *Early Access Property* Grace period for token rotation, required with grant types refresh_token
 - `refresh_token_rotation` (String) *Early Access Property* Refresh token rotation behavior, required with grant types refresh_token
 - `response_types` (Set of String) List of OAuth 2.0 response type strings. Valid values are any combination of: `code`, `token`, and `id_token`.
+- `skip_authentication_policy` (Boolean) When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.
 - `status` (String) Status of application. By default, it is `ACTIVE`
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.

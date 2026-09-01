@@ -231,6 +231,7 @@ resource "okta_app_saml" "test" {
 - `single_logout_certificate` (String) x509 encoded certificate that the Service Provider uses to sign Single Logout requests. Note: should be provided without `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----`, see [official documentation](https://developer.okta.com/docs/reference/api/apps/#service-provider-certificate).
 - `single_logout_issuer` (String) The issuer of the Service Provider that generates the Single Logout request
 - `single_logout_url` (String) The location where the logout response is sent
+- `skip_authentication_policy` (Boolean) When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.
 - `sp_issuer` (String) SAML SP issuer ID
 - `sso_url` (String) Single Sign On URL
 - `status` (String) Status of application. By default, it is `ACTIVE`
