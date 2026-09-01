@@ -13,6 +13,14 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
+// mfaPolicyAuthenticators lists the OIE authenticator keys the MFA enrollment
+// policy resource supports. It augments the local SDK list (sdk.AuthenticatorProviders)
+// with `tac`: the Okta authenticator-enrollment policy accepts `tac`, but it is
+// not part of sdk.AuthenticatorProviders, and the v6 SDK models the policy
+// authenticator key as a free-form string with no dedicated constant. A fresh
+// slice copy is used so sdk.AuthenticatorProviders is never mutated.
+var mfaPolicyAuthenticators = append(append([]string{}, sdk.AuthenticatorProviders...), "tac")
+
 // resourcePolicyMfa requires Org Feature Flag OKTA_MFA_POLICY
 func resourcePolicyMfa() *schema.Resource {
 	return &schema.Resource{
@@ -107,7 +115,7 @@ func validateAuthenticators(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	var invalidAuths []string
-	for _, key := range sdk.AuthenticatorProviders {
+	for _, key := range mfaPolicyAuthenticators {
 		if key == "custom_app" || key == "external_idp" {
 			continue
 		}
@@ -153,7 +161,7 @@ func buildSettings(d *schema.ResourceData) *sdk.SdkPolicySettings {
 	if d.Get("is_oie") == true {
 		authenticators := []*sdk.PolicyAuthenticator{}
 
-		for _, key := range sdk.AuthenticatorProviders {
+		for _, key := range mfaPolicyAuthenticators {
 			if key == "custom_app" {
 				continue
 			}
@@ -300,7 +308,7 @@ func syncSettings(d *schema.ResourceData, settings *sdk.SdkPolicySettings) {
 	_ = d.Set("is_oie", settings.Type == "AUTHENTICATORS")
 
 	if settings.Type == "AUTHENTICATORS" {
-		for _, key := range sdk.AuthenticatorProviders {
+		for _, key := range mfaPolicyAuthenticators {
 			syncAuthenticator(d, key, settings.Authenticators)
 		}
 	} else {
@@ -457,7 +465,7 @@ func syncCustomAppAuthenticator(d *schema.ResourceData, authenticators []*sdk.Po
 func buildFactorSchemaProviders() map[string]*schema.Schema {
 	res := make(map[string]*schema.Schema)
 	// Note: It's okay to append and have duplicates as we're setting back into a map here
-	for _, key := range append(sdk.FactorProviders, sdk.AuthenticatorProviders...) {
+	for _, key := range append(sdk.FactorProviders, mfaPolicyAuthenticators...) {
 		if key == "external_idp" {
 			res[key] = &schema.Schema{
 				Optional: true,

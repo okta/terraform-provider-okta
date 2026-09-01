@@ -3,10 +3,12 @@ package idaas
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -43,22 +45,29 @@ the authenticator doesn't exist then a one time 'POST /api/v1/authenticators' to
 create the authenticator (hard create) will be performed. Thereafter, that
 authenticator is never deleted, it is only deactivated (soft delete). Therefore,
 if the authenticator already exists create is just a soft import of an existing
-authenticator. This does not apply to custom_otp authenticator. There can be 
-multiple custom_otp authenticator. To create new custom_otp authenticator, 
-name and key = custom_otp is required. If an old name is used, it will simply 
+authenticator. This does not apply to custom_otp authenticator. There can be
+multiple custom_otp authenticator. To create new custom_otp authenticator,
+name and key = custom_otp is required. If an old name is used, it will simply
 reactivate the old custom_otp authenticator
 
 -> **Update:** custom_otp authenticator cannot be updated
 
 -> **Delete:** Authenticators can not be truly deleted therefore delete is soft.
 Delete will attempt to deativate the authenticator. An authenticator can only be
-deactivated if it's not in use by any other policy.`,
+deactivated if it's not in use by any other policy.
+
+-> **Temporary Access Code (TAC):** The TAC authenticator (key = 'tac') is
+configured via the 'provider_json' argument. The provider JSON must contain
+'type' (value: 'TAC', uppercase) and 'configuration' fields. The configuration
+supports: 'minTtl', 'maxTtl', 'defaultTtl' (minutes), 'length' (code length),
+'complexity' (object with 'numbers', 'letters', 'specialCharacters' booleans),
+and 'multiUseAllowed' (boolean). TAC CRUD operations use the v6 Okta SDK.`,
 		Schema: map[string]*schema.Schema{
 			"key": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values inclue: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `webauthn`",
+				Description: "A human-readable string that identifies the authenticator. Some authenticators are available by feature flag on the organization. Possible values include: `duo`, `external_idp`, `google_otp`, `okta_email`, `okta_password`, `okta_verify`, `onprem_mfa`, `phone_number`, `rsa_token`, `security_question`, `tac`, `webauthn`",
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -199,6 +208,10 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
+	if d.Get("key").(string) == "tac" {
+		return resourceAuthenticatorTACCreate(ctx, d, meta)
+	}
+
 	var err error
 	// soft create if the authenticator already exists
 	authenticator, _ := findAuthenticator(ctx, meta, d.Get("name").(string), d.Get("key").(string))
@@ -261,12 +274,22 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 	establishAuthenticator(authenticator, d)
 
+	// TAC provider configuration is not represented in the local SDK struct;
+	// use v6 SDK to supplement the read with provider_json.
+	if authenticator.Key == "tac" {
+		return resourceAuthenticatorTACReadProviderData(ctx, d, meta)
+	}
+
 	return nil
 }
 
 func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if providerIsClassicOrg(ctx, meta) {
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
+	}
+
+	if d.Get("key").(string) == "tac" {
+		return resourceAuthenticatorTACUpdate(ctx, d, meta)
 	}
 
 	err := validateAuthenticator(d)
@@ -434,6 +457,136 @@ func validateAuthenticator(d *schema.ResourceData) error {
 		}
 	}
 	return nil
+}
+
+// resourceAuthenticatorTACCreate handles create for the TAC (Temporary Access
+// Code) authenticator using the v6 SDK, which supports the TAC provider
+// configuration fields that the local SDK does not represent.
+func resourceAuthenticatorTACCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	existing, _ := findAuthenticator(ctx, meta, d.Get("name").(string), "tac")
+
+	v6Client := getOktaV6ClientFromMetadata(meta)
+
+	if existing == nil {
+		tacBase, err := buildTACAuthenticatorV6(d)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		activate := d.Get("status").(string) == StatusActive
+		result, _, err := v6Client.AuthenticatorAPI.
+			CreateAuthenticator(ctx).
+			Authenticator(tacBase).
+			Activate(activate).
+			Execute()
+		if err != nil {
+			return diag.FromErr(tacAPIError("create", err))
+		}
+		d.SetId(result.GetId())
+	} else {
+		d.SetId(existing.Id)
+		desiredStatus := d.Get("status").(string)
+		if existing.Status != desiredStatus {
+			var err error
+			if desiredStatus == StatusInactive {
+				_, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
+			} else {
+				_, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
+			}
+			if err != nil {
+				return diag.Errorf("failed to change TAC authenticator status: %v", err)
+			}
+		}
+	}
+
+	return resourceAuthenticatorRead(ctx, d, meta)
+}
+
+// resourceAuthenticatorTACUpdate handles update for the TAC authenticator.
+func resourceAuthenticatorTACUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	tacBase, err := buildTACAuthenticatorV6(d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	v6Client := getOktaV6ClientFromMetadata(meta)
+	_, _, err = v6Client.AuthenticatorAPI.
+		ReplaceAuthenticator(ctx, d.Id()).
+		Authenticator(tacBase).
+		Execute()
+	if err != nil {
+		return diag.FromErr(tacAPIError("update", err))
+	}
+
+	oldStatus, newStatus := d.GetChange("status")
+	if oldStatus != newStatus {
+		if newStatus == StatusActive {
+			_, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
+		} else {
+			_, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
+		}
+		if err != nil {
+			return diag.Errorf("failed to change TAC authenticator status: %v", err)
+		}
+	}
+
+	return resourceAuthenticatorRead(ctx, d, meta)
+}
+
+// resourceAuthenticatorTACReadProviderData supplements a base authenticator
+// read by fetching the TAC provider configuration via the v6 SDK and storing
+// it in the provider_json attribute.
+func resourceAuthenticatorTACReadProviderData(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	result, _, err := getOktaV6ClientFromMetadata(meta).AuthenticatorAPI.
+		GetAuthenticator(ctx, d.Id()).
+		Execute()
+	if err != nil {
+		return diag.Errorf("failed to get TAC authenticator provider data: %v", err)
+	}
+
+	if provider, ok := result.AdditionalProperties["provider"]; ok {
+		b, marshalErr := json.Marshal(provider)
+		if marshalErr == nil {
+			_ = d.Set("provider_json", string(b))
+		}
+	}
+	return nil
+}
+
+// tacAPIError wraps a v6 SDK error for a TAC operation, surfacing the Okta API
+// response body (errorSummary/errorCauses) when available so configuration
+// problems such as out-of-range TTL values are visible to the user.
+func tacAPIError(action string, err error) error {
+	var apiErr *v6okta.GenericOpenAPIError
+	if errors.As(err, &apiErr) && len(apiErr.Body()) > 0 {
+		return fmt.Errorf("failed to %s TAC authenticator: %v: %s", action, err, string(apiErr.Body()))
+	}
+	return fmt.Errorf("failed to %s TAC authenticator: %v", action, err)
+}
+
+// buildTACAuthenticatorV6 constructs a v6 AuthenticatorBase for TAC, embedding
+// the provider configuration from provider_json into AdditionalProperties so
+// the v6 SDK serializes it correctly in the request body.
+func buildTACAuthenticatorV6(d *schema.ResourceData) (v6okta.AuthenticatorBase, error) {
+	auth := v6okta.AuthenticatorBase{}
+	auth.SetKey("tac")
+	auth.SetType("tac")
+	auth.SetName(d.Get("name").(string))
+	if status, ok := d.GetOk("status"); ok {
+		auth.SetStatus(status.(string))
+	}
+
+	additionalProps := map[string]interface{}{}
+	if p, ok := d.GetOk("provider_json"); ok {
+		var provider interface{}
+		if err := json.Unmarshal([]byte(p.(string)), &provider); err != nil {
+			return auth, fmt.Errorf("failed to parse provider_json for TAC authenticator: %v", err)
+		}
+		additionalProps["provider"] = provider
+	}
+	if len(additionalProps) > 0 {
+		auth.AdditionalProperties = additionalProps
+	}
+	return auth, nil
 }
 
 func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.ResourceData) {
