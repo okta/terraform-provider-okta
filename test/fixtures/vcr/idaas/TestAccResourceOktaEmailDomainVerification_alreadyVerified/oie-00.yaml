@@ -1,0 +1,69 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD14kbe6kzsL858H698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD14kbe6kzsL858H698","validationStatus":"VERIFIED","displayName":"Support","userName":"support","domain":"custom.example.com","validationSubdomain":"mail","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.custom.example.com","verificationValue":"52f087f2ea3e41a5939efb4784111afb"},{"recordType":"cname","fqdn":"mail.custom.example.com","verificationValue":"u21992032.wl033.sendgrid.net"},{"recordType":"cname","fqdn":"okt._domainkey.custom.example.com","verificationValue":"okt.domainkey.u21992032.wl033.sendgrid.net"},{"recordType":"cname","fqdn":"okt2._domainkey.custom.example.com","verificationValue":"okt2.domainkey.u21992032.wl033.sendgrid.net"}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 04:49:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 695.405833ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/email-domains/OeD14kbe6kzsL858H698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OeD14kbe6kzsL858H698","validationStatus":"VERIFIED","displayName":"Support","userName":"support","domain":"custom.example.com","validationSubdomain":"mail","dnsValidationRecords":[{"recordType":"TXT","fqdn":"_oktaverification.custom.example.com","verificationValue":"52f087f2ea3e41a5939efb4784111afb"},{"recordType":"cname","fqdn":"mail.custom.example.com","verificationValue":"u21992032.wl033.sendgrid.net"},{"recordType":"cname","fqdn":"okt._domainkey.custom.example.com","verificationValue":"okt.domainkey.u21992032.wl033.sendgrid.net"},{"recordType":"cname","fqdn":"okt2._domainkey.custom.example.com","verificationValue":"okt2.domainkey.u21992032.wl033.sendgrid.net"}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 04:49:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 642.837916ms

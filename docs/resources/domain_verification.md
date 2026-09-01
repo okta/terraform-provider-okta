@@ -16,7 +16,7 @@ resource "okta_domain" "example" {
 }
 
 resource "okta_domain_verification" "example" {
-  domain_id = okta_domain.test.id
+  domain_id = okta_domain.example.id
 }
 ```
 
@@ -30,5 +30,13 @@ resource "okta_domain_verification" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+terraform import okta_domain_verification.example <domain_id>
+```
 
 
