@@ -46,7 +46,7 @@ the Okta Terraform Provider.
 
 If you have been using version 3.x of the Okta Terraform Provider, please upgrade to the latest version to take advantage of
 all the new features, fixes, and functionality. Please refer to this [Upgrade Guide](https://github.com/okta/terraform-provider-okta/issues/1338)
-for guidance on how to upgrade to version 4.x. Also, please check our [Releases](https://github.com/okta/terraform-provider-okta/releases) page for more details on major, minor, and patch updates. 
+for guidance on how to upgrade to version 4.x. Also, please check our [Releases](https://github.com/okta/terraform-provider-okta/releases) page for more details on major, minor, and patch updates.
 
 ## Quick Start
 
@@ -92,7 +92,7 @@ $ make test
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
 _Note:_ Acceptance tests create real resources, and often cost money to run. Please
-read [Running an Acceptance Test](https://github.com/okta/terraform-provider-okta/blob/master/.github/CONTRIBUTING.md#running-an-acceptance-test)
+read [Running an Acceptance Test](https://github.com/okta/terraform-provider-okta/blob/main/.github/CONTRIBUTING.md#running-an-acceptance-test)
 in the contribution guidelines for more information on usage.
 
 ```sh
