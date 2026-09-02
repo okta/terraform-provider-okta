@@ -17,12 +17,16 @@ package okta4ai
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -46,22 +50,15 @@ type mcpServerResource struct {
 
 // McpServerModel describes the resource data model.
 type mcpServerModel struct {
-	ID                       types.String                         `tfsdk:"id"`
-	AuthorizationServerCount types.Int64                          `tfsdk:"authorization_server_count"`
-	Created                  types.String                         `tfsdk:"created"`
-	DetectedMetadata         *McpServerModelDetectedMetadataModel `tfsdk:"detected_metadata"`
-	LastUpdated              types.String                         `tfsdk:"last_updated"`
-	Orn                      types.String                         `tfsdk:"orn"`
-	ResourceUrl              types.String                         `tfsdk:"resource_url"`
-	Status                   types.String                         `tfsdk:"status"`
-	Description              types.String                         `tfsdk:"description"`
-	DisplayName              types.String                         `tfsdk:"display_name"`
-}
-
-// McpServerModelDetectedMetadataModel is the nested model for detected_metadata.
-type McpServerModelDetectedMetadataModel struct {
-	LastRefreshedAt types.String `tfsdk:"last_refreshed_at"`
-	ResourceName    types.String `tfsdk:"resource_name"`
+	ID                       types.String `tfsdk:"id"`
+	AuthorizationServerCount types.Int64  `tfsdk:"authorization_server_count"`
+	Created                  types.String `tfsdk:"created"`
+	LastUpdated              types.String `tfsdk:"last_updated"`
+	Orn                      types.String `tfsdk:"orn"`
+	ResourceUrl              types.String `tfsdk:"resource_url"`
+	Status                   types.String `tfsdk:"status"`
+	Description              types.String `tfsdk:"description"`
+	DisplayName              types.String `tfsdk:"display_name"`
 }
 
 func NewMcpServerResource() resource.Resource {
@@ -89,31 +86,45 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 			"authorization_server_count": schema.Int64Attribute{
 				Description: "Number of authorization servers linked to this MCP server",
-				Required:    true,
 				Computed:    true,
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"created": schema.StringAttribute{
-				Description: "Timestamp when the resource server was created",
-				Required:    true,
+				Description: "Timestamp when the MCP server was created",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_updated": schema.StringAttribute{
-				Description: "Timestamp when the resource server was last updated",
-				Required:    true,
+				Description: "Timestamp when the MCP server was last updated",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"orn": schema.StringAttribute{
 				Description: "The [ORN](https://developer.",
-				Required:    true,
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"resource_url": schema.StringAttribute{
-				Description: "The URL of the resource server",
+				Description: "The URL of the MCP server resource",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"status": schema.StringAttribute{
-				Description: "Current status of the resource server in its lifecycle",
-				Required:    true,
+				Description: "Current status of the MCP server in its lifecycle",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"description": schema.StringAttribute{
 				Description: "Description of the resource server",
@@ -124,22 +135,6 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Description: "Human-readable display name for the resource server",
 				Optional:    true,
 				Sensitive:   true,
-			},
-		},
-		Blocks: map[string]schema.Block{
-			"detected_metadata": schema.SingleNestedBlock{
-				Description: "Auto-detected metadata about the MCP server from the `.",
-				Attributes: map[string]schema.Attribute{
-					"last_refreshed_at": schema.StringAttribute{
-						Description: "Timestamp when the metadata was last refreshed from the MCP server",
-						Required:    true,
-						Computed:    true,
-					},
-					"resource_name": schema.StringAttribute{
-						Description: "Canonical resource name of the MCP server as reported by the server itself (auto-detected).",
-						Computed:    true,
-					},
-				},
 			},
 		},
 	}
@@ -166,6 +161,11 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("Error reading mcp_server", err.Error())
 		return
 	}
+	metadata, ok := result.GetMetadataOk()
+	if ok {
+		state.Description = types.StringValue(string(metadata.GetDescription()))
+		state.DisplayName = types.StringValue(string(metadata.GetDisplayName()))
+	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.AuthorizationServerCount = types.Int64Value(int64(result.GetAuthorizationServerCount()))
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
@@ -173,14 +173,6 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.Orn = types.StringValue(string(result.GetOrn()))
 	state.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if detectedMetadataRaw0, ok := result.GetDetectedMetadataOk(); ok {
-		detectedMetadataModel0 := &McpServerModelDetectedMetadataModel{}
-		if t := detectedMetadataRaw0.GetLastRefreshedAt(); !t.IsZero() {
-			detectedMetadataModel0.LastRefreshedAt = types.StringValue(t.Format(time.RFC3339))
-		}
-		detectedMetadataModel0.ResourceName = types.StringValue(string(detectedMetadataRaw0.GetResourceName()))
-		state.DetectedMetadata = detectedMetadataModel0
-	}
 
 	state.ID = types.StringValue(string(result.GetId()))
 
@@ -203,14 +195,84 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 	body.SetDisplayName(plan.DisplayName.ValueString())
 	body.SetResourceUrl(plan.ResourceUrl.ValueString())
 	createReq = createReq.Body(*body)
-	_, err := createReq.Execute()
+	httpResp, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating mcp_server", err.Error())
 		return
 	}
-	// Create returns no body or ID; set ID from the plan field.
-	plan.ID = types.StringValue("temp")
-	// Fetch computed fields via a follow-up Read (Create returned no body).
+
+	// Extract operation ID from Location header
+	locationURL := httpResp.Header.Get("Location")
+	parts := strings.Split(locationURL, "/")
+	operationID := parts[len(parts)-1]
+
+	// Poll the operation until completion with exponential backoff
+	timeout := time.After(5 * time.Minute)
+	ticker := time.NewTicker(1 * time.Second)
+	backoffDuration := 1 * time.Second
+	const maxBackoffDuration = 2 * time.Second
+	defer ticker.Stop()
+
+	var operationResult interface{}
+	for {
+		select {
+		case <-timeout:
+			resp.Diagnostics.AddError("Timeout waiting for mcp_server operation", "Operation did not complete within 5 minutes")
+			return
+		case <-ctx.Done():
+			resp.Diagnostics.AddError("Context cancelled", "Waiting for mcp_server operation was cancelled")
+			return
+		case <-ticker.C:
+			// Decode response body directly to check status
+			opResp, _, opErr := client.ResourceServerOperationsAPI.GetResourceServerOperation(ctx, operationID).Execute()
+			if opErr != nil {
+				resp.Diagnostics.AddError("Error polling mcp_server operation status", opErr.Error())
+				return
+			}
+
+			// Parse response JSON to check status field
+			var respJSON map[string]interface{}
+			bodyBytes, _ := json.Marshal(opResp)
+			if err := json.Unmarshal(bodyBytes, &respJSON); err == nil {
+				if status, ok := respJSON["status"]; ok {
+					statusStr := fmt.Sprintf("%v", status)
+					if statusStr == "COMPLETED" {
+						operationResult = opResp
+						break
+					} else if statusStr == "FAILED" {
+						resp.Diagnostics.AddError("mcp_server operation failed", "The async operation failed to complete")
+						return
+					}
+				}
+			}
+
+			// Apply exponential backoff for next poll
+			backoffDuration = time.Duration(float64(backoffDuration) * 1.5)
+			if backoffDuration > maxBackoffDuration {
+				backoffDuration = maxBackoffDuration
+			}
+			ticker.Stop()
+			ticker = time.NewTicker(backoffDuration)
+		}
+		if operationResult != nil {
+			break
+		}
+	}
+
+	// Extract resource from operation response
+	if operationResult == nil {
+		resp.Diagnostics.AddError("Async operation error", "Operation polling completed but returned no result")
+		return
+	}
+	opResp := operationResult.(*okta4AI.ResourceServerOperationResponse)
+	if resource := opResp.Resource; resource != nil {
+		plan.ID = types.StringValue(string(resource.GetId()))
+	} else {
+		resp.Diagnostics.AddError("Async operation error", "Operation completed but returned no resource")
+		return
+	}
+
+	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
 	readResult, _, readErr := client.MCPServerRegistrationAPI.GetMCPServer(ctx, id).Execute()
 	if readErr == nil {
@@ -218,6 +280,7 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
 		plan.Orn = types.StringValue(string(readResult.GetOrn()))
+		plan.Status = types.StringValue(string(readResult.GetStatus()))
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -253,13 +316,10 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 	// No response body — copy all plan fields back to state (including write-only).
 	state.AuthorizationServerCount = plan.AuthorizationServerCount
 	state.Created = plan.Created
-	state.DetectedMetadata = plan.DetectedMetadata
 	state.LastUpdated = plan.LastUpdated
 	state.Orn = plan.Orn
 	state.ResourceUrl = plan.ResourceUrl
 	state.Status = plan.Status
-	state.Description = plan.Description
-	state.DisplayName = plan.DisplayName
 	state.Description = plan.Description
 	state.DisplayName = plan.DisplayName
 

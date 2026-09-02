@@ -17,6 +17,8 @@ package okta4ai
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -47,21 +49,13 @@ type a2aServersAuthorizationServerResource struct {
 
 // A2aServersAuthorizationServerModel describes the resource data model.
 type a2aServersAuthorizationServerModel struct {
-	ID          types.String                                     `tfsdk:"id"`
-	A2aServerId types.String                                     `tfsdk:"a2a_server_id"`
-	Issuer      types.String                                     `tfsdk:"issuer"`
-	LastUpdated types.String                                     `tfsdk:"last_updated"`
-	Metadata    *A2aServersAuthorizationServerModelMetadataModel `tfsdk:"metadata"`
-	Orn         types.String                                     `tfsdk:"orn"`
-	Status      types.String                                     `tfsdk:"status"`
-	Type        types.String                                     `tfsdk:"type"`
-}
-
-// A2aServersAuthorizationServerModelMetadataModel is the nested model for metadata.
-type A2aServersAuthorizationServerModelMetadataModel struct {
-	AuthorizationEndpoint types.String `tfsdk:"authorization_endpoint"`
-	GrantTypesSupported   types.List   `tfsdk:"grant_types_supported"`
-	TokenEndpoint         types.String `tfsdk:"token_endpoint"`
+	ID          types.String `tfsdk:"id"`
+	A2aServerId types.String `tfsdk:"a2a_server_id"`
+	Issuer      types.String `tfsdk:"issuer"`
+	LastUpdated types.String `tfsdk:"last_updated"`
+	Orn         types.String `tfsdk:"orn"`
+	Status      types.String `tfsdk:"status"`
+	Type        types.String `tfsdk:"type"`
 }
 
 func NewA2aServersAuthorizationServerResource() resource.Resource {
@@ -96,44 +90,35 @@ func (r *a2aServersAuthorizationServerResource) Schema(_ context.Context, _ reso
 			},
 			"issuer": schema.StringAttribute{
 				Description: "OAuth 2.",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "Timestamp when the authorization server was last updated",
-				Required:    true,
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"orn": schema.StringAttribute{
 				Description: "The [ORN](https://developer.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"status": schema.StringAttribute{
 				Description: "Current status of the authorization server",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"type": schema.StringAttribute{
 				Description: "Type",
 				Required:    true,
-				Sensitive:   true,
-			},
-		},
-		Blocks: map[string]schema.Block{
-			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the authorization server.",
-				Attributes: map[string]schema.Attribute{
-					"authorization_endpoint": schema.StringAttribute{
-						Description: "URL of the authorization endpoint",
-						Optional:    true,
-					},
-					"grant_types_supported": schema.ListAttribute{
-						Description: "OAuth 2.",
-						Optional:    true,
-					},
-					"token_endpoint": schema.StringAttribute{
-						Description: "URL of the token endpoint",
-						Optional:    true,
-					},
-				},
 			},
 		},
 	}
@@ -172,22 +157,14 @@ func (r *a2aServersAuthorizationServerResource) Read(ctx context.Context, req re
 		resp.Diagnostics.AddError("Error reading a2a_servers_authorization_server", err.Error())
 		return
 	}
+	// Type is write-only and not returned by the API; A2A servers always have type OKTA
+	state.Type = types.StringValue("OKTA")
+
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Issuer = types.StringValue(string(result.GetIssuer()))
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 	state.Orn = types.StringValue(string(result.GetOrn()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok {
-		metadataModel0 := &A2aServersAuthorizationServerModelMetadataModel{}
-		metadataModel0.AuthorizationEndpoint = types.StringValue(string(metadataRaw0.GetAuthorizationEndpoint()))
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetGrantTypesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.GrantTypesSupported = listVal
-		}
-		metadataModel0.TokenEndpoint = types.StringValue(string(metadataRaw0.GetTokenEndpoint()))
-		state.Metadata = metadataModel0
-	}
 
 	state.ID = types.StringValue(string(result.GetId()))
 
@@ -210,18 +187,90 @@ func (r *a2aServersAuthorizationServerResource) Create(ctx context.Context, req 
 	body.SetOrn(plan.Orn.ValueString())
 	body.SetType(plan.Type.ValueString())
 	createReq = createReq.Body(*body)
-	_, err := createReq.Execute()
+	httpResp, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating a2a_servers_authorization_server", err.Error())
 		return
 	}
-	// Create returns no body or ID; set ID from the plan field.
-	plan.ID = plan.Orn
-	// Fetch computed fields via a follow-up Read (Create returned no body).
+
+	// Extract operation ID from Location header
+	locationURL := httpResp.Header.Get("Location")
+	parts := strings.Split(locationURL, "/")
+	operationID := parts[len(parts)-1]
+
+	// Poll the operation until completion with exponential backoff
+	timeout := time.After(5 * time.Minute)
+	ticker := time.NewTicker(1 * time.Second)
+	backoffDuration := 1 * time.Second
+	const maxBackoffDuration = 2 * time.Second
+	defer ticker.Stop()
+
+	var operationResult interface{}
+	for {
+		select {
+		case <-timeout:
+			resp.Diagnostics.AddError("Timeout waiting for a2a_servers_authorization_server operation", "Operation did not complete within 5 minutes")
+			return
+		case <-ctx.Done():
+			resp.Diagnostics.AddError("Context cancelled", "Waiting for a2a_servers_authorization_server operation was cancelled")
+			return
+		case <-ticker.C:
+			// Decode response body directly to check status
+			opResp, _, opErr := client.ResourceServerOperationsAPI.GetResourceServerOperation(ctx, operationID).Execute()
+			if opErr != nil {
+				resp.Diagnostics.AddError("Error polling a2a_servers_authorization_server operation status", opErr.Error())
+				return
+			}
+
+			// Parse response JSON to check status field
+			var respJSON map[string]interface{}
+			bodyBytes, _ := json.Marshal(opResp)
+			if err := json.Unmarshal(bodyBytes, &respJSON); err == nil {
+				if status, ok := respJSON["status"]; ok {
+					statusStr := fmt.Sprintf("%v", status)
+					if statusStr == "COMPLETED" {
+						operationResult = opResp
+						break
+					} else if statusStr == "FAILED" {
+						resp.Diagnostics.AddError("a2a_servers_authorization_server operation failed", "The async operation failed to complete")
+						return
+					}
+				}
+			}
+
+			// Apply exponential backoff for next poll
+			backoffDuration = time.Duration(float64(backoffDuration) * 1.5)
+			if backoffDuration > maxBackoffDuration {
+				backoffDuration = maxBackoffDuration
+			}
+			ticker.Stop()
+			ticker = time.NewTicker(backoffDuration)
+		}
+		if operationResult != nil {
+			break
+		}
+	}
+
+	// Extract resource from operation response
+	if operationResult == nil {
+		resp.Diagnostics.AddError("Async operation error", "Operation polling completed but returned no result")
+		return
+	}
+	opResp := operationResult.(*okta4AI.ResourceServerOperationResponse)
+	if resource := opResp.Resource; resource != nil {
+		plan.ID = types.StringValue(string(resource.GetId()))
+	} else {
+		resp.Diagnostics.AddError("Async operation error", "Operation completed but returned no resource")
+		return
+	}
+
+	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
 	readResult, _, readErr := client.A2AServerRegistrationAPI.GetA2AServerAuthorizationServer(ctx, plan.A2aServerId.ValueString(), id).Execute()
 	if readErr == nil {
+		plan.Issuer = types.StringValue(string(readResult.GetIssuer()))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
+		plan.Status = types.StringValue(string(readResult.GetStatus()))
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

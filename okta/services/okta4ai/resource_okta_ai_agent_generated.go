@@ -17,6 +17,8 @@ package okta4ai
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -87,14 +89,23 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"created": schema.StringAttribute{
 				Description: "Timestamp when the AI agent was created",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_updated": schema.StringAttribute{
 				Description: "Timestamp when the AI agent was updated",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"status": schema.StringAttribute{
 				Description: "When an AI agent is created, it's in the `STAGED` status.",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"resource_url": schema.StringAttribute{
 				Description: "The resource URL for the agent-to-agent (A2A) server associated with this AI agent.",
@@ -112,7 +123,7 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					},
 					"name": schema.StringAttribute{
 						Description: "Unique name of the AI agent",
-						Required:    true,
+						Optional:    true,
 					},
 				},
 			},
@@ -145,7 +156,7 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if profileRaw0, ok := result.GetProfileOk(); ok {
+	if profileRaw0, ok := result.GetProfileOk(); ok && state.Profile != nil {
 		profileModel0 := &AiAgentModelProfileModel{}
 		profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
 		profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
@@ -188,44 +199,75 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	// Extract operation ID from Location header
-	parts := strings.Split(httpResp.Header.Get("Location"), "/")
-	workloadOperationsID := parts[len(parts)-1]
+	locationURL := httpResp.Header.Get("Location")
+	parts := strings.Split(locationURL, "/")
+	operationID := parts[len(parts)-1]
 
-	timeout := time.After(10 * time.Minute)
-	ticker := time.NewTicker(20 * time.Second)
+	// Poll the operation until completion with exponential backoff
+	timeout := time.After(5 * time.Minute)
+	ticker := time.NewTicker(1 * time.Second)
+	backoffDuration := 1 * time.Second
+	const maxBackoffDuration = 2 * time.Second
 	defer ticker.Stop()
 
-	var workloadOperationsResp interface{}
+	var operationResult interface{}
 	for {
 		select {
 		case <-timeout:
-			resp.Diagnostics.AddError("Timeout waiting for ai_agent operation", "Operation did not reach STAGED status within 10 minutes")
+			resp.Diagnostics.AddError("Timeout waiting for ai_agent operation", "Operation did not complete within 5 minutes")
 			return
 		case <-ctx.Done():
 			resp.Diagnostics.AddError("Context cancelled", "Waiting for ai_agent operation was cancelled")
 			return
 		case <-ticker.C:
-			opResp, _, opErr := client.WorkloadPrincipalOperationsAPI.
-				GetWorkloadPrincipalOperation(ctx, workloadOperationsID).Execute()
+			// Decode response body directly to check status
+			opResp, _, opErr := client.WorkloadPrincipalOperationsAPI.GetWorkloadPrincipalOperation(ctx, operationID).Execute()
 			if opErr != nil {
 				resp.Diagnostics.AddError("Error polling ai_agent operation status", opErr.Error())
 				return
 			}
-			status := string(opResp.Resource.GetStatus())
-			if status == "STAGED" {
-				workloadOperationsResp = opResp
-				break
+
+			// Parse response JSON to check status field
+			var respJSON map[string]interface{}
+			bodyBytes, _ := json.Marshal(opResp)
+			if err := json.Unmarshal(bodyBytes, &respJSON); err == nil {
+				if status, ok := respJSON["status"]; ok {
+					statusStr := fmt.Sprintf("%v", status)
+					if statusStr == "COMPLETED" {
+						operationResult = opResp
+						break
+					} else if statusStr == "FAILED" {
+						resp.Diagnostics.AddError("ai_agent operation failed", "The async operation failed to complete")
+						return
+					}
+				}
 			}
+
+			// Apply exponential backoff for next poll
+			backoffDuration = time.Duration(float64(backoffDuration) * 1.5)
+			if backoffDuration > maxBackoffDuration {
+				backoffDuration = maxBackoffDuration
+			}
+			ticker.Stop()
+			ticker = time.NewTicker(backoffDuration)
 		}
-		if workloadOperationsResp != nil {
+		if operationResult != nil {
 			break
 		}
 	}
 
-	opResp := workloadOperationsResp.(*okta4AI.WorkloadPrincipalOperationResponse)
-	result := opResp.Resource
-	plan.ID = types.StringValue(string(result.GetId()))
-	plan.Status = types.StringValue(string(result.GetStatus()))
+	// Extract resource from operation response
+	if operationResult == nil {
+		resp.Diagnostics.AddError("Async operation error", "Operation polling completed but returned no result")
+		return
+	}
+	opResp := operationResult.(*okta4AI.WorkloadPrincipalOperationResponse)
+	if resource := opResp.Resource; resource != nil {
+		plan.ID = types.StringValue(string(resource.GetId()))
+	} else {
+		resp.Diagnostics.AddError("Async operation error", "Operation completed but returned no resource")
+		return
+	}
 
 	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
@@ -234,12 +276,13 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
 		plan.Status = types.StringValue(string(readResult.GetStatus()))
-		if profileRaw, ok := readResult.GetProfileOk(); ok {
-			plan.Profile = &AiAgentModelProfileModel{
-				Description: types.StringValue(string(profileRaw.GetDescription())),
-				Name:        types.StringValue(string(profileRaw.GetName())),
-			}
+		if profileRaw0, ok := readResult.GetProfileOk(); ok && plan.Profile != nil {
+			profileModel0 := &AiAgentModelProfileModel{}
+			profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
+			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+			plan.Profile = profileModel0
 		}
+
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -279,12 +322,12 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Error updating ai_agent", err.Error())
 		return
 	}
-	// No result to use — copy all plan fields back to state (including write-only).
+	// Update returns no body; preserve ID from state.
+	// No response body — copy all plan fields back to state (including write-only).
 	state.Created = plan.Created
 	state.LastUpdated = plan.LastUpdated
 	state.Profile = plan.Profile
 	state.Status = plan.Status
-	state.ResourceUrl = plan.ResourceUrl
 	state.ResourceUrl = plan.ResourceUrl
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

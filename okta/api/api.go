@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 	"net/http"
 	"net/url"
 	"os"
@@ -22,6 +23,127 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/version"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
+
+func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okta4AIAPIClient, error) {
+	var httpClient *http.Client
+	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
+	debugHTTPRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
+	if c.Backoff {
+		retryableClient := retryablehttp.NewClient()
+		retryableClient.RetryWaitMin = time.Second * time.Duration(c.MinWait)
+		retryableClient.RetryWaitMax = time.Second * time.Duration(c.MaxWait)
+		retryableClient.RetryMax = c.RetryCount
+		retryableClient.Logger = c.Logger
+		if debugHTTPRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode only
+			retryableClient.HTTPClient.Transport = logging.NewTransport("Okta", retryableClient.HTTPClient.Transport)
+		} else {
+			retryableClient.HTTPClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", retryableClient.HTTPClient.Transport)
+		}
+		if c.PrivateKey != "" {
+			retryableClient.CheckRetry = checkRetryDeferOn429
+			retryableClient.ErrorHandler = errHandlerPassThrough429
+		} else {
+			retryableClient.ErrorHandler = errHandler
+			retryableClient.CheckRetry = checkRetry
+		}
+		httpClient = retryableClient.StandardClient()
+		c.Logger.Info(fmt.Sprintf("v6 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
+	} else {
+		httpClient = cleanhttp.DefaultClient()
+		if debugHTTPRequests {
+			// Needed for pretty printing http protocol in a local developer environment, ignore deprecation warnings.
+			//lint:ignore SA1019 used in developer mode onlyhttpClienthttpClient
+			httpClient.Transport = logging.NewTransport("Okta", httpClient.Transport)
+		} else {
+			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
+		}
+		c.Logger.Info("v6 running with default http client")
+	}
+
+	// adds transport governor to retryable or default client
+	if c.MaxAPICapacity > 0 && c.MaxAPICapacity < 100 {
+		c.Logger.Info(fmt.Sprintf("v6 running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
+		apiMutex, err := apimutex.NewAPIMutex(c.MaxAPICapacity)
+		if err != nil {
+			return nil, nil, err
+		}
+		httpClient.Transport = transport.NewGovernedTransport(httpClient.Transport, apiMutex, c.Logger)
+	}
+	var orgURL string
+	var disableHTTPS bool
+	if c.HttpProxy != "" {
+		orgURL = strings.TrimSuffix(c.HttpProxy, "/")
+		disableHTTPS = strings.HasPrefix(orgURL, "http://")
+	} else {
+		orgURL = fmt.Sprintf("https://%v.%v", c.OrgName, c.Domain)
+	}
+	_, err := url.Parse(orgURL)
+	if err != nil {
+		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
+	}
+
+	setters := []okta4AI.ConfigSetter{
+		okta4AI.WithOrgUrl(orgURL),
+		okta4AI.WithCache(false),
+		okta4AI.WithHttpClientPtr(httpClient),
+		okta4AI.WithRateLimitMaxBackOff(int64(c.MaxWait)),
+		okta4AI.WithRequestTimeout(int64(c.RequestTimeout)),
+		okta4AI.WithRateLimitMaxRetries(int32(c.RetryCount)),
+		okta4AI.WithUserAgentExtra(version.OktaTerraformProviderUserAgent),
+	}
+	// v6 client also needs http proxy explicitly set
+	if c.HttpProxy != "" {
+		_url, err := url.Parse(c.HttpProxy)
+		if err != nil {
+			return nil, nil, err
+		}
+		host := okta4AI.WithProxyHost(_url.Hostname())
+		setters = append(setters, host)
+
+		sPort := _url.Port()
+		if sPort == "" {
+			sPort = "80"
+		}
+		iPort, err := strconv.Atoi(sPort)
+		if err != nil {
+			return nil, nil, err
+		}
+		port := okta4AI.WithProxyPort(int32(iPort))
+		setters = append(setters, port)
+	}
+
+	switch {
+	case c.AccessToken != "":
+		setters = append(
+			setters,
+			okta4AI.WithToken(c.AccessToken), okta4AI.WithAuthorizationMode("Bearer"),
+		)
+
+	case c.ApiToken != "":
+		setters = append(
+			setters,
+			okta4AI.WithToken(c.ApiToken), okta4AI.WithAuthorizationMode("SSWS"),
+		)
+
+	case c.PrivateKey != "":
+		setters = append(
+			setters,
+			okta4AI.WithPrivateKey(c.PrivateKey), okta4AI.WithPrivateKeyId(c.PrivateKeyId), okta4AI.WithScopes(c.Scopes), okta4AI.WithClientId(c.ClientID), okta4AI.WithAuthorizationMode("PrivateKey"),
+		)
+	}
+
+	if disableHTTPS {
+		setters = append(setters, okta4AI.WithTestingDisableHttpsCheck(true))
+	}
+
+	config, err := okta4AI.NewConfiguration(setters...)
+	if err != nil {
+		return nil, nil, err
+	}
+	return config, nil, nil
+}
 
 func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClient, error) {
 	var httpClient *http.Client

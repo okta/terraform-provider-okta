@@ -17,6 +17,8 @@ package okta4ai
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -47,17 +49,14 @@ type apiServerResource struct {
 
 // ApiServerModel describes the resource data model.
 type apiServerModel struct {
-	ID          types.String                 `tfsdk:"id"`
-	Created     types.String                 `tfsdk:"created"`
-	LastUpdated types.String                 `tfsdk:"last_updated"`
-	Metadata    *ApiServerModelMetadataModel `tfsdk:"metadata"`
-	Orn         types.String                 `tfsdk:"orn"`
-	ResourceUrl types.String                 `tfsdk:"resource_url"`
-	Status      types.String                 `tfsdk:"status"`
-}
-
-// ApiServerModelMetadataModel is the nested model for metadata.
-type ApiServerModelMetadataModel struct {
+	ID          types.String `tfsdk:"id"`
+	Created     types.String `tfsdk:"created"`
+	LastUpdated types.String `tfsdk:"last_updated"`
+	Orn         types.String `tfsdk:"orn"`
+	ResourceUrl types.String `tfsdk:"resource_url"`
+	Status      types.String `tfsdk:"status"`
+	Description types.String `tfsdk:"description"`
+	DisplayName types.String `tfsdk:"display_name"`
 }
 
 func NewApiServerResource() resource.Resource {
@@ -84,43 +83,49 @@ func (r *apiServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				},
 			},
 			"created": schema.StringAttribute{
-				Description: "Timestamp when the resource server was created",
-				//Required:    true,
-				Computed: true,
+				Description: "Timestamp when the API server was created",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_updated": schema.StringAttribute{
-				Description: "Timestamp when the resource server was last updated",
-				//Required:    true,
-				Computed: true,
+				Description: "Timestamp when the API server was last updated",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"orn": schema.StringAttribute{
 				Description: "The [ORN](https://developer.",
-				//Required:    true,
-				Computed: true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"resource_url": schema.StringAttribute{
-				Description: "The URL of the resource server",
+				Description: "The URL of the API server",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"status": schema.StringAttribute{
-				Description: "Current status of the resource server in its lifecycle",
-				//Required:    true,
-				Computed: true,
-			},
-		},
-		Blocks: map[string]schema.Block{
-			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the resource server.",
-				Attributes: map[string]schema.Attribute{
-					"description": schema.StringAttribute{
-						Description: "Description of the resource server",
-						Optional:    true,
-					},
-					"display_name": schema.StringAttribute{
-						Description: "Human-readable display name for the resource server",
-						Optional:    true,
-					},
+				Description: "Current status of the API server in its lifecycle",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
 				},
+			},
+			"description": schema.StringAttribute{
+				Description: "Description of the resource server",
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"display_name": schema.StringAttribute{
+				Description: "Human-readable display name for the resource server",
+				Optional:    true,
+				Sensitive:   true,
 			},
 		},
 	}
@@ -147,17 +152,18 @@ func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 		resp.Diagnostics.AddError("Error reading api_server", err.Error())
 		return
 	}
+	metadata, ok := result.GetMetadataOk()
+	if ok {
+		state.Description = types.StringValue(string(metadata.GetDescription()))
+		state.DisplayName = types.StringValue(string(metadata.GetDisplayName()))
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
 	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 	state.Orn = types.StringValue(string(result.GetOrn()))
 	state.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok {
-		metadataModel0 := &ApiServerModelMetadataModel{}
-		_ = metadataRaw0
-		state.Metadata = metadataModel0
-	}
 
 	state.ID = types.StringValue(string(result.GetId()))
 
@@ -176,6 +182,8 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 	// Build request body from plan
 	createReq := client.ApiServerRegistrationAPI.RegisterApiServer(ctx)
 	body := okta4AI.NewCreateApiServerRequestWithDefaults()
+	body.SetDescription(plan.Description.ValueString())
+	body.SetDisplayName(plan.DisplayName.ValueString())
 	body.SetResourceUrl(plan.ResourceUrl.ValueString())
 	createReq = createReq.Body(*body)
 	httpResp, err := createReq.Execute()
@@ -185,43 +193,75 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Extract operation ID from Location header
-	parts := strings.Split(httpResp.Header.Get("Location"), "/")
-	workloadOperationsID := parts[len(parts)-1]
+	locationURL := httpResp.Header.Get("Location")
+	parts := strings.Split(locationURL, "/")
+	operationID := parts[len(parts)-1]
 
-	timeout := time.After(10 * time.Minute)
-	ticker := time.NewTicker(20 * time.Second)
+	// Poll the operation until completion with exponential backoff
+	timeout := time.After(5 * time.Minute)
+	ticker := time.NewTicker(1 * time.Second)
+	backoffDuration := 1 * time.Second
+	const maxBackoffDuration = 2 * time.Second
 	defer ticker.Stop()
 
-	var workloadOperationsResp interface{}
+	var operationResult interface{}
 	for {
 		select {
 		case <-timeout:
-			resp.Diagnostics.AddError("Timeout waiting for api_server operation", "Operation did not reach STAGED status within 10 minutes")
+			resp.Diagnostics.AddError("Timeout waiting for api_server operation", "Operation did not complete within 5 minutes")
 			return
 		case <-ctx.Done():
 			resp.Diagnostics.AddError("Context cancelled", "Waiting for api_server operation was cancelled")
 			return
 		case <-ticker.C:
-			opResp, _, opErr := client.WorkloadPrincipalOperationsAPI.
-				GetWorkloadPrincipalOperation(ctx, workloadOperationsID).Execute()
+			// Decode response body directly to check status
+			opResp, _, opErr := client.ResourceServerOperationsAPI.GetResourceServerOperation(ctx, operationID).Execute()
 			if opErr != nil {
 				resp.Diagnostics.AddError("Error polling api_server operation status", opErr.Error())
 				return
 			}
-			status := string(opResp.Resource.GetStatus())
-			if status == "STAGED" {
-				workloadOperationsResp = opResp
-				break
+
+			// Parse response JSON to check status field
+			var respJSON map[string]interface{}
+			bodyBytes, _ := json.Marshal(opResp)
+			if err := json.Unmarshal(bodyBytes, &respJSON); err == nil {
+				if status, ok := respJSON["status"]; ok {
+					statusStr := fmt.Sprintf("%v", status)
+					if statusStr == "COMPLETED" {
+						operationResult = opResp
+						break
+					} else if statusStr == "FAILED" {
+						resp.Diagnostics.AddError("api_server operation failed", "The async operation failed to complete")
+						return
+					}
+				}
 			}
+
+			// Apply exponential backoff for next poll
+			backoffDuration = time.Duration(float64(backoffDuration) * 1.5)
+			if backoffDuration > maxBackoffDuration {
+				backoffDuration = maxBackoffDuration
+			}
+			ticker.Stop()
+			ticker = time.NewTicker(backoffDuration)
 		}
-		if workloadOperationsResp != nil {
+		if operationResult != nil {
 			break
 		}
 	}
 
-	opResp := workloadOperationsResp.(*okta4AI.WorkloadPrincipalOperationResponse)
-	result := opResp.Resource
-	plan.ID = types.StringValue(string(result.GetId()))
+	// Extract resource from operation response
+	if operationResult == nil {
+		resp.Diagnostics.AddError("Async operation error", "Operation polling completed but returned no result")
+		return
+	}
+	opResp := operationResult.(*okta4AI.ResourceServerOperationResponse)
+	if resource := opResp.Resource; resource != nil {
+		plan.ID = types.StringValue(string(resource.GetId()))
+	} else {
+		resp.Diagnostics.AddError("Async operation error", "Operation completed but returned no resource")
+		return
+	}
 
 	// Fetch computed fields from the resource to ensure created/updated timestamps are available
 	id := plan.ID.ValueString()
@@ -230,6 +270,7 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
 		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
 		plan.Orn = types.StringValue(string(readResult.GetOrn()))
+		plan.Status = types.StringValue(string(readResult.GetStatus()))
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -252,18 +293,24 @@ func (r *apiServerResource) Update(ctx context.Context, req resource.UpdateReque
 
 	// Build request body from plan — only send changed fields
 	updateReq := client.ApiServerRegistrationAPI.UpdateApiServer(ctx, id)
+	updateBody := okta4AI.NewPatchResourceServerRequestBaseWithDefaults()
+	updateBody.SetDescription(plan.Description.ValueString())
+	updateBody.SetDisplayName(plan.DisplayName.ValueString())
+	updateReq = updateReq.Body(*updateBody)
 	_, err := updateReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating api_server", err.Error())
 		return
 	}
-	// No result to use — copy all plan fields back to state (including write-only).
+	// Update returns no body; preserve ID from state.
+	// No response body — copy all plan fields back to state (including write-only).
 	state.Created = plan.Created
 	state.LastUpdated = plan.LastUpdated
-	state.Metadata = plan.Metadata
 	state.Orn = plan.Orn
 	state.ResourceUrl = plan.ResourceUrl
 	state.Status = plan.Status
+	state.Description = plan.Description
+	state.DisplayName = plan.DisplayName
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

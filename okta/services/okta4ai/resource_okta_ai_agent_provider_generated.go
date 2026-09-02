@@ -97,35 +97,59 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 			},
 			"integration_date": schema.StringAttribute{
 				Description: "The date and time when the AI agent provider was integrated",
-				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_import_date": schema.StringAttribute{
 				Description: "The date and time when the last import from the AI agent provider occurred",
-				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"next_scheduled_import_date": schema.StringAttribute{
 				Description: "The date and time of the next scheduled import from the AI agent provider",
-				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"source_id": schema.StringAttribute{
 				Description: "The ID of the source",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"source_name": schema.StringAttribute{
 				Description: "The name of the source",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"source_orn": schema.StringAttribute{
 				Description: "The [ORN](https://developer.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"source_type": schema.StringAttribute{
 				Description: "The type of the source",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"status": schema.StringAttribute{
 				Description: "The status of the AI agent provider",
-				Required:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"configuration": schema.MapAttribute{
 				Description: "Configuration",
@@ -144,6 +168,7 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
+						ElementType: types.StringType,
 						Optional:    true,
 					},
 				},
@@ -153,11 +178,11 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 				Attributes: map[string]schema.Attribute{
 					"cron": schema.StringAttribute{
 						Description: "The schedule of the import in cron format.",
-						Required:    true,
+						Optional:    true,
 					},
 					"timezone": schema.StringAttribute{
 						Description: "Timezone of where the scheduled import takes place",
-						Required:    true,
+						Optional:    true,
 					},
 				},
 			},
@@ -195,7 +220,7 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if ownersRaw0, ok := result.GetOwnersOk(); ok {
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && state.Owners != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
 		ownersModel0.GroupOrn = types.StringValue(string(ownersRaw0.GetGroupOrn()))
 		{
@@ -205,7 +230,7 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		}
 		state.Owners = ownersModel0
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok {
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && state.Schedule != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
 		scheduleModel0.Cron = types.StringValue(string(scheduleRaw0.GetCron()))
 		scheduleModel0.Timezone = types.StringValue(string(scheduleRaw0.GetTimezone()))
@@ -229,6 +254,15 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	// Build request body from plan
 	createReq := client.AgentProvidersAPI.CreateAIAgentProvider(ctx)
 	body := okta4AI.NewCreateAIAgentProviderRequestWithDefaults()
+	if !plan.Configuration.IsNull() && !plan.Configuration.IsUnknown() {
+		configurationMap := make(map[string]interface{})
+		for k, v := range plan.Configuration.Elements() {
+			if sv, ok := v.(types.String); ok {
+				configurationMap[k] = sv.ValueString()
+			}
+		}
+		body.SetConfiguration(configurationMap)
+	}
 	if plan.Owners != nil {
 		nestedOwners := okta4AI.NewOwnersWithDefaults()
 		if !plan.Owners.GroupOrn.IsNull() && !plan.Owners.GroupOrn.IsUnknown() {
@@ -273,6 +307,22 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	plan.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	plan.SourceType = types.StringValue(string(result.GetSourceType()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && plan.Owners != nil {
+		ownersModel0 := &AiAgentProviderModelOwnersModel{}
+		ownersModel0.GroupOrn = types.StringValue(string(ownersRaw0.GetGroupOrn()))
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
+			resp.Diagnostics.Append(listDiags...)
+			ownersModel0.UserOrns = listVal
+		}
+		plan.Owners = ownersModel0
+	}
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && plan.Schedule != nil {
+		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
+		scheduleModel0.Cron = types.StringValue(string(scheduleRaw0.GetCron()))
+		scheduleModel0.Timezone = types.StringValue(string(scheduleRaw0.GetTimezone()))
+		plan.Schedule = scheduleModel0
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }

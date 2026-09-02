@@ -1,7 +1,6 @@
 package api
 
 import (
-	_ "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 )
 
@@ -16,7 +15,7 @@ type Okta4AIClient interface {
 }
 
 func newOkta4AISDKClient(c *OktaAPIConfig) (*okta4AI.Okta4AIAPIClient, error) {
-	config, _, err := getV6ClientConfig(c)
+	config, _, err := getO4AIClientConfig(c)
 	if err != nil {
 		return nil, err
 	}
