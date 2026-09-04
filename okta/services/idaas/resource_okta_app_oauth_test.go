@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -945,6 +946,157 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
+					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_secretRotationGuard verifies that an app whose state has no known
+// client_secret (e.g. immediately after terraform import, since Okta's GET response never
+// returns the secret) refuses an unrelated-attribute update instead of silently letting Okta
+// mint a brand new client_secret. Setting client_basic_secret_wo to the app's real secret is
+// one of the two documented ways to unblock it. See the CustomizeDiff guard in
+// resource_okta_app_oauth.go (appOAuthWouldSilentlyRotateSecret).
+func TestAccResourceOktaAppOauth_secretRotationGuard(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	create := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	unrelatedChange := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
+  response_types = ["code"]
+}
+`
+	unrelatedChangeWithKnownSecret := `
+resource "okta_app_oauth" "test" {
+  label                  = "testAcc_replace_with_uuid"
+  type                   = "web"
+  grant_types            = ["authorization_code"]
+  redirect_uris          = ["https://example.com/callback", "https://example.com/callback2"]
+  response_types         = ["code"]
+  client_basic_secret_wo = "known_secret_value"
+}
+`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(create),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+				),
+			},
+			{
+				// Simulate the customer's scenario: bring the resource in via import, which
+				// never populates client_secret (Okta's GET response never returns it), and
+				// persist that secret-less state as the baseline for the next step.
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStatePersist: true,
+				ImportStateVerify:  false,
+			},
+			{
+				// An unrelated attribute change against secret-less state must be blocked
+				// rather than silently allowed to let Okta mint a new client_secret.
+				Config:      mgr.ConfigReplace(unrelatedChange),
+				ExpectError: regexp.MustCompile(`refusing to apply this change because Terraform has no known client_secret value`),
+			},
+			{
+				// Escape hatch: supplying the real secret via client_basic_secret_wo unblocks it.
+				Config: mgr.ConfigReplace(unrelatedChangeWithKnownSecret),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "2"),
+				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_secretRotationGuardOmitSecretEscape is the same scenario as
+// TestAccResourceOktaAppOauth_secretRotationGuard, but proves the second documented escape
+// hatch: setting omit_secret = true also unblocks an update against secret-less state.
+func TestAccResourceOktaAppOauth_secretRotationGuardOmitSecretEscape(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	create := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	unrelatedChange := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
+  response_types = ["code"]
+}
+`
+	unrelatedChangeOmitSecret := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
+  response_types = ["code"]
+  omit_secret    = true
+}
+`
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(create),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+				),
+			},
+			{
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStatePersist: true,
+				ImportStateVerify:  false,
+			},
+			{
+				Config:      mgr.ConfigReplace(unrelatedChange),
+				ExpectError: regexp.MustCompile(`refusing to apply this change because Terraform has no known client_secret value`),
+			},
+			{
+				// Escape hatch: omit_secret = true unblocks it by telling the provider to stop
+				// trying to manage/send client_secret for this app at all.
+				Config: mgr.ConfigReplace(unrelatedChangeOmitSecret),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
 				),
 			},

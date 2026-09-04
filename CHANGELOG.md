@@ -2,8 +2,13 @@
 
 ## Unreleased
 
+### BREAKING CHANGES
+
+* **`okta_app_oauth`**: `terraform plan`/`apply` will now fail with an actionable error for existing apps where Terraform has no known `client_secret` (most commonly apps brought in via `terraform import`) and `token_endpoint_auth_method` requires one (`client_secret_basic`, `client_secret_post`, or `client_secret_jwt`). Previously, applying any unrelated change to such a resource caused Okta to silently issue a brand-new `client_secret`, invalidating the old one with no visible plan diff. Set `client_basic_secret_wo` (or `client_basic_secret`) to the app's real secret, or set `omit_secret = true`, to resolve.
+
 ### BUG FIXES
 
+* **`okta_app_oauth`**: Fixed `client_secret` being silently rotated by Okta on unrelated updates when Terraform had no known secret value in state (most commonly after `terraform import`, since Okta's `GET` response never returns an app's secret). This is now blocked with an actionable plan-time error instead of allowing the silent rotation; see the BREAKING CHANGES entry above for remediation.
 * **`okta_policy_rule_signon`, `okta_policy_rule_mfa`**: A policy's default rule can now be imported and updated. Previously any update failed with `Default Rule is immutable` because the provider matched on the rule's name rather than the API's `system` flag, even though Okta permits editing default rules. Removing a default rule from configuration now drops it from Terraform state instead of erroring or attempting a delete Okta rejects. Okta continues to manage `priority`, `network_connection`, `network_includes`, `network_excludes`, `users_excluded` and `session_persistent` on a default rule, so values configured for them are ignored. Policy rule resources gain a read-only `system` attribute. [#2788](https://github.com/okta/terraform-provider-okta/issues/2788)
 
 ## 7.0.0 (Aug 24, 2026)
