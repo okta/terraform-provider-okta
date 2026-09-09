@@ -3,14 +3,12 @@ package idaas
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"net/http"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func dataSourceAppOauth() *schema.Resource {
@@ -154,6 +152,11 @@ func dataSourceAppOauth() *schema.Resource {
 				Computed:    true,
 				Description: "Indicates if the client is allowed to use wildcard matching of redirect_uris. Some valid values include: \"SUBDOMAIN\", \"DISABLED\".",
 			},
+			"dpop_bound_access_tokens": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Indicates that the client application uses Demonstrating Proof-of-Possession (DPoP) for token requests. If true, the authorization server rejects token requests from this client that don't contain the DPoP header.",
+			},
 			"network": {
 				Type:        schema.TypeList,
 				Computed:    true,
@@ -190,71 +193,85 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("invalid OAuth app filters: %v", err)
 	}
-	var app *sdk.OpenIdConnectApplication
+	client := getOktaV6ClientFromMetadata(meta)
+
+	var app *v6okta.OpenIdConnectApplication
 	if filters.ID != "" {
-		respApp, _, err := getOktaClientFromMetadata(meta).Application.GetApplication(ctx, filters.ID, sdk.NewOpenIdConnectApplication(), nil)
+		respApp, _, err := client.ApplicationAPI.GetApplication(ctx, filters.ID).Execute()
 		if err != nil {
 			return diag.Errorf("failed get app by ID: %v", err)
 		}
-		app = respApp.(*sdk.OpenIdConnectApplication)
-	} else {
-		re := getOktaClientFromMetadata(meta).GetRequestExecutor()
-		qp := &query.Params{Limit: 1, Filter: filters.Status, Q: filters.GetQ()}
-		req, err := re.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/apps%s", qp.String()), nil)
+		app, err = verifyOidcAppTypeV6(*respApp)
 		if err != nil {
-			return diag.Errorf("failed to list OAuth apps: %v", err)
+			return diag.FromErr(err)
 		}
-		var appList []*sdk.OpenIdConnectApplication
-		_, err = re.Do(ctx, req, &appList)
+	} else {
+		req := client.ApplicationAPI.ListApplications(ctx).Limit(1)
+		if q := filters.GetQ(); q != "" {
+			req = req.Q(q)
+		}
+		if filters.Status != "" {
+			req = req.Filter(filters.Status)
+		}
+		appList, _, err := req.Execute()
 		if err != nil {
 			return diag.Errorf("failed to list OAuth apps: %v", err)
 		}
 		if len(appList) < 1 {
 			return diag.Errorf("no OAuth application found with provided filter: %s", filters)
 		}
-		if filters.Label != "" && appList[0].Label != filters.Label {
+		app, err = verifyOidcAppTypeV6(appList[0])
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if filters.Label != "" && app.GetLabel() != filters.Label {
 			return diag.Errorf("no OAuth application found with the provided label: %s", filters.Label)
 		}
 		logger(meta).Info("found multiple OAuth applications with the criteria supplied, using the first one, sorted by creation date")
-		app = appList[0]
 	}
 
-	d.SetId(app.Id)
-	_ = d.Set("label", app.Label)
-	_ = d.Set("name", app.Name)
-	_ = d.Set("status", app.Status)
-	_ = d.Set("auto_submit_toolbar", app.Visibility.AutoSubmitToolbar)
-	_ = d.Set("hide_ios", app.Visibility.Hide.IOS)
-	_ = d.Set("hide_web", app.Visibility.Hide.Web)
+	d.SetId(app.GetId())
+	_ = d.Set("label", app.GetLabel())
+	_ = d.Set("name", app.GetName())
+	_ = d.Set("status", app.GetStatus())
+
+	visibility := app.GetVisibility()
+	_ = d.Set("auto_submit_toolbar", visibility.GetAutoSubmitToolbar())
+	hide := visibility.GetHide()
+	_ = d.Set("hide_ios", hide.GetIOS())
+	_ = d.Set("hide_web", hide.GetWeb())
 
 	respTypes := []string{}
 	grantTypes := []string{}
 	redirectUris := []string{}
 	postLogoutRedirectUris := []string{}
 
-	if app.Settings.OauthClient != nil {
-		_ = d.Set("type", app.Settings.OauthClient.ApplicationType)
-		_ = d.Set("client_uri", app.Settings.OauthClient.ClientUri)
-		_ = d.Set("logo_uri", app.Settings.OauthClient.LogoUri)
-		_ = d.Set("login_uri", app.Settings.OauthClient.InitiateLoginUri)
-		_ = d.Set("client_id", app.Credentials.OauthClient.ClientId)
+	settings := app.GetSettings()
+	oauthClient := settings.OauthClient
+	if oauthClient != nil {
+		_ = d.Set("type", oauthClient.GetApplicationType())
+		_ = d.Set("client_uri", oauthClient.GetClientUri())
+		_ = d.Set("logo_uri", oauthClient.GetLogoUri())
+		_ = d.Set("login_uri", oauthClient.GetInitiateLoginUri())
 
-		secret, err := getCurrentlyActiveClientSecret(ctx, meta, app.Id)
+		credentials := app.GetCredentials()
+		credentialsOauthClient := credentials.GetOauthClient()
+		_ = d.Set("client_id", credentialsOauthClient.GetClientId())
+
+		secret, err := getCurrentlyActiveClientSecret(ctx, meta, app.GetId())
 		if err != nil {
 			return diag.Errorf("failed to fetch OAuth client secret: %v", err)
 		}
 		_ = d.Set("client_secret", secret)
 
-		_ = d.Set("policy_uri", app.Settings.OauthClient.PolicyUri)
-		_ = d.Set("wildcard_redirect", app.Settings.OauthClient.WildcardRedirect)
-		for i := range app.Settings.OauthClient.ResponseTypes {
-			respTypes = append(respTypes, string(*app.Settings.OauthClient.ResponseTypes[i]))
-		}
-		for i := range app.Settings.OauthClient.GrantTypes {
-			grantTypes = append(grantTypes, string(*app.Settings.OauthClient.GrantTypes[i]))
-		}
-		redirectUris = append(redirectUris, app.Settings.OauthClient.RedirectUris...)
-		postLogoutRedirectUris = append(postLogoutRedirectUris, app.Settings.OauthClient.PostLogoutRedirectUris...)
+		_ = d.Set("policy_uri", oauthClient.GetPolicyUri())
+		_ = d.Set("wildcard_redirect", oauthClient.GetWildcardRedirect())
+		_ = d.Set("dpop_bound_access_tokens", oauthClient.GetDpopBoundAccessTokens())
+
+		respTypes = append(respTypes, oauthClient.ResponseTypes...)
+		grantTypes = append(grantTypes, oauthClient.GrantTypes...)
+		redirectUris = append(redirectUris, oauthClient.RedirectUris...)
+		postLogoutRedirectUris = append(postLogoutRedirectUris, oauthClient.PostLogoutRedirectUris...)
 	}
 
 	aggMap := map[string]interface{}{
@@ -263,25 +280,27 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 		"grant_types":               utils.ConvertStringSliceToSet(grantTypes),
 		"post_logout_redirect_uris": utils.ConvertStringSliceToSet(postLogoutRedirectUris),
 	}
-	if app.Settings.OauthClient != nil &&
-		app.Settings.OauthClient.IdpInitiatedLogin != nil {
-		_ = d.Set("login_mode", app.Settings.OauthClient.IdpInitiatedLogin.Mode)
-		aggMap["login_scopes"] = utils.ConvertStringSliceToSet(app.Settings.OauthClient.IdpInitiatedLogin.DefaultScope)
+	if oauthClient != nil {
+		if idpLogin, ok := oauthClient.GetIdpInitiatedLoginOk(); ok && idpLogin != nil {
+			_ = d.Set("login_mode", idpLogin.GetMode())
+			aggMap["login_scopes"] = utils.ConvertStringSliceToSet(idpLogin.DefaultScope)
+		}
 	}
 
 	err = utils.SetNonPrimitives(d, aggMap)
 	if err != nil {
 		return diag.Errorf("failed to set OAuth application properties: %v", err)
 	}
-	if app.Settings.OauthClient != nil && app.Settings.OauthClient.Network != nil {
-		network := app.Settings.OauthClient.Network
-		networkMap := map[string]interface{}{
-			"connection": network.Connection,
-			"include":    utils.ConvertStringSliceToSet(network.Include),
-			"exclude":    utils.ConvertStringSliceToSet(network.Exclude),
-		}
-		if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
-			return diag.Errorf("failed to set OAuth application network properties: %v", err)
+	if oauthClient != nil {
+		if network, ok := oauthClient.GetNetworkOk(); ok && network != nil {
+			networkMap := map[string]interface{}{
+				"connection": network.GetConnection(),
+				"include":    utils.ConvertStringSliceToSet(network.GetInclude()),
+				"exclude":    utils.ConvertStringSliceToSet(network.GetExclude()),
+			}
+			if err := utils.SetNonPrimitives(d, map[string]interface{}{"network": []interface{}{networkMap}}); err != nil {
+				return diag.Errorf("failed to set OAuth application network properties: %v", err)
+			}
 		}
 	}
 	p, _ := json.Marshal(app.Links)
@@ -290,25 +309,32 @@ func dataSourceAppOauthRead(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 // getCurrentlyActiveClientSecret See: https://developer.okta.com/docs/reference/api/apps/#list-client-secrets
-func getCurrentlyActiveClientSecret(ctx context.Context, meta interface{}, appId string) (string, error) {
-	secrets, _, err := getOktaClientFromMetadata(meta).Application.ListClientSecretsForApplication(ctx, appId)
+func getCurrentlyActiveClientSecret(ctx context.Context, meta interface{}, appID string) (string, error) {
+	secrets, _, err := getOktaV6ClientFromMetadata(meta).ApplicationSSOPublicKeysAPI.ListOAuth2ClientSecrets(ctx, appID).Execute()
 	if err != nil {
 		return "", err
 	}
 
 	// There can only be two client secrets. Regardless, choose the latest created active secret.
+	// v6 reports `created` as an RFC3339 string rather than a time.Time, so parse before comparing;
+	// an unparseable timestamp sorts as the zero time and simply loses to any parseable one.
 	var secretValue string
-	var secret *sdk.ClientSecret
-	for _, s := range secrets {
-		if secret == nil && s.Status == "ACTIVE" {
-			secret = s
+	var newest time.Time
+	found := false
+	for i := range secrets {
+		s := secrets[i]
+		if s.GetStatus() != StatusActive {
+			continue
 		}
-		if secret != nil && s.Status == "ACTIVE" && secret.Created.Before(*s.Created) {
-			secret = s
+		created, err := time.Parse(time.RFC3339, s.GetCreated())
+		if err != nil {
+			created = time.Time{}
 		}
-	}
-	if secret != nil {
-		secretValue = secret.ClientSecret
+		if !found || created.After(newest) {
+			secretValue = s.GetClientSecret()
+			newest = created
+			found = true
+		}
 	}
 
 	return secretValue, nil

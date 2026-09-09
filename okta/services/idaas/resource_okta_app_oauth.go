@@ -255,6 +255,12 @@ other arguments that changed will be applied.`,
 				Description: "Require Proof Key for Code Exchange (PKCE) for additional verification key rotation mode. See: https://developer.okta.com/docs/reference/api/apps/#oauth-credential-object",
 				Computed:    true,
 			},
+			"dpop_bound_access_tokens": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+				Description: "Indicates that the client application uses Demonstrating Proof-of-Possession (DPoP) for token requests. If true, the authorization server rejects token requests from this client that don't contain the DPoP header.",
+			},
 			"redirect_uris": {
 				Type:        schema.TypeList,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -594,7 +600,7 @@ func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta in
 				Detail: "The groups_claim block was configured but will NOT be written to the app because the " +
 					"Okta provider is using OAuth 2.0 credentials (private_key or access_token). " +
 					"groups_claim requires SSWS API token authentication. " +
-										"The app was created/updated successfully but the groups claim is absent from its Sign On configuration. " +
+					"The app was created/updated successfully but the groups claim is absent from its Sign On configuration. " +
 					"To configure a groups claim, switch to SSWS token auth or use okta_auth_server_claim (requires Custom Authorization Server).",
 			},
 		}
@@ -848,6 +854,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 	_ = d.Set("participate_slo", oauthClient.GetParticipateSlo())
 	_ = d.Set("frontchannel_logout_uri", oauthClient.GetFrontchannelLogoutUri())
 	_ = d.Set("frontchannel_logout_session_required", oauthClient.GetFrontchannelLogoutSessionRequired())
+	_ = d.Set("dpop_bound_access_tokens", oauthClient.GetDpopBoundAccessTokens())
 
 	if refreshToken := oauthClient.GetRefreshToken(); refreshToken.GetRotationType() != "" {
 		_ = d.Set("refresh_token_rotation", refreshToken.GetRotationType())
@@ -1128,6 +1135,17 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	// Build OAuth client settings
 	oauthClientSettings := v6okta.NewOpenIdConnectApplicationSettingsClientWithDefaults()
 	oauthClientSettings.SetApplicationType(appType)
+
+	dpopVal := d.GetRawConfig().GetAttr("dpop_bound_access_tokens")
+	if dpopVal.IsNull() {
+		if isNew {
+			oauthClientSettings.DpopBoundAccessTokens = nil
+		} else {
+			oauthClientSettings.SetDpopBoundAccessTokens(d.Get("dpop_bound_access_tokens").(bool))
+		}
+	} else {
+		oauthClientSettings.SetDpopBoundAccessTokens(dpopVal.True()) // True() returns true if value is true else false if false
+	}
 
 	// Convert grant and response types to v6 format
 	v6GrantTypes := make([]string, len(grantTypes))

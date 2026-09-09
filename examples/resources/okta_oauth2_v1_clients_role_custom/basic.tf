@@ -9,6 +9,6 @@ resource "okta_app_oauth" "test" {
 resource "okta_oauth2_v1_clients_role_custom" "test" {
   client_id    = okta_app_oauth.test.client_id
   type         = "CUSTOM"
-  role         = "cr0ohugfh3nITgFgm1d7"
-  resource_set = "iamohu8okbUTSrARn1d7"
+  role         = "cr0120m8opgg3lywG1d8"
+  resource_set = "iamqspdvrtb1i0JWi1d7"
 }

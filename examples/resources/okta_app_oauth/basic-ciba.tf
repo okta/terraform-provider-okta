@@ -6,13 +6,13 @@ resource "okta_authenticator" "test1" {
   legacy_ignore_name = false
   settings = jsonencode({
     "userVerification" : "REQUIRED",
-    "appInstanceId" : "0oabcdefghi123456789"
+    "appInstanceId" : "0oazl5jsgoLmguzkM1d7"
   })
   provider_json = jsonencode({
     "type" : "PUSH",
     "configuration" : {
       "fcm" : {
-        "id" : "ppcabcdefghijklmno123"
+        "id" : "ppcrbgysxxBZDHPTv1d7"
       }
     }
   })
