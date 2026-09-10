@@ -165,7 +165,8 @@ func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, 
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
-	if c.Backoff {
+	// skip retryablehttp for PrivateKey auth, the SDK's doWithRetries handles DPoP JWT regeneration on retry
+	if c.Backoff && c.PrivateKey == "" {
 		retryableClient := retryablehttp.NewClient()
 		retryableClient.RetryWaitMin = time.Second * time.Duration(c.MinWait)
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.MaxWait)

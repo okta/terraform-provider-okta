@@ -27,7 +27,8 @@ func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClie
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHTTPRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
-	if c.Backoff {
+	// skip retryablehttp for PrivateKey auth, the SDK's doWithRetries handles DPoP JWT regeneration on retry
+	if c.Backoff && c.PrivateKey == "" {
 		retryableClient := retryablehttp.NewClient()
 		retryableClient.RetryWaitMin = time.Second * time.Duration(c.MinWait)
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.MaxWait)
@@ -148,7 +149,8 @@ func getV5ClientConfig(c *OktaAPIConfig) (*v5okta.Configuration, *v5okta.APIClie
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHttpRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
-	if c.Backoff {
+	// skip retryablehttp for PrivateKey auth, the SDK's doWithRetries handles DPoP JWT regeneration on retry
+	if c.Backoff && c.PrivateKey == "" {
 		retryableClient := retryablehttp.NewClient()
 		retryableClient.RetryWaitMin = time.Second * time.Duration(c.MinWait)
 		retryableClient.RetryWaitMax = time.Second * time.Duration(c.MaxWait)
