@@ -3,6 +3,7 @@ package idaas_test
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -74,6 +75,50 @@ func TestAccResourceOktaGroupMemberships_GH2775(t *testing.T) {
 
 					return nil
 				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaGroupMemberships_Issue2866 addresses https://github.com/okta/terraform-provider-okta/issues/2866
+// Verifies that an API error (e.g. 403 E0000006 on a group with an Application Administrator role binding)
+// during okta_group_memberships Update is surfaced as an apply error rather than being silently swallowed.
+func TestAccResourceOktaGroupMemberships_Issue2866(t *testing.T) {
+	step1 := `
+resource "okta_group" "test" {
+  name        = "TestACC Group 2866"
+  description = "Group for issue 2866 test"
+}
+resource "okta_group_memberships" "test" {
+  group_id = okta_group.test.id
+  users    = ["00u2866TESTUSER1d7"]
+}
+`
+	step2 := `
+resource "okta_group" "test" {
+  name        = "TestACC Group 2866"
+  description = "Group for issue 2866 test"
+}
+resource "okta_group_memberships" "test" {
+  group_id = okta_group.test.id
+  users    = ["00u2866TESTUSER1d7", "00u2866TESTUSER2d7"]
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkUserDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: step1,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_group_memberships.test", "users.#", "1"),
+				),
+			},
+			{
+				Config:      step2,
+				ExpectError: regexp.MustCompile(`You do not have permission to perform the requested action`),
 			},
 		},
 	})
