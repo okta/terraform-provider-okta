@@ -124,6 +124,10 @@ func checkIfUserHasGroups(ctx context.Context, client *sdk.Client, userId string
 	var nextUserGroups []*sdk.Group
 
 	for resp.HasNextPage() {
+		// Reset the slice before decoding the next page. Reusing it would make
+		// the JSON decoder write into the *sdk.Group values already appended to
+		// userGroups from the previous page, silently dropping those groups.
+		nextUserGroups = nil
 		resp, err = resp.Next(ctx, &nextUserGroups)
 
 		if err := utils.SuppressErrorOn404(resp, err); err != nil {
