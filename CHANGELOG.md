@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### FEATURES
+
+* **`okta_authenticator`, `okta_policy_mfa`, `okta_policy_mfa_default`**: Added support for the Temporary Access Code (TAC) authenticator (key `tac`). `okta_authenticator` accepts `tac` as a `key` value, configured via `provider_json`; `okta_policy_mfa` and `okta_policy_mfa_default` accept a `tac` enrollment block. TAC-specific API calls use the Okta SDK v6. [#2717](https://github.com/okta/terraform-provider-okta/issues/2717)
+
 ### BUG FIXES
 
 * **`okta_policy_rule_signon`, `okta_policy_rule_mfa`**: A policy's default rule can now be imported and updated. Previously any update failed with `Default Rule is immutable` because the provider matched on the rule's name rather than the API's `system` flag, even though Okta permits editing default rules. Removing a default rule from configuration now drops it from Terraform state instead of erroring or attempting a delete Okta rejects. Okta continues to manage `priority`, `network_connection`, `network_includes`, `network_excludes`, `users_excluded` and `session_persistent` on a default rule, so values configured for them are ignored. Policy rule resources gain a read-only `system` attribute. [#2788](https://github.com/okta/terraform-provider-okta/issues/2788)

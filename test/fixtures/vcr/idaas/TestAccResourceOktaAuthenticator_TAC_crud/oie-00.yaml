@@ -1,0 +1,233 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/.well-known/okta-organization
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"id":"00owz7gjrgT0HUZNv697","cell":"ok14","_links":{"organization":{"href":"https://oie-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":true,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":true}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 160.370041ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"security_key","id":"aut14l5hhvjbViRu1698","key":"custom_otp","status":"INACTIVE","name":"Custom OTP Authenticator","created":"2026-06-26T18:09:16.000Z","lastUpdated":"2026-06-26T21:11:14.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5hhvjbViRu1698","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5hhvjbViRu1698/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5hhvjbViRu1698/methods","hints":{"allow":["GET"]}}}},{"type":"email","id":"autwz7pcc98Hfiws7697","key":"okta_email","status":"ACTIVE","name":"Email","created":"2025-10-31T16:22:05.000Z","lastUpdated":"2026-06-26T21:11:14.000Z","settings":{"allowedFor":"recovery","tokenLifetimeInMinutes":5},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcc98Hfiws7697","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcc98Hfiws7697/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcc98Hfiws7697/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"aut14l5lqi5PUu7XV698","key":"google_otp","status":"INACTIVE","name":"Google Authenticator","created":"2026-06-26T18:11:08.000Z","lastUpdated":"2026-06-26T18:11:35.000Z","settings":{},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5lqi5PUu7XV698","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5lqi5PUu7XV698/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14l5lqi5PUu7XV698/methods","hints":{"allow":["GET"]}}}},{"type":"app","id":"autwz7pccdFrAIhBX697","key":"okta_verify","status":"ACTIVE","name":"Okta Verify","created":"2025-10-31T16:22:05.000Z","lastUpdated":"2025-10-31T16:22:06.000Z","settings":{"compliance":{"fips":"OPTIONAL"},"channelBinding":{"style":"NUMBER_CHALLENGE","required":"NEVER"},"userVerification":"PREFERRED","userVerificationMethods":["BIOMETRICS","PIN"],"appInstanceId":""},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccdFrAIhBX697","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccdFrAIhBX697/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccdFrAIhBX697/methods","hints":{"allow":["GET"]}},"enroll":{"href":"https://oie-00.dne-okta.com/idp/authenticators","hints":{"allow":["POST"]}}}},{"type":"password","id":"autwz7pcc8CqYEB1C697","key":"okta_password","status":"ACTIVE","name":"Password","created":"2025-10-31T16:22:05.000Z","lastUpdated":"2025-10-31T16:22:05.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcc8CqYEB1C697","hints":{"allow":["GET","PUT"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcc8CqYEB1C697/methods","hints":{"allow":["GET"]}}}},{"type":"phone","id":"autwz7pccagv9rAqv697","key":"phone_number","status":"INACTIVE","name":"Phone","created":"2025-10-31T16:22:05.000Z","lastUpdated":"2025-10-31T16:22:05.000Z","settings":{"allowedFor":"any"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccagv9rAqv697","hints":{"allow":["GET","PUT"]}},"activate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccagv9rAqv697/lifecycle/activate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pccagv9rAqv697/methods","hints":{"allow":["GET"]}}}},{"type":"security_key","id":"autwz7pclhKtTFckP697","key":"webauthn","status":"ACTIVE","name":"Security Key or Biometric","created":"2025-10-31T16:22:08.000Z","lastUpdated":"2026-06-26T21:51:02.000Z","_links":{"aaguids":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pclhKtTFckP697/aaguids","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pclhKtTFckP697","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pclhKtTFckP697/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pclhKtTFckP697/methods","hints":{"allow":["GET"]}}}},{"type":"security_question","id":"autwz7pcccTpJd3Ri697","key":"security_question","status":"ACTIVE","name":"Security Question","created":"2025-10-31T16:22:05.000Z","lastUpdated":"2026-06-26T21:11:56.000Z","settings":{"allowedFor":"recovery"},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcccTpJd3Ri697","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcccTpJd3Ri697/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/autwz7pcccTpJd3Ri697/methods","hints":{"allow":["GET"]}}}},{"type":"tac","id":"aut14ldws7wVm6Wo1698","key":"tac","status":"ACTIVE","name":"Temporary Access Code","created":"2026-06-26T21:44:44.000Z","lastUpdated":"2026-06-26T21:44:44.000Z","provider":{"type":"TAC","configuration":{"length":8,"minTtl":10,"maxTtl":480,"defaultTtl":60,"multiUseAllowed":false,"complexity":{"numbers":true,"letters":true,"specialCharacters":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/methods","hints":{"allow":["GET"]}}}}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 198.079875ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"tac","id":"aut14ldws7wVm6Wo1698","key":"tac","status":"ACTIVE","name":"Temporary Access Code","created":"2026-06-26T21:44:44.000Z","lastUpdated":"2026-06-26T21:44:44.000Z","provider":{"type":"TAC","configuration":{"length":8,"minTtl":10,"maxTtl":480,"defaultTtl":60,"multiUseAllowed":false,"complexity":{"numbers":true,"letters":true,"specialCharacters":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/methods","hints":{"allow":["GET"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 147.563542ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"tac","id":"aut14ldws7wVm6Wo1698","key":"tac","status":"ACTIVE","name":"Temporary Access Code","created":"2026-06-26T21:44:44.000Z","lastUpdated":"2026-06-26T21:44:44.000Z","provider":{"type":"TAC","configuration":{"length":8,"minTtl":10,"maxTtl":480,"defaultTtl":60,"multiUseAllowed":false,"complexity":{"numbers":true,"letters":true,"specialCharacters":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/methods","hints":{"allow":["GET"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 211.377291ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"tac","id":"aut14ldws7wVm6Wo1698","key":"tac","status":"ACTIVE","name":"Temporary Access Code","created":"2026-06-26T21:44:44.000Z","lastUpdated":"2026-06-26T21:44:44.000Z","provider":{"type":"TAC","configuration":{"length":8,"minTtl":10,"maxTtl":480,"defaultTtl":60,"multiUseAllowed":false,"complexity":{"numbers":true,"letters":true,"specialCharacters":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/methods","hints":{"allow":["GET"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 180.813333ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"tac","id":"aut14ldws7wVm6Wo1698","key":"tac","status":"ACTIVE","name":"Temporary Access Code","created":"2026-06-26T21:44:44.000Z","lastUpdated":"2026-06-26T21:44:44.000Z","provider":{"type":"TAC","configuration":{"length":8,"minTtl":10,"maxTtl":480,"defaultTtl":60,"multiUseAllowed":false,"complexity":{"numbers":true,"letters":true,"specialCharacters":false}}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698","hints":{"allow":["GET","PUT"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate","hints":{"allow":["POST"]}},"methods":{"href":"https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/methods","hints":{"allow":["GET"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 181.999709ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/authenticators/aut14ldws7wVm6Wo1698/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"errorCode":"E0000148","errorSummary":"Cannot modify/disable this authenticator because it is enabled in one or more policies. To continue, disable the authenticator in these policies.","errorLink":"E0000148","errorId":"oae8E32W03OTFKoGr8OyPV6Nw","errorCauses":[{"errorSummary":"Authenticator Enrollment Policies: Default Policy"}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 21:51:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 403 Forbidden
+        code: 403
+        duration: 199.08625ms

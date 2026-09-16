@@ -302,6 +302,32 @@ func TestAccResourceOktaAuthenticator_ExternalIDPCrud(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaAuthenticator_TAC_crud tests the TAC (Temporary Access
+// Code) authenticator create, read, and update via the v6 SDK path.
+func TestAccResourceOktaAuthenticator_TAC_crud(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.tac", resources.OktaIDaaSAuthenticator)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAuthenticator, t.Name())
+	config := mgr.GetFixtures("tac.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "key", "tac"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Temporary Access Code"),
+					resource.TestCheckResourceAttrSet(resourceName, "provider_json"),
+				),
+			},
+		},
+	})
+}
+
 // TestAccResourceOktaAuthenticator_WebAuthn_update
 // Tests that WebAuthn authenticators can be updated without requiring
 // on-premises provider configuration fields
