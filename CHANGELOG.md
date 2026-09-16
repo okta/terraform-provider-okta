@@ -4,7 +4,7 @@
 
 ### FEATURES
 
-* **`okta_authenticator`, `okta_policy_mfa`, `okta_policy_mfa_default`**: Added support for the Temporary Access Code (TAC) authenticator (key `tac`). `okta_authenticator` accepts `tac` as a `key` value, configured via `provider_json`; `okta_policy_mfa` and `okta_policy_mfa_default` accept a `tac` enrollment block. TAC-specific API calls use the Okta SDK v6. [#2717](https://github.com/okta/terraform-provider-okta/issues/2717)
+* **`okta_authenticator`, `okta_policy_mfa`, `okta_policy_mfa_default`**: Added support for the Temporary Access Code (TAC) authenticator (key `tac`). `okta_authenticator` accepts `tac` as a `key` value, configured via `provider_json`; `okta_policy_mfa` and `okta_policy_mfa_default` accept a `tac` enrollment block. `okta_authenticator` and its data source now perform all authenticator operations through the Okta SDK v6, removing the resource's dependency on the provider's legacy internal SDK. [#2717](https://github.com/okta/terraform-provider-okta/issues/2717)
 
 ### BUG FIXES
 

@@ -11,8 +11,6 @@ import (
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceAuthenticator() *schema.Resource {
@@ -61,7 +59,9 @@ configured via the 'provider_json' argument. The provider JSON must contain
 'type' (value: 'TAC', uppercase) and 'configuration' fields. The configuration
 supports: 'minTtl', 'maxTtl', 'defaultTtl' (minutes), 'length' (code length),
 'complexity' (object with 'numbers', 'letters', 'specialCharacters' booleans),
-and 'multiUseAllowed' (boolean). TAC CRUD operations use the v6 Okta SDK.`,
+and 'multiUseAllowed' (boolean).
+
+-> All authenticator operations use the Okta SDK v6.`,
 		Schema: map[string]*schema.Schema{
 			"key": {
 				Type:        schema.TypeString,
@@ -80,7 +80,7 @@ and 'multiUseAllowed' (boolean). TAC CRUD operations use the v6 Okta SDK.`,
 			"settings": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key`",
+				Description:      "Settings for the authenticator. The settings JSON contains values based on Authenticator key. It is not used for authenticators with type `security_key` or key `tac`",
 				ValidateDiagFunc: stringIsJSON,
 				StateFunc:        utils.NormalizeDataJSON,
 				DiffSuppressFunc: utils.NoChangeInObjectWithSortedSlicesFromUnmarshaledJSON,
@@ -208,58 +208,51 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	if d.Get("key").(string) == "tac" {
-		return resourceAuthenticatorTACCreate(ctx, d, meta)
-	}
+	v6Client := getOktaV6ClientFromMetadata(meta)
 
-	var err error
 	// soft create if the authenticator already exists
-	authenticator, _ := findAuthenticator(ctx, meta, d.Get("name").(string), d.Get("key").(string))
+	authenticator, _ := findAuthenticatorV6(ctx, v6Client, d.Get("name").(string), d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
-		authenticator, err = buildAuthenticator(d)
+		auth, err := buildAuthenticatorV6(d)
 		if err != nil {
 			return diag.FromErr(err)
 		}
-		activate := (d.Get("status").(string) == StatusActive)
-		qp := &query.Params{
-			Activate: utils.BoolPtr(activate),
-		}
-		authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.CreateAuthenticator(ctx, *authenticator, qp)
+		activate := d.Get("status").(string) == StatusActive
+		authenticator, _, err = v6Client.AuthenticatorAPI.
+			CreateAuthenticator(ctx).
+			Authenticator(auth).
+			Activate(activate).
+			Execute()
 		if err != nil {
-			return diag.FromErr(err)
+			return diag.FromErr(authenticatorAPIError("create", err))
 		}
+
 		if d.Get("key").(string) == "custom_otp" {
-			var otp *sdk.OTP
-			otp, err = buildOTP(d)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			_, err = getOktaClientFromMetadata(meta).Authenticator.SetSettingsOTP(ctx, *otp, authenticator.Id)
-			if err != nil {
+			if err := setOTPMethodSettings(ctx, v6Client, authenticator.GetId(), d); err != nil {
 				return diag.FromErr(err)
 			}
 		}
 	}
 
-	d.SetId(authenticator.Id)
+	d.SetId(authenticator.GetId())
 
 	// If status is defined in the config, and the actual status reported by the
 	// API is not the same, then toggle the status. Soft update.
 	status, ok := d.GetOk("status")
-	if ok && authenticator.Status != status.(string) {
+	if ok && authenticator.GetStatus() != status.(string) {
 		var err error
 		if status.(string) == StatusInactive {
-			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
 		} else {
-			authenticator, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			authenticator, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
 		}
 	}
 
-	establishAuthenticator(authenticator, d)
+	establishAuthenticatorV6(authenticator, d)
 	return nil
 }
 
@@ -268,17 +261,11 @@ func resourceAuthenticatorRead(ctx context.Context, d *schema.ResourceData, meta
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	authenticator, _, err := getOktaClientFromMetadata(meta).Authenticator.GetAuthenticator(ctx, d.Id())
+	authenticator, _, err := getOktaV6ClientFromMetadata(meta).AuthenticatorAPI.GetAuthenticator(ctx, d.Id()).Execute()
 	if err != nil {
 		return diag.Errorf("failed to get authenticator: %v", err)
 	}
-	establishAuthenticator(authenticator, d)
-
-	// TAC provider configuration is not represented in the local SDK struct;
-	// use v6 SDK to supplement the read with provider_json.
-	if authenticator.Key == "tac" {
-		return resourceAuthenticatorTACReadProviderData(ctx, d, meta)
-	}
+	establishAuthenticatorV6(authenticator, d)
 
 	return nil
 }
@@ -288,28 +275,25 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	if d.Get("key").(string) == "tac" {
-		return resourceAuthenticatorTACUpdate(ctx, d, meta)
-	}
-
 	err := validateAuthenticator(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	authenticator, err := buildAuthenticator(d)
+	auth, err := buildAuthenticatorV6(d)
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
-	_, _, err = getOktaClientFromMetadata(meta).Authenticator.UpdateAuthenticator(ctx, d.Id(), *authenticator)
+	v6Client := getOktaV6ClientFromMetadata(meta)
+	_, _, err = v6Client.AuthenticatorAPI.ReplaceAuthenticator(ctx, d.Id()).Authenticator(auth).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
 	oldStatus, newStatus := d.GetChange("status")
 	if oldStatus != newStatus {
 		if newStatus == StatusActive {
-			_, _, err = getOktaClientFromMetadata(meta).Authenticator.ActivateAuthenticator(ctx, d.Id())
+			_, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
 		} else {
-			_, _, err = getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+			_, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
 		}
 		if err != nil {
 			return diag.Errorf("failed to change authenticator status: %v", err)
@@ -326,7 +310,7 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAuthenticator)
 	}
 
-	_, _, err := getOktaClientFromMetadata(meta).Authenticator.DeactivateAuthenticator(ctx, d.Id())
+	_, _, err := getOktaV6ClientFromMetadata(meta).AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
 	if err != nil {
 		logger(meta).Warn(fmt.Sprintf("Attempted to deactivate authenticator %q as soft delete and received error: %s", d.Get("key"), err))
 	}
@@ -334,92 +318,183 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
-	authenticator := sdk.Authenticator{
-		Type: d.Get("type").(string),
-		Id:   d.Id(),
-		Key:  d.Get("key").(string),
-		Name: d.Get("name").(string),
+// authenticatorProviderV6 and authenticatorProviderConfigV6 mirror the JSON
+// shape of an authenticator's `provider` object. The v6 SDK's AuthenticatorBase
+// does not model `provider` as a typed field (it is only typed on the
+// ListAuthenticators discriminated-union response, which isn't used for
+// create/replace/get) so these local types exist purely to get correct
+// `omitempty` wire behavior when building the provider payload for the
+// security_key/RADIUS and DUO cases below; provider_json is handled
+// generically without any typed struct.
+type authenticatorProviderV6 struct {
+	Type          string                         `json:"type,omitempty"`
+	Configuration *authenticatorProviderConfigV6 `json:"configuration,omitempty"`
+}
+
+type authenticatorProviderConfigV6 struct {
+	HostName         string                                   `json:"hostName,omitempty"`
+	AuthPort         *int64                                   `json:"authPort,omitempty"`
+	InstanceId       string                                   `json:"instanceId,omitempty"`
+	SharedSecret     string                                   `json:"sharedSecret,omitempty"`
+	Host             string                                   `json:"host,omitempty"`
+	SecretKey        string                                   `json:"secretKey,omitempty"`
+	IntegrationKey   string                                   `json:"integrationKey,omitempty"`
+	UserNameTemplate *authenticatorProviderUserNameTemplateV6 `json:"userNameTemplate,omitempty"`
+}
+
+type authenticatorProviderUserNameTemplateV6 struct {
+	Template string `json:"template,omitempty"`
+}
+
+// authenticatorSettingsV6 mirrors the fixed field set the legacy SDK's
+// AuthenticatorSettings modeled. Settings are round-tripped through this type
+// (rather than passed through as an arbitrary map) on both build and establish
+// so unrecognized/zero-value fields the Okta API happens to return (e.g.
+// oauthClientId, an empty appInstanceId) are dropped exactly as before,
+// preserving existing plan/state diff behavior.
+type authenticatorSettingsV6 struct {
+	AllowedFor              string                         `json:"allowedFor,omitempty"`
+	AppInstanceId           string                         `json:"appInstanceId,omitempty"`
+	ChannelBinding          *authenticatorChannelBindingV6 `json:"channelBinding,omitempty"`
+	Compliance              *authenticatorComplianceV6     `json:"compliance,omitempty"`
+	TokenLifetimeInMinutes  *int64                         `json:"tokenLifetimeInMinutes,omitempty"`
+	UserVerification        string                         `json:"userVerification,omitempty"`
+	EnrollmentSecurityLevel string                         `json:"enrollmentSecurityLevel,omitempty"`
+	UserVerificationMethods []string                       `json:"userVerificationMethods,omitempty"`
+}
+
+type authenticatorChannelBindingV6 struct {
+	Required string `json:"required,omitempty"`
+	Style    string `json:"style,omitempty"`
+}
+
+type authenticatorComplianceV6 struct {
+	Fips string `json:"fips,omitempty"`
+}
+
+// marshalAuthenticatorSettings filters a raw `settings` value (as decoded
+// generically from AdditionalProperties) through authenticatorSettingsV6,
+// matching the legacy behavior of reading settings back through a fixed,
+// typed field set.
+func marshalAuthenticatorSettings(raw interface{}) (string, bool) {
+	b, err := json.Marshal(raw)
+	if err != nil {
+		return "", false
 	}
-	// WebAuthn is a built-in authenticator and doesn't need provider configuration
-	if d.Get("type").(string) == "security_key" && d.Get("key").(string) != "webauthn" {
-		authenticator.Provider = &sdk.AuthenticatorProvider{
+	var settings authenticatorSettingsV6
+	if json.Unmarshal(b, &settings) != nil {
+		return "", false
+	}
+	b, err = json.Marshal(settings)
+	if err != nil {
+		return "", false
+	}
+	return string(b), true
+}
+
+// buildAuthenticatorV6 constructs a v6 AuthenticatorBase for any authenticator
+// key. `provider`, `settings`, and `agreeToTerms` aren't typed fields on
+// AuthenticatorBase, so they're carried in AdditionalProperties, which the v6
+// SDK serializes at the top level of the request body.
+func buildAuthenticatorV6(d *schema.ResourceData) (v6okta.AuthenticatorBase, error) {
+	auth := v6okta.AuthenticatorBase{}
+	if id := d.Id(); id != "" {
+		auth.SetId(id)
+	}
+	if typ := d.Get("type").(string); typ != "" {
+		auth.SetType(typ)
+	}
+	auth.SetKey(d.Get("key").(string))
+	auth.SetName(d.Get("name").(string))
+
+	additionalProps := map[string]interface{}{}
+
+	switch {
+	case d.Get("type").(string) == "security_key" && d.Get("key").(string) != "webauthn":
+		// WebAuthn is a built-in authenticator and doesn't need provider configuration
+		authPort := int64(d.Get("provider_auth_port").(int))
+		additionalProps["provider"] = authenticatorProviderV6{
 			Type: d.Get("provider_type").(string),
-			Configuration: &sdk.AuthenticatorProviderConfiguration{
-				HostName:     d.Get("provider_hostname").(string),
-				AuthPortPtr:  utils.Int64Ptr(d.Get("provider_auth_port").(int)),
-				InstanceId:   d.Get("provider_instance_id").(string),
-				SharedSecret: d.Get("provider_shared_secret").(string),
-				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
-					Template: "",
-				},
+			Configuration: &authenticatorProviderConfigV6{
+				HostName:         d.Get("provider_hostname").(string),
+				AuthPort:         &authPort,
+				InstanceId:       d.Get("provider_instance_id").(string),
+				SharedSecret:     d.Get("provider_shared_secret").(string),
+				UserNameTemplate: &authenticatorProviderUserNameTemplateV6{},
 			},
 		}
-	} else if d.Get("type").(string) == "DUO" {
-		authenticator.Provider = &sdk.AuthenticatorProvider{
+	case d.Get("type").(string) == "DUO":
+		additionalProps["provider"] = authenticatorProviderV6{
 			Type: d.Get("provider_type").(string),
-			Configuration: &sdk.AuthenticatorProviderConfiguration{
+			Configuration: &authenticatorProviderConfigV6{
 				Host:           d.Get("provider_host").(string),
 				SecretKey:      d.Get("provider_secret_key").(string),
 				IntegrationKey: d.Get("provider_integration_key").(string),
-				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
+				UserNameTemplate: &authenticatorProviderUserNameTemplateV6{
 					Template: d.Get("provider_user_name_template").(string),
 				},
 			},
 		}
-	} else if d.Get("key").(string) == "custom_app" {
+	case d.Get("key").(string) == "custom_app":
 		agreeToTerms, ok := d.Get("agree_to_terms").(bool)
 		if !ok {
-			return nil, fmt.Errorf("unable to parse agree_to_terms as a boolean value, valid values are true/false")
+			return auth, fmt.Errorf("unable to parse agree_to_terms as a boolean value, valid values are true/false")
 		}
-
-		authenticator.AgreeToTerms = agreeToTerms
+		additionalProps["agreeToTerms"] = agreeToTerms
 		if s, ok := d.GetOk("settings"); ok {
-			var settings sdk.AuthenticatorSettings
-			err := json.Unmarshal([]byte(s.(string)), &settings)
-			if err != nil {
-				return nil, err
+			var settings authenticatorSettingsV6
+			if err := json.Unmarshal([]byte(s.(string)), &settings); err != nil {
+				return auth, err
 			}
-			authenticator.Settings = &settings
+			additionalProps["settings"] = settings
 		}
-		authenticator.Provider = &sdk.AuthenticatorProvider{
-			Type: d.Get("provider_type").(string),
-		}
-	} else if d.Get("key").(string) != "custom_otp" { // does not include custom_app
+		additionalProps["provider"] = authenticatorProviderV6{Type: d.Get("provider_type").(string)}
+	case d.Get("key").(string) != "custom_otp": // does not include custom_app
 		if s, ok := d.GetOk("settings"); ok {
-			var settings sdk.AuthenticatorSettings
-			err := json.Unmarshal([]byte(s.(string)), &settings)
-			if err != nil {
-				return nil, err
+			var settings authenticatorSettingsV6
+			if err := json.Unmarshal([]byte(s.(string)), &settings); err != nil {
+				return auth, err
 			}
-			authenticator.Settings = &settings
+			additionalProps["settings"] = settings
 		}
 	}
 
 	if p, ok := d.GetOk("provider_json"); ok {
-		var provider sdk.AuthenticatorProvider
-		err := json.Unmarshal([]byte(p.(string)), &provider)
-		if err != nil {
-			return nil, err
+		var provider interface{}
+		if err := json.Unmarshal([]byte(p.(string)), &provider); err != nil {
+			return auth, err
 		}
-		authenticator.Provider = &provider
+		additionalProps["provider"] = provider
 	}
 
-	return &authenticator, nil
+	if len(additionalProps) > 0 {
+		auth.AdditionalProperties = additionalProps
+	}
+	return auth, nil
 }
 
-func buildOTP(d *schema.ResourceData) (*sdk.OTP, error) {
-	otp := sdk.OTP{}
+// setOTPMethodSettings configures custom_otp settings via the authenticator
+// methods API (`PUT /api/v1/authenticators/{id}/methods/otp`). OTP settings
+// aren't part of the base authenticator body - confirmed against Okta's
+// management OpenAPI spec, whose replaceAuthenticatorMethod operation accepts
+// a flat AuthenticatorMethodOtp body (acceptableAdjacentIntervals, algorithm,
+// encoding, passCodeLength, protocol, timeIntervalInSeconds), not a
+// settings-wrapped object.
+func setOTPMethodSettings(ctx context.Context, v6Client *v6okta.APIClient, authenticatorId string, d *schema.ResourceData) error {
+	otp := v6okta.AuthenticatorMethodOtp{}
 	if s, ok := d.GetOk("settings"); ok {
-		var settings sdk.AuthenticatorSettingsOTP
-		err := json.Unmarshal([]byte(s.(string)), &settings)
-		if err != nil {
-			return nil, err
+		if err := json.Unmarshal([]byte(s.(string)), &otp); err != nil {
+			return err
 		}
-		otp.Settings = &settings
 	}
-
-	return &otp, nil
+	_, _, err := v6Client.AuthenticatorAPI.
+		ReplaceAuthenticatorMethod(ctx, authenticatorId, "otp").
+		ListAuthenticatorMethods200ResponseInner(v6okta.AuthenticatorMethodOtpAsListAuthenticatorMethods200ResponseInner(&otp)).
+		Execute()
+	if err != nil {
+		return fmt.Errorf("failed to set custom_otp settings: %v", err)
+	}
+	return nil
 }
 
 func validateAuthenticator(d *schema.ResourceData) error {
@@ -459,194 +534,135 @@ func validateAuthenticator(d *schema.ResourceData) error {
 	return nil
 }
 
-// resourceAuthenticatorTACCreate handles create for the TAC (Temporary Access
-// Code) authenticator entirely through the v6 SDK, which supports the TAC
-// provider configuration fields that the local SDK does not represent.
-func resourceAuthenticatorTACCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	v6Client := getOktaV6ClientFromMetadata(meta)
-
-	existing, err := findTACAuthenticatorV6(ctx, v6Client, d.Get("name").(string))
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	if existing == nil {
-		tacBase, err := buildTACAuthenticatorV6(d)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-		activate := d.Get("status").(string) == StatusActive
-		result, _, err := v6Client.AuthenticatorAPI.
-			CreateAuthenticator(ctx).
-			Authenticator(tacBase).
-			Activate(activate).
-			Execute()
-		if err != nil {
-			return diag.FromErr(tacAPIError("create", err))
-		}
-		d.SetId(result.GetId())
-	} else {
-		d.SetId(existing.GetId())
-		desiredStatus := d.Get("status").(string)
-		if existing.GetStatus() != desiredStatus {
-			var err error
-			if desiredStatus == StatusInactive {
-				_, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
-			} else {
-				_, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
-			}
-			if err != nil {
-				return diag.Errorf("failed to change TAC authenticator status: %v", err)
-			}
-		}
-	}
-
-	return resourceAuthenticatorRead(ctx, d, meta)
-}
-
-// findTACAuthenticatorV6 looks for an existing TAC authenticator via the v6
-// SDK's ListAuthenticators, matching by key (there can only be one `tac`
-// authenticator) or by display name, mirroring the legacy findAuthenticator
-// semantics used for other authenticator types without depending on the
-// legacy SDK client.
-func findTACAuthenticatorV6(ctx context.Context, v6Client *v6okta.APIClient, name string) (*v6okta.AuthenticatorKeyTac, error) {
+// findAuthenticatorV6 looks for an existing authenticator by name and/or key
+// via the v6 SDK's ListAuthenticators, replicating the legacy findAuthenticator
+// matching semantics (custom_app can have multiple authenticators sharing a
+// key, so it matches by name only; custom_otp requires an exact name+key match
+// on the first candidate found, erroring otherwise; everything else matches by
+// name OR key).
+func findAuthenticatorV6(ctx context.Context, v6Client *v6okta.APIClient, name, key string) (*v6okta.AuthenticatorBase, error) {
 	authenticators, _, err := v6Client.AuthenticatorAPI.ListAuthenticators(ctx).Execute()
 	if err != nil {
-		return nil, fmt.Errorf("failed to list authenticators while looking for existing TAC authenticator: %v", err)
+		return nil, err
 	}
-	for _, authenticator := range authenticators {
-		tac := authenticator.AuthenticatorKeyTac
-		if tac == nil {
+	for _, item := range authenticators {
+		authenticator, err := normalizeListedAuthenticator(item)
+		if err != nil {
 			continue
 		}
-		if tac.GetKey() == "tac" || tac.GetName() == name {
-			return tac, nil
+		switch {
+		case key == "custom_app":
+			if authenticator.GetName() == name { // there can be more than 1 custom_app type authenticator, return nil in the end if we can't find by name.
+				return authenticator, nil
+			}
+		case key != "custom_otp":
+			if authenticator.GetName() == name {
+				return authenticator, nil
+			}
+			if authenticator.GetKey() == key {
+				return authenticator, nil
+			}
+		default:
+			if authenticator.GetName() == name && authenticator.GetKey() == key {
+				return authenticator, nil
+			}
+			return nil, fmt.Errorf("authenticator with name '%s' and/or key '%s' does not exist", name, key)
 		}
 	}
-	return nil, nil
+	if key != "" {
+		return nil, fmt.Errorf("authenticator with key '%s' does not exist", key)
+	}
+	return nil, fmt.Errorf("authenticator with name '%s' does not exist", name) // authenticator names must be unique.
 }
 
-// resourceAuthenticatorTACUpdate handles update for the TAC authenticator.
-func resourceAuthenticatorTACUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	tacBase, err := buildTACAuthenticatorV6(d)
+// normalizeListedAuthenticator converts one ListAuthenticators union item
+// (whose MarshalJSON serializes whichever typed key-variant is set) back into
+// a generic AuthenticatorBase, so callers can read id/key/name/status/provider/
+// settings without a type switch over every authenticator key variant.
+func normalizeListedAuthenticator(item v6okta.ListAuthenticators200ResponseInner) (*v6okta.AuthenticatorBase, error) {
+	b, err := json.Marshal(item)
 	if err != nil {
-		return diag.FromErr(err)
+		return nil, err
 	}
-
-	v6Client := getOktaV6ClientFromMetadata(meta)
-	_, _, err = v6Client.AuthenticatorAPI.
-		ReplaceAuthenticator(ctx, d.Id()).
-		Authenticator(tacBase).
-		Execute()
-	if err != nil {
-		return diag.FromErr(tacAPIError("update", err))
+	var base v6okta.AuthenticatorBase
+	if err := json.Unmarshal(b, &base); err != nil {
+		return nil, err
 	}
-
-	oldStatus, newStatus := d.GetChange("status")
-	if oldStatus != newStatus {
-		if newStatus == StatusActive {
-			_, _, err = v6Client.AuthenticatorAPI.ActivateAuthenticator(ctx, d.Id()).Execute()
-		} else {
-			_, _, err = v6Client.AuthenticatorAPI.DeactivateAuthenticator(ctx, d.Id()).Execute()
-		}
-		if err != nil {
-			return diag.Errorf("failed to change TAC authenticator status: %v", err)
-		}
-	}
-
-	return resourceAuthenticatorRead(ctx, d, meta)
+	return &base, nil
 }
 
-// resourceAuthenticatorTACReadProviderData supplements a base authenticator
-// read by fetching the TAC provider configuration via the v6 SDK and storing
-// it in the provider_json attribute.
-func resourceAuthenticatorTACReadProviderData(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	result, _, err := getOktaV6ClientFromMetadata(meta).AuthenticatorAPI.
-		GetAuthenticator(ctx, d.Id()).
-		Execute()
-	if err != nil {
-		return diag.Errorf("failed to get TAC authenticator provider data: %v", err)
-	}
-
-	if provider, ok := result.AdditionalProperties["provider"]; ok {
-		b, marshalErr := json.Marshal(provider)
-		if marshalErr == nil {
-			_ = d.Set("provider_json", string(b))
-		}
-	}
-	return nil
-}
-
-// tacAPIError wraps a v6 SDK error for a TAC operation, surfacing the Okta API
-// response body (errorSummary/errorCauses) when available so configuration
-// problems such as out-of-range TTL values are visible to the user.
-func tacAPIError(action string, err error) error {
+// authenticatorAPIError wraps a v6 SDK error for an authenticator operation,
+// surfacing the Okta API response body (errorSummary/errorCauses) when
+// available so configuration problems are visible to the user.
+func authenticatorAPIError(action string, err error) error {
 	var apiErr *v6okta.GenericOpenAPIError
 	if errors.As(err, &apiErr) && len(apiErr.Body()) > 0 {
-		return fmt.Errorf("failed to %s TAC authenticator: %v: %s", action, err, string(apiErr.Body()))
+		return fmt.Errorf("failed to %s authenticator: %v: %s", action, err, string(apiErr.Body()))
 	}
-	return fmt.Errorf("failed to %s TAC authenticator: %v", action, err)
+	return fmt.Errorf("failed to %s authenticator: %v", action, err)
 }
 
-// buildTACAuthenticatorV6 constructs a v6 AuthenticatorBase for TAC, embedding
-// the provider configuration from provider_json into AdditionalProperties so
-// the v6 SDK serializes it correctly in the request body.
-func buildTACAuthenticatorV6(d *schema.ResourceData) (v6okta.AuthenticatorBase, error) {
-	auth := v6okta.AuthenticatorBase{}
-	auth.SetKey("tac")
-	auth.SetType("tac")
-	auth.SetName(d.Get("name").(string))
-	if status, ok := d.GetOk("status"); ok {
-		auth.SetStatus(status.(string))
+// establishAuthenticatorV6 populates resource attributes from a v6
+// AuthenticatorBase. `settings`, `provider`, and `agreeToTerms` are read out of
+// AdditionalProperties generically (they round-trip as raw JSON) rather than
+// through any typed model.
+//
+// provider_json is populated here for any authenticator whose provider
+// configuration isn't otherwise captured by the dedicated provider_* attributes
+// below (e.g. `tac`), matching the pre-v6-migration behavior where provider_json
+// was write-only for DUO/security_key (those types' current provider values are
+// reflected via provider_host/provider_hostname/etc. instead, to avoid a
+// perpetual diff against the Optional, non-Computed provider_json attribute).
+func establishAuthenticatorV6(authenticator *v6okta.AuthenticatorBase, d *schema.ResourceData) {
+	_ = d.Set("key", authenticator.GetKey())
+	_ = d.Set("name", authenticator.GetName())
+	_ = d.Set("status", authenticator.GetStatus())
+	_ = d.Set("type", authenticator.GetType())
+
+	if raw, ok := authenticator.AdditionalProperties["settings"]; ok && raw != nil {
+		if s, ok := marshalAuthenticatorSettings(raw); ok {
+			_ = d.Set("settings", s)
+		}
 	}
 
-	additionalProps := map[string]interface{}{}
-	if p, ok := d.GetOk("provider_json"); ok {
-		var provider interface{}
-		if err := json.Unmarshal([]byte(p.(string)), &provider); err != nil {
-			return auth, fmt.Errorf("failed to parse provider_json for TAC authenticator: %v", err)
-		}
-		additionalProps["provider"] = provider
+	raw, ok := authenticator.AdditionalProperties["provider"]
+	if !ok || raw == nil {
+		return
 	}
-	if len(additionalProps) > 0 {
-		auth.AdditionalProperties = additionalProps
-	}
-	return auth, nil
-}
-
-func establishAuthenticator(authenticator *sdk.Authenticator, d *schema.ResourceData) {
-	_ = d.Set("key", authenticator.Key)
-	_ = d.Set("name", authenticator.Name)
-	_ = d.Set("status", authenticator.Status)
-	_ = d.Set("type", authenticator.Type)
-	if authenticator.Settings != nil {
-		b, _ := json.Marshal(authenticator.Settings)
-		dataMap := map[string]interface{}{}
-		_ = json.Unmarshal([]byte(string(b)), &dataMap)
-		b, _ = json.Marshal(dataMap)
-		_ = d.Set("settings", string(b))
+	b, err := json.Marshal(raw)
+	if err != nil {
+		return
 	}
 
-	if authenticator.Provider != nil {
-		_ = d.Set("provider_type", authenticator.Provider.Type)
+	var provider authenticatorProviderV6
+	if json.Unmarshal(b, &provider) != nil {
+		return
+	}
+	_ = d.Set("provider_type", provider.Type)
 
-		// WebAuthn is a built-in authenticator and doesn't have provider configuration
-		if authenticator.Type == "security_key" && authenticator.Key != "webauthn" {
-			_ = d.Set("provider_hostname", authenticator.Provider.Configuration.HostName)
-			if authenticator.Provider.Configuration.AuthPortPtr != nil {
-				_ = d.Set("provider_auth_port", authenticator.Provider.Configuration.AuthPortPtr)
-			}
-			_ = d.Set("provider_instance_id", authenticator.Provider.Configuration.InstanceId)
-		}
+	authType := authenticator.GetType()
+	authKey := authenticator.GetKey()
+	hasDedicatedProviderAttrs := (authType == "security_key" && authKey != "webauthn") || provider.Type == "DUO"
+	if !hasDedicatedProviderAttrs {
+		_ = d.Set("provider_json", string(b))
+	}
 
-		if authenticator.Provider.Configuration.UserNameTemplate != nil {
-			_ = d.Set("provider_user_name_template", authenticator.Provider.Configuration.UserNameTemplate.Template)
+	if provider.Configuration == nil {
+		return
+	}
+	if authType == "security_key" && authKey != "webauthn" {
+		_ = d.Set("provider_hostname", provider.Configuration.HostName)
+		if provider.Configuration.AuthPort != nil {
+			_ = d.Set("provider_auth_port", int(*provider.Configuration.AuthPort))
 		}
-
-		if authenticator.Provider.Type == "DUO" {
-			_ = d.Set("provider_host", authenticator.Provider.Configuration.Host)
-			_ = d.Set("provider_secret_key", authenticator.Provider.Configuration.SecretKey)
-			_ = d.Set("provider_integration_key", authenticator.Provider.Configuration.IntegrationKey)
-		}
+		_ = d.Set("provider_instance_id", provider.Configuration.InstanceId)
+	}
+	if provider.Configuration.UserNameTemplate != nil {
+		_ = d.Set("provider_user_name_template", provider.Configuration.UserNameTemplate.Template)
+	}
+	if provider.Type == "DUO" {
+		_ = d.Set("provider_host", provider.Configuration.Host)
+		_ = d.Set("provider_secret_key", provider.Configuration.SecretKey)
+		_ = d.Set("provider_integration_key", provider.Configuration.IntegrationKey)
 	}
 }
