@@ -14,7 +14,7 @@ import (
 
 var _ datasource.DataSource = &requestSequenceDataSource{}
 
-func newRequestSequencesDataSource() datasource.DataSource {
+func newRequestSequenceDataSource() datasource.DataSource {
 	return &requestSequenceDataSource{}
 }
 
