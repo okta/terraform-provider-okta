@@ -15,10 +15,11 @@ Creates email domain. This resource allows you to create and configure an email 
 
 ```terraform
 resource "okta_email_domain" "example" {
-  brand_id     = "abc123"
-  domain       = "example.com"
-  display_name = "test"
-  user_name    = "paul_atreides"
+  brand_id             = "abc123"
+  domain               = "example.com"
+  display_name         = "test"
+  user_name            = "paul_atreides"
+  validation_subdomain = "mail"
 }
 ```
 
@@ -31,6 +32,10 @@ resource "okta_email_domain" "example" {
 - `display_name` (String) Display name of the email domain.
 - `domain` (String) Mail domain to send from.
 - `user_name` (String) User name of the email domain.
+
+### Optional
+
+- `validation_subdomain` (String) Subdomain for the email sender's custom mail domain.
 
 ### Read-Only
 
