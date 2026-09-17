@@ -159,6 +159,48 @@ func (m reauthFrequencyModifier) PlanModifyString(ctx context.Context, req planm
 	}
 }
 
+// ChainsPlanModifier normalizes the JSON key order of each chains element during
+// planning so the plan value always matches the post-apply canonical form.
+type ChainsPlanModifier struct{}
+
+func (m ChainsPlanModifier) Description(_ context.Context) string {
+	return "Normalizes JSON key order in chains elements to prevent inconsistent result after apply"
+}
+
+func (m ChainsPlanModifier) MarkdownDescription(ctx context.Context) string {
+	return m.Description(ctx)
+}
+
+func (m ChainsPlanModifier) PlanModifyList(ctx context.Context, req planmodifier.ListRequest, resp *planmodifier.ListResponse) {
+	if req.PlanValue.IsNull() || req.PlanValue.IsUnknown() {
+		return
+	}
+	var chainStrings []string
+	resp.Diagnostics.Append(req.PlanValue.ElementsAs(ctx, &chainStrings, false)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	normalized := make([]string, len(chainStrings))
+	for i, s := range chainStrings {
+		var raw map[string]interface{}
+		if err := json.Unmarshal([]byte(s), &raw); err != nil {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid chains JSON",
+				fmt.Sprintf("chains[%d] is not valid JSON: %s", i, err),
+			)
+			return
+		}
+		b, _ := json.Marshal(raw)
+		normalized[i] = string(b)
+	}
+	listVal, diags := types.ListValueFrom(ctx, types.StringType, normalized)
+	resp.Diagnostics.Append(diags...)
+	if !resp.Diagnostics.HasError() {
+		resp.PlanValue = listVal
+	}
+}
+
 // ruleIndex provides efficient lookups for rules by name and ID.
 type ruleIndex struct {
 	byName map[string]policyRuleModel
@@ -788,6 +830,9 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Optional:    true,
 			ElementType: types.StringType,
 			Description: "List of authentication method chain objects as JSON-encoded strings. Use with `type = \"AUTH_METHOD_CHAIN\"` only.",
+			PlanModifiers: []planmodifier.List{
+				ChainsPlanModifier{},
+			},
 		},
 		"risk_score": schema.StringAttribute{
 			Optional: true,

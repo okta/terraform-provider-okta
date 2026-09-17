@@ -861,3 +861,48 @@ func TestAccResourceOktaAppSignOnPolicyRule_keep_me_signed_in_drift(t *testing.T
 		},
 	})
 }
+
+func TestAccResourceOktaAppSignOnPolicyRule_office365_client_include(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	config := mgr.GetFixtures("office365_client_include.tf", t)
+	updatedConfig := mgr.GetFixtures("office365_client_include_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "office365_client_include.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "office365_client_include.*", "WEB"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "office365_client_include.*", "MODERN_AUTH"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "office365_client_include.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "office365_client_include.*", "WEB"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "office365_client_include.*", "MODERN_AUTH"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "office365_client_include.*", "AAD_JOIN"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find app sign on policy rule %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.Attributes["id"]), nil
+				},
+			},
+		},
+	})
+}

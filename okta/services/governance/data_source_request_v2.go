@@ -161,7 +161,7 @@ func (d *requestV2DataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.LastUpdatedBy = types.StringValue(getRequestV2Resp.GetLastUpdatedBy())
 	data.Requested = setRequested(getRequestV2Resp.GetRequested())
 	data.RequestedBy = setRequestedBy(getRequestV2Resp.GetRequestedBy())
-	data.RequestedFor = setRequestedBy(getRequestV2Resp.GetRequestedFor())
+	data.RequestedFor = setRequestedFor(getRequestV2Resp.GetRequestedFor())
 	// Save Data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

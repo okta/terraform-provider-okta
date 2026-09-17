@@ -1,19 +1,19 @@
 ---
 page_title: "Data Source: okta_role_subscription"
 description: |-
-  Get subscriptions of a Role with a specific type
+  Retrieves a subscription by notification type for a specified role.
 ---
 
 # Data Source: okta_role_subscription
 
-Get subscriptions of a Role with a specific type
+Retrieves a subscription by notification type for a specified role.
 
 ## Example Usage
 
 ```terraform
 data "okta_role_subscription" "example" {
-  notification_type = "APP_IMPORT"
-  role_type         = "SUPER_ADMIN"
+  role_ref = "SUPER_ADMIN"
+  id       = "APP_IMPORT"
 }
 ```
 
@@ -22,12 +22,35 @@ data "okta_role_subscription" "example" {
 
 ### Required
 
-- `notification_type` (String) Type of the notification
-- `role_type` (String) Type of the role
+- `id` (String) The notification type to look up. Valid values:
+	- `CONNECTOR_AGENT` - Disconnects and reconnects: On-prem provisioning, on-prem MFA agents, and RADIUS server agent.
+	- `USER_LOCKED_OUT` - User lockouts.
+	- `APP_IMPORT` - App user import status.
+	- `LDAP_AGENT` - Disconnects and reconnects: LDAP agent.
+	- `AD_AGENT` - Disconnects and reconnects: AD agent.
+	- `OKTA_ANNOUNCEMENT` - Okta release notes and announcements.
+	- `OKTA_UPDATE` - Scheduled system updates.
+	- `IWA_AGENT` - Disconnects and reconnects: IWA agent.
+	- `USER_DEPROVISION` - User deprovisions.
+	- `REPORT_SUSPICIOUS_ACTIVITY` - User reporting of suspicious activity.
+	- `RATELIMIT_NOTIFICATION` - Rate limit warning and violation.
+	- `AGENT_AUTO_UPDATE_NOTIFICATION` - Agent auto-update notifications: AD Agent.
+- `role_ref` (String) A reference to an existing role. Valid values:
+	`API_ADMIN`,
+	`APP_ADMIN`,
+	`CUSTOM`,
+	`GROUP_MEMBERSHIP_ADMIN`,
+	`HELP_DESK_ADMIN`,
+	`MOBILE_ADMIN`,
+	`ORG_ADMIN`,
+	`READ_ONLY_ADMIN`,
+	`REPORT_ADMIN`,
+	`SUPER_ADMIN`,
+	`USER_ADMIN`.
+	See [API docs](https://developer.okta.com/docs/reference/api/admin-notifications/#role-types).
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `status` (String) Status of subscription
-
-
+- `channels` (List of String) An array of sources used to send notifications to users.
+- `notification_type` (String) The type of notification.
+- `status` (String) The status of the subscription.

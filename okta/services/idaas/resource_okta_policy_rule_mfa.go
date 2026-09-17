@@ -19,6 +19,11 @@ func resourcePolicyMfaRule() *schema.Resource {
 		Importer:      createPolicyRuleImporter(),
 		Description:   "Creates an MFA Policy Rule. This resource allows you to create and configure an MFA Policy Rule.",
 		Schema: buildRuleSchema(map[string]*schema.Schema{
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether this is the system (default) rule of its policy. Okta creates and deletes default rules itself; Terraform can update one but can not create, rename or delete it.",
+			},
 			"enroll": {
 				Type:        schema.TypeString,
 				Default:     "CHALLENGE",
@@ -68,7 +73,7 @@ func resourcePolicyMfaRuleRead(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("failed to sync MFA policy rule: %v", err)
 	}
-	if (rule.Conditions.App) != nil {
+	if rule.Conditions != nil && rule.Conditions.App != nil {
 		if len(rule.Conditions.App.Include) != 0 {
 			_ = d.Set("app_include", flattenApps(rule.Conditions.App.Include))
 		}
@@ -92,7 +97,9 @@ func resourcePolicyMfaRuleUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourcePolicyMfaRuleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	err := deleteRule(ctx, d, meta, false)
+	// checkIsSystemPolicy is true so that a policy's default rule, which Okta will not
+	// let anyone delete, is dropped from state instead of failing the destroy.
+	err := deleteRule(ctx, d, meta, true)
 	if err != nil {
 		return diag.Errorf("failed to delete MFA policy rule: %v", err)
 	}
