@@ -205,31 +205,21 @@ true in the resource. This causes `client_secret` to be set to blank. Remove
 `omit_secret` and run apply again. The resource will set a new `client_secret`
 for the app.
 
-### Client secret unknown to Terraform (e.g. after import)
+### If the client secret is regenerated directly in Okta
 
 Okta's API only returns an app's `client_secret` in the response to a Create
 or Update call — a plain `GET` (including the read that backs `terraform
-import`) never returns it. As a result, `client_secret` is left blank in
-state immediately after `terraform import`, and stays blank until an Update
-happens to populate it.
-
-If `token_endpoint_auth_method` is `client_secret_basic` (the default),
-`client_secret_post`, or `client_secret_jwt` — all of which require a secret
-— and Terraform has no known secret value to send (`client_secret` is blank
-in state, and neither `client_basic_secret` nor `client_basic_secret_wo` is
-set), any further apply is blocked with an error rather than being allowed to
-proceed. Without this guard, Okta treats an update that omits `client_secret`
-the same way it treats app creation: it silently generates a brand new
-secret, with no diff shown in `terraform plan` (since `client_secret` is a
-computed-only attribute), immediately invalidating the old secret used by any
-existing OAuth clients.
-
-To resolve this after importing a pre-existing app, either:
-1. Set `client_basic_secret_wo` (recommended, Terraform 1.11+, not persisted
-   in state) or `client_basic_secret` to the app's real, current
-   `client_secret` value, or
-2. Set `omit_secret = true` so Terraform stops trying to manage the
-   `client_secret` value for this app.
+import`) never returns it. Because of this, the provider never resends the
+`client_secret` it has cached in state back to Okta on an update; only the
+explicit `client_basic_secret`/`client_basic_secret_wo` attributes are ever
+sent. This means that if the client secret is regenerated directly in Okta
+(for example, via "Generate new client secret" in the Admin Console) outside
+of Terraform, a later `terraform apply` for unrelated attributes will not
+revert it back to the value Terraform has cached in state - the live secret
+in Okta is left untouched. `client_secret` in state will simply be stale
+until the next time Terraform's own Create/Update response updates it (or
+until you run `terraform apply` with `client_basic_secret`/
+`client_basic_secret_wo` set to the new value).
 
 ### Private Keys
 

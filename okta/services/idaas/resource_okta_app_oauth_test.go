@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
+
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -953,13 +954,65 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 	})
 }
 
-// TestAccResourceOktaAppOauth_secretRotationGuard verifies that an app whose state has no known
-// client_secret (e.g. immediately after terraform import, since Okta's GET response never
-// returns the secret) refuses an unrelated-attribute update instead of silently letting Okta
-// mint a brand new client_secret. Setting client_basic_secret_wo to the app's real secret is
-// one of the two documented ways to unblock it. See the CustomizeDiff guard in
-// resource_okta_app_oauth.go (appOAuthWouldSilentlyRotateSecret).
-func TestAccResourceOktaAppOauth_secretRotationGuard(t *testing.T) {
+// fetchLiveOAuthClientSecret reads back an app's current live client_secret directly from the
+// Okta API, bypassing Terraform state entirely. A plain GET never returns client_secret, so this
+// re-PUTs the fetched application object unchanged (client_secret omitted, which is a safe no-op
+// - see TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted) purely to read the
+// current value back from the Update response.
+func fetchLiveOAuthClientSecret(t *testing.T, appID string) string {
+	t.Helper()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+	ctx := context.Background()
+
+	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, appID).Execute()
+	if err != nil {
+		t.Fatalf("failed to get app %s: %v", appID, err)
+	}
+	updated, _, err := client.ApplicationAPI.ReplaceApplication(ctx, appID).Application(*appResp).Execute()
+	if err != nil {
+		t.Fatalf("failed to refresh app %s: %v", appID, err)
+	}
+	if updated.OpenIdConnectApplication == nil {
+		t.Fatalf("unexpected app response shape for %s: not an OpenIdConnectApplication", appID)
+	}
+	return updated.OpenIdConnectApplication.Credentials.OauthClient.GetClientSecret()
+}
+
+// rotateOAuthClientSecretOutOfBand sets an app's client_secret directly via the Okta API,
+// simulating an admin regenerating it in the Okta Console - independent of Terraform.
+func rotateOAuthClientSecretOutOfBand(t *testing.T, appID, newSecret string) {
+	t.Helper()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+	ctx := context.Background()
+
+	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, appID).Execute()
+	if err != nil {
+		t.Fatalf("failed to get app %s: %v", appID, err)
+	}
+	oidcApp := appResp.OpenIdConnectApplication
+	if oidcApp == nil {
+		t.Fatalf("unexpected app response shape for %s: not an OpenIdConnectApplication", appID)
+	}
+	credentials := oidcApp.GetCredentials()
+	oauthClient := credentials.GetOauthClient()
+	oauthClient.SetClientSecret(newSecret)
+	credentials.SetOauthClient(oauthClient)
+	oidcApp.SetCredentials(credentials)
+
+	if _, _, err := client.ApplicationAPI.ReplaceApplication(ctx, appID).Application(v6okta.ListApplications200ResponseInner{OpenIdConnectApplication: oidcApp}).Execute(); err != nil {
+		t.Fatalf("failed to rotate secret out-of-band for app %s: %v", appID, err)
+	}
+}
+
+// TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted covers the actual root cause of
+// the reported "client_secret rotated unexpectedly" bug: the provider used to unconditionally
+// resend whatever client_secret it had cached in state on every Update, regardless of what
+// attribute actually changed. If the live secret had since been regenerated directly in Okta
+// (a normal admin action, entirely outside Terraform), the next unrelated apply would silently
+// revert the live secret back to the stale cached value. Confirmed against a live sandbox org
+// that Okta's Update API leaves an existing secret untouched when the field is omitted, but
+// applies whatever value is explicitly sent - so the fix is to never resend the cached value.
+func TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
 
@@ -981,16 +1034,9 @@ resource "okta_app_oauth" "test" {
   response_types = ["code"]
 }
 `
-	unrelatedChangeWithKnownSecret := `
-resource "okta_app_oauth" "test" {
-  label                  = "testAcc_replace_with_uuid"
-  type                   = "web"
-  grant_types            = ["authorization_code"]
-  redirect_uris          = ["https://example.com/callback", "https://example.com/callback2"]
-  response_types         = ["code"]
-  client_basic_secret_wo = "known_secret_value"
-}
-`
+
+	var appID string
+	const rotatedSecret = "test-out-of-band-rotated-secret-value"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -1003,101 +1049,31 @@ resource "okta_app_oauth" "test" {
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("resource %s not found in state", resourceName)
+						}
+						appID = rs.Primary.ID
+						rotateOAuthClientSecretOutOfBand(t, appID, rotatedSecret)
+						return nil
+					},
 				),
 			},
 			{
-				// Simulate the customer's scenario: bring the resource in via import, which
-				// never populates client_secret (Okta's GET response never returns it), and
-				// persist that secret-less state as the baseline for the next step.
-				ResourceName:       resourceName,
-				ImportState:        true,
-				ImportStatePersist: true,
-				ImportStateVerify:  false,
-			},
-			{
-				// An unrelated attribute change against secret-less state must be blocked
-				// rather than silently allowed to let Okta mint a new client_secret.
-				Config:      mgr.ConfigReplace(unrelatedChange),
-				ExpectError: regexp.MustCompile(`refusing to apply this change because Terraform has no known client_secret value`),
-			},
-			{
-				// Escape hatch: supplying the real secret via client_basic_secret_wo unblocks it.
-				Config: mgr.ConfigReplace(unrelatedChangeWithKnownSecret),
+				// An unrelated attribute change, applied against state that still holds the
+				// pre-rotation secret, must NOT revert the live (out-of-band-rotated) secret.
+				Config: mgr.ConfigReplace(unrelatedChange),
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "2"),
-				),
-			},
-		},
-	})
-}
-
-// TestAccResourceOktaAppOauth_secretRotationGuardOmitSecretEscape is the same scenario as
-// TestAccResourceOktaAppOauth_secretRotationGuard, but proves the second documented escape
-// hatch: setting omit_secret = true also unblocks an update against secret-less state.
-func TestAccResourceOktaAppOauth_secretRotationGuardOmitSecretEscape(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
-
-	create := `
-resource "okta_app_oauth" "test" {
-  label          = "testAcc_replace_with_uuid"
-  type           = "web"
-  grant_types    = ["authorization_code"]
-  redirect_uris  = ["https://example.com/callback"]
-  response_types = ["code"]
-}
-`
-	unrelatedChange := `
-resource "okta_app_oauth" "test" {
-  label          = "testAcc_replace_with_uuid"
-  type           = "web"
-  grant_types    = ["authorization_code"]
-  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
-  response_types = ["code"]
-}
-`
-	unrelatedChangeOmitSecret := `
-resource "okta_app_oauth" "test" {
-  label          = "testAcc_replace_with_uuid"
-  type           = "web"
-  grant_types    = ["authorization_code"]
-  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
-  response_types = ["code"]
-  omit_secret    = true
-}
-`
-
-	acctest.OktaResourceTest(t, resource.TestCase{
-		PreCheck:                 acctest.AccPreCheck(t),
-		ErrorCheck:               testAccErrorChecks(t),
-		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
-		Steps: []resource.TestStep{
-			{
-				Config: mgr.ConfigReplace(create),
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
-					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
-				),
-			},
-			{
-				ResourceName:       resourceName,
-				ImportState:        true,
-				ImportStatePersist: true,
-				ImportStateVerify:  false,
-			},
-			{
-				Config:      mgr.ConfigReplace(unrelatedChange),
-				ExpectError: regexp.MustCompile(`refusing to apply this change because Terraform has no known client_secret value`),
-			},
-			{
-				// Escape hatch: omit_secret = true unblocks it by telling the provider to stop
-				// trying to manage/send client_secret for this app at all.
-				Config: mgr.ConfigReplace(unrelatedChangeOmitSecret),
-				Check: resource.ComposeTestCheckFunc(
-					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
-					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+					func(*terraform.State) error {
+						live := fetchLiveOAuthClientSecret(t, appID)
+						if live != rotatedSecret {
+							return fmt.Errorf("live client_secret was reverted by an unrelated apply: expected it to remain the out-of-band-rotated value, got a different value")
+						}
+						return nil
+					},
 				),
 			},
 		},

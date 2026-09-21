@@ -122,69 +122,6 @@ var appRequirementsByType = map[string]*applicationMap{
 	},
 }
 
-// appOAuthSecretGetter is the subset of *schema.ResourceData and *schema.ResourceDiff needed
-// to detect the "no known client_secret" condition. Both concrete types already satisfy this
-// interface, so appOAuthWouldSilentlyRotateSecret runs unchanged from CustomizeDiff (plan time,
-// *schema.ResourceDiff) and resourceAppOAuthUpdate (apply time, *schema.ResourceData).
-type appOAuthSecretGetter interface {
-	Get(key string) interface{}
-	GetOk(key string) (interface{}, bool)
-	GetRawConfigAt(valPath cty.Path) (cty.Value, diag.Diagnostics)
-}
-
-// oauthAuthMethodsRequiringSecret enumerates token_endpoint_auth_method values that require a
-// client_secret. private_key_jwt and none authenticate without one.
-var oauthAuthMethodsRequiringSecret = map[string]bool{
-	"client_secret_basic": true,
-	"client_secret_post":  true,
-	"client_secret_jwt":   true,
-}
-
-// appOAuthSecretRotationRiskMessage is shared by the CustomizeDiff guard and the
-// resourceAppOAuthUpdate defensive guard so the two error paths never drift out of sync.
-const appOAuthSecretRotationRiskMessage = `okta_app_oauth: refusing to apply this change because Terraform has no known client_secret value for this application, and its token_endpoint_auth_method requires one.
-
-Applying anyway would cause Okta to silently generate a brand new client_secret for this app. This will NOT show up as a diff in "terraform plan" (client_secret is a computed-only attribute), and it will immediately break any existing OAuth clients that are using the current secret.
-
-This most commonly happens when an app was brought under Terraform management via "terraform import": Okta's API never returns an existing app's client_secret on a read/import, so it is left empty in state.
-
-To resolve, do ONE of the following, then apply again:
-  1. Set "client_basic_secret_wo" (recommended for Terraform 1.11+, not persisted in state) or "client_basic_secret" to this app's current, real client_secret value, so Terraform sends the existing secret back to Okta instead of omitting it.
-  2. Set "omit_secret = true" so Terraform stops trying to manage/send the client_secret value for this app entirely.`
-
-// appOAuthWouldSilentlyRotateSecret reports whether applying the current plan/state would send
-// an update to Okta that omits client_secret entirely, for an auth method that requires one.
-// Okta treats an omitted client_secret on update the same as on create: it silently mints a
-// brand new one. Because client_secret is Computed-only, Terraform never surfaces this as a
-// plan diff, so the rotation is invisible until it's too late.
-func appOAuthWouldSilentlyRotateSecret(d appOAuthSecretGetter) bool {
-	if omit, _ := d.Get("omit_secret").(bool); omit {
-		return false
-	}
-
-	authMethod, _ := d.Get("token_endpoint_auth_method").(string)
-	if !oauthAuthMethodsRequiringSecret[authMethod] {
-		return false
-	}
-
-	if secret, _ := d.Get("client_secret").(string); secret != "" {
-		return false
-	}
-
-	if _, ok := d.GetOk("client_basic_secret"); ok {
-		return false
-	}
-
-	// client_basic_secret_wo is write-only: it is never stored in state, so it must be read
-	// from raw config, and GetOk cannot be used (there's nothing in state/diff to "get").
-	woVal, _ := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo"))
-	if !woVal.IsNull() {
-		return false
-	}
-
-	return true
-}
-
 func resourceAppOAuth() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceAppOAuthCreate,
@@ -195,20 +132,11 @@ func resourceAppOAuth() *schema.Resource {
 			StateContext: appImporter,
 		},
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, v interface{}) error {
+			// Force new if omit_secret goes from true to false
 			if d.Id() != "" {
-				// Force new if omit_secret goes from true to false. This intentionally
-				// recreates the app (a fresh secret from Okta on Create is expected here), so
-				// it must return before the silent-rotation guard below, which only concerns
-				// in-place updates.
 				oldValue, newValue := d.GetChange("omit_secret")
 				if oldValue.(bool) && !newValue.(bool) {
 					return d.ForceNew("omit_secret")
-				}
-
-				// Block plans that would cause Okta to silently mint a new client_secret on
-				// an in-place update, because Terraform has no known secret value to send back.
-				if appOAuthWouldSilentlyRotateSecret(d) {
-					return errors.New(appOAuthSecretRotationRiskMessage)
 				}
 			}
 			return nil
@@ -1033,13 +961,6 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
 
-	// Defensive second layer: CustomizeDiff should already have blocked this at plan time, but
-	// guard here too so we never PUT a request that would cause Okta to silently rotate the
-	// app's client_secret.
-	if appOAuthWouldSilentlyRotateSecret(d) {
-		return diag.Errorf("%s", appOAuthSecretRotationRiskMessage)
-	}
-
 	app, err := buildAppOAuthV6(d, false)
 	if err != nil {
 		return diag.Errorf("failed to build OAuth application: %v", err)
@@ -1166,9 +1087,12 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 		oauthClient.SetClientId(clientID)
 	}
 	oauthClient.SetTokenEndpointAuthMethod(authMethod)
-	if clientSecret := d.Get("client_secret").(string); clientSecret != "" {
-		oauthClient.SetClientSecret(clientSecret)
-	}
+	// Deliberately not resending the computed client_secret from state here: Okta's Update API
+	// leaves an existing app's secret untouched when the field is omitted, but accepts and
+	// applies whatever value is explicitly sent - including a stale one. Echoing back a cached
+	// value that has since drifted (e.g. someone regenerated it directly in Okta) would silently
+	// revert the live secret. client_basic_secret/client_basic_secret_wo below remain the only
+	// supported way to explicitly set/rotate it.
 
 	// Handle PKCE requirements
 	var pkceRequired bool
