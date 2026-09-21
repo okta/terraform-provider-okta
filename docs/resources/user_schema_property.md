@@ -34,7 +34,6 @@ behavior is specific to the Terraform provider implementation.
 3. Re-import the updated resource:
 	- Terraform: `terraform import <resource_address> <resource_id>`
 
-
 ## Example Usage
 
 ```terraform
@@ -46,6 +45,27 @@ resource "okta_user_schema_property" "example" {
   master      = "OKTA"
   scope       = "SELF"
   user_type   = data.okta_user_type.example.id
+}
+
+resource "okta_user_schema_property" "auth_type" {
+  index       = "authType"
+  title       = "Authentication Type"
+  type        = "string"
+  description = "Determines which authentication method the user should use"
+  master      = "OKTA"
+  scope       = "SELF"
+  enum        = ["EMAIL", "PASSWORD"]
+  default     = "EMAIL"
+
+  one_of {
+    const = "EMAIL"
+    title = "Email"
+  }
+
+  one_of {
+    const = "PASSWORD"
+    title = "Password"
+  }
 }
 ```
 
@@ -65,6 +85,7 @@ resource "okta_user_schema_property" "example" {
 	- 'const' - (Required) value mapping to member of 'enum'.
 	- 'title' - (Required) display name for the enum value. (see [below for nested schema](#nestedblock--array_one_of))
 - `array_type` (String) The type of the array elements if `type` is set to `array`
+- `default` (String) Default value of the user schema property. Supported for `type` values of `string`, `boolean`, `number`, and `integer`. As with `enum`, provide the value as a string; it is converted to the property's underlying type before being sent to Okta. Removing this argument clears the property's default value on the next apply.
 - `description` (String) The description of the user schema property.
 - `enum` (List of String) Array of values a primitive property can be set to. See `array_enum` for arrays.
 - `external_name` (String) External name of the user schema property.

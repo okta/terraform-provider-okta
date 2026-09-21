@@ -4,6 +4,12 @@ package sdk
 import "encoding/json"
 
 type UserSchemaAttribute struct {
+	// Default is a pointer to an interface{} (rather than a plain interface{})
+	// so that an explicit JSON `null` can be sent to clear a previously set
+	// default value. The Okta schema update endpoint is a partial update, so a
+	// field that is simply omitted from the request is left unchanged server
+	// side; only a non-nil pointer to a nil interface value marshals to `null`.
+	Default           *interface{}                     `json:"default,omitempty"`
 	Description       string                           `json:"description,omitempty"`
 	Enum              []interface{}                    `json:"enum,omitempty"`
 	ExternalName      string                           `json:"externalName,omitempty"`
