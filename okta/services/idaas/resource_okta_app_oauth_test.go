@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
@@ -946,6 +948,132 @@ func TestAccResourceOktaAppOauth_omitSecretSafeEnable(t *testing.T) {
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttr(resourceName, "client_secret", ""),
+				),
+			},
+		},
+	})
+}
+
+// fetchLiveOAuthClientSecret reads back an app's current live client_secret directly from the
+// Okta API, bypassing Terraform state entirely. A plain GET never returns client_secret, so this
+// re-PUTs the fetched application object unchanged (client_secret omitted, which is a safe no-op
+// - see TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted) purely to read the
+// current value back from the Update response.
+func fetchLiveOAuthClientSecret(t *testing.T, appID string) string {
+	t.Helper()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+	ctx := context.Background()
+
+	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, appID).Execute()
+	if err != nil {
+		t.Fatalf("failed to get app %s: %v", appID, err)
+	}
+	updated, _, err := client.ApplicationAPI.ReplaceApplication(ctx, appID).Application(*appResp).Execute()
+	if err != nil {
+		t.Fatalf("failed to refresh app %s: %v", appID, err)
+	}
+	if updated.OpenIdConnectApplication == nil {
+		t.Fatalf("unexpected app response shape for %s: not an OpenIdConnectApplication", appID)
+	}
+	return updated.OpenIdConnectApplication.Credentials.OauthClient.GetClientSecret()
+}
+
+// rotateOAuthClientSecretOutOfBand sets an app's client_secret directly via the Okta API,
+// simulating an admin regenerating it in the Okta Console - independent of Terraform.
+func rotateOAuthClientSecretOutOfBand(t *testing.T, appID, newSecret string) {
+	t.Helper()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+	ctx := context.Background()
+
+	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, appID).Execute()
+	if err != nil {
+		t.Fatalf("failed to get app %s: %v", appID, err)
+	}
+	oidcApp := appResp.OpenIdConnectApplication
+	if oidcApp == nil {
+		t.Fatalf("unexpected app response shape for %s: not an OpenIdConnectApplication", appID)
+	}
+	credentials := oidcApp.GetCredentials()
+	oauthClient := credentials.GetOauthClient()
+	oauthClient.SetClientSecret(newSecret)
+	credentials.SetOauthClient(oauthClient)
+	oidcApp.SetCredentials(credentials)
+
+	if _, _, err := client.ApplicationAPI.ReplaceApplication(ctx, appID).Application(v6okta.ListApplications200ResponseInner{OpenIdConnectApplication: oidcApp}).Execute(); err != nil {
+		t.Fatalf("failed to rotate secret out-of-band for app %s: %v", appID, err)
+	}
+}
+
+// TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted covers the actual root cause of
+// the reported "client_secret rotated unexpectedly" bug: the provider used to unconditionally
+// resend whatever client_secret it had cached in state on every Update, regardless of what
+// attribute actually changed. If the live secret had since been regenerated directly in Okta
+// (a normal admin action, entirely outside Terraform), the next unrelated apply would silently
+// revert the live secret back to the stale cached value. Confirmed against a live sandbox org
+// that Okta's Update API leaves an existing secret untouched when the field is omitted, but
+// applies whatever value is explicitly sent - so the fix is to never resend the cached value.
+func TestAccResourceOktaAppOauth_outOfBandSecretRotationNotReverted(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	create := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback"]
+  response_types = ["code"]
+}
+`
+	unrelatedChange := `
+resource "okta_app_oauth" "test" {
+  label          = "testAcc_replace_with_uuid"
+  type           = "web"
+  grant_types    = ["authorization_code"]
+  redirect_uris  = ["https://example.com/callback", "https://example.com/callback2"]
+  response_types = ["code"]
+}
+`
+
+	var appID string
+	const rotatedSecret = "test-out-of-band-rotated-secret-value"
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(create),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("resource %s not found in state", resourceName)
+						}
+						appID = rs.Primary.ID
+						rotateOAuthClientSecretOutOfBand(t, appID, rotatedSecret)
+						return nil
+					},
+				),
+			},
+			{
+				// An unrelated attribute change, applied against state that still holds the
+				// pre-rotation secret, must NOT revert the live (out-of-band-rotated) secret.
+				Config: mgr.ConfigReplace(unrelatedChange),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "redirect_uris.#", "2"),
+					func(*terraform.State) error {
+						live := fetchLiveOAuthClientSecret(t, appID)
+						if live != rotatedSecret {
+							return fmt.Errorf("live client_secret was reverted by an unrelated apply: expected it to remain the out-of-band-rotated value, got a different value")
+						}
+						return nil
+					},
 				),
 			},
 		},

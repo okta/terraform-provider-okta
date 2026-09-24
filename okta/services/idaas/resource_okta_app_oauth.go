@@ -1094,9 +1094,12 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 		oauthClient.SetClientId(clientID)
 	}
 	oauthClient.SetTokenEndpointAuthMethod(authMethod)
-	if clientSecret := d.Get("client_secret").(string); clientSecret != "" {
-		oauthClient.SetClientSecret(clientSecret)
-	}
+	// Deliberately not resending the computed client_secret from state here: Okta's Update API
+	// leaves an existing app's secret untouched when the field is omitted, but accepts and
+	// applies whatever value is explicitly sent - including a stale one. Echoing back a cached
+	// value that has since drifted (e.g. someone regenerated it directly in Okta) would silently
+	// revert the live secret. client_basic_secret/client_basic_secret_wo below remain the only
+	// supported way to explicitly set/rotate it.
 
 	// Handle PKCE requirements
 	var pkceRequired bool
