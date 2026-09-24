@@ -242,6 +242,17 @@ func getGroups(d *schema.ResourceData) *sdk.PolicyPeopleCondition {
 	return people
 }
 
+func getGroupsV6(d *schema.ResourceData) *v6okta.AuthenticatorEnrollmentPolicyConditionsAllOfPeople {
+	if include, ok := d.GetOk("groups_included"); ok {
+		return &v6okta.AuthenticatorEnrollmentPolicyConditionsAllOfPeople{
+			Groups: &v6okta.AuthenticatorEnrollmentPolicyConditionsAllOfPeopleGroups{
+				Include: utils.ConvertInterfaceToStringSet(include),
+			},
+		}
+	}
+	return nil
+}
+
 // Grabs policy from upstream, if the resource does not exist the returned policy will be nil which is not considered an error
 func getPolicy(ctx context.Context, d *schema.ResourceData, m interface{}) (*sdk.SdkPolicy, error) {
 	logger(m).Info("getting policy", "id", d.Id())
@@ -347,13 +358,22 @@ func replacePolicyV6(ctx context.Context, d *schema.ResourceData, meta interface
 	return policy, policyActivate(ctx, d, meta)
 }
 
-func syncPolicyFromUpstreamV6(d *schema.ResourceData, policy *v6okta.PasswordPolicy) {
+func syncPolicyFromUpstreamV6(d *schema.ResourceData, policy *v6okta.PasswordPolicy) error {
 	_ = d.Set("name", policy.GetName())
 	_ = d.Set("description", policy.GetDescription())
 	_ = d.Set("status", policy.GetStatus())
 	if policy.Priority != nil {
 		_ = d.Set("priority", int(*policy.Priority))
 	}
+	if policy.Conditions != nil &&
+		policy.Conditions.People != nil &&
+		policy.Conditions.People.Groups != nil &&
+		policy.Conditions.People.Groups.Include != nil {
+		return utils.SetNonPrimitives(d, map[string]interface{}{
+			"groups_included": utils.ConvertStringSliceToSet(policy.Conditions.People.Groups.Include),
+		})
+	}
+	return nil
 }
 
 func syncPolicyFromUpstream(d *schema.ResourceData, policy *sdk.SdkPolicy) error {

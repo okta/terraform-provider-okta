@@ -1,5 +1,86 @@
 # Changelog
 
+## Unreleased
+
+### BUG FIXES
+
+* **`okta_policy_rule_signon`, `okta_policy_rule_mfa`**: A policy's default rule can now be imported and updated. Previously any update failed with `Default Rule is immutable` because the provider matched on the rule's name rather than the API's `system` flag, even though Okta permits editing default rules. Removing a default rule from configuration now drops it from Terraform state instead of erroring or attempting a delete Okta rejects. Okta continues to manage `priority`, `network_connection`, `network_includes`, `network_excludes`, `users_excluded` and `session_persistent` on a default rule, so values configured for them are ignored. Policy rule resources gain a read-only `system` attribute. [#2788](https://github.com/okta/terraform-provider-okta/issues/2788)
+
+## 7.0.0 (Aug 24, 2026)
+
+### BREAKING CHANGES
+
+* **`okta_email_template_settings`**: Migrated from Framework+SDKv3 to Terraform Plugin Framework + Okta SDK v6. The `recipients` attribute is now optional (previously required). `brand_id` and `template_name` now force resource replacement when changed.
+* **`okta_threat_insight_settings`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `network_excludes` attribute has been renamed to `exclude_zones`. New computed attributes `created` and `last_updated` added.
+* **`okta_role_subscription`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `role_type` attribute has been renamed to `role_ref`. The `status` attribute has been removed; use `notification_type` and manage subscription state directly.
+* **`okta_role_subscription` (data source)**: `role_type` renamed to `role_ref`. `notification_type` moved from required input to computed output; pass the notification type as `id` instead. New computed attribute `channels` added.
+* **`okta_template_sms`**: Migrated from the legacy SDKv2 implementation to Terraform Plugin Framework (TPF) + Okta SDK v6. The `translations` attribute has changed from a set of objects (`{language, template}`) to a `map(string)`. The `type` and `template` attributes are now optional (previously required). New computed attributes `created` and `last_updated` are available. Existing configurations must update the `translations` block accordingly.
+* **`okta_trusted_origin`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `scopes` argument has changed type from a list of strings to a repeatable block: replace `scopes = ["CORS", "REDIRECT"]` with one `scopes { type = "CORS" }` block per scope. Each block also accepts the new optional `allowed_okta_apps` list, and at least one `scopes` block is required. The `active` boolean has been replaced by `status` (`ACTIVE`/`INACTIVE`); `active = false` becomes `status = "INACTIVE"`. New computed attributes `created`, `created_by`, `last_updated`, and `last_updated_by` added. Existing configurations must update the `scopes` blocks and replace `active` accordingly.
+* **`okta_captcha`**: Migrated from SDKv2 to Terraform Plugin Framework + Okta SDK v6. The `name`, `type`, `site_key`, and `secret_key` attributes are now optional (previously required). `type` no longer forces resource replacement when changed; it is now updated in place.
+* **`okta_captcha_org_wide_settings`**: Deprecated in favour of the new `okta_org_captcha` resource, and will be removed in a future version. The replacement renames `enabled_for` (set of strings) to `enabled_pages` (list of strings); replace `enabled_for = ["SIGN_IN"]` with `enabled_pages = ["SIGN_IN"]` when moving to `okta_org_captcha`.
+
+### FEATURES
+
+* Added new resource `okta_brands_templates_email_customization` for managing email template customizations per brand [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_threat_insight_settings` [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new resource `okta_user_subscription` for managing notification subscriptions for individual users [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_user_subscription` to read a user's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_role_subscription` to read a role's notification subscription [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_trusted_origin` to read a single trusted origin by `id` [#2932](https://github.com/okta/terraform-provider-okta/pull/2932) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new resource `okta_org_captcha` for managing org-wide CAPTCHA settings, replacing `okta_captcha_org_wide_settings` [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_captcha` to read a CAPTCHA instance [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+* Added new data source `okta_org_captcha` to read the org-wide CAPTCHA settings [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+
+### ENHANCEMENTS
+
+* Migrated `okta_template_sms` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_email_template_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_threat_insight_settings` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Adds new resources for oauthv1 clients [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_role_subscription` to Terraform Plugin Framework + Okta SDK v6 [#2891](https://github.com/okta/terraform-provider-okta/pull/2891) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_trusted_origin` to Terraform Plugin Framework + Okta SDK v6 [#2932](https://github.com/okta/terraform-provider-okta/pull/2932) by [@pranav-okta](https://github.com/pranav-okta)
+* Migrated `okta_captcha` to Terraform Plugin Framework + Okta SDK v6 [#2933](https://github.com/okta/terraform-provider-okta/pull/2933) by [@pranav-okta](https://github.com/pranav-okta)
+
+
+## 6.15.0 (Aug 5, 2026)
+### BUG FIXES
+* Updates documentation for `okta_ap_signon_policy_rule` resource to include `office365_client_include` [#2916](https://github.com/okta/terraform-provider-okta/pull/2916) by [aditya-okta](https://github.com/aditya-okta)
+* Updates documentation for `oauthv1 client role` resources [#2917](https://github.com/okta/terraform-provider-okta/pull/2917) by [pranav-okta](https://github.com/pranav-okta)
+* Normalize Workflow Permission Expansion for `okta_admin_role_custom` resources [#2902](https://github.com/okta/terraform-provider-okta/pull/2902) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Normalize chains JSON keys during plan phase for `okta_app_signon_policy_rules` resource [#2906](https://github.com/okta/terraform-provider-okta/pull/2906) by [aditya-okta](https://github.com/aditya-okta)
+* Resolved breaking changes reported in v6.14.0 [#2915](https://github.com/okta/terraform-provider-okta/pull/2915), [#2914](#https://github.com/okta/terraform-provider-okta/pull/2914) by [pranav-okta](https://github.com/pranav-okta)
+
+## 6.14.0 (Jul 30, 2026)
+
+### FEATURES
+* Adds support for office365Client config in `okta_ap_signon_policy_rule` resource [#2644](https://github.com/okta/terraform-provider-okta/pull/2644) by [aditya-okta](https://github.com/aditya-okta)
+* Adds new resources for oauthv1 clients [#2886](https://github.com/okta/terraform-provider-okta/pull/2886) by [pranav-okta](https://github.com/pranav-okta)
+
+## 6.13.0 (June 30, 2026)
+
+### FEATURES
+
+* Added Resource Set data source `okta_iam_resource_set` [#2861](https://github.com/okta/terraform-provider-okta/pull/2861) by [@pranav-okta](https://github.com/pranav-okta)
+* Added Labels, and Resource Owners resources `okta_label`, `okta_resource_owner`, and `okta_resource_owners_catalog_resource` [#2867](https://github.com/okta/terraform-provider-okta/pull/2867) by [@pranav-okta](https://github.com/pranav-okta)
+
+## 6.12.0 (June 10, 2026)
+
+### FEATURES
+* Added new data source `okta_signon_policy_rule` to read sign-on policy rules [#2846](https://github.com/okta/terraform-provider-okta/pull/2846) by [aditya-okta](https://github.com/aditya-okta)
+* Added new data source `okta_auth_server_policy_rule` to read authorization server policy rules [#2848](https://github.com/okta/terraform-provider-okta/pull/2848) by [aditya-okta](https://github.com/aditya-okta)
+* Added new data source `okta_assignees_users` to list users assignable to a resource [#2851](https://github.com/okta/terraform-provider-okta/pull/2851) by [aditya-okta](https://github.com/aditya-okta)
+* Added `backchannel_custom_authenticator_id` attribute to `okta_app_oauth` for Client Initiated Backchannel Authentication (CIBA) support [#2855](https://github.com/okta/terraform-provider-okta/pull/2855) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added `keep_me_signed_in` support to `okta_app_signon_policy_rules` resource [#2858](https://github.com/okta/terraform-provider-okta/pull/2858) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### BUG FIXES
+* Fixed nil pointer dereference in `okta_idp_saml`, `okta_idp_social`, and `okta_idp_oidc` when `accountLink.filter.groups` is null [#2843](https://github.com/okta/terraform-provider-okta/pull/2843) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed documentation for `okta_request_setting_resource` [#2844](https://github.com/okta/terraform-provider-okta/pull/2844) by [aditya-okta](https://github.com/aditya-okta)
+* Fixed `okta_authenticator` validation error when updating WebAuthn authenticators [#2763](https://github.com/okta/terraform-provider-okta/pull/2763) by [trosborn](https://github.com/trosborn)
+* Fixed `groups_included` field being ignored in `okta_policy_password` resource [#2856](https://github.com/okta/terraform-provider-okta/pull/2856) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Fixed documentation for `okta_request_setting_organization` [#2852](https://github.com/okta/terraform-provider-okta/pull/2852) by [aditya-okta](https://github.com/aditya-okta)
+* Deferred 429 retries to SDK for DPoP requests, improving handling of rate-limited DPoP-bound traffic [#2841](https://github.com/okta/terraform-provider-okta/pull/2841) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Fixed `okta_app_signon_policy_rules` to work in organizations without Risk Scoring [#2858](https://github.com/okta/terraform-provider-okta/pull/2858) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
 ## 6.11.0 (May 26, 2026)
 
 ### FEATURES

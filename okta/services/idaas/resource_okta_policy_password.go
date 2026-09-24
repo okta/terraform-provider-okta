@@ -301,7 +301,9 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, met
 			}
 		}
 	}
-	syncPolicyFromUpstreamV6(d, policy)
+	if err := syncPolicyFromUpstreamV6(d, policy); err != nil {
+		return diag.Errorf("failed to sync password policy: %v", err)
+	}
 	if pw != nil && pw.BreachedProtection != nil {
 		bp := pw.BreachedProtection
 		if bp.HasExpireAfterDays() {
@@ -350,6 +352,7 @@ func buildPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 	authProvider.SetProvider(d.Get("auth_provider").(string))
 	conditions := &v6okta.PasswordPolicyConditions{
 		AuthProvider: authProvider,
+		People:       getGroupsV6(d),
 	}
 	template.Conditions = conditions
 	passwordSettings := &v6okta.PasswordPolicyPasswordSettings{

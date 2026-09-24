@@ -140,7 +140,12 @@ func TestAccResourceOktaBrand_Issue_1846_with_classic_application_uri(t *testing
 resource okta_trusted_origin test{
 	name   = "testAcc-replace_with_uuid"
 	origin = "https://examplesss.com"
-	scopes = ["CORS", "REDIRECT"]
+	scopes {
+		type = "CORS"
+	}
+	scopes {
+		type = "REDIRECT"
+	}
 }
 
 resource okta_brand test{

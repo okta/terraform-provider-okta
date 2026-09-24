@@ -1073,7 +1073,6 @@ resource "okta_app_oauth" "test" {
 	})
 }
 
-
 // TestAccResourceOktaAppOauth_preconfigured tests creating and updating OAuth applications
 // using preconfigured apps from the Okta Integration Network (test1-test3), as well as
 // custom OAuth apps (test4-test5). groups_claim is not supported for preconfigured apps
@@ -1281,6 +1280,116 @@ resource "okta_app_oauth" "test" {
 					resource.TestCheckResourceAttrSet(resourceName, "client_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "client_secret"),
 				),
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_backchannelCustomAuthenticatorId_GH2408 covers GH-2408:
+// the okta_app_oauth resource exposes backchannel_custom_authenticator_id so a CIBA
+// (urn:openid:params:grant-type:ciba) client can bind to a custom authenticator.
+// The test creates a custom_app authenticator, wires its id into the OAuth app, and
+// verifies the value round-trips through state on create and on import.
+func TestAccResourceOktaAppOauth_backchannelCustomAuthenticatorId_GH2408(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	appResourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	config := mgr.GetFixtures("basic-ciba.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(appResourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(appResourceName, "label", "GH2408_CIBA"),
+					resource.TestCheckResourceAttr(appResourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(appResourceName, "type", "web"),
+					resource.TestCheckResourceAttr(appResourceName, "grant_types.#", "3"),
+					resource.TestCheckTypeSetElemAttr(appResourceName, "grant_types.*", "urn:openid:params:grant-type:ciba"),
+					resource.TestCheckResourceAttrSet(appResourceName, "backchannel_custom_authenticator_id"),
+				),
+			},
+			{
+				ResourceName: appResourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import okta_app_oauth into state")
+					}
+					attrs := s[0].Attributes
+					got, ok := attrs["backchannel_custom_authenticator_id"]
+					if !ok || got == "" {
+						return errors.New("expected backchannel_custom_authenticator_id to be populated on import")
+					}
+					return nil
+				},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_dpopBoundAccessTokens_OKTA1223484 covers OKTA-1223484:
+// okta_app_oauth exposes dpop_bound_access_tokens so DPoP (Demonstrating Proof-of-Possession)
+// can be managed as code instead of by hand in the admin console.
+//
+// The middle step is the regression guard. Before the fix the v6 SDK settings constructor seeded
+// dpop_bound_access_tokens with false, so an apply that never mentioned the attribute still wrote
+// false and turned DPoP off. That step omits the attribute entirely and changes enduser_note to
+// force a real update call, then asserts DPoP is still enabled.
+func TestAccResourceOktaAppOauth_dpopBoundAccessTokens_OKTA1223484(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	enabled := mgr.GetFixtures("dpop_bound_access_tokens.tf", t)
+	omitted := mgr.GetFixtures("dpop_bound_access_tokens_omitted.tf", t)
+	disabled := mgr.GetFixtures("dpop_bound_access_tokens_disabled.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: enabled,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "label", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "type", "web"),
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "true"),
+				),
+			},
+			{
+				Config: omitted,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "enduser_note", "dpop omitted update"),
+					// Omitting the attribute must leave the enabled value alone, not reset it to false.
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "true"),
+				),
+			},
+			{
+				Config: disabled,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "dpop_bound_access_tokens", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import okta_app_oauth into state")
+					}
+					if got := s[0].Attributes["dpop_bound_access_tokens"]; got != "false" {
+						return fmt.Errorf("expected dpop_bound_access_tokens to be \"false\" on import, got %q", got)
+					}
+					return nil
+				},
 			},
 		},
 	})

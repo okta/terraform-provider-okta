@@ -1,0 +1,422 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 120
+        host: oie-00.dne-okta.com
+        body: |
+            {"label":"testAcc_630040260","description":"workflow permission alias migration","permissions":["okta.workflows.read"]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:16:55 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.240842916s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:16:56 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.1316205s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"permissions":[{"label":"okta.workflows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.read"}}},{"label":"okta.workflows.flows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.flows.read"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:16:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.157097459s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:16:59 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.13642975s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"permissions":[{"label":"okta.workflows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.read"}}},{"label":"okta.workflows.flows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.flows.read"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.154351667s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:02 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.124455375s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"permissions":[{"label":"okta.workflows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.read"}}},{"label":"okta.workflows.flows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.flows.read"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.169373958s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:04 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.121264875s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"permissions":[{"label":"okta.workflows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.read"}}},{"label":"okta.workflows.flows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.flows.read"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:05 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.177508083s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"cr0120jciz6Axxxtn1d8","label":"testAcc_630040260","isCloneable":false,"description":"workflow permission alias migration","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","_links":{"permissions":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:07 GMT
+            Link:
+                - <https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.12173225s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"permissions":[{"label":"okta.workflows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.read"}}},{"label":"okta.workflows.flows.read","created":"2026-07-31T06:16:55.000Z","lastUpdated":"2026-07-31T06:16:55.000Z","conditions":null,"_links":{"role":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8"},"self":{"href":"https://oie-00-admin.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8/permissions/okta.workflows.flows.read"}}}]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 31 Jul 2026 06:17:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.140397542s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/iam/roles/cr0120jciz6Axxxtn1d8
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Fri, 31 Jul 2026 06:17:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.411105625s

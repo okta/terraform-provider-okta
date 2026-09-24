@@ -53,6 +53,7 @@ const (
 	OktaIDaaSBrand                                    = "okta_brand"
 	OktaIDaaSBrands                                   = "okta_brands"
 	OktaIDaaSCaptcha                                  = "okta_captcha"
+	OktaIDaaSCaptchaOrgWide                           = "okta_org_captcha"
 	OktaIDaaSCaptchaOrgWideSettings                   = "okta_captcha_org_wide_settings"
 	OktaIDaaSDefaultPolicy                            = "okta_default_policy"
 	OktaIDaaSDomain                                   = "okta_domain"
@@ -82,6 +83,7 @@ const (
 	OktaIDaaSGroups                                   = "okta_groups"
 	OktaIDaaSGroupSchemaProperty                      = "okta_group_schema_property"
 	OktaIDaaSIamAssigneesUser                         = "okta_iam_assignees_user"
+	OktaIDaaSIamResourceSet                           = "okta_iam_resource_set"
 	OktaIDaaSIdentitySourceGroup                      = "okta_identity_source_group"
 	OktaIDaaSIdentitySourceGroupMembership            = "okta_identity_source_group_membership"
 	OktaIDaaSIdentitySourceGroupMemberships           = "okta_identity_source_group_memberships"
@@ -173,4 +175,7 @@ const (
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUID        = "okta_authenticator_webauthn_custom_aaguid"
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUIDs       = "okta_authenticator_webauthn_custom_aaguids"
 	OktaIDaaSAuthenticatorMethodWebauthn              = "okta_authenticator_method_webauthn"
+	OktaIDaaSPoliciesRuleSignOn                       = "okta_policies_rule_sign_on"
+	OktaGovernanceResourceOwner                       = "okta_resource_owner"
+	OktaGovernanceResourceOwnersCatalogResource       = "okta_resource_owners_catalog_resource"
 )

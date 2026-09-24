@@ -1,9 +1,12 @@
 package idaas_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -225,4 +228,200 @@ func TestAccResourceOktaAppSignOnPolicyRules_chains(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRules_chains_misaligned_keys verifies that
+// chains with non-alphabetical JSON key ordering (e.g., userVerification before
+// method) are normalized during plan, preventing "Provider produced inconsistent
+// result after apply" errors. This regression test covers OKTA-1184047.
+func TestAccResourceOktaAppSignOnPolicyRules_chains_misaligned_keys(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test_chains_misaligned", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("chains_misaligned_keys.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "1"),
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.name", fmt.Sprintf("MisalignedKeys-testAcc_%s", mgr.SeedStr())),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.chains.#", "1"),
+					// Verify the chain is stored
+					resource.TestCheckResourceAttrSet(resourceName, "rule.0.chains.0"),
+				),
+			},
+			{
+				// Idempotency check — this should succeed without "inconsistent result" error.
+				// Before the fix, this step would fail with:
+				// "Provider produced inconsistent result after apply"
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in verifies that the
+// keep_me_signed_in (KMSI / "Option to stay signed in") block on the plural
+// resource round-trips correctly across multiple rules. The config defines four
+// rules covering every keep_me_signed_in combination:
+//   - rule[0]: NOT_ALLOWED with no prompt frequency
+//   - rule[1]: ALLOWED with a 50h prompt frequency
+//   - rule[2]: ALLOWED with a 168h prompt frequency
+//   - rule[3]: NOT_ALLOWED with no prompt frequency (regression case for the
+//     "null -> empty string" inconsistent-result-after-apply bug)
+//
+// It then updates all four rules (flipping post_auth and frequency values) and
+// asserts the changes are applied and remain idempotent on re-apply.
+func TestAccResourceOktaAppSignOnPolicyRules_keep_me_signed_in(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	config := mgr.GetFixtures("keep_me_signed_in.tf", t)
+	updatedConfig := mgr.GetFixtures("keep_me_signed_in_updated.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Step 1: Create four rules with varying KMSI settings.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "4"),
+					// rule[0]: NOT_ALLOWED, no frequency. The Optional (non-Computed)
+					// frequency is null, so it is absent from state (not "").
+					resource.TestCheckResourceAttr(resourceName, "rule.0.access", "ALLOW"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth_prompt_frequency"),
+					// rule[1]: ALLOWED, PT50H.
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth_prompt_frequency", "PT50H"),
+					// rule[2]: ALLOWED, PT168H.
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// rule[3]: NOT_ALLOWED, no frequency. This is the exact scenario
+					// from the bug report (rule[3].keep_me_signed_in[0].
+					// post_auth_prompt_frequency was null, but now ""): it must stay
+					// null after apply, i.e. absent from state.
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth_prompt_frequency"),
+				),
+			},
+			{
+				// Step 2: Idempotency on create config.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				// Step 3: Update all four rules, flipping post_auth and frequency.
+				// rule[1] clears its frequency (ALLOWED PT50H -> NOT_ALLOWED), which
+				// is the regression scenario: the API returns an empty frequency and
+				// the provider must keep the Optional (non-Computed) attribute null
+				// instead of "" to avoid an "inconsistent result after apply" error.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "rule.#", "4"),
+					// rule[0]: NOT_ALLOWED -> ALLOWED (PT168H).
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.0.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+					// rule[1]: ALLOWED (PT50H) -> NOT_ALLOWED, frequency cleared
+					// (null, so absent from state).
+					resource.TestCheckResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth", "NOT_ALLOWED"),
+					resource.TestCheckNoResourceAttr(resourceName, "rule.1.keep_me_signed_in.0.post_auth_prompt_frequency"),
+					// rule[2]: ALLOWED (PT168H) -> ALLOWED (PT50H).
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.2.keep_me_signed_in.0.post_auth_prompt_frequency", "PT50H"),
+					// rule[3]: NOT_ALLOWED -> ALLOWED (PT168H).
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth", "ALLOWED"),
+					resource.TestCheckResourceAttr(resourceName, "rule.3.keep_me_signed_in.0.post_auth_prompt_frequency", "PT168H"),
+				),
+			},
+			{
+				// Step 4: Idempotency on updated config.
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestChainsPlanModifier(t *testing.T) {
+	modifier := idaas.ChainsPlanModifier{}
+
+	tests := []struct {
+		name          string
+		planValue     string
+		expectedValue string
+		wantErr       bool
+	}{
+		{
+			name:          "already alphabetical",
+			planValue:     `{"key":"okta_verify","method":"push","userVerification":"OPTIONAL"}`,
+			expectedValue: `{"key":"okta_verify","method":"push","userVerification":"OPTIONAL"}`,
+		},
+		{
+			name:          "userVerification before method",
+			planValue:     `{"key":"okta_verify","userVerification":"OPTIONAL","method":"push"}`,
+			expectedValue: `{"key":"okta_verify","method":"push","userVerification":"OPTIONAL"}`,
+		},
+		{
+			name:          "complex nested non-alphabetical keys",
+			planValue:     `{"authenticationMethods":[{"userVerification":"OPTIONAL","method":"push","key":"okta_verify"}],"reauthenticateIn":"PT0S","next":[]}`,
+			expectedValue: `{"authenticationMethods":[{"key":"okta_verify","method":"push","userVerification":"OPTIONAL"}],"next":[],"reauthenticateIn":"PT0S"}`,
+		},
+		{
+			name:      "invalid JSON returns error diagnostic",
+			planValue: `not-valid-json`,
+			wantErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := context.Background()
+			listValue, diags := types.ListValueFrom(ctx, types.StringType, []string{tt.planValue})
+			if diags.HasError() {
+				t.Fatalf("failed to create list value: %v", diags)
+			}
+
+			req := planmodifier.ListRequest{PlanValue: listValue}
+			resp := &planmodifier.ListResponse{PlanValue: listValue}
+			modifier.PlanModifyList(ctx, req, resp)
+
+			if tt.wantErr {
+				if !resp.Diagnostics.HasError() {
+					t.Fatal("expected error diagnostic, got none")
+				}
+				return
+			}
+
+			if resp.Diagnostics.HasError() {
+				t.Fatalf("unexpected error: %v", resp.Diagnostics)
+			}
+
+			var result []string
+			resp.PlanValue.ElementsAs(ctx, &result, false)
+			if len(result) != 1 {
+				t.Fatalf("expected 1 element, got %d", len(result))
+			}
+			if result[0] != tt.expectedValue {
+				t.Errorf("got %s, want %s", result[0], tt.expectedValue)
+			}
+		})
+	}
 }

@@ -19,8 +19,17 @@ func resourcePolicySignOnRule() *schema.Resource {
 		UpdateContext: resourcePolicySignOnRuleUpdate,
 		DeleteContext: resourcePolicySignOnRuleDelete,
 		Importer:      createPolicyRuleImporter(),
-		Description:   "Creates a Sign On Policy Rule. In case `Invalid condition type specified: riskScore.` error is thrown, set `risc_level` to an empty string, since this feature is not enabled.",
+		Description: `Creates a Sign On Policy Rule. In case 'Invalid condition type specified: riskScore.' error is thrown, set 'risc_level' to an empty string, since this feature is not enabled.
+A policy's default rule (the rule named 'Default Rule') can be imported and updated as a custom rule, but it can not be created, renamed or deleted.
+Okta manages these fields on a default rule, so values configured for them are ignored: 'priority', 'network_connection', 'network_includes',
+'network_excludes', 'users_excluded' and 'session_persistent'.
+Removing a default rule from your configuration drops it from Terraform state without deleting it from Okta.`,
 		Schema: buildRuleSchema(map[string]*schema.Schema{
+			"system": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Whether this is the system (default) rule of its policy. Okta creates and deletes default rules itself; Terraform can update one but can not create, rename or delete it.",
+			},
 			"authtype": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -175,8 +184,11 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 	if rule == nil {
 		return nil
 	}
-	// Update with upstream state to prevent stale state
-	_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
+	// Update with upstream state to prevent stale state. A policy's default (system)
+	// rule can omit parts of its conditions, so guard each dereference.
+	if rule.Conditions != nil && rule.Conditions.AuthContext != nil {
+		_ = d.Set("authtype", rule.Conditions.AuthContext.AuthType)
+	}
 	_ = d.Set("access", rule.Actions.SignOn.Access)
 	_ = d.Set("mfa_required", rule.Actions.SignOn.RequireFactor)
 	_ = d.Set("mfa_remember_device", rule.Actions.SignOn.RememberDeviceByDefault)
@@ -216,7 +228,7 @@ func resourcePolicySignOnRuleRead(ctx context.Context, d *schema.ResourceData, m
 			}
 		}
 	}
-	if rule.Conditions.IdentityProvider != nil {
+	if rule.Conditions != nil && rule.Conditions.IdentityProvider != nil {
 		_ = d.Set("identity_provider", rule.Conditions.IdentityProvider.Provider)
 		if rule.Conditions.IdentityProvider.Provider == "SPECIFIC_IDP" {
 			_ = d.Set("identity_provider_ids", utils.ConvertStringSliceToSet(rule.Conditions.IdentityProvider.IdpIds))

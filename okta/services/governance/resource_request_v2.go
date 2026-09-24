@@ -284,7 +284,7 @@ func (r *requestV2Resource) Read(ctx context.Context, req resource.ReadRequest, 
 	data.LastUpdated = types.StringValue(getRequestV2Resp.GetLastUpdated().Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(getRequestV2Resp.GetLastUpdatedBy())
 	data.Requested = setRequested(getRequestV2Resp.GetRequested())
-	data.RequestedFor = setRequestedBy(getRequestV2Resp.GetRequestedFor())
+	data.RequestedFor = setRequestedFor(getRequestV2Resp.GetRequestedFor())
 	data.Status = types.StringValue(string(getRequestV2Resp.GetStatus()))
 	data.AccessDuration = types.StringValue(getRequestV2Resp.GetAccessDuration())
 	data.Granted = types.StringValue(getRequestV2Resp.GetGranted().Format(time.RFC3339))
@@ -348,7 +348,7 @@ func applyRequestResourceToState(data *requestV2ResourceModel, reqCreatableResp 
 	data.LastUpdated = types.StringValue(reqCreatableResp.GetLastUpdated().Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(reqCreatableResp.GetLastUpdatedBy())
 	data.Requested = setRequested(reqCreatableResp.GetRequested())
-	data.RequestedFor = setRequestedBy(reqCreatableResp.GetRequestedFor())
+	data.RequestedFor = setRequestedFor(reqCreatableResp.GetRequestedFor())
 	data.Status = types.StringValue(reqCreatableResp.GetStatus())
 	data.AccessDuration = types.StringValue(reqCreatableResp.GetAccessDuration())
 	data.Granted = types.StringValue(reqCreatableResp.GetGranted().Format(time.RFC3339))
@@ -386,7 +386,14 @@ func applyRequestResourceToState(data *requestV2ResourceModel, reqCreatableResp 
 	riskAssessments.RiskRules = rules
 }
 
-func setRequestedBy(by governance.TargetPrincipal) *entitlementParentModel {
+func setRequestedBy(by governance.ClientCredentialPrincipal) *entitlementParentModel {
+	return &entitlementParentModel{
+		Type:       types.StringValue(by.GetType()),
+		ExternalID: types.StringValue(by.GetExternalId()),
+	}
+}
+
+func setRequestedFor(by governance.TargetPrincipal) *entitlementParentModel {
 	return &entitlementParentModel{
 		Type:       types.StringValue(string(by.GetType())),
 		ExternalID: types.StringValue(by.GetExternalId()),
@@ -406,11 +413,9 @@ func setRequested(getRequested governance.Requested) *requested {
 
 func createRequestReq(data requestV2ResourceModel) governance.RequestCreatable2 {
 	var reqCreatable governance.RequestCreatable2
-	reqCreatable.Requested = governance.RequestResourceCreatable{
-		RequestResourceCatalogEntryCreatable: &governance.RequestResourceCatalogEntryCreatable{
-			Type:    data.Requested.Type.ValueString(),
-			EntryId: data.Requested.EntryId.ValueString(),
-		},
+	reqCreatable.Requested = governance.RequestResourceCatalogEntryCreatable{
+		Type:    data.Requested.Type.ValueString(),
+		EntryId: data.Requested.EntryId.ValueString(),
 	}
 	reqCreatable.RequestedFor = governance.TargetPrincipal{
 		ExternalId: data.RequestedFor.ExternalID.ValueString(),
