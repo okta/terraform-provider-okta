@@ -107,7 +107,7 @@ func testAccDeletePushGroupMappingOutOfBand(resourceName string) resource.TestCh
 
 		return retry.RetryContext(ctx, time.Minute, func() *retry.RetryError {
 			_, response, err := client.GroupPushMappingAPI.GetGroupPushMapping(ctx, appID, mappingID).Execute()
-			if response != nil && response.StatusCode == http.StatusNotFound {
+			if response != nil && response.Response != nil && response.StatusCode == http.StatusNotFound {
 				return nil
 			}
 			if err != nil {

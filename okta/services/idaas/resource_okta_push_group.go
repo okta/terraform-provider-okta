@@ -264,16 +264,10 @@ func (r *pushGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	groupPushMapping, apiResp, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.UpdateGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Body(v6okta.UpdateGroupPushMappingRequest{
+	groupPushMapping, _, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.UpdateGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).Body(v6okta.UpdateGroupPushMappingRequest{
 		Status: state.Status.ValueString(),
 	}).Execute()
 	if err != nil {
-		if utils.SuppressErrorOn404_V6(apiResp, err) == nil {
-			// The mapping no longer exists in Okta (deleted out of band); drop it
-			// from state so Terraform plans a recreate instead of erroring.
-			resp.State.RemoveResource(ctx)
-			return
-		}
 		resp.Diagnostics.AddError("failed to update push group mapping: ", err.Error())
 		return
 	}
