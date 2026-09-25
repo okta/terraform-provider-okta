@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -292,6 +293,161 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 			},
 		},
 	})
+}
+
+// TestAccResourceOktaPolicyRulePassword_preservesUnmodeledProperties is the
+// GH-2960 regression test. An update replaces the rule wholesale, so anything
+// Okta stores that the schema does not model has to be read first and carried
+// over, otherwise updating one managed attribute deletes it.
+//
+// actions.selfServicePasswordReset.settings.allowRecoveryEmailWithoutEnrollment
+// is the property used here, but nothing about the fix is specific to it.
+func TestAccResourceOktaPolicyRulePassword_preservesUnmodeledProperties(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRulePassword, t.Name())
+	config := testOktaPolicyRulePasswordUnlock(mgr.Seed, "DENY")
+	updatedConfig := testOktaPolicyRulePasswordUnlock(mgr.Seed, "ALLOW")
+	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
+
+	var policyID, ruleID string
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		Steps: []resource.TestStep{
+			{
+				// Step 1: create the rule and capture the IDs the out-of-band
+				// mutation needs.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_unlock", "DENY"),
+					func(s *terraform.State) error {
+						rs, ok := s.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("resource not found: %s", resourceName)
+						}
+						ruleID = rs.Primary.ID
+						policyID = rs.Primary.Attributes["policy_id"]
+						return nil
+					},
+				),
+			},
+			{
+				// Step 2: an admin sets a property the schema does not model,
+				// then Terraform updates an unrelated managed attribute. The
+				// property must still be there afterwards.
+				PreConfig: func() {
+					if policyID == "" || ruleID == "" {
+						t.Fatalf("policy_id or rule id not captured from the previous step")
+					}
+					if err := setUnmodeledPasswordRuleProperty(policyID, ruleID, true); err != nil {
+						t.Fatalf("failed to set the property out of band: %v", err)
+					}
+					set, err := unmodeledPasswordRulePropertyIsSet(policyID, ruleID)
+					if err != nil {
+						t.Fatalf("failed to read the rule back: %v", err)
+					}
+					if !set {
+						t.Fatalf("the org did not persist allowRecoveryEmailWithoutEnrollment, nothing to preserve")
+					}
+				},
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "password_unlock", "ALLOW"),
+					func(s *terraform.State) error {
+						set, err := unmodeledPasswordRulePropertyIsSet(policyID, ruleID)
+						if err != nil {
+							return err
+						}
+						if !set {
+							return fmt.Errorf("the update deleted allowRecoveryEmailWithoutEnrollment, it should have been carried over")
+						}
+						return nil
+					},
+				),
+			},
+		},
+	})
+}
+
+// ssprSettingsProperty is the object holding the property this test preserves.
+// The provider does not model it, so the SDK carries it in AdditionalProperties.
+const ssprSettingsProperty = "settings"
+
+// setUnmodeledPasswordRuleProperty mirrors the admin doing a GET, editing the
+// JSON and PUTting it back, which is how the defect was found.
+func setUnmodeledPasswordRuleProperty(policyID, ruleID string, allowRecoveryEmailWithoutEnrollment bool) error {
+	ctx := context.Background()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6().PolicyAPI
+
+	inner, _, err := client.GetPolicyRule(ctx, policyID, ruleID).Execute()
+	if err != nil {
+		return fmt.Errorf("failed to get the rule: %w", err)
+	}
+	if inner == nil || inner.PasswordPolicyRule == nil {
+		return fmt.Errorf("the rule was not returned as a password policy rule")
+	}
+	rule := inner.PasswordPolicyRule
+	if rule.Actions == nil || rule.Actions.SelfServicePasswordReset == nil {
+		return fmt.Errorf("the rule has no selfServicePasswordReset action to edit")
+	}
+
+	sspr := rule.Actions.SelfServicePasswordReset
+	if sspr.AdditionalProperties == nil {
+		sspr.AdditionalProperties = map[string]interface{}{}
+	}
+	sspr.AdditionalProperties[ssprSettingsProperty] = map[string]interface{}{
+		"allowRecoveryEmailWithoutEnrollment": allowRecoveryEmailWithoutEnrollment,
+	}
+
+	payload := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(rule)
+	if _, _, err := client.ReplacePolicyRule(ctx, policyID, ruleID).PolicyRule(payload).Execute(); err != nil {
+		return fmt.Errorf("failed to replace the rule: %w", err)
+	}
+	return nil
+}
+
+func unmodeledPasswordRulePropertyIsSet(policyID, ruleID string) (bool, error) {
+	ctx := context.Background()
+	client := iDaaSAPIClientForTestUtil.OktaSDKClientV6().PolicyAPI
+
+	inner, _, err := client.GetPolicyRule(ctx, policyID, ruleID).Execute()
+	if err != nil {
+		return false, fmt.Errorf("failed to get the rule: %w", err)
+	}
+	if inner == nil || inner.PasswordPolicyRule == nil {
+		return false, fmt.Errorf("the rule was not returned as a password policy rule")
+	}
+	actions := inner.PasswordPolicyRule.Actions
+	if actions == nil || actions.SelfServicePasswordReset == nil {
+		return false, nil
+	}
+
+	settings, ok := actions.SelfServicePasswordReset.AdditionalProperties[ssprSettingsProperty].(map[string]interface{})
+	if !ok {
+		return false, nil
+	}
+	allowed, _ := settings["allowRecoveryEmailWithoutEnrollment"].(bool)
+	return allowed, nil
+}
+
+func testOktaPolicyRulePasswordUnlock(rInt int, passwordUnlock string) string {
+	name := acctest.BuildResourceName(rInt)
+
+	return fmt.Sprintf(`
+data "okta_default_policy" "default-%d" {
+	type = "%s"
+}
+
+resource "%s" "%s" {
+	policy_id       = "${data.okta_default_policy.default-%d.id}"
+	name            = "%s"
+	status          = "ACTIVE"
+	password_unlock = "%s"
+}
+`, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name, passwordUnlock)
 }
 
 func testOktaPolicyRulePasswordUpdated(rInt int) string {
