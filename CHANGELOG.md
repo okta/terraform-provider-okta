@@ -4,6 +4,7 @@
 
 ### BUG FIXES
 
+* **`okta_policy_rule_password`**: An update no longer deletes the properties Okta holds for a rule that the provider does not model. The rule was rebuilt from configuration and PUT back wholesale, so any property outside the schema, `actions.selfServicePasswordReset.settings.allowRecoveryEmailWithoutEnrollment` for example, was dropped as soon as an unrelated managed attribute changed. Nothing reported the loss: the property is in no plan and in no state. The update now reads the rule first and carries those properties over. [#2960](https://github.com/okta/terraform-provider-okta/issues/2960)
 * **`okta_policy_rule_signon`, `okta_policy_rule_mfa`**: A policy's default rule can now be imported and updated. Previously any update failed with `Default Rule is immutable` because the provider matched on the rule's name rather than the API's `system` flag, even though Okta permits editing default rules. Removing a default rule from configuration now drops it from Terraform state instead of erroring or attempting a delete Okta rejects. Okta continues to manage `priority`, `network_connection`, `network_includes`, `network_excludes`, `users_excluded` and `session_persistent` on a default rule, so values configured for them are ignored. Policy rule resources gain a read-only `system` attribute. [#2788](https://github.com/okta/terraform-provider-okta/issues/2788)
 
 ## 7.0.0 (Aug 24, 2026)
