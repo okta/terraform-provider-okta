@@ -22,12 +22,14 @@ resource "okta_group" "example" {
 }
 
 resource "okta_policy_rule_profile_enrollment" "example" {
-  policy_id           = okta_policy_profile_enrollment.example.id
-  inline_hook_id      = okta_inline_hook.example.id
-  target_group_id     = okta_group.example.id
-  unknown_user_action = "REGISTER"
-  email_verification  = true
-  access              = "ALLOW"
+  policy_id                    = okta_policy_profile_enrollment.example.id
+  inline_hook_id               = okta_inline_hook.example.id
+  inline_hook_scopes           = ["SELF_SERVICE_REGISTRATION", "PROGRESSIVE_PROFILING"]
+  progressive_profiling_action = "ENABLED"
+  target_group_id              = okta_group.example.id
+  unknown_user_action          = "REGISTER"
+  email_verification           = true
+  access                       = "ALLOW"
   profile_attributes {
     name     = "email"
     label    = "Email"
