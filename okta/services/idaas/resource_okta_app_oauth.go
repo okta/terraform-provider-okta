@@ -1336,8 +1336,10 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 	// Build main settings
 	settings := v6okta.NewOpenIdConnectApplicationSettingsWithDefaults()
-	if implicitAssignment, ok := d.GetOk("implicit_assignment"); ok {
-		settings.SetImplicitAssignment(implicitAssignment.(bool))
+	// Use GetRawConfig: GetOk cannot distinguish explicit false from unset, and false must be
+	// sent to disable Federation Broker Mode.
+	if attr := d.GetRawConfig().GetAttr("implicit_assignment"); !attr.IsNull() {
+		settings.SetImplicitAssignment(attr.True())
 	}
 	settings.SetOauthClient(*oauthClientSettings)
 	settings.SetNotes(*BuildAppNotesV6(d))
