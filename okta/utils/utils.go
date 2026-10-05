@@ -23,6 +23,7 @@ import (
 	"unicode"
 
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+	v7okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/cenkalti/backoff"
 	"github.com/hashicorp/go-cty/cty"
@@ -406,6 +407,32 @@ func DoesResourceExistV6(response *v6okta.APIResponse, err error) (bool, error) 
 	return true, nil
 }
 
+func DoesResourceExistV7(response *v7okta.APIResponse, err error) (bool, error) {
+	if response == nil {
+		return false, err
+	}
+	// We don't want to consider a 404 an error in some cases and thus the delineation
+	if response.StatusCode == 404 {
+		return false, nil
+	}
+	if err != nil {
+		return false, ResponseErr_V7(response, err)
+	}
+
+	defer response.Body.Close()
+	b, err := io.ReadAll(response.Body)
+	if err != nil {
+		return false, ResponseErr_V7(response, err)
+	}
+	// some of the API response can be 200 and return an empty object or list meaning nothing was found
+	body := string(b)
+	if body == "{}" || body == "[]" {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 // Useful shortcut for suppressing errors from Okta's SDK when a resource does not exist. Usually used during deletion
 // of nested resources.
 func SuppressErrorOn404(resp *sdk.Response, err error) error {
@@ -436,6 +463,13 @@ func SuppressErrorOn404_V6(resp *v6okta.APIResponse, err error) error {
 		return nil
 	}
 	return ResponseErr_V6(resp, err)
+}
+
+func SuppressErrorOn404_V7(resp *v7okta.APIResponse, err error) error {
+	if resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound {
+		return nil
+	}
+	return ResponseErr_V7(resp, err)
 }
 
 // Useful shortcut for suppressing errors from Okta's SDK when a Org does not
@@ -548,6 +582,17 @@ func ResponseErr_V3(resp *okta.APIResponse, err error) error {
 
 // TODO switch to responseErr when migration complete
 func ResponseErr_V5(resp *v5okta.APIResponse, err error) error {
+	if err != nil {
+		msg := err.Error()
+		if resp != nil && resp.Response != nil {
+			msg += fmt.Sprintf(", Status: %s", resp.Status)
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
+
+func ResponseErr_V7(resp *v7okta.APIResponse, err error) error {
 	if err != nil {
 		msg := err.Error()
 		if resp != nil && resp.Response != nil {
