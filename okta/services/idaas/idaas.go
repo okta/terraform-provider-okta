@@ -97,11 +97,6 @@ func FWProviderResources() []func() resource.Resource {
 		newTrustedServerResource,
 		newBrandResource,
 		newLogStreamResource,
-		newPolicyDeviceAssuranceAndroidResource,
-		newPolicyDeviceAssuranceChromeOSResource,
-		newPolicyDeviceAssuranceIOSResource,
-		newPolicyDeviceAssuranceMacOSResource,
-		newPolicyDeviceAssuranceWindowsResource,
 		newCustomizedSigninResource,
 		newPreviewSigninResource,
 		newGroupOwnerResource,
@@ -219,6 +214,11 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newThreatInsightSettingsDataSource,
 		newCaptchaDataSource,
 		newOrgCaptchaDataSource,
+		NewDeviceAssuranceWindowsDataSource,
+		NewDeviceAssuranceMacosDataSource,
+		NewDeviceAssuranceIosDataSource,
+		NewDeviceAssuranceChromeosDataSource,
+		NewDeviceAssuranceAndroidDataSource,
 	}
 }
 

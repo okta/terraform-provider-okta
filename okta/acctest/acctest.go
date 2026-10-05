@@ -727,6 +727,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
 	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
+	c.OktaIDaaSClient.OktaSDKClientV7().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV6().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV2().GetConfig().HttpClient.Transport = tripper
@@ -737,6 +738,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV7Client:         c.OktaIDaaSClient.OktaSDKClientV7(),
 		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
 		sdkV3Client:         c.OktaIDaaSClient.OktaSDKClientV3(),
@@ -780,6 +782,7 @@ func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV7Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV3Client.GetConfig().HTTPClient.Transport = rt
