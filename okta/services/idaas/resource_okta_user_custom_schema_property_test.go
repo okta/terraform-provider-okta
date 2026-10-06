@@ -913,6 +913,98 @@ func TestAccResourceOktaUserSchema_enum_string(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaUserSchema_default(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSUserSchemaProperty, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSUserSchemaProperty)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkOktaUserSchemasDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(`
+			resource "okta_user_schema_property" "test" {
+			  index       = "testAcc_replace_with_uuid"
+			  title       = "terraform acceptance test"
+			  type        = "string"
+			  description = "testing"
+			  master      = "OKTA"
+			  scope       = "SELF"
+			  enum    = ["EMAIL", "PASSWORD"]
+			  default = "EMAIL"
+			  one_of {
+			    title = "Email"
+			    const = "EMAIL"
+			  }
+			  one_of {
+			    title = "Password"
+			    const = "PASSWORD"
+			  }
+			}`),
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "default", "EMAIL"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(`
+			resource "okta_user_schema_property" "test" {
+			  index       = "testAcc_replace_with_uuid"
+			  title       = "terraform acceptance test"
+			  type        = "string"
+			  description = "testing"
+			  master      = "OKTA"
+			  scope       = "SELF"
+			  enum    = ["EMAIL", "PASSWORD"]
+			  default = "PASSWORD"
+			  one_of {
+			    title = "Email"
+			    const = "EMAIL"
+			  }
+			  one_of {
+			    title = "Password"
+			    const = "PASSWORD"
+			  }
+			}`),
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "default", "PASSWORD"),
+				),
+			},
+			{
+				// removing "default" from configuration should clear it on the next apply,
+				// not silently leave the previously applied value in place.
+				Config: mgr.ConfigReplace(`
+			resource "okta_user_schema_property" "test" {
+			  index       = "testAcc_replace_with_uuid"
+			  title       = "terraform acceptance test"
+			  type        = "string"
+			  description = "testing"
+			  master      = "OKTA"
+			  scope       = "SELF"
+			  enum    = ["EMAIL", "PASSWORD"]
+			  one_of {
+			    title = "Email"
+			    const = "EMAIL"
+			  }
+			  one_of {
+			    title = "Password"
+			    const = "PASSWORD"
+			  }
+			}`),
+				Check: resource.ComposeTestCheckFunc(
+					testOktaUserSchemasExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "type", "string"),
+					resource.TestCheckResourceAttr(resourceName, "default", ""),
+				),
+			},
+		},
+	})
+}
+
 func testOktaUserSchemasExists(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
