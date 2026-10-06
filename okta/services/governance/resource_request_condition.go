@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -226,10 +227,10 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		}
 	}
 
-	// The API may ignore the priority field on create and return a default
-	// value (e.g. always 0). Save the planned priority so we can restore it
-	// after applying the API response to state, since even the follow-up
-	// PATCH response returns 0 for this field.
+	// The API may ignore the priority field on create and return a different
+	// value. Save the planned priority so we can restore it after applying the
+	// API response to state, since even the follow-up PATCH response does not
+	// echo back the requested value.
 	plannedPriority := data.Priority
 
 	// If the planned priority differs from what the API returned, issue a
@@ -250,12 +251,9 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 
 	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &data, requestConditionResp)...)
 
-	// Restore the planned priority: the API always returns 0 for this field,
-	// even after a successful PATCH, so we preserve the planned value to
-	// avoid a "Provider produced inconsistent result after apply" error.
-	if !plannedPriority.IsNull() && data.Priority.ValueInt32() == 0 && plannedPriority.ValueInt32() != 0 {
-		data.Priority = plannedPriority
-	}
+	// Restore the planned priority so Terraform's post-apply consistency check
+	// sees the value it planned. Warn when the API reassigned it.
+	resp.Diagnostics.Append(restoreRequestConditionPriority(&data, plannedPriority)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -274,9 +272,11 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	// Save the prior-state priority: the API always returns 0 for this field
-	// regardless of what was configured, so we preserve the known priority to
-	// avoid a spurious non-empty plan after apply.
+	// Save the prior-state priority: the API does not echo back the configured
+	// value, so we preserve the known priority to avoid a spurious non-empty
+	// plan after apply. Note this means priority changes made outside Terraform
+	// are not surfaced as drift; the API value is not a reliable mirror of what
+	// was configured.
 	priorPriority := data.Priority
 
 	// Read API call logic
@@ -300,9 +300,10 @@ func (r *requestConditionResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	// Restore the prior-state priority when the API returns 0 but the
-	// configuration had a non-zero value.
-	if !priorPriority.IsNull() && data.Priority.ValueInt32() == 0 && priorPriority.ValueInt32() != 0 {
+	// Restore the prior-state priority whenever one is known. Unlike Create and
+	// Update this deliberately emits no warning: a refresh is not a user action
+	// and the reassignment, if any, was already reported at apply time.
+	if !priorPriority.IsNull() && !priorPriority.IsUnknown() {
 		data.Priority = priorPriority
 	}
 
@@ -324,9 +325,14 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	// Save planned priority before the API call: the update API also returns
-	// 0 for priority in the response, so we preserve the planned value.
+	// Save planned priority before the API call: the update API does not echo
+	// back the requested priority either, so we preserve the planned value.
 	plannedPriority := data.Priority
+
+	// Only warn about a reassignment when the practitioner actually asked to
+	// change priority this apply. Otherwise an unrelated edit (e.g. renaming
+	// the condition) would warn on every apply about a value nobody touched.
+	priorityChanged := !plannedPriority.Equal(state.Priority)
 
 	// Update API call logic
 	ctx = context.WithValue(ctx, api.RetryOnStatusCodes, []int{http.StatusConflict})
@@ -378,10 +384,14 @@ func (r *requestConditionResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	// Restore the planned priority: the update API also returns 0 for this
-	// field, so we preserve the planned value to keep state consistent.
-	if !plannedPriority.IsNull() && data.Priority.ValueInt32() == 0 && plannedPriority.ValueInt32() != 0 {
-		data.Priority = plannedPriority
+	// Restore the planned priority to keep state consistent with the plan. The
+	// warning is suppressed unless priority actually changed this apply.
+	priorityDiags := restoreRequestConditionPriority(&data, plannedPriority)
+	if priorityChanged {
+		resp.Diagnostics.Append(priorityDiags...)
+	}
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	// Save Data into Terraform state
@@ -434,6 +444,41 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 		)
 		return
 	}
+}
+
+// restoreRequestConditionPriority writes the planned priority back over the
+// value the API returned, and warns when the two disagree.
+//
+// The governance API treats priority as a position in the resource's ordered
+// list of conditions rather than a free-form value: it clamps the request to
+// the length of that list and does not echo back what was sent (e.g. a POST
+// with priority 100 against a two-condition resource responds with 1). Writing
+// the API's value straight to state would break Terraform's post-apply
+// consistency contract and fail the apply with "Provider produced inconsistent
+// result after apply", so the planned value wins.
+//
+// A null or unknown priority is left alone: the practitioner did not configure
+// one, so the API-assigned value is the correct thing to keep for this
+// Optional+Computed attribute.
+func restoreRequestConditionPriority(data *requestConditionResourceModel, plannedPriority types.Int32) diag.Diagnostics {
+	var diags diag.Diagnostics
+	if plannedPriority.IsNull() || plannedPriority.IsUnknown() {
+		return diags
+	}
+
+	if !data.Priority.Equal(plannedPriority) {
+		diags.AddWarning(
+			"Priority reassigned by API",
+			fmt.Sprintf("Requested priority %d for request condition %q was reassigned to %d by the server. "+
+				"Okta treats priority as a position within the resource's ordered list of conditions and clamps "+
+				"out-of-range values. Terraform will keep the configured value in state; adjust the configuration "+
+				"if the server-side ordering is the one you want.",
+				plannedPriority.ValueInt32(), data.Name.ValueString(), data.Priority.ValueInt32()),
+		)
+	}
+	data.Priority = plannedPriority
+
+	return diags
 }
 
 func applyRequestConditionToState(ctx context.Context, data *requestConditionResourceModel, requestConditionResp *governance.RequestConditionFull) diag.Diagnostics {

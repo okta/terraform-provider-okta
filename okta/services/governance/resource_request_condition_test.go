@@ -162,6 +162,93 @@ func TestAccRequestConditionResource_Priority(t *testing.T) {
 	})
 }
 
+// TestAccRequestConditionResource_PriorityNonzeroMismatch covers the case where
+// the governance API reassigns a configured priority to a different *non-zero*
+// value — e.g. a sparse scheme that leaves gaps for future inserts, where
+// priority 5 against a shorter condition list is clamped down to 3.
+//
+// Before the fix the restore guard only triggered when the API returned exactly
+// 0, so this path wrote the API's value to state and the apply failed with
+// "Provider produced inconsistent result after apply". The second step repeats
+// the exercise through Update, and the third asserts the apply converges — a
+// plan immediately afterwards must be empty.
+func TestAccRequestConditionResource_PriorityNonzeroMismatch(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority_nonzero_mismatch.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_nonzero_mismatch_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test_priority_sparse", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				// Create: API returns priority 3 for a requested 5.
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-priority-sparse"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "5"),
+				),
+			},
+			{
+				// Update: API returns priority 4 for a requested 9.
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "priority", "9"),
+				),
+			},
+			{
+				// The apply must converge: no ExpectNonEmptyPlan here, so the
+				// test fails if Read reintroduces a perpetual diff.
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+// TestAccRequestConditionResource_PriorityUnrelatedEdit asserts that an update
+// which does not touch priority still round-trips cleanly. The reassignment
+// warning is gated on priority actually changing, so editing only name and
+// description must not re-warn about a value nobody touched.
+func TestAccRequestConditionResource_PriorityUnrelatedEdit(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority_unrelated_edit.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_unrelated_edit_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test_priority_unrelated", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-unrelated-before"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "5"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-unrelated-after"),
+					resource.TestCheckResourceAttr(resourceName, "description", "after"),
+					// priority is untouched by this edit and must survive it.
+					resource.TestCheckResourceAttr(resourceName, "priority", "5"),
+				),
+			},
+			{
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode
