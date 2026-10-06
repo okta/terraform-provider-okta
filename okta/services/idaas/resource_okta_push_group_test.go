@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 )
@@ -40,6 +41,42 @@ func TestAccResourceOktaPushGroup_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "source_group_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "target_group_id"),
 				),
+			},
+		},
+	})
+}
+
+// Importing a mapping must produce the same state a created one has, including
+// delete_target_group_on_destroy, which the API never returns. See issue #2827.
+func TestAccResourceOktaPushGroup_import(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.sample", resources.OktaIDaaSPushGroup)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPushGroup, t.Name())
+	config := mgr.GetFixtures("okta_push_group.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "delete_target_group_on_destroy", "true"),
+				),
+			},
+			{
+				Config:       config,
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("resource not found: %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["app_id"], rs.Primary.ID), nil
+				},
+				ImportStateVerify: true,
 			},
 		},
 	})
