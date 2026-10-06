@@ -1,77 +1,112 @@
 ---
-page_title: "Resource: okta_device_assurance_windows"
+page_title: "Resource: okta_policy_device_assurance_windows"
 description: |-
   This resource allows you to create and configure a Windows Device Assurance Policy.
 ---
 
-# Resource: okta_device_assurance_windows
+# Resource: okta_policy_device_assurance_windows
 
 This resource allows you to create and configure a Windows Device Assurance Policy.
 
-!> **BREAKING CHANGE**: This resource replaces the deprecated `okta_device_assurance_policy_windows_os` resource. Migration guide below.
+!> **BREAKING CHANGE**: This resource has been migrated to use Okta SDK v7, which introduces schema changes. The resource name is unchanged. Migration guide below.
 
-## Breaking Changes from `okta_device_assurance_policy_windows_os`
+## Breaking Changes
 
-### 1. Resource Name Changed
-- **Old**: `okta_device_assurance_policy_windows_os`
-- **New**: `okta_device_assurance_windows`
-
-Update your Terraform configurations to use the new resource type.
+### 1. Resource Name Unchanged
+The resource type remains `okta_policy_device_assurance_windows`. No changes are required to your resource addressing (`resource "okta_policy_device_assurance_windows" "example" { ... }`).
 
 ### 2. Schema Changes
-The new resource uses an updated API schema with the following changes:
-- The `platform` field is now required and must be set to `"WINDOWS"`
-- Nested attributes for third-party signal providers have been restructured
-- Additional computed fields are now available for read-only access
-
-### 3. SDK Version Upgrade
-The new resource uses Okta SDK v7 instead of v3, which provides:
-- Enhanced API coverage and reliability
-- Improved error handling and validation
-- Better performance and response times
+The resource now uses an updated API schema with the following changes:
+- `platform` is now a **required** attribute and must be set to `"WINDOWS"` (previously computed automatically)
+- `screenlock_type` has been renamed to `screen_lock_type` and is now a nested block with an `include` attribute (previously a list of strings)
+- `disk_encryption_type` is now a nested block with an `include` attribute (previously a list of strings)
+- `os_version` is now a nested block with a `minimum` attribute (previously a plain string); a new `os_version_constraints` repeatable block supports `major_version_constraint`, `minimum`, and `dynamic_version_requirement`
+- Third-party signal provider attributes previously flattened with a `tpsp_` prefix (for example `tpsp_disk_encrypted`, `tpsp_windows_machine_domain`, `tpsp_crowd_strike_agent_id`) have been restructured into nested blocks under `third_party_signal_providers.dtc` (the Google Chrome Device Trust Connector provider), using names without the `tpsp_` prefix (for example `disk_encrypted`, `windows_machine_domain`, `crowd_strike_agent_id`)
+- `created_date` and `last_update` are no longer exposed on the resource (still available on the corresponding data source)
+- New optional attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
 
 ## Migration Guide
 
-To migrate from the old resource to the new one:
+Update any configuration using the old flat `tpsp_*` attributes to the new nested block syntax:
 
 ```terraform
-# Old resource (deprecated)
-resource "okta_device_assurance_policy_windows_os" "example" {
-  name = "My Windows Policy"
+# Old schema
+resource "okta_policy_device_assurance_windows" "example" {
+  name                       = "My Windows Policy"
+  tpsp_disk_encrypted        = true
+  tpsp_windows_machine_domain = "example.com"
+  tpsp_crowd_strike_agent_id = "agent-id"
 }
 
-# New resource (use this instead)
-resource "okta_device_assurance_windows" "example" {
+# New schema
+resource "okta_policy_device_assurance_windows" "example" {
   name     = "My Windows Policy"
   platform = "WINDOWS"
+
+  third_party_signal_providers {
+    dtc {
+      disk_encrypted         = true
+      windows_machine_domain = "example.com"
+      crowd_strike_agent_id  = "agent-id"
+    }
+  }
 }
 ```
 
-Import existing policies using the new resource:
-```bash
-terraform import okta_device_assurance_windows.example <policy-id>
+No changes to import are required:
+```shell
+terraform import okta_policy_device_assurance_windows.example <policy-id>
 ```
 
 ## Example Usage
 
 ```terraform
-resource "okta_device_assurance_windows" "example" {
-  name     = "My Windows Policy"
-  platform = "WINDOWS"
+resource "okta_policy_device_assurance_windows" "example" {
+  name                    = "My Windows Policy"
+  platform                = "WINDOWS"
+  secure_hardware_present = true
 }
 
-resource "okta_device_assurance_windows" "example_with_providers" {
+resource "okta_policy_device_assurance_windows" "example_with_providers" {
   name                     = "My Windows Policy with Providers"
   platform                 = "WINDOWS"
   display_remediation_mode = "HIDE"
-  
+
   third_party_signal_providers {
     device_posture_id_p {
       compliant = true
       managed   = true
     }
+
+    dtc {
+      antivirus_enabled                    = true
+      built_in_dns_client_enabled          = true
+      disk_encrypted                       = true
+      os_firewall                          = true
+      screen_lock_secured                  = true
+      secure_boot_enabled                  = true
+      site_isolation_enabled               = true
+      third_party_blocking_enabled         = true
+      realtime_url_check_mode              = true
+      safe_browsing_protection_level       = "ENHANCED_PROTECTION"
+      password_protection_warning_trigger  = "PASSWORD_PROTECTION_OFF"
+      device_enrollment_domain             = "example.com"
+      key_trust_level                      = "CHROME_BROWSER_HW_KEY"
+      windows_machine_domain               = "example.com"
+      windows_user_domain                  = "example.com"
+      crowd_strike_agent_id                = "agent-id"
+      crowd_strike_customer_id             = "customer-id"
+
+      os_version {
+        minimum = "10"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
   }
-  
+
   grace_period {
     type   = "DAYS"
     expiry = "30"

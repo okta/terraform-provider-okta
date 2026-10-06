@@ -1,9 +1,9 @@
-resource "okta_device_assurance_ios" "test" {
+resource "okta_policy_device_assurance_ios" "test" {
   name     = "testAcc_replace_with_uuid"
   platform  = "IOS"
   jailbreak = false
 }
 
-data "okta_device_assurance_ios" "test" {
-  id = okta_device_assurance_ios.test.id
+data "okta_policy_device_assurance_ios" "test" {
+  id = okta_policy_device_assurance_ios.test.id
 }

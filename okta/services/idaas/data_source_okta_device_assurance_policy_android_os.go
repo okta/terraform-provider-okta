@@ -29,70 +29,70 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &deviceAssuranceAndroidDataSource{}
-	_ datasource.DataSourceWithConfigure = &deviceAssuranceAndroidDataSource{}
+	_ datasource.DataSource              = &policyDeviceAssuranceAndroidDataSource{}
+	_ datasource.DataSourceWithConfigure = &policyDeviceAssuranceAndroidDataSource{}
 )
 
-// DeviceAssuranceAndroidDataSource defines the data source implementation.
-type deviceAssuranceAndroidDataSource struct {
+// PolicyDeviceAssuranceAndroidDataSource defines the data source implementation.
+type policyDeviceAssuranceAndroidDataSource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceAndroidDataSourceModel describes the data source data model.
-type deviceAssuranceAndroidDataSourceModel struct {
-	ID                        types.String                                                         `tfsdk:"id"`
-	CreatedBy                 types.String                                                         `tfsdk:"created_by"`
-	CreatedDate               types.String                                                         `tfsdk:"created_date"`
-	DiskEncryptionType        *DeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                                         `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceAndroidDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
-	Jailbreak                 types.Bool                                                           `tfsdk:"jailbreak"`
-	LastUpdate                types.String                                                         `tfsdk:"last_update"`
-	LastUpdatedBy             types.String                                                         `tfsdk:"last_updated_by"`
-	Name                      types.String                                                         `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceAndroidDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceAndroidDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                                           `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceAndroidDataSourceModel describes the data source data model.
+type policyDeviceAssuranceAndroidDataSourceModel struct {
+	ID                        types.String                                                               `tfsdk:"id"`
+	CreatedBy                 types.String                                                               `tfsdk:"created_by"`
+	CreatedDate               types.String                                                               `tfsdk:"created_date"`
+	DiskEncryptionType        *PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                               `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
+	Jailbreak                 types.Bool                                                                 `tfsdk:"jailbreak"`
+	LastUpdate                types.String                                                               `tfsdk:"last_update"`
+	LastUpdatedBy             types.String                                                               `tfsdk:"last_updated_by"`
+	Name                      types.String                                                               `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                                 `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceAndroidDataSourceModelGracePeriodModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceAndroidDataSourceModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                                       `tfsdk:"minimum"`
+// PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                                             `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceAndroidDataSourceModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel struct {
-	AndroidDeviceTrust *DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel `tfsdk:"android_device_trust"`
-	DevicePostureIdP   *DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel   `tfsdk:"device_posture_id_p"`
+// PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel struct {
+	AndroidDeviceTrust *PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel `tfsdk:"android_device_trust"`
+	DevicePostureIdP   *PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel   `tfsdk:"device_posture_id_p"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel is the nested model for android_device_trust.
-type DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel is the nested model for android_device_trust.
+type PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel struct {
 	DeviceIntegrityLevel      types.String `tfsdk:"device_integrity_level"`
 	NetworkProxyDisabled      types.Bool   `tfsdk:"network_proxy_disabled"`
 	PlayProtectVerdict        types.String `tfsdk:"play_protect_verdict"`
@@ -102,30 +102,30 @@ type DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidD
 	WifiSecured               types.Bool   `tfsdk:"wifi_secured"`
 }
 
-// DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewDeviceAssuranceAndroidDataSource() datasource.DataSource {
-	return &deviceAssuranceAndroidDataSource{}
+func NewPolicyDeviceAssuranceAndroidDataSource() datasource.DataSource {
+	return &policyDeviceAssuranceAndroidDataSource{}
 }
 
-func (d *deviceAssuranceAndroidDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_android"
+func (d *policyDeviceAssuranceAndroidDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_android"
 }
 
-func (d *deviceAssuranceAndroidDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *policyDeviceAssuranceAndroidDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *deviceAssuranceAndroidDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *policyDeviceAssuranceAndroidDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Retrieves a device assurance policy by `deviceAssuranceId`",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the device_assurance_android.",
+				MarkdownDescription: "Unique identifier of the policy_device_assurance_android.",
 				Required:            true,
 			},
 			"created_by": schema.StringAttribute{
@@ -278,8 +278,8 @@ func (d *deviceAssuranceAndroidDataSource) Schema(_ context.Context, _ datasourc
 	}
 }
 
-func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state deviceAssuranceAndroidDataSourceModel
+func (d *policyDeviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state policyDeviceAssuranceAndroidDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -291,10 +291,10 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 	result, httpResp, err := client.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.Diagnostics.AddError("Not Found", "device_assurance_android with the given ID was not found.")
+			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_android with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_android", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_android", err.Error())
 		return
 	}
 	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceAndroidPlatform); ok {
@@ -308,7 +308,7 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 		state.Name = types.StringValue(string(variantObj.GetName()))
 		state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 		if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-			diskEncryptionTypeModel0 := &DeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel{}
+			diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -317,14 +317,14 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 			state.DiskEncryptionType = diskEncryptionTypeModel0
 		}
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &DeviceAssuranceAndroidDataSourceModelGracePeriodModel{}
+			gracePeriodModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 			state.GracePeriod = gracePeriodModel0
 		}
 		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &DeviceAssuranceAndroidDataSourceModelOsVersionModel{}
+			osVersionModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel{}
 			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &DeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
@@ -334,7 +334,7 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 			state.OsVersion = osVersionModel0
 		}
 		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &DeviceAssuranceAndroidDataSourceModelScreenLockTypeModel{}
+			screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -343,9 +343,9 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 			state.ScreenLockType = screenLockTypeModel0
 		}
 		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel{}
+			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel{}
 			if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
-				androidDeviceTrustModel1 := &DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
+				androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
 				androidDeviceTrustModel1.NetworkProxyDisabled = types.BoolValue(androidDeviceTrustRaw1.GetNetworkProxyDisabled())
 				androidDeviceTrustModel1.PlayProtectVerdict = types.StringValue(string(androidDeviceTrustRaw1.GetPlayProtectVerdict()))
@@ -356,7 +356,7 @@ func (d *deviceAssuranceAndroidDataSource) Read(ctx context.Context, req datasou
 				thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
 			}
 			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &DeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+				devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1

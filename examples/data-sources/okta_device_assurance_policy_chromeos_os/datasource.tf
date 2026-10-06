@@ -1,4 +1,4 @@
-resource "okta_device_assurance_chromeos" "test" {
+resource "okta_policy_device_assurance_chromeos" "test" {
   name     = "testAcc_replace_with_uuid"
   platform = "CHROMEOS"
   display_remediation_mode = "SHOW"
@@ -10,6 +10,6 @@ resource "okta_device_assurance_chromeos" "test" {
   }
 }
 
-data "okta_device_assurance_chromeos" "test" {
-  id = okta_device_assurance_chromeos.test.id
+data "okta_policy_device_assurance_chromeos" "test" {
+  id = okta_policy_device_assurance_chromeos.test.id
 }

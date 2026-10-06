@@ -34,113 +34,113 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &deviceAssuranceMacosResource{}
-	_ resource.ResourceWithConfigure   = &deviceAssuranceMacosResource{}
-	_ resource.ResourceWithImportState = &deviceAssuranceMacosResource{}
+	_ resource.Resource                = &policyDeviceAssuranceMacosResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceMacosResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceMacosResource{}
 )
 
-// DeviceAssuranceMacosResource defines the resource implementation.
-type deviceAssuranceMacosResource struct {
+// PolicyDeviceAssuranceMacosResource defines the resource implementation.
+type policyDeviceAssuranceMacosResource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceMacosModel describes the resource data model.
-type deviceAssuranceMacosModel struct {
-	ID                        types.String                                             `tfsdk:"id"`
-	Platform                  types.String                                             `tfsdk:"platform"`
-	CreatedBy                 types.String                                             `tfsdk:"created_by"`
-	DiskEncryptionType        *DeviceAssuranceMacosModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                             `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceMacosModelGracePeriodModel               `tfsdk:"grace_period"`
-	LastUpdatedBy             types.String                                             `tfsdk:"last_updated_by"`
-	Name                      types.String                                             `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceMacosModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceMacosModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                               `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceMacosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceMacosModel describes the resource data model.
+type policyDeviceAssuranceMacosModel struct {
+	ID                        types.String                                                   `tfsdk:"id"`
+	Platform                  types.String                                                   `tfsdk:"platform"`
+	CreatedBy                 types.String                                                   `tfsdk:"created_by"`
+	DiskEncryptionType        *PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                   `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceMacosModelGracePeriodModel               `tfsdk:"grace_period"`
+	LastUpdatedBy             types.String                                                   `tfsdk:"last_updated_by"`
+	Name                      types.String                                                   `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceMacosModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceMacosModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                     `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceMacosModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceMacosModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceMacosModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceMacosModelGracePeriodModel struct {
+// PolicyDeviceAssuranceMacosModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceMacosModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceMacosModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceMacosModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                           `tfsdk:"minimum"`
+// PolicyDeviceAssuranceMacosModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceMacosModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                                 `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceMacosModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceMacosModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceMacosModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceMacosModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceMacosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceMacosModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
-	Dtc              *DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
+// PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+	Dtc              *PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
 }
 
-// DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-// DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
-type DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel struct {
-	BrowserVersion                   *DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
-	BuiltInDnsClientEnabled          types.Bool                                                                          `tfsdk:"built_in_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked    types.Bool                                                                          `tfsdk:"chrome_remote_desktop_app_blocked"`
-	DeviceEnrollmentDomain           types.String                                                                        `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                    types.Bool                                                                          `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                    types.String                                                                        `tfsdk:"key_trust_level"`
-	OsFirewall                       types.Bool                                                                          `tfsdk:"os_firewall"`
-	OsVersion                        *DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
-	PasswordProtectionWarningTrigger types.String                                                                        `tfsdk:"password_protection_warning_trigger"`
-	RealtimeUrlCheckMode             types.Bool                                                                          `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel      types.String                                                                        `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                types.Bool                                                                          `tfsdk:"screen_lock_secured"`
-	SiteIsolationEnabled             types.Bool                                                                          `tfsdk:"site_isolation_enabled"`
+// PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
+type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel struct {
+	BrowserVersion                   *PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
+	BuiltInDnsClientEnabled          types.Bool                                                                                `tfsdk:"built_in_dns_client_enabled"`
+	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                `tfsdk:"chrome_remote_desktop_app_blocked"`
+	DeviceEnrollmentDomain           types.String                                                                              `tfsdk:"device_enrollment_domain"`
+	DiskEncrypted                    types.Bool                                                                                `tfsdk:"disk_encrypted"`
+	KeyTrustLevel                    types.String                                                                              `tfsdk:"key_trust_level"`
+	OsFirewall                       types.Bool                                                                                `tfsdk:"os_firewall"`
+	OsVersion                        *PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
+	PasswordProtectionWarningTrigger types.String                                                                              `tfsdk:"password_protection_warning_trigger"`
+	RealtimeUrlCheckMode             types.Bool                                                                                `tfsdk:"realtime_url_check_mode"`
+	SafeBrowsingProtectionLevel      types.String                                                                              `tfsdk:"safe_browsing_protection_level"`
+	ScreenLockSecured                types.Bool                                                                                `tfsdk:"screen_lock_secured"`
+	SiteIsolationEnabled             types.Bool                                                                                `tfsdk:"site_isolation_enabled"`
 }
 
-// DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
-type DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
+// PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
+type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
+// PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewDeviceAssuranceMacosResource() resource.Resource {
-	return &deviceAssuranceMacosResource{}
+func NewPolicyDeviceAssuranceMacosResource() resource.Resource {
+	return &policyDeviceAssuranceMacosResource{}
 }
 
-func (r *deviceAssuranceMacosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_macos"
+func (r *policyDeviceAssuranceMacosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_macos"
 }
 
-func (r *deviceAssuranceMacosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *policyDeviceAssuranceMacosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *deviceAssuranceMacosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *policyDeviceAssuranceMacosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Device Assurance Policies API provides operations to manage device assurance policies in your organization.",
 		Attributes: map[string]schema.Attribute{
@@ -176,6 +176,9 @@ func (r *deviceAssuranceMacosResource) Schema(_ context.Context, _ resource.Sche
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -346,12 +349,12 @@ func (r *deviceAssuranceMacosResource) Schema(_ context.Context, _ resource.Sche
 		},
 	}
 }
-func (r *deviceAssuranceMacosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *policyDeviceAssuranceMacosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state deviceAssuranceMacosModel
+func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state policyDeviceAssuranceMacosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -365,13 +368,13 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	variantObj := result.DeviceAssuranceMacOSPlatform
 	if variantObj == nil {
-		resp.Diagnostics.AddError("Error reading device_assurance_macos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", "API returned a response for a different variant type")
 		return
 	}
 
@@ -384,7 +387,7 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceMacosModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -397,7 +400,7 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceMacosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -406,9 +409,9 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceMacosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -434,7 +437,7 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceMacosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -447,17 +450,17 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -496,7 +499,7 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -537,8 +540,8 @@ func (r *deviceAssuranceMacosResource) Read(ctx context.Context, req resource.Re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan deviceAssuranceMacosModel
+func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan policyDeviceAssuranceMacosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -681,13 +684,13 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceMacOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_macos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	createVariantObj := result.DeviceAssuranceMacOSPlatform
 	if createVariantObj == nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_macos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_macos", "API returned a response for a different variant type")
 		return
 	}
 	// Set ID from API response
@@ -698,7 +701,7 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
 	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceMacosModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -711,7 +714,7 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceMacosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -720,9 +723,9 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 		plan.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceMacosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -748,7 +751,7 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 		plan.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceMacosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -761,17 +764,17 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 		plan.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -810,7 +813,7 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -850,14 +853,14 @@ func (r *deviceAssuranceMacosResource) Create(ctx context.Context, req resource.
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan deviceAssuranceMacosModel
+func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan policyDeviceAssuranceMacosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state deviceAssuranceMacosModel
+	var state policyDeviceAssuranceMacosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1001,13 +1004,13 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceMacOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_macos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	updateVariantObj := result.DeviceAssuranceMacOSPlatform
 	if updateVariantObj == nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_macos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_macos", "API returned a response for a different variant type")
 		return
 	}
 
@@ -1032,7 +1035,7 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
 	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceMacosModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -1045,7 +1048,7 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceMacosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -1054,9 +1057,9 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceMacosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -1082,7 +1085,7 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceMacosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -1095,17 +1098,17 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -1144,7 +1147,7 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -1185,8 +1188,8 @@ func (r *deviceAssuranceMacosResource) Update(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceMacosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state deviceAssuranceMacosModel
+func (r *policyDeviceAssuranceMacosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state policyDeviceAssuranceMacosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1199,7 +1202,7 @@ func (r *deviceAssuranceMacosResource) Delete(ctx context.Context, req resource.
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_macos", err.Error())
 		return
 	}
 }

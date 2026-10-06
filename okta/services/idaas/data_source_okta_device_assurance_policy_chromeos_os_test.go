@@ -24,7 +24,7 @@ import (
 )
 
 func TestAccDataSourceOktaDeviceAssuranceChromeos_read(t *testing.T) {
-	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_policy_chromeos_os")
+	resourceName := fmt.Sprintf("data.%s.test", "okta_policy_device_assurance_chromeos")
 	mgr := newFixtureManager("data-sources", "okta_device_assurance_policy_chromeos_os", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
@@ -36,7 +36,7 @@ func TestAccDataSourceOktaDeviceAssuranceChromeos_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_device_assurance_chromeos.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_policy_device_assurance_chromeos.test", "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "name"),
 				),

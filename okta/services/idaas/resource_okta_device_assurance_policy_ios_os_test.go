@@ -24,9 +24,9 @@ import (
 )
 
 func TestAccDeviceAssuranceIos_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_device_assurance_ios", t.Name())
+	mgr := newFixtureManager("resources", "okta_device_assurance_policy_ios_os", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", "okta_device_assurance_ios")
+	resourceName := fmt.Sprintf("%s.test", "okta_policy_device_assurance_ios")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),

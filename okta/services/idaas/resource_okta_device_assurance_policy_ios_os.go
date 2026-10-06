@@ -34,79 +34,79 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &deviceAssuranceIosResource{}
-	_ resource.ResourceWithConfigure   = &deviceAssuranceIosResource{}
-	_ resource.ResourceWithImportState = &deviceAssuranceIosResource{}
+	_ resource.Resource                = &policyDeviceAssuranceIosResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceIosResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceIosResource{}
 )
 
-// DeviceAssuranceIosResource defines the resource implementation.
-type deviceAssuranceIosResource struct {
+// PolicyDeviceAssuranceIosResource defines the resource implementation.
+type policyDeviceAssuranceIosResource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceIosModel describes the resource data model.
-type deviceAssuranceIosModel struct {
-	ID                        types.String                                           `tfsdk:"id"`
-	Platform                  types.String                                           `tfsdk:"platform"`
-	CreatedBy                 types.String                                           `tfsdk:"created_by"`
-	DisplayRemediationMode    types.String                                           `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceIosModelGracePeriodModel               `tfsdk:"grace_period"`
-	Jailbreak                 types.Bool                                             `tfsdk:"jailbreak"`
-	LastUpdatedBy             types.String                                           `tfsdk:"last_updated_by"`
-	Name                      types.String                                           `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceIosModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceIosModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	ThirdPartySignalProviders *DeviceAssuranceIosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceIosModel describes the resource data model.
+type policyDeviceAssuranceIosModel struct {
+	ID                        types.String                                                 `tfsdk:"id"`
+	Platform                  types.String                                                 `tfsdk:"platform"`
+	CreatedBy                 types.String                                                 `tfsdk:"created_by"`
+	DisplayRemediationMode    types.String                                                 `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceIosModelGracePeriodModel               `tfsdk:"grace_period"`
+	Jailbreak                 types.Bool                                                   `tfsdk:"jailbreak"`
+	LastUpdatedBy             types.String                                                 `tfsdk:"last_updated_by"`
+	Name                      types.String                                                 `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceIosModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceIosModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceIosModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceIosModelGracePeriodModel struct {
+// PolicyDeviceAssuranceIosModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceIosModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceIosModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceIosModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                         `tfsdk:"minimum"`
+// PolicyDeviceAssuranceIosModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceIosModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                               `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceIosModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceIosModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceIosModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceIosModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceIosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceIosModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+// PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
 }
 
-// DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewDeviceAssuranceIosResource() resource.Resource {
-	return &deviceAssuranceIosResource{}
+func NewPolicyDeviceAssuranceIosResource() resource.Resource {
+	return &policyDeviceAssuranceIosResource{}
 }
 
-func (r *deviceAssuranceIosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_ios"
+func (r *policyDeviceAssuranceIosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_ios"
 }
 
-func (r *deviceAssuranceIosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *policyDeviceAssuranceIosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *deviceAssuranceIosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *policyDeviceAssuranceIosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Device Assurance Policies API provides operations to manage device assurance policies in your organization.",
 		Attributes: map[string]schema.Attribute{
@@ -150,6 +150,9 @@ func (r *deviceAssuranceIosResource) Schema(_ context.Context, _ resource.Schema
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -237,12 +240,12 @@ func (r *deviceAssuranceIosResource) Schema(_ context.Context, _ resource.Schema
 		},
 	}
 }
-func (r *deviceAssuranceIosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *policyDeviceAssuranceIosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state deviceAssuranceIosModel
+func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state policyDeviceAssuranceIosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -256,13 +259,13 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	variantObj := result.DeviceAssuranceIOSPlatform
 	if variantObj == nil {
-		resp.Diagnostics.AddError("Error reading device_assurance_ios", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", "API returned a response for a different variant type")
 		return
 	}
 
@@ -275,7 +278,7 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceIosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -284,9 +287,9 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceIosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -312,7 +315,7 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceIosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -325,9 +328,9 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceIosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -338,8 +341,8 @@ func (r *deviceAssuranceIosResource) Read(ctx context.Context, req resource.Read
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan deviceAssuranceIosModel
+func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan policyDeviceAssuranceIosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -420,13 +423,13 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceIOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_ios", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	createVariantObj := result.DeviceAssuranceIOSPlatform
 	if createVariantObj == nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_ios", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_ios", "API returned a response for a different variant type")
 		return
 	}
 	// Set ID from API response
@@ -438,7 +441,7 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 	plan.Jailbreak = types.BoolValue(createVariantObj.GetJailbreak())
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
 	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceIosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -447,9 +450,9 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 		plan.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceIosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -475,7 +478,7 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 		plan.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceIosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -488,9 +491,9 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 		plan.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceIosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -500,14 +503,14 @@ func (r *deviceAssuranceIosResource) Create(ctx context.Context, req resource.Cr
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan deviceAssuranceIosModel
+func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan policyDeviceAssuranceIosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state deviceAssuranceIosModel
+	var state policyDeviceAssuranceIosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -589,13 +592,13 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceIOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_ios", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	updateVariantObj := result.DeviceAssuranceIOSPlatform
 	if updateVariantObj == nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_ios", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_ios", "API returned a response for a different variant type")
 		return
 	}
 
@@ -620,7 +623,7 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 		state.Name = types.StringValue(string(*nameVal))
 	}
 	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceIosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -629,9 +632,9 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceIosModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -657,7 +660,7 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceIosModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -670,9 +673,9 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceIosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceIosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -683,8 +686,8 @@ func (r *deviceAssuranceIosResource) Update(ctx context.Context, req resource.Up
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceIosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state deviceAssuranceIosModel
+func (r *policyDeviceAssuranceIosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state policyDeviceAssuranceIosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -697,7 +700,7 @@ func (r *deviceAssuranceIosResource) Delete(ctx context.Context, req resource.De
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_ios", err.Error())
 		return
 	}
 }

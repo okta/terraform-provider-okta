@@ -1,18 +1,41 @@
 ---
-page_title: "Data Source: okta_device_assurance_android"
+page_title: "Data Source: okta_policy_device_assurance_android"
 description: |-
-  Get an Android Device Assurance Policy data source.
+  Retrieves an Android Device Assurance Policy.
 ---
 
-# Data Source: okta_device_assurance_android
+# Data Source: okta_policy_device_assurance_android
 
-Get an Android Device Assurance Policy data source.
+Retrieves a device assurance policy by `deviceAssuranceId`.
+
+!> **BREAKING CHANGE**: This data source has been migrated to use Okta SDK v7, which introduces schema changes. Migration guide below.
+
+## Breaking Changes
+
+### 1. Data Source Replaces the Generic `okta_device_assurance_policy` Data Source
+The previous generic `okta_device_assurance_policy` data source (queryable by `id` or `name`) has been replaced by platform-specific data sources, one per OS. This data source, `okta_policy_device_assurance_android`, retrieves Android device assurance policies.
+
+### 2. Argument Changes
+- `id` is now **required**; querying by `name` is no longer supported
+- `platform` is no longer exposed (the platform is implied by the data source itself)
+
+### 3. Schema Changes
+- `screenlock_type` has been renamed to `screen_lock_type` and is now a nested block with an `include` attribute
+- `disk_encryption_type` is now a nested block with an `include` attribute
+- `os_version` is now a nested block with a `minimum` attribute and an optional `dynamic_version_requirement` sub-block
+- New computed attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers` (`android_device_trust`, `device_posture_id_p`)
 
 ## Example Usage
 
 ```terraform
-data "okta_device_assurance_android" "example" {
-  id = "device_assurance_policy_id"
+resource "okta_policy_device_assurance_android" "example" {
+  name                    = "My Android Policy"
+  platform                = "ANDROID"
+  secure_hardware_present = true
+}
+
+data "okta_policy_device_assurance_android" "example" {
+  id = okta_policy_device_assurance_android.example.id
 }
 ```
 
@@ -25,7 +48,6 @@ data "okta_device_assurance_android" "example" {
 In addition to all arguments above, the following attributes are exported:
 
 - `name` - Display name of the device assurance policy.
-- `platform` - The platform type (always "ANDROID").
 - `created_by` - User ID who created the policy.
 - `created_date` - When the policy was created.
 - `last_updated_by` - User ID who last updated the policy.
@@ -34,8 +56,15 @@ In addition to all arguments above, the following attributes are exported:
 - `jailbreak` - Whether jailbreak detection is enabled.
 - `secure_hardware_present` - Whether secure hardware is required.
 - `disk_encryption_type` - Disk encryption requirements.
+  - `include` - List of disk encryption types required.
 - `os_version` - Operating system version requirements.
+  - `minimum` - Minimum OS version required.
+  - `dynamic_version_requirement` - Dynamic OS version requirement settings.
+    - `distance_from_latest_major` - Distance from the latest major version.
+    - `latest_security_patch` - Whether the latest security patch is required.
+    - `type` - Type of the dynamic OS version requirement.
 - `screen_lock_type` - Screen lock type requirements.
+  - `include` - List of screen lock types required.
 - `third_party_signal_providers` - Third-party signal provider configuration.
   - `android_device_trust` - Android Device Trust integration settings.
     - `device_integrity_level` - Device integrity attestation level.
@@ -51,13 +80,3 @@ In addition to all arguments above, the following attributes are exported:
 - `grace_period` - Grace period configuration.
   - `type` - Type of grace period (e.g., "DAYS").
   - `expiry` - Grace period duration.
-
-## Import
-
-This data source can be imported by specifying the policy ID:
-
-```shell
-terraform import okta_device_assurance_android.example device_assurance_policy_id
-```
-
-Note: Data sources cannot be imported directly. Instead, import the corresponding resource and then reference it with a data source as shown in the example above.

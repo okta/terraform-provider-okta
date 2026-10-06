@@ -24,9 +24,9 @@ import (
 )
 
 func TestAccDeviceAssuranceChromeos_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_device_assurance_chromeos", t.Name())
+	mgr := newFixtureManager("resources", "okta_device_assurance_policy_chromeos_os", t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", "okta_device_assurance_chromeos")
+	resourceName := fmt.Sprintf("%s.test", "okta_policy_device_assurance_chromeos")
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),

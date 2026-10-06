@@ -29,118 +29,118 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &deviceAssuranceMacosDataSource{}
-	_ datasource.DataSourceWithConfigure = &deviceAssuranceMacosDataSource{}
+	_ datasource.DataSource              = &policyDeviceAssuranceMacosDataSource{}
+	_ datasource.DataSourceWithConfigure = &policyDeviceAssuranceMacosDataSource{}
 )
 
-// DeviceAssuranceMacosDataSource defines the data source implementation.
-type deviceAssuranceMacosDataSource struct {
+// PolicyDeviceAssuranceMacosDataSource defines the data source implementation.
+type policyDeviceAssuranceMacosDataSource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceMacosDataSourceModel describes the data source data model.
-type deviceAssuranceMacosDataSourceModel struct {
-	ID                        types.String                                                       `tfsdk:"id"`
-	CreatedBy                 types.String                                                       `tfsdk:"created_by"`
-	CreatedDate               types.String                                                       `tfsdk:"created_date"`
-	DiskEncryptionType        *DeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                                       `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceMacosDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
-	LastUpdate                types.String                                                       `tfsdk:"last_update"`
-	LastUpdatedBy             types.String                                                       `tfsdk:"last_updated_by"`
-	Name                      types.String                                                       `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceMacosDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceMacosDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                                         `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceMacosDataSourceModel describes the data source data model.
+type policyDeviceAssuranceMacosDataSourceModel struct {
+	ID                        types.String                                                             `tfsdk:"id"`
+	CreatedBy                 types.String                                                             `tfsdk:"created_by"`
+	CreatedDate               types.String                                                             `tfsdk:"created_date"`
+	DiskEncryptionType        *PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                             `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
+	LastUpdate                types.String                                                             `tfsdk:"last_update"`
+	LastUpdatedBy             types.String                                                             `tfsdk:"last_updated_by"`
+	Name                      types.String                                                             `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                               `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceMacosDataSourceModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceMacosDataSourceModelGracePeriodModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceMacosDataSourceModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceMacosDataSourceModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                                     `tfsdk:"minimum"`
+// PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                                           `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceMacosDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceMacosDataSourceModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
-	Dtc              *DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
+// PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+	Dtc              *PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
 }
 
-// DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-// DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
-type DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel struct {
-	BrowserVersion                   *DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
-	BuiltInDnsClientEnabled          types.Bool                                                                                    `tfsdk:"built_in_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                    `tfsdk:"chrome_remote_desktop_app_blocked"`
-	DeviceEnrollmentDomain           types.String                                                                                  `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                    types.Bool                                                                                    `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                    types.String                                                                                  `tfsdk:"key_trust_level"`
-	OsFirewall                       types.Bool                                                                                    `tfsdk:"os_firewall"`
-	OsVersion                        *DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
-	PasswordProtectionWarningTrigger types.String                                                                                  `tfsdk:"password_protection_warning_trigger"`
-	RealtimeUrlCheckMode             types.Bool                                                                                    `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel      types.String                                                                                  `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                types.Bool                                                                                    `tfsdk:"screen_lock_secured"`
-	SiteIsolationEnabled             types.Bool                                                                                    `tfsdk:"site_isolation_enabled"`
+// PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
+type PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel struct {
+	BrowserVersion                   *PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
+	BuiltInDnsClientEnabled          types.Bool                                                                                          `tfsdk:"built_in_dns_client_enabled"`
+	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                          `tfsdk:"chrome_remote_desktop_app_blocked"`
+	DeviceEnrollmentDomain           types.String                                                                                        `tfsdk:"device_enrollment_domain"`
+	DiskEncrypted                    types.Bool                                                                                          `tfsdk:"disk_encrypted"`
+	KeyTrustLevel                    types.String                                                                                        `tfsdk:"key_trust_level"`
+	OsFirewall                       types.Bool                                                                                          `tfsdk:"os_firewall"`
+	OsVersion                        *PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
+	PasswordProtectionWarningTrigger types.String                                                                                        `tfsdk:"password_protection_warning_trigger"`
+	RealtimeUrlCheckMode             types.Bool                                                                                          `tfsdk:"realtime_url_check_mode"`
+	SafeBrowsingProtectionLevel      types.String                                                                                        `tfsdk:"safe_browsing_protection_level"`
+	ScreenLockSecured                types.Bool                                                                                          `tfsdk:"screen_lock_secured"`
+	SiteIsolationEnabled             types.Bool                                                                                          `tfsdk:"site_isolation_enabled"`
 }
 
-// DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
-type DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
+type PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
+// PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewDeviceAssuranceMacosDataSource() datasource.DataSource {
-	return &deviceAssuranceMacosDataSource{}
+func NewPolicyDeviceAssuranceMacosDataSource() datasource.DataSource {
+	return &policyDeviceAssuranceMacosDataSource{}
 }
 
-func (d *deviceAssuranceMacosDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_macos"
+func (d *policyDeviceAssuranceMacosDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_macos"
 }
 
-func (d *deviceAssuranceMacosDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *policyDeviceAssuranceMacosDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *deviceAssuranceMacosDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *policyDeviceAssuranceMacosDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Retrieves a device assurance policy by `deviceAssuranceId`",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the device_assurance_macos.",
+				MarkdownDescription: "Unique identifier of the policy_device_assurance_macos.",
 				Required:            true,
 			},
 			"created_by": schema.StringAttribute{
@@ -325,8 +325,8 @@ func (d *deviceAssuranceMacosDataSource) Schema(_ context.Context, _ datasource.
 	}
 }
 
-func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state deviceAssuranceMacosDataSourceModel
+func (d *policyDeviceAssuranceMacosDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state policyDeviceAssuranceMacosDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -338,10 +338,10 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 	result, httpResp, err := client.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.Diagnostics.AddError("Not Found", "device_assurance_macos with the given ID was not found.")
+			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_macos with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", err.Error())
 		return
 	}
 	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceMacOSPlatform); ok {
@@ -354,7 +354,7 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 		state.Name = types.StringValue(string(variantObj.GetName()))
 		state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 		if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-			diskEncryptionTypeModel0 := &DeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel{}
+			diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -363,14 +363,14 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 			state.DiskEncryptionType = diskEncryptionTypeModel0
 		}
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &DeviceAssuranceMacosDataSourceModelGracePeriodModel{}
+			gracePeriodModel0 := &PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 			state.GracePeriod = gracePeriodModel0
 		}
 		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &DeviceAssuranceMacosDataSourceModelOsVersionModel{}
+			osVersionModel0 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel{}
 			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &DeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
@@ -380,7 +380,7 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 			state.OsVersion = osVersionModel0
 		}
 		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &DeviceAssuranceMacosDataSourceModelScreenLockTypeModel{}
+			screenLockTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -389,17 +389,17 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 			state.ScreenLockType = screenLockTypeModel0
 		}
 		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel{}
+			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel{}
 			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+				devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 			}
 			if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-				dtcModel1 := &DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel{}
+				dtcModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel{}
 				if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-					browserVersionModel2 := &DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+					browserVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 					dtcModel1.BrowserVersion = browserVersionModel2
 				}
@@ -410,7 +410,7 @@ func (d *deviceAssuranceMacosDataSource) Read(ctx context.Context, req datasourc
 				dtcModel1.KeyTrustLevel = types.StringValue(string(dtcRaw1.GetKeyTrustLevel()))
 				dtcModel1.OsFirewall = types.BoolValue(dtcRaw1.GetOsFirewall())
 				if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-					osVersionModel2 := &DeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+					osVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 					dtcModel1.OsVersion = osVersionModel2
 				}

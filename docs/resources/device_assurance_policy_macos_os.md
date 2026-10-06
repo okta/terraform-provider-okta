@@ -1,77 +1,117 @@
 ---
-page_title: "Resource: okta_device_assurance_macos"
+page_title: "Resource: okta_policy_device_assurance_macos"
 description: |-
   This resource allows you to create and configure a macOS Device Assurance Policy.
 ---
 
-# Resource: okta_device_assurance_macos
+# Resource: okta_policy_device_assurance_macos
 
 This resource allows you to create and configure a macOS Device Assurance Policy.
 
-!> **BREAKING CHANGE**: This resource replaces the deprecated `okta_device_assurance_policy_macos_os` resource. Migration guide below.
+!> **BREAKING CHANGE**: This resource has been migrated to use Okta SDK v7, which introduces schema changes. The resource name is unchanged. Migration guide below.
 
-## Breaking Changes from `okta_device_assurance_policy_macos_os`
+## Breaking Changes
 
-### 1. Resource Name Changed
-- **Old**: `okta_device_assurance_policy_macos_os`
-- **New**: `okta_device_assurance_macos`
-
-Update your Terraform configurations to use the new resource type.
+### 1. Resource Name Unchanged
+The resource type remains `okta_policy_device_assurance_macos`. No changes are required to your resource addressing (`resource "okta_policy_device_assurance_macos" "example" { ... }`).
 
 ### 2. Schema Changes
-The new resource uses an updated API schema with the following changes:
-- The `platform` field is now required and must be set to `"MACOS"`
-- Nested attributes for third-party signal providers have been restructured
-- Additional computed fields are now available for read-only access
-
-### 3. SDK Version Upgrade
-The new resource uses Okta SDK v7 instead of v3, which provides:
-- Enhanced API coverage and reliability
-- Improved error handling and validation
-- Better performance and response times
+The resource now uses an updated API schema with the following changes:
+- `platform` is now a **required** attribute and must be set to `"MACOS"` (previously computed automatically)
+- `screenlock_type` has been renamed to `screen_lock_type` and is now a nested block with an `include` attribute (previously a list of strings)
+- `disk_encryption_type` is now a nested block with an `include` attribute (previously a list of strings)
+- `os_version` is now a nested block with a `minimum` attribute and an optional `dynamic_version_requirement` sub-block (previously a plain string)
+- Third-party signal provider attributes previously flattened with a `tpsp_` prefix (for example `tpsp_disk_encrypted`, `tpsp_os_firewall`, `tpsp_browser_version`) have been restructured into nested blocks under `third_party_signal_providers.dtc` (the Google Chrome Device Trust Connector provider), using names without the `tpsp_` prefix
+- `created_date` and `last_update` are no longer exposed on the resource (still available on the corresponding data source)
+- New optional attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
 
 ## Migration Guide
 
-To migrate from the old resource to the new one:
+Update any configuration using the old flat attributes to the new nested block syntax:
 
 ```terraform
-# Old resource (deprecated)
-resource "okta_device_assurance_policy_macos_os" "example" {
-  name = "My macOS Policy"
+# Old schema
+resource "okta_policy_device_assurance_macos" "example" {
+  name                    = "My macOS Policy"
+  os_version              = "13"
+  screenlock_type         = ["BIOMETRIC"]
+  disk_encryption_type    = ["FULL"]
+  tpsp_disk_encrypted     = true
 }
 
-# New resource (use this instead)
-resource "okta_device_assurance_macos" "example" {
-  name     = "My macOS Policy"
-  platform = "MACOS"
+# New schema
+resource "okta_policy_device_assurance_macos" "example" {
+  name                    = "My macOS Policy"
+  platform                = "MACOS"
+  secure_hardware_present = true
+
+  os_version {
+    minimum = "13"
+  }
+
+  screen_lock_type {
+    include = ["BIOMETRIC"]
+  }
+
+  disk_encryption_type {
+    include = ["FULL"]
+  }
+
+  third_party_signal_providers {
+    dtc {
+      disk_encrypted = true
+    }
+  }
 }
 ```
 
-Import existing policies using the new resource:
-```bash
-terraform import okta_device_assurance_macos.example <policy-id>
+No changes to import are required:
+```shell
+terraform import okta_policy_device_assurance_macos.example <policy-id>
 ```
 
 ## Example Usage
 
 ```terraform
-resource "okta_device_assurance_macos" "example" {
-  name     = "My macOS Policy"
-  platform = "MACOS"
+resource "okta_policy_device_assurance_macos" "example" {
+  name                    = "My macOS Policy"
+  platform                = "MACOS"
+  secure_hardware_present = true
 }
 
-resource "okta_device_assurance_macos" "example_with_providers" {
+resource "okta_policy_device_assurance_macos" "example_with_providers" {
   name                     = "My macOS Policy with Providers"
   platform                 = "MACOS"
   display_remediation_mode = "HIDE"
-  
+
   third_party_signal_providers {
     device_posture_id_p {
       compliant = true
       managed   = true
     }
+
+    dtc {
+      built_in_dns_client_enabled          = true
+      disk_encrypted                       = true
+      os_firewall                          = true
+      screen_lock_secured                  = true
+      site_isolation_enabled               = true
+      realtime_url_check_mode              = true
+      safe_browsing_protection_level       = "ENHANCED_PROTECTION"
+      password_protection_warning_trigger  = "PASSWORD_PROTECTION_OFF"
+      device_enrollment_domain             = "example.com"
+      key_trust_level                      = "CHROME_BROWSER_HW_KEY"
+
+      os_version {
+        minimum = "13"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
   }
-  
+
   grace_period {
     type   = "DAYS"
     expiry = "30"

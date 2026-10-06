@@ -24,7 +24,7 @@ import (
 )
 
 func TestAccDataSourceOktaDeviceAssuranceWindows_read(t *testing.T) {
-	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_policy_windows_os")
+	resourceName := fmt.Sprintf("data.%s.test", "okta_policy_device_assurance_windows")
 	mgr := newFixtureManager("data-sources", "okta_device_assurance_policy_windows_os", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
@@ -36,7 +36,7 @@ func TestAccDataSourceOktaDeviceAssuranceWindows_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_device_assurance_windows.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_policy_device_assurance_windows.test", "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "name"),
 				),

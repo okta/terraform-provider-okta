@@ -34,70 +34,70 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &deviceAssuranceAndroidResource{}
-	_ resource.ResourceWithConfigure   = &deviceAssuranceAndroidResource{}
-	_ resource.ResourceWithImportState = &deviceAssuranceAndroidResource{}
+	_ resource.Resource                = &policyDeviceAssuranceAndroidResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceAndroidResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceAndroidResource{}
 )
 
-// DeviceAssuranceAndroidResource defines the resource implementation.
-type deviceAssuranceAndroidResource struct {
+// PolicyDeviceAssuranceAndroidResource defines the resource implementation.
+type policyDeviceAssuranceAndroidResource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceAndroidModel describes the resource data model.
-type deviceAssuranceAndroidModel struct {
-	ID                        types.String                                               `tfsdk:"id"`
-	Platform                  types.String                                               `tfsdk:"platform"`
-	CreatedBy                 types.String                                               `tfsdk:"created_by"`
-	DiskEncryptionType        *DeviceAssuranceAndroidModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                               `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceAndroidModelGracePeriodModel               `tfsdk:"grace_period"`
-	Jailbreak                 types.Bool                                                 `tfsdk:"jailbreak"`
-	LastUpdatedBy             types.String                                               `tfsdk:"last_updated_by"`
-	Name                      types.String                                               `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceAndroidModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceAndroidModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                                 `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceAndroidModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceAndroidModel describes the resource data model.
+type policyDeviceAssuranceAndroidModel struct {
+	ID                        types.String                                                     `tfsdk:"id"`
+	Platform                  types.String                                                     `tfsdk:"platform"`
+	CreatedBy                 types.String                                                     `tfsdk:"created_by"`
+	DiskEncryptionType        *PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                     `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceAndroidModelGracePeriodModel               `tfsdk:"grace_period"`
+	Jailbreak                 types.Bool                                                       `tfsdk:"jailbreak"`
+	LastUpdatedBy             types.String                                                     `tfsdk:"last_updated_by"`
+	Name                      types.String                                                     `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceAndroidModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceAndroidModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                       `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceAndroidModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceAndroidModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceAndroidModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceAndroidModelGracePeriodModel struct {
+// PolicyDeviceAssuranceAndroidModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceAndroidModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceAndroidModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceAndroidModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                             `tfsdk:"minimum"`
+// PolicyDeviceAssuranceAndroidModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceAndroidModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                                   `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceAndroidModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceAndroidModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceAndroidModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceAndroidModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceAndroidModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceAndroidModelThirdPartySignalProvidersModel struct {
-	AndroidDeviceTrust *DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel `tfsdk:"android_device_trust"`
-	DevicePostureIdP   *DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel   `tfsdk:"device_posture_id_p"`
+// PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel struct {
+	AndroidDeviceTrust *PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel `tfsdk:"android_device_trust"`
+	DevicePostureIdP   *PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel   `tfsdk:"device_posture_id_p"`
 }
 
-// DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel is the nested model for android_device_trust.
-type DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel struct {
+// PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel is the nested model for android_device_trust.
+type PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel struct {
 	DeviceIntegrityLevel      types.String `tfsdk:"device_integrity_level"`
 	NetworkProxyDisabled      types.Bool   `tfsdk:"network_proxy_disabled"`
 	PlayProtectVerdict        types.String `tfsdk:"play_protect_verdict"`
@@ -107,25 +107,25 @@ type DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrust
 	WifiSecured               types.Bool   `tfsdk:"wifi_secured"`
 }
 
-// DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewDeviceAssuranceAndroidResource() resource.Resource {
-	return &deviceAssuranceAndroidResource{}
+func NewPolicyDeviceAssuranceAndroidResource() resource.Resource {
+	return &policyDeviceAssuranceAndroidResource{}
 }
 
-func (r *deviceAssuranceAndroidResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_android"
+func (r *policyDeviceAssuranceAndroidResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_android"
 }
 
-func (r *deviceAssuranceAndroidResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *policyDeviceAssuranceAndroidResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *deviceAssuranceAndroidResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Device Assurance Policies API provides operations to manage device assurance policies in your organization.",
 		Attributes: map[string]schema.Attribute{
@@ -169,6 +169,9 @@ func (r *deviceAssuranceAndroidResource) Schema(_ context.Context, _ resource.Sc
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -303,12 +306,12 @@ func (r *deviceAssuranceAndroidResource) Schema(_ context.Context, _ resource.Sc
 		},
 	}
 }
-func (r *deviceAssuranceAndroidResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *policyDeviceAssuranceAndroidResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state deviceAssuranceAndroidModel
+func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state policyDeviceAssuranceAndroidModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -322,13 +325,13 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_android", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_android", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	variantObj := result.DeviceAssuranceAndroidPlatform
 	if variantObj == nil {
-		resp.Diagnostics.AddError("Error reading device_assurance_android", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_android", "API returned a response for a different variant type")
 		return
 	}
 
@@ -342,7 +345,7 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -355,7 +358,7 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceAndroidModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -364,9 +367,9 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceAndroidModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -392,7 +395,7 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceAndroidModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -405,9 +408,9 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
 		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
-			androidDeviceTrustModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
+			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
 			} else {
@@ -446,7 +449,7 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 			thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
 		}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -457,8 +460,8 @@ func (r *deviceAssuranceAndroidResource) Read(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan deviceAssuranceAndroidModel
+func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan policyDeviceAssuranceAndroidModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -578,13 +581,13 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceAndroidPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_android", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_android", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	createVariantObj := result.DeviceAssuranceAndroidPlatform
 	if createVariantObj == nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_android", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_android", "API returned a response for a different variant type")
 		return
 	}
 	// Set ID from API response
@@ -596,7 +599,7 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 	plan.Jailbreak = types.BoolValue(createVariantObj.GetJailbreak())
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
 	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -609,7 +612,7 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceAndroidModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -618,9 +621,9 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 		plan.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceAndroidModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -646,7 +649,7 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 		plan.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceAndroidModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -659,9 +662,9 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 		plan.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
 		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
-			androidDeviceTrustModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
+			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !plan.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
 			} else {
@@ -700,7 +703,7 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 			thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
 		}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -710,14 +713,14 @@ func (r *deviceAssuranceAndroidResource) Create(ctx context.Context, req resourc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan deviceAssuranceAndroidModel
+func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan policyDeviceAssuranceAndroidModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state deviceAssuranceAndroidModel
+	var state policyDeviceAssuranceAndroidModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -838,13 +841,13 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceAndroidPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_android", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_android", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	updateVariantObj := result.DeviceAssuranceAndroidPlatform
 	if updateVariantObj == nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_android", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_android", "API returned a response for a different variant type")
 		return
 	}
 
@@ -872,7 +875,7 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
 	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -885,7 +888,7 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceAndroidModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -894,9 +897,9 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceAndroidModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
 		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-			dynamicVersionRequirementModel1 := &DeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
@@ -922,7 +925,7 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 		state.OsVersion = osVersionModel0
 	}
 	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceAndroidModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -935,9 +938,9 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
 		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
-			androidDeviceTrustModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
+			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !plan.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
 			} else {
@@ -976,7 +979,7 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 			thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
 		}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
@@ -987,8 +990,8 @@ func (r *deviceAssuranceAndroidResource) Update(ctx context.Context, req resourc
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceAndroidResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state deviceAssuranceAndroidModel
+func (r *policyDeviceAssuranceAndroidResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state policyDeviceAssuranceAndroidModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1001,7 +1004,7 @@ func (r *deviceAssuranceAndroidResource) Delete(ctx context.Context, req resourc
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting device_assurance_android", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_android", err.Error())
 		return
 	}
 }

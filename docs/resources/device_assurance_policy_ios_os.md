@@ -1,77 +1,84 @@
 ---
-page_title: "Resource: okta_device_assurance_ios"
+page_title: "Resource: okta_policy_device_assurance_ios"
 description: |-
   This resource allows you to create and configure an iOS Device Assurance Policy.
 ---
 
-# Resource: okta_device_assurance_ios
+# Resource: okta_policy_device_assurance_ios
 
 This resource allows you to create and configure an iOS Device Assurance Policy.
 
-!> **BREAKING CHANGE**: This resource replaces the deprecated `okta_device_assurance_policy_ios_os` resource. Migration guide below.
+!> **BREAKING CHANGE**: This resource has been migrated to use Okta SDK v7, which introduces schema changes. The resource name is unchanged. Migration guide below.
 
-## Breaking Changes from `okta_device_assurance_policy_ios_os`
+## Breaking Changes
 
-### 1. Resource Name Changed
-- **Old**: `okta_device_assurance_policy_ios_os`
-- **New**: `okta_device_assurance_ios`
-
-Update your Terraform configurations to use the new resource type.
+### 1. Resource Name Unchanged
+The resource type remains `okta_policy_device_assurance_ios`. No changes are required to your resource addressing (`resource "okta_policy_device_assurance_ios" "example" { ... }`).
 
 ### 2. Schema Changes
-The new resource uses an updated API schema with the following changes:
-- The `platform` field is now required and must be set to `"IOS"`
-- Nested attributes for third-party signal providers have been restructured
-- Additional computed fields are now available for read-only access
-
-### 3. SDK Version Upgrade
-The new resource uses Okta SDK v7 instead of v3, which provides:
-- Enhanced API coverage and reliability
-- Improved error handling and validation
-- Better performance and response times
+The resource now uses an updated API schema with the following changes:
+- `platform` is now a **required** attribute and must be set to `"IOS"` (previously computed automatically)
+- `screenlock_type` has been renamed to `screen_lock_type` and is now a nested block with an `include` attribute (previously a list of strings)
+- `os_version` is now a nested block with a `minimum` attribute and an optional `dynamic_version_requirement` sub-block (previously a plain string)
+- `created_date` and `last_update` are no longer exposed on the resource (still available on the corresponding data source)
+- New optional attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
 
 ## Migration Guide
 
-To migrate from the old resource to the new one:
+Update any configuration using the old flat attributes to the new nested block syntax:
 
 ```terraform
-# Old resource (deprecated)
-resource "okta_device_assurance_policy_ios_os" "example" {
-  name = "My iOS Policy"
+# Old schema
+resource "okta_policy_device_assurance_ios" "example" {
+  name            = "My iOS Policy"
+  jailbreak       = false
+  os_version      = "15"
+  screenlock_type = ["BIOMETRIC"]
 }
 
-# New resource (use this instead)
-resource "okta_device_assurance_ios" "example" {
-  name     = "My iOS Policy"
-  platform = "IOS"
+# New schema
+resource "okta_policy_device_assurance_ios" "example" {
+  name      = "My iOS Policy"
+  platform  = "IOS"
+  jailbreak = false
+
+  os_version {
+    minimum = "15"
+  }
+
+  screen_lock_type {
+    include = ["BIOMETRIC"]
+  }
 }
 ```
 
-Import existing policies using the new resource:
-```bash
-terraform import okta_device_assurance_ios.example <policy-id>
+No changes to import are required:
+```shell
+terraform import okta_policy_device_assurance_ios.example <policy-id>
 ```
 
 ## Example Usage
 
 ```terraform
-resource "okta_device_assurance_ios" "example" {
-  name     = "My iOS Policy"
-  platform = "IOS"
+resource "okta_policy_device_assurance_ios" "example" {
+  name      = "My iOS Policy"
+  platform  = "IOS"
+  jailbreak = false
 }
 
-resource "okta_device_assurance_ios" "example_with_providers" {
+resource "okta_policy_device_assurance_ios" "example_with_providers" {
   name                     = "My iOS Policy with Providers"
   platform                 = "IOS"
+  jailbreak                = false
   display_remediation_mode = "HIDE"
-  
+
   third_party_signal_providers {
     device_posture_id_p {
       compliant = true
       managed   = true
     }
   }
-  
+
   grace_period {
     type   = "DAYS"
     expiry = "30"

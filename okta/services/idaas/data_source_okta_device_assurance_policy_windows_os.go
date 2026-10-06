@@ -29,118 +29,118 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &deviceAssuranceWindowsDataSource{}
-	_ datasource.DataSourceWithConfigure = &deviceAssuranceWindowsDataSource{}
+	_ datasource.DataSource              = &policyDeviceAssuranceWindowsDataSource{}
+	_ datasource.DataSourceWithConfigure = &policyDeviceAssuranceWindowsDataSource{}
 )
 
-// DeviceAssuranceWindowsDataSource defines the data source implementation.
-type deviceAssuranceWindowsDataSource struct {
+// PolicyDeviceAssuranceWindowsDataSource defines the data source implementation.
+type policyDeviceAssuranceWindowsDataSource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceWindowsDataSourceModel describes the data source data model.
-type deviceAssuranceWindowsDataSourceModel struct {
-	ID                        types.String                                                         `tfsdk:"id"`
-	CreatedBy                 types.String                                                         `tfsdk:"created_by"`
-	CreatedDate               types.String                                                         `tfsdk:"created_date"`
-	DiskEncryptionType        *DeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                                         `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceWindowsDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
-	LastUpdate                types.String                                                         `tfsdk:"last_update"`
-	LastUpdatedBy             types.String                                                         `tfsdk:"last_updated_by"`
-	Name                      types.String                                                         `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceWindowsDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
-	OsVersionConstraints      types.List                                                           `tfsdk:"os_version_constraints"`
-	ScreenLockType            *DeviceAssuranceWindowsDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                                           `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceWindowsDataSourceModel describes the data source data model.
+type policyDeviceAssuranceWindowsDataSourceModel struct {
+	ID                        types.String                                                               `tfsdk:"id"`
+	CreatedBy                 types.String                                                               `tfsdk:"created_by"`
+	CreatedDate               types.String                                                               `tfsdk:"created_date"`
+	DiskEncryptionType        *PolicyDeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                               `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceWindowsDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
+	LastUpdate                types.String                                                               `tfsdk:"last_update"`
+	LastUpdatedBy             types.String                                                               `tfsdk:"last_updated_by"`
+	Name                      types.String                                                               `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceWindowsDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
+	OsVersionConstraints      types.List                                                                 `tfsdk:"os_version_constraints"`
+	ScreenLockType            *PolicyDeviceAssuranceWindowsDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                                 `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceWindowsDataSourceModelGracePeriodModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceWindowsDataSourceModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceWindowsDataSourceModelOsVersionModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceWindowsDataSourceModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceWindowsDataSourceModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceWindowsDataSourceModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
-	Dtc              *DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
+// PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+	Dtc              *PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
-type DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel struct {
-	AntivirusEnabled                 types.Bool                                                                                      `tfsdk:"antivirus_enabled"`
-	BrowserVersion                   *DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
-	BuiltInDnsClientEnabled          types.Bool                                                                                      `tfsdk:"built_in_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                      `tfsdk:"chrome_remote_desktop_app_blocked"`
-	CrowdStrikeAgentId               types.String                                                                                    `tfsdk:"crowd_strike_agent_id"`
-	CrowdStrikeCustomerId            types.String                                                                                    `tfsdk:"crowd_strike_customer_id"`
-	DeviceEnrollmentDomain           types.String                                                                                    `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                    types.Bool                                                                                      `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                    types.String                                                                                    `tfsdk:"key_trust_level"`
-	OsFirewall                       types.Bool                                                                                      `tfsdk:"os_firewall"`
-	OsVersion                        *DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
-	PasswordProtectionWarningTrigger types.String                                                                                    `tfsdk:"password_protection_warning_trigger"`
-	RealtimeUrlCheckMode             types.Bool                                                                                      `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel      types.String                                                                                    `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                types.Bool                                                                                      `tfsdk:"screen_lock_secured"`
-	SecureBootEnabled                types.Bool                                                                                      `tfsdk:"secure_boot_enabled"`
-	SiteIsolationEnabled             types.Bool                                                                                      `tfsdk:"site_isolation_enabled"`
-	ThirdPartyBlockingEnabled        types.Bool                                                                                      `tfsdk:"third_party_blocking_enabled"`
-	WindowsMachineDomain             types.String                                                                                    `tfsdk:"windows_machine_domain"`
-	WindowsUserDomain                types.String                                                                                    `tfsdk:"windows_user_domain"`
+// PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
+type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel struct {
+	AntivirusEnabled                 types.Bool                                                                                            `tfsdk:"antivirus_enabled"`
+	BrowserVersion                   *PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
+	BuiltInDnsClientEnabled          types.Bool                                                                                            `tfsdk:"built_in_dns_client_enabled"`
+	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                            `tfsdk:"chrome_remote_desktop_app_blocked"`
+	CrowdStrikeAgentId               types.String                                                                                          `tfsdk:"crowd_strike_agent_id"`
+	CrowdStrikeCustomerId            types.String                                                                                          `tfsdk:"crowd_strike_customer_id"`
+	DeviceEnrollmentDomain           types.String                                                                                          `tfsdk:"device_enrollment_domain"`
+	DiskEncrypted                    types.Bool                                                                                            `tfsdk:"disk_encrypted"`
+	KeyTrustLevel                    types.String                                                                                          `tfsdk:"key_trust_level"`
+	OsFirewall                       types.Bool                                                                                            `tfsdk:"os_firewall"`
+	OsVersion                        *PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
+	PasswordProtectionWarningTrigger types.String                                                                                          `tfsdk:"password_protection_warning_trigger"`
+	RealtimeUrlCheckMode             types.Bool                                                                                            `tfsdk:"realtime_url_check_mode"`
+	SafeBrowsingProtectionLevel      types.String                                                                                          `tfsdk:"safe_browsing_protection_level"`
+	ScreenLockSecured                types.Bool                                                                                            `tfsdk:"screen_lock_secured"`
+	SecureBootEnabled                types.Bool                                                                                            `tfsdk:"secure_boot_enabled"`
+	SiteIsolationEnabled             types.Bool                                                                                            `tfsdk:"site_isolation_enabled"`
+	ThirdPartyBlockingEnabled        types.Bool                                                                                            `tfsdk:"third_party_blocking_enabled"`
+	WindowsMachineDomain             types.String                                                                                          `tfsdk:"windows_machine_domain"`
+	WindowsUserDomain                types.String                                                                                          `tfsdk:"windows_user_domain"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
-type DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
+type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
+// PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewDeviceAssuranceWindowsDataSource() datasource.DataSource {
-	return &deviceAssuranceWindowsDataSource{}
+func NewPolicyDeviceAssuranceWindowsDataSource() datasource.DataSource {
+	return &policyDeviceAssuranceWindowsDataSource{}
 }
 
-func (d *deviceAssuranceWindowsDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_windows"
+func (d *policyDeviceAssuranceWindowsDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_windows"
 }
 
-func (d *deviceAssuranceWindowsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *policyDeviceAssuranceWindowsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *deviceAssuranceWindowsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *policyDeviceAssuranceWindowsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Retrieves a device assurance policy by `deviceAssuranceId`",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the device_assurance_windows.",
+				MarkdownDescription: "Unique identifier of the policy_device_assurance_windows.",
 				Required:            true,
 			},
 			"created_by": schema.StringAttribute{
@@ -339,8 +339,8 @@ func (d *deviceAssuranceWindowsDataSource) Schema(_ context.Context, _ datasourc
 	}
 }
 
-func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state deviceAssuranceWindowsDataSourceModel
+func (d *policyDeviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state policyDeviceAssuranceWindowsDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -352,10 +352,10 @@ func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasou
 	result, httpResp, err := client.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.Diagnostics.AddError("Not Found", "device_assurance_windows with the given ID was not found.")
+			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_windows with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_windows", err.Error())
 		return
 	}
 	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceWindowsPlatform); ok {
@@ -368,7 +368,7 @@ func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasou
 		state.Name = types.StringValue(string(variantObj.GetName()))
 		state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 		if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-			diskEncryptionTypeModel0 := &DeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel{}
+			diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsDataSourceModelDiskEncryptionTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -377,17 +377,17 @@ func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasou
 			state.DiskEncryptionType = diskEncryptionTypeModel0
 		}
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &DeviceAssuranceWindowsDataSourceModelGracePeriodModel{}
+			gracePeriodModel0 := &PolicyDeviceAssuranceWindowsDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 			state.GracePeriod = gracePeriodModel0
 		}
 		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &DeviceAssuranceWindowsDataSourceModelOsVersionModel{}
+			osVersionModel0 := &PolicyDeviceAssuranceWindowsDataSourceModelOsVersionModel{}
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 			state.OsVersion = osVersionModel0
 		}
 		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &DeviceAssuranceWindowsDataSourceModelScreenLockTypeModel{}
+			screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsDataSourceModelScreenLockTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -396,18 +396,18 @@ func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasou
 			state.ScreenLockType = screenLockTypeModel0
 		}
 		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel{}
+			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModel{}
 			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+				devicePostureIdPModel1 := &PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 			}
 			if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-				dtcModel1 := &DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel{}
+				dtcModel1 := &PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModel{}
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 				if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-					browserVersionModel2 := &DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+					browserVersionModel2 := &PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 					dtcModel1.BrowserVersion = browserVersionModel2
 				}
@@ -420,7 +420,7 @@ func (d *deviceAssuranceWindowsDataSource) Read(ctx context.Context, req datasou
 				dtcModel1.KeyTrustLevel = types.StringValue(string(dtcRaw1.GetKeyTrustLevel()))
 				dtcModel1.OsFirewall = types.BoolValue(dtcRaw1.GetOsFirewall())
 				if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-					osVersionModel2 := &DeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+					osVersionModel2 := &PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 					dtcModel1.OsVersion = osVersionModel2
 				}

@@ -34,127 +34,127 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &deviceAssuranceWindowsResource{}
-	_ resource.ResourceWithConfigure   = &deviceAssuranceWindowsResource{}
-	_ resource.ResourceWithImportState = &deviceAssuranceWindowsResource{}
+	_ resource.Resource                = &policyDeviceAssuranceWindowsResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceWindowsResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceWindowsResource{}
 )
 
-// DeviceAssuranceWindowsResource defines the resource implementation.
-type deviceAssuranceWindowsResource struct {
+// PolicyDeviceAssuranceWindowsResource defines the resource implementation.
+type policyDeviceAssuranceWindowsResource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceWindowsModel describes the resource data model.
-type deviceAssuranceWindowsModel struct {
-	ID                        types.String                                               `tfsdk:"id"`
-	Platform                  types.String                                               `tfsdk:"platform"`
-	CreatedBy                 types.String                                               `tfsdk:"created_by"`
-	DiskEncryptionType        *DeviceAssuranceWindowsModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
-	DisplayRemediationMode    types.String                                               `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceWindowsModelGracePeriodModel               `tfsdk:"grace_period"`
-	LastUpdatedBy             types.String                                               `tfsdk:"last_updated_by"`
-	Name                      types.String                                               `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceWindowsModelOsVersionModel                 `tfsdk:"os_version"`
-	OsVersionConstraints      []DeviceAssuranceWindowsModelOsVersionConstraintsModel     `tfsdk:"os_version_constraints"`
-	ScreenLockType            *DeviceAssuranceWindowsModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	SecureHardwarePresent     types.Bool                                                 `tfsdk:"secure_hardware_present"`
-	ThirdPartySignalProviders *DeviceAssuranceWindowsModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceWindowsModel describes the resource data model.
+type policyDeviceAssuranceWindowsModel struct {
+	ID                        types.String                                                     `tfsdk:"id"`
+	Platform                  types.String                                                     `tfsdk:"platform"`
+	CreatedBy                 types.String                                                     `tfsdk:"created_by"`
+	DiskEncryptionType        *PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel        `tfsdk:"disk_encryption_type"`
+	DisplayRemediationMode    types.String                                                     `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceWindowsModelGracePeriodModel               `tfsdk:"grace_period"`
+	LastUpdatedBy             types.String                                                     `tfsdk:"last_updated_by"`
+	Name                      types.String                                                     `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceWindowsModelOsVersionModel                 `tfsdk:"os_version"`
+	OsVersionConstraints      []PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel     `tfsdk:"os_version_constraints"`
+	ScreenLockType            *PolicyDeviceAssuranceWindowsModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	SecureHardwarePresent     types.Bool                                                       `tfsdk:"secure_hardware_present"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceWindowsModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
-type DeviceAssuranceWindowsModelDiskEncryptionTypeModel struct {
+// PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel is the nested model for disk_encryption_type.
+type PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceWindowsModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceWindowsModelGracePeriodModel struct {
+// PolicyDeviceAssuranceWindowsModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceWindowsModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceWindowsModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceWindowsModelOsVersionModel struct {
+// PolicyDeviceAssuranceWindowsModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceWindowsModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceWindowsModelOsVersionConstraintsModel is the nested model for os_version_constraints.
-type DeviceAssuranceWindowsModelOsVersionConstraintsModel struct {
-	DynamicVersionRequirement *DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	MajorVersionConstraint    types.String                                                                        `tfsdk:"major_version_constraint"`
-	Minimum                   types.String                                                                        `tfsdk:"minimum"`
+// PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel is the nested model for os_version_constraints.
+type PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	MajorVersionConstraint    types.String                                                                              `tfsdk:"major_version_constraint"`
+	Minimum                   types.String                                                                              `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceWindowsModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceWindowsModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceWindowsModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceWindowsModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceWindowsModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceWindowsModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
-	Dtc              *DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
+// PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+	Dtc              *PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
 }
 
-// DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-// DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
-type DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel struct {
-	AntivirusEnabled                 types.Bool                                                                            `tfsdk:"antivirus_enabled"`
-	BrowserVersion                   *DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
-	BuiltInDnsClientEnabled          types.Bool                                                                            `tfsdk:"built_in_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked    types.Bool                                                                            `tfsdk:"chrome_remote_desktop_app_blocked"`
-	CrowdStrikeAgentId               types.String                                                                          `tfsdk:"crowd_strike_agent_id"`
-	CrowdStrikeCustomerId            types.String                                                                          `tfsdk:"crowd_strike_customer_id"`
-	DeviceEnrollmentDomain           types.String                                                                          `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                    types.Bool                                                                            `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                    types.String                                                                          `tfsdk:"key_trust_level"`
-	OsFirewall                       types.Bool                                                                            `tfsdk:"os_firewall"`
-	OsVersion                        *DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
-	PasswordProtectionWarningTrigger types.String                                                                          `tfsdk:"password_protection_warning_trigger"`
-	RealtimeUrlCheckMode             types.Bool                                                                            `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel      types.String                                                                          `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                types.Bool                                                                            `tfsdk:"screen_lock_secured"`
-	SecureBootEnabled                types.Bool                                                                            `tfsdk:"secure_boot_enabled"`
-	SiteIsolationEnabled             types.Bool                                                                            `tfsdk:"site_isolation_enabled"`
-	ThirdPartyBlockingEnabled        types.Bool                                                                            `tfsdk:"third_party_blocking_enabled"`
-	WindowsMachineDomain             types.String                                                                          `tfsdk:"windows_machine_domain"`
-	WindowsUserDomain                types.String                                                                          `tfsdk:"windows_user_domain"`
+// PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
+type PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel struct {
+	AntivirusEnabled                 types.Bool                                                                                  `tfsdk:"antivirus_enabled"`
+	BrowserVersion                   *PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
+	BuiltInDnsClientEnabled          types.Bool                                                                                  `tfsdk:"built_in_dns_client_enabled"`
+	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                  `tfsdk:"chrome_remote_desktop_app_blocked"`
+	CrowdStrikeAgentId               types.String                                                                                `tfsdk:"crowd_strike_agent_id"`
+	CrowdStrikeCustomerId            types.String                                                                                `tfsdk:"crowd_strike_customer_id"`
+	DeviceEnrollmentDomain           types.String                                                                                `tfsdk:"device_enrollment_domain"`
+	DiskEncrypted                    types.Bool                                                                                  `tfsdk:"disk_encrypted"`
+	KeyTrustLevel                    types.String                                                                                `tfsdk:"key_trust_level"`
+	OsFirewall                       types.Bool                                                                                  `tfsdk:"os_firewall"`
+	OsVersion                        *PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
+	PasswordProtectionWarningTrigger types.String                                                                                `tfsdk:"password_protection_warning_trigger"`
+	RealtimeUrlCheckMode             types.Bool                                                                                  `tfsdk:"realtime_url_check_mode"`
+	SafeBrowsingProtectionLevel      types.String                                                                                `tfsdk:"safe_browsing_protection_level"`
+	ScreenLockSecured                types.Bool                                                                                  `tfsdk:"screen_lock_secured"`
+	SecureBootEnabled                types.Bool                                                                                  `tfsdk:"secure_boot_enabled"`
+	SiteIsolationEnabled             types.Bool                                                                                  `tfsdk:"site_isolation_enabled"`
+	ThirdPartyBlockingEnabled        types.Bool                                                                                  `tfsdk:"third_party_blocking_enabled"`
+	WindowsMachineDomain             types.String                                                                                `tfsdk:"windows_machine_domain"`
+	WindowsUserDomain                types.String                                                                                `tfsdk:"windows_user_domain"`
 }
 
-// DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
-type DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
+// PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
+type PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
+// PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewDeviceAssuranceWindowsResource() resource.Resource {
-	return &deviceAssuranceWindowsResource{}
+func NewPolicyDeviceAssuranceWindowsResource() resource.Resource {
+	return &policyDeviceAssuranceWindowsResource{}
 }
 
-func (r *deviceAssuranceWindowsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_windows"
+func (r *policyDeviceAssuranceWindowsResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_windows"
 }
 
-func (r *deviceAssuranceWindowsResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *policyDeviceAssuranceWindowsResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *deviceAssuranceWindowsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Device Assurance Policies API provides operations to manage device assurance policies in your organization.",
 		Attributes: map[string]schema.Attribute{
@@ -190,6 +190,9 @@ func (r *deviceAssuranceWindowsResource) Schema(_ context.Context, _ resource.Sc
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -403,12 +406,12 @@ func (r *deviceAssuranceWindowsResource) Schema(_ context.Context, _ resource.Sc
 		},
 	}
 }
-func (r *deviceAssuranceWindowsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *policyDeviceAssuranceWindowsResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state deviceAssuranceWindowsModel
+func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state policyDeviceAssuranceWindowsModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -422,13 +425,13 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_windows", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	variantObj := result.DeviceAssuranceWindowsPlatform
 	if variantObj == nil {
-		resp.Diagnostics.AddError("Error reading device_assurance_windows", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_windows", "API returned a response for a different variant type")
 		return
 	}
 
@@ -441,7 +444,7 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -454,7 +457,7 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceWindowsModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -463,7 +466,7 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceWindowsModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !state.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
@@ -472,11 +475,11 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 		state.OsVersion = osVersionModel0
 	}
 	if apiList := variantObj.GetOsVersionConstraints(); len(apiList) > 0 {
-		osVersionConstraintsList0 := make([]DeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
+		osVersionConstraintsList0 := make([]PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
 		for _, apiItem := range apiList {
-			osVersionConstraintsItem0 := &DeviceAssuranceWindowsModelOsVersionConstraintsModel{}
+			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
-				dynamicVersionRequirementModel2 := &DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
@@ -489,7 +492,7 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 		state.OsVersionConstraints = osVersionConstraintsList0
 	}
 	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceWindowsModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -502,22 +505,22 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !state.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = state.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -566,7 +569,7 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -627,8 +630,8 @@ func (r *deviceAssuranceWindowsResource) Read(ctx context.Context, req resource.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan deviceAssuranceWindowsModel
+func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan policyDeviceAssuranceWindowsModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -796,13 +799,13 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_windows", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	createVariantObj := result.DeviceAssuranceWindowsPlatform
 	if createVariantObj == nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_windows", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_windows", "API returned a response for a different variant type")
 		return
 	}
 	// Set ID from API response
@@ -813,7 +816,7 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
 	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -826,7 +829,7 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceWindowsModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -835,7 +838,7 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 		plan.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceWindowsModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !plan.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
@@ -844,11 +847,11 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 		plan.OsVersion = osVersionModel0
 	}
 	if apiList := createVariantObj.GetOsVersionConstraints(); len(apiList) > 0 {
-		osVersionConstraintsList0 := make([]DeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
+		osVersionConstraintsList0 := make([]PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
 		for _, apiItem := range apiList {
-			osVersionConstraintsItem0 := &DeviceAssuranceWindowsModelOsVersionConstraintsModel{}
+			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
-				dynamicVersionRequirementModel2 := &DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
@@ -861,7 +864,7 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 		plan.OsVersionConstraints = osVersionConstraintsList0
 	}
 	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceWindowsModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -874,22 +877,22 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 		plan.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -938,7 +941,7 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -998,14 +1001,14 @@ func (r *deviceAssuranceWindowsResource) Create(ctx context.Context, req resourc
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan deviceAssuranceWindowsModel
+func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan policyDeviceAssuranceWindowsModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state deviceAssuranceWindowsModel
+	var state policyDeviceAssuranceWindowsModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1174,13 +1177,13 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceWindowsPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_windows", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	updateVariantObj := result.DeviceAssuranceWindowsPlatform
 	if updateVariantObj == nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_windows", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_windows", "API returned a response for a different variant type")
 		return
 	}
 
@@ -1205,7 +1208,7 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
 	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-		diskEncryptionTypeModel0 := &DeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
@@ -1218,7 +1221,7 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
 	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceWindowsModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -1227,7 +1230,7 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.GracePeriod = gracePeriodModel0
 	}
 	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-		osVersionModel0 := &DeviceAssuranceWindowsModelOsVersionModel{}
+		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !plan.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
@@ -1236,11 +1239,11 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.OsVersion = osVersionModel0
 	}
 	if apiList := updateVariantObj.GetOsVersionConstraints(); len(apiList) > 0 {
-		osVersionConstraintsList0 := make([]DeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
+		osVersionConstraintsList0 := make([]PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel, 0, len(apiList))
 		for _, apiItem := range apiList {
-			osVersionConstraintsItem0 := &DeviceAssuranceWindowsModelOsVersionConstraintsModel{}
+			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
-				dynamicVersionRequirementModel2 := &DeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
@@ -1253,7 +1256,7 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.OsVersionConstraints = osVersionConstraintsList0
 	}
 	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-		screenLockTypeModel0 := &DeviceAssuranceWindowsModelScreenLockTypeModel{}
+		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
@@ -1266,22 +1269,22 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 		state.ScreenLockType = screenLockTypeModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -1330,7 +1333,7 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -1391,8 +1394,8 @@ func (r *deviceAssuranceWindowsResource) Update(ctx context.Context, req resourc
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceWindowsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state deviceAssuranceWindowsModel
+func (r *policyDeviceAssuranceWindowsResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state policyDeviceAssuranceWindowsModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -1405,7 +1408,7 @@ func (r *deviceAssuranceWindowsResource) Delete(ctx context.Context, req resourc
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_windows", err.Error())
 		return
 	}
 }

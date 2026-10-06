@@ -1,76 +1,95 @@
 ---
-page_title: "Resource: okta_device_assurance_chromeos"
+page_title: "Resource: okta_policy_device_assurance_chromeos"
 description: |-
   This resource allows you to create and configure a ChromeOS Device Assurance Policy.
 ---
 
-# Resource: okta_device_assurance_chromeos
+# Resource: okta_policy_device_assurance_chromeos
 
 This resource allows you to create and configure a ChromeOS Device Assurance Policy.
 
-!> **BREAKING CHANGE**: This resource replaces the deprecated `okta_device_assurance_policy_chromeos_os` resource. Migration guide below.
+!> **BREAKING CHANGE**: This resource has been migrated to use Okta SDK v7, which introduces schema changes. The resource name is unchanged. Migration guide below.
 
-## Breaking Changes from `okta_device_assurance_policy_chromeos_os`
+## Breaking Changes
 
-### 1. Resource Name Changed
-- **Old**: `okta_device_assurance_policy_chromeos_os`
-- **New**: `okta_device_assurance_chromeos`
-
-Update your Terraform configurations to use the new resource type.
+### 1. Resource Name Unchanged
+The resource type remains `okta_policy_device_assurance_chromeos`. No changes are required to your resource addressing (`resource "okta_policy_device_assurance_chromeos" "example" { ... }`).
 
 ### 2. Schema Changes
-The new resource uses an updated API schema with the following changes:
-- The `platform` field is now required and must be set to `"CHROMEOS"`
-- Nested attributes for third-party signal providers (including Google Chrome Device Trust Connector) have been restructured
-- Additional computed fields are now available for read-only access
-
-### 3. SDK Version Upgrade
-The new resource uses Okta SDK v7 instead of v3, which provides:
-- Enhanced API coverage and reliability
-- Improved error handling and validation
-- Better performance and response times
+The resource now uses an updated API schema with the following changes:
+- `platform` is now a **required** attribute and must be set to `"CHROMEOS"` (previously computed automatically)
+- Third-party signal provider attributes previously flattened with a `tpsp_` prefix (for example `tpsp_disk_encrypted`, `tpsp_os_firewall`, `tpsp_browser_version`) have been restructured into nested blocks under `third_party_signal_providers.dtc` (the Google Chrome Device Trust Connector provider), using names without the `tpsp_` prefix (for example `disk_encrypted`, `os_firewall`, `browser_version { minimum = ... }`)
+- `created_date` and `last_update` are no longer exposed on the resource (still available on the corresponding data source)
+- New optional attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
 
 ## Migration Guide
 
-To migrate from the old resource to the new one:
+Update any configuration using the old flat `tpsp_*` attributes to the new nested block syntax:
 
 ```terraform
-# Old resource (deprecated)
-resource "okta_device_assurance_policy_chromeos_os" "example" {
-  name = "My ChromeOS Policy"
+# Old schema
+resource "okta_policy_device_assurance_chromeos" "example" {
+  name                        = "My ChromeOS Policy"
+  tpsp_disk_encrypted         = true
+  tpsp_os_firewall            = true
+  tpsp_os_version             = "110"
+  tpsp_browser_version        = "110"
+  tpsp_key_trust_level        = "CHROME_BROWSER_HW_KEY"
 }
 
-# New resource (use this instead)
-resource "okta_device_assurance_chromeos" "example" {
+# New schema
+resource "okta_policy_device_assurance_chromeos" "example" {
   name     = "My ChromeOS Policy"
   platform = "CHROMEOS"
+
+  third_party_signal_providers {
+    dtc {
+      disk_encrypted   = true
+      os_firewall      = true
+      key_trust_level  = "CHROME_BROWSER_HW_KEY"
+
+      os_version {
+        minimum = "110"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
+  }
 }
 ```
 
-Import existing policies using the new resource:
-```bash
-terraform import okta_device_assurance_chromeos.example <policy-id>
+No changes to import are required:
+```shell
+terraform import okta_policy_device_assurance_chromeos.example <policy-id>
 ```
 
 ## Example Usage
 
 ```terraform
-resource "okta_device_assurance_chromeos" "example" {
+resource "okta_policy_device_assurance_chromeos" "example" {
   name     = "My ChromeOS Policy"
   platform = "CHROMEOS"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+    }
+  }
 }
 
-resource "okta_device_assurance_chromeos" "example_with_providers" {
+resource "okta_policy_device_assurance_chromeos" "example_with_providers" {
   name                     = "My ChromeOS Policy with Providers"
   platform                 = "CHROMEOS"
   display_remediation_mode = "HIDE"
-  
+
   third_party_signal_providers {
     device_posture_id_p {
       compliant = true
       managed   = true
     }
-    
+
     dtc {
       allow_screen_lock                   = true
       disk_encrypted                      = true
@@ -83,17 +102,17 @@ resource "okta_device_assurance_chromeos" "example_with_providers" {
       password_protection_warning_trigger = "PASSWORD_PROTECTION_OFF"
       device_enrollment_domain            = "example.com"
       key_trust_level                     = "CHROME_BROWSER_HW_KEY"
-      
+
       os_version {
         minimum = "110"
       }
-      
+
       browser_version {
         minimum = "110"
       }
     }
   }
-  
+
   grace_period {
     type   = "DAYS"
     expiry = "30"

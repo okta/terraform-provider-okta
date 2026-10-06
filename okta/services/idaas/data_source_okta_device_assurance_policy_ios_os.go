@@ -29,84 +29,84 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &deviceAssuranceIosDataSource{}
-	_ datasource.DataSourceWithConfigure = &deviceAssuranceIosDataSource{}
+	_ datasource.DataSource              = &policyDeviceAssuranceIosDataSource{}
+	_ datasource.DataSourceWithConfigure = &policyDeviceAssuranceIosDataSource{}
 )
 
-// DeviceAssuranceIosDataSource defines the data source implementation.
-type deviceAssuranceIosDataSource struct {
+// PolicyDeviceAssuranceIosDataSource defines the data source implementation.
+type policyDeviceAssuranceIosDataSource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceIosDataSourceModel describes the data source data model.
-type deviceAssuranceIosDataSourceModel struct {
-	ID                        types.String                                                     `tfsdk:"id"`
-	CreatedBy                 types.String                                                     `tfsdk:"created_by"`
-	CreatedDate               types.String                                                     `tfsdk:"created_date"`
-	DisplayRemediationMode    types.String                                                     `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceIosDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
-	Jailbreak                 types.Bool                                                       `tfsdk:"jailbreak"`
-	LastUpdate                types.String                                                     `tfsdk:"last_update"`
-	LastUpdatedBy             types.String                                                     `tfsdk:"last_updated_by"`
-	Name                      types.String                                                     `tfsdk:"name"`
-	OsVersion                 *DeviceAssuranceIosDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
-	ScreenLockType            *DeviceAssuranceIosDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
-	ThirdPartySignalProviders *DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceIosDataSourceModel describes the data source data model.
+type policyDeviceAssuranceIosDataSourceModel struct {
+	ID                        types.String                                                           `tfsdk:"id"`
+	CreatedBy                 types.String                                                           `tfsdk:"created_by"`
+	CreatedDate               types.String                                                           `tfsdk:"created_date"`
+	DisplayRemediationMode    types.String                                                           `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel               `tfsdk:"grace_period"`
+	Jailbreak                 types.Bool                                                             `tfsdk:"jailbreak"`
+	LastUpdate                types.String                                                           `tfsdk:"last_update"`
+	LastUpdatedBy             types.String                                                           `tfsdk:"last_updated_by"`
+	Name                      types.String                                                           `tfsdk:"name"`
+	OsVersion                 *PolicyDeviceAssuranceIosDataSourceModelOsVersionModel                 `tfsdk:"os_version"`
+	ScreenLockType            *PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel            `tfsdk:"screen_lock_type"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceIosDataSourceModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceIosDataSourceModelGracePeriodModel struct {
+// PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceIosDataSourceModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceIosDataSourceModelOsVersionModel struct {
-	DynamicVersionRequirement *DeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
-	Minimum                   types.String                                                                   `tfsdk:"minimum"`
+// PolicyDeviceAssuranceIosDataSourceModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceIosDataSourceModelOsVersionModel struct {
+	DynamicVersionRequirement *PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel `tfsdk:"dynamic_version_requirement"`
+	Minimum                   types.String                                                                         `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
-type DeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
+// PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel is the nested model for dynamic_version_requirement.
+type PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel struct {
 	DistanceFromLatestMajor types.Int64  `tfsdk:"distance_from_latest_major"`
 	LatestSecurityPatch     types.Bool   `tfsdk:"latest_security_patch"`
 	Type                    types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceIosDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
-type DeviceAssuranceIosDataSourceModelScreenLockTypeModel struct {
+// PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel is the nested model for screen_lock_type.
+type PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel struct {
 	Include types.List `tfsdk:"include"`
 }
 
-// DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+// PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
 }
 
-// DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewDeviceAssuranceIosDataSource() datasource.DataSource {
-	return &deviceAssuranceIosDataSource{}
+func NewPolicyDeviceAssuranceIosDataSource() datasource.DataSource {
+	return &policyDeviceAssuranceIosDataSource{}
 }
 
-func (d *deviceAssuranceIosDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_ios"
+func (d *policyDeviceAssuranceIosDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_ios"
 }
 
-func (d *deviceAssuranceIosDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *policyDeviceAssuranceIosDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	d.Config = dataSourceConfiguration(req, resp)
 }
 
-func (d *deviceAssuranceIosDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *policyDeviceAssuranceIosDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Retrieves a device assurance policy by `deviceAssuranceId`",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Unique identifier of the device_assurance_ios.",
+				MarkdownDescription: "Unique identifier of the policy_device_assurance_ios.",
 				Required:            true,
 			},
 			"created_by": schema.StringAttribute{
@@ -212,8 +212,8 @@ func (d *deviceAssuranceIosDataSource) Schema(_ context.Context, _ datasource.Sc
 	}
 }
 
-func (d *deviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var state deviceAssuranceIosDataSourceModel
+func (d *policyDeviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var state policyDeviceAssuranceIosDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -225,10 +225,10 @@ func (d *deviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.
 	result, httpResp, err := client.DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
-			resp.Diagnostics.AddError("Not Found", "device_assurance_ios with the given ID was not found.")
+			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_ios with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", err.Error())
 		return
 	}
 	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceIOSPlatform); ok {
@@ -241,14 +241,14 @@ func (d *deviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.
 		state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 		state.Name = types.StringValue(string(variantObj.GetName()))
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &DeviceAssuranceIosDataSourceModelGracePeriodModel{}
+			gracePeriodModel0 := &PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 			state.GracePeriod = gracePeriodModel0
 		}
 		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &DeviceAssuranceIosDataSourceModelOsVersionModel{}
+			osVersionModel0 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModel{}
 			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &DeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
@@ -258,7 +258,7 @@ func (d *deviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.
 			state.OsVersion = osVersionModel0
 		}
 		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &DeviceAssuranceIosDataSourceModelScreenLockTypeModel{}
+			screenLockTypeModel0 := &PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel{}
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -267,9 +267,9 @@ func (d *deviceAssuranceIosDataSource) Read(ctx context.Context, req datasource.
 			state.ScreenLockType = screenLockTypeModel0
 		}
 		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel{}
+			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel{}
 			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &DeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+				devicePostureIdPModel1 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1

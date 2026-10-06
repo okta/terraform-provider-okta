@@ -1,18 +1,40 @@
 ---
-page_title: "Data Source: okta_device_assurance_ios"
+page_title: "Data Source: okta_policy_device_assurance_ios"
 description: |-
-  Get an iOS Device Assurance Policy data source.
+  Retrieves an iOS Device Assurance Policy.
 ---
 
-# Data Source: okta_device_assurance_ios
+# Data Source: okta_policy_device_assurance_ios
 
-Get an iOS Device Assurance Policy data source.
+Retrieves a device assurance policy by `deviceAssuranceId`.
+
+!> **BREAKING CHANGE**: This data source has been migrated to use Okta SDK v7, which introduces schema changes. Migration guide below.
+
+## Breaking Changes
+
+### 1. Data Source Replaces the Generic `okta_device_assurance_policy` Data Source
+The previous generic `okta_device_assurance_policy` data source (queryable by `id` or `name`) has been replaced by platform-specific data sources, one per OS. This data source, `okta_policy_device_assurance_ios`, retrieves iOS device assurance policies.
+
+### 2. Argument Changes
+- `id` is now **required**; querying by `name` is no longer supported
+- `platform` is no longer exposed (the platform is implied by the data source itself)
+
+### 3. Schema Changes
+- `screenlock_type` has been renamed to `screen_lock_type` and is now a nested block with an `include` attribute
+- `os_version` is now a nested block with a `minimum` attribute and an optional `dynamic_version_requirement` sub-block
+- New computed attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
 
 ## Example Usage
 
 ```terraform
-data "okta_device_assurance_ios" "example" {
-  id = "device_assurance_policy_id"
+resource "okta_policy_device_assurance_ios" "example" {
+  name      = "My iOS Policy"
+  platform  = "IOS"
+  jailbreak = false
+}
+
+data "okta_policy_device_assurance_ios" "example" {
+  id = okta_policy_device_assurance_ios.example.id
 }
 ```
 
@@ -25,7 +47,6 @@ data "okta_device_assurance_ios" "example" {
 In addition to all arguments above, the following attributes are exported:
 
 - `name` - Display name of the device assurance policy.
-- `platform` - The platform type (always "IOS").
 - `created_by` - User ID who created the policy.
 - `created_date` - When the policy was created.
 - `last_updated_by` - User ID who last updated the policy.
@@ -33,7 +54,13 @@ In addition to all arguments above, the following attributes are exported:
 - `display_remediation_mode` - Remediation mode for non-compliant devices.
 - `jailbreak` - Whether jailbreak detection is enabled.
 - `os_version` - Operating system version requirements.
-  - `minimum` - Minimum OS version.
+  - `minimum` - Minimum OS version required.
+  - `dynamic_version_requirement` - Dynamic OS version requirement settings.
+    - `distance_from_latest_major` - Distance from the latest major version.
+    - `latest_security_patch` - Whether the latest security patch is required.
+    - `type` - Type of the dynamic OS version requirement.
+- `screen_lock_type` - Screen lock type requirements.
+  - `include` - List of screen lock types required.
 - `third_party_signal_providers` - Third-party signal provider configuration.
   - `device_posture_id_p` - Device Posture IdP provider settings.
     - `compliant` - Whether device must be compliant.
@@ -41,13 +68,3 @@ In addition to all arguments above, the following attributes are exported:
 - `grace_period` - Grace period configuration.
   - `type` - Type of grace period (e.g., "DAYS").
   - `expiry` - Grace period duration.
-
-## Import
-
-This data source can be imported by specifying the policy ID:
-
-```shell
-terraform import okta_device_assurance_ios.example device_assurance_policy_id
-```
-
-Note: Data sources cannot be imported directly. Instead, import the corresponding resource and then reference it with a data source as shown in the example above.

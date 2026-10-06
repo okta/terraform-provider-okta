@@ -34,88 +34,88 @@ import (
 
 // Ensure interface compliance
 var (
-	_ resource.Resource                = &deviceAssuranceChromeosResource{}
-	_ resource.ResourceWithConfigure   = &deviceAssuranceChromeosResource{}
-	_ resource.ResourceWithImportState = &deviceAssuranceChromeosResource{}
+	_ resource.Resource                = &policyDeviceAssuranceChromeosResource{}
+	_ resource.ResourceWithConfigure   = &policyDeviceAssuranceChromeosResource{}
+	_ resource.ResourceWithImportState = &policyDeviceAssuranceChromeosResource{}
 )
 
-// DeviceAssuranceChromeosResource defines the resource implementation.
-type deviceAssuranceChromeosResource struct {
+// PolicyDeviceAssuranceChromeosResource defines the resource implementation.
+type policyDeviceAssuranceChromeosResource struct {
 	Config *config.Config
 }
 
-// DeviceAssuranceChromeosModel describes the resource data model.
-type deviceAssuranceChromeosModel struct {
-	ID                        types.String                                                `tfsdk:"id"`
-	Platform                  types.String                                                `tfsdk:"platform"`
-	CreatedBy                 types.String                                                `tfsdk:"created_by"`
-	DisplayRemediationMode    types.String                                                `tfsdk:"display_remediation_mode"`
-	GracePeriod               *DeviceAssuranceChromeosModelGracePeriodModel               `tfsdk:"grace_period"`
-	LastUpdatedBy             types.String                                                `tfsdk:"last_updated_by"`
-	Name                      types.String                                                `tfsdk:"name"`
-	ThirdPartySignalProviders *DeviceAssuranceChromeosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
+// PolicyDeviceAssuranceChromeosModel describes the resource data model.
+type policyDeviceAssuranceChromeosModel struct {
+	ID                        types.String                                                      `tfsdk:"id"`
+	Platform                  types.String                                                      `tfsdk:"platform"`
+	CreatedBy                 types.String                                                      `tfsdk:"created_by"`
+	DisplayRemediationMode    types.String                                                      `tfsdk:"display_remediation_mode"`
+	GracePeriod               *PolicyDeviceAssuranceChromeosModelGracePeriodModel               `tfsdk:"grace_period"`
+	LastUpdatedBy             types.String                                                      `tfsdk:"last_updated_by"`
+	Name                      types.String                                                      `tfsdk:"name"`
+	ThirdPartySignalProviders *PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel `tfsdk:"third_party_signal_providers"`
 }
 
-// DeviceAssuranceChromeosModelGracePeriodModel is the nested model for grace_period.
-type DeviceAssuranceChromeosModelGracePeriodModel struct {
+// PolicyDeviceAssuranceChromeosModelGracePeriodModel is the nested model for grace_period.
+type PolicyDeviceAssuranceChromeosModelGracePeriodModel struct {
 	Expiry types.String `tfsdk:"expiry"`
 	Type   types.String `tfsdk:"type"`
 }
 
-// DeviceAssuranceChromeosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
-type DeviceAssuranceChromeosModelThirdPartySignalProvidersModel struct {
-	DevicePostureIdP *DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
-	Dtc              *DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
+// PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel is the nested model for third_party_signal_providers.
+type PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel struct {
+	DevicePostureIdP *PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel `tfsdk:"device_posture_id_p"`
+	Dtc              *PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel              `tfsdk:"dtc"`
 }
 
-// DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
-type DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
+// PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel is the nested model for device_posture_id_p.
+type PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel struct {
 	Compliant types.Bool `tfsdk:"compliant"`
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-// DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
-type DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel struct {
-	AllowScreenLock                  types.Bool                                                                             `tfsdk:"allow_screen_lock"`
-	BrowserVersion                   *DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
-	BuiltInDnsClientEnabled          types.Bool                                                                             `tfsdk:"built_in_dns_client_enabled"`
-	ChromeRemoteDesktopAppBlocked    types.Bool                                                                             `tfsdk:"chrome_remote_desktop_app_blocked"`
-	DeviceEnrollmentDomain           types.String                                                                           `tfsdk:"device_enrollment_domain"`
-	DiskEncrypted                    types.Bool                                                                             `tfsdk:"disk_encrypted"`
-	KeyTrustLevel                    types.String                                                                           `tfsdk:"key_trust_level"`
-	ManagedDevice                    types.Bool                                                                             `tfsdk:"managed_device"`
-	OsFirewall                       types.Bool                                                                             `tfsdk:"os_firewall"`
-	OsVersion                        *DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
-	PasswordProtectionWarningTrigger types.String                                                                           `tfsdk:"password_protection_warning_trigger"`
-	RealtimeUrlCheckMode             types.Bool                                                                             `tfsdk:"realtime_url_check_mode"`
-	SafeBrowsingProtectionLevel      types.String                                                                           `tfsdk:"safe_browsing_protection_level"`
-	ScreenLockSecured                types.Bool                                                                             `tfsdk:"screen_lock_secured"`
-	SiteIsolationEnabled             types.Bool                                                                             `tfsdk:"site_isolation_enabled"`
+// PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel is the nested model for dtc.
+type PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel struct {
+	AllowScreenLock                  types.Bool                                                                                   `tfsdk:"allow_screen_lock"`
+	BrowserVersion                   *PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel `tfsdk:"browser_version"`
+	BuiltInDnsClientEnabled          types.Bool                                                                                   `tfsdk:"built_in_dns_client_enabled"`
+	ChromeRemoteDesktopAppBlocked    types.Bool                                                                                   `tfsdk:"chrome_remote_desktop_app_blocked"`
+	DeviceEnrollmentDomain           types.String                                                                                 `tfsdk:"device_enrollment_domain"`
+	DiskEncrypted                    types.Bool                                                                                   `tfsdk:"disk_encrypted"`
+	KeyTrustLevel                    types.String                                                                                 `tfsdk:"key_trust_level"`
+	ManagedDevice                    types.Bool                                                                                   `tfsdk:"managed_device"`
+	OsFirewall                       types.Bool                                                                                   `tfsdk:"os_firewall"`
+	OsVersion                        *PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel      `tfsdk:"os_version"`
+	PasswordProtectionWarningTrigger types.String                                                                                 `tfsdk:"password_protection_warning_trigger"`
+	RealtimeUrlCheckMode             types.Bool                                                                                   `tfsdk:"realtime_url_check_mode"`
+	SafeBrowsingProtectionLevel      types.String                                                                                 `tfsdk:"safe_browsing_protection_level"`
+	ScreenLockSecured                types.Bool                                                                                   `tfsdk:"screen_lock_secured"`
+	SiteIsolationEnabled             types.Bool                                                                                   `tfsdk:"site_isolation_enabled"`
 }
 
-// DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
-type DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
+// PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel is the nested model for browser_version.
+type PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-// DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
-type DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
+// PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel is the nested model for os_version.
+type PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel struct {
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewDeviceAssuranceChromeosResource() resource.Resource {
-	return &deviceAssuranceChromeosResource{}
+func NewPolicyDeviceAssuranceChromeosResource() resource.Resource {
+	return &policyDeviceAssuranceChromeosResource{}
 }
 
-func (r *deviceAssuranceChromeosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_device_assurance_chromeos"
+func (r *policyDeviceAssuranceChromeosResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy_device_assurance_chromeos"
 }
 
-func (r *deviceAssuranceChromeosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *policyDeviceAssuranceChromeosResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	r.Config = resourceConfiguration(req, resp)
 }
 
-func (r *deviceAssuranceChromeosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *policyDeviceAssuranceChromeosResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "The Device Assurance Policies API provides operations to manage device assurance policies in your organization.",
 		Attributes: map[string]schema.Attribute{
@@ -151,6 +151,9 @@ func (r *deviceAssuranceChromeosResource) Schema(_ context.Context, _ resource.S
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -277,12 +280,12 @@ func (r *deviceAssuranceChromeosResource) Schema(_ context.Context, _ resource.S
 		},
 	}
 }
-func (r *deviceAssuranceChromeosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *policyDeviceAssuranceChromeosResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
 }
 
-func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state deviceAssuranceChromeosModel
+func (r *policyDeviceAssuranceChromeosResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state policyDeviceAssuranceChromeosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -296,13 +299,13 @@ func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	variantObj := result.DeviceAssuranceChromeOSPlatform
 	if variantObj == nil {
-		resp.Diagnostics.AddError("Error reading device_assurance_chromeos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", "API returned a response for a different variant type")
 		return
 	}
 
@@ -314,7 +317,7 @@ func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceChromeosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -323,22 +326,22 @@ func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource
 		state.GracePeriod = gracePeriodModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !state.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = state.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -382,7 +385,7 @@ func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -423,8 +426,8 @@ func (r *deviceAssuranceChromeosResource) Read(ctx context.Context, req resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan deviceAssuranceChromeosModel
+func (r *policyDeviceAssuranceChromeosResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan policyDeviceAssuranceChromeosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -525,13 +528,13 @@ func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resour
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_chromeos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	createVariantObj := result.DeviceAssuranceChromeOSPlatform
 	if createVariantObj == nil {
-		resp.Diagnostics.AddError("Error creating device_assurance_chromeos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_chromeos", "API returned a response for a different variant type")
 		return
 	}
 	// Set ID from API response
@@ -542,7 +545,7 @@ func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resour
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
 	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceChromeosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -551,22 +554,22 @@ func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resour
 		plan.GracePeriod = gracePeriodModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = plan.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -610,7 +613,7 @@ func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resour
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -650,14 +653,14 @@ func (r *deviceAssuranceChromeosResource) Create(ctx context.Context, req resour
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan deviceAssuranceChromeosModel
+func (r *policyDeviceAssuranceChromeosResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan policyDeviceAssuranceChromeosModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state deviceAssuranceChromeosModel
+	var state policyDeviceAssuranceChromeosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -759,13 +762,13 @@ func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resour
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceChromeOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_chromeos", err.Error())
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
 	updateVariantObj := result.DeviceAssuranceChromeOSPlatform
 	if updateVariantObj == nil {
-		resp.Diagnostics.AddError("Error updating device_assurance_chromeos", "API returned a response for a different variant type")
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_chromeos", "API returned a response for a different variant type")
 		return
 	}
 
@@ -787,7 +790,7 @@ func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resour
 		state.Name = types.StringValue(string(*nameVal))
 	}
 	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-		gracePeriodModel0 := &DeviceAssuranceChromeosModelGracePeriodModel{}
+		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
@@ -796,22 +799,22 @@ func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resour
 		state.GracePeriod = gracePeriodModel0
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-		thirdPartySignalProvidersModel0 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModel{}
 		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-			devicePostureIdPModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
 			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
 		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-			dtcModel1 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
+			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = plan.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
 			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-				browserVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
@@ -855,7 +858,7 @@ func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resour
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
 			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-				osVersionModel2 := &DeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
@@ -896,8 +899,8 @@ func (r *deviceAssuranceChromeosResource) Update(ctx context.Context, req resour
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func (r *deviceAssuranceChromeosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state deviceAssuranceChromeosModel
+func (r *policyDeviceAssuranceChromeosResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state policyDeviceAssuranceChromeosModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -910,7 +913,7 @@ func (r *deviceAssuranceChromeosResource) Delete(ctx context.Context, req resour
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_chromeos", err.Error())
 		return
 	}
 }

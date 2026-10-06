@@ -153,11 +153,11 @@ func FWProviderResources() []func() resource.Resource {
 		newRoleSubscriptionResource,
 		newUserSubscriptionResource,
 		newThreatInsightSettingsResource,
-		NewDeviceAssuranceAndroidResource,
-		NewDeviceAssuranceChromeosResource,
-		NewDeviceAssuranceIosResource,
-		NewDeviceAssuranceMacosResource,
-		NewDeviceAssuranceWindowsResource,
+		NewPolicyDeviceAssuranceAndroidResource,
+		NewPolicyDeviceAssuranceChromeosResource,
+		NewPolicyDeviceAssuranceIosResource,
+		NewPolicyDeviceAssuranceMacosResource,
+		NewPolicyDeviceAssuranceWindowsResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -213,11 +213,11 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newThreatInsightSettingsDataSource,
 		newCaptchaDataSource,
 		newOrgCaptchaDataSource,
-		NewDeviceAssuranceWindowsDataSource,
-		NewDeviceAssuranceMacosDataSource,
-		NewDeviceAssuranceIosDataSource,
-		NewDeviceAssuranceChromeosDataSource,
-		NewDeviceAssuranceAndroidDataSource,
+		NewPolicyDeviceAssuranceWindowsDataSource,
+		NewPolicyDeviceAssuranceMacosDataSource,
+		NewPolicyDeviceAssuranceIosDataSource,
+		NewPolicyDeviceAssuranceChromeosDataSource,
+		NewPolicyDeviceAssuranceAndroidDataSource,
 	}
 }
 
