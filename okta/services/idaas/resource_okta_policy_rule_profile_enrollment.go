@@ -3,9 +3,11 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -46,6 +48,17 @@ enrollment policy, it allows the default policy rule to be updated.`,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "ID of a Registration Inline Hook",
+			},
+			"inline_hook_scopes": {
+				Type:         schema.TypeSet,
+				Optional:     true,
+				Computed:     true,
+				RequiredWith: []string{"inline_hook_id"},
+				Description:  "The registration flows that trigger the Registration Inline Hook set in `inline_hook_id`. Valid values are: `SELF_SERVICE_REGISTRATION` (new users signing up), `PROGRESSIVE_PROFILING` (existing users prompted for additional profile data; use with `progressive_profiling_action` set to `ENABLED`). Set both to run the hook for both flows. If not set, the value currently on the rule is kept, and Okta defaults to `SELF_SERVICE_REGISTRATION` when a hook is first attached.",
+				Elem: &schema.Schema{
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{"SELF_SERVICE_REGISTRATION", "PROGRESSIVE_PROFILING"}, false)),
+				},
 			},
 			"target_group_id": {
 				Type:        schema.TypeString,
@@ -171,7 +184,11 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 	_ = d.Set("status", rule.Status)
 	_ = d.Set("name", rule.Name)
 	if len(rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks) != 0 {
-		_ = d.Set("inline_hook_id", rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks[0].InlineHookId)
+		hook := rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks[0]
+		_ = d.Set("inline_hook_id", hook.InlineHookId)
+		if err := d.Set("inline_hook_scopes", utils.ConvertStringSliceToSet(hook.Scopes)); err != nil {
+			return diag.Errorf("error setting inline_hook_scopes: %v", err)
+		}
 	}
 	if len(rule.Actions.ProfileEnrollment.TargetGroupIds) != 0 {
 		_ = d.Set("target_group_id", rule.Actions.ProfileEnrollment.TargetGroupIds[0])
@@ -290,13 +307,16 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, meta interface{}, d *
 		ProfileEnrollment: ruleAction,
 	}
 
-	// inline_hook_id
-	if len(rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks) != 0 {
-		updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks
+	// inline_hook_id and inline_hook_scopes
+	var hookScopes []string
+	if scopes, ok := d.GetOk("inline_hook_scopes"); ok {
+		hookScopes = utils.ConvertInterfaceToStringSetNullable(scopes)
 	}
-	if hook, ok := d.GetOk("inline_hook_id"); ok {
-		updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = []*sdk.PreRegistrationInlineHook{{InlineHookId: hook.(string)}}
-	}
+	updateRule.Actions.ProfileEnrollment.PreRegistrationInlineHooks = BuildProfileEnrollmentInlineHooks(
+		rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks,
+		d.Get("inline_hook_id").(string),
+		hookScopes,
+	)
 
 	// target_group_id
 	if len(rule.Actions.ProfileEnrollment.TargetGroupIds) != 0 {
@@ -322,4 +342,32 @@ func buildPolicyRuleProfileEnrollment(ctx context.Context, meta interface{}, d *
 	updateRule.Actions.ProfileEnrollment.ProfileAttributes = attributes
 
 	return &updateRule, nil
+}
+
+// BuildProfileEnrollmentInlineHooks builds the preRegistrationInlineHooks
+// value for a profile enrollment policy rule update. The update is a full
+// PUT, so when no scopes are configured the scopes already present on the
+// rule for the same hook are carried over rather than dropped (Okta would
+// otherwise reset them to SELF_SERVICE_REGISTRATION). When no hook ID is
+// configured the hooks already on the rule are kept unchanged.
+func BuildProfileEnrollmentInlineHooks(existing []*sdk.PreRegistrationInlineHook, hookID string, scopes []string) []*sdk.PreRegistrationInlineHook {
+	if hookID == "" {
+		if len(existing) == 0 {
+			return nil
+		}
+		return existing
+	}
+	hook := &sdk.PreRegistrationInlineHook{InlineHookId: hookID}
+	if len(scopes) > 0 {
+		hook.Scopes = append([]string(nil), scopes...)
+		sort.Strings(hook.Scopes)
+	} else {
+		for _, h := range existing {
+			if h != nil && h.InlineHookId == hookID {
+				hook.Scopes = h.Scopes
+				break
+			}
+		}
+	}
+	return []*sdk.PreRegistrationInlineHook{hook}
 }
