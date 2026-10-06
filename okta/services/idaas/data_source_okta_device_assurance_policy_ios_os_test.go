@@ -24,8 +24,8 @@ import (
 )
 
 func TestAccDataSourceOktaDeviceAssuranceIos_read(t *testing.T) {
-	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_ios")
-	mgr := newFixtureManager("data-sources", "okta_device_assurance_ios", t.Name())
+	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_policy_ios_os")
+	mgr := newFixtureManager("data-sources", "okta_device_assurance_policy_ios_os", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

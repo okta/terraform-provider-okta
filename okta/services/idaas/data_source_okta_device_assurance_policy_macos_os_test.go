@@ -23,9 +23,9 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDataSourceOktaDeviceAssuranceChromeos_read(t *testing.T) {
-	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_chromeos")
-	mgr := newFixtureManager("data-sources", "okta_device_assurance_chromeos", t.Name())
+func TestAccDataSourceOktaDeviceAssuranceMacos_read(t *testing.T) {
+	resourceName := fmt.Sprintf("data.%s.test", "okta_device_assurance_policy_macos_os")
+	mgr := newFixtureManager("data-sources", "okta_device_assurance_policy_macos_os", t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -36,7 +36,7 @@ func TestAccDataSourceOktaDeviceAssuranceChromeos_read(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("okta_device_assurance_chromeos.test", "id"),
+					resource.TestCheckResourceAttrSet("okta_device_assurance_macos.test", "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "name"),
 				),
