@@ -173,9 +173,7 @@ func resourcePolicyProfileEnrollmentRuleRead(ctx context.Context, d *schema.Reso
 	if len(rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks) != 0 {
 		_ = d.Set("inline_hook_id", rule.Actions.ProfileEnrollment.PreRegistrationInlineHooks[0].InlineHookId)
 	}
-	if len(rule.Actions.ProfileEnrollment.TargetGroupIds) != 0 {
-		_ = d.Set("target_group_id", rule.Actions.ProfileEnrollment.TargetGroupIds[0])
-	}
+	setProfileEnrollmentTargetGroupID(d, rule.Actions.ProfileEnrollment.TargetGroupIds)
 	_ = d.Set("unknown_user_action", rule.Actions.ProfileEnrollment.UnknownUserAction)
 	_ = d.Set("ui_schema_id", rule.Actions.ProfileEnrollment.UiSchemaId)
 	_ = d.Set("email_verification", rule.Actions.ProfileEnrollment.ActivationRequirements.EmailVerification)
@@ -207,6 +205,16 @@ func resourcePolicyProfileEnrollmentRuleUpdate(ctx context.Context, d *schema.Re
 		return diag.Errorf("failed to update profile enrollment policy rule: %v", err)
 	}
 	return resourcePolicyProfileEnrollmentRuleRead(ctx, d, meta)
+}
+
+// setProfileEnrollmentTargetGroupID records the rule's target group. An empty list means the group was
+// removed in Okta, so state must be cleared too or the removal is never reported as drift.
+func setProfileEnrollmentTargetGroupID(d *schema.ResourceData, targetGroupIDs []string) {
+	targetGroupID := ""
+	if len(targetGroupIDs) != 0 {
+		targetGroupID = targetGroupIDs[0]
+	}
+	_ = d.Set("target_group_id", targetGroupID)
 }
 
 // You cannot delete a default rule in a policy
