@@ -97,11 +97,6 @@ func FWProviderResources() []func() resource.Resource {
 		newTrustedServerResource,
 		newBrandResource,
 		newLogStreamResource,
-		newPolicyDeviceAssuranceAndroidResource,
-		newPolicyDeviceAssuranceChromeOSResource,
-		newPolicyDeviceAssuranceIOSResource,
-		newPolicyDeviceAssuranceMacOSResource,
-		newPolicyDeviceAssuranceWindowsResource,
 		newCustomizedSigninResource,
 		newPreviewSigninResource,
 		newGroupOwnerResource,
@@ -158,6 +153,11 @@ func FWProviderResources() []func() resource.Resource {
 		newRoleSubscriptionResource,
 		newUserSubscriptionResource,
 		newThreatInsightSettingsResource,
+		NewPolicyDeviceAssuranceAndroidResource,
+		NewPolicyDeviceAssuranceChromeosResource,
+		NewPolicyDeviceAssuranceIosResource,
+		NewPolicyDeviceAssuranceMacosResource,
+		NewPolicyDeviceAssuranceWindowsResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -172,7 +172,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newLogStreamDataSource,
 		newAppsDataSource,
 		newUserTypeDataSource,
-		newDeviceAssurancePolicyDataSource,
 		newFeaturesDataSource,
 		newRealmDataSource,
 		newRealmAssignmentDataSource,
@@ -214,6 +213,11 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newThreatInsightSettingsDataSource,
 		newCaptchaDataSource,
 		newOrgCaptchaDataSource,
+		NewPolicyDeviceAssuranceWindowsDataSource,
+		NewPolicyDeviceAssuranceMacosDataSource,
+		NewPolicyDeviceAssuranceIosDataSource,
+		NewPolicyDeviceAssuranceChromeosDataSource,
+		NewPolicyDeviceAssuranceAndroidDataSource,
 	}
 }
 

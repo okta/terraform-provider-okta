@@ -23,37 +23,23 @@ import (
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 )
 
-func TestAccDeviceAssuranceAndroid_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", "okta_device_assurance_policy_android_os", t.Name())
-	config := mgr.GetFixtures("basic.tf", t)
-	resourceName := fmt.Sprintf("%s.test", "okta_policy_device_assurance_android")
+func TestAccDataSourceOktaDeviceAssuranceAndroid_read(t *testing.T) {
+	resourceName := fmt.Sprintf("data.%s.test", "okta_policy_device_assurance_android")
+	mgr := newFixtureManager("data-sources", "okta_device_assurance_policy_android_os", t.Name())
+	config := mgr.GetFixtures("datasource.tf", t)
+
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
-		CheckDestroy:             nil, // TODO: destroy check not auto-generated (singleton/variant/no-op or non-standard read)
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("okta_policy_device_assurance_android.test", "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "name"),
 				),
-			},
-			{
-				// R5: re-plan after apply must be empty (idempotency / no perpetual diff).
-				Config:   config,
-				PlanOnly: true,
-			},
-			{
-				Config: mgr.GetFixtures("updated.tf", t),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "display_remediation_mode", "HIDE"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
