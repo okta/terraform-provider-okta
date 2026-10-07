@@ -449,7 +449,7 @@ func (r *requestConditionResource) Delete(ctx context.Context, req resource.Dele
 // restoreRequestConditionPriority writes the planned priority back over the
 // value the API returned, and warns when the two disagree.
 //
-// The governance API treats priority as a position in the resource's ordered
+// The API treats priority as a position in the resource's ordered
 // list of conditions rather than a free-form value: it clamps the request to
 // the length of that list and does not echo back what was sent (e.g. a POST
 // with priority 100 against a two-condition resource responds with 1). Writing
@@ -476,7 +476,7 @@ func restoreRequestConditionPriority(data *requestConditionResourceModel, planne
 				plannedPriority.ValueInt32(), data.Name.ValueString(), data.Priority.ValueInt32()),
 		)
 	}
-	data.Priority = plannedPriority
+	data.Priority = plannedPriority // priority is the one field where the server's answer is untrustworthy, so it's the one field we override.
 
 	return diags
 }

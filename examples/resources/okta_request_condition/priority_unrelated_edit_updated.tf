@@ -1,6 +1,6 @@
 resource "okta_request_condition" "test_priority_unrelated" {
-  resource_id          = "0oasp3g29b1hqkcYE1d7"
-  approval_sequence_id = "69251ae704a4d0a7fcdb870f"
+  resource_id          = "0oa14jmvwvzsRjALs1d8"
+  approval_sequence_id = "68d224058c0cff364ca377e8"
   name                 = "test-condition-unrelated-after"
   description          = "after"
   priority             = 5
