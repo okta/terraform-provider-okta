@@ -57,9 +57,8 @@ resource "okta_request_condition" "example_active" {
 ### Optional
 
 - `description` (String) The description of the request condition.
-- `priority` (int) The priority of the request condition. Lower numbers indicate higher priority.
 - `access_duration_settings` (Block Set) The access duration settings for the request condition (see [below for nested schema](#nestedblock--access_duration_settings))
-- `priority` (int) The priority of the request condition. Lower numbers indicate higher priority.
+- `priority` (int) The priority of the request condition. Lower numbers indicate higher priority. Okta treats this as a position within the resource's ordered list of conditions: a value beyond the number of existing conditions is clamped, and the API does not echo back the value that was sent. Terraform keeps the value you configured in state and emits a `Priority reassigned by API` warning when the server picks a different one. Because the API response is not a reliable mirror of the configured value, changes to `priority` made outside Terraform are not reported as drift.
 - `status` (String) Status of the condition. Valid values: `ACTIVE`, `INACTIVE`. Default is `INACTIVE`. Note: `DELETED` and `INVALID` statuses are system-managed and cannot be set directly.
 
 

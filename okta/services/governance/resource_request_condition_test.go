@@ -162,6 +162,87 @@ func TestAccRequestConditionResource_Priority(t *testing.T) {
 	})
 }
 
+func TestAccRequestConditionResource_PriorityNonzeroMismatch(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority_nonzero_mismatch.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_nonzero_mismatch_updated.tf", t)
+	oneName := fmt.Sprintf("%s.condition-one", resources.OktaGovernanceRequestCondition)
+	twoName := fmt.Sprintf("%s.condition-two", resources.OktaGovernanceRequestCondition)
+	threeName := fmt.Sprintf("%s.condition-three", resources.OktaGovernanceRequestCondition)
+	fourName := fmt.Sprintf("%s.condition-four", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(oneName, "name", "okta-1292840-request-condition-one"),
+					resource.TestCheckResourceAttr(oneName, "priority", "0"),
+					resource.TestCheckResourceAttr(twoName, "name", "okta-1292840-request-condition-two"),
+					resource.TestCheckResourceAttr(twoName, "priority", "1"),
+					resource.TestCheckResourceAttr(threeName, "name", "okta-1292840-request-condition-three"),
+					resource.TestCheckResourceAttr(threeName, "priority", "50"),
+					resource.TestCheckResourceAttr(fourName, "name", "okta-1292840-request-condition-four"),
+					resource.TestCheckResourceAttr(fourName, "priority", "100"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(oneName, "priority", "0"),
+					resource.TestCheckResourceAttr(twoName, "priority", "1"),
+					resource.TestCheckResourceAttr(threeName, "priority", "50"),
+					resource.TestCheckResourceAttr(fourName, "priority", "25"),
+				),
+			},
+			{
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestAccRequestConditionResource_PriorityUnrelatedEdit(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("priority_unrelated_edit.tf", t)
+	updatedConfig := mgr.GetFixtures("priority_unrelated_edit_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test_priority_unrelated", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-unrelated-before"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "5"),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-condition-unrelated-after"),
+					resource.TestCheckResourceAttr(resourceName, "description", "after"),
+					// priority is untouched by this edit and must survive it.
+					resource.TestCheckResourceAttr(resourceName, "priority", "5"),
+				),
+			},
+			{
+				Config:   updatedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 // checkRequestConditionDestroy verifies that request conditions have been destroyed
 func checkRequestConditionDestroy(s *terraform.State) error {
 	// Skip destroy check in VCR playback mode
