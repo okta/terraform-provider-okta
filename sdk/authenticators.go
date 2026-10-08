@@ -10,6 +10,9 @@ var AuthenticatorProviders = []string{
 	OktaEmailFactor,
 	OktaPasswordFactor, // NOTE: Not configurable in OIE policies (Handle downstream as necessary)
 	OktaVerifyFactor,
+	OktaVerifyFastPassFactor,
+	OktaVerifyPushFactor,
+	OktaVerifyTotpFactor,
 	OnPremMfaFactor,
 	PhoneNumberFactor,
 	RsaTokenFactor,

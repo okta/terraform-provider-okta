@@ -210,3 +210,32 @@ variable "custom_app_id_3" { default = "%s" }
 		},
 	})
 }
+
+// TestAccResourceOktaMfaPolicy_Issue_2934 deals with testing
+// https://github.com/okta/terraform-provider-okta/issues/2934
+func TestAccResourceOktaMfaPolicy_Issue_2934(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
+	config := mgr.GetFixtures("issue_2934.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy Okta Verify Breakdown"),
+					resource.TestCheckResourceAttr(resourceName, "okta_verify_fastpass.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "okta_verify_push.enroll", "OPTIONAL"),
+					resource.TestCheckResourceAttr(resourceName, "okta_verify_totp.enroll", "NOT_ALLOWED"),
+				),
+			},
+		},
+	})
+}
