@@ -294,14 +294,23 @@ func (r *pushGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 			Status: "INACTIVE",
 		}).Execute()
 		if err != nil {
-			resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
+			resp.Diagnostics.AddError("failed to deactivate push group mapping before delete: ", err.Error())
+			return
+		}
+
+		// The mapping has stopped pushing group membership downstream, so record the
+		// new status before attempting the delete. State written during Delete is
+		// preserved when error diagnostics are returned and discarded when Delete
+		// succeeds, so this keeps state accurate if the delete below fails.
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("status"), "INACTIVE")...)
+		if resp.Diagnostics.HasError() {
 			return
 		}
 	}
 
 	_, err := r.config.OktaIDaaSClient.OktaSDKClientV6().GroupPushMappingAPI.DeleteGroupPushMapping(ctx, state.AppId.ValueString(), state.ID.ValueString()).DeleteTargetGroup(state.DeleteTargetGroupOnDestroy.ValueBool()).Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("failed to delete push group mapping: ", err.Error())
+		resp.Diagnostics.AddError("failed to delete push group mapping: ", fmt.Sprintf("the mapping is INACTIVE and is no longer pushing group membership to the downstream application, but it could not be deleted: %s", err.Error()))
 		return
 	}
 }
