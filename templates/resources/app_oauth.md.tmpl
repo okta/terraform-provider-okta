@@ -42,6 +42,22 @@ true in the resource. This causes `client_secret` to be set to blank. Remove
 `omit_secret` and run apply again. The resource will set a new `client_secret`
 for the app.
 
+### If the client secret is regenerated directly in Okta
+
+Okta's API only returns an app's `client_secret` in the response to a Create
+or Update call — a plain `GET` (including the read that backs `terraform
+import`) never returns it. Because of this, the provider never resends the
+`client_secret` it has cached in state back to Okta on an update; only the
+explicit `client_basic_secret`/`client_basic_secret_wo` attributes are ever
+sent. This means that if the client secret is regenerated directly in Okta
+(for example, via "Generate new client secret" in the Admin Console) outside
+of Terraform, a later `terraform apply` for unrelated attributes will not
+revert it back to the value Terraform has cached in state - the live secret
+in Okta is left untouched. `client_secret` in state will simply be stale
+until the next time Terraform's own Create/Update response updates it (or
+until you run `terraform apply` with `client_basic_secret`/
+`client_basic_secret_wo` set to the new value).
+
 ### Private Keys
 
 The private key format that an Okta OAuth app expects is PKCS#8 (unencrypted).
