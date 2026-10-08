@@ -450,10 +450,42 @@ func applyRequestConditionToState(ctx context.Context, data *requestConditionRes
 	data.LastUpdated = types.StringValue(requestConditionResp.GetLastUpdated().Format(time.RFC3339))
 	data.LastUpdatedBy = types.StringValue(requestConditionResp.GetLastUpdatedBy())
 	data.Status = types.StringValue(string(requestConditionResp.GetStatus()))
+	// The API keeps the stored order of groups when an update only reorders
+	// them, so the response can differ from the planned order. Keep the order
+	// already in data (plan on create/update, prior state on read) when the API
+	// returned the same IDs, otherwise Terraform reports an inconsistent result.
+	priorRequester, priorAccessScope := data.RequesterSettings, data.AccessScopeSettings
 	data.RequesterSettings, _ = setRequesterSettings(requestConditionResp.GetRequesterSettings())
 	data.AccessScopeSettings, _ = setAccessScopeSettings(requestConditionResp.GetAccessScopeSettings())
+	if priorRequester != nil && data.RequesterSettings != nil {
+		data.RequesterSettings.Ids = keepOrderIfSameIds(data.RequesterSettings.Ids, priorRequester.Ids)
+	}
+	if priorAccessScope != nil && data.AccessScopeSettings != nil {
+		data.AccessScopeSettings.Ids = keepOrderIfSameIds(data.AccessScopeSettings.Ids, priorAccessScope.Ids)
+	}
 	data.AccessDurationSettings = setAccessDurationSettings(requestConditionResp.GetAccessDurationSettings())
 	return diags
+}
+
+// keepOrderIfSameIds returns reference when api holds exactly the same IDs
+// (ignoring order, counting duplicates), and api otherwise so that real
+// differences are still reported.
+func keepOrderIfSameIds(api, reference []IdModel) []IdModel {
+	if len(api) != len(reference) {
+		return api
+	}
+	counts := make(map[string]int, len(reference))
+	for _, ref := range reference {
+		counts[ref.Id.ValueString()]++
+	}
+	for _, a := range api {
+		key := a.Id.ValueString()
+		counts[key]--
+		if counts[key] < 0 {
+			return api
+		}
+	}
+	return reference
 }
 
 func setAccessDurationSettings(settings governance.AccessDurationSettingsFull) *AccessDurationSettings {
