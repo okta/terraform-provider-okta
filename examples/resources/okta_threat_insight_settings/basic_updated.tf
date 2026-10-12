@@ -7,6 +7,6 @@ resource "okta_network_zone" "test" {
 }
 
 resource "okta_threat_insight_settings" "test" {
-  action           = "block"
+  action        = "block"
   exclude_zones = [okta_network_zone.test.id]
 }
