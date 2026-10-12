@@ -441,7 +441,11 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 	state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
 	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
-	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
+	if secureHardwarePresentVal, ok := variantObj.GetSecureHardwarePresentOk(); ok && secureHardwarePresentVal != nil {
+		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
+	} else {
+		state.SecureHardwarePresent = types.BoolNull()
+	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
@@ -707,7 +711,9 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		}
 		body.SetScreenLockType(*nestedScreenLockType)
 	}
-	body.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	if !plan.SecureHardwarePresent.IsNull() && !plan.SecureHardwarePresent.IsUnknown() {
+		body.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	}
 	if plan.ThirdPartySignalProviders != nil {
 		nestedThirdPartySignalProviders := okta.NewDeviceAssuranceWindowsPlatformAllOfThirdPartySignalProvidersWithDefaults()
 		if plan.ThirdPartySignalProviders.DevicePostureIdP != nil {
@@ -1085,7 +1091,9 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		}
 		updateBody.SetScreenLockType(*nestedScreenLockType)
 	}
-	updateBody.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	if !plan.SecureHardwarePresent.IsNull() && !plan.SecureHardwarePresent.IsUnknown() {
+		updateBody.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	}
 	if plan.ThirdPartySignalProviders != nil {
 		nestedThirdPartySignalProviders := okta.NewDeviceAssuranceWindowsPlatformAllOfThirdPartySignalProvidersWithDefaults()
 		if plan.ThirdPartySignalProviders.DevicePostureIdP != nil {

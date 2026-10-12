@@ -384,7 +384,11 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 	state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
 	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
-	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
+	if secureHardwarePresentVal, ok := variantObj.GetSecureHardwarePresentOk(); ok && secureHardwarePresentVal != nil {
+		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
+	} else {
+		state.SecureHardwarePresent = types.BoolNull()
+	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
 	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
@@ -613,7 +617,9 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 		}
 		body.SetScreenLockType(*nestedScreenLockType)
 	}
-	body.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	if !plan.SecureHardwarePresent.IsNull() && !plan.SecureHardwarePresent.IsUnknown() {
+		body.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	}
 	if plan.ThirdPartySignalProviders != nil {
 		nestedThirdPartySignalProviders := okta.NewDeviceAssuranceMacOSPlatformAllOfThirdPartySignalProvidersWithDefaults()
 		if plan.ThirdPartySignalProviders.DevicePostureIdP != nil {
@@ -933,7 +939,9 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 		}
 		updateBody.SetScreenLockType(*nestedScreenLockType)
 	}
-	updateBody.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	if !plan.SecureHardwarePresent.IsNull() && !plan.SecureHardwarePresent.IsUnknown() {
+		updateBody.SetSecureHardwarePresent(plan.SecureHardwarePresent.ValueBool())
+	}
 	if plan.ThirdPartySignalProviders != nil {
 		nestedThirdPartySignalProviders := okta.NewDeviceAssuranceMacOSPlatformAllOfThirdPartySignalProvidersWithDefaults()
 		if plan.ThirdPartySignalProviders.DevicePostureIdP != nil {
