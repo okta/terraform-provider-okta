@@ -6,6 +6,6 @@ resource "okta_network_zone" "ip_network_zone_example" {
 }
 
 resource "okta_threat_insight_settings" "example" {
-  action           = "block"
+  action        = "block"
   exclude_zones = [okta_network_zone.ip_network_zone_example.id]
 }

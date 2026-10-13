@@ -43,6 +43,46 @@ func TestAccRequestConditionResource_basic(t *testing.T) {
 	})
 }
 
+func TestAccRequestConditionResource_ReorderIDs(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
+	config := mgr.GetFixtures("reorder_ids.tf", t)
+	updatedConfig := mgr.GetFixtures("reorder_ids_updated.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceRequestCondition)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRequestConditionDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", "test-reorder-ids"),
+					resource.TestCheckResourceAttr(resourceName, "requester_settings.type", "GROUPS"),
+					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.0.id", "00gwkaw31mtq5LnuZ1d7"),
+					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.1.id", "00gwkax39dIJgiptR1d7"),
+					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.0.id", "00gwkaw31mtq5LnuZ1d7"),
+					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.1.id", "00gwkax39dIJgiptR1d7"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(updatedConfig),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.0.id", "00gwkax39dIJgiptR1d7"),
+					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.1.id", "00gwkaw31mtq5LnuZ1d7"),
+					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.0.id", "00gwkax39dIJgiptR1d7"),
+					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.1.id", "00gwkaw31mtq5LnuZ1d7"),
+				),
+			},
+			{
+				Config:   mgr.ConfigReplace(updatedConfig),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func TestAccRequestConditionResource_Issue2510(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaGovernanceRequestCondition, t.Name())
 	config := mgr.GetFixtures("basic_issue2510.tf", t)
