@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.0.1 (Oct 13, 2026)
+## 7.1.0 (Oct 14, 2026)
 
 ### BUG FIXES
 
