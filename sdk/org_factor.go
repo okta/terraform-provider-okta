@@ -16,29 +16,32 @@ type OrgFactor struct {
 
 // Current available org factors for MFA
 const (
-	DuoFactor              = "duo"
-	ExternalIdpFactor      = "external_idp"
-	FidoU2fFactor          = "fido_u2f"
-	FidoWebauthnFactor     = "fido_webauthn"
-	GoogleOtpFactor        = "google_otp"
-	HotpFactor             = "hotp"
-	OktaCallFactor         = "okta_call"
-	OktaEmailFactor        = "okta_email"
-	OktaOtpFactor          = "okta_otp"
-	OktaPasswordFactor     = "okta_password" // Not configurable for OIE
-	OktaPushFactor         = "okta_push"
-	OktaQuestionFactor     = "okta_question"
-	OktaSmsFactor          = "okta_sms"
-	OktaVerifyFactor       = "okta_verify"  // OIE only (Combo of OktaOtp, OktaPush)
-	OnPremMfaFactor        = "onprem_mfa"   // OIE only
-	PhoneNumberFactor      = "phone_number" // OIE only (Combo of OktaSms + OktaCall)
-	RsaTokenFactor         = "rsa_token"
-	SecurityQuestionFactor = "security_question" // OIE only (Evolution/rename from okta_question)
-	SymantecVipFactor      = "symantec_vip"
-	WebauthnFactor         = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
-	YubikeyTokenFactor     = "yubikey_token"
-	SmartCardIdpFactor     = "smart_card_idp"
-	CustomAppFactor        = "custom_app" // OIE only
+	DuoFactor                = "duo"
+	ExternalIdpFactor        = "external_idp"
+	FidoU2fFactor            = "fido_u2f"
+	FidoWebauthnFactor       = "fido_webauthn"
+	GoogleOtpFactor          = "google_otp"
+	HotpFactor               = "hotp"
+	OktaCallFactor           = "okta_call"
+	OktaEmailFactor          = "okta_email"
+	OktaOtpFactor            = "okta_otp"
+	OktaPasswordFactor       = "okta_password" // Not configurable for OIE
+	OktaPushFactor           = "okta_push"
+	OktaQuestionFactor       = "okta_question"
+	OktaSmsFactor            = "okta_sms"
+	OktaVerifyFactor         = "okta_verify"          // OIE only (Combo of OktaOtp, OktaPush)
+	OktaVerifyFastPassFactor = "okta_verify_fastpass" // OIE only (Okta Verify authenticator breakdown)
+	OktaVerifyPushFactor     = "okta_verify_push"     // OIE only (Okta Verify authenticator breakdown)
+	OktaVerifyTotpFactor     = "okta_verify_totp"     // OIE only (Okta Verify authenticator breakdown)
+	OnPremMfaFactor          = "onprem_mfa"           // OIE only
+	PhoneNumberFactor        = "phone_number"         // OIE only (Combo of OktaSms + OktaCall)
+	RsaTokenFactor           = "rsa_token"
+	SecurityQuestionFactor   = "security_question" // OIE only (Evolution/rename from okta_question)
+	SymantecVipFactor        = "symantec_vip"
+	WebauthnFactor           = "webauthn" // OIE only (Evolution/rename from fido_webauthn)
+	YubikeyTokenFactor       = "yubikey_token"
+	SmartCardIdpFactor       = "smart_card_idp"
+	CustomAppFactor          = "custom_app" // OIE only
 )
 
 // List of factors that are applicable to Okta Classic Engine
