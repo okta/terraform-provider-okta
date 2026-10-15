@@ -41,6 +41,7 @@ data "okta_app_oauth" "test" {
 - `client_id` (String) OAuth client ID
 - `client_secret` (String, Sensitive) OAuth client secret
 - `client_uri` (String) URI to a web page providing information about the client.
+- `dpop_bound_access_tokens` (Boolean) Indicates that the client application uses Demonstrating Proof-of-Possession (DPoP) for token requests. If true, the authorization server rejects token requests from this client that don't contain the DPoP header.
 - `grant_types` (Set of String) List of OAuth 2.0 grant types
 - `hide_ios` (Boolean) Do not display application icon on mobile app
 - `hide_web` (Boolean) Do not display application icon to users

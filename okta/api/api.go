@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	v5okta "github.com/okta/okta-sdk-golang/v5/okta"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+	v7okta "github.com/okta/okta-sdk-golang/v7/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/okta/utils"
@@ -24,7 +24,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okta4AIAPIClient, error) {
+func getV7ClientConfig(c *OktaAPIConfig) (*v7okta.Configuration, *v7okta.APIClient, error) {
 	var httpClient *http.Client
 	logLevel := strings.ToLower(os.Getenv("TF_LOG"))
 	debugHTTPRequests := (logLevel == "1" || logLevel == "debug" || logLevel == "trace")
@@ -49,7 +49,7 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 			retryableClient.CheckRetry = checkRetry
 		}
 		httpClient = retryableClient.StandardClient()
-		c.Logger.Info(fmt.Sprintf("v6 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
+		c.Logger.Info(fmt.Sprintf("v7 running with backoff http client, wait min %d, wait max %d, retry max %d", retryableClient.RetryWaitMin, retryableClient.RetryWaitMax, retryableClient.RetryMax))
 	} else {
 		httpClient = cleanhttp.DefaultClient()
 		if debugHTTPRequests {
@@ -59,12 +59,12 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 		} else {
 			httpClient.Transport = logging.NewSubsystemLoggingHTTPTransport("Okta", httpClient.Transport)
 		}
-		c.Logger.Info("v6 running with default http client")
+		c.Logger.Info("v7 running with default http client")
 	}
 
 	// adds transport governor to retryable or default client
 	if c.MaxAPICapacity > 0 && c.MaxAPICapacity < 100 {
-		c.Logger.Info(fmt.Sprintf("v6 running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
+		c.Logger.Info(fmt.Sprintf("v7 running with experimental max_api_capacity configuration at %d%%", c.MaxAPICapacity))
 		apiMutex, err := apimutex.NewAPIMutex(c.MaxAPICapacity)
 		if err != nil {
 			return nil, nil, err
@@ -84,14 +84,14 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
-	setters := []okta4AI.ConfigSetter{
-		okta4AI.WithOrgUrl(orgURL),
-		okta4AI.WithCache(false),
-		okta4AI.WithHttpClientPtr(httpClient),
-		okta4AI.WithRateLimitMaxBackOff(int64(c.MaxWait)),
-		okta4AI.WithRequestTimeout(int64(c.RequestTimeout)),
-		okta4AI.WithRateLimitMaxRetries(int32(c.RetryCount)),
-		okta4AI.WithUserAgentExtra(version.OktaTerraformProviderUserAgent),
+	setters := []v7okta.ConfigSetter{
+		v7okta.WithOrgUrl(orgURL),
+		v7okta.WithCache(false),
+		v7okta.WithHttpClientPtr(httpClient),
+		v7okta.WithRateLimitMaxBackOff(int64(c.MaxWait)),
+		v7okta.WithRequestTimeout(int64(c.RequestTimeout)),
+		v7okta.WithRateLimitMaxRetries(int32(c.RetryCount)),
+		v7okta.WithUserAgentExtra(version.OktaTerraformProviderUserAgent),
 	}
 	// v6 client also needs http proxy explicitly set
 	if c.HttpProxy != "" {
@@ -99,7 +99,7 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 		if err != nil {
 			return nil, nil, err
 		}
-		host := okta4AI.WithProxyHost(_url.Hostname())
+		host := v7okta.WithProxyHost(_url.Hostname())
 		setters = append(setters, host)
 
 		sPort := _url.Port()
@@ -110,7 +110,7 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 		if err != nil {
 			return nil, nil, err
 		}
-		port := okta4AI.WithProxyPort(int32(iPort))
+		port := v7okta.WithProxyPort(int32(iPort))
 		setters = append(setters, port)
 	}
 
@@ -118,27 +118,27 @@ func getO4AIClientConfig(c *OktaAPIConfig) (*okta4AI.Configuration, *okta4AI.Okt
 	case c.AccessToken != "":
 		setters = append(
 			setters,
-			okta4AI.WithToken(c.AccessToken), okta4AI.WithAuthorizationMode("Bearer"),
+			v7okta.WithToken(c.AccessToken), v7okta.WithAuthorizationMode("Bearer"),
 		)
 
 	case c.ApiToken != "":
 		setters = append(
 			setters,
-			okta4AI.WithToken(c.ApiToken), okta4AI.WithAuthorizationMode("SSWS"),
+			v7okta.WithToken(c.ApiToken), v7okta.WithAuthorizationMode("SSWS"),
 		)
 
 	case c.PrivateKey != "":
 		setters = append(
 			setters,
-			okta4AI.WithPrivateKey(c.PrivateKey), okta4AI.WithPrivateKeyId(c.PrivateKeyId), okta4AI.WithScopes(c.Scopes), okta4AI.WithClientId(c.ClientID), okta4AI.WithAuthorizationMode("PrivateKey"),
+			v7okta.WithPrivateKey(c.PrivateKey), v7okta.WithPrivateKeyId(c.PrivateKeyId), v7okta.WithScopes(c.Scopes), v7okta.WithClientId(c.ClientID), v7okta.WithAuthorizationMode("PrivateKey"),
 		)
 	}
 
 	if disableHTTPS {
-		setters = append(setters, okta4AI.WithTestingDisableHttpsCheck(true))
+		setters = append(setters, v7okta.WithTestingDisableHttpsCheck(true))
 	}
 
-	config, err := okta4AI.NewConfiguration(setters...)
+	config, err := v7okta.NewConfiguration(setters...)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	oktav5sdk "github.com/okta/okta-sdk-golang/v5/okta"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
+	v7okta "github.com/okta/okta-sdk-golang/v7/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -57,6 +58,10 @@ func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
 }
 
+func getOktaV7ClientFromMetadata(meta interface{}) *v7okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV7()
+}
+
 func getOktaV6ClientFromMetadata(meta interface{}) *v6okta.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV6()
 }
@@ -86,6 +91,7 @@ func providerIsClassicOrg(ctx context.Context, m interface{}) bool {
 
 func FWProviderResources() []func() resource.Resource {
 	rawResources := []func() resource.Resource{
+		newTrustedOriginResource,
 		newAppAccessPolicyAssignmentResource,
 		newAppOAuthRoleAssignmentResource,
 		newTrustedServerResource,
@@ -102,6 +108,7 @@ func FWProviderResources() []func() resource.Resource {
 		newGroupOwnersResource,
 		newAppSignOnPolicyResource,
 		newEmailTemplateSettingsResource,
+		newTemplateSmsResource,
 		newFeaturesResource,
 		newRealmResource,
 		newRealmAssignmentResource,
@@ -133,6 +140,24 @@ func FWProviderResources() []func() resource.Resource {
 		newIdentitySourceGroupMembershipResource,
 		newIdentitySourceImportResource,
 		newIdentitySourceUserResource,
+		newCaptchaResource,
+		newOrgCaptchaResource,
+		newOauth2V1ClientsRoleAccessCertificationsAdminResource,
+		newOauth2V1ClientsRoleAccessRequestsAdminResource,
+		newOauth2V1ClientsRoleApiAccessManagementAdminResource,
+		newOauth2V1ClientsRoleAppAdminResource,
+		newOauth2V1ClientsRoleCustomResource,
+		newOauth2V1ClientsRoleGroupMembershipAdminResource,
+		newOauth2V1ClientsRoleHelpDeskAdminResource,
+		newOauth2V1ClientsRoleOrgAdminResource,
+		newOauth2V1ClientsRoleReadOnlyAdminResource,
+		newOauth2V1ClientsRoleReportAdminResource,
+		newOauth2V1ClientsRoleSuperAdminResource,
+		newOauth2V1ClientsRoleUserAdminResource,
+		newOauth2V1ClientsRoleWorkflowsAdminResource,
+		newRoleSubscriptionResource,
+		newUserSubscriptionResource,
+		newThreatInsightSettingsResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -184,6 +209,11 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newAuthorizationServersPoliciesRuleDataSource,
 		newIamAssigneesUserDataSource,
 		newIamResourceSetDataSource,
+		newRoleSubscriptionDataSource,
+		newUserSubscriptionDataSource,
+		newThreatInsightSettingsDataSource,
+		newCaptchaDataSource,
+		newOrgCaptchaDataSource,
 	}
 }
 
@@ -221,7 +251,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSAuthServerPolicyRule:          resourceAuthServerPolicyRule(),
 		resources.OktaIDaaSAuthServerScope:               resourceAuthServerScope(),
 		resources.OktaIDaaSBehavior:                      resourceBehavior(),
-		resources.OktaIDaaSCaptcha:                       resourceCaptcha(),
 		resources.OktaIDaaSCaptchaOrgWideSettings:        resourceCaptchaOrgWideSettings(),
 		resources.OktaIDaaSDomain:                        resourceDomain(),
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
@@ -266,12 +295,8 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
 		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
 		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
-		resources.OktaIDaaSRoleSubscription:           resourceRoleSubscription(),
 		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTemplateSms:                resourceTemplateSms(),
 		resources.OktaIDaaSTheme:                      resourceTheme(),
-		resources.OktaIDaaSThreatInsightSettings:      resourceThreatInsightSettings(),
-		resources.OktaIDaaSTrustedOrigin:              resourceTrustedOrigin(),
 		resources.OktaIDaaSUser:                       resourceUser(),
 		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
 		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
@@ -320,7 +345,6 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSNetworkZone:              dataSourceNetworkZone(),
 		resources.OktaIDaaSPolicy:                   dataSourcePolicy(),
 		resources.OktaIDaaSPolicyRulePassword:       dataSourcePolicyRulePassword(),
-		resources.OktaIDaaSRoleSubscription:         dataSourceRoleSubscription(),
 		resources.OktaIDaaSTheme:                    dataSourceTheme(),
 		resources.OktaIDaaSThemes:                   dataSourceThemes(),
 		resources.OktaIDaaSTrustedOrigins:           dataSourceTrustedOrigins(),

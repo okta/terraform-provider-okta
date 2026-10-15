@@ -12,10 +12,11 @@ import (
 
 func resourceCaptchaOrgWideSettings() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceCaptchaOrgWideSettingsCreate,
-		ReadContext:   resourceCaptchaOrgWideSettingsRead,
-		UpdateContext: resourceCaptchaOrgWideSettingsUpdate,
-		DeleteContext: resourceCaptchaOrgWideSettingsDelete,
+		CreateContext:      resourceCaptchaOrgWideSettingsCreate,
+		ReadContext:        resourceCaptchaOrgWideSettingsRead,
+		UpdateContext:      resourceCaptchaOrgWideSettingsUpdate,
+		DeleteContext:      resourceCaptchaOrgWideSettingsDelete,
+		DeprecationMessage: "Use `okta_org_captcha` instead. `okta_captcha_org_wide_settings` will be removed in a future version.",
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

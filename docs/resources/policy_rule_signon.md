@@ -1,12 +1,20 @@
 ---
 page_title: "Resource: okta_policy_rule_signon"
 description: |-
-  Creates a Sign On Policy Rule. In case Invalid condition type specified: riskScore. error is thrown, set risc_level to an empty string, since this feature is not enabled.
+  Creates a Sign On Policy Rule. In case 'Invalid condition type specified: riskScore.' error is thrown, set 'risc_level' to an empty string, since this feature is not enabled.
+  A policy's default rule (the rule named 'Default Rule') can be imported and updated as a custom rule, but it can not be created, renamed or deleted.
+  Okta manages these fields on a default rule, so values configured for them are ignored: 'priority', 'network_connection', 'network_includes',
+  'network_excludes', 'users_excluded' and 'session_persistent'.
+  Removing a default rule from your configuration drops it from Terraform state without deleting it from Okta.
 ---
 
 # Resource: okta_policy_rule_signon
 
-Creates a Sign On Policy Rule. In case `Invalid condition type specified: riskScore.` error is thrown, set `risc_level` to an empty string, since this feature is not enabled.
+Creates a Sign On Policy Rule. In case 'Invalid condition type specified: riskScore.' error is thrown, set 'risc_level' to an empty string, since this feature is not enabled.
+A policy's default rule (the rule named 'Default Rule') can be imported and updated as a custom rule, but it can not be created, renamed or deleted.
+Okta manages these fields on a default rule, so values configured for them are ignored: 'priority', 'network_connection', 'network_includes',
+'network_excludes', 'users_excluded' and 'session_persistent'.
+Removing a default rule from your configuration drops it from Terraform state without deleting it from Okta.
 
 ## Example Usage
 
@@ -126,6 +134,7 @@ resource "okta_policy_rule_signon" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `system` (Boolean) Whether this is the system (default) rule of its policy. Okta creates and deletes default rules itself; Terraform can update one but can not create, rename or delete it.
 
 <a id="nestedblock--factor_sequence"></a>
 ### Nested Schema for `factor_sequence`

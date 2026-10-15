@@ -35,6 +35,10 @@ func TestAccDataSourceOktaAppOauth_read(t *testing.T) {
 					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "label", acctest.BuildResourceName(mgr.Seed)),
 					resource.TestCheckResourceAttr("data.okta_app_oauth.test", "status", idaas.StatusActive),
 					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "status", idaas.StatusActive),
+					// OKTA-1223484: dpop_bound_access_tokens is surfaced by the data source, via
+					// both the id lookup and the label lookup.
+					resource.TestCheckResourceAttr("data.okta_app_oauth.test", "dpop_bound_access_tokens", "true"),
+					resource.TestCheckResourceAttr("data.okta_app_oauth.test_label", "dpop_bound_access_tokens", "true"),
 				),
 			},
 		},
@@ -51,5 +55,6 @@ resource "okta_app_oauth" "test" {
   response_types             = ["code"]
   token_endpoint_auth_method = "client_secret_basic"
   consent_method             = "TRUSTED"
+  dpop_bound_access_tokens   = true
 }`, d)
 }

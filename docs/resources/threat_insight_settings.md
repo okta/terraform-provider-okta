@@ -19,8 +19,26 @@ resource "okta_network_zone" "ip_network_zone_example" {
 }
 
 resource "okta_threat_insight_settings" "example" {
+  action        = "block"
+  exclude_zones = [okta_network_zone.ip_network_zone_example.id]
+}
+```
+
+## Upgrading from `network_excludes`
+
+This resource was migrated from the Terraform SDKv2 to the Terraform Plugin Framework. As part of the migration, the `network_excludes` attribute was renamed to `exclude_zones`. Update existing configurations as follows:
+
+```terraform
+# Before
+resource "okta_threat_insight_settings" "example" {
   action           = "block"
   network_excludes = [okta_network_zone.ip_network_zone_example.id]
+}
+
+# After
+resource "okta_threat_insight_settings" "example" {
+  action        = "block"
+  exclude_zones = [okta_network_zone.ip_network_zone_example.id]
 }
 ```
 
@@ -33,11 +51,13 @@ resource "okta_threat_insight_settings" "example" {
 
 ### Optional
 
-- `network_excludes` (List of String) Accepts a list of Network Zone IDs. Can only accept zones of `IP` type. IPs in the excluded Network Zones aren't logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation. This ensures that traffic from known, trusted IPs isn't accidentally logged or blocked. The ordering of the network zone is not guarantee from the API sides
+- `exclude_zones` (List of String) Accepts a list of Network Zone IDs. Can only accept zones of `IP` type. IPs in the excluded Network Zones aren't logged or blocked by Okta ThreatInsight and proceed to Sign On rules evaluation. This ensures that traffic from known, trusted IPs isn't accidentally logged or blocked. The ordering of the network zone is not guaranteed from the API side.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `created` (String) Timestamp when the ThreatInsight Configuration object was created.
+- `id` (String) The unique identifier for the resource.
+- `last_updated` (String) Timestamp when the ThreatInsight Configuration object was last updated.
 
 ## Import
 

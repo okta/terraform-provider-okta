@@ -43,6 +43,46 @@ func TestAccResourceOktaAdminRoleCustom_crud(t *testing.T) {
 		})
 }
 
+func TestAccResourceOktaAdminRoleCustom_workflowPermissionAliasMigration(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAdminRoleCustom, t.Name())
+	legacy := mgr.GetFixtures("workflow_permission_legacy.tf", t)
+	alias := mgr.GetFixtures("workflow_permission_alias.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAdminRoleCustom)
+	acctest.OktaResourceTest(
+		t, resource.TestCase{
+			PreCheck:                 acctest.AccPreCheck(t),
+			ErrorCheck:               testAccErrorChecks(t),
+			ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+			CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAdminRoleCustom, doesAdminRoleCustomExist),
+			Steps: []resource.TestStep{
+				{
+					Config: legacy,
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "permissions.#", "1"),
+						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.read"),
+					),
+				},
+				{
+					// Swap to the alias label. Post-apply the framework runs a
+					// refresh + plan and fails on a non-empty plan, which is
+					// exactly the regression: the old logic deleted the
+					// permission here, requiring a second apply to re-add it.
+					Config: alias,
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "permissions.#", "1"),
+						resource.TestCheckTypeSetElemAttr(resourceName, "permissions.*", "okta.workflows.flows.read"),
+					),
+				},
+				{
+					// Explicit no-drift assertion after the migration.
+					Config:             alias,
+					PlanOnly:           true,
+					ExpectNonEmptyPlan: false,
+				},
+			},
+		})
+}
+
 func doesAdminRoleCustomExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKSupplementClient()
 	_, response, err := client.GetCustomRole(context.Background(), id)

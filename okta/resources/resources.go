@@ -53,6 +53,7 @@ const (
 	OktaIDaaSBrand                                    = "okta_brand"
 	OktaIDaaSBrands                                   = "okta_brands"
 	OktaIDaaSCaptcha                                  = "okta_captcha"
+	OktaIDaaSCaptchaOrgWide                           = "okta_org_captcha"
 	OktaIDaaSCaptchaOrgWideSettings                   = "okta_captcha_org_wide_settings"
 	OktaIDaaSDefaultPolicy                            = "okta_default_policy"
 	OktaIDaaSDomain                                   = "okta_domain"

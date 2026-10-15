@@ -6,6 +6,7 @@ resource "okta_app_oauth" "test" {
   response_types             = ["code"]
   token_endpoint_auth_method = "client_secret_basic"
   consent_method             = "TRUSTED"
+  dpop_bound_access_tokens   = true
 }
 
 data "okta_app_oauth" "test" {

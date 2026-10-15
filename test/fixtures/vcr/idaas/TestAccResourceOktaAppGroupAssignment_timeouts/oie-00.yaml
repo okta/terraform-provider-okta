@@ -25,28 +25,61 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","created":"2026-02-02T11:25:30.000Z","lastUpdated":"2026-02-02T11:25:30.000Z","lastMembershipUpdated":"2026-02-02T11:25:30.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/apps"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","created":"2026-09-08T06:11:20.000Z","lastUpdated":"2026-09-08T06:11:20.000Z","lastMembershipUpdated":"2026-09-08T06:11:20.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/apps"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:30 GMT
+                - Tue, 08 Sep 2026 06:11:20 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.107070417s
+        duration: 1.196845875s
     - id: 1
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 710
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00g13frzxzsedrdcm1d8","created":"2026-09-08T06:11:20.000Z","lastUpdated":"2026-09-08T06:11:20.000Z","lastMembershipUpdated":"2026-09-08T06:11:20.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 08 Sep 2026 06:11:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.100750166s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 677
         host: oie-00.dne-okta.com
         body: |
-            {"accessibility":{},"credentials":{"oauthClient":{"autoKeyRotation":true,"pkce_required":false,"token_endpoint_auth_method":"client_secret_basic"},"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_969119981","name":"oidc_client","settings":{"notes":{},"oauthClient":{"application_type":"web","consent_method":"TRUSTED","dpop_bound_access_tokens":false,"grant_types":["authorization_code","implicit"],"idp_initiated_login":{"default_scope":[],"mode":"DISABLED"},"issuer_mode":"ORG_URL","redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"wildcard_redirect":"DISABLED"}},"signOnMode":"OPENID_CONNECT","visibility":{"hide":{"iOS":true,"web":true}}}
+            {"accessibility":{},"credentials":{"oauthClient":{"autoKeyRotation":true,"pkce_required":false,"token_endpoint_auth_method":"client_secret_basic"},"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"}},"label":"testAcc_969119981","name":"oidc_client","settings":{"notes":{},"oauthClient":{"application_type":"web","consent_method":"TRUSTED","grant_types":["authorization_code","implicit"],"idp_initiated_login":{"default_scope":[],"mode":"DISABLED"},"issuer_mode":"ORG_URL","redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"wildcard_redirect":"DISABLED"}},"signOnMode":"OPENID_CONNECT","visibility":{"hide":{"iOS":true,"web":true}}}
         form:
             activate:
                 - "true"
@@ -65,20 +98,20 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oauj98mrx4VaCSsN1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oauj98mrx4VaCSsN1d7","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-02-02T11:25:31.000Z","created":"2026-02-02T11:25:30.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oauj98mrx4VaCSsN1d7","client_secret":"7trsoVz2bZx7yjHxLLzqdbtcRwqt7HXNn7yXDf41_XaWERnYytS_S_VRct0Zwqr0","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oauj98mrx4VaCSsN1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oa13frzzlcgZ18c41d8","orn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oa13frzzlcgZ18c41d8","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-09-08T06:11:22.000Z","created":"2026-09-08T06:11:20.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa13frzzlcgZ18c41d8","client_secret":"1YojmPU3RAebPFBtHbzczpWiLjoCjZm-1X3R55XY1yLDtcKr-YPL5n6tFklP4FB1","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oa13frzzlcgZ18c41d8/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgzCwhJaUs1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgxfqkDUtx1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/lifecycle/deactivate"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:31 GMT
+                - Tue, 08 Sep 2026 06:11:22 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.556047541s
-    - id: 2
+        duration: 2.997326583s
+    - id: 3
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -90,7 +123,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -98,20 +131,20 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","created":"2026-02-02T11:25:30.000Z","lastUpdated":"2026-02-02T11:25:30.000Z","lastMembershipUpdated":"2026-02-02T11:25:30.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/apps"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","created":"2026-09-08T06:11:20.000Z","lastUpdated":"2026-09-08T06:11:20.000Z","lastMembershipUpdated":"2026-09-08T06:11:20.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/apps"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:31 GMT
+                - Tue, 08 Sep 2026 06:11:22 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.090387791s
-    - id: 3
+        duration: 1.098038958s
+    - id: 4
       request:
         proto: HTTP/1.1
         proto_major: 1
@@ -127,7 +160,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oauj98mrx4VaCSsN1d7/settings/oauth/idToken
+        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oa13frzzlcgZ18c41d8/settings/oauth/idToken
         method: POST
       response:
         proto: HTTP/2.0
@@ -141,45 +174,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:32 GMT
+                - Tue, 08 Sep 2026 06:11:23 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.384568958s
-    - id: 4
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: -1
-        uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","created":"2026-02-02T11:25:30.000Z","lastUpdated":"2026-02-02T11:25:30.000Z","lastMembershipUpdated":"2026-02-02T11:25:30.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/apps"}}}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Mon, 02 Feb 2026 11:25:32 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.10648025s
+        duration: 1.448766334s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -199,19 +199,19 @@ interactions:
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"id":"00otivnuq1X5554yc1d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":false,"desktopMFAEnabled":false,"itpEnabled":false}}'
+        body: '{"id":"00onkw1sbuAh3Q06I1d7","cell":"op3","_links":{"organization":{"href":"https://oie-00.dne-okta.com"}},"pipeline":"idx","settings":{"analyticsCollectionEnabled":false,"bugReportingEnabled":true,"omEnabled":false,"pssoEnabled":true,"desktopMFAEnabled":true,"itpEnabled":true}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:33 GMT
+                - Tue, 08 Sep 2026 06:11:24 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.080538292s
+        duration: 1.087755041s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -235,21 +235,21 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '[{"id":"rsttivnuus97Z2Ua81d7","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuus97Z2Ua81d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuuz4MSxGin1d7","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuuz4MSxGin1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuv2yDnkaOF1d7","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:37.000Z","lastUpdated":"2026-01-06T09:19:37.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuv2yDnkaOF1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuvg01CxhjA1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2026-01-06T09:19:38.000Z","lastUpdated":"2026-01-06T09:19:38.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttivnuwgnZVG5Un1d7","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:19:39.000Z","lastUpdated":"2026-01-06T09:19:39.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7","hints":{"allow":["GET"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuwgnZVG5Un1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rsttiw5aaeJ48m2Zv1d7","status":"ACTIVE","name":"Case-OKTA-1059814-1","priority":1,"system":false,"conditions":null,"created":"2026-01-06T09:27:38.000Z","lastUpdated":"2026-01-06T09:27:38.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttiw5aaeJ48m2Zv1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttmdzj9uWJqn1Ci1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-01-08T05:12:17.000Z","lastUpdated":"2026-01-08T05:12:17.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttmdzj9uWJqn1Ci1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttns08bchudC1Wi1d7","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2026-01-09T03:44:43.000Z","lastUpdated":"2026-01-09T03:44:43.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttns08bchudC1Wi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvifqwwqHh7gPr1d7","status":"ACTIVE","name":"TF - AMichaels Test","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-01-16T07:33:53.000Z","lastUpdated":"2026-01-16T07:33:53.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvifqwwqHh7gPr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttvno3t8GBjwDxN1d7","status":"ACTIVE","name":"MFA enroll policy","priority":1,"system":false,"conditions":null,"created":"2026-01-16T10:51:35.000Z","lastUpdated":"2026-01-16T10:51:35.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttvno3t8GBjwDxN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstuibbxieCTOq8vq1d7","status":"ACTIVE","name":"TF - Uber''s Test","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2026-02-01T07:50:33.000Z","lastUpdated":"2026-02-01T07:50:33.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstuibbxieCTOq8vq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
+        body: '[{"id":"rstnkw1sg2fWHAvjK1d7","status":"ACTIVE","name":"Okta Admin Console","priority":1,"system":false,"conditions":null,"created":"2025-06-26T15:51:39.000Z","lastUpdated":"2025-06-26T15:51:39.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg2fWHAvjK1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg2fWHAvjK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg2fWHAvjK1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg2fWHAvjK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstnkw1sg9IQmPCLu1d7","status":"ACTIVE","name":"Okta Dashboard","priority":1,"system":false,"conditions":null,"created":"2025-06-26T15:51:39.000Z","lastUpdated":"2025-06-26T15:51:39.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg9IQmPCLu1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg9IQmPCLu1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg9IQmPCLu1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sg9IQmPCLu1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstnkw1sgcakRr6vG1d7","status":"ACTIVE","name":"Okta Browser Plugin","priority":1,"system":false,"conditions":null,"created":"2025-06-26T15:51:39.000Z","lastUpdated":"2025-06-26T15:51:39.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgcakRr6vG1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgcakRr6vG1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgcakRr6vG1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgcakRr6vG1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstnkw1sgxfqkDUtx1d7","status":"ACTIVE","name":"Any two factors","description":"Require two factors to access.","priority":1,"system":true,"conditions":null,"created":"2025-06-26T15:51:39.000Z","lastUpdated":"2025-06-26T15:51:39.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgxfqkDUtx1d7","hints":{"allow":["GET","PUT"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgxfqkDUtx1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstnkwe1vlzSvyOpb1d7","status":"ACTIVE","name":"Okta Account Management Policy","description":"This policy defines how users must authenticate for authenticator enrollment, password reset, or unlock account. Password policy rules control whether to enforce this policy for password reset and unlock account.","priority":1,"system":false,"conditions":null,"created":"2025-06-26T15:51:41.000Z","lastUpdated":"2025-06-26T15:51:41.000Z","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkwe1vlzSvyOpb1d7","hints":{"allow":["GET"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkwe1vlzSvyOpb1d7/rules","hints":{"allow":["GET","POST"]}}},"_embedded":{"resourceType":"END_USER_ACCOUNT_MANAGEMENT"},"type":"ACCESS_POLICY"},{"id":"rstpbfm3a3IBq00o11d7","status":"ACTIVE","name":"app","priority":1,"system":false,"conditions":null,"created":"2025-08-20T15:15:14.000Z","lastUpdated":"2025-11-05T16:55:28.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstpbfm3a3IBq00o11d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstpbfm3a3IBq00o11d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstpbfm3a3IBq00o11d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstpbfm3a3IBq00o11d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstptcolp9oveKe3d1d7","status":"ACTIVE","name":"tf-test","priority":1,"system":false,"conditions":null,"created":"2025-09-05T03:40:53.000Z","lastUpdated":"2025-09-05T03:40:53.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstptcolp9oveKe3d1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstptcolp9oveKe3d1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstptcolp9oveKe3d1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstptcolp9oveKe3d1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstqx747x9rjXYwjj1d7","status":"ACTIVE","name":"OKTA-1010693-1","priority":1,"system":false,"conditions":null,"created":"2025-10-13T08:06:10.000Z","lastUpdated":"2025-10-13T08:06:10.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstqx747x9rjXYwjj1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstqx747x9rjXYwjj1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstqx747x9rjXYwjj1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstqx747x9rjXYwjj1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstrdletj1K80Nggt1d7","status":"ACTIVE","name":"Partner Admin Portal","priority":1,"system":false,"conditions":null,"created":"2025-10-29T10:04:13.000Z","lastUpdated":"2025-10-29T10:04:13.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrdletj1K80Nggt1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrdletj1K80Nggt1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrdletj1K80Nggt1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrdletj1K80Nggt1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstrjnmxgxO1EDrOd1d7","status":"ACTIVE","name":"dhiwakar_example","description":"Authentication Policy to be used on my app.","priority":1,"system":false,"conditions":null,"created":"2025-11-04T08:56:28.000Z","lastUpdated":"2025-11-06T09:39:15.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrjnmxgxO1EDrOd1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrjnmxgxO1EDrOd1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrjnmxgxO1EDrOd1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrjnmxgxO1EDrOd1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstrm0wvxsAZerwOW1d7","status":"ACTIVE","name":"dhiwakar_example_002","description":"Authentication Policy to be used on my app.","priority":1,"system":false,"conditions":null,"created":"2025-11-06T09:53:07.000Z","lastUpdated":"2025-11-06T09:53:07.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrm0wvxsAZerwOW1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrm0wvxsAZerwOW1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrm0wvxsAZerwOW1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrm0wvxsAZerwOW1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstrpm0angvCFmYaN1d7","status":"ACTIVE","name":"TF - AMichaels Test-34","description":"Test Policy.","priority":1,"system":false,"conditions":null,"created":"2025-11-10T08:48:58.000Z","lastUpdated":"2025-11-12T20:20:55.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrpm0angvCFmYaN1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrpm0angvCFmYaN1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrpm0angvCFmYaN1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstrpm0angvCFmYaN1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsts3b7i5nGuq6FII1d7","status":"ACTIVE","name":"Case:02502653","priority":1,"system":false,"conditions":null,"created":"2025-11-24T11:56:51.000Z","lastUpdated":"2025-11-24T11:56:51.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsts3b7i5nGuq6FII1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsts3b7i5nGuq6FII1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsts3b7i5nGuq6FII1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsts3b7i5nGuq6FII1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstsfz8upwQL3U1wr1d7","status":"ACTIVE","name":"xxx","priority":1,"system":false,"conditions":null,"created":"2025-12-07T08:20:41.000Z","lastUpdated":"2025-12-07T08:20:41.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstsfz8upwQL3U1wr1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstsfz8upwQL3U1wr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstsfz8upwQL3U1wr1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstsfz8upwQL3U1wr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rsttnr1lke47WiZr71d7","status":"ACTIVE","name":"Okta End User Settings","priority":1,"system":false,"conditions":null,"created":"2026-01-09T03:07:20.000Z","lastUpdated":"2026-01-09T03:07:20.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttnr1lke47WiZr71d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttnr1lke47WiZr71d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttnr1lke47WiZr71d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttnr1lke47WiZr71d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwpma1z6ykMpzCn1d7","status":"ACTIVE","name":"newpasswordpolicy001","priority":1,"system":false,"conditions":null,"created":"2026-03-25T17:05:16.000Z","lastUpdated":"2026-03-25T17:05:16.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwpma1z6ykMpzCn1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwpma1z6ykMpzCn1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwpma1z6ykMpzCn1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwpma1z6ykMpzCn1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwqeuuroOqEnG9d1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-03-26T04:36:03.000Z","lastUpdated":"2026-03-26T04:36:03.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqeuuroOqEnG9d1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqeuuroOqEnG9d1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqeuuroOqEnG9d1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqeuuroOqEnG9d1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwqhuhqdkq7ojMF1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-03-26T05:51:03.000Z","lastUpdated":"2026-03-26T05:51:03.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqhuhqdkq7ojMF1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqhuhqdkq7ojMF1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqhuhqdkq7ojMF1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqhuhqdkq7ojMF1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwqjrl0cjrrBxLK1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-03-26T06:15:19.000Z","lastUpdated":"2026-03-26T06:15:19.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqjrl0cjrrBxLK1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqjrl0cjrrBxLK1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqjrl0cjrrBxLK1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwqjrl0cjrrBxLK1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr5sclbui5m0qf1d7","status":"ACTIVE","name":"Microsoft Office 365","priority":1,"system":false,"conditions":null,"created":"2026-03-26T16:16:05.000Z","lastUpdated":"2026-03-26T16:16:05.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr5sclbui5m0qf1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr5sclbui5m0qf1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr5sclbui5m0qf1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr5sclbui5m0qf1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr7h81mANWDLZl1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA","priority":1,"system":false,"conditions":null,"created":"2026-03-26T17:01:29.000Z","lastUpdated":"2026-03-26T17:01:29.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7h81mANWDLZl1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7h81mANWDLZl1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7h81mANWDLZl1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7h81mANWDLZl1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr7xvocuIZYBOl1d7","status":"ACTIVE","name":"Microsoft Office 365 SAML","priority":1,"system":false,"conditions":null,"created":"2026-03-26T17:01:28.000Z","lastUpdated":"2026-03-26T17:01:28.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7xvocuIZYBOl1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7xvocuIZYBOl1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7xvocuIZYBOl1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr7xvocuIZYBOl1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr9aoc9WVUuMWc1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA","priority":1,"system":false,"conditions":null,"created":"2026-03-26T17:39:40.000Z","lastUpdated":"2026-03-26T17:39:40.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9aoc9WVUuMWc1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9aoc9WVUuMWc1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9aoc9WVUuMWc1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9aoc9WVUuMWc1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr9fksmm5AKmYk1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-26T17:40:29.000Z","lastUpdated":"2026-03-26T17:40:29.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9fksmm5AKmYk1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9fksmm5AKmYk1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9fksmm5AKmYk1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9fksmm5AKmYk1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwr9l0bnn3fsTLq1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-26T17:41:29.000Z","lastUpdated":"2026-03-26T17:41:29.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9l0bnn3fsTLq1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9l0bnn3fsTLq1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9l0bnn3fsTLq1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwr9l0bnn3fsTLq1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrvaa51PRjq4ao1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T02:49:10.000Z","lastUpdated":"2026-03-27T02:49:10.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvaa51PRjq4ao1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvaa51PRjq4ao1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvaa51PRjq4ao1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvaa51PRjq4ao1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrvayupPX8zkjM1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T02:49:09.000Z","lastUpdated":"2026-03-27T02:49:09.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvayupPX8zkjM1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvayupPX8zkjM1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvayupPX8zkjM1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvayupPX8zkjM1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrvdna21sVWV491d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T02:49:10.000Z","lastUpdated":"2026-03-27T02:49:10.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvdna21sVWV491d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvdna21sVWV491d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvdna21sVWV491d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrvdna21sVWV491d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwfmp6q3q1ZRs1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:13:15.000Z","lastUpdated":"2026-03-27T03:13:15.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwfmp6q3q1ZRs1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwfmp6q3q1ZRs1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwfmp6q3q1ZRs1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwfmp6q3q1ZRs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwm4xkxBWNfoi1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:13:16.000Z","lastUpdated":"2026-03-27T03:13:16.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwm4xkxBWNfoi1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwm4xkxBWNfoi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwm4xkxBWNfoi1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwm4xkxBWNfoi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwq4mbnmHfMfJ1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:20:35.000Z","lastUpdated":"2026-03-27T03:20:35.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwq4mbnmHfMfJ1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwq4mbnmHfMfJ1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwq4mbnmHfMfJ1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwq4mbnmHfMfJ1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwugib4wCCcSc1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:20:34.000Z","lastUpdated":"2026-03-27T03:20:34.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwugib4wCCcSc1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwugib4wCCcSc1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwugib4wCCcSc1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwugib4wCCcSc1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwxkjmzJR1nV61d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:31:58.000Z","lastUpdated":"2026-03-27T03:31:58.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwxkjmzJR1nV61d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwxkjmzJR1nV61d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwxkjmzJR1nV61d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwxkjmzJR1nV61d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwz6zeKSjS67r1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:31:59.000Z","lastUpdated":"2026-03-27T03:31:59.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwz6zeKSjS67r1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwz6zeKSjS67r1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwz6zeKSjS67r1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwz6zeKSjS67r1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrwzfkcq8AOatr1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T03:31:59.000Z","lastUpdated":"2026-03-27T03:31:59.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwzfkcq8AOatr1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwzfkcq8AOatr1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwzfkcq8AOatr1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrwzfkcq8AOatr1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrz5lqjrLuUr411d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T04:20:45.000Z","lastUpdated":"2026-03-27T04:20:45.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz5lqjrLuUr411d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz5lqjrLuUr411d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz5lqjrLuUr411d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz5lqjrLuUr411d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrz6vt2TXAehFC1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T04:20:44.000Z","lastUpdated":"2026-03-27T04:20:44.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz6vt2TXAehFC1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz6vt2TXAehFC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz6vt2TXAehFC1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrz6vt2TXAehFC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstwrzcwergc94mnC1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T04:20:45.000Z","lastUpdated":"2026-03-27T04:20:45.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrzcwergc94mnC1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrzcwergc94mnC1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrzcwergc94mnC1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstwrzcwergc94mnC1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws0opsxO0fTQYH1d7","status":"ACTIVE","name":"Microsoft Office 365 4","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:03:24.000Z","lastUpdated":"2026-03-27T05:03:24.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws0opsxO0fTQYH1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws0opsxO0fTQYH1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws0opsxO0fTQYH1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws0opsxO0fTQYH1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws1vj3kFBFxhRi1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:36:49.000Z","lastUpdated":"2026-03-27T05:36:49.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1vj3kFBFxhRi1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1vj3kFBFxhRi1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1vj3kFBFxhRi1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1vj3kFBFxhRi1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws1x9huUdMmLJD1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:36:49.000Z","lastUpdated":"2026-03-27T05:36:49.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1x9huUdMmLJD1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1x9huUdMmLJD1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1x9huUdMmLJD1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1x9huUdMmLJD1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws1xnxrPfwB1Xe1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:36:49.000Z","lastUpdated":"2026-03-27T05:36:49.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xnxrPfwB1Xe1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xnxrPfwB1Xe1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xnxrPfwB1Xe1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xnxrPfwB1Xe1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws1xxqigmdzjGV1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:34:47.000Z","lastUpdated":"2026-03-27T05:34:47.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xxqigmdzjGV1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xxqigmdzjGV1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xxqigmdzjGV1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws1xxqigmdzjGV1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2198pZGbqV971d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:36:50.000Z","lastUpdated":"2026-03-27T05:36:50.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2198pZGbqV971d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2198pZGbqV971d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2198pZGbqV971d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2198pZGbqV971d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws233msDy5RqpY1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:38:44.000Z","lastUpdated":"2026-03-27T05:38:44.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233msDy5RqpY1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233msDy5RqpY1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233msDy5RqpY1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233msDy5RqpY1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws233w4KQGIK3b1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:40:11.000Z","lastUpdated":"2026-03-27T05:40:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233w4KQGIK3b1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233w4KQGIK3b1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233w4KQGIK3b1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws233w4KQGIK3b1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws293b93k1EZvy1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:44:12.000Z","lastUpdated":"2026-03-27T05:44:12.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws293b93k1EZvy1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws293b93k1EZvy1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws293b93k1EZvy1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws293b93k1EZvy1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws29hlbu5fM0MH1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:42:50.000Z","lastUpdated":"2026-03-27T05:42:50.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws29hlbu5fM0MH1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws29hlbu5fM0MH1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws29hlbu5fM0MH1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws29hlbu5fM0MH1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2bcri5eKRaxk1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T05:45:02.000Z","lastUpdated":"2026-03-27T05:45:02.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2bcri5eKRaxk1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2bcri5eKRaxk1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2bcri5eKRaxk1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2bcri5eKRaxk1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2ltu2rfNGT7y1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:02:10.000Z","lastUpdated":"2026-03-27T06:02:10.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2ltu2rfNGT7y1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2ltu2rfNGT7y1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2ltu2rfNGT7y1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2ltu2rfNGT7y1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2lz9invtdDXB1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:02:11.000Z","lastUpdated":"2026-03-27T06:02:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2lz9invtdDXB1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2lz9invtdDXB1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2lz9invtdDXB1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2lz9invtdDXB1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2n07dKn2ZVLE1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:02:11.000Z","lastUpdated":"2026-03-27T06:02:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n07dKn2ZVLE1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n07dKn2ZVLE1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n07dKn2ZVLE1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n07dKn2ZVLE1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2n1s3LAVWXfz1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:02:11.000Z","lastUpdated":"2026-03-27T06:02:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n1s3LAVWXfz1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n1s3LAVWXfz1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n1s3LAVWXfz1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2n1s3LAVWXfz1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws2pj0izU87b9z1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 3","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:02:11.000Z","lastUpdated":"2026-03-27T06:02:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2pj0izU87b9z1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2pj0izU87b9z1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2pj0izU87b9z1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws2pj0izU87b9z1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws3yvugTBOwOiI1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:48:10.000Z","lastUpdated":"2026-03-27T06:48:10.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws3yvugTBOwOiI1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws3yvugTBOwOiI1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws3yvugTBOwOiI1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws3yvugTBOwOiI1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws43uoadWNrzBs1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:48:11.000Z","lastUpdated":"2026-03-27T06:48:11.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws43uoadWNrzBs1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws43uoadWNrzBs1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws43uoadWNrzBs1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws43uoadWNrzBs1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws4bpsbAoTNF1G1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:54:59.000Z","lastUpdated":"2026-03-27T06:54:59.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4bpsbAoTNF1G1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4bpsbAoTNF1G1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4bpsbAoTNF1G1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4bpsbAoTNF1G1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws4clesnZxyEAb1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 2","priority":1,"system":false,"conditions":null,"created":"2026-03-27T06:54:58.000Z","lastUpdated":"2026-03-27T06:54:58.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4clesnZxyEAb1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4clesnZxyEAb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4clesnZxyEAb1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4clesnZxyEAb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws4pq67WRR38DY1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 99","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:00:40.000Z","lastUpdated":"2026-03-27T07:00:40.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4pq67WRR38DY1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4pq67WRR38DY1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4pq67WRR38DY1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws4pq67WRR38DY1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws55jnoBuNFdTb1d7","status":"ACTIVE","name":"Microsoft Office 365 SWA 1","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:10:07.000Z","lastUpdated":"2026-03-27T07:10:07.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws55jnoBuNFdTb1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws55jnoBuNFdTb1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws55jnoBuNFdTb1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws55jnoBuNFdTb1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws5jsnsMzvEJyY1d7","status":"ACTIVE","name":"testAcc_3575239772","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:29:33.000Z","lastUpdated":"2026-03-27T07:29:33.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5jsnsMzvEJyY1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5jsnsMzvEJyY1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5jsnsMzvEJyY1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5jsnsMzvEJyY1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws5pm77V4GGkyU1d7","status":"ACTIVE","name":"testAcc_3575239772","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:28:48.000Z","lastUpdated":"2026-03-27T07:28:48.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pm77V4GGkyU1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pm77V4GGkyU1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pm77V4GGkyU1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pm77V4GGkyU1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws5pwrw7Gjwvms1d7","status":"ACTIVE","name":"testAcc_3575239772","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:35:09.000Z","lastUpdated":"2026-03-27T07:35:09.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pwrw7Gjwvms1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pwrw7Gjwvms1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pwrw7Gjwvms1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5pwrw7Gjwvms1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstws5sngnm6HW8zV1d7","status":"ACTIVE","name":"testAcc_3575239772","priority":1,"system":false,"conditions":null,"created":"2026-03-27T07:35:35.000Z","lastUpdated":"2026-03-27T07:35:35.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5sngnm6HW8zV1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5sngnm6HW8zV1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5sngnm6HW8zV1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstws5sngnm6HW8zV1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstyq0xus3FKJHbk11d7","status":"ACTIVE","name":"newpolicybydhiwakar","priority":1,"system":false,"conditions":null,"created":"2026-05-14T08:43:02.000Z","lastUpdated":"2026-05-14T08:43:02.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstyq0xus3FKJHbk11d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstyq0xus3FKJHbk11d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstyq0xus3FKJHbk11d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstyq0xus3FKJHbk11d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"},{"id":"rstzr3ncbhqC52tdY1d7","status":"ACTIVE","name":"dhiwakar-june8th-001","priority":1,"system":false,"conditions":null,"created":"2026-06-08T10:24:07.000Z","lastUpdated":"2026-06-08T10:24:07.000Z","_links":{"mappings":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstzr3ncbhqC52tdY1d7/mappings","hints":{"allow":["GET","POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstzr3ncbhqC52tdY1d7","hints":{"allow":["GET","PUT","DELETE"]}},"rules":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstzr3ncbhqC52tdY1d7/rules","hints":{"allow":["GET","POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstzr3ncbhqC52tdY1d7/lifecycle/deactivate","hints":{"allow":["POST"]}}},"_embedded":{"resourceType":"APP"},"type":"ACCESS_POLICY"}]'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:34 GMT
+                - Tue, 08 Sep 2026 06:11:26 GMT
             Link:
                 - <https://oie-00.dne-okta.com/api/v1/policies?type=ACCESS_POLICY>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.117541667s
+        duration: 1.258646417s
     - id: 7
       request:
         proto: HTTP/1.1
@@ -262,7 +262,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/policies/rsttivnuvg01CxhjA1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/policies/rstnkw1sgxfqkDUtx1d7
         method: PUT
       response:
         proto: HTTP/2.0
@@ -274,12 +274,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 02 Feb 2026 11:25:35 GMT
+                - Tue, 08 Sep 2026 06:11:27 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.152444375s
+        duration: 1.241219625s
     - id: 8
       request:
         proto: HTTP/1.1
@@ -292,7 +292,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -300,19 +300,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oauj98mrx4VaCSsN1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oauj98mrx4VaCSsN1d7","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-02-02T11:25:32.000Z","created":"2026-02-02T11:25:30.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oauj98mrx4VaCSsN1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oauj98mrx4VaCSsN1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oa13frzzlcgZ18c41d8","orn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oa13frzzlcgZ18c41d8","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-09-08T06:11:23.000Z","created":"2026-09-08T06:11:20.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa13frzzlcgZ18c41d8","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oa13frzzlcgZ18c41d8/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgzCwhJaUs1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgxfqkDUtx1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/lifecycle/deactivate"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:36 GMT
+                - Tue, 08 Sep 2026 06:11:28 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.139653375s
+        duration: 1.141211458s
     - id: 9
       request:
         proto: HTTP/1.1
@@ -325,26 +325,26 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oauj98mrx4VaCSsN1d7/settings/oauth/idToken
+        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oa13frzzlcgZ18c41d8/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"issuer":"https://oie-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oauj98mrx4VaCSsN1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://oie-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oa13frzzlcgZ18c41d8","issuerMode":"ORG_URL"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:38 GMT
+                - Tue, 08 Sep 2026 06:11:29 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.12051125s
+        duration: 1.102127041s
     - id: 10
       request:
         proto: HTTP/1.1
@@ -361,7 +361,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8
         method: PUT
       response:
         proto: HTTP/2.0
@@ -369,19 +369,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","lastUpdated":"2026-02-02T11:25:39.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","lastUpdated":"2026-09-08T06:11:30.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:39 GMT
+                - Tue, 08 Sep 2026 06:11:30 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.165877166s
+        duration: 1.186821s
     - id: 11
       request:
         proto: HTTP/1.1
@@ -394,7 +394,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -402,19 +402,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","lastUpdated":"2026-02-02T11:25:39.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","lastUpdated":"2026-09-08T06:11:30.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:40 GMT
+                - Tue, 08 Sep 2026 06:11:31 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.180545584s
+        duration: 1.12439475s
     - id: 12
       request:
         proto: HTTP/1.1
@@ -427,7 +427,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -435,19 +435,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","created":"2026-02-02T11:25:30.000Z","lastUpdated":"2026-02-02T11:25:30.000Z","lastMembershipUpdated":"2026-02-02T11:25:30.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7/apps"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","created":"2026-09-08T06:11:20.000Z","lastUpdated":"2026-09-08T06:11:20.000Z","lastMembershipUpdated":"2026-09-08T06:11:20.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_969119981","description":""},"_links":{"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://op3static2.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"owners":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/owners"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8/apps"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:41 GMT
+                - Tue, 08 Sep 2026 06:11:33 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.081846792s
+        duration: 1.116078292s
     - id: 13
       request:
         proto: HTTP/1.1
@@ -460,7 +460,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -468,19 +468,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"0oauj98mrx4VaCSsN1d7","orn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oauj98mrx4VaCSsN1d7","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-02-02T11:25:32.000Z","created":"2026-02-02T11:25:30.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"48X-q9YWQ_p1aXo_HbPDTPbEncSYjFgiJEzhmK8Kq8I"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oauj98mrx4VaCSsN1d7","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":null,"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oauj98mrx4VaCSsN1d7/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuviYmKDYit1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rsttivnuvg01CxhjA1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/lifecycle/deactivate"}}}'
+        body: '{"id":"0oa13frzzlcgZ18c41d8","orn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oa13frzzlcgZ18c41d8","name":"oidc_client","label":"testAcc_969119981","status":"ACTIVE","lastUpdated":"2026-09-08T06:11:23.000Z","created":"2026-09-08T06:11:20.000Z","accessibility":{"selfService":false,"errorRedirectUrl":null,"loginRedirectUrl":null},"visibility":{"autoLaunch":false,"autoSubmitToolbar":false,"hide":{"iOS":true,"web":true},"appLinks":{"oidc_client_link":true}},"features":[],"signOnMode":"OPENID_CONNECT","credentials":{"userNameTemplate":{"template":"${source.login}","type":"BUILT_IN"},"signing":{"kid":"sALQDM5PBTRR6dsVDGloCQexOBDrJNwQmFiZuWur7eo"},"oauthClient":{"autoKeyRotation":true,"client_id":"0oa13frzzlcgZ18c41d8","token_endpoint_auth_method":"client_secret_basic","pkce_required":false}},"universalLogout":{"status":"DISABLED","supportType":"FULL","identityStack":"NOT_SHARED","protocol":"GLOBAL_TOKEN_REVOCATION"},"settings":{"app":{},"notifications":{"vpn":{"network":{"connection":"DISABLED"},"message":null,"helpUrl":null}},"manualProvisioning":false,"implicitAssignment":false,"emOptInStatus":"NONE","notes":{"admin":null,"enduser":null},"oauthClient":{"client_uri":null,"logo_uri":null,"redirect_uris":["http://d.com/"],"response_types":["code","token","id_token"],"grant_types":["authorization_code","implicit"],"application_type":"web","consent_method":"TRUSTED","issuer_mode":"ORG_URL","idp_initiated_login":{"mode":"DISABLED","default_scope":[]},"wildcard_redirect":"DISABLED","dpop_bound_access_tokens":false,"participate_slo":false}},"_links":{"uploadLogo":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/logo","hints":{"allow":["POST"]}},"appLinks":[{"name":"oidc_client_link","href":"https://oie-00.dne-okta.com/home/oidc_client/0oa13frzzlcgZ18c41d8/aln177a159h7Zf52X0g8","type":"text/html"}],"profileEnrollment":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgzCwhJaUs1d7"},"policies":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/policies","hints":{"allow":["PUT"]}},"groups":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups"},"logo":[{"name":"medium","href":"https://op3static2.oktacdn.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png","type":"image/png"}],"clientCredentials":[{"name":"secrets","href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/credentials/secrets"}],"accessPolicy":{"href":"https://oie-00.dne-okta.com/api/v1/policies/rstnkw1sgxfqkDUtx1d7"},"users":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/users"},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/lifecycle/deactivate"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:41 GMT
+                - Tue, 08 Sep 2026 06:11:33 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.11560175s
+        duration: 1.135464875s
     - id: 14
       request:
         proto: HTTP/1.1
@@ -493,26 +493,26 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oauj98mrx4VaCSsN1d7/settings/oauth/idToken
+        url: https://oie-00.dne-okta.com/api/v1/internal/apps/0oa13frzzlcgZ18c41d8/settings/oauth/idToken
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
         content_length: -1
-        body: '{"issuer":"https://oie-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oauj98mrx4VaCSsN1d7","issuerMode":"ORG_URL"}'
+        body: '{"issuer":"https://oie-00.dne-okta.com","orgUrl":null,"customUrl":null,"audience":"0oa13frzzlcgZ18c41d8","issuerMode":"ORG_URL"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:42 GMT
+                - Tue, 08 Sep 2026 06:11:34 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.090860541s
+        duration: 1.098805625s
     - id: 15
       request:
         proto: HTTP/1.1
@@ -525,7 +525,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8
         method: GET
       response:
         proto: HTTP/2.0
@@ -533,19 +533,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"id":"00guj9da46zq3jlQf1d7","lastUpdated":"2026-02-02T11:25:39.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7"}}}'
+        body: '{"id":"00g13frzxzsedrdcm1d8","lastUpdated":"2026-09-08T06:11:30.000Z","priority":0,"profile":{},"_links":{"app":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8"},"self":{"href":"https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8"},"group":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8"}}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:44 GMT
+                - Tue, 08 Sep 2026 06:11:35 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.101332416s
+        duration: 1.121036708s
     - id: 16
       request:
         proto: HTTP/1.1
@@ -558,7 +558,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/groups/00g13frzxzsedrdcm1d8
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -570,12 +570,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 02 Feb 2026 11:25:45 GMT
+                - Tue, 08 Sep 2026 06:11:36 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.09839425s
+        duration: 1.160971166s
     - id: 17
       request:
         proto: HTTP/1.1
@@ -588,7 +588,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/groups/00guj9da46zq3jlQf1d7
+        url: https://oie-00.dne-okta.com/api/v1/groups/00g13frzxzsedrdcm1d8
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -600,12 +600,12 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 02 Feb 2026 11:25:46 GMT
+                - Tue, 08 Sep 2026 06:11:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.121628458s
+        duration: 1.119134541s
     - id: 18
       request:
         proto: HTTP/1.1
@@ -618,7 +618,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7/lifecycle/deactivate
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8/lifecycle/deactivate
         method: POST
       response:
         proto: HTTP/2.0
@@ -633,12 +633,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 02 Feb 2026 11:25:46 GMT
+                - Tue, 08 Sep 2026 06:11:38 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.150577042s
+        duration: 1.18773025s
     - id: 19
       request:
         proto: HTTP/1.1
@@ -651,7 +651,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/api/v1/apps/0oauj98mrx4VaCSsN1d7
+        url: https://oie-00.dne-okta.com/api/v1/apps/0oa13frzzlcgZ18c41d8
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -663,9 +663,9 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 02 Feb 2026 11:25:47 GMT
+                - Tue, 08 Sep 2026 06:11:39 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.3115065s
+        duration: 1.672795458s

@@ -153,6 +153,10 @@ func createPolicyRuleImporter() *schema.ResourceImporter {
 	}
 }
 
+// ensureNotDefaultRule is a create-time guard only: Okta creates a policy's default
+// rule itself, so a rule by that name can never be POSTed. Do not reintroduce it into
+// the update or delete paths, that is exactly the GH-2788 regression. Those paths key
+// off the API's `system` flag instead, since a rule's name is not authoritative.
 func ensureNotDefaultRule(d *schema.ResourceData) error {
 	return utils.EnsureNotDefault(d, "Rule")
 }
@@ -208,33 +212,73 @@ func syncRuleFromUpstream(d *schema.ResourceData, rule *sdk.SdkPolicyRule) error
 	_ = d.Set("name", rule.Name)
 	_ = d.Set("status", rule.Status)
 	_ = d.Set("priority", rule.Priority)
-	_ = d.Set("network_connection", rule.Conditions.Network.Connection)
+	_ = d.Set("system", utils.BoolFromBoolPtr(rule.System))
+	// A policy's default (system) rule can come back with sparse or entirely absent
+	// conditions, so substitute the schema defaults for anything the API omitted.
+	network := &sdk.PolicyNetworkCondition{Connection: "ANYWHERE"}
+	var usersExcluded []string
+	if rule.Conditions != nil {
+		if rule.Conditions.Network != nil {
+			network = rule.Conditions.Network
+		}
+		if rule.Conditions.People != nil && rule.Conditions.People.Users != nil {
+			usersExcluded = rule.Conditions.People.Users.Exclude
+		}
+	}
+	_ = d.Set("network_connection", network.Connection)
 	m := map[string]interface{}{
-		"users_excluded": utils.ConvertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
+		"users_excluded": utils.ConvertStringSliceToSetNullable(usersExcluded),
 	}
-	if len(rule.Conditions.Network.Include) > 0 {
-		m["network_includes"] = utils.ConvertStringSliceToInterfaceSlice(rule.Conditions.Network.Include)
+	if len(network.Include) > 0 {
+		m["network_includes"] = utils.ConvertStringSliceToInterfaceSlice(network.Include)
 	}
-	if len(rule.Conditions.Network.Exclude) > 0 {
-		m["network_excludes"] = utils.ConvertStringSliceToInterfaceSlice(rule.Conditions.Network.Exclude)
+	if len(network.Exclude) > 0 {
+		m["network_excludes"] = utils.ConvertStringSliceToInterfaceSlice(network.Exclude)
 	}
-	if rule.Conditions.Network.Connection != "ANYWHERE" {
+	if network.Connection != "ANYWHERE" {
 		return utils.SetNonPrimitives(d, m)
 	}
 	return utils.SetNonPrimitives(d, map[string]interface{}{
-		"users_excluded": utils.ConvertStringSliceToSetNullable(rule.Conditions.People.Users.Exclude),
+		"users_excluded": utils.ConvertStringSliceToSetNullable(usersExcluded),
 	})
 }
 
 func updateRule(ctx context.Context, d *schema.ResourceData, m interface{}, template sdk.SdkPolicyRule) error {
 	logger(m).Info("updating policy rule", "name", d.Get("name").(string))
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
 	policyID := d.Get("policy_id").(string)
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
 	}
+
+	// Okta allows a policy's default rule to be edited, it only forbids creating and
+	// deleting it. A few attributes are managed by Okta on that rule though, so drop
+	// them from the payload. This keys off the API's `system` flag, synced into state
+	// by the read, rather than the configured name, which is not authoritative.
+	if d.Get("system").(bool) {
+		// A default rule's conditions are read-only. Okta rejects the PUT with
+		// "Cannot modify the conditions object because it is read-only" for any value
+		// that differs from the current one, and since SdkPolicyRule.Conditions has no
+		// omitempty a nil would be sent as "conditions": null and count as a change.
+		// So fetch the rule and echo its conditions back verbatim. This GET is
+		// deliberately inside the system-rule branch: ordinary rules must not pay for
+		// it, and adding an unconditional request would invalidate every existing VCR
+		// cassette that replays a rule update.
+		upstream, err := getPolicyRule(ctx, d, m)
+		if err != nil {
+			return err
+		}
+		if upstream == nil {
+			// The rule is gone upstream and the ID has been cleared.
+			return nil
+		}
+		template.Conditions = upstream.Conditions
+		template.System = utils.BoolPtr(true)
+		// usePersistentCookie must still be SENT. It is read-only in the sense that
+		// its value can't change, but omitting it makes Okta return a 500. The schema
+		// default (false) matches what a default rule reports, so the value built from
+		// config is already correct; it just must not be stripped.
+	}
+
 	rule, _, err := getAPISupplementFromMetadata(m).UpdatePolicyRule(ctx, policyID, d.Id(), template)
 	if err != nil {
 		return err
@@ -253,6 +297,14 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 	if policyID == "" {
 		return fmt.Errorf("'policy_id' field should be set")
 	}
+	// Only drive the lifecycle when the status actually changed. Re-activating an
+	// already-active rule is a wasted call for an ordinary rule, and on a policy's
+	// default rule it fails outright with "Cannot modify the status attribute because
+	// it is read-only". The read syncs status from the API, so GetChange's old value
+	// is upstream truth rather than a guess.
+	if oldStatus, newStatus := d.GetChange("status"); oldStatus == newStatus {
+		return nil
+	}
 	if d.Get("status").(string) == StatusActive {
 		_, err := client.ActivatePolicyRule(ctx, policyID, d.Id())
 		if err != nil {
@@ -270,9 +322,6 @@ func policyRuleActivate(ctx context.Context, d *schema.ResourceData, m interface
 
 func deleteRule(ctx context.Context, d *schema.ResourceData, m interface{}, checkIsSystemPolicy bool) error {
 	logger(m).Info("deleting policy rule", "name", d.Get("name").(string))
-	if err := ensureNotDefaultRule(d); err != nil {
-		return err
-	}
 	rule, err := getPolicyRule(ctx, d, m)
 	if err != nil {
 		return err

@@ -1,116 +1,216 @@
+// Copyright 2025 - Present Okta, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package idaas
 
 import (
 	"context"
+	"net/http"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/terraform-provider-okta/okta/resources"
-	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
+	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	okta "github.com/okta/okta-sdk-golang/v6/okta"
+
+	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
-func resourceCaptcha() *schema.Resource {
-	return &schema.Resource{
-		CreateContext: resourceCaptchaCreate,
-		ReadContext:   resourceCaptchaRead,
-		UpdateContext: resourceCaptchaUpdate,
-		DeleteContext: resourceCaptchaDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Description: `Creates different types of captcha.
-		~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
-		This resource allows you to create and configure a CAPTCHA.`,
-		Schema: map[string]*schema.Schema{
-			"name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Name of the CAPTCHA",
+// Ensure interface compliance
+var (
+	_ resource.Resource                = &captchaResource{}
+	_ resource.ResourceWithConfigure   = &captchaResource{}
+	_ resource.ResourceWithImportState = &captchaResource{}
+)
+
+// CaptchaResource defines the resource implementation.
+type captchaResource struct {
+	Config *config.Config
+}
+
+// CaptchaModel describes the resource data model.
+type captchaModel struct {
+	ID        types.String `tfsdk:"id"`
+	Name      types.String `tfsdk:"name"`
+	SecretKey types.String `tfsdk:"secret_key"`
+	SiteKey   types.String `tfsdk:"site_key"`
+	Type      types.String `tfsdk:"type"`
+}
+
+func newCaptchaResource() resource.Resource {
+	return &captchaResource{}
+}
+
+func (r *captchaResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_captcha"
+}
+
+func (r *captchaResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.Config = resourceConfiguration(req, resp)
+}
+
+func (r *captchaResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "As an option to increase org security, Okta supports CAPTCHA services to prevent automated sign-in attempts.",
+		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "The unique identifier for the resource.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
-			"type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Type of the captcha. Valid values: `HCAPTCHA`, `RECAPTCHA_V2`",
+			"name": schema.StringAttribute{
+				Description: "The name of the CAPTCHA instance",
+				Optional:    true,
 			},
-			"site_key": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Site key issued from the CAPTCHA vendor to render a CAPTCHA on a page",
-			},
-			"secret_key": {
-				Type:        schema.TypeString,
-				Required:    true,
+			"secret_key": schema.StringAttribute{
+				Description: "The secret key issued from the CAPTCHA provider to perform server-side validation for a CAPTCHA token",
+				Optional:    true,
 				Sensitive:   true,
-				Description: "Secret key issued from the CAPTCHA vendor to perform server-side validation for a CAPTCHA token",
+			},
+			"site_key": schema.StringAttribute{
+				Description: "The site key issued from the CAPTCHA provider to render a CAPTCHA on a page",
+				Optional:    true,
+			},
+			"type": schema.StringAttribute{
+				Description: "The type of CAPTCHA provider",
+				Optional:    true,
 			},
 		},
 	}
 }
+func (r *captchaResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+}
 
-func resourceCaptchaCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	if providerIsClassicOrg(ctx, meta) {
-		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
+func (r *captchaResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var state captchaModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
+	id := state.ID.ValueString()
 
-	captcha, _, err := getAPISupplementFromMetadata(meta).CreateCaptcha(ctx, buildCaptcha(d))
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	result, httpResp, err := client.CAPTCHAAPI.GetCaptchaInstance(ctx, id).Execute()
 	if err != nil {
-		return diag.Errorf("failed to create CAPTCHA: %v", err)
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
+		resp.Diagnostics.AddError("Error reading captcha", err.Error())
+		return
 	}
-	d.SetId(captcha.Id)
-	return nil
+	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.Name = types.StringValue(string(result.GetName()))
+	state.SiteKey = types.StringValue(string(result.GetSiteKey()))
+	state.Type = types.StringValue(string(result.GetType()))
+
+	state.ID = types.StringValue(string(result.GetId()))
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func resourceCaptchaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	if providerIsClassicOrg(ctx, meta) {
-		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
+func (r *captchaResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var plan captchaModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	captcha, resp, err := getAPISupplementFromMetadata(meta).GetCaptcha(ctx, d.Id())
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
-		return diag.Errorf("failed to find CAPTCHA: %v", err)
-	}
-	if captcha == nil {
-		d.SetId("")
-		return nil
-	}
-	_ = d.Set("name", captcha.Name)
-	_ = d.Set("type", captcha.Type)
-	_ = d.Set("site_key", captcha.SiteKey)
-	return nil
-}
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
 
-func resourceCaptchaUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	if providerIsClassicOrg(ctx, meta) {
-		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
-	}
-
-	_, _, err := getAPISupplementFromMetadata(meta).UpdateCaptcha(ctx, d.Id(), buildCaptcha(d))
+	// Build request body from plan
+	createReq := client.CAPTCHAAPI.CreateCaptchaInstance(ctx)
+	body := okta.NewCAPTCHAInstanceWithDefaults()
+	body.SetName(plan.Name.ValueString())
+	body.SetSecretKey(plan.SecretKey.ValueString())
+	body.SetSiteKey(plan.SiteKey.ValueString())
+	body.SetType(plan.Type.ValueString())
+	createReq = createReq.Instance(*body)
+	result, _, err := createReq.Execute()
 	if err != nil {
-		return diag.Errorf("failed to update CAPTCHA: %v", err)
+		resp.Diagnostics.AddError("Error creating captcha", err.Error())
+		return
 	}
-	return nil
+	// Set ID from API response
+	plan.ID = types.StringValue(string(result.GetId()))
+	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	plan.Name = types.StringValue(string(result.GetName()))
+	plan.SiteKey = types.StringValue(string(result.GetSiteKey()))
+	plan.Type = types.StringValue(string(result.GetType()))
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
-
-func resourceCaptchaDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	if providerIsClassicOrg(ctx, meta) {
-		return resourceOIEOnlyFeatureError(resources.OktaIDaaSCaptcha)
+func (r *captchaResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var plan captchaModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	logger(meta).Info("deleting Captcha", "name", d.Get("name").(string))
-	_, err := getAPISupplementFromMetadata(meta).DeleteCaptcha(ctx, d.Id())
+	var state captchaModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	id := state.ID.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+
+	// Build request body from plan — only send changed fields
+	updateReq := client.CAPTCHAAPI.ReplaceCaptchaInstance(ctx, id)
+	updateBody := okta.NewCAPTCHAInstanceWithDefaults()
+	updateBody.SetName(plan.Name.ValueString())
+	updateBody.SetSecretKey(plan.SecretKey.ValueString())
+	updateBody.SetSiteKey(plan.SiteKey.ValueString())
+	updateBody.SetType(plan.Type.ValueString())
+	updateReq = updateReq.Instance(*updateBody)
+	result, _, err := updateReq.Execute()
 	if err != nil {
-		return diag.Errorf("failed to delete CAPTCHA: %v", err)
+		resp.Diagnostics.AddError("Error updating captcha", err.Error())
+		return
 	}
-	return nil
+	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
+	state.ID = types.StringValue(string(result.GetId()))
+	state.Name = types.StringValue(string(result.GetName()))
+	state.SiteKey = types.StringValue(string(result.GetSiteKey()))
+	state.Type = types.StringValue(string(result.GetType()))
+	state.SecretKey = plan.SecretKey
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
-func buildCaptcha(d *schema.ResourceData) sdk.Captcha {
-	return sdk.Captcha{
-		Name:      d.Get("name").(string),
-		SiteKey:   d.Get("site_key").(string),
-		SecretKey: d.Get("secret_key").(string),
-		Type:      d.Get("type").(string),
+func (r *captchaResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var state captchaModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	id := state.ID.ValueString()
+
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV6()
+	httpResp, err := client.CAPTCHAAPI.DeleteCaptchaInstance(ctx, id).Execute()
+	if err != nil {
+		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
+			return
+		}
+		resp.Diagnostics.AddError("Error deleting captcha", err.Error())
+		return
 	}
 }
