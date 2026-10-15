@@ -17,13 +17,12 @@ package okta4ai
 
 import (
 	"context"
+	okta4AI "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )

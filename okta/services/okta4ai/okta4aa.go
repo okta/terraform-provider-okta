@@ -9,15 +9,15 @@ import (
 func FWProviderResources() []func() resource.Resource {
 	rawResources := []func() resource.Resource{
 		NewDelegationLinkResource,
-		NewAiAgentsCredentialsJwkRsaResource,
+		//NewAiAgentsCredentialsJwkRsaResource,
 		NewAiAgentResource,
-		NewAiAgentsCredentialsJwkEcResource,
-		NewApiServerResource,
-		NewClientAuthSettingResource,
+		//NewAiAgentsCredentialsJwkEcResource,
+		//NewApiServerResource,
+		//NewClientAuthSettingResource,
 		NewAiAgentProviderResource,
 		NewA2aServersAuthorizationServerResource,
-		NewApiServersAuthorizationServerResource,
-		NewMcpServerResource,
+		//NewApiServersAuthorizationServerResource,
+		//NewMcpServerResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)

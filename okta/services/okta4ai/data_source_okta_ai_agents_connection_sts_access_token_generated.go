@@ -23,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
+	okta4AI "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )

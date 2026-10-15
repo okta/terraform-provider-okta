@@ -26,7 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta4AI "github.com/okta4AI/okta4AI-for-ai-sdk-golang/v1"
+	okta4aa "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -60,8 +60,7 @@ type DelegationLinkModelFromModel struct {
 
 // DelegationLinkModelToModel is the nested model for to.
 type DelegationLinkModelToModel struct {
-	AuthorizationServerOrn types.String `tfsdk:"authorization_server_orn"`
-	ResourceOrn            types.String `tfsdk:"resource_orn"`
+	ResourceOrn types.String `tfsdk:"resource_orn"`
 }
 
 func NewDelegationLinkResource() resource.Resource {
@@ -113,11 +112,6 @@ func (r *delegationLinkResource) Schema(_ context.Context, _ resource.SchemaRequ
 			"to": schema.SingleNestedBlock{
 				Description: "The target resource for the delegation link",
 				Attributes: map[string]schema.Attribute{
-					"authorization_server_orn": schema.StringAttribute{
-						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the authorization server for the target resource.",
-						Optional:    true,
-						Computed:    true,
-					},
 					"resource_orn": schema.StringAttribute{
 						Description: "The [Okta Resource Name (ORN)](/openapi/okta-management/guides/roles/#okta-resource-name-orn) of the target resource",
 						Required:    true,
@@ -140,7 +134,7 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	result, httpResp, err := client.DelegationLinksAPI.GetDelegationLink(ctx, id).Execute()
+	result, httpResp, err := client.DelegationLinksV2API.GetDelegationLinkV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
@@ -153,23 +147,26 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkModelFromModel{}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+			fromModel0.AppInstanceOrn = types.StringValue(obj.GetAppInstanceOrn())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
+			fromModel0.ClientOrn = types.StringValue(obj.GetClientOrn())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
-			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
+			fromModel0.TokenType = types.StringValue(obj.GetTokenType())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(string(obj.GetType()))
+			fromModel0.Type = types.StringValue(obj.GetType())
 		}
 		state.From = fromModel0
 	}
-	if toRaw0, ok := result.GetToOk(); ok {
+	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkModelToModel{}
-		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))
-		toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		if !state.To.ResourceOrn.IsNull() {
+			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		} else {
+			toModel0.ResourceOrn = state.To.ResourceOrn
+		}
 		state.To = toModel0
 	}
 
@@ -188,36 +185,36 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan
-	createReq := client.DelegationLinksAPI.CreateDelegationLink(ctx)
-	body := okta4AI.NewDelegationLinkCreatableWithDefaults()
+	createReq := client.DelegationLinksV2API.CreateDelegationLinkV2(ctx)
+	body := okta4aa.NewDelegationLinkCreatableV2WithDefaults()
 	if plan.From != nil {
-		var fromVal okta4AI.DelegationLinkFromCreatable
+		var fromVal okta4aa.DelegationLinkFromCreatableV2
 		variantSet := false
 		if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
-			sub := okta4AI.NewOktaAuthorizationServerDelegationLinkFromCreatableWithDefaults()
+			sub := okta4aa.NewOktaAuthorizationServerDelegationLinkFromCreatableV2WithDefaults()
 			if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
 				sub.SetClientOrn(plan.From.ClientOrn.ValueString())
 			}
 			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
-				sub.SetTokenType(plan.From.TokenType.ValueString())
+				sub.SetTokenType(okta4aa.DelegationLinkTokenTypeV2(plan.From.TokenType.ValueString()))
 			}
 			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
 				sub.SetType(plan.From.Type.ValueString())
 			}
-			fromVal = okta4AI.OktaAuthorizationServerDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
+			fromVal = okta4aa.OktaAuthorizationServerDelegationLinkFromCreatableV2AsDelegationLinkFromCreatableV2(sub)
 			variantSet = true
 		} else if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
-			sub := okta4AI.NewSamlApplicationDelegationLinkFromCreatableWithDefaults()
+			sub := okta4aa.NewSamlApplicationDelegationLinkFromCreatableV2WithDefaults()
 			if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
 				sub.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
 			}
 			if !plan.From.TokenType.IsNull() && !plan.From.TokenType.IsUnknown() {
-				sub.SetTokenType(plan.From.TokenType.ValueString())
+				sub.SetTokenType(okta4aa.DelegationLinkTokenTypeV2(plan.From.TokenType.ValueString()))
 			}
 			if !plan.From.Type.IsNull() && !plan.From.Type.IsUnknown() {
 				sub.SetType(plan.From.Type.ValueString())
 			}
-			fromVal = okta4AI.SamlApplicationDelegationLinkFromCreatableAsDelegationLinkFromCreatable(sub)
+			fromVal = okta4aa.SamlApplicationDelegationLinkFromCreatableV2AsDelegationLinkFromCreatableV2(sub)
 			variantSet = true
 		}
 		if variantSet {
@@ -226,44 +223,46 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 
 	}
 	if plan.To != nil {
-		nestedTo := okta4AI.NewDelegationLinkToCreatableWithDefaults()
-		if !plan.To.AuthorizationServerOrn.IsNull() && !plan.To.AuthorizationServerOrn.IsUnknown() {
-			nestedTo.SetAuthorizationServerOrn(plan.To.AuthorizationServerOrn.ValueString())
-		}
+		nestedTo := okta4aa.NewDelegationLinkToCreatableV2WithDefaults()
 		if !plan.To.ResourceOrn.IsNull() && !plan.To.ResourceOrn.IsUnknown() {
 			nestedTo.SetResourceOrn(plan.To.ResourceOrn.ValueString())
 		}
 		body.SetTo(*nestedTo)
 	}
-	createReq = createReq.DelegationLinkCreatable(*body)
+	createReq = createReq.DelegationLinkCreatableV2(*body)
 	result, _, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating delegation_link", err.Error())
 		return
 	}
+
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkModelFromModel{}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+			fromModel0.AppInstanceOrn = types.StringValue(obj.GetAppInstanceOrn())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
+			fromModel0.ClientOrn = types.StringValue(obj.GetClientOrn())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
-			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
+			fromModel0.TokenType = types.StringValue(obj.GetTokenType())
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(string(obj.GetType()))
+			fromModel0.Type = types.StringValue(obj.GetType())
 		}
 		plan.From = fromModel0
 	}
-	if toRaw0, ok := result.GetToOk(); ok {
+	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkModelToModel{}
-		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))
-		toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		if !plan.To.ResourceOrn.IsNull() {
+			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		} else {
+			toModel0.ResourceOrn = plan.To.ResourceOrn
+		}
 		plan.To = toModel0
 	}
 
@@ -285,7 +284,7 @@ func (r *delegationLinkResource) Delete(ctx context.Context, req resource.Delete
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	httpResp, err := client.DelegationLinksAPI.DeleteDelegationLink(ctx, id).Execute()
+	httpResp, err := client.DelegationLinksV2API.DeleteDelegationLinkV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
