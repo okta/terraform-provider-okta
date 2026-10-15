@@ -155,9 +155,13 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_policy_device_assurance_android" "test" {
-  name       = "testAcc-replace_with_uuid"
-  os_version = "12"
-  jailbreak  = false
+  name      = "testAcc-replace_with_uuid"
+  platform  = "ANDROID"
+  jailbreak = false
+
+  os_version {
+    minimum = "12"
+  }
 }
 
 resource "okta_app_signon_policy_rule" "test" {
