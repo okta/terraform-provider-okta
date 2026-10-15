@@ -128,7 +128,7 @@ type PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVers
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewPolicyDeviceAssuranceMacosResource() resource.Resource {
+func newPolicyDeviceAssuranceMacosResource() resource.Resource {
 	return &policyDeviceAssuranceMacosResource{}
 }
 
@@ -255,7 +255,7 @@ func (r *policyDeviceAssuranceMacosResource) Schema(_ context.Context, _ resourc
 				Description: "Settings for third-party signal providers (based on the `MACOS` platform)",
 				Blocks: map[string]schema.Block{
 					"device_posture_id_p": schema.SingleNestedBlock{
-						Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Device Posture IdP provider",
+						Description: "Device Posture IdP provider",
 						Attributes: map[string]schema.Attribute{
 							"compliant": schema.BoolAttribute{
 								Description: "Indicates whether the device is compliant according to the custom IDP",

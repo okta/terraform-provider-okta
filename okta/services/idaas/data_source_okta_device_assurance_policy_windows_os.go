@@ -123,7 +123,7 @@ type PolicyDeviceAssuranceWindowsDataSourceModelThirdPartySignalProvidersModelDt
 	Minimum types.String `tfsdk:"minimum"`
 }
 
-func NewPolicyDeviceAssuranceWindowsDataSource() datasource.DataSource {
+func newPolicyDeviceAssuranceWindowsDataSource() datasource.DataSource {
 	return &policyDeviceAssuranceWindowsDataSource{}
 }
 
@@ -224,7 +224,7 @@ func (d *policyDeviceAssuranceWindowsDataSource) Schema(_ context.Context, _ dat
 				Description: "Settings for third-party signal providers (based on the `WINDOWS` platform)",
 				Blocks: map[string]schema.Block{
 					"device_posture_id_p": schema.SingleNestedBlock{
-						Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Device Posture IdP provider",
+						Description: "Device Posture IdP provider",
 						Attributes: map[string]schema.Attribute{
 							"compliant": schema.BoolAttribute{
 								Description: "Indicates whether the device is compliant according to the custom IDP",

@@ -89,7 +89,7 @@ type PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevice
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewPolicyDeviceAssuranceIosDataSource() datasource.DataSource {
+func newPolicyDeviceAssuranceIosDataSource() datasource.DataSource {
 	return &policyDeviceAssuranceIosDataSource{}
 }
 
@@ -194,7 +194,7 @@ func (d *policyDeviceAssuranceIosDataSource) Schema(_ context.Context, _ datasou
 				Description: "Settings for third-party signal providers (based on the `IOS` platform)",
 				Blocks: map[string]schema.Block{
 					"device_posture_id_p": schema.SingleNestedBlock{
-						Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Device Posture IdP provider",
+						Description: "Device Posture IdP provider",
 						Attributes: map[string]schema.Attribute{
 							"compliant": schema.BoolAttribute{
 								Description: "Indicates whether the device is compliant according to the custom IDP",

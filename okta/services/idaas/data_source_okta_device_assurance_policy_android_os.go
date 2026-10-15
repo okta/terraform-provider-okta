@@ -108,7 +108,7 @@ type PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDe
 	Managed   types.Bool `tfsdk:"managed"`
 }
 
-func NewPolicyDeviceAssuranceAndroidDataSource() datasource.DataSource {
+func newPolicyDeviceAssuranceAndroidDataSource() datasource.DataSource {
 	return &policyDeviceAssuranceAndroidDataSource{}
 }
 
@@ -260,7 +260,7 @@ func (d *policyDeviceAssuranceAndroidDataSource) Schema(_ context.Context, _ dat
 						},
 					},
 					"device_posture_id_p": schema.SingleNestedBlock{
-						Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Device Posture IdP provider",
+						Description: "Device Posture IdP provider",
 						Attributes: map[string]schema.Attribute{
 							"compliant": schema.BoolAttribute{
 								Description: "Indicates whether the device is compliant according to the custom IDP",
