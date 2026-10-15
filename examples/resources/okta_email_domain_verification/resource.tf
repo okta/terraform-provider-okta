@@ -6,5 +6,5 @@ resource "okta_email_domain" "example" {
 }
 
 resource "okta_email_domain_verification" "example" {
-  email_domain_id = okta_email_domain.valid.id
+  email_domain_id = okta_email_domain.example.id
 }
