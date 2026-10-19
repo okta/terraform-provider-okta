@@ -16,6 +16,7 @@ func FWProviderResources() []func() resource.Resource {
 		//NewClientAuthSettingResource,
 		NewAiAgentProviderResource,
 		NewA2aServersAuthorizationServerResource,
+		NewAgentGatewayResource,
 		//NewApiServersAuthorizationServerResource,
 		//NewMcpServerResource,
 	}
@@ -37,5 +38,8 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewA2aServersAuthorizationServerDataSource,
 		NewMcpServerDataSource,
 		NewClientAuthSettingDataSource,
+		NewAgentGatewayDataSource,
+		NewAgentGatewaysAuthorizationServerDataSource,
+		NewAgentGatewaysToolDataSource,
 	}
 }

@@ -17,11 +17,7 @@ package okta4ai
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
-	"time"
 
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -30,7 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta4AI "github.com/okta/okta-for-ai-agents-golang/okta4aa"
+	okta4aa "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -49,18 +45,33 @@ type aiAgentResource struct {
 
 // AiAgentModel describes the resource data model.
 type aiAgentModel struct {
-	ID          types.String              `tfsdk:"id"`
-	Created     types.String              `tfsdk:"created"`
-	LastUpdated types.String              `tfsdk:"last_updated"`
-	Profile     *AiAgentModelProfileModel `tfsdk:"profile"`
-	Status      types.String              `tfsdk:"status"`
-	ResourceUrl types.String              `tfsdk:"resource_url"`
+	ID             types.String                     `tfsdk:"id"`
+	OauthClient    *AiAgentModelOauthClientModel    `tfsdk:"oauth_client"`
+	Profile        *AiAgentModelProfileModel        `tfsdk:"profile"`
+	SignOnProvider *AiAgentModelSignOnProviderModel `tfsdk:"sign_on_provider"`
+	Status         types.String                     `tfsdk:"status"`
+	OauthClientId  types.String                     `tfsdk:"oauth_client_id"`
+	ResourceUrl    types.String                     `tfsdk:"resource_url"`
+}
+
+// AiAgentModelOauthClientModel is the nested model for oauth_client.
+type AiAgentModelOauthClientModel struct {
+	ClientIdMatchPattern types.String `tfsdk:"client_id_match_pattern"`
+	Type                 types.String `tfsdk:"type"`
 }
 
 // AiAgentModelProfileModel is the nested model for profile.
 type AiAgentModelProfileModel struct {
 	Description types.String `tfsdk:"description"`
+	ExternalId  types.String `tfsdk:"external_id"`
 	Name        types.String `tfsdk:"name"`
+	Platform    types.String `tfsdk:"platform"`
+}
+
+// AiAgentModelSignOnProviderModel is the nested model for sign_on_provider.
+type AiAgentModelSignOnProviderModel struct {
+	AppInstanceId types.String `tfsdk:"app_instance_id"`
+	Type          types.String `tfsdk:"type"`
 }
 
 func NewAiAgentResource() resource.Resource {
@@ -77,24 +88,10 @@ func (r *aiAgentResource) Configure(_ context.Context, req resource.ConfigureReq
 
 func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The AI Agent Registrations API provides registration and lifecycle management operations for AI agents.",
+		Description: "The AI Agent Registrations V2 API provides registration and lifecycle management operations for AI agents.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique identifier for the resource.",
-				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"created": schema.StringAttribute{
-				Description: "Timestamp when the AI agent was created",
-				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
-			},
-			"last_updated": schema.StringAttribute{
-				Description: "Timestamp when the AI agent was updated",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
@@ -107,6 +104,13 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"oauth_client_id": schema.StringAttribute{
+				Description: "The workload principal's OAuth `clientId`.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 			"resource_url": schema.StringAttribute{
 				Description: "The resource URL for the agent-to-agent (A2A) server associated with this AI agent.",
 				Optional:    true,
@@ -114,6 +118,19 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			},
 		},
 		Blocks: map[string]schema.Block{
+			"oauth_client": schema.SingleNestedBlock{
+				Description: "Registers the AI agent as a CIMD OAuth client, using a hosted metadata URL as the client identity.",
+				Attributes: map[string]schema.Attribute{
+					"client_id_match_pattern": schema.StringAttribute{
+						Description: "The HTTPS URL of the agent's Client ID Metadata Document (CIMD).",
+						Optional:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "OAuth client type.",
+						Optional:    true,
+					},
+				},
+			},
 			"profile": schema.SingleNestedBlock{
 				Description: "AI agent profile",
 				Attributes: map[string]schema.Attribute{
@@ -121,8 +138,29 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 						Description: "Description of the AI agent",
 						Optional:    true,
 					},
+					"external_id": schema.StringAttribute{
+						Description: "Unique external ID for an AI agent",
+						Optional:    true,
+					},
 					"name": schema.StringAttribute{
 						Description: "Unique name of the AI agent",
+						Required:    true,
+					},
+					"platform": schema.StringAttribute{
+						Description: "The hosting platform of the AI agent.",
+						Optional:    true,
+					},
+				},
+			},
+			"sign_on_provider": schema.SingleNestedBlock{
+				Description: "Sign-on provider to bind to the workload principal.",
+				Attributes: map[string]schema.Attribute{
+					"app_instance_id": schema.StringAttribute{
+						Description: "ID of the app instance to bind the workload principal to.",
+						Optional:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "Type",
 						Optional:    true,
 					},
 				},
@@ -143,7 +181,7 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	result, httpResp, err := client.AgentRegistrationAPI.GetAIAgent(ctx, id).Execute()
+	result, httpResp, err := client.AgentRegistrationV2API.GetAIAgentV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
@@ -153,14 +191,45 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	state.Created = types.StringValue(result.GetCreated().Format(time.RFC3339))
-	state.LastUpdated = types.StringValue(result.GetLastUpdated().Format(time.RFC3339))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if profileRaw0, ok := result.GetProfileOk(); ok && state.Profile != nil {
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+	} else {
+		state.OauthClientId = types.StringNull()
+	}
+	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
 		profileModel0 := &AiAgentModelProfileModel{}
-		profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
-		profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		if v := string(profileRaw0.GetDescription()); v != "" {
+			profileModel0.Description = types.StringValue(v)
+		} else {
+			profileModel0.Description = types.StringNull()
+		}
+		if v := string(profileRaw0.GetExternalId()); v != "" {
+			profileModel0.ExternalId = types.StringValue(v)
+		} else {
+			profileModel0.ExternalId = types.StringNull()
+		}
+		if !state.Profile.Name.IsNull() {
+			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		} else {
+			profileModel0.Name = state.Profile.Name
+		}
+		if v := string(profileRaw0.GetPlatform()); v != "" {
+			profileModel0.Platform = types.StringValue(v)
+		} else {
+			profileModel0.Platform = types.StringNull()
+		}
 		state.Profile = profileModel0
+	}
+	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+		if !state.SignOnProvider.AppInstanceId.IsNull() {
+			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
+		} else {
+			signOnProviderModel0.AppInstanceId = state.SignOnProvider.AppInstanceId
+		}
+		state.SignOnProvider = signOnProviderModel0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
@@ -178,111 +247,111 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan
-	createReq := client.AgentRegistrationAPI.RegisterAIAgent(ctx)
-	body := okta4AI.NewCreateAIAgentRequestWithDefaults()
+	createReq := client.AgentRegistrationV2API.RegisterAIAgentV2(ctx)
+	body := okta4aa.NewCreateAIAgentRequestV2WithDefaults()
+	if plan.OauthClient != nil {
+		nestedOauthClient := okta4aa.NewWorkloadPrincipalOAuthClientCimdRequestWithDefaults()
+		if !plan.OauthClient.ClientIdMatchPattern.IsNull() && !plan.OauthClient.ClientIdMatchPattern.IsUnknown() {
+			nestedOauthClient.SetClientIdMatchPattern(plan.OauthClient.ClientIdMatchPattern.ValueString())
+		}
+		if !plan.OauthClient.Type.IsNull() && !plan.OauthClient.Type.IsUnknown() {
+			nestedOauthClient.SetType(plan.OauthClient.Type.ValueString())
+		}
+		body.SetOauthClient(*nestedOauthClient)
+	}
 	if plan.Profile != nil {
-		nestedProfile := okta4AI.NewAIAgentProfileWithDefaults()
+		nestedProfile := okta4aa.NewAIAgentProfileWithDefaults()
 		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
 			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.ExternalId.IsNull() && !plan.Profile.ExternalId.IsUnknown() {
+			nestedProfile.SetExternalId(plan.Profile.ExternalId.ValueString())
 		}
 		if !plan.Profile.Name.IsNull() && !plan.Profile.Name.IsUnknown() {
 			nestedProfile.SetName(plan.Profile.Name.ValueString())
 		}
+		if !plan.Profile.Platform.IsNull() && !plan.Profile.Platform.IsUnknown() {
+			nestedProfile.SetPlatform(plan.Profile.Platform.ValueString())
+		}
 		body.SetProfile(*nestedProfile)
 	}
 	body.SetResourceUrl(plan.ResourceUrl.ValueString())
+	if plan.SignOnProvider != nil {
+		var signOnProviderVal okta4aa.WorkloadPrincipalSignOnProviderRequest
+		variantSet := false
+		if !plan.SignOnProvider.Type.IsNull() && !plan.SignOnProvider.Type.IsUnknown() {
+			sub := okta4aa.NewWorkloadPrincipalSignOnProviderNewOidcAppWithDefaults()
+			if !plan.SignOnProvider.Type.IsNull() && !plan.SignOnProvider.Type.IsUnknown() {
+				sub.SetType(plan.SignOnProvider.Type.ValueString())
+			}
+			signOnProviderVal = okta4aa.WorkloadPrincipalSignOnProviderNewOidcAppAsWorkloadPrincipalSignOnProviderRequest(sub)
+			variantSet = true
+		} else if !plan.SignOnProvider.AppInstanceId.IsNull() && !plan.SignOnProvider.AppInstanceId.IsUnknown() {
+			sub := okta4aa.NewWorkloadPrincipalSignOnProviderExistingAppWithDefaults()
+			if !plan.SignOnProvider.AppInstanceId.IsNull() && !plan.SignOnProvider.AppInstanceId.IsUnknown() {
+				sub.SetAppInstanceId(plan.SignOnProvider.AppInstanceId.ValueString())
+			}
+			if !plan.SignOnProvider.Type.IsNull() && !plan.SignOnProvider.Type.IsUnknown() {
+				sub.SetType(plan.SignOnProvider.Type.ValueString())
+			}
+			signOnProviderVal = okta4aa.WorkloadPrincipalSignOnProviderExistingAppAsWorkloadPrincipalSignOnProviderRequest(sub)
+			variantSet = true
+		}
+		if variantSet {
+			body.SetSignOnProvider(signOnProviderVal)
+		}
+
+	}
 	createReq = createReq.Body(*body)
-	httpResp, err := createReq.Execute()
+	result, _, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating ai_agent", err.Error())
 		return
 	}
 
-	// Extract operation ID from Location header
-	locationURL := httpResp.Header.Get("Location")
-	parts := strings.Split(locationURL, "/")
-	operationID := parts[len(parts)-1]
+	// Set ID from API response
+	plan.ID = types.StringValue(string(result.GetId()))
+	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	// Poll the operation until completion with exponential backoff
-	timeout := time.After(5 * time.Minute)
-	ticker := time.NewTicker(1 * time.Second)
-	backoffDuration := 1 * time.Second
-	const maxBackoffDuration = 2 * time.Second
-	defer ticker.Stop()
-
-	var operationResult interface{}
-	for {
-		select {
-		case <-timeout:
-			resp.Diagnostics.AddError("Timeout waiting for ai_agent operation", "Operation did not complete within 5 minutes")
-			return
-		case <-ctx.Done():
-			resp.Diagnostics.AddError("Context cancelled", "Waiting for ai_agent operation was cancelled")
-			return
-		case <-ticker.C:
-			// Decode response body directly to check status
-			opResp, _, opErr := client.WorkloadPrincipalOperationsAPI.GetWorkloadPrincipalOperation(ctx, operationID).Execute()
-			if opErr != nil {
-				resp.Diagnostics.AddError("Error polling ai_agent operation status", opErr.Error())
-				return
-			}
-
-			// Parse response JSON to check status field
-			var respJSON map[string]interface{}
-			bodyBytes, _ := json.Marshal(opResp)
-			if err := json.Unmarshal(bodyBytes, &respJSON); err == nil {
-				if status, ok := respJSON["status"]; ok {
-					statusStr := fmt.Sprintf("%v", status)
-					if statusStr == "COMPLETED" {
-						operationResult = opResp
-						break
-					} else if statusStr == "FAILED" {
-						resp.Diagnostics.AddError("ai_agent operation failed", "The async operation failed to complete")
-						return
-					}
-				}
-			}
-
-			// Apply exponential backoff for next poll
-			backoffDuration = time.Duration(float64(backoffDuration) * 1.5)
-			if backoffDuration > maxBackoffDuration {
-				backoffDuration = maxBackoffDuration
-			}
-			ticker.Stop()
-			ticker = time.NewTicker(backoffDuration)
-		}
-		if operationResult != nil {
-			break
-		}
-	}
-
-	// Extract resource from operation response
-	if operationResult == nil {
-		resp.Diagnostics.AddError("Async operation error", "Operation polling completed but returned no result")
-		return
-	}
-	opResp := operationResult.(*okta4AI.WorkloadPrincipalOperationResponse)
-	if resource := opResp.Resource; resource != nil {
-		plan.ID = types.StringValue(string(resource.GetId()))
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
 	} else {
-		resp.Diagnostics.AddError("Async operation error", "Operation completed but returned no resource")
-		return
+		plan.OauthClientId = types.StringNull()
 	}
-
-	// Fetch computed fields from the resource to ensure created/updated timestamps are available
-	id := plan.ID.ValueString()
-	readResult, _, readErr := client.AgentRegistrationAPI.GetAIAgent(ctx, id).Execute()
-	if readErr == nil {
-		plan.Created = types.StringValue(readResult.GetCreated().Format(time.RFC3339))
-		plan.LastUpdated = types.StringValue(readResult.GetLastUpdated().Format(time.RFC3339))
-		plan.Status = types.StringValue(string(readResult.GetStatus()))
-		if profileRaw0, ok := readResult.GetProfileOk(); ok && plan.Profile != nil {
-			profileModel0 := &AiAgentModelProfileModel{}
-			profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
-			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
-			plan.Profile = profileModel0
+	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+		profileModel0 := &AiAgentModelProfileModel{}
+		if v := string(profileRaw0.GetDescription()); v != "" {
+			profileModel0.Description = types.StringValue(v)
+		} else {
+			profileModel0.Description = types.StringNull()
 		}
-
+		if v := string(profileRaw0.GetExternalId()); v != "" {
+			profileModel0.ExternalId = types.StringValue(v)
+		} else {
+			profileModel0.ExternalId = types.StringNull()
+		}
+		if !plan.Profile.Name.IsNull() {
+			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		} else {
+			profileModel0.Name = plan.Profile.Name
+		}
+		if v := string(profileRaw0.GetPlatform()); v != "" {
+			profileModel0.Platform = types.StringValue(v)
+		} else {
+			profileModel0.Platform = types.StringNull()
+		}
+		plan.Profile = profileModel0
+	}
+	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+		if !plan.SignOnProvider.AppInstanceId.IsNull() {
+			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
+		} else {
+			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
+		}
+		plan.SignOnProvider = signOnProviderModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -304,30 +373,78 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan — only send changed fields
-	updateReq := client.AgentRegistrationAPI.ReplaceAIAgent(ctx, id)
-	updateBody := okta4AI.NewUpdateAIAgentRequestWithDefaults()
+	updateReq := client.AgentRegistrationV2API.ReplaceAIAgentV2(ctx, id)
+	updateBody := okta4aa.NewUpdateAIAgentRequestV2WithDefaults()
 	if plan.Profile != nil {
-		nestedProfile := okta4AI.NewAIAgentProfileWithDefaults()
+		nestedProfile := okta4aa.NewAIAgentProfileWithDefaults()
 		if !plan.Profile.Description.IsNull() && !plan.Profile.Description.IsUnknown() {
 			nestedProfile.SetDescription(plan.Profile.Description.ValueString())
+		}
+		if !plan.Profile.ExternalId.IsNull() && !plan.Profile.ExternalId.IsUnknown() {
+			nestedProfile.SetExternalId(plan.Profile.ExternalId.ValueString())
 		}
 		if !plan.Profile.Name.IsNull() && !plan.Profile.Name.IsUnknown() {
 			nestedProfile.SetName(plan.Profile.Name.ValueString())
 		}
+		if !plan.Profile.Platform.IsNull() && !plan.Profile.Platform.IsUnknown() {
+			nestedProfile.SetPlatform(plan.Profile.Platform.ValueString())
+		}
 		updateBody.SetProfile(*nestedProfile)
 	}
 	updateReq = updateReq.Body(*updateBody)
-	_, err := updateReq.Execute()
+	result, _, err := updateReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating ai_agent", err.Error())
 		return
 	}
-	// Update returns no body; preserve ID from state.
-	// No response body — copy all plan fields back to state (including write-only).
-	state.Created = plan.Created
-	state.LastUpdated = plan.LastUpdated
-	state.Profile = plan.Profile
-	state.Status = plan.Status
+	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
+	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
+	// since some update endpoints return a narrower object than the GET response
+	// and overwriting with a zero value here would produce an inconsistent-result error.
+	state.ID = types.StringValue(string(result.GetId()))
+	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
+		state.Status = types.StringValue(string(*statusVal))
+	}
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+	} else {
+		state.OauthClientId = types.StringNull()
+	}
+	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+		profileModel0 := &AiAgentModelProfileModel{}
+		if v := string(profileRaw0.GetDescription()); v != "" {
+			profileModel0.Description = types.StringValue(v)
+		} else {
+			profileModel0.Description = types.StringNull()
+		}
+		if v := string(profileRaw0.GetExternalId()); v != "" {
+			profileModel0.ExternalId = types.StringValue(v)
+		} else {
+			profileModel0.ExternalId = types.StringNull()
+		}
+		if !plan.Profile.Name.IsNull() {
+			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		} else {
+			profileModel0.Name = plan.Profile.Name
+		}
+		if v := string(profileRaw0.GetPlatform()); v != "" {
+			profileModel0.Platform = types.StringValue(v)
+		} else {
+			profileModel0.Platform = types.StringNull()
+		}
+		state.Profile = profileModel0
+	}
+	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+		if !plan.SignOnProvider.AppInstanceId.IsNull() {
+			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
+		} else {
+			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
+		}
+		state.SignOnProvider = signOnProviderModel0
+	}
+
 	state.ResourceUrl = plan.ResourceUrl
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
@@ -342,7 +459,7 @@ func (r *aiAgentResource) Delete(ctx context.Context, req resource.DeleteRequest
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	httpResp, err := client.AgentRegistrationAPI.DeleteAIAgent(ctx, id).Execute()
+	httpResp, err := client.AgentRegistrationV2API.DeleteAIAgentV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return

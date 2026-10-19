@@ -14,14 +14,12 @@ type Okta4AIClient interface {
 	Okta4AISDKClient() *okta4AI.APIClient
 }
 
-// TODO(okta4ai): wire the real configuration. getV5ClientConfig returns the v5 SDK's
-// *Configuration, but okta4AI.NewAPIClient takes the okta4AI package's own *Configuration
-// (built via okta4AI.NewConfiguration(...ConfigSetter), which returns two values). Those two
-// types are unrelated, so the previous call here did not compile. Stubbed so that the rest of
-// the provider type-checks; the okta4AI client is non-functional until this is implemented.
 func newOkta4AISDKClient(c *OktaAPIConfig) (*okta4AI.APIClient, error) {
-	_ = c
-	return nil, nil
+	config, _, err := getO4AIClientConfig(c)
+	if err != nil {
+		return nil, err
+	}
+	return okta4AI.NewAPIClient(config), nil
 }
 
 func (c *okta4AIAPIClient) Okta4AISDKClient() *okta4AI.APIClient {

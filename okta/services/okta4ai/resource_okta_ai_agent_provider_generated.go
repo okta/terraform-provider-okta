@@ -17,17 +17,21 @@ package okta4ai
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta4AI "github.com/okta/okta-for-ai-agents-golang/okta4aa"
+	okta4aa "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -47,6 +51,9 @@ type aiAgentProviderResource struct {
 // AiAgentProviderModel describes the resource data model.
 type aiAgentProviderModel struct {
 	ID                      types.String                       `tfsdk:"id"`
+	Configuration           types.Map                          `tfsdk:"configuration"`
+	DeDupExpression         types.String                       `tfsdk:"de_dup_expression"`
+	ImportInProgress        types.Bool                         `tfsdk:"import_in_progress"`
 	IntegrationDate         types.String                       `tfsdk:"integration_date"`
 	LastImportDate          types.String                       `tfsdk:"last_import_date"`
 	NextScheduledImportDate types.String                       `tfsdk:"next_scheduled_import_date"`
@@ -56,8 +63,8 @@ type aiAgentProviderModel struct {
 	SourceName              types.String                       `tfsdk:"source_name"`
 	SourceOrn               types.String                       `tfsdk:"source_orn"`
 	SourceType              types.String                       `tfsdk:"source_type"`
+	Stage                   types.String                       `tfsdk:"stage"`
 	Status                  types.String                       `tfsdk:"status"`
-	Configuration           types.Map                          `tfsdk:"configuration"`
 }
 
 // AiAgentProviderModelOwnersModel is the nested model for owners.
@@ -86,13 +93,36 @@ func (r *aiAgentProviderResource) Configure(_ context.Context, req resource.Conf
 
 func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The AI Agent Providers API provides operations to help manage integrations that allow AI agents from external platforms to be imported and registered in Okta's AI Agents registry in Universal Directory.",
+		Description: "The AI Agent Providers V2 API provides operations to help manage integrations that allow AI agents from external platforms to be imported and registered in Okta's AI Agents registry in Universal Directory.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "The unique identifier for the resource.",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"configuration": schema.MapAttribute{
+				Description: "Configuration",
+				ElementType: types.StringType,
+				Required:    true,
+				PlanModifiers: []planmodifier.Map{
+					mapplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"de_dup_expression": schema.StringAttribute{
+				Description: "Expression to uniquely identify imported agents.",
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"import_in_progress": schema.BoolAttribute{
+				Description: "Whether an import job for this provider is currently queued or running.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"integration_date": schema.StringAttribute{
@@ -144,18 +174,20 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"stage": schema.StringAttribute{
+				Description: "Preview option to unify identity for imported agents.",
+				Optional:    true,
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 			"status": schema.StringAttribute{
 				Description: "The status of the AI agent provider",
 				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
-			},
-			"configuration": schema.MapAttribute{
-				Description: "Configuration",
-				ElementType: types.StringType,
-				Required:    true,
-				Sensitive:   true,
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -202,7 +234,7 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	result, httpResp, err := client.AgentProvidersAPI.GetAIAgentProvider(ctx, id).Execute()
+	result, httpResp, err := client.AgentProvidersV2API.GetAIAgentProviderV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.State.RemoveResource(ctx)
@@ -212,6 +244,17 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	if m := result.GetConfiguration(); len(m) > 0 {
+		configurationVals := make(map[string]attr.Value, len(m))
+		for k, v := range m {
+			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		state.Configuration, _ = types.MapValue(types.StringType, configurationVals)
+	} else {
+		state.Configuration = types.MapNull(types.StringType)
+	}
+	state.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
+	state.ImportInProgress = types.BoolValue(result.GetImportInProgress())
 	state.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
 	state.LastImportDate = types.StringValue(result.GetLastImportDate().Format(time.RFC3339))
 	state.NextScheduledImportDate = types.StringValue(result.GetNextScheduledImportDate().Format(time.RFC3339))
@@ -219,10 +262,23 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	state.SourceName = types.StringValue(string(result.GetSourceName()))
 	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
+	state.Stage = types.StringValue(string(result.GetStage()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if ownersRaw0, ok := result.GetOwnersOk(); ok && state.Owners != nil {
+	if result.GetConfiguration() != nil {
+		configurationAttrs := make(map[string]attr.Value)
+		for k, v := range result.GetConfiguration() {
+			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
+		state.Configuration = configurationVal
+	}
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
-		ownersModel0.GroupOrn = types.StringValue(string(ownersRaw0.GetGroupOrn()))
+		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
+			ownersModel0.GroupOrn = types.StringValue(v)
+		} else {
+			ownersModel0.GroupOrn = types.StringNull()
+		}
 		{
 			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
 			resp.Diagnostics.Append(listDiags...)
@@ -230,10 +286,18 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		}
 		state.Owners = ownersModel0
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok && state.Schedule != nil {
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
-		scheduleModel0.Cron = types.StringValue(string(scheduleRaw0.GetCron()))
-		scheduleModel0.Timezone = types.StringValue(string(scheduleRaw0.GetTimezone()))
+		if v := string(scheduleRaw0.GetCron()); v != "" {
+			scheduleModel0.Cron = types.StringValue(v)
+		} else {
+			scheduleModel0.Cron = types.StringNull()
+		}
+		if v := string(scheduleRaw0.GetTimezone()); v != "" {
+			scheduleModel0.Timezone = types.StringValue(v)
+		} else {
+			scheduleModel0.Timezone = types.StringNull()
+		}
 		state.Schedule = scheduleModel0
 	}
 
@@ -252,19 +316,23 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan
-	createReq := client.AgentProvidersAPI.CreateAIAgentProvider(ctx)
-	body := okta4AI.NewCreateAIAgentProviderRequestWithDefaults()
+	createReq := client.AgentProvidersV2API.CreateAIAgentProviderV2(ctx)
+	body := okta4aa.NewCreateAIAgentProviderRequestV2WithDefaults()
 	if !plan.Configuration.IsNull() && !plan.Configuration.IsUnknown() {
 		configurationMap := make(map[string]interface{})
 		for k, v := range plan.Configuration.Elements() {
 			if sv, ok := v.(types.String); ok {
 				configurationMap[k] = sv.ValueString()
+
 			}
 		}
 		body.SetConfiguration(configurationMap)
 	}
+	if !plan.DeDupExpression.IsNull() && !plan.DeDupExpression.IsUnknown() {
+		body.SetDeDupExpression(plan.DeDupExpression.ValueString())
+	}
 	if plan.Owners != nil {
-		nestedOwners := okta4AI.NewOwnersWithDefaults()
+		nestedOwners := okta4aa.NewOwnersWithDefaults()
 		if !plan.Owners.GroupOrn.IsNull() && !plan.Owners.GroupOrn.IsUnknown() {
 			nestedOwners.SetGroupOrn(plan.Owners.GroupOrn.ValueString())
 		}
@@ -280,7 +348,7 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 		body.SetOwners(*nestedOwners)
 	}
 	if plan.Schedule != nil {
-		nestedSchedule := okta4AI.NewScheduleWithDefaults()
+		nestedSchedule := okta4aa.NewScheduleWithDefaults()
 		if !plan.Schedule.Cron.IsNull() && !plan.Schedule.Cron.IsUnknown() {
 			nestedSchedule.SetCron(plan.Schedule.Cron.ValueString())
 		}
@@ -290,15 +358,30 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 		body.SetSchedule(*nestedSchedule)
 	}
 	body.SetSourceOrn(plan.SourceOrn.ValueString())
+	if !plan.Stage.IsNull() && !plan.Stage.IsUnknown() {
+		body.SetStage(okta4aa.AIAgentProviderStage(plan.Stage.ValueString()))
+	}
 	createReq = createReq.Body(*body)
 	result, _, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating ai_agent_provider", err.Error())
 		return
 	}
+
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	if m := result.GetConfiguration(); len(m) > 0 {
+		configurationVals := make(map[string]attr.Value, len(m))
+		for k, v := range m {
+			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		plan.Configuration, _ = types.MapValue(types.StringType, configurationVals)
+	} else {
+		plan.Configuration = types.MapNull(types.StringType)
+	}
+	plan.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
+	plan.ImportInProgress = types.BoolValue(result.GetImportInProgress())
 	plan.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
 	plan.LastImportDate = types.StringValue(result.GetLastImportDate().Format(time.RFC3339))
 	plan.NextScheduledImportDate = types.StringValue(result.GetNextScheduledImportDate().Format(time.RFC3339))
@@ -306,10 +389,24 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	plan.SourceName = types.StringValue(string(result.GetSourceName()))
 	plan.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	plan.SourceType = types.StringValue(string(result.GetSourceType()))
+	plan.Stage = types.StringValue(string(result.GetStage()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
-	if ownersRaw0, ok := result.GetOwnersOk(); ok && plan.Owners != nil {
+
+	if result.GetConfiguration() != nil {
+		configurationAttrs := make(map[string]attr.Value)
+		for k, v := range result.GetConfiguration() {
+			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
+		plan.Configuration = configurationVal
+	}
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
-		ownersModel0.GroupOrn = types.StringValue(string(ownersRaw0.GetGroupOrn()))
+		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
+			ownersModel0.GroupOrn = types.StringValue(v)
+		} else {
+			ownersModel0.GroupOrn = types.StringNull()
+		}
 		{
 			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
 			resp.Diagnostics.Append(listDiags...)
@@ -317,10 +414,18 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 		}
 		plan.Owners = ownersModel0
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok && plan.Schedule != nil {
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
-		scheduleModel0.Cron = types.StringValue(string(scheduleRaw0.GetCron()))
-		scheduleModel0.Timezone = types.StringValue(string(scheduleRaw0.GetTimezone()))
+		if v := string(scheduleRaw0.GetCron()); v != "" {
+			scheduleModel0.Cron = types.StringValue(v)
+		} else {
+			scheduleModel0.Cron = types.StringNull()
+		}
+		if v := string(scheduleRaw0.GetTimezone()); v != "" {
+			scheduleModel0.Timezone = types.StringValue(v)
+		} else {
+			scheduleModel0.Timezone = types.StringNull()
+		}
 		plan.Schedule = scheduleModel0
 	}
 
@@ -343,10 +448,13 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
 
 	// Build request body from plan — only send changed fields
-	updateReq := client.AgentProvidersAPI.ReplaceAIAgentProvider(ctx, id)
-	updateBody := okta4AI.NewReplaceAIAgentProviderRequestWithDefaults()
+	updateReq := client.AgentProvidersV2API.ReplaceAIAgentProviderV2(ctx, id)
+	updateBody := okta4aa.NewReplaceAIAgentProviderRequestV2WithDefaults()
+	if !plan.DeDupExpression.IsNull() && !plan.DeDupExpression.IsUnknown() {
+		updateBody.SetDeDupExpression(plan.DeDupExpression.ValueString())
+	}
 	if plan.Owners != nil {
-		nestedOwners := okta4AI.NewOwnersWithDefaults()
+		nestedOwners := okta4aa.NewOwnersWithDefaults()
 		if !plan.Owners.GroupOrn.IsNull() && !plan.Owners.GroupOrn.IsUnknown() {
 			nestedOwners.SetGroupOrn(plan.Owners.GroupOrn.ValueString())
 		}
@@ -362,7 +470,7 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 		updateBody.SetOwners(*nestedOwners)
 	}
 	if plan.Schedule != nil {
-		nestedSchedule := okta4AI.NewScheduleWithDefaults()
+		nestedSchedule := okta4aa.NewScheduleWithDefaults()
 		if !plan.Schedule.Cron.IsNull() && !plan.Schedule.Cron.IsUnknown() {
 			nestedSchedule.SetCron(plan.Schedule.Cron.ValueString())
 		}
@@ -371,23 +479,98 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 		}
 		updateBody.SetSchedule(*nestedSchedule)
 	}
+	if !plan.Stage.IsNull() && !plan.Stage.IsUnknown() {
+		updateBody.SetStage(okta4aa.AIAgentProviderStage(plan.Stage.ValueString()))
+	}
 	updateReq = updateReq.Body(*updateBody)
 	result, _, err := updateReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error updating ai_agent_provider", err.Error())
 		return
 	}
-	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped)
+	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
+	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
+	// since some update endpoints return a narrower object than the GET response
+	// and overwriting with a zero value here would produce an inconsistent-result error.
 	state.ID = types.StringValue(string(result.GetId()))
-	state.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
-	state.LastImportDate = types.StringValue(result.GetLastImportDate().Format(time.RFC3339))
-	state.NextScheduledImportDate = types.StringValue(result.GetNextScheduledImportDate().Format(time.RFC3339))
-	state.SourceId = types.StringValue(string(result.GetSourceId()))
-	state.SourceName = types.StringValue(string(result.GetSourceName()))
-	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
-	state.SourceType = types.StringValue(string(result.GetSourceType()))
-	state.Status = types.StringValue(string(result.GetStatus()))
-	state.Configuration = plan.Configuration
+	if m := result.GetConfiguration(); len(m) > 0 {
+		configurationVals := make(map[string]attr.Value, len(m))
+		for k, v := range m {
+			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		state.Configuration, _ = types.MapValue(types.StringType, configurationVals)
+	} else {
+		state.Configuration = types.MapNull(types.StringType)
+	}
+	if deDupExpressionVal, ok := result.GetDeDupExpressionOk(); ok && deDupExpressionVal != nil {
+		state.DeDupExpression = types.StringValue(string(*deDupExpressionVal))
+	}
+	if importInProgressVal, ok := result.GetImportInProgressOk(); ok && importInProgressVal != nil {
+		state.ImportInProgress = types.BoolValue(*importInProgressVal)
+	}
+	if integrationDateVal, ok := result.GetIntegrationDateOk(); ok && integrationDateVal != nil {
+		state.IntegrationDate = types.StringValue(integrationDateVal.Format(time.RFC3339))
+	}
+	if lastImportDateVal, ok := result.GetLastImportDateOk(); ok && lastImportDateVal != nil {
+		state.LastImportDate = types.StringValue(lastImportDateVal.Format(time.RFC3339))
+	}
+	if nextScheduledImportDateVal, ok := result.GetNextScheduledImportDateOk(); ok && nextScheduledImportDateVal != nil {
+		state.NextScheduledImportDate = types.StringValue(nextScheduledImportDateVal.Format(time.RFC3339))
+	}
+	if sourceIdVal, ok := result.GetSourceIdOk(); ok && sourceIdVal != nil {
+		state.SourceId = types.StringValue(string(*sourceIdVal))
+	}
+	if sourceNameVal, ok := result.GetSourceNameOk(); ok && sourceNameVal != nil {
+		state.SourceName = types.StringValue(string(*sourceNameVal))
+	}
+	if sourceOrnVal, ok := result.GetSourceOrnOk(); ok && sourceOrnVal != nil {
+		state.SourceOrn = types.StringValue(string(*sourceOrnVal))
+	}
+	if sourceTypeVal, ok := result.GetSourceTypeOk(); ok && sourceTypeVal != nil {
+		state.SourceType = types.StringValue(string(*sourceTypeVal))
+	}
+	if stageVal, ok := result.GetStageOk(); ok && stageVal != nil {
+		state.Stage = types.StringValue(string(*stageVal))
+	}
+	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
+		state.Status = types.StringValue(string(*statusVal))
+	}
+	if result.GetConfiguration() != nil {
+		configurationAttrs := make(map[string]attr.Value)
+		for k, v := range result.GetConfiguration() {
+			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
+		state.Configuration = configurationVal
+	}
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
+		ownersModel0 := &AiAgentProviderModelOwnersModel{}
+		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
+			ownersModel0.GroupOrn = types.StringValue(v)
+		} else {
+			ownersModel0.GroupOrn = types.StringNull()
+		}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
+			resp.Diagnostics.Append(listDiags...)
+			ownersModel0.UserOrns = listVal
+		}
+		state.Owners = ownersModel0
+	}
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
+		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
+		if v := string(scheduleRaw0.GetCron()); v != "" {
+			scheduleModel0.Cron = types.StringValue(v)
+		} else {
+			scheduleModel0.Cron = types.StringNull()
+		}
+		if v := string(scheduleRaw0.GetTimezone()); v != "" {
+			scheduleModel0.Timezone = types.StringValue(v)
+		} else {
+			scheduleModel0.Timezone = types.StringNull()
+		}
+		state.Schedule = scheduleModel0
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -401,7 +584,7 @@ func (r *aiAgentProviderResource) Delete(ctx context.Context, req resource.Delet
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	httpResp, err := client.AgentProvidersAPI.DeleteAIAgentProvider(ctx, id).Execute()
+	httpResp, err := client.AgentProvidersV2API.DeleteAIAgentProviderV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
