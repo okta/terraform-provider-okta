@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v4/okta"
+	"github.com/okta/okta-sdk-golang/v7/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -30,27 +30,29 @@ type policyDeviceAssuranceChromeOSResource struct {
 }
 
 type policyDeviceAssuranceChromeOSResourceModel struct {
-	ID                                   types.String `tfsdk:"id"`
-	Name                                 types.String `tfsdk:"name"`
-	Platform                             types.String `tfsdk:"platform"`
-	CreateDate                           types.String `tfsdk:"created_date"`
-	CreateBy                             types.String `tfsdk:"created_by"`
-	LastUpdate                           types.String `tfsdk:"last_update"`
-	LastUpdatedBy                        types.String `tfsdk:"last_updated_by"`
-	TpspAllowScreenLock                  types.Bool   `tfsdk:"tpsp_allow_screen_lock"`
-	TpspBrowserVersion                   types.String `tfsdk:"tpsp_browser_version"`
-	TpspBuiltInDNSClientEnabled          types.Bool   `tfsdk:"tpsp_builtin_dns_client_enabled"`
-	TpspChromeRemoteDesktopAppBlocked    types.Bool   `tfsdk:"tpsp_chrome_remote_desktop_app_blocked"`
-	TpspDeviceEnrollmentDomain           types.String `tfsdk:"tpsp_device_enrollment_domain"`
-	TpspDiskEncrypted                    types.Bool   `tfsdk:"tpsp_disk_encrypted"`
-	TpspKeyTrustLevel                    types.String `tfsdk:"tpsp_key_trust_level"`
-	TpspOsFirewall                       types.Bool   `tfsdk:"tpsp_os_firewall"`
-	TpspOsVersion                        types.String `tfsdk:"tpsp_os_version"`
-	TpspPasswordProtectionWarningTrigger types.String `tfsdk:"tpsp_password_proctection_warning_trigger"`
-	TpspRealtimeURLCheckMode             types.Bool   `tfsdk:"tpsp_realtime_url_check_mode"`
-	TpspSafeBrowsingProtectionLevel      types.String `tfsdk:"tpsp_safe_browsing_protection_level"`
-	TpspScreenLockSecured                types.Bool   `tfsdk:"tpsp_screen_lock_secured"`
-	TpspSiteIsolationEnabled             types.Bool   `tfsdk:"tpsp_site_isolation_enabled"`
+	ID                                   types.String                     `tfsdk:"id"`
+	Name                                 types.String                     `tfsdk:"name"`
+	Platform                             types.String                     `tfsdk:"platform"`
+	DisplayRemediationMode               types.String                     `tfsdk:"display_remediation_mode"`
+	GracePeriod                          *deviceAssuranceGracePeriodModel `tfsdk:"grace_period"`
+	CreateDate                           types.String                     `tfsdk:"created_date"`
+	CreateBy                             types.String                     `tfsdk:"created_by"`
+	LastUpdate                           types.String                     `tfsdk:"last_update"`
+	LastUpdatedBy                        types.String                     `tfsdk:"last_updated_by"`
+	TpspAllowScreenLock                  types.Bool                       `tfsdk:"tpsp_allow_screen_lock"`
+	TpspBrowserVersion                   types.String                     `tfsdk:"tpsp_browser_version"`
+	TpspBuiltInDNSClientEnabled          types.Bool                       `tfsdk:"tpsp_builtin_dns_client_enabled"`
+	TpspChromeRemoteDesktopAppBlocked    types.Bool                       `tfsdk:"tpsp_chrome_remote_desktop_app_blocked"`
+	TpspDeviceEnrollmentDomain           types.String                     `tfsdk:"tpsp_device_enrollment_domain"`
+	TpspDiskEncrypted                    types.Bool                       `tfsdk:"tpsp_disk_encrypted"`
+	TpspKeyTrustLevel                    types.String                     `tfsdk:"tpsp_key_trust_level"`
+	TpspOsFirewall                       types.Bool                       `tfsdk:"tpsp_os_firewall"`
+	TpspOsVersion                        types.String                     `tfsdk:"tpsp_os_version"`
+	TpspPasswordProtectionWarningTrigger types.String                     `tfsdk:"tpsp_password_proctection_warning_trigger"`
+	TpspRealtimeURLCheckMode             types.Bool                       `tfsdk:"tpsp_realtime_url_check_mode"`
+	TpspSafeBrowsingProtectionLevel      types.String                     `tfsdk:"tpsp_safe_browsing_protection_level"`
+	TpspScreenLockSecured                types.Bool                       `tfsdk:"tpsp_screen_lock_secured"`
+	TpspSiteIsolationEnabled             types.Bool                       `tfsdk:"tpsp_site_isolation_enabled"`
 }
 
 func (r *policyDeviceAssuranceChromeOSResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -79,6 +81,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"display_remediation_mode": deviceAssuranceDisplayRemediationModeAttribute(),
 			"tpsp_allow_screen_lock": schema.BoolAttribute{
 				Description: "Third party signal provider allow screen lock",
 				Optional:    true,
@@ -152,6 +155,9 @@ func (r *policyDeviceAssuranceChromeOSResource) Schema(_ context.Context, _ reso
 				Computed:    true,
 			},
 		},
+		Blocks: map[string]schema.Block{
+			"grace_period": deviceAssuranceGracePeriodBlock(),
+		},
 	}
 }
 
@@ -176,7 +182,8 @@ func (r *policyDeviceAssuranceChromeOSResource) Create(ctx context.Context, req 
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -203,7 +210,8 @@ func (r *policyDeviceAssuranceChromeOSResource) Read(ctx context.Context, req re
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -230,7 +238,7 @@ func (r *policyDeviceAssuranceChromeOSResource) Delete(ctx context.Context, req 
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -256,7 +264,8 @@ func (r *policyDeviceAssuranceChromeOSResource) Update(ctx context.Context, req 
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",
@@ -280,6 +289,7 @@ func buildDeviceAssuranceChromeOSPolicyRequest(model policyDeviceAssuranceChrome
 	chromeOS := &okta.DeviceAssuranceChromeOSPlatform{}
 	chromeOS.SetName(model.Name.ValueString())
 	chromeOS.SetPlatform("CHROMEOS")
+	applyDeviceAssuranceRemediation(&chromeOS.DeviceAssurance, model.DisplayRemediationMode, model.GracePeriod)
 
 	var thirdPartySignalProviders okta.DeviceAssuranceChromeOSPlatformAllOfThirdPartySignalProviders
 	var dtc okta.DTCChromeOS
@@ -324,6 +334,7 @@ func mapDeviceAssuranceChromeOSToState(data *okta.ListDeviceAssurancePolicies200
 	state.ID = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.Id)
 	state.Name = types.StringPointerValue(data.DeviceAssuranceChromeOSPlatform.Name)
 	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceChromeOSPlatform.Platform))
+	state.DisplayRemediationMode, state.GracePeriod = deviceAssuranceRemediationToState(&data.DeviceAssuranceChromeOSPlatform.DeviceAssurance, state.DisplayRemediationMode)
 
 	if _, ok := data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.GetDtcOk(); ok {
 		state.TpspAllowScreenLock = types.BoolPointerValue(data.DeviceAssuranceChromeOSPlatform.ThirdPartySignalProviders.Dtc.AllowScreenLock)

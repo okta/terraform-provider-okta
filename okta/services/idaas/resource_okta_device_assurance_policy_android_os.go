@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v4/okta"
+	"github.com/okta/okta-sdk-golang/v7/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -34,18 +34,20 @@ type policyDeviceAssuranceAndroidResource struct {
 }
 
 type policyDeviceAssuranceAndroidResourceModel struct {
-	ID                    types.String   `tfsdk:"id"`
-	Name                  types.String   `tfsdk:"name"`
-	Platform              types.String   `tfsdk:"platform"`
-	DiskEncryptionType    []types.String `tfsdk:"disk_encryption_type"`
-	JailBreak             types.Bool     `tfsdk:"jailbreak"`
-	OsVersion             types.String   `tfsdk:"os_version"`
-	SecureHardwarePresent types.Bool     `tfsdk:"secure_hardware_present"`
-	ScreenLockType        []types.String `tfsdk:"screenlock_type"`
-	CreateDate            types.String   `tfsdk:"created_date"`
-	CreateBy              types.String   `tfsdk:"created_by"`
-	LastUpdate            types.String   `tfsdk:"last_update"`
-	LastUpdatedBy         types.String   `tfsdk:"last_updated_by"`
+	ID                     types.String                     `tfsdk:"id"`
+	Name                   types.String                     `tfsdk:"name"`
+	Platform               types.String                     `tfsdk:"platform"`
+	DisplayRemediationMode types.String                     `tfsdk:"display_remediation_mode"`
+	GracePeriod            *deviceAssuranceGracePeriodModel `tfsdk:"grace_period"`
+	DiskEncryptionType     []types.String                   `tfsdk:"disk_encryption_type"`
+	JailBreak              types.Bool                       `tfsdk:"jailbreak"`
+	OsVersion              types.String                     `tfsdk:"os_version"`
+	SecureHardwarePresent  types.Bool                       `tfsdk:"secure_hardware_present"`
+	ScreenLockType         []types.String                   `tfsdk:"screenlock_type"`
+	CreateDate             types.String                     `tfsdk:"created_date"`
+	CreateBy               types.String                     `tfsdk:"created_by"`
+	LastUpdate             types.String                     `tfsdk:"last_update"`
+	LastUpdatedBy          types.String                     `tfsdk:"last_updated_by"`
 }
 
 func (r *policyDeviceAssuranceAndroidResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -74,6 +76,7 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"display_remediation_mode": deviceAssuranceDisplayRemediationModeAttribute(),
 			// use set to avoid order change as v3 does not have diff suppress func
 			"disk_encryption_type": schema.SetAttribute{
 				Description: "List of disk encryption type, can be `FULL`, `USER`",
@@ -154,6 +157,9 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 				Computed:    true,
 			},
 		},
+		Blocks: map[string]schema.Block{
+			"grace_period": deviceAssuranceGracePeriodBlock(),
+		},
 	}
 }
 
@@ -178,7 +184,8 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -205,7 +212,8 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -232,7 +240,7 @@ func (r *policyDeviceAssuranceAndroidResource) Delete(ctx context.Context, req r
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -258,7 +266,8 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",
@@ -282,6 +291,7 @@ func buildDeviceAssuranceAndroidPolicyRequest(model policyDeviceAssuranceAndroid
 	android := &okta.DeviceAssuranceAndroidPlatform{}
 	android.SetName(model.Name.ValueString())
 	android.SetPlatform("ANDROID")
+	applyDeviceAssuranceRemediation(&android.DeviceAssurance, model.DisplayRemediationMode, model.GracePeriod)
 	if len(model.DiskEncryptionType) > 0 {
 		diskEncryptionType := make([]string, 0)
 		for _, det := range model.DiskEncryptionType {
@@ -314,6 +324,7 @@ func mapDeviceAssuranceAndroidToState(data *okta.ListDeviceAssurancePolicies200R
 	state.ID = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.Id)
 	state.Name = types.StringPointerValue(data.DeviceAssuranceAndroidPlatform.Name)
 	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceAndroidPlatform.Platform))
+	state.DisplayRemediationMode, state.GracePeriod = deviceAssuranceRemediationToState(&data.DeviceAssuranceAndroidPlatform.DeviceAssurance, state.DisplayRemediationMode)
 
 	state.JailBreak = types.BoolPointerValue(data.DeviceAssuranceAndroidPlatform.Jailbreak)
 	state.SecureHardwarePresent = types.BoolPointerValue(data.DeviceAssuranceAndroidPlatform.SecureHardwarePresent)
