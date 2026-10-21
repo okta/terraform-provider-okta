@@ -347,7 +347,7 @@ resource "okta_app_signon_policy_rule" "test" {
 
 - `access` (String) Allow or deny access based on the rule conditions: ALLOW or DENY
 - `constraints` (List of String) An array that contains nested Authenticator Constraint objects that are organized by the Authenticator class
-- `custom_expression` (String) This is an optional advanced setting. If the expression is formatted incorrectly or conflicts with conditions set above, the rule may not match any users.
+- `custom_expression` (String) This is an optional advanced setting. If the expression is formatted incorrectly or conflicts with conditions set above, the rule may not match any users. When the expression references a custom user attribute managed in the same configuration, reference the `okta_user_schema_property` resource (or use `depends_on`) so the attribute is created first; the provider briefly retries while a newly created attribute becomes available to expressions.
 - `device_assurances_included` (Set of String) List of device assurance IDs to include
 - `device_is_managed` (Boolean) If the device is managed. A device is managed if it's managed by a device management system. When managed is passed, registered must also be included and must be set to true.
 - `device_is_registered` (Boolean) If the device is registered. A device is registered if the User enrolls with Okta Verify that is installed on the device.

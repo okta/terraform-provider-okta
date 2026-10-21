@@ -3,8 +3,12 @@ package idaas
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"net/http"
 	"strings"
+	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -153,7 +157,7 @@ The only difference is that these fields are immutable and can not be managed: '
 			"custom_expression": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "This is an optional advanced setting. If the expression is formatted incorrectly or conflicts with conditions set above, the rule may not match any users.",
+				Description: "This is an optional advanced setting. If the expression is formatted incorrectly or conflicts with conditions set above, the rule may not match any users. When the expression references a custom user attribute managed in the same configuration, reference the `okta_user_schema_property` resource (or use `depends_on`) so the attribute is created first; the provider briefly retries while a newly created attribute becomes available to expressions.",
 			},
 			"user_types_excluded": {
 				Type:        schema.TypeSet,
@@ -295,7 +299,13 @@ func resourceAppSignOnPolicyRuleCreate(ctx context.Context, d *schema.ResourceDa
 		return resourceOIEOnlyFeatureError(resources.OktaIDaaSAppSignOnPolicyRule)
 	}
 
-	rule, _, err := getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+	var rule *sdk.AccessPolicyRule
+	err := retryOnELPropertyNotYetVisible(ctx, d, meta, func() (*sdk.Response, error) {
+		var resp *sdk.Response
+		var err error
+		rule, resp, err = getAPISupplementFromMetadata(meta).CreateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), buildAppSignOnPolicyRule(d))
+		return resp, err
+	})
 	if err != nil {
 		return diag.Errorf("failed to create app sign on policy rule: %v", err)
 	}
@@ -423,7 +433,10 @@ func resourceAppSignOnPolicyRuleUpdate(ctx context.Context, d *schema.ResourceDa
 		// Conditions can't be set on the default/system rule
 		rule.Conditions = nil
 	}
-	_, _, err := getAPISupplementFromMetadata(meta).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
+	err := retryOnELPropertyNotYetVisible(ctx, d, meta, func() (*sdk.Response, error) {
+		_, resp, err := getAPISupplementFromMetadata(meta).UpdateAppSignOnPolicyRule(ctx, d.Get("policy_id").(string), d.Id(), rule)
+		return resp, err
+	})
 	if err != nil {
 		return diag.Errorf("failed to update app sign on policy rule: %v", err)
 	}
@@ -458,6 +471,59 @@ func resourceAppSignOnPolicyRuleDelete(ctx context.Context, d *schema.ResourceDa
 		return diag.Errorf("failed to delete app sign-on policy rule: %v", err)
 	}
 	return nil
+}
+
+// elPropertyNotYetVisibleTimeout bounds how long create/update of a rule is
+// retried while a newly created user schema property is not yet available to
+// the Expression Language validator.
+const elPropertyNotYetVisibleTimeout = 60 * time.Second
+
+// retryOnELPropertyNotYetVisible runs fn and retries it with exponential backoff
+// only when the rule has a custom_expression and the API rejects it because a
+// referenced user schema property is not yet visible to the Expression Language
+// validator. Okta propagates new schema properties to the validator
+// asynchronously, so a rule created right after its custom attribute can fail
+// even though the attribute exists. Any other error fails immediately.
+func retryOnELPropertyNotYetVisible(ctx context.Context, d *schema.ResourceData, meta interface{}, fn func() (*sdk.Response, error)) error {
+	_, hasExpression := d.GetOk("custom_expression")
+	boc := utils.NewExponentialBackOffWithContext(ctx, elPropertyNotYetVisibleTimeout)
+	return backoff.Retry(func() error {
+		resp, err := fn()
+		if err == nil {
+			return nil
+		}
+		if doNotRetry(meta, err) || !hasExpression || !IsELPropertyNotYetVisibleErr(resp, err) {
+			return backoff.Permanent(err)
+		}
+		logger(meta).Debug("custom_expression references a property not yet visible to the expression language, retrying", "error", err.Error())
+		return err
+	}, boc)
+}
+
+// IsELPropertyNotYetVisibleErr reports whether err is the validation error the
+// API returns when an Expression Language condition references a property it
+// does not (yet) know about, e.g.
+// "conditions.elCondition.condition: Invalid property foo in expression user.foo".
+func IsELPropertyNotYetVisibleErr(resp *sdk.Response, err error) bool {
+	if err == nil || resp == nil || resp.StatusCode != http.StatusBadRequest {
+		return false
+	}
+	isMatch := func(summary string) bool {
+		return strings.Contains(summary, "Invalid property") && strings.Contains(summary, "in expression")
+	}
+	var oktaErr *sdk.Error
+	if errors.As(err, &oktaErr) {
+		if oktaErr.ErrorCode != "E0000001" {
+			return false
+		}
+		for _, cause := range oktaErr.ErrorCauses {
+			if summary, ok := cause["errorSummary"].(string); ok && isMatch(summary) {
+				return true
+			}
+		}
+		return false
+	}
+	return isMatch(err.Error())
 }
 
 func buildAppSignOnPolicyRule(d *schema.ResourceData) sdk.AccessPolicyRule {

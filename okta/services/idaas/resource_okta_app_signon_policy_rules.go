@@ -1130,7 +1130,7 @@ func (r *appSignOnPolicyRulesResource) createRuleInAPI(ctx context.Context, clie
 		created, apiResp, err := client.CreateAppSignOnPolicyRule(ctx, policyID, rule)
 		if err != nil {
 			// Note: isRetryableStatusCode is only checked after ensuring apiResp != nil
-			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+			if (apiResp != nil && isRetryableStatusCode(apiResp.StatusCode)) || IsELPropertyNotYetVisibleErr(apiResp, err) {
 				return nil, err
 			}
 			return nil, backoff.Permanent(err)
@@ -1155,7 +1155,7 @@ func (r *appSignOnPolicyRulesResource) updateRuleInAPI(ctx context.Context, clie
 	return backoff.Retry(ctx, func() (*sdk.AccessPolicyRule, error) {
 		updated, apiResp, err := client.UpdateAppSignOnPolicyRule(ctx, policyID, ruleID, rule)
 		if err != nil {
-			if apiResp != nil && isRetryableStatusCode(apiResp.StatusCode) {
+			if (apiResp != nil && isRetryableStatusCode(apiResp.StatusCode)) || IsELPropertyNotYetVisibleErr(apiResp, err) {
 				return nil, err
 			}
 			return nil, backoff.Permanent(err)

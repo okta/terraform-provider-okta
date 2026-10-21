@@ -906,3 +906,101 @@ func TestAccResourceOktaAppSignOnPolicyRule_office365_client_include(t *testing.
 		},
 	})
 }
+
+// TestAccResourceOktaAppSignOnPolicyRule_custom_expression_new_user_attribute
+// creates a custom user attribute and a rule whose custom_expression references
+// it in the same apply. The API may briefly reject the expression until the
+// new attribute propagates to the expression language validator; the provider
+// should retry so a single apply succeeds. See OKTA-1288147.
+func TestAccResourceOktaAppSignOnPolicyRule_custom_expression_new_user_attribute(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRule)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRule, t.Name())
+	config := fmt.Sprintf(`
+resource "okta_user_schema_property" "test" {
+  index       = "testAcc_%d"
+  title       = "terraform acceptance test"
+  type        = "boolean"
+  description = "testing"
+}
+
+resource "okta_app_oauth" "test" {
+  label                      = "testAcc_%d"
+  type                       = "web"
+  grant_types                = ["authorization_code"]
+  redirect_uris              = ["https://example.com/callback"]
+  response_types             = ["code"]
+  token_endpoint_auth_method = "client_secret_basic"
+}
+
+data "okta_app_signon_policy" "test" {
+  app_id = okta_app_oauth.test.id
+}
+
+resource "okta_app_signon_policy_rule" "test" {
+  policy_id         = data.okta_app_signon_policy.test.id
+  name              = "testAcc_%d"
+  custom_expression = "user.${okta_user_schema_property.test.index} == true"
+  access            = "ALLOW"
+  factor_mode       = "2FA"
+  type              = "ASSURANCE"
+}`, mgr.Seed, mgr.Seed, mgr.Seed)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkAppSignOnPolicyRuleDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "custom_expression", fmt.Sprintf("user.testAcc_%d == true", mgr.Seed)),
+				),
+			},
+		},
+	})
+}
+
+func TestIsELPropertyNotYetVisibleErr(t *testing.T) {
+	resp := func(code int) *sdk.Response {
+		return &sdk.Response{Response: &http.Response{StatusCode: code}}
+	}
+	elErr := &sdk.Error{
+		ErrorCode:    "E0000001",
+		ErrorSummary: "Api validation failed: conditions.elCondition.condition",
+		ErrorCauses: []map[string]interface{}{
+			{"errorSummary": "conditions.elCondition.condition: Invalid property bTFValidate in expression user.bTFValidate"},
+		},
+	}
+	otherValidationErr := &sdk.Error{
+		ErrorCode:    "E0000001",
+		ErrorSummary: "Api validation failed: name",
+		ErrorCauses: []map[string]interface{}{
+			{"errorSummary": "name: A rule with this name already exists"},
+		},
+	}
+	tests := []struct {
+		name string
+		resp *sdk.Response
+		err  error
+		want bool
+	}{
+		{"nil error", resp(http.StatusBadRequest), nil, false},
+		{"nil response", nil, elErr, false},
+		{"el property not yet visible", resp(http.StatusBadRequest), elErr, true},
+		{"wrapped el property not yet visible", resp(http.StatusBadRequest), fmt.Errorf("wrapped: %w", elErr), true},
+		{"other validation error", resp(http.StatusBadRequest), otherValidationErr, false},
+		{"non-400 status", resp(http.StatusInternalServerError), elErr, false},
+		{"different error code", resp(http.StatusBadRequest), &sdk.Error{ErrorCode: "E0000003", ErrorCauses: elErr.ErrorCauses}, false},
+		{"plain error with matching text", resp(http.StatusBadRequest), errors.New(elErr.Error()), true},
+		{"plain error without matching text", resp(http.StatusBadRequest), errors.New("boom"), false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := idaas.IsELPropertyNotYetVisibleErr(tt.resp, tt.err); got != tt.want {
+				t.Errorf("IsELPropertyNotYetVisibleErr() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
