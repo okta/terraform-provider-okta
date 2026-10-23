@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### FEATURES
+
+* **`okta_authenticator`, `okta_policy_mfa`, `okta_policy_mfa_default`**: Added support for the Temporary Access Code (TAC) authenticator (key `tac`). `okta_authenticator` accepts `tac` as a `key` value, configured via `provider_json`; `okta_policy_mfa` and `okta_policy_mfa_default` accept a `tac` enrollment block. `okta_authenticator` and its data source now perform all authenticator operations through the Okta SDK v6, removing the resource's dependency on the provider's legacy internal SDK. [#2717](https://github.com/okta/terraform-provider-okta/issues/2717)
+
 ### BUG FIXES
 
 * **`okta_request_condition`**: Reordering the `ids` in `access_scope_settings` or `requester_settings` on an existing condition no longer fails with `Provider produced inconsistent result after apply`. Okta keeps the stored order of the groups when an update only reorders them, so the provider now keeps the configured order in state whenever the API returns the same IDs. Added, removed or replaced IDs are still reported as differences. Relates to OPE-865.
