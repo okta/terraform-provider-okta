@@ -74,3 +74,38 @@ func TestAccResourceOktaPushGroup_ad(t *testing.T) {
 		},
 	})
 }
+
+// Refreshes of many groups and push mappings are served from listings, and a
+// membership whose last_membership_updated is in state is not listed again.
+func TestAccResourceOktaPushGroup_listing(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPushGroup, t.Name())
+	config := mgr.GetFixtures("okta_push_group_listing.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("okta_push_group.p0", "status", "ACTIVE"),
+					resource.TestCheckResourceAttr("okta_push_group.p1", "status", "ACTIVE"),
+					resource.TestCheckResourceAttrSet("okta_push_group.p1", "target_group_id"),
+				),
+			},
+			{
+				// The refresh records the timestamp the next read compares.
+				RefreshState: true,
+				Check:        resource.TestCheckResourceAttrSet("okta_group_memberships.g0", "last_membership_updated"),
+			},
+			{
+				// Served from the listings, with the unchanged membership not listed:
+				// a replay fails on any request the recording did not make.
+				Config:   config,
+				PlanOnly: true,
+			},
+		},
+	})
+}
