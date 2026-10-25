@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -23,6 +24,7 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 	groupUpdate := mgr.GetFixtures("basic_group_update.tf", t)
 	deactivated := mgr.GetFixtures("basic_deactivated.tf", t)
 	name2 := acctest.BuildResourceName(mgr.Seed)
+	var ruleID string
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -44,6 +46,7 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					captureGroupRuleID(resourceName, &ruleID),
 				),
 			},
 			{
@@ -51,6 +54,9 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name2),
 					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "group_assignments.#", "1"),
+					resource.TestCheckResourceAttrPair(resourceName, "group_assignments.0", "okta_group.test_other", "id"),
+					checkGroupRuleIDUnchanged(resourceName, &ruleID),
 				),
 			},
 			{
@@ -63,6 +69,30 @@ func TestAccResourceOktaGroupRule_crud(t *testing.T) {
 			},
 		},
 	})
+}
+
+func captureGroupRuleID(resourceName string, id *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+		*id = rs.Primary.ID
+		return nil
+	}
+}
+
+func checkGroupRuleIDUnchanged(resourceName string, id *string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", resourceName)
+		}
+		if rs.Primary.ID != *id {
+			return fmt.Errorf("expected group rule to be updated in place, but it was replaced: id changed from %s to %s", *id, rs.Primary.ID)
+		}
+		return nil
+	}
 }
 
 func TestAccResourceOktaGroupRule_invalidHandle(t *testing.T) {
