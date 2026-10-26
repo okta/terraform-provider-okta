@@ -309,11 +309,26 @@ func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceDat
 		return diag.Errorf("'policy_id' field should be set")
 	}
 
+	client := getOktaV6ClientFromMetadata(meta).PolicyAPI
+
 	rule := buildPolicyRulePassword(d)
+
+	// ReplacePolicyRule is a PUT with replace semantics, so every property the
+	// request body omits is deleted upstream. The rule built from configuration
+	// only carries the properties this provider models, so read the rule first
+	// and carry the rest of it over. See GH-2960.
+	currentInner, _, err := client.GetPolicyRule(ctx, policyID, d.Id()).Execute()
+	if err != nil {
+		return diag.Errorf("failed to read password policy rule before update: %v", err)
+	}
+	if currentInner != nil {
+		preserveUnmodeledProperties(&rule, currentInner.PasswordPolicyRule)
+	}
+
 	policyRule := v6okta.PasswordPolicyRuleAsListPolicyRules200ResponseInner(&rule)
 
 	// ReplacePolicyRule is the V6 equivalent of UpdatePolicyRule (HTTP PUT).
-	updatedInner, _, err := getOktaV6ClientFromMetadata(meta).PolicyAPI.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(policyRule).Execute()
+	updatedInner, _, err := client.ReplacePolicyRule(ctx, policyID, d.Id()).PolicyRule(policyRule).Execute()
 	if err != nil {
 		return diag.Errorf("failed to update password policy rule: %v", err)
 	}
@@ -326,7 +341,6 @@ func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	// Activate or deactivate the rule to match the desired status.
-	client := getOktaV6ClientFromMetadata(meta).PolicyAPI
 	if d.Get("status").(string) == StatusActive {
 		if _, actErr := client.ActivatePolicyRule(ctx, policyID, d.Id()).Execute(); actErr != nil {
 			return diag.Errorf("failed to activate password policy rule: %v", actErr)
@@ -514,4 +528,86 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 
 	rule.SetActions(actions)
 	return *rule
+}
+
+// preserveUnmodeledProperties carries the properties Okta holds for a rule that
+// this provider's schema does not model from current, the rule as it is
+// upstream, onto built, the rule as configuration describes it. Without this the
+// PUT in the update path deletes them, silently: they are in no plan and in no
+// state, so nothing reports the loss. See GH-2960.
+//
+// The SDK sorts every property it has no field for into the AdditionalProperties
+// map of the object it was found on, and re-emits it when marshalling, so
+// copying those maps across is all it takes to round-trip them. Only unknown
+// properties travel. Everything the schema does model stays exactly as
+// configuration built it, so removing a managed attribute still removes it
+// upstream, and an object configuration leaves out is still deleted whole.
+//
+// Each node below can hold unknown properties of its own:
+//
+//	rule
+//	├── conditions
+//	│   ├── network
+//	│   └── people
+//	│       ├── users
+//	│       └── groups
+//	└── actions
+//	    ├── passwordChange
+//	    ├── selfServiceUnlock
+//	    └── selfServicePasswordReset  <- actions.selfServicePasswordReset.settings
+//	        └── requirement              lands here, the case that exposed GH-2960
+//	            ├── primary
+//	            └── stepUp
+//
+// Lists are left alone. requirement.primary.methodConstraints is the only one
+// under a password rule, and configuration owns its contents outright, so
+// pairing entries up by index would carry properties onto the wrong constraint.
+func preserveUnmodeledProperties(built, current *v6okta.PasswordPolicyRule) {
+	if built == nil || current == nil {
+		return
+	}
+	built.AdditionalProperties = current.AdditionalProperties
+
+	if conds, currentConds := built.Conditions, current.Conditions; conds != nil && currentConds != nil {
+		conds.AdditionalProperties = currentConds.AdditionalProperties
+		if network, currentNetwork := conds.Network, currentConds.Network; network != nil && currentNetwork != nil {
+			network.AdditionalProperties = currentNetwork.AdditionalProperties
+		}
+		if people, currentPeople := conds.People, currentConds.People; people != nil && currentPeople != nil {
+			people.AdditionalProperties = currentPeople.AdditionalProperties
+			if users, currentUsers := people.Users, currentPeople.Users; users != nil && currentUsers != nil {
+				users.AdditionalProperties = currentUsers.AdditionalProperties
+			}
+			if groups, currentGroups := people.Groups, currentPeople.Groups; groups != nil && currentGroups != nil {
+				groups.AdditionalProperties = currentGroups.AdditionalProperties
+			}
+		}
+	}
+
+	actions, currentActions := built.Actions, current.Actions
+	if actions == nil || currentActions == nil {
+		return
+	}
+	actions.AdditionalProperties = currentActions.AdditionalProperties
+	if change, currentChange := actions.PasswordChange, currentActions.PasswordChange; change != nil && currentChange != nil {
+		change.AdditionalProperties = currentChange.AdditionalProperties
+	}
+	if unlock, currentUnlock := actions.SelfServiceUnlock, currentActions.SelfServiceUnlock; unlock != nil && currentUnlock != nil {
+		unlock.AdditionalProperties = currentUnlock.AdditionalProperties
+	}
+
+	sspr, currentSSPR := actions.SelfServicePasswordReset, currentActions.SelfServicePasswordReset
+	if sspr == nil || currentSSPR == nil {
+		return
+	}
+	sspr.AdditionalProperties = currentSSPR.AdditionalProperties
+	if req, currentReq := sspr.Requirement, currentSSPR.Requirement; req != nil && currentReq != nil {
+		req.AdditionalProperties = currentReq.AdditionalProperties
+		if primary, currentPrimary := req.Primary, currentReq.Primary; primary != nil && currentPrimary != nil {
+			primary.AdditionalProperties = currentPrimary.AdditionalProperties
+		}
+		if stepUp, currentStepUp := req.StepUp, currentReq.StepUp; stepUp != nil && currentStepUp != nil {
+			stepUp.AdditionalProperties = currentStepUp.AdditionalProperties
+		}
+	}
 }
