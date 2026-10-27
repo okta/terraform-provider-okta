@@ -17,9 +17,11 @@ package okta4ai
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -40,6 +42,9 @@ type aiAgentProviderDataSource struct {
 // AiAgentProviderDataSourceModel describes the data source data model.
 type aiAgentProviderDataSourceModel struct {
 	ID                      types.String                                 `tfsdk:"id"`
+	Configuration           types.Map                                    `tfsdk:"configuration"`
+	DeDupExpression         types.String                                 `tfsdk:"de_dup_expression"`
+	ImportInProgress        types.Bool                                   `tfsdk:"import_in_progress"`
 	IntegrationDate         types.String                                 `tfsdk:"integration_date"`
 	LastImportDate          types.String                                 `tfsdk:"last_import_date"`
 	NextScheduledImportDate types.String                                 `tfsdk:"next_scheduled_import_date"`
@@ -49,6 +54,7 @@ type aiAgentProviderDataSourceModel struct {
 	SourceName              types.String                                 `tfsdk:"source_name"`
 	SourceOrn               types.String                                 `tfsdk:"source_orn"`
 	SourceType              types.String                                 `tfsdk:"source_type"`
+	Stage                   types.String                                 `tfsdk:"stage"`
 	Status                  types.String                                 `tfsdk:"status"`
 }
 
@@ -84,6 +90,19 @@ func (d *aiAgentProviderDataSource) Schema(_ context.Context, _ datasource.Schem
 				MarkdownDescription: "Unique identifier of the ai_agent_provider.",
 				Required:            true,
 			},
+			"configuration": schema.MapAttribute{
+				MarkdownDescription: "Configuration",
+				ElementType:         types.StringType,
+				Computed:            true,
+			},
+			"de_dup_expression": schema.StringAttribute{
+				MarkdownDescription: "Expression to uniquely identify imported agents.",
+				Computed:            true,
+			},
+			"import_in_progress": schema.BoolAttribute{
+				MarkdownDescription: "Whether an import job for this provider is currently queued or running.",
+				Computed:            true,
+			},
 			"integration_date": schema.StringAttribute{
 				MarkdownDescription: "The date and time when the AI agent provider was integrated",
 				Computed:            true,
@@ -112,6 +131,10 @@ func (d *aiAgentProviderDataSource) Schema(_ context.Context, _ datasource.Schem
 				MarkdownDescription: "The type of the source",
 				Computed:            true,
 			},
+			"stage": schema.StringAttribute{
+				MarkdownDescription: "Preview option to unify identity for imported agents.",
+				Computed:            true,
+			},
 			"status": schema.StringAttribute{
 				MarkdownDescription: "The status of the AI agent provider",
 				Computed:            true,
@@ -127,6 +150,7 @@ func (d *aiAgentProviderDataSource) Schema(_ context.Context, _ datasource.Schem
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
+						ElementType: types.StringType,
 						Computed:    true,
 					},
 				},
@@ -158,7 +182,7 @@ func (d *aiAgentProviderDataSource) Read(ctx context.Context, req datasource.Rea
 
 	client := d.Config.Okta4AIClient.Okta4AISDKClient()
 	id := state.ID.ValueString()
-	result, httpResp, err := client.AgentProvidersAPI.GetAIAgentProvider(ctx, id).Execute()
+	result, httpResp, err := client.AgentProvidersV2API.GetAIAgentProviderV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.Diagnostics.AddError("Not Found", "ai_agent_provider with the given ID was not found.")
@@ -168,6 +192,17 @@ func (d *aiAgentProviderDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 	state.ID = types.StringValue(string(result.GetId()))
+	if m := result.GetConfiguration(); len(m) > 0 {
+		configurationVals := make(map[string]attr.Value, len(m))
+		for k, v := range m {
+			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		state.Configuration, _ = types.MapValue(types.StringType, configurationVals)
+	} else {
+		state.Configuration = types.MapNull(types.StringType)
+	}
+	state.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
+	state.ImportInProgress = types.BoolValue(result.GetImportInProgress())
 	if t := result.GetIntegrationDate(); !t.IsZero() {
 		state.IntegrationDate = types.StringValue(t.Format(time.RFC3339))
 	}
@@ -181,10 +216,23 @@ func (d *aiAgentProviderDataSource) Read(ctx context.Context, req datasource.Rea
 	state.SourceName = types.StringValue(string(result.GetSourceName()))
 	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
+	state.Stage = types.StringValue(string(result.GetStage()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if ownersRaw0, ok := result.GetOwnersOk(); ok {
+	if result.GetConfiguration() != nil {
+		configurationAttrs := make(map[string]attr.Value)
+		for k, v := range result.GetConfiguration() {
+			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
+		}
+		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
+		state.Configuration = configurationVal
+	}
+	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderDataSourceModelOwnersModel{}
-		ownersModel0.GroupOrn = types.StringValue(string(ownersRaw0.GetGroupOrn()))
+		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
+			ownersModel0.GroupOrn = types.StringValue(v)
+		} else {
+			ownersModel0.GroupOrn = types.StringNull()
+		}
 		{
 			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
 			resp.Diagnostics.Append(listDiags...)
@@ -192,10 +240,18 @@ func (d *aiAgentProviderDataSource) Read(ctx context.Context, req datasource.Rea
 		}
 		state.Owners = ownersModel0
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok {
+	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderDataSourceModelScheduleModel{}
-		scheduleModel0.Cron = types.StringValue(string(scheduleRaw0.GetCron()))
-		scheduleModel0.Timezone = types.StringValue(string(scheduleRaw0.GetTimezone()))
+		if v := string(scheduleRaw0.GetCron()); v != "" {
+			scheduleModel0.Cron = types.StringValue(v)
+		} else {
+			scheduleModel0.Cron = types.StringNull()
+		}
+		if v := string(scheduleRaw0.GetTimezone()); v != "" {
+			scheduleModel0.Timezone = types.StringValue(v)
+		} else {
+			scheduleModel0.Timezone = types.StringNull()
+		}
 		state.Schedule = scheduleModel0
 	}
 

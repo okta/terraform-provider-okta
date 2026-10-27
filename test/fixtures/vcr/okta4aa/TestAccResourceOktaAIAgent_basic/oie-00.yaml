@@ -1,0 +1,235 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 107
+        host: oie-00.dne-okta.com
+        body: |
+            {"profile":{"description":"Test AI Agent","name":"test-ai-agent"},"resourceUrl":"https://example.com/api"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 597
+        body: '{"created":"2026-10-21T15:39:13Z","id":"wlpt7zg7INRHhZgExao5","lastUpdated":"2026-10-21T15:39:13Z","profile":{"description":"Test AI Agent","name":"test-ai-agent"},"_links":{"resourceServer":"https://oie-00.dne-okta.com/resource-servers/api/v1/a2a-servers/wlpt7zg7INRHhZgExao5","delegationLinks":"https://oie-00.dne-okta.com/workload-principals/api/v1/delegation-links?filter=to.resourceOrn%20eq%20%22orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt7zg7INRHhZgExao5%22"},"oauthClient":{"clientId":"wlpt7zg7INRHhZgExao5"},"status":"STAGED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "597"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 15:39:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.145001583s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 21 Oct 2026 15:39:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.632248333s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 244
+        body: '{"created":"2026-10-21T15:39:13Z","id":"wlpt7zg7INRHhZgExao5","lastUpdated":"2026-10-21T15:39:14Z","profile":{"description":"Test AI Agent","name":"test-ai-agent"},"_links":{},"oauthClient":{"clientId":"wlpt7zg7INRHhZgExao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "244"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 15:39:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.108567958s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 244
+        body: '{"created":"2026-10-21T15:39:13Z","id":"wlpt7zg7INRHhZgExao5","lastUpdated":"2026-10-21T15:39:14Z","profile":{"description":"Test AI Agent","name":"test-ai-agent"},"_links":{},"oauthClient":{"clientId":"wlpt7zg7INRHhZgExao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "244"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 15:39:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.111650708s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 244
+        body: '{"created":"2026-10-21T15:39:13Z","id":"wlpt7zg7INRHhZgExao5","lastUpdated":"2026-10-21T15:39:14Z","profile":{"description":"Test AI Agent","name":"test-ai-agent"},"_links":{},"oauthClient":{"clientId":"wlpt7zg7INRHhZgExao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "244"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 15:39:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.342411916s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 21 Oct 2026 15:39:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.114465875s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpt7zg7INRHhZgExao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 21 Oct 2026 15:39:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.188983583s

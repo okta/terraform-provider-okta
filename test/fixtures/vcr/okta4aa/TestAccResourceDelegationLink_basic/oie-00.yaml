@@ -1,0 +1,143 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 273
+        host: oie-00.dne-okta.com
+        body: |
+            {"from":{"clientOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:oidc_client:0oatkyugHHHcLBCFTao5","tokenType":"ACCESS_TOKEN","type":"OKTA_AUTHORIZATION_SERVER"},"to":{"resourceOrn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt1ulvUBdpeNxDBao5"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 404
+        body: '{"from":{"clientOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:oidc_client:0oatkyugHHHcLBCFTao5","tokenType":"ACCESS_TOKEN","type":"OKTA_AUTHORIZATION_SERVER"},"id":"dlktm379VZYqkOOywao5","to":{"authorizationServerOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:authorization_servers:ausqpwofSsBAfq27wao5","resourceOrn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt1ulvUBdpeNxDBao5"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "404"
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 25 Oct 2026 14:07:48 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.168063458s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links/dlktm379VZYqkOOywao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 404
+        body: '{"from":{"clientOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:oidc_client:0oatkyugHHHcLBCFTao5","tokenType":"ACCESS_TOKEN","type":"OKTA_AUTHORIZATION_SERVER"},"id":"dlktm379VZYqkOOywao5","to":{"authorizationServerOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:authorization_servers:ausqpwofSsBAfq27wao5","resourceOrn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt1ulvUBdpeNxDBao5"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "404"
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 25 Oct 2026 14:07:49 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.102746s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links/dlktm379VZYqkOOywao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 404
+        body: '{"from":{"clientOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:oidc_client:0oatkyugHHHcLBCFTao5","tokenType":"ACCESS_TOKEN","type":"OKTA_AUTHORIZATION_SERVER"},"id":"dlktm379VZYqkOOywao5","to":{"authorizationServerOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:authorization_servers:ausqpwofSsBAfq27wao5","resourceOrn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt1ulvUBdpeNxDBao5"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "404"
+            Content-Type:
+                - application/json
+            Date:
+                - Sun, 25 Oct 2026 14:07:51 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.091579s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links/dlktm379VZYqkOOywao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Sun, 25 Oct 2026 14:07:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.813006875s

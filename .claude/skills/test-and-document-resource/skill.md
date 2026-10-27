@@ -98,6 +98,9 @@ Use `*terraform.State` from `"github.com/hashicorp/terraform-plugin-sdk/v2/terra
 ### ImportStateVerifyIgnore
 Any field that `Read` does not map back from the API must be listed in `ImportStateVerifyIgnore`. Determine this by reading the `Read` function carefully.
 
+### Only assert attributes that exist in the schema
+Every attribute named in `TestCheckResourceAttr` / `TestCheckResourceAttrSet` must appear as a `tfsdk:"<name>"` tag in the resource or data source Go file. Do not copy assertions from a sibling resource (e.g. `orn` exists on `okta_agent_gateway` but not on `okta_ai_agent`). Add nothing beyond what the schema defines; STEP 7 verifies this.
+
 ### Provider factory
 Use `ProtoV6ProviderFactoriesForTestAcc` for Framework resources (most idaas resources generated after 2024). Use `ProtoV5ProviderFactoriesForTestAcc` for SDK v2 resources.
 
@@ -207,6 +210,23 @@ Fix any errors before proceeding. Common issues:
 - Missing import for `"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"` when using `*terraform.State`
 - `resource.State` used instead of `*terraform.State` — always use the latter
 - Missing constant in `resources.go`
+
+### Schema attribute check
+
+Confirm every asserted attribute exists in the schema. Set `TEST` to the test file and `SRC` to the resource/data source file it covers:
+
+```bash
+TEST=okta/services/<package>/<name>_test.go
+SRC=okta/services/<package>/<name>.go
+grep -oE 'TestCheckResourceAttr(Set)?\([^,]+, *"[^"]+"' "$TEST" \
+  | sed -E 's/.*, *"([^"]+)"/\1/' \
+  | tr '.' '\n' | grep -vE '^(#|[0-9]+|%)$' | sort -u \
+  | while read -r attr; do
+      grep -q "tfsdk:\"$attr\"" "$SRC" || echo "NOT IN SCHEMA: $attr"
+    done
+```
+
+Any `NOT IN SCHEMA` line must be fixed by removing the assertion, never by adding an attribute to the schema just to satisfy the test. Nested attributes are checked segment by segment; a map key may be reported falsely, so confirm those by hand.
 
 ---
 
@@ -355,6 +375,7 @@ For a **data source**, create `docs/data-sources/<name>.md` instead.
 - [ ] `ImportStateVerifyIgnore` set for any field `Read` doesn't restore
 - [ ] Fixture `.tf` file created with resource block named `"test"`
 - [ ] Compile check passes (`GOTOOLCHAIN=auto go build`)
+- [ ] Schema attribute check reports no `NOT IN SCHEMA` lines
 - [ ] VCR recording passes
 - [ ] VCR playback passes
 - [ ] Docs written with accurate schema sections and import instructions

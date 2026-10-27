@@ -1,0 +1,165 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsqqnc8ExM3ffcA0ao5/tools/emtqqnf6dkTudWZCUao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-09-17T14:12:13Z","credential":{"clientAuthSettingsId":"rscqq5hg0fjmtFtBDao5","scopes":[],"authType":"CLIENT_AUTH_SETTINGS"},"description":"Manage Okta applications: list, get, create, update, delete, activate, and deactivate application integrations.\n\nHOW TO USE:\n1. Call operation=''list_actions'' (no other args) to see every supported action.\n2. Call operation=''describe_action'' with action=<name> to view full details — the requestParams / body schema and an example envelope. Always describe an action before executing it.\n3. Call the chosen action with operation=''execute_action'', action=<name>, and the matching envelope fields (requestParams / body).\nNote: list actions are paginated — ''limit'' defaults to 20 and caps at 200. Call describe_action for each action''s exact parameters.","id":"emtqqnf6dkTudWZCUao5","inputSchema":{"type":"object","properties":{"requestParams":{"type":"object","description":"Only used with execute_action. Pass the action''s query/path parameters here. Call describe_action first to know the exact fields."},"body":{"type":"object","description":"Only used with execute_action. Pass the request body for create/update actions here. Call describe_action first to know the expected schema."},"operation":{"description":"The operation to perform on this tool","type":"string","enum":["list_actions","describe_action","execute_action"]},"action":{"type":"string","description":"The action to describe or execute; required for describe_action and execute_action"}},"required":["operation"],"additionalProperties":true},"lastUpdated":"2026-09-17T14:12:13Z","name":"okta_application_management"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 13:44:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.1626655s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsqqnc8ExM3ffcA0ao5/tools/emtqqnf6dkTudWZCUao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-09-17T14:12:13Z","credential":{"clientAuthSettingsId":"rscqq5hg0fjmtFtBDao5","scopes":[],"authType":"CLIENT_AUTH_SETTINGS"},"description":"Manage Okta applications: list, get, create, update, delete, activate, and deactivate application integrations.\n\nHOW TO USE:\n1. Call operation=''list_actions'' (no other args) to see every supported action.\n2. Call operation=''describe_action'' with action=<name> to view full details — the requestParams / body schema and an example envelope. Always describe an action before executing it.\n3. Call the chosen action with operation=''execute_action'', action=<name>, and the matching envelope fields (requestParams / body).\nNote: list actions are paginated — ''limit'' defaults to 20 and caps at 200. Call describe_action for each action''s exact parameters.","id":"emtqqnf6dkTudWZCUao5","inputSchema":{"type":"object","properties":{"requestParams":{"type":"object","description":"Only used with execute_action. Pass the action''s query/path parameters here. Call describe_action first to know the exact fields."},"body":{"type":"object","description":"Only used with execute_action. Pass the request body for create/update actions here. Call describe_action first to know the expected schema."},"operation":{"description":"The operation to perform on this tool","type":"string","enum":["list_actions","describe_action","execute_action"]},"action":{"type":"string","description":"The action to describe or execute; required for describe_action and execute_action"}},"required":["operation"],"additionalProperties":true},"lastUpdated":"2026-09-17T14:12:13Z","name":"okta_application_management"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 13:44:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0915585s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsqqnc8ExM3ffcA0ao5/tools/emtqqnf6dkTudWZCUao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-09-17T14:12:13Z","credential":{"clientAuthSettingsId":"rscqq5hg0fjmtFtBDao5","scopes":[],"authType":"CLIENT_AUTH_SETTINGS"},"description":"Manage Okta applications: list, get, create, update, delete, activate, and deactivate application integrations.\n\nHOW TO USE:\n1. Call operation=''list_actions'' (no other args) to see every supported action.\n2. Call operation=''describe_action'' with action=<name> to view full details — the requestParams / body schema and an example envelope. Always describe an action before executing it.\n3. Call the chosen action with operation=''execute_action'', action=<name>, and the matching envelope fields (requestParams / body).\nNote: list actions are paginated — ''limit'' defaults to 20 and caps at 200. Call describe_action for each action''s exact parameters.","id":"emtqqnf6dkTudWZCUao5","inputSchema":{"type":"object","properties":{"requestParams":{"type":"object","description":"Only used with execute_action. Pass the action''s query/path parameters here. Call describe_action first to know the exact fields."},"body":{"type":"object","description":"Only used with execute_action. Pass the request body for create/update actions here. Call describe_action first to know the expected schema."},"operation":{"description":"The operation to perform on this tool","type":"string","enum":["list_actions","describe_action","execute_action"]},"action":{"type":"string","description":"The action to describe or execute; required for describe_action and execute_action"}},"required":["operation"],"additionalProperties":true},"lastUpdated":"2026-09-17T14:12:13Z","name":"okta_application_management"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 13:44:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.51126325s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsqqnc8ExM3ffcA0ao5/tools/emtqqnf6dkTudWZCUao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-09-17T14:12:13Z","credential":{"clientAuthSettingsId":"rscqq5hg0fjmtFtBDao5","scopes":[],"authType":"CLIENT_AUTH_SETTINGS"},"description":"Manage Okta applications: list, get, create, update, delete, activate, and deactivate application integrations.\n\nHOW TO USE:\n1. Call operation=''list_actions'' (no other args) to see every supported action.\n2. Call operation=''describe_action'' with action=<name> to view full details — the requestParams / body schema and an example envelope. Always describe an action before executing it.\n3. Call the chosen action with operation=''execute_action'', action=<name>, and the matching envelope fields (requestParams / body).\nNote: list actions are paginated — ''limit'' defaults to 20 and caps at 200. Call describe_action for each action''s exact parameters.","id":"emtqqnf6dkTudWZCUao5","inputSchema":{"type":"object","properties":{"requestParams":{"type":"object","description":"Only used with execute_action. Pass the action''s query/path parameters here. Call describe_action first to know the exact fields."},"body":{"type":"object","description":"Only used with execute_action. Pass the request body for create/update actions here. Call describe_action first to know the expected schema."},"operation":{"description":"The operation to perform on this tool","type":"string","enum":["list_actions","describe_action","execute_action"]},"action":{"type":"string","description":"The action to describe or execute; required for describe_action and execute_action"}},"required":["operation"],"additionalProperties":true},"lastUpdated":"2026-09-17T14:12:13Z","name":"okta_application_management"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 13:45:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.110791958s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsqqnc8ExM3ffcA0ao5/tools/emtqqnf6dkTudWZCUao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-09-17T14:12:13Z","credential":{"clientAuthSettingsId":"rscqq5hg0fjmtFtBDao5","scopes":[],"authType":"CLIENT_AUTH_SETTINGS"},"description":"Manage Okta applications: list, get, create, update, delete, activate, and deactivate application integrations.\n\nHOW TO USE:\n1. Call operation=''list_actions'' (no other args) to see every supported action.\n2. Call operation=''describe_action'' with action=<name> to view full details — the requestParams / body schema and an example envelope. Always describe an action before executing it.\n3. Call the chosen action with operation=''execute_action'', action=<name>, and the matching envelope fields (requestParams / body).\nNote: list actions are paginated — ''limit'' defaults to 20 and caps at 200. Call describe_action for each action''s exact parameters.","id":"emtqqnf6dkTudWZCUao5","inputSchema":{"type":"object","properties":{"requestParams":{"type":"object","description":"Only used with execute_action. Pass the action''s query/path parameters here. Call describe_action first to know the exact fields."},"body":{"type":"object","description":"Only used with execute_action. Pass the request body for create/update actions here. Call describe_action first to know the expected schema."},"operation":{"description":"The operation to perform on this tool","type":"string","enum":["list_actions","describe_action","execute_action"]},"action":{"type":"string","description":"The action to describe or execute; required for describe_action and execute_action"}},"required":["operation"],"additionalProperties":true},"lastUpdated":"2026-09-17T14:12:13Z","name":"okta_application_management"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 13:45:01 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.115928875s

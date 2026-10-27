@@ -29,6 +29,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	okta4AI "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 	"github.com/okta/okta-governance-sdk-golang/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
@@ -87,6 +88,12 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 	// sdk client clients are set up in provider factories for test
 	if mgr.IsPlaying() {
+		if mgr.IsOkta4aa() {
+			if _, err := os.ReadDir(mgr.Okta4aaCassettesPath); err != nil {
+				t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test.", t.Name(), mgr.Okta4aaCassettesPath)
+				return
+			}
+		}
 		if !mgr.HasIdaasCassettesToPlay() {
 			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.IdaaSCassettesPath)
 			return
@@ -150,6 +157,8 @@ type vcrManager struct {
 	IdaaSCassettesPath      string
 	GovernanceFixturesHome  string
 	GovernanceCassettesPath string
+	Okta4aaFixturesHome     string
+	Okta4aaCassettesPath    string
 	CurrentCassette         string
 	VCRModeName             string
 }
@@ -161,6 +170,8 @@ func newVCRManager(testName string) *vcrManager {
 	idaasCassettesPath := path.Join(idaasVcrFixturesHome, testName)
 	governanceVcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/governance")
 	governanceCassettesPath := path.Join(governanceVcrFixturesHome, testName)
+	okta4aaVcrFixturesHome := path.Join(dir, "../../../test/fixtures/vcr/okta4aa")
+	okta4aaCassettesPath := path.Join(okta4aaVcrFixturesHome, testName)
 
 	return &vcrManager{
 		Name:                    testName,
@@ -168,6 +179,8 @@ func newVCRManager(testName string) *vcrManager {
 		IdaaSCassettesPath:      idaasCassettesPath,
 		GovernanceFixturesHome:  governanceVcrFixturesHome,
 		GovernanceCassettesPath: governanceCassettesPath,
+		Okta4aaFixturesHome:     okta4aaVcrFixturesHome,
+		Okta4aaCassettesPath:    okta4aaCassettesPath,
 		CurrentCassette:         os.Getenv("OKTA_VCR_CASSETTE"),
 		VCRModeName:             os.Getenv("OKTA_VCR_TF_ACC"),
 	}
@@ -200,6 +213,33 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 
 	cfg := c.(*config.Config)
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
+
+	if mgr.IsOkta4aa() {
+		// okta4ai tests call the Okta4AI SDK client, which has its own HTTP
+		// client. All recorders write to the same cassette path, so use a
+		// single recorder and share it across the clients to avoid clobbering.
+		idaasTestClient := NewVcrIDaaSClient(d)
+		cfg.SetIdaasAPIClient(idaasTestClient)
+
+		okta4aiTestClient := NewVcrOkta4AIClient(d)
+		if okta4aiTestClient == nil {
+			return nil, diag.Errorf("failed to create VCR Okta4AI client")
+		}
+		cfg.SetOkta4AI(okta4aiTestClient)
+
+		rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
+		rt := http.RoundTripper(rec)
+		idaasTestClient.SetTransport(rt)
+		okta4aiTestClient.SetTransport(rt)
+
+		providerConfigsLock.Lock()
+		providerConfigs[mgr.TestAndCassetteNameKey()] = cfg
+		providerConfigsLock.Unlock()
+		return cfg, nil
+	}
 
 	idaasTestClient := NewVcrIDaaSClient(d)
 	cfg.SetIdaasAPIClient(idaasTestClient)
@@ -251,7 +291,15 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		// don't record failing test runs (unless explicitly allowed for error response testing)
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// If a test succeeds, write new seed/yaml to files
-			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
+			if vcr.IsOkta4aa() {
+				// the recorder is shared by the okta4ai and IDaaS clients
+				rtOkta4aiHelper := config.Okta4AIClient.(HttpClientHelper)
+				rt := rtOkta4aiHelper.Transport()
+				err := rt.(*recorder.Recorder).Stop()
+				if err != nil {
+					t.Error(err)
+				}
+			} else if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
 				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
 				rt := rtIDaasHelper.Transport()
 				err := rt.(*recorder.Recorder).Stop()
@@ -323,7 +371,17 @@ func (m *vcrManager) CassettePath() string {
 	if strings.Contains(strings.ToLower(wd), "governance") {
 		return path.Join(m.GovernanceCassettesPath, m.CurrentCassette)
 	}
+	if m.IsOkta4aa() {
+		return path.Join(m.Okta4aaCassettesPath, m.CurrentCassette)
+	}
 	return path.Join(m.IdaaSCassettesPath, m.CurrentCassette)
+}
+
+// IsOkta4aa the test is running from the okta4ai service package, whose
+// cassettes live in test/fixtures/vcr/okta4aa.
+func (m *vcrManager) IsOkta4aa() bool {
+	wd, _ := os.Getwd()
+	return strings.Contains(strings.ToLower(wd), "okta4ai")
 }
 
 // AttemptedWriteOfExistingCassette given a vcr mode of record the current
@@ -364,6 +422,13 @@ func (m *vcrManager) Cassettes() []string {
 	}
 
 	cassettes := []string{}
+	if m.IsOkta4aa() {
+		okta4aaFiles, err := os.ReadDir(m.Okta4aaCassettesPath)
+		if err != nil {
+			return cassettes
+		}
+		return m.getCassettes(okta4aaFiles, cassettes)
+	}
 	idaasFiles, err := os.ReadDir(path.Join(m.IdaaSCassettesPath))
 	if err != nil {
 		return cassettes
@@ -697,6 +762,8 @@ var (
 	_ HttpClientHelper         = &vcrIDaaSTestClient{}
 	_ api.OktaGovernanceClient = &vcrGovernanceTestClient{}
 	_ HttpClientHelper         = &vcrGovernanceTestClient{}
+	_ api.Okta4AIClient        = &vcrOkta4AITestClient{}
+	_ HttpClientHelper         = &vcrOkta4AITestClient{}
 )
 
 type HttpClientHelper interface {
@@ -767,6 +834,39 @@ func NewVcrGovernanceClient(d *schema_sdk.ResourceData) *vcrGovernanceTestClient
 	}
 
 	return client
+}
+
+type vcrOkta4AITestClient struct {
+	sdkClient *okta4AI.APIClient
+	transport http.RoundTripper
+}
+
+func NewVcrOkta4AIClient(d *schema_sdk.ResourceData) *vcrOkta4AITestClient {
+	c := config.NewConfig(d)
+	c.Backoff = false
+	if err := c.LoadAPIClient(); err != nil {
+		fmt.Printf("Error loading API client: %v", err)
+		return nil
+	}
+
+	sdkClient := c.Okta4AIClient.Okta4AISDKClient()
+	return &vcrOkta4AITestClient{
+		sdkClient: sdkClient,
+		transport: sdkClient.GetConfig().HTTPClient.Transport,
+	}
+}
+
+func (c *vcrOkta4AITestClient) Okta4AISDKClient() *okta4AI.APIClient {
+	return c.sdkClient
+}
+
+func (c *vcrOkta4AITestClient) Transport() http.RoundTripper {
+	return c.transport
+}
+
+func (c *vcrOkta4AITestClient) SetTransport(rt http.RoundTripper) {
+	c.transport = rt
+	c.sdkClient.GetConfig().HTTPClient.Transport = rt
 }
 
 func (c *vcrIDaaSTestClient) Transport() http.RoundTripper {

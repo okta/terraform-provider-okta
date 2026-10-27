@@ -1,0 +1,245 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 142
+        host: oie-00.dne-okta.com
+        body: |
+            {"profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"resourcePath":"staging"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 335
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:35Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"INACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "335"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.579819375s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 333
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:36Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "333"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.1093705s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 333
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:36Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "333"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.114805209s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 333
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:36Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "333"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.390015625s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 333
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:36Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "333"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.147598375s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 335
+        body: '{"created":"2026-10-21T14:51:35Z","id":"wlpt7z8tl3gY2TO8yao5","lastUpdated":"2026-10-21T14:51:42Z","orn":"orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:virtual-mcp:wlpt7z8tl3gY2TO8yao5","profile":{"description":"description for the production MCP server group","displayName":"Production MCP Servers"},"status":"INACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "335"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 21 Oct 2026 14:51:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.133708958s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/agent-gateways/wlpt7z8tl3gY2TO8yao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 21 Oct 2026 14:51:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.15486325s

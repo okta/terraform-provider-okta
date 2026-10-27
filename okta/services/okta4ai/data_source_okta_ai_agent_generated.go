@@ -39,17 +39,32 @@ type aiAgentDataSource struct {
 
 // AiAgentDataSourceModel describes the data source data model.
 type aiAgentDataSourceModel struct {
-	ID          types.String                        `tfsdk:"id"`
-	Created     types.String                        `tfsdk:"created"`
-	LastUpdated types.String                        `tfsdk:"last_updated"`
-	Profile     *AiAgentDataSourceModelProfileModel `tfsdk:"profile"`
-	Status      types.String                        `tfsdk:"status"`
+	ID             types.String                               `tfsdk:"id"`
+	Created        types.String                               `tfsdk:"created"`
+	LastUpdated    types.String                               `tfsdk:"last_updated"`
+	OauthClient    *AiAgentDataSourceModelOauthClientModel    `tfsdk:"oauth_client"`
+	Profile        *AiAgentDataSourceModelProfileModel        `tfsdk:"profile"`
+	SignOnProvider *AiAgentDataSourceModelSignOnProviderModel `tfsdk:"sign_on_provider"`
+	Status         types.String                               `tfsdk:"status"`
+}
+
+// AiAgentDataSourceModelOauthClientModel is the nested model for oauth_client.
+type AiAgentDataSourceModelOauthClientModel struct {
+	ClientId types.String `tfsdk:"client_id"`
+	Type     types.String `tfsdk:"type"`
 }
 
 // AiAgentDataSourceModelProfileModel is the nested model for profile.
 type AiAgentDataSourceModelProfileModel struct {
 	Description types.String `tfsdk:"description"`
+	ExternalId  types.String `tfsdk:"external_id"`
 	Name        types.String `tfsdk:"name"`
+	Platform    types.String `tfsdk:"platform"`
+}
+
+// AiAgentDataSourceModelSignOnProviderModel is the nested model for sign_on_provider.
+type AiAgentDataSourceModelSignOnProviderModel struct {
+	AppInstanceId types.String `tfsdk:"app_instance_id"`
 }
 
 func NewAiAgentDataSource() datasource.DataSource {
@@ -86,6 +101,19 @@ func (d *aiAgentDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 			},
 		},
 		Blocks: map[string]schema.Block{
+			"oauth_client": schema.SingleNestedBlock{
+				Description: "The workload principal's OAuth client identity.",
+				Attributes: map[string]schema.Attribute{
+					"client_id": schema.StringAttribute{
+						Description: "The workload principal's OAuth `clientId`.",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "OAuth client type.",
+						Computed:    true,
+					},
+				},
+			},
 			"profile": schema.SingleNestedBlock{
 				Description: "AI agent profile",
 				Attributes: map[string]schema.Attribute{
@@ -93,8 +121,25 @@ func (d *aiAgentDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 						Description: "Description of the AI agent",
 						Computed:    true,
 					},
+					"external_id": schema.StringAttribute{
+						Description: "Unique external ID for an AI agent",
+						Computed:    true,
+					},
 					"name": schema.StringAttribute{
 						Description: "Unique name of the AI agent",
+						Computed:    true,
+					},
+					"platform": schema.StringAttribute{
+						Description: "The hosting platform of the AI agent.",
+						Computed:    true,
+					},
+				},
+			},
+			"sign_on_provider": schema.SingleNestedBlock{
+				Description: "The sign-on provider bound to the workload principal.",
+				Attributes: map[string]schema.Attribute{
+					"app_instance_id": schema.StringAttribute{
+						Description: "ID of the app instance bound to the workload principal.",
 						Computed:    true,
 					},
 				},
@@ -113,7 +158,7 @@ func (d *aiAgentDataSource) Read(ctx context.Context, req datasource.ReadRequest
 
 	client := d.Config.Okta4AIClient.Okta4AISDKClient()
 	id := state.ID.ValueString()
-	result, httpResp, err := client.AgentRegistrationAPI.GetAIAgent(ctx, id).Execute()
+	result, httpResp, err := client.AgentRegistrationV2API.GetAIAgentV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.Diagnostics.AddError("Not Found", "ai_agent with the given ID was not found.")
@@ -130,11 +175,52 @@ func (d *aiAgentDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		state.LastUpdated = types.StringValue(t.Format(time.RFC3339))
 	}
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if profileRaw0, ok := result.GetProfileOk(); ok {
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		oauthClientModel0 := &AiAgentDataSourceModelOauthClientModel{}
+		if v := string(oauthClientRaw0.GetClientId()); v != "" {
+			oauthClientModel0.ClientId = types.StringValue(v)
+		} else {
+			oauthClientModel0.ClientId = types.StringNull()
+		}
+		if v := string(oauthClientRaw0.GetType()); v != "" {
+			oauthClientModel0.Type = types.StringValue(v)
+		} else {
+			oauthClientModel0.Type = types.StringNull()
+		}
+		state.OauthClient = oauthClientModel0
+	}
+	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
 		profileModel0 := &AiAgentDataSourceModelProfileModel{}
-		profileModel0.Description = types.StringValue(string(profileRaw0.GetDescription()))
-		profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+		if v := string(profileRaw0.GetDescription()); v != "" {
+			profileModel0.Description = types.StringValue(v)
+		} else {
+			profileModel0.Description = types.StringNull()
+		}
+		if v := string(profileRaw0.GetExternalId()); v != "" {
+			profileModel0.ExternalId = types.StringValue(v)
+		} else {
+			profileModel0.ExternalId = types.StringNull()
+		}
+		if v := string(profileRaw0.GetName()); v != "" {
+			profileModel0.Name = types.StringValue(v)
+		} else {
+			profileModel0.Name = types.StringNull()
+		}
+		if v := string(profileRaw0.GetPlatform()); v != "" {
+			profileModel0.Platform = types.StringValue(v)
+		} else {
+			profileModel0.Platform = types.StringNull()
+		}
 		state.Profile = profileModel0
+	}
+	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+		signOnProviderModel0 := &AiAgentDataSourceModelSignOnProviderModel{}
+		if v := string(signOnProviderRaw0.GetAppInstanceId()); v != "" {
+			signOnProviderModel0.AppInstanceId = types.StringValue(v)
+		} else {
+			signOnProviderModel0.AppInstanceId = types.StringNull()
+		}
+		state.SignOnProvider = signOnProviderModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

@@ -17,11 +17,9 @@ package okta4ai
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -109,6 +107,7 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 				PlanModifiers: []planmodifier.Map{
 					mapplanmodifier.UseStateForUnknown(),
 				},
+				Sensitive: true,
 			},
 			"de_dup_expression": schema.StringAttribute{
 				Description: "Expression to uniquely identify imported agents.",
@@ -142,9 +141,6 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 			"next_scheduled_import_date": schema.StringAttribute{
 				Description: "The date and time of the next scheduled import from the AI agent provider",
 				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"source_id": schema.StringAttribute{
 				Description: "The ID of the source",
@@ -197,11 +193,13 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					"group_orn": schema.StringAttribute{
 						Description: "The resource-owner group [ORN](https://developer.",
 						Optional:    true,
+						Computed:    true,
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
 						ElementType: types.StringType,
 						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -211,10 +209,12 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					"cron": schema.StringAttribute{
 						Description: "The schedule of the import in cron format.",
 						Optional:    true,
+						Computed:    true,
 					},
 					"timezone": schema.StringAttribute{
 						Description: "Timezone of where the scheduled import takes place",
 						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -244,15 +244,6 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	if m := result.GetConfiguration(); len(m) > 0 {
-		configurationVals := make(map[string]attr.Value, len(m))
-		for k, v := range m {
-			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		state.Configuration, _ = types.MapValue(types.StringType, configurationVals)
-	} else {
-		state.Configuration = types.MapNull(types.StringType)
-	}
 	state.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
 	state.ImportInProgress = types.BoolValue(result.GetImportInProgress())
 	state.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
@@ -264,14 +255,6 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
 	state.Stage = types.StringValue(string(result.GetStage()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if result.GetConfiguration() != nil {
-		configurationAttrs := make(map[string]attr.Value)
-		for k, v := range result.GetConfiguration() {
-			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
-		state.Configuration = configurationVal
-	}
 	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
 		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
@@ -284,7 +267,9 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 			resp.Diagnostics.Append(listDiags...)
 			ownersModel0.UserOrns = listVal
 		}
-		state.Owners = ownersModel0
+		if state.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+			state.Owners = ownersModel0
+		}
 	}
 	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
@@ -298,7 +283,9 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		} else {
 			scheduleModel0.Timezone = types.StringNull()
 		}
-		state.Schedule = scheduleModel0
+		if state.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+			state.Schedule = scheduleModel0
+		}
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
@@ -371,15 +358,6 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
-	if m := result.GetConfiguration(); len(m) > 0 {
-		configurationVals := make(map[string]attr.Value, len(m))
-		for k, v := range m {
-			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		plan.Configuration, _ = types.MapValue(types.StringType, configurationVals)
-	} else {
-		plan.Configuration = types.MapNull(types.StringType)
-	}
 	plan.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
 	plan.ImportInProgress = types.BoolValue(result.GetImportInProgress())
 	plan.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
@@ -392,14 +370,6 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	plan.Stage = types.StringValue(string(result.GetStage()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	if result.GetConfiguration() != nil {
-		configurationAttrs := make(map[string]attr.Value)
-		for k, v := range result.GetConfiguration() {
-			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
-		plan.Configuration = configurationVal
-	}
 	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
 		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
@@ -412,7 +382,9 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 			resp.Diagnostics.Append(listDiags...)
 			ownersModel0.UserOrns = listVal
 		}
-		plan.Owners = ownersModel0
+		if plan.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+			plan.Owners = ownersModel0
+		}
 	}
 	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
@@ -426,9 +398,30 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 		} else {
 			scheduleModel0.Timezone = types.StringNull()
 		}
-		plan.Schedule = scheduleModel0
+		if plan.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+			plan.Schedule = scheduleModel0
+		}
 	}
 
+	{
+		// Created in an inactive state; activate before handing the resource to Terraform.
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, activateErr := client.AgentProvidersV2API.ActivateAIAgentProviderV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating ai_agent_provider after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.AgentProvidersV2API.GetAIAgentProviderV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading ai_agent_provider after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -450,6 +443,16 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	// Build request body from plan — only send changed fields
 	updateReq := client.AgentProvidersV2API.ReplaceAIAgentProviderV2(ctx, id)
 	updateBody := okta4aa.NewReplaceAIAgentProviderRequestV2WithDefaults()
+	if !plan.Configuration.IsNull() && !plan.Configuration.IsUnknown() {
+		configurationMap := make(map[string]interface{})
+		for k, v := range plan.Configuration.Elements() {
+			if sv, ok := v.(types.String); ok {
+				configurationMap[k] = sv.ValueString()
+
+			}
+		}
+		updateBody.SetConfiguration(configurationMap)
+	}
 	if !plan.DeDupExpression.IsNull() && !plan.DeDupExpression.IsUnknown() {
 		updateBody.SetDeDupExpression(plan.DeDupExpression.ValueString())
 	}
@@ -493,15 +496,6 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	// since some update endpoints return a narrower object than the GET response
 	// and overwriting with a zero value here would produce an inconsistent-result error.
 	state.ID = types.StringValue(string(result.GetId()))
-	if m := result.GetConfiguration(); len(m) > 0 {
-		configurationVals := make(map[string]attr.Value, len(m))
-		for k, v := range m {
-			configurationVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		state.Configuration, _ = types.MapValue(types.StringType, configurationVals)
-	} else {
-		state.Configuration = types.MapNull(types.StringType)
-	}
 	if deDupExpressionVal, ok := result.GetDeDupExpressionOk(); ok && deDupExpressionVal != nil {
 		state.DeDupExpression = types.StringValue(string(*deDupExpressionVal))
 	}
@@ -535,14 +529,6 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	if result.GetConfiguration() != nil {
-		configurationAttrs := make(map[string]attr.Value)
-		for k, v := range result.GetConfiguration() {
-			configurationAttrs[k] = types.StringValue(fmt.Sprintf("%v", v))
-		}
-		configurationVal, _ := types.MapValue(types.StringType, configurationAttrs)
-		state.Configuration = configurationVal
-	}
 	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
 		ownersModel0 := &AiAgentProviderModelOwnersModel{}
 		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
@@ -555,7 +541,9 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 			resp.Diagnostics.Append(listDiags...)
 			ownersModel0.UserOrns = listVal
 		}
-		state.Owners = ownersModel0
+		if plan.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+			state.Owners = ownersModel0
+		}
 	}
 	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
 		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
@@ -569,8 +557,12 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 		} else {
 			scheduleModel0.Timezone = types.StringNull()
 		}
-		state.Schedule = scheduleModel0
+		if plan.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+			state.Schedule = scheduleModel0
+		}
 	}
+
+	state.Configuration = plan.Configuration
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -584,6 +576,11 @@ func (r *aiAgentProviderResource) Delete(ctx context.Context, req resource.Delet
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
+	deactivateHTTPResp, deactivateErr := client.AgentProvidersV2API.DeactivateAIAgentProviderV2(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating ai_agent_provider before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.AgentProvidersV2API.DeleteAIAgentProviderV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {

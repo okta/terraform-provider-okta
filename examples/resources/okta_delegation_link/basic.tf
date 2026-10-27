@@ -1,11 +1,11 @@
 resource "okta_delegation_link" "test" {
   from {
     type       = "OKTA_AUTHORIZATION_SERVER"
-    client_orn = "orn:okta:directory:00otivnuq1X5554yc1d7:workload-principals:ai-agents:wlp114bmffd1byZg51d8"
+    client_orn = "orn:okta:idp:00op58x1t9iNay3Ojao5:apps:oidc_client:0oatkyugHHHcLBCFTao5"
     token_type = "ACCESS_TOKEN"
   }
 
   to {
-    resource_orn = "orn:okta:directory:00otivnuq1X5554yc1d7:workload-principals:ai-agents:wlp11f2exa8aMDIS41d8"
+    resource_orn = "orn:okta:directory:00op58x1t9iNay3Ojao5:workload-principals:ai-agents:wlpt1ulvUBdpeNxDBao5"
   }
 }

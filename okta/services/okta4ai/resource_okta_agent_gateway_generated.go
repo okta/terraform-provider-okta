@@ -150,10 +150,10 @@ func (r *agentGatewayResource) Read(ctx context.Context, req resource.ReadReques
 		} else {
 			profileModel0.Description = types.StringNull()
 		}
-		if !state.Profile.DisplayName.IsNull() {
+		if state.Profile != nil && !state.Profile.DisplayName.IsNull() {
 			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
 		} else {
-			profileModel0.DisplayName = state.Profile.DisplayName
+			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
 		}
 		state.Profile = profileModel0
 	}
@@ -214,6 +214,25 @@ func (r *agentGatewayResource) Create(ctx context.Context, req resource.CreateRe
 		plan.Profile = profileModel0
 	}
 
+	{
+		// Created in an inactive state; activate before handing the resource to Terraform.
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, _, activateErr := client.AgentGatewayRegistrationV2API.ActivateAgentGatewayV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating agent_gateway after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.AgentGatewayRegistrationV2API.GetAgentGatewayV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading agent_gateway after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *agentGatewayResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -291,6 +310,11 @@ func (r *agentGatewayResource) Delete(ctx context.Context, req resource.DeleteRe
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
+	_, deactivateHTTPResp, deactivateErr := client.AgentGatewayRegistrationV2API.DeactivateAgentGatewayV2(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating agent_gateway before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.AgentGatewayRegistrationV2API.DeleteAgentGatewayV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {

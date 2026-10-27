@@ -147,22 +147,24 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkModelFromModel{}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(obj.GetAppInstanceOrn())
+			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(obj.GetClientOrn())
+			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
-			fromModel0.TokenType = types.StringValue(obj.GetTokenType())
+		if obj, ok := fromRaw0.GetActualInstance().(interface {
+			GetTokenType() okta4aa.DelegationLinkTokenTypeV2
+		}); ok {
+			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(obj.GetType())
+			fromModel0.Type = types.StringValue(string(obj.GetType()))
 		}
 		state.From = fromModel0
 	}
 	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkModelToModel{}
-		if !state.To.ResourceOrn.IsNull() {
+		if state.To == nil || !state.To.ResourceOrn.IsNull() {
 			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
 		} else {
 			toModel0.ResourceOrn = state.To.ResourceOrn
@@ -190,7 +192,8 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	if plan.From != nil {
 		var fromVal okta4aa.DelegationLinkFromCreatableV2
 		variantSet := false
-		if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
+		switch plan.From.Type.ValueString() {
+		case "OKTA_AUTHORIZATION_SERVER":
 			sub := okta4aa.NewOktaAuthorizationServerDelegationLinkFromCreatableV2WithDefaults()
 			if !plan.From.ClientOrn.IsNull() && !plan.From.ClientOrn.IsUnknown() {
 				sub.SetClientOrn(plan.From.ClientOrn.ValueString())
@@ -203,7 +206,7 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 			}
 			fromVal = okta4aa.OktaAuthorizationServerDelegationLinkFromCreatableV2AsDelegationLinkFromCreatableV2(sub)
 			variantSet = true
-		} else if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
+		case "SAML_APPLICATION":
 			sub := okta4aa.NewSamlApplicationDelegationLinkFromCreatableV2WithDefaults()
 			if !plan.From.AppInstanceOrn.IsNull() && !plan.From.AppInstanceOrn.IsUnknown() {
 				sub.SetAppInstanceOrn(plan.From.AppInstanceOrn.ValueString())
@@ -243,22 +246,24 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkModelFromModel{}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(obj.GetAppInstanceOrn())
+			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(obj.GetClientOrn())
+			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
-			fromModel0.TokenType = types.StringValue(obj.GetTokenType())
+		if obj, ok := fromRaw0.GetActualInstance().(interface {
+			GetTokenType() okta4aa.DelegationLinkTokenTypeV2
+		}); ok {
+			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
 		}
 		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(obj.GetType())
+			fromModel0.Type = types.StringValue(string(obj.GetType()))
 		}
 		plan.From = fromModel0
 	}
 	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkModelToModel{}
-		if !plan.To.ResourceOrn.IsNull() {
+		if plan.To == nil || !plan.To.ResourceOrn.IsNull() {
 			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
 		} else {
 			toModel0.ResourceOrn = plan.To.ResourceOrn

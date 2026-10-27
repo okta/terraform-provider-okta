@@ -161,7 +161,7 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					},
 					"type": schema.StringAttribute{
 						Description: "Type",
-						Optional:    true,
+						Required:    true,
 					},
 				},
 			},
@@ -210,7 +210,7 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 		} else {
 			profileModel0.ExternalId = types.StringNull()
 		}
-		if !state.Profile.Name.IsNull() {
+		if state.Profile == nil || !state.Profile.Name.IsNull() {
 			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
 		} else {
 			profileModel0.Name = state.Profile.Name
@@ -224,10 +224,13 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
 		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if !state.SignOnProvider.AppInstanceId.IsNull() {
+		if state.SignOnProvider == nil || !state.SignOnProvider.AppInstanceId.IsNull() {
 			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
 		} else {
 			signOnProviderModel0.AppInstanceId = state.SignOnProvider.AppInstanceId
+		}
+		if state.SignOnProvider != nil {
+			signOnProviderModel0.Type = state.SignOnProvider.Type
 		}
 		state.SignOnProvider = signOnProviderModel0
 	}
@@ -275,18 +278,21 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 		}
 		body.SetProfile(*nestedProfile)
 	}
-	body.SetResourceUrl(plan.ResourceUrl.ValueString())
+	if !plan.ResourceUrl.IsNull() && !plan.ResourceUrl.IsUnknown() {
+		body.SetResourceUrl(plan.ResourceUrl.ValueString())
+	}
 	if plan.SignOnProvider != nil {
 		var signOnProviderVal okta4aa.WorkloadPrincipalSignOnProviderRequest
 		variantSet := false
-		if !plan.SignOnProvider.Type.IsNull() && !plan.SignOnProvider.Type.IsUnknown() {
+		switch plan.SignOnProvider.Type.ValueString() {
+		case "NEW_OIDC_APP":
 			sub := okta4aa.NewWorkloadPrincipalSignOnProviderNewOidcAppWithDefaults()
 			if !plan.SignOnProvider.Type.IsNull() && !plan.SignOnProvider.Type.IsUnknown() {
 				sub.SetType(plan.SignOnProvider.Type.ValueString())
 			}
 			signOnProviderVal = okta4aa.WorkloadPrincipalSignOnProviderNewOidcAppAsWorkloadPrincipalSignOnProviderRequest(sub)
 			variantSet = true
-		} else if !plan.SignOnProvider.AppInstanceId.IsNull() && !plan.SignOnProvider.AppInstanceId.IsUnknown() {
+		case "EXISTING_APP":
 			sub := okta4aa.NewWorkloadPrincipalSignOnProviderExistingAppWithDefaults()
 			if !plan.SignOnProvider.AppInstanceId.IsNull() && !plan.SignOnProvider.AppInstanceId.IsUnknown() {
 				sub.SetAppInstanceId(plan.SignOnProvider.AppInstanceId.ValueString())
@@ -332,7 +338,7 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 		} else {
 			profileModel0.ExternalId = types.StringNull()
 		}
-		if !plan.Profile.Name.IsNull() {
+		if plan.Profile == nil || !plan.Profile.Name.IsNull() {
 			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
 		} else {
 			profileModel0.Name = plan.Profile.Name
@@ -346,14 +352,36 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
 		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if !plan.SignOnProvider.AppInstanceId.IsNull() {
+		if plan.SignOnProvider == nil || !plan.SignOnProvider.AppInstanceId.IsNull() {
 			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
 		} else {
 			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
 		}
+		if plan.SignOnProvider != nil {
+			signOnProviderModel0.Type = plan.SignOnProvider.Type
+		}
 		plan.SignOnProvider = signOnProviderModel0
 	}
 
+	{
+		// Created in an inactive state; activate before handing the resource to Terraform.
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, activateErr := client.AgentRegistrationV2API.ActivateAIAgentV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating ai_agent after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.AgentRegistrationV2API.GetAIAgentV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading ai_agent after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -423,7 +451,7 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 		} else {
 			profileModel0.ExternalId = types.StringNull()
 		}
-		if !plan.Profile.Name.IsNull() {
+		if plan.Profile == nil || !plan.Profile.Name.IsNull() {
 			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
 		} else {
 			profileModel0.Name = plan.Profile.Name
@@ -437,10 +465,13 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
 		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if !plan.SignOnProvider.AppInstanceId.IsNull() {
+		if plan.SignOnProvider == nil || !plan.SignOnProvider.AppInstanceId.IsNull() {
 			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
 		} else {
 			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
+		}
+		if plan.SignOnProvider != nil {
+			signOnProviderModel0.Type = plan.SignOnProvider.Type
 		}
 		state.SignOnProvider = signOnProviderModel0
 	}
@@ -459,6 +490,11 @@ func (r *aiAgentResource) Delete(ctx context.Context, req resource.DeleteRequest
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
+	deactivateHTTPResp, deactivateErr := client.AgentRegistrationV2API.DeactivateAIAgentV2(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating ai_agent before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.AgentRegistrationV2API.DeleteAIAgentV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {

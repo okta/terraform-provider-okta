@@ -96,8 +96,8 @@ func (d *delegationLinkDataSource) Schema(_ context.Context, _ datasource.Schema
 					},
 					"type": schema.StringAttribute{
 						Description: "The type of token source",
-						//Required:    true,
-						Computed: true,
+						Optional:    true,
+						Computed:    true,
 					},
 				},
 			},
@@ -156,8 +156,16 @@ func (d *delegationLinkDataSource) Read(ctx context.Context, req datasource.Read
 	}
 	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkDataSourceModelToModel{}
-		toModel0.AuthorizationServerOrn = types.StringValue(string(toRaw0.GetAuthorizationServerOrn()))
-		toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+		if v := string(toRaw0.GetAuthorizationServerOrn()); v != "" {
+			toModel0.AuthorizationServerOrn = types.StringValue(v)
+		} else {
+			toModel0.AuthorizationServerOrn = types.StringNull()
+		}
+		if v := string(toRaw0.GetResourceOrn()); v != "" {
+			toModel0.ResourceOrn = types.StringValue(v)
+		} else {
+			toModel0.ResourceOrn = types.StringNull()
+		}
 		state.To = toModel0
 	}
 
