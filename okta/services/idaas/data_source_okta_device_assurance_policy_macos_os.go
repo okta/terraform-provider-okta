@@ -168,13 +168,13 @@ func (d *policyDeviceAssuranceMacosDataSource) Schema(_ context.Context, _ datas
 				Computed:            true,
 			},
 			"secure_hardware_present": schema.BoolAttribute{
-				MarkdownDescription: "SecureHardwarePresent",
+				MarkdownDescription: "Indicates if the device contains a secure hardware functionality",
 				Computed:            true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"disk_encryption_type": schema.SingleNestedBlock{
-				Description: "DiskEncryptionType",
+				Description: "List of disk encryption type, can be `FULL`, `USER`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",
@@ -225,7 +225,7 @@ func (d *policyDeviceAssuranceMacosDataSource) Schema(_ context.Context, _ datas
 				},
 			},
 			"screen_lock_type": schema.SingleNestedBlock{
-				Description: "ScreenLockType",
+				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",

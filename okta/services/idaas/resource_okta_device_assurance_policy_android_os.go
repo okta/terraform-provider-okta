@@ -159,7 +159,7 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"jailbreak": schema.BoolAttribute{
-				Description: "Jailbreak",
+				Description: "Is the device jailbroken in the device assurance policy.",
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
@@ -178,13 +178,13 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 				Optional:    true,
 			},
 			"secure_hardware_present": schema.BoolAttribute{
-				Description: "SecureHardwarePresent",
+				Description: "Indicates if the device contains a secure hardware functionality",
 				Optional:    true,
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"disk_encryption_type": schema.SingleNestedBlock{
-				Description: "DiskEncryptionType",
+				Description: "List of disk encryption type, can be `FULL`, `USER`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",
@@ -235,7 +235,7 @@ func (r *policyDeviceAssuranceAndroidResource) Schema(_ context.Context, _ resou
 				},
 			},
 			"screen_lock_type": schema.SingleNestedBlock{
-				Description: "ScreenLockType",
+				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",

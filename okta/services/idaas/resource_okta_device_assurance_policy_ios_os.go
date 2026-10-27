@@ -140,7 +140,7 @@ func (r *policyDeviceAssuranceIosResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"jailbreak": schema.BoolAttribute{
-				Description: "Jailbreak",
+				Description: "Is the device jailbroken in the device assurance policy.",
 				Optional:    true,
 				Computed:    true,
 				PlanModifiers: []planmodifier.Bool{
@@ -202,7 +202,7 @@ func (r *policyDeviceAssuranceIosResource) Schema(_ context.Context, _ resource.
 				},
 			},
 			"screen_lock_type": schema.SingleNestedBlock{
-				Description: "ScreenLockType",
+				Description: "List of screenlock type, can be `BIOMETRIC` or `BIOMETRIC, PASSCODE`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",
