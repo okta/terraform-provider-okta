@@ -87,6 +87,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_risk_level", "HIGH"),
 					resource.TestCheckResourceAttr(resourceName, "policy_evaluation_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 			{
@@ -96,6 +97,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
 					resource.TestCheckResourceAttr(resourceName, "policy_evaluation_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "min_risk_level", "HIGH"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 		},

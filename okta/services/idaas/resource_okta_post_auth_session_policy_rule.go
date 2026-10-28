@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -45,6 +46,7 @@ type postAuthSessionPolicyRuleResourceModel struct {
 	GroupsExcluded   types.Set    `tfsdk:"groups_excluded"`
 	TerminateSession types.Bool   `tfsdk:"terminate_session"`
 	WorkflowID       types.String `tfsdk:"workflow_id"`
+	Priority         types.Int64  `tfsdk:"priority"`
 }
 
 func (r *postAuthSessionPolicyRuleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -107,6 +109,14 @@ func (r *postAuthSessionPolicyRuleResource) Schema(_ context.Context, _ resource
 			"workflow_id": schema.StringAttribute{
 				Description: "ID of the Okta Workflow to run when a policy failure is detected.",
 				Optional:    true,
+			},
+			// Okta increments the rule's priority when a PUT omits it, and the Session
+			// Protection admin UI only renders settings for the priority 0 rule, so the
+			// provider always sends 0 and plans a diff if the rule has drifted.
+			"priority": schema.Int64Attribute{
+				Description: "Priority of the rule. Always 0, as the Session Protection page in the Admin Console only renders settings for the priority 0 rule.",
+				Computed:    true,
+				Default:     int64default.StaticInt64(0),
 			},
 		},
 	}
@@ -282,6 +292,9 @@ func (r *postAuthSessionPolicyRuleResource) readPostAuthSessionPolicyRule(ctx co
 	if rule.Status != nil {
 		state.Status = types.StringValue(string(*rule.Status))
 	}
+	if rule.Priority.IsSet() && rule.Priority.Get() != nil {
+		state.Priority = types.Int64Value(int64(*rule.Priority.Get()))
+	}
 
 	if rule.Conditions != nil {
 		if rule.Conditions.People != nil {
@@ -347,6 +360,7 @@ func (r *postAuthSessionPolicyRuleResource) buildPostAuthSessionPolicyRule(ctx c
 
 	ruleType := "POST_AUTH_SESSION"
 	rule.Type = &ruleType
+	rule.SetPriority(0)
 
 	conditions := v6okta.NewPostAuthSessionPolicyRuleAllOfConditions()
 
