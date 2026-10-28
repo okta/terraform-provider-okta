@@ -15,6 +15,7 @@ func FWProviderResources() []func() resource.Resource {
 		newEntitlementResource,
 		newReviewResource,
 		newRequestConditionResource,
+		newRequestConditionsResource,
 		newRequestSequenceResource,
 		newRequestSettingOrganizationResource,
 		newRequestSettingResourceResource,
