@@ -34,6 +34,7 @@ import (
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
 	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"
 	v7SdkOkta "github.com/okta/okta-sdk-golang/v7/okta"
+	v8SdkOkta "github.com/okta/okta-sdk-golang/v8/okta"
 	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/fwprovider"
@@ -705,6 +706,7 @@ type HttpClientHelper interface {
 }
 
 type vcrIDaaSTestClient struct {
+	sdkV8Client         *v8SdkOkta.APIClient
 	sdkV7Client         *v7SdkOkta.APIClient
 	sdkV6Client         *v6SdkOkta.APIClient
 	sdkV5Client         *v5SdkOkta.APIClient
@@ -794,6 +796,10 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 func (c *vcrGovernanceTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 	c.oktaGovernanceSDKClient.GetConfig().HTTPClient.Transport = rt
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV8() *v8SdkOkta.APIClient {
+	return c.sdkV8Client
 }
 
 func (c *vcrIDaaSTestClient) OktaSDKClientV7() *v7SdkOkta.APIClient {
