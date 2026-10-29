@@ -41,7 +41,7 @@ These operations allow the creation and manipulation of custom roles as custom c
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "The hrefs that point to User(s) and/or Group(s) that receive the Role",
+				Description: "The hrefs that point to User(s) and/or Group(s) that receive the Role. **WARNING:** Always use the organization domain (e.g., https://{yourOktaDomain}.okta.com or https://{yourOktaDomain}.oktapreview.com) instead of alternate/custom domains. The Okta API normalizes alternate domains to the organization domain, and using alternate domains will cause perpetual diffs in your Terraform state.",
 			},
 		},
 	}
