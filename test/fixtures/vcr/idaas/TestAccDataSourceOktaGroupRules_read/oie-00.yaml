@@ -1,0 +1,2167 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 58
+        host: oie-00.dne-okta.com
+        body: |
+            {"profile":{"name":"testAcc_323887101","description":""}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/groups
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 965.055833ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 699.490792ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 681.604541ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 261
+        host: oie-00.dne-okta.com
+        body: |
+            {"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"andy\")"},"people":{"users":{}}},"name":"testAccOne_323887101","type":"group_rule"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"INACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 710.989459ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 06:41:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 696.055416ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 674.04725ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 260
+        host: oie-00.dne-okta.com
+        body: |
+            {"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"conditions":{"expression":{"type":"urn:okta:expression:1.0","value":"String.startsWith(user.firstName,\"bob\")"},"people":{"users":{}}},"name":"testAccTwo_323887101","type":"group_rule"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"INACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:13.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 697.026708ms
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 06:41:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 700.319042ms
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 683.315333ms
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 647.557667ms
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 654.229167ms
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 670.765625ms
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 678.423541ms
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:16 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 634.060625ms
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:16 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 666.799375ms
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:16 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 669.095666ms
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:16 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 707.548084ms
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 649.757167ms
+    - id: 18
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 648.578834ms
+    - id: 19
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 639.438875ms
+    - id: 20
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 667.382541ms
+    - id: 21
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 674.129291ms
+    - id: 22
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.134241334s
+    - id: 23
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:19 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.134361375s
+    - id: 24
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:20 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 663.160708ms
+    - id: 25
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:20 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 687.04125ms
+    - id: 26
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:20 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 687.107542ms
+    - id: 27
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:20 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 686.985958ms
+    - id: 28
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 657.7795ms
+    - id: 29
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 669.394917ms
+    - id: 30
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 684.059333ms
+    - id: 31
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:23 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 759.440708ms
+    - id: 32
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:23 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 761.424625ms
+    - id: 33
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.212386583s
+    - id: 34
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.234628375s
+    - id: 35
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 637.743041ms
+    - id: 36
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 651.827584ms
+    - id: 37
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 666.571583ms
+    - id: 38
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:24 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 683.167209ms
+    - id: 39
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:25 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 640.00425ms
+    - id: 40
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:25 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 642.854583ms
+    - id: 41
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:25 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 654.233334ms
+    - id: 42
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:25 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 658.950875ms
+    - id: 43
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"00gtgl2t6kXXFILbZ697","created":"2025-07-22T06:41:09.000Z","lastUpdated":"2025-07-22T06:41:09.000Z","lastMembershipUpdated":"2025-07-22T06:41:09.000Z","objectClass":["okta:user_group"],"type":"OKTA_GROUP","profile":{"name":"testAcc_323887101","description":""},"_links":{"logo":[{"name":"medium","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.30ce6d4085dff29412984e4c191bc874.png","type":"image/png"},{"name":"large","href":"https://ok14static.oktacdn.com/assets/img/logos/groups/odyssey/okta-large.c3cb8cda8ae0add1b4fe928f5844dbe3.png","type":"image/png"}],"users":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/users"},"apps":{"href":"https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697/apps"}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 660.304625ms
+    - id: 44
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 650.77875ms
+    - id: 45
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 647.881542ms
+    - id: 46
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:28 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 644.998208ms
+    - id: 47
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:28 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 651.324709ms
+    - id: 48
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:28 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 652.026542ms
+    - id: 49
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:28 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 674.638542ms
+    - id: 50
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "50"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:29 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=50>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 649.639875ms
+    - id: 51
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:29 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 657.531125ms
+    - id: 52
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            limit:
+                - "200"
+            search:
+                - testAcc
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:29 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&search=testAcc>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 699.306625ms
+    - id: 53
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            expand:
+                - groupIdToGroupNameMap
+            limit:
+                - "200"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules?expand=groupIdToGroupNameMap&limit=200
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '[{"type":"group_rule","id":"0prtgl5oqmS5jYIMK697","status":"ACTIVE","name":"testAccOne_323887101","created":"2025-07-22T06:41:11.000Z","lastUpdated":"2025-07-22T06:41:11.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"andy\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true},{"type":"group_rule","id":"0prtgl4aj24bfkh0h697","status":"ACTIVE","name":"testAccTwo_323887101","created":"2025-07-22T06:41:13.000Z","lastUpdated":"2025-07-22T06:41:14.000Z","conditions":{"people":{"users":{"exclude":[]},"groups":{"exclude":[]}},"expression":{"value":"String.startsWith(user.firstName,\"bob\")","type":"urn:okta:expression:1.0"}},"actions":{"assignUserToGroups":{"groupIds":["00gtgl2t6kXXFILbZ697"]}},"_embedded":{"groupIdToGroupNameMap":{"00gtgl2t6kXXFILbZ697":"testAcc_323887101"}},"allGroupsValid":true}]'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:30 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/api/v1/groups/rules?limit=200&expand=groupIdToGroupNameMap>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.164571292s
+    - id: 54
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 06:41:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 687.189125ms
+    - id: 55
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            removeUsers:
+                - "false"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl4aj24bfkh0h697?removeUsers=false
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 202 Accepted
+        code: 202
+        duration: 707.034541ms
+    - id: 56
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 06:41:32 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 688.471459ms
+    - id: 57
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        form:
+            removeUsers:
+                - "false"
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/rules/0prtgl5oqmS5jYIMK697?removeUsers=false
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 06:41:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 202 Accepted
+        code: 202
+        duration: 723.938167ms
+    - id: 58
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/groups/00gtgl2t6kXXFILbZ697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 06:41:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 698.191833ms
