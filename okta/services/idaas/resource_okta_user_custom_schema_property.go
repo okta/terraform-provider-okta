@@ -43,6 +43,14 @@ func resourceUserCustomSchemaProperty() *schema.Resource {
 			userTypeSchema,
 			userPatternSchema,
 			map[string]*schema.Schema{
+				"default": {
+					Type:          schema.TypeString,
+					Optional:      true,
+					ConflictsWith: []string{"array_type"},
+					Description: "Default value of the user schema property. Supported for `type` values of `string`, `boolean`, `number`, and `integer`. " +
+						"As with `enum`, provide the value as a string; it is converted to the property's underlying type before being sent to Okta. " +
+						"Removing this argument clears the property's default value on the next apply.",
+				},
 				"scope": {
 					Type:        schema.TypeString,
 					Optional:    true,
@@ -112,6 +120,9 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	if err := setUserSchemaAttributeDefault(d, userCustomSchemaAttribute); err != nil {
+		return diag.FromErr(err)
+	}
 	custom := BuildCustomUserSchema(d.Get("index").(string), userCustomSchemaAttribute)
 	subSchema, err := alterCustomUserSchema(ctx, meta, d.Get("user_type").(string), d.Get("index").(string), custom, false)
 	if err != nil {
@@ -122,7 +133,44 @@ func resourceUserSchemaCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	if err != nil {
 		return diag.Errorf("failed to set user custom schema property: %v", err)
 	}
+	syncUserSchemaAttributeDefault(d, subSchema)
 	return nil
+}
+
+// setUserSchemaAttributeDefault sets attribute.Default from the "default" argument, coercing it to
+// the property's native JSON type the same way "enum" and "one_of" values are coerced. Okta's schema
+// update endpoint is a partial update, so clearing a previously set default requires sending an
+// explicit JSON null rather than simply omitting the field, which the API treats as "leave unchanged".
+func setUserSchemaAttributeDefault(d *schema.ResourceData, attribute *sdk.UserSchemaAttribute) error {
+	if v, ok := d.GetOk("default"); ok {
+		coerced, err := coerceCorrectTypedValue(d.Get("type").(string), v)
+		if err != nil {
+			return fmt.Errorf(`invalid "default" value: %w`, err)
+		}
+		attribute.Default = &coerced
+		return nil
+	}
+	if d.HasChange("default") {
+		var cleared interface{}
+		attribute.Default = &cleared
+	}
+	return nil
+}
+
+// syncUserSchemaAttributeDefault mirrors attribute.Default back into Terraform state as a string,
+// consistent with how "enum" and "one_of" const values are stringified regardless of the property's
+// underlying type.
+func syncUserSchemaAttributeDefault(d *schema.ResourceData, attribute *sdk.UserSchemaAttribute) {
+	if attribute == nil || attribute.Default == nil || *attribute.Default == nil {
+		_ = d.Set("default", "")
+		return
+	}
+	v, err := coerceStringValue(attribute.Type, *attribute.Default)
+	if err != nil {
+		_ = d.Set("default", "")
+		return
+	}
+	_ = d.Set("default", v)
 }
 
 func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -144,6 +192,7 @@ func resourceUserSchemaRead(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.Errorf("failed to set user custom schema property: %v", err)
 	}
+	syncUserSchemaAttributeDefault(d, customAttribute)
 	return nil
 }
 
