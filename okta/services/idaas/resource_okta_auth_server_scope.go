@@ -42,7 +42,7 @@ func resourceAuthServerScope() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Default:     "IMPLICIT",
-				Description: "Indicates whether a consent dialog is needed for the scope. It can be set to `REQUIRED` or `IMPLICIT`. Default: `IMPLICIT`",
+				Description: "Indicates whether a consent dialog is needed for the scope. It can be set to `REQUIRED`, `FLEXIBLE`, or `IMPLICIT`. Default: `IMPLICIT`",
 			},
 			"metadata_publish": {
 				Type:        schema.TypeString,
