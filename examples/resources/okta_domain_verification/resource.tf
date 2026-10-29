@@ -3,5 +3,5 @@ resource "okta_domain" "example" {
 }
 
 resource "okta_domain_verification" "example" {
-  domain_id = okta_domain.test.id
+  domain_id = okta_domain.example.id
 }
