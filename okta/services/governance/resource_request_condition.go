@@ -211,6 +211,20 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// A failure in the follow-up calls below (activate, priority update)
+	// must not orphan the just-created condition, so save it to state
+	// now rather than only at the end of Create. Copy the plan model so
+	// the planned status/priority in `data` stay intact for that logic.
+	createdState := data
+	resp.Diagnostics.Append(applyRequestConditionToState(ctx, &createdState, requestConditionResp)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &createdState)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	// Activate the condition if status is set to ACTIVE
 	if !data.Status.IsNull() && data.Status.ValueString() == "ACTIVE" {
 		requestConditionResp, _, err = r.OktaGovernanceClient.OktaGovernanceSDKClient().
@@ -222,6 +236,19 @@ func (r *requestConditionResource) Create(ctx context.Context, req resource.Crea
 				"Error activating Request condition",
 				"Could not activate Request condition after creation: "+err.Error(),
 			)
+			return
+		}
+
+		// Refresh the saved state with the activation result so the recorded
+		// status stays accurate (and Delete deactivates correctly) if the
+		// priority update below fails.
+		createdState = data
+		resp.Diagnostics.Append(applyRequestConditionToState(ctx, &createdState, requestConditionResp)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		resp.Diagnostics.Append(resp.State.Set(ctx, &createdState)...)
+		if resp.Diagnostics.HasError() {
 			return
 		}
 	}
