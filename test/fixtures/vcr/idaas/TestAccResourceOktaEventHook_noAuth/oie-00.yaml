@@ -1,0 +1,169 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 204
+        host: oie-00.dne-okta.com
+        body: |
+            {"channel":{"config":{"uri":"https://example.com/webhook"},"type":"HTTP","version":"1.0.0"},"events":{"items":["user.lifecycle.create"],"type":"EVENT_TYPE"},"name":"Event Hook No Auth","status":"ACTIVE"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmtsmhJWBu144697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook No Auth","description":null,"created":"2025-07-22T08:12:11.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:11.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 871.250208ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmtsmhJWBu144697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook No Auth","description":null,"created":"2025-07-22T08:12:11.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:11.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 849.795ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmtsmhJWBu144697","status":"ACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook No Auth","description":null,"created":"2025-07-22T08:12:11.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:11.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[],"method":"POST","authScheme":null}},"_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697"},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/verify","hints":{"allow":["POST"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 649.582334ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"whotgmtsmhJWBu144697","status":"INACTIVE","verificationStatus":"UNVERIFIED","name":"Event Hook No Auth","description":null,"created":"2025-07-22T08:12:11.000Z","createdBy":"00usd50212GgyPvAS697","lastUpdated":"2025-07-22T08:12:14.000Z","events":{"type":"EVENT_TYPE","items":["user.lifecycle.create"],"filter":null},"channel":{"type":"HTTP","version":"1.0.0","config":{"uri":"https://example.com/webhook","headers":[],"method":"POST","authScheme":null}},"_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697"},"delete":{"href":"https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697","hints":{"allow":["DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Tue, 22 Jul 2025 08:12:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 856.735708ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/eventHooks/whotgmtsmhJWBu144697
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Tue, 22 Jul 2025 08:12:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 824.098417ms
