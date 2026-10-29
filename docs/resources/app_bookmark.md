@@ -45,6 +45,7 @@ resource "okta_app_bookmark" "example" {
 - `hide_web` (Boolean) Do not display application icon to users
 - `logo` (String) Local file path to the logo. The file must be in PNG, JPG, or GIF format, and less than 1 MB in size.
 - `request_integration` (Boolean) Would you like Okta to add an integration for this app?
+- `skip_authentication_policy` (Boolean) When set to true, the provider will not assign or read the authentication policy for this application. This can be useful when the caller lacks the permissions to read or manage policies, or to reduce API calls against the `/api/v1/apps` rate limit.
 - `status` (String) Status of application. By default, it is `ACTIVE`
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
