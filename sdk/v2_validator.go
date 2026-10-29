@@ -55,8 +55,11 @@ func validateOktaDomain(c *config) error {
 }
 
 func validateAPIToken(c *config) error {
+	// An empty token is allowed at init time; any API call will return a 401
+	// from the server. This permits provider configuration without credentials
+	// when no Okta resources are actually deployed (e.g. count = 0 / for_each = {}).
 	if c.Okta.Client.Token == "" {
-		return errors.New("your Okta API token is missing. You can generate one in the Okta Developer Console. Follow these instructions: https://bit.ly/get-okta-api-token")
+		return nil
 	}
 
 	if strings.Contains(c.Okta.Client.Token, "{apiToken}") {
