@@ -46,6 +46,19 @@ provider "okta" {
 }
 ```
 
+### Skip Validation Example
+
+For environments where Okta resources are conditionally used:
+
+```hcl
+provider "okta" {
+  org_name = null
+  base_url = null
+  api_token = null
+  skip_validation = true
+}
+```
+
 For the resources and data sources examples, please check the [examples](https://github.com/okta/terraform-provider-okta/tree/master/examples) directory.
 
 ## Authentication
@@ -136,3 +149,6 @@ arguments](https://www.terraform.io/docs/configuration/providers.html) (e.g.
 - `max_api_capacity` - (Optional) sets what percentage of capacity the provider can use of the total
   rate limit capacity while making calls to the Okta management API endpoints. Okta API operates in one minute buckets.
   See Okta Management API Rate Limits: https://developer.okta.com/docs/reference/rl-global-mgmt. Can be set to a value between 1 and 100.
+
+- `skip_validation` - (Optional) Skip all input validation for Okta Provider credentials. Can also be set via the `OKTA_SKIP_VALIDATION` environment variable. Defaults to `false`.  
+  **Note**: Using `skip_validation = true` may make troubleshooting more difficult and may result in less helpful error messages if missing/invalid credentials are used with the provider.
