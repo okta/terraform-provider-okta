@@ -10,9 +10,8 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
-	"github.com/okta/terraform-provider-okta/sdk"
-	"github.com/okta/terraform-provider-okta/sdk/query"
 )
 
 func resourceGroupMemberships() *schema.Resource {
@@ -36,24 +35,24 @@ func resourceGroupMemberships() *schema.Resource {
 
 				// Fetch current group members so the state is populated on import,
 				// preventing Terraform from treating existing members as pending additions.
-				client := getOktaClientFromMetadata(meta)
-				groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
+				client := getOktaV6ClientFromMetadata(meta)
+				groupUsers, resp, err := client.GroupAPI.ListGroupUsers(ctx, groupId).Limit(int32(utils.DefaultPaginationLimit)).Execute()
 				if err != nil {
 					return nil, fmt.Errorf("error fetching group users during import: %w ID is %v", err, groupId)
 				}
 
 				userIDs := make([]string, 0, len(groupUsers))
 				for _, user := range groupUsers {
-					userIDs = append(userIDs, user.Id)
+					userIDs = append(userIDs, user.GetId())
 				}
 				for resp.HasNextPage() {
 					groupUsers = nil
-					resp, err = resp.Next(ctx, &groupUsers)
+					resp, err = resp.Next(&groupUsers)
 					if err != nil {
 						return nil, fmt.Errorf("error fetching group users during import: %w", err)
 					}
 					for _, user := range groupUsers {
-						userIDs = append(userIDs, user.Id)
+						userIDs = append(userIDs, user.GetId())
 					}
 				}
 				d.Set("users", utils.ConvertStringSliceToSet(userIDs))
@@ -104,7 +103,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 		d.Set("group_id", groupId)
 	}
 
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta)
 
 	if len(users) == 0 {
 		d.SetId(groupId)
@@ -140,7 +139,7 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta)
 	groupId := d.Get("group_id").(string)
 	oldUsers := utils.ConvertInterfaceToStringSetNullable(d.Get("users"))
 	trackAllUsers := d.Get("track_all_users").(bool)
@@ -174,7 +173,7 @@ func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
 	users := utils.ConvertInterfaceToStringSetNullable(d.Get("users"))
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta)
 	err := removeGroupMembers(ctx, client, groupId, users)
 	if err != nil {
 		return diag.FromErr(err)
@@ -184,7 +183,7 @@ func resourceGroupMembershipsDelete(ctx context.Context, d *schema.ResourceData,
 
 func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := d.Get("group_id").(string)
-	client := getOktaClientFromMetadata(meta)
+	client := getOktaV6ClientFromMetadata(meta)
 
 	oldUsers, newUsers := d.GetChange("users")
 
@@ -211,7 +210,7 @@ func resourceGroupMembershipsUpdate(ctx context.Context, d *schema.ResourceData,
 // changed and the returned user ids should be considered the new set of users.
 // Returns error for API errors. Returns false if no users have changed and the
 // slice of returned strings will be empty.
-func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
+func checkIfUsersHaveChanged(ctx context.Context, client *v6okta.APIClient, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
 	// users slice can be sized 0 if this is a read from import
 	if users == nil {
@@ -225,32 +224,32 @@ func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId st
 	// Collect all user ids that are returned from the API
 	usersFromAPI := []string{}
 
-	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	groupUsers, resp, err := client.GroupAPI.ListGroupUsers(ctx, groupId).Limit(int32(utils.DefaultPaginationLimit)).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return false, &noop, fmt.Errorf("unable to list users for group (%s) from API, error: %+v", groupId, err)
 	}
 
 	for _, user := range groupUsers {
 		// if the new user id is not in the old users map then the list of users has changed
-		if _, found := (*oldUsers)[user.Id]; !found {
+		if _, found := (*oldUsers)[user.GetId()]; !found {
 			changed = true
 		}
-		usersFromAPI = append(usersFromAPI, user.Id)
+		usersFromAPI = append(usersFromAPI, user.GetId())
 	}
 
 	for resp.HasNextPage() {
 		groupUsers = nil
-		resp, err = resp.Next(context.Background(), &groupUsers)
+		resp, err = resp.Next(&groupUsers)
 		if err != nil {
 			return false, &noop, fmt.Errorf("unable to list users for group (%s) from API, error: %+v", groupId, err)
 		}
 
 		for _, user := range groupUsers {
 			// if the new user id is not in the old users map then the list of users has changed
-			if _, found := (*oldUsers)[user.Id]; !found {
+			if _, found := (*oldUsers)[user.GetId()]; !found {
 				changed = true
 			}
-			usersFromAPI = append(usersFromAPI, user.Id)
+			usersFromAPI = append(usersFromAPI, user.GetId())
 		}
 	}
 	if len(*oldUsers) != len(usersFromAPI) {
@@ -269,7 +268,7 @@ func checkIfUsersHaveChanged(ctx context.Context, client *sdk.Client, groupId st
 // removed and the subset of returned user ids should be considered the new set
 // of users. Returns error for API errors. Returns false if no users have been
 // removed and the slice of returned strings will be empty.
-func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupId string, users *[]string) (bool, *[]string, error) {
+func checkIfUsersHaveBeenRemoved(ctx context.Context, client *v6okta.APIClient, groupId string, users *[]string) (bool, *[]string, error) {
 	noop := []string{}
 	if users == nil || len(*users) == 0 {
 		return false, &noop, nil
@@ -280,14 +279,14 @@ func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupI
 	// all of our user ids and no longer have to make API calls.
 	oldUsers := toStrIndexedMap(users)
 
-	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+	groupUsers, resp, err := client.GroupAPI.ListGroupUsers(ctx, groupId).Limit(int32(utils.DefaultPaginationLimit)).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return false, &noop, fmt.Errorf("unable to list users for group (%s) from API, error: %+v", groupId, err)
 	}
 
 	for _, user := range groupUsers {
 		// Deleting user from API from the old users map
-		delete(*oldUsers, user.Id)
+		delete(*oldUsers, user.GetId())
 		if len(*oldUsers) == 0 {
 			// All old users have been accounted for.
 			return false, &noop, nil
@@ -296,13 +295,13 @@ func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupI
 
 	for resp.HasNextPage() {
 		groupUsers = nil
-		resp, err = resp.Next(context.Background(), &groupUsers)
+		resp, err = resp.Next(&groupUsers)
 		if err != nil {
 			return false, &noop, fmt.Errorf("unable to list users for group (%s) from API, error: %+v", groupId, err)
 		}
 		for _, user := range groupUsers {
 			// Deleting user from API from the old users map
-			delete(*oldUsers, user.Id)
+			delete(*oldUsers, user.GetId())
 			if len(*oldUsers) == 0 {
 				// All old users have been accounted for.
 				return false, &noop, nil
@@ -326,9 +325,9 @@ func checkIfUsersHaveBeenRemoved(ctx context.Context, client *sdk.Client, groupI
 	return true, &newUsers, nil
 }
 
-func checkIfGroupHasUsers(ctx context.Context, client *sdk.Client, groupId string, users []string) (bool, error) {
-	groupUsers, resp, err := client.Group.ListGroupUsers(ctx, groupId, &query.Params{Limit: utils.DefaultPaginationLimit})
-	if err := utils.SuppressErrorOn404(resp, err); err != nil {
+func checkIfGroupHasUsers(ctx context.Context, client *v6okta.APIClient, groupId string, users []string) (bool, error) {
+	groupUsers, resp, err := client.GroupAPI.ListGroupUsers(ctx, groupId).Limit(int32(utils.DefaultPaginationLimit)).Execute()
+	if err := utils.SuppressErrorOn404_V6(resp, err); err != nil {
 		return false, fmt.Errorf("unable to return membership for group (%s) from API", groupId)
 	}
 	return (len(groupUsers) > 0), nil
