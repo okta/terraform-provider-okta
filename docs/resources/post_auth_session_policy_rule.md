@@ -48,6 +48,7 @@ resource "okta_post_auth_session_policy_rule" "example" {
 ## Attributes Reference
 
 - `id` - ID of the policy rule.
+- `priority` - Priority of the rule. Always `0`, as the Session Protection page in the Admin Console only renders settings for the priority 0 rule. If the rule's priority has drifted, the next `terraform apply` resets it to `0`.
 
 ## Lifecycle
 
