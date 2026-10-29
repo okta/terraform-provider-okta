@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-sdk-golang/v4/okta"
+	"github.com/okta/okta-sdk-golang/v7/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -34,16 +34,18 @@ type policyDeviceAssuranceIOSResource struct {
 }
 
 type policyDeviceAssuranceIOSResourceModel struct {
-	ID             types.String   `tfsdk:"id"`
-	Name           types.String   `tfsdk:"name"`
-	Platform       types.String   `tfsdk:"platform"`
-	JailBreak      types.Bool     `tfsdk:"jailbreak"`
-	OsVersion      types.String   `tfsdk:"os_version"`
-	ScreenLockType []types.String `tfsdk:"screenlock_type"`
-	CreateDate     types.String   `tfsdk:"created_date"`
-	CreateBy       types.String   `tfsdk:"created_by"`
-	LastUpdate     types.String   `tfsdk:"last_update"`
-	LastUpdatedBy  types.String   `tfsdk:"last_updated_by"`
+	ID                     types.String                     `tfsdk:"id"`
+	Name                   types.String                     `tfsdk:"name"`
+	Platform               types.String                     `tfsdk:"platform"`
+	DisplayRemediationMode types.String                     `tfsdk:"display_remediation_mode"`
+	GracePeriod            *deviceAssuranceGracePeriodModel `tfsdk:"grace_period"`
+	JailBreak              types.Bool                       `tfsdk:"jailbreak"`
+	OsVersion              types.String                     `tfsdk:"os_version"`
+	ScreenLockType         []types.String                   `tfsdk:"screenlock_type"`
+	CreateDate             types.String                     `tfsdk:"created_date"`
+	CreateBy               types.String                     `tfsdk:"created_by"`
+	LastUpdate             types.String                     `tfsdk:"last_update"`
+	LastUpdatedBy          types.String                     `tfsdk:"last_updated_by"`
 }
 
 func (r *policyDeviceAssuranceIOSResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -69,6 +71,7 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				Description: "Policy device assurance platform",
 				Computed:    true,
 			},
+			"display_remediation_mode": deviceAssuranceDisplayRemediationModeAttribute(),
 			"jailbreak": schema.BoolAttribute{
 				Description: "Is the device jailbroken in the device assurance policy.",
 				Optional:    true,
@@ -117,6 +120,9 @@ func (r *policyDeviceAssuranceIOSResource) Schema(_ context.Context, _ resource.
 				Computed:    true,
 			},
 		},
+		Blocks: map[string]schema.Block{
+			"grace_period": deviceAssuranceGracePeriodBlock(),
+		},
 	}
 }
 
@@ -141,7 +147,8 @@ func (r *policyDeviceAssuranceIOSResource) Create(ctx context.Context, req resou
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.CreateDeviceAssurancePolicy(ctx).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to create device assurance",
@@ -168,7 +175,8 @@ func (r *policyDeviceAssuranceIOSResource) Read(ctx context.Context, req resourc
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.GetDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to read device assurance",
@@ -195,7 +203,7 @@ func (r *policyDeviceAssuranceIOSResource) Delete(ctx context.Context, req resou
 		return
 	}
 
-	_, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
+	_, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.DeleteDeviceAssurancePolicy(ctx, state.ID.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to delete device assurance",
@@ -221,7 +229,8 @@ func (r *policyDeviceAssuranceIOSResource) Update(ctx context.Context, req resou
 		return
 	}
 
-	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV3().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, _, err := r.OktaIDaaSClient.OktaSDKClientV7().DeviceAssuranceAPI.ReplaceDeviceAssurancePolicy(ctx, state.ID.ValueString()).DeviceAssurance(reqBody).Execute()
+	deviceAssurance, err = decodeDeviceAssuranceResponse(deviceAssurance, err)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"failed to update device assurance",
@@ -245,6 +254,7 @@ func buildDeviceAssuranceIOSPolicyRequest(model policyDeviceAssuranceIOSResource
 	iOS := &okta.DeviceAssuranceIOSPlatform{}
 	iOS.SetName(model.Name.ValueString())
 	iOS.SetPlatform("IOS")
+	applyDeviceAssuranceRemediation(&iOS.DeviceAssurance, model.DisplayRemediationMode, model.GracePeriod)
 
 	iOS.Jailbreak = model.JailBreak.ValueBoolPointer()
 	if !model.OsVersion.IsNull() {
@@ -271,6 +281,7 @@ func mapDeviceAssuranceIOSToState(data *okta.ListDeviceAssurancePolicies200Respo
 	state.ID = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.Id)
 	state.Name = types.StringPointerValue(data.DeviceAssuranceIOSPlatform.Name)
 	state.Platform = types.StringPointerValue((*string)(data.DeviceAssuranceIOSPlatform.Platform))
+	state.DisplayRemediationMode, state.GracePeriod = deviceAssuranceRemediationToState(&data.DeviceAssuranceIOSPlatform.DeviceAssurance, state.DisplayRemediationMode)
 
 	state.JailBreak = types.BoolPointerValue(data.DeviceAssuranceIOSPlatform.Jailbreak)
 	if _, ok := data.DeviceAssuranceIOSPlatform.GetOsVersionOk(); ok {
