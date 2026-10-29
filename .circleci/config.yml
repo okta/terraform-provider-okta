@@ -10,7 +10,11 @@ jobs:
   reversing-labs:
     docker:
       - image: cimg/go:1.24.0
-    resource_class: large
+    resource_class: xlarge
+    environment:
+      # Go sees the host's CPU count inside Docker and compiles the large
+      # okta-sdk-golang packages concurrently, which OOM-kills the compiler.
+      GOFLAGS: -p=2
     steps:
       - checkout
       - run:
@@ -55,6 +59,8 @@ jobs:
   snyk-scan:
     docker:
       - image: cimg/go:1.24.0
+    environment:
+      GOFLAGS: -p=2
     steps:
       - checkout
       - general-platform-helpers/step-load-dependencies
