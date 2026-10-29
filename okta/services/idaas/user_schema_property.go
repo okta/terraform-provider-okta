@@ -141,6 +141,14 @@ var (
 		},
 	}
 
+	userSchemaDefaultSchema = map[string]*schema.Schema{
+		"default": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Default value for the schema property. For `number`, `integer`, and `boolean` types, provide the value as a string. For `array` and `object` types, provide a JSON encoded value.",
+		},
+	}
+
 	userTypeSchema = map[string]*schema.Schema{
 		"user_type": {
 			Type:        schema.TypeString,
@@ -169,6 +177,11 @@ func syncCustomUserSchema(d *schema.ResourceData, subschema *sdk.UserSchemaAttri
 	if subschema.MaxLengthPtr != nil {
 		_ = d.Set("max_length", subschema.MaxLengthPtr)
 	}
+	defaultValue, err := flattenSchemaDefault(subschema.Type, subschema.Default)
+	if err != nil {
+		return err
+	}
+	_ = d.Set("default", defaultValue)
 	_ = d.Set("scope", subschema.Scope)
 	_ = d.Set("external_name", subschema.ExternalName)
 	_ = d.Set("external_namespace", subschema.ExternalNamespace)
@@ -376,6 +389,13 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*sdk.UserSchemaAttr
 		ExternalNamespace: d.Get("external_namespace").(string),
 		Unique:            d.Get("unique").(string),
 	}
+	defaultValue, ok, err := buildSchemaDefault(d)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		attribute.Default = defaultValue
+	}
 	if min, ok := d.GetOk("min_length"); ok {
 		attribute.MinLengthPtr = utils.Int64Ptr(min.(int))
 	}
@@ -385,6 +405,61 @@ func buildUserCustomSchemaAttribute(d *schema.ResourceData) (*sdk.UserSchemaAttr
 	rawEnum := d.Get("enum")
 	attribute.Enum, _ = utils.BuildEnum(rawEnum.([]interface{}), d.Get("type").(string))
 	return attribute, nil
+}
+
+func buildSchemaDefault(d *schema.ResourceData) (interface{}, bool, error) {
+	rawDefault, ok := d.GetOk("default")
+	if !ok {
+		return nil, false, nil
+	}
+	defaultValue := rawDefault.(string)
+	attributeType := d.Get("type").(string)
+	switch attributeType {
+	case "array":
+		var value interface{}
+		if err := json.Unmarshal([]byte(defaultValue), &value); err != nil {
+			return nil, true, fmt.Errorf("default must be valid JSON for %q schema properties: %w", attributeType, err)
+		}
+		if _, ok := value.([]interface{}); !ok {
+			return nil, true, fmt.Errorf("default must be a JSON array for %q schema properties", attributeType)
+		}
+		return value, true, nil
+	case "object":
+		var value interface{}
+		if err := json.Unmarshal([]byte(defaultValue), &value); err != nil {
+			return nil, true, fmt.Errorf("default must be valid JSON for %q schema properties: %w", attributeType, err)
+		}
+		if _, ok := value.(map[string]interface{}); !ok {
+			return nil, true, fmt.Errorf("default must be a JSON object for %q schema properties", attributeType)
+		}
+		return value, true, nil
+	default:
+		value, err := coerceCorrectTypedValue(attributeType, defaultValue)
+		if err != nil {
+			return nil, true, fmt.Errorf("default must match %q schema property type: %w", attributeType, err)
+		}
+		return value, true, nil
+	}
+}
+
+func flattenSchemaDefault(attributeType string, defaultValue interface{}) (string, error) {
+	if defaultValue == nil {
+		return "", nil
+	}
+	switch attributeType {
+	case "array", "object":
+		value, err := json.Marshal(defaultValue)
+		if err != nil {
+			return "", fmt.Errorf("failed to flatten default value for %q schema property: %w", attributeType, err)
+		}
+		return string(value), nil
+	default:
+		value, err := coerceStringValue(attributeType, defaultValue)
+		if err != nil {
+			return "", fmt.Errorf("failed to flatten default value for %q schema property: %w", attributeType, err)
+		}
+		return value.(string), nil
+	}
 }
 
 func buildUserBaseSchemaAttribute(d *schema.ResourceData) *sdk.UserSchemaAttribute {
