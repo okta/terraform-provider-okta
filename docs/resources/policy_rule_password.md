@@ -67,7 +67,7 @@ resource "okta_policy_rule_password" "example_legacy" {
 - `password_change` (String) Allow or deny a user to change their password: `ALLOW` or `DENY`. Default: `ALLOW`
 - `password_reset` (String) Allow or deny a user to reset their password: `ALLOW` or `DENY`. Default: `ALLOW`
 - `password_reset_access_control` (String) Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.
-- `password_reset_requirement` (Block List, Max: 1) Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = "LEGACY"`. (see [below for nested schema](#nestedblock--password_reset_requirement))
+- `password_reset_requirement` (Block List, Max: 1) Self-service password reset (SSPR) requirement settings. Can be set with or without `password_reset_access_control`; Okta defaults to legacy access control behavior when `password_reset_access_control` is omitted. (see [below for nested schema](#nestedblock--password_reset_requirement))
 - `password_unlock` (String) Allow or deny a user to unlock. Default: `DENY`
 - `policy_id` (String) Policy ID of the Rule
 - `priority` (Number) Rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last (lowest) if not provided.
