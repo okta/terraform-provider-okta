@@ -316,7 +316,7 @@ func listApplicationGroupAssignments(ctx context.Context, client *sdk.Client, id
 	return groups, resp, nil
 }
 
-func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, links interface{}) error {
+func handleAppLogo(ctx context.Context, d *schema.ResourceData, m interface{}, appID string, _ interface{}) error {
 	l, ok := d.GetOk("logo")
 	if !ok {
 		return nil
