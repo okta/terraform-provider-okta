@@ -2,7 +2,7 @@ module github.com/okta/terraform-provider-okta
 
 go 1.26.2
 
-replace github.com/okta4AI/okta4AI-for-ai-sdk-golang => /Users/aditya.anand/GolandProjects/okta-for-ai-sdk-golang/okta4AI
+replace github.com/okta4AI/okta4AI-for-ai-agents-sdk-golang => /Users/aditya.anand/GolandProjects/okta-for-ai-agents-sdk-golang/okta4AI
 
 require (
 	github.com/BurntSushi/toml v1.6.0
