@@ -68,9 +68,9 @@ resource "okta_group_role" "test" {
 ### Optional
 
 - `disable_notifications` (Boolean) When this setting is enabled, the admins won't receive any of the default Okta administrator emails. These admins also won't have access to contact Okta Support and open support cases on behalf of your org.
+- `target_app_list` (Set of String) A list of app names (name represents set of app instances, like 'salesforce' or 'facebook'), or a combination of app name and app instance ID (like 'facebook.0oapsqQ6dv19pqyEo0g3') you would like as the targets of the admin role. For OIDC/OAuth2/API Services apps, use the `oidc_client.<app_id>` format (e.g., 'oidc_client.0oapsqQ6dv19pqyEo0g3'). - Only supported when used with the role type `APP_ADMIN`.
 - `resource_set_id` (String) Resource Set ID. Required for role_type = `CUSTOM`
 - `role_id` (String) Role ID. Required for role_type = `CUSTOM`
-- `target_app_list` (Set of String) A list of app names (name represents set of app instances, like 'salesforce' or 'facebook'), or a combination of app name and app instance ID (like 'facebook.0oapsqQ6dv19pqyEo0g3') you would like as the targets of the admin role. - Only supported when used with the role type `APP_ADMIN`.
 - `target_group_list` (Set of String) A list of group IDs you would like as the targets of the admin role. - Only supported when used with the role types: `GROUP_MEMBERSHIP_ADMIN`, `HELP_DESK_ADMIN`, or `USER_ADMIN`.
 
 ### Read-Only
