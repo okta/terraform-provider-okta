@@ -146,12 +146,12 @@ func resourceAppGroupAssignmentDelete(ctx context.Context, d *schema.ResourceDat
 		return nil
 	}
 
-	_, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationGroupAssignment(
+	resp, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationGroupAssignment(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("group_id").(string),
 	)
-	if err != nil {
+	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete application group assignment: %v", err)
 	}
 	return nil

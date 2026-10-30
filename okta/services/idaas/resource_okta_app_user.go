@@ -198,13 +198,13 @@ func resourceAppUserDelete(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
-	_, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationUser(
+	resp, err := getOktaClientFromMetadata(meta).Application.DeleteApplicationUser(
 		ctx,
 		d.Get("app_id").(string),
 		d.Get("user_id").(string),
 		nil,
 	)
-	if err != nil {
+	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete application's user: %v", err)
 	}
 	return nil
