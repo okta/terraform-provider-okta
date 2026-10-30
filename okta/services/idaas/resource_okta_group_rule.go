@@ -45,11 +45,9 @@ the underlying rule resource and create a new rule resource.`,
 				ValidateDiagFunc: utils.StrMaxLength(50), // ideas.okta.com/app/#/case/204022
 			},
 			"group_assignments": {
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				// Actions cannot be updated even on a deactivated rule
-				ForceNew:    true,
+				Type:        schema.TypeSet,
+				Required:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 				Description: "The list of group ids to assign the users to.",
 			},
 			"expression_type": {
@@ -77,7 +75,8 @@ the underlying rule resource and create a new rule resource.`,
 			},
 		},
 		CustomizeDiff: customdiff.ForceNewIf("status", func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
-			return StatusIsInvalidDiffFn(d.Get("status").(string))
+			oldStatus, _ := d.GetChange("status")
+			return StatusIsInvalidDiffFn(oldStatus.(string))
 		}),
 	}
 }
