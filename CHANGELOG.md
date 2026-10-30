@@ -5,6 +5,10 @@
 ### ENHANCEMENTS
 * Adds new resource **`okta_request_conditions`** to manage all the resource conditions of a resource in a single configuration block [#2990](https://github.com/okta/terraform-provider-okta/pull/2990) by [aditya-okta](https://github.com/aditya-okta)
 
+### ENHANCEMENTS
+
+* **`okta_policy_rule_profile_enrollment`**: Added the optional `inline_hook_scopes` attribute to choose which registration flows run the registration inline hook (`SELF_SERVICE_REGISTRATION`, `PROGRESSIVE_PROFILING`, or both). Scopes already set on the rule are now preserved on update instead of being reset to `SELF_SERVICE_REGISTRATION`. [#1624](https://github.com/okta/terraform-provider-okta/issues/1624)
+
 ### BUG FIXES
 
 * **`okta_request_condition`**: Reordering the `ids` in `access_scope_settings` or `requester_settings` on an existing condition no longer fails with `Provider produced inconsistent result after apply`. Okta keeps the stored order of the groups when an update only reorders them, so the provider now keeps the configured order in state whenever the API returns the same IDs. Added, removed or replaced IDs are still reported as differences. Relates to OPE-865.[#2980](https://github.com/okta/terraform-provider-okta/pull/2982) by [pranav-okta](https://github.com/pranav-okta)

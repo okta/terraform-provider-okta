@@ -2,7 +2,8 @@
 package sdk
 
 type PreRegistrationInlineHook struct {
-	InlineHookId string `json:"inlineHookId,omitempty"`
+	InlineHookId string   `json:"inlineHookId,omitempty"`
+	Scopes       []string `json:"scopes,omitempty"`
 }
 
 func NewPreRegistrationInlineHook() *PreRegistrationInlineHook {
