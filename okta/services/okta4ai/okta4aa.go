@@ -28,5 +28,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewMcpServersMetadataDiscoveryDataSource,
 		NewAiAgentProvidersProfileMappingDataSource,
 		NewAiAgentProvidersStagingDataSource,
+		NewAiAgentProvidersStagingStatDataSource,
 	}
 }

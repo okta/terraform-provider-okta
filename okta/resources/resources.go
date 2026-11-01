@@ -9,6 +9,7 @@ const (
 	OktaIDaaSAgentPoolUpdate                          = "okta_agent_pool_update"
 	OktaIDaaSAIAgent                                  = "okta_ai_agent"
 	OktaIDaaSAIAgentProvider                          = "okta_ai_agent_provider"
+	OktaIDaaSAIAgentProvidersStagingStat              = "okta_ai_agent_providers_staging_stat"
 	OktaIDaaSApp                                      = "okta_app"
 	OktaIDaaSApps                                     = "okta_apps"
 	OktaIDaaSAppAutoLogin                             = "okta_app_auto_login"
