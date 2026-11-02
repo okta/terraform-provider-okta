@@ -4,13 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 func TestAccResourceOktaAppGroupAssignment_crud(t *testing.T) {
@@ -147,6 +151,41 @@ func TestAccResourceOktaAppGroupAssignment_retain(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaAppGroupAssignment_groupDeletedOutsideTerraform covers
+// OKTA-1243779. The group is deleted directly in Okta, which also removes its
+// app assignment, while both are still in state. The post-test destroy runs
+// with -refresh=false, so Delete is called on both resources and gets a 404,
+// which must be treated as already deleted.
+func TestAccResourceOktaAppGroupAssignment_groupDeletedOutsideTerraform(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppGroupAssignment)
+	groupName := fmt.Sprintf("%s.test", resources.OktaIDaaSGroup)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppGroupAssignment, t.Name())
+	config := mgr.GetFixtures("deleted_outside_terraform.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSGroup, doesGroupExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureAppGroupAssignmentExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "group_id"),
+				),
+			},
+			{
+				// The check runs after this step's refresh, so the deleted
+				// group and assignment are still in state for the destroy.
+				RefreshState: true,
+				Check:        deleteGroupOutsideTerraform(groupName, resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAppGroupAssignment_timeouts(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppGroupAssignment, t.Name())
 	resourceName0 := fmt.Sprintf("%s.test.0", resources.OktaIDaaSAppGroupAssignment)
@@ -258,5 +297,46 @@ func ensureAppGroupAssignmentRetained(appName, groupName string) resource.TestCh
 			return fmt.Errorf("application group assignment not found for app ID, group ID: %s, %s", appID, groupID)
 		}
 		return nil
+	}
+}
+
+func deleteGroupOutsideTerraform(groupName, assignmentName string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
+	return func(s *terraform.State) error {
+		notFound := "resource not found: %s"
+		groupRes, ok := s.RootModule().Resources[groupName]
+		if !ok {
+			return fmt.Errorf(notFound, groupName)
+		}
+		assignmentRes, ok := s.RootModule().Resources[assignmentName]
+		if !ok {
+			return fmt.Errorf(notFound, assignmentName)
+		}
+
+		ctx := context.Background()
+		groupID := groupRes.Primary.ID
+		appID := assignmentRes.Primary.Attributes["app_id"]
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV2()
+
+		if _, err := client.Group.DeleteGroup(ctx, groupID); err != nil {
+			return fmt.Errorf("failed to delete group %s outside terraform: %w", groupID, err)
+		}
+
+		// wait for Okta to remove the group's app assignment
+		boc := utils.NewExponentialBackOffWithContext(ctx, 30*time.Second)
+		return backoff.Retry(func() error {
+			_, resp, err := client.Application.GetApplicationGroupAssignment(ctx, appID, groupID, nil)
+			if resp != nil && resp.StatusCode == http.StatusNotFound {
+				return nil
+			}
+			if err != nil {
+				return backoff.Permanent(err)
+			}
+			return fmt.Errorf("application group assignment for app ID, group ID: %s, %s still exists", appID, groupID)
+		}, boc)
 	}
 }

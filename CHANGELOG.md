@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### BUG FIXES
+
+* **`okta_group`, `okta_app_group_assignment`, `okta_app_user`**: Destroying a resource that was already deleted outside Terraform no longer fails with a 404, and the resource is now removed from state. This came up when Okta cascade-deleted an app assignment after its group or user was deleted, and when a saved plan was applied after the object was already gone. Relates to OKTA-1243779.
+
 ## 7.1.0 (Oct 29, 2026)
 
 ### ENHANCEMENTS
