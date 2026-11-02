@@ -86,3 +86,12 @@ Import is supported using the following syntax:
 ```shell
 terraform import okta_push_group.example <app_id>/<push_group_mapping_id>
 ```
+
+~> **NOTE:** `delete_target_group_on_destroy` is not part of the Okta API response, it
+only exists as a query parameter on the delete call. Import therefore sets it to the
+documented default of `true`. Set it to `false` in configuration and apply if the target
+group should survive a destroy.
+
+~> **NOTE:** `target_group_name` is also not returned by the API, so it stays unset after
+import. Changing it forces replacement, so leave it out of the configuration of an
+imported mapping unless you intend the mapping to be recreated.
