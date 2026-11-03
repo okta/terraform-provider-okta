@@ -319,6 +319,11 @@ func (d *policyDeviceAssuranceAndroidDataSource) Read(ctx context.Context, req d
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
 			gracePeriodModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
 			state.GracePeriod = gracePeriodModel0
 		}
 		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {

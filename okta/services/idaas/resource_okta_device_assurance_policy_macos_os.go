@@ -390,9 +390,9 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		state.SecureHardwarePresent = types.BoolNull()
 	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && state.DiskEncryptionType != nil {
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
-		if !state.DiskEncryptionType.Include.IsNull() {
+		if state.DiskEncryptionType == nil || !state.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -403,46 +403,55 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
-		if !state.GracePeriod.Type.IsNull() {
+		if state.GracePeriod == nil || !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = state.GracePeriod.Type
 		}
+		if state.GracePeriod == nil || !state.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = state.GracePeriod.Expiry
+		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
-			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor
 			}
-			if !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 			} else {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch
 			}
-			if !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
 			} else {
 				dynamicVersionRequirementModel1.Type = state.OsVersion.DynamicVersionRequirement.Type
 			}
 			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if !state.OsVersion.Minimum.IsNull() {
+		if state.OsVersion == nil || !state.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
 			osVersionModel0.Minimum = state.OsVersion.Minimum
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
-		if !state.ScreenLockType.Include.IsNull() {
+		if state.ScreenLockType == nil || !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -461,77 +470,77 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.Dtc != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
 			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
-				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
+				if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || state.ThirdPartySignalProviders.Dtc.BrowserVersion == nil || !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
 				} else {
 					browserVersionModel2.Minimum = state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum
 				}
 				dtcModel1.BrowserVersion = browserVersionModel2
 			}
-			if !state.ThirdPartySignalProviders.Dtc.BuiltInDnsClientEnabled.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.BuiltInDnsClientEnabled.IsNull() {
 				dtcModel1.BuiltInDnsClientEnabled = types.BoolValue(dtcRaw1.GetBuiltInDnsClientEnabled())
 			} else {
 				dtcModel1.BuiltInDnsClientEnabled = state.ThirdPartySignalProviders.Dtc.BuiltInDnsClientEnabled
 			}
-			if !state.ThirdPartySignalProviders.Dtc.ChromeRemoteDesktopAppBlocked.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.ChromeRemoteDesktopAppBlocked.IsNull() {
 				dtcModel1.ChromeRemoteDesktopAppBlocked = types.BoolValue(dtcRaw1.GetChromeRemoteDesktopAppBlocked())
 			} else {
 				dtcModel1.ChromeRemoteDesktopAppBlocked = state.ThirdPartySignalProviders.Dtc.ChromeRemoteDesktopAppBlocked
 			}
-			if !state.ThirdPartySignalProviders.Dtc.DeviceEnrollmentDomain.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.DeviceEnrollmentDomain.IsNull() {
 				dtcModel1.DeviceEnrollmentDomain = types.StringValue(string(dtcRaw1.GetDeviceEnrollmentDomain()))
 			} else {
 				dtcModel1.DeviceEnrollmentDomain = state.ThirdPartySignalProviders.Dtc.DeviceEnrollmentDomain
 			}
-			if !state.ThirdPartySignalProviders.Dtc.DiskEncrypted.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.DiskEncrypted.IsNull() {
 				dtcModel1.DiskEncrypted = types.BoolValue(dtcRaw1.GetDiskEncrypted())
 			} else {
 				dtcModel1.DiskEncrypted = state.ThirdPartySignalProviders.Dtc.DiskEncrypted
 			}
-			if !state.ThirdPartySignalProviders.Dtc.KeyTrustLevel.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.KeyTrustLevel.IsNull() {
 				dtcModel1.KeyTrustLevel = types.StringValue(string(dtcRaw1.GetKeyTrustLevel()))
 			} else {
 				dtcModel1.KeyTrustLevel = state.ThirdPartySignalProviders.Dtc.KeyTrustLevel
 			}
-			if !state.ThirdPartySignalProviders.Dtc.OsFirewall.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.OsFirewall.IsNull() {
 				dtcModel1.OsFirewall = types.BoolValue(dtcRaw1.GetOsFirewall())
 			} else {
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.OsVersion != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
-				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
+				if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || state.ThirdPartySignalProviders.Dtc.OsVersion == nil || !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
 				} else {
 					osVersionModel2.Minimum = state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum
 				}
 				dtcModel1.OsVersion = osVersionModel2
 			}
-			if !state.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger.IsNull() {
 				dtcModel1.PasswordProtectionWarningTrigger = types.StringValue(string(dtcRaw1.GetPasswordProtectionWarningTrigger()))
 			} else {
 				dtcModel1.PasswordProtectionWarningTrigger = state.ThirdPartySignalProviders.Dtc.PasswordProtectionWarningTrigger
 			}
-			if !state.ThirdPartySignalProviders.Dtc.RealtimeUrlCheckMode.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.RealtimeUrlCheckMode.IsNull() {
 				dtcModel1.RealtimeUrlCheckMode = types.BoolValue(dtcRaw1.GetRealtimeUrlCheckMode())
 			} else {
 				dtcModel1.RealtimeUrlCheckMode = state.ThirdPartySignalProviders.Dtc.RealtimeUrlCheckMode
 			}
-			if !state.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel.IsNull() {
 				dtcModel1.SafeBrowsingProtectionLevel = types.StringValue(string(dtcRaw1.GetSafeBrowsingProtectionLevel()))
 			} else {
 				dtcModel1.SafeBrowsingProtectionLevel = state.ThirdPartySignalProviders.Dtc.SafeBrowsingProtectionLevel
 			}
-			if !state.ThirdPartySignalProviders.Dtc.ScreenLockSecured.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.ScreenLockSecured.IsNull() {
 				dtcModel1.ScreenLockSecured = types.BoolValue(dtcRaw1.GetScreenLockSecured())
 			} else {
 				dtcModel1.ScreenLockSecured = state.ThirdPartySignalProviders.Dtc.ScreenLockSecured
 			}
-			if !state.ThirdPartySignalProviders.Dtc.SiteIsolationEnabled.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.Dtc == nil || !state.ThirdPartySignalProviders.Dtc.SiteIsolationEnabled.IsNull() {
 				dtcModel1.SiteIsolationEnabled = types.BoolValue(dtcRaw1.GetSiteIsolationEnabled())
 			} else {
 				dtcModel1.SiteIsolationEnabled = state.ThirdPartySignalProviders.Dtc.SiteIsolationEnabled
@@ -725,6 +734,15 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
@@ -1022,6 +1040,23 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 		return
 	}
 
+	// A nested block removed from config must be cleared, not carried over from prior state.
+	if plan.DiskEncryptionType == nil {
+		state.DiskEncryptionType = nil
+	}
+	if plan.GracePeriod == nil {
+		state.GracePeriod = nil
+	}
+	if plan.OsVersion == nil {
+		state.OsVersion = nil
+	}
+	if plan.ScreenLockType == nil {
+		state.ScreenLockType = nil
+	}
+	if plan.ThirdPartySignalProviders == nil {
+		state.ThirdPartySignalProviders = nil
+	}
+
 	// Map API response fields to state (scalar types only).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -1061,6 +1096,15 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		state.GracePeriod = gracePeriodModel0
 	}

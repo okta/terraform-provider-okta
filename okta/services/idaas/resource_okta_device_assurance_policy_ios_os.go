@@ -277,46 +277,55 @@ func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resourc
 	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
-		if !state.GracePeriod.Type.IsNull() {
+		if state.GracePeriod == nil || !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = state.GracePeriod.Type
 		}
+		if state.GracePeriod == nil || !state.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = state.GracePeriod.Expiry
+		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
-			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor
 			}
-			if !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 			} else {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch
 			}
-			if !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
 			} else {
 				dynamicVersionRequirementModel1.Type = state.OsVersion.DynamicVersionRequirement.Type
 			}
 			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if !state.OsVersion.Minimum.IsNull() {
+		if state.OsVersion == nil || !state.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
 			osVersionModel0.Minimum = state.OsVersion.Minimum
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
-		if !state.ScreenLockType.Include.IsNull() {
+		if state.ScreenLockType == nil || !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -446,6 +455,15 @@ func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resou
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
@@ -602,6 +620,20 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 		return
 	}
 
+	// A nested block removed from config must be cleared, not carried over from prior state.
+	if plan.GracePeriod == nil {
+		state.GracePeriod = nil
+	}
+	if plan.OsVersion == nil {
+		state.OsVersion = nil
+	}
+	if plan.ScreenLockType == nil {
+		state.ScreenLockType = nil
+	}
+	if plan.ThirdPartySignalProviders == nil {
+		state.ThirdPartySignalProviders = nil
+	}
+
 	// Map API response fields to state (scalar types only).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -628,6 +660,15 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		state.GracePeriod = gracePeriodModel0
 	}

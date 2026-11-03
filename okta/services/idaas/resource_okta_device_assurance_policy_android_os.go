@@ -348,9 +348,9 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		state.SecureHardwarePresent = types.BoolNull()
 	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && state.DiskEncryptionType != nil {
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
-		if !state.DiskEncryptionType.Include.IsNull() {
+		if state.DiskEncryptionType == nil || !state.DiskEncryptionType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -361,46 +361,55 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
-		if !state.GracePeriod.Type.IsNull() {
+		if state.GracePeriod == nil || !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = state.GracePeriod.Type
 		}
+		if state.GracePeriod == nil || !state.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = state.GracePeriod.Expiry
+		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
-			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
 			} else {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor
 			}
-			if !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch.IsNull() {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
 			} else {
 				dynamicVersionRequirementModel1.LatestSecurityPatch = state.OsVersion.DynamicVersionRequirement.LatestSecurityPatch
 			}
-			if !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
+			if state.OsVersion == nil || state.OsVersion.DynamicVersionRequirement == nil || !state.OsVersion.DynamicVersionRequirement.Type.IsNull() {
 				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
 			} else {
 				dynamicVersionRequirementModel1.Type = state.OsVersion.DynamicVersionRequirement.Type
 			}
 			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if !state.OsVersion.Minimum.IsNull() {
+		if state.OsVersion == nil || !state.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
 		} else {
 			osVersionModel0.Minimum = state.OsVersion.Minimum
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
-		if !state.ScreenLockType.Include.IsNull() {
+		if state.ScreenLockType == nil || !state.ScreenLockType.Include.IsNull() {
 			{
 				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
 				resp.Diagnostics.Append(listDiags...)
@@ -413,39 +422,39 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
 		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
-		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.AndroidDeviceTrust != nil {
+		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
 			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
 			} else {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = state.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.NetworkProxyDisabled.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.NetworkProxyDisabled.IsNull() {
 				androidDeviceTrustModel1.NetworkProxyDisabled = types.BoolValue(androidDeviceTrustRaw1.GetNetworkProxyDisabled())
 			} else {
 				androidDeviceTrustModel1.NetworkProxyDisabled = state.ThirdPartySignalProviders.AndroidDeviceTrust.NetworkProxyDisabled
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.PlayProtectVerdict.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.PlayProtectVerdict.IsNull() {
 				androidDeviceTrustModel1.PlayProtectVerdict = types.StringValue(string(androidDeviceTrustRaw1.GetPlayProtectVerdict()))
 			} else {
 				androidDeviceTrustModel1.PlayProtectVerdict = state.ThirdPartySignalProviders.AndroidDeviceTrust.PlayProtectVerdict
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.RequireMajorVersionUpdate.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.RequireMajorVersionUpdate.IsNull() {
 				androidDeviceTrustModel1.RequireMajorVersionUpdate = types.BoolValue(androidDeviceTrustRaw1.GetRequireMajorVersionUpdate())
 			} else {
 				androidDeviceTrustModel1.RequireMajorVersionUpdate = state.ThirdPartySignalProviders.AndroidDeviceTrust.RequireMajorVersionUpdate
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.ScreenLockComplexity.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.ScreenLockComplexity.IsNull() {
 				androidDeviceTrustModel1.ScreenLockComplexity = types.StringValue(string(androidDeviceTrustRaw1.GetScreenLockComplexity()))
 			} else {
 				androidDeviceTrustModel1.ScreenLockComplexity = state.ThirdPartySignalProviders.AndroidDeviceTrust.ScreenLockComplexity
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.UsbDebuggingDisabled.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.UsbDebuggingDisabled.IsNull() {
 				androidDeviceTrustModel1.UsbDebuggingDisabled = types.BoolValue(androidDeviceTrustRaw1.GetUsbDebuggingDisabled())
 			} else {
 				androidDeviceTrustModel1.UsbDebuggingDisabled = state.ThirdPartySignalProviders.AndroidDeviceTrust.UsbDebuggingDisabled
 			}
-			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.WifiSecured.IsNull() {
+			if state.ThirdPartySignalProviders == nil || state.ThirdPartySignalProviders.AndroidDeviceTrust == nil || !state.ThirdPartySignalProviders.AndroidDeviceTrust.WifiSecured.IsNull() {
 				androidDeviceTrustModel1.WifiSecured = types.BoolValue(androidDeviceTrustRaw1.GetWifiSecured())
 			} else {
 				androidDeviceTrustModel1.WifiSecured = state.ThirdPartySignalProviders.AndroidDeviceTrust.WifiSecured
@@ -623,6 +632,15 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
@@ -859,6 +877,23 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		return
 	}
 
+	// A nested block removed from config must be cleared, not carried over from prior state.
+	if plan.DiskEncryptionType == nil {
+		state.DiskEncryptionType = nil
+	}
+	if plan.GracePeriod == nil {
+		state.GracePeriod = nil
+	}
+	if plan.OsVersion == nil {
+		state.OsVersion = nil
+	}
+	if plan.ScreenLockType == nil {
+		state.ScreenLockType = nil
+	}
+	if plan.ThirdPartySignalProviders == nil {
+		state.ThirdPartySignalProviders = nil
+	}
+
 	// Map API response fields to state (scalar types only).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -901,6 +936,15 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
 		} else {
 			gracePeriodModel0.Type = plan.GracePeriod.Type
+		}
+		if !plan.GracePeriod.Expiry.IsNull() {
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
+		} else {
+			gracePeriodModel0.Expiry = plan.GracePeriod.Expiry
 		}
 		state.GracePeriod = gracePeriodModel0
 	}

@@ -286,6 +286,11 @@ func (d *policyDeviceAssuranceChromeosDataSource) Read(ctx context.Context, req 
 		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
 			gracePeriodModel0 := &PolicyDeviceAssuranceChromeosDataSourceModelGracePeriodModel{}
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
+			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+			} else {
+				gracePeriodModel0.Expiry = types.StringNull()
+			}
 			state.GracePeriod = gracePeriodModel0
 		}
 		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
