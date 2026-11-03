@@ -176,11 +176,11 @@ func (d *policyDeviceAssuranceAndroidDataSource) Schema(_ context.Context, _ dat
 				Description: "Represents the Grace Period configuration for the device assurance policy",
 				Attributes: map[string]schema.Attribute{
 					"expiry": schema.StringAttribute{
-						Description: "Expiry",
+						Description: "When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "Represents the type of Grace Period configured for the device assurance policy",
+						Description: "Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 				},
@@ -297,78 +297,80 @@ func (d *policyDeviceAssuranceAndroidDataSource) Read(ctx context.Context, req d
 		resp.Diagnostics.AddError("Error reading policy_device_assurance_android", err.Error())
 		return
 	}
-	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceAndroidPlatform); ok {
-		state.ID = types.StringValue(string(variantObj.GetId()))
-		state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
-		state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
-		state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
-		state.Jailbreak = types.BoolValue(variantObj.GetJailbreak())
-		state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
-		state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
-		state.Name = types.StringValue(string(variantObj.GetName()))
-		state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
-		if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-			diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel{}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
-				resp.Diagnostics.Append(listDiags...)
-				diskEncryptionTypeModel0.Include = listVal
-			}
-			state.DiskEncryptionType = diskEncryptionTypeModel0
+	variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceAndroidPlatform)
+	if !ok {
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_android", "device assurance policy "+id+" is not a ANDROID policy")
+		return
+	}
+	state.ID = types.StringValue(string(variantObj.GetId()))
+	state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
+	state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
+	state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
+	state.Jailbreak = types.BoolValue(variantObj.GetJailbreak())
+	state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
+	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
+	state.Name = types.StringValue(string(variantObj.GetName()))
+	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelDiskEncryptionTypeModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
+			resp.Diagnostics.Append(listDiags...)
+			diskEncryptionTypeModel0.Include = listVal
 		}
-		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel{}
-			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
-			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
-				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
-			} else {
-				gracePeriodModel0.Expiry = types.StringNull()
-			}
-			state.GracePeriod = gracePeriodModel0
+		state.DiskEncryptionType = diskEncryptionTypeModel0
+	}
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelGracePeriodModel{}
+		gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
+		if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+			gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+		} else {
+			gracePeriodModel0.Expiry = types.StringNull()
 		}
-		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel{}
-			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
-				osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
-			}
-			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
-			state.OsVersion = osVersionModel0
+		state.GracePeriod = gracePeriodModel0
+	}
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+		osVersionModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModel{}
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
+			dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
+			dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
+			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel{}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
-				resp.Diagnostics.Append(listDiags...)
-				screenLockTypeModel0.Include = listVal
-			}
-			state.ScreenLockType = screenLockTypeModel0
+		osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
+		state.OsVersion = osVersionModel0
+	}
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelScreenLockTypeModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
+			resp.Diagnostics.Append(listDiags...)
+			screenLockTypeModel0.Include = listVal
 		}
-		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel{}
-			if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
-				androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
-				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
-				androidDeviceTrustModel1.NetworkProxyDisabled = types.BoolValue(androidDeviceTrustRaw1.GetNetworkProxyDisabled())
-				androidDeviceTrustModel1.PlayProtectVerdict = types.StringValue(string(androidDeviceTrustRaw1.GetPlayProtectVerdict()))
-				androidDeviceTrustModel1.RequireMajorVersionUpdate = types.BoolValue(androidDeviceTrustRaw1.GetRequireMajorVersionUpdate())
-				androidDeviceTrustModel1.ScreenLockComplexity = types.StringValue(string(androidDeviceTrustRaw1.GetScreenLockComplexity()))
-				androidDeviceTrustModel1.UsbDebuggingDisabled = types.BoolValue(androidDeviceTrustRaw1.GetUsbDebuggingDisabled())
-				androidDeviceTrustModel1.WifiSecured = types.BoolValue(androidDeviceTrustRaw1.GetWifiSecured())
-				thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
-			}
-			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
-				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
-				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
-				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
-			}
-			state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
+		state.ScreenLockType = screenLockTypeModel0
+	}
+	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModel{}
+		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
+			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
+			androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
+			androidDeviceTrustModel1.NetworkProxyDisabled = types.BoolValue(androidDeviceTrustRaw1.GetNetworkProxyDisabled())
+			androidDeviceTrustModel1.PlayProtectVerdict = types.StringValue(string(androidDeviceTrustRaw1.GetPlayProtectVerdict()))
+			androidDeviceTrustModel1.RequireMajorVersionUpdate = types.BoolValue(androidDeviceTrustRaw1.GetRequireMajorVersionUpdate())
+			androidDeviceTrustModel1.ScreenLockComplexity = types.StringValue(string(androidDeviceTrustRaw1.GetScreenLockComplexity()))
+			androidDeviceTrustModel1.UsbDebuggingDisabled = types.BoolValue(androidDeviceTrustRaw1.GetUsbDebuggingDisabled())
+			androidDeviceTrustModel1.WifiSecured = types.BoolValue(androidDeviceTrustRaw1.GetWifiSecured())
+			thirdPartySignalProvidersModel0.AndroidDeviceTrust = androidDeviceTrustModel1
 		}
-
+		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceAndroidDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
+			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
+			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
+		}
+		state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

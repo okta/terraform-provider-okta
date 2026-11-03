@@ -80,8 +80,8 @@ resource "okta_policy_device_assurance_ios" "example_with_providers" {
   }
 
   grace_period {
-    type   = "DAYS"
-    expiry = "30"
+    type   = "BY_DURATION"
+    expiry = "P30D"
   }
 }
 ```
@@ -112,10 +112,12 @@ resource "okta_policy_device_assurance_ios" "example_with_providers" {
 <a id="nestedblock--grace_period"></a>
 ### Nested Schema for `grace_period`
 
+~> **Note:** Grace periods of type `BY_DATE_TIME` are not supported yet. The Okta Go SDK v7 cannot decode a date-time `expiry`, so reading such a policy fails. Use `BY_DURATION`.
+
 Optional:
 
-- `expiry` (String) Expiry
-- `type` (String) Represents the type of Grace Period configured for the device assurance policy
+- `expiry` (String) When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.
+- `type` (String) Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.
 
 <a id="nestedblock--os_version"></a>
 ### Nested Schema for `os_version`

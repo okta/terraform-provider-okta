@@ -165,11 +165,11 @@ func (r *policyDeviceAssuranceChromeosResource) Schema(_ context.Context, _ reso
 				Description: "Represents the Grace Period configuration for the device assurance policy",
 				Attributes: map[string]schema.Attribute{
 					"expiry": schema.StringAttribute{
-						Description: "Expiry",
+						Description: "When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.",
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "Represents the type of Grace Period configured for the device assurance policy",
+						Description: "Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.",
 						Optional:    true,
 					},
 				},

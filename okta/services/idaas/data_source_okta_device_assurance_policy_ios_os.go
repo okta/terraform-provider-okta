@@ -143,11 +143,11 @@ func (d *policyDeviceAssuranceIosDataSource) Schema(_ context.Context, _ datasou
 				Description: "Represents the Grace Period configuration for the device assurance policy",
 				Attributes: map[string]schema.Attribute{
 					"expiry": schema.StringAttribute{
-						Description: "Expiry",
+						Description: "When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "Represents the type of Grace Period configured for the device assurance policy",
+						Description: "Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 				},
@@ -231,57 +231,59 @@ func (d *policyDeviceAssuranceIosDataSource) Read(ctx context.Context, req datas
 		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", err.Error())
 		return
 	}
-	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceIOSPlatform); ok {
-		state.ID = types.StringValue(string(variantObj.GetId()))
-		state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
-		state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
-		state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
-		state.Jailbreak = types.BoolValue(variantObj.GetJailbreak())
-		state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
-		state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
-		state.Name = types.StringValue(string(variantObj.GetName()))
-		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel{}
-			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
-			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
-				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
-			} else {
-				gracePeriodModel0.Expiry = types.StringNull()
-			}
-			state.GracePeriod = gracePeriodModel0
+	variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceIOSPlatform)
+	if !ok {
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", "device assurance policy "+id+" is not an IOS policy")
+		return
+	}
+	state.ID = types.StringValue(string(variantObj.GetId()))
+	state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
+	state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
+	state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
+	state.Jailbreak = types.BoolValue(variantObj.GetJailbreak())
+	state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
+	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
+	state.Name = types.StringValue(string(variantObj.GetName()))
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+		gracePeriodModel0 := &PolicyDeviceAssuranceIosDataSourceModelGracePeriodModel{}
+		gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
+		if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+			gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+		} else {
+			gracePeriodModel0.Expiry = types.StringNull()
 		}
-		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModel{}
-			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
-				osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
-			}
-			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
-			state.OsVersion = osVersionModel0
+		state.GracePeriod = gracePeriodModel0
+	}
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+		osVersionModel0 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModel{}
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
+			dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
+			dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
+			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel{}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
-				resp.Diagnostics.Append(listDiags...)
-				screenLockTypeModel0.Include = listVal
-			}
-			state.ScreenLockType = screenLockTypeModel0
+		osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
+		state.OsVersion = osVersionModel0
+	}
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+		screenLockTypeModel0 := &PolicyDeviceAssuranceIosDataSourceModelScreenLockTypeModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
+			resp.Diagnostics.Append(listDiags...)
+			screenLockTypeModel0.Include = listVal
 		}
-		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel{}
-			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
-				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
-				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
-				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
-			}
-			state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
+		state.ScreenLockType = screenLockTypeModel0
+	}
+	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModel{}
+		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceIosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
+			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
+			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-
+		state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

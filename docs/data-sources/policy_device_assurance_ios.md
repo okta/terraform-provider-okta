@@ -64,8 +64,8 @@ data "okta_policy_device_assurance_ios" "example" {
 
 Read-Only:
 
-- `expiry` (String) Expiry
-- `type` (String) Represents the type of Grace Period configured for the device assurance policy
+- `expiry` (String) When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.
+- `type` (String) Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.
 
 
 <a id="nestedblock--os_version"></a>

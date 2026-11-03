@@ -17,7 +17,7 @@ resource "okta_policy_device_assurance_android" "example_with_remediation" {
   }
 
   grace_period {
-    type   = "DAYS"
-    expiry = "30"
+    type   = "BY_DURATION"
+    expiry = "P30D"
   }
 }

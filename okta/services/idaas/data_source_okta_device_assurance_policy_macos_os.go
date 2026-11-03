@@ -187,11 +187,11 @@ func (d *policyDeviceAssuranceMacosDataSource) Schema(_ context.Context, _ datas
 				Description: "Represents the Grace Period configuration for the device assurance policy",
 				Attributes: map[string]schema.Attribute{
 					"expiry": schema.StringAttribute{
-						Description: "Expiry",
+						Description: "When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "Represents the type of Grace Period configured for the device assurance policy",
+						Description: "Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.",
 						Computed:    true,
 					},
 				},
@@ -344,91 +344,93 @@ func (d *policyDeviceAssuranceMacosDataSource) Read(ctx context.Context, req dat
 		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", err.Error())
 		return
 	}
-	if variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceMacOSPlatform); ok {
-		state.ID = types.StringValue(string(variantObj.GetId()))
-		state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
-		state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
-		state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
-		state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
-		state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
-		state.Name = types.StringValue(string(variantObj.GetName()))
-		state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
-		if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
-			diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel{}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
-				resp.Diagnostics.Append(listDiags...)
-				diskEncryptionTypeModel0.Include = listVal
-			}
-			state.DiskEncryptionType = diskEncryptionTypeModel0
+	variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceMacOSPlatform)
+	if !ok {
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", "device assurance policy "+id+" is not a MACOS policy")
+		return
+	}
+	state.ID = types.StringValue(string(variantObj.GetId()))
+	state.CreatedBy = types.StringValue(string(variantObj.GetCreatedBy()))
+	state.CreatedDate = types.StringValue(string(variantObj.GetCreatedDate()))
+	state.DisplayRemediationMode = types.StringValue(string(variantObj.GetDisplayRemediationMode()))
+	state.LastUpdate = types.StringValue(string(variantObj.GetLastUpdate()))
+	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
+	state.Name = types.StringValue(string(variantObj.GetName()))
+	state.SecureHardwarePresent = types.BoolValue(variantObj.GetSecureHardwarePresent())
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelDiskEncryptionTypeModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, diskEncryptionTypeRaw0.GetInclude())
+			resp.Diagnostics.Append(listDiags...)
+			diskEncryptionTypeModel0.Include = listVal
 		}
-		if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
-			gracePeriodModel0 := &PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel{}
-			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
-			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
-				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
-			} else {
-				gracePeriodModel0.Expiry = types.StringNull()
-			}
-			state.GracePeriod = gracePeriodModel0
+		state.DiskEncryptionType = diskEncryptionTypeModel0
+	}
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+		gracePeriodModel0 := &PolicyDeviceAssuranceMacosDataSourceModelGracePeriodModel{}
+		gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
+		if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
+			gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+		} else {
+			gracePeriodModel0.Expiry = types.StringNull()
 		}
-		if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
-			osVersionModel0 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel{}
-			if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
-				dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
-				osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
-			}
-			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
-			state.OsVersion = osVersionModel0
+		state.GracePeriod = gracePeriodModel0
+	}
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+		osVersionModel0 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModel{}
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosDataSourceModelOsVersionModelDynamicVersionRequirementModel{}
+			dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
+			dynamicVersionRequirementModel1.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw1.GetLatestSecurityPatch())
+			dynamicVersionRequirementModel1.Type = types.StringValue(string(dynamicVersionRequirementRaw1.GetType()))
+			osVersionModel0.DynamicVersionRequirement = dynamicVersionRequirementModel1
 		}
-		if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
-			screenLockTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel{}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
-				resp.Diagnostics.Append(listDiags...)
-				screenLockTypeModel0.Include = listVal
-			}
-			state.ScreenLockType = screenLockTypeModel0
+		osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
+		state.OsVersion = osVersionModel0
+	}
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosDataSourceModelScreenLockTypeModel{}
+		{
+			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, screenLockTypeRaw0.GetInclude())
+			resp.Diagnostics.Append(listDiags...)
+			screenLockTypeModel0.Include = listVal
 		}
-		if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
-			thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel{}
-			if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
-				devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
-				devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
-				devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
-				thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
-			}
-			if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
-				dtcModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel{}
-				if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
-					browserVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
-					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
-					dtcModel1.BrowserVersion = browserVersionModel2
-				}
-				dtcModel1.BuiltInDnsClientEnabled = types.BoolValue(dtcRaw1.GetBuiltInDnsClientEnabled())
-				dtcModel1.ChromeRemoteDesktopAppBlocked = types.BoolValue(dtcRaw1.GetChromeRemoteDesktopAppBlocked())
-				dtcModel1.DeviceEnrollmentDomain = types.StringValue(string(dtcRaw1.GetDeviceEnrollmentDomain()))
-				dtcModel1.DiskEncrypted = types.BoolValue(dtcRaw1.GetDiskEncrypted())
-				dtcModel1.KeyTrustLevel = types.StringValue(string(dtcRaw1.GetKeyTrustLevel()))
-				dtcModel1.OsFirewall = types.BoolValue(dtcRaw1.GetOsFirewall())
-				if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
-					osVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
-					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
-					dtcModel1.OsVersion = osVersionModel2
-				}
-				dtcModel1.PasswordProtectionWarningTrigger = types.StringValue(string(dtcRaw1.GetPasswordProtectionWarningTrigger()))
-				dtcModel1.RealtimeUrlCheckMode = types.BoolValue(dtcRaw1.GetRealtimeUrlCheckMode())
-				dtcModel1.SafeBrowsingProtectionLevel = types.StringValue(string(dtcRaw1.GetSafeBrowsingProtectionLevel()))
-				dtcModel1.ScreenLockSecured = types.BoolValue(dtcRaw1.GetScreenLockSecured())
-				dtcModel1.SiteIsolationEnabled = types.BoolValue(dtcRaw1.GetSiteIsolationEnabled())
-				thirdPartySignalProvidersModel0.Dtc = dtcModel1
-			}
-			state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
+		state.ScreenLockType = screenLockTypeModel0
+	}
+	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
+		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModel{}
+		if devicePostureIdPRaw1, ok := thirdPartySignalProvidersRaw0.GetDevicePostureIdPOk(); ok && devicePostureIdPRaw1 != nil {
+			devicePostureIdPModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDevicePostureIdPModel{}
+			devicePostureIdPModel1.Compliant = types.BoolValue(devicePostureIdPRaw1.GetCompliant())
+			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
+			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+			dtcModel1 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModel{}
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+				browserVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
+				browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
+				dtcModel1.BrowserVersion = browserVersionModel2
+			}
+			dtcModel1.BuiltInDnsClientEnabled = types.BoolValue(dtcRaw1.GetBuiltInDnsClientEnabled())
+			dtcModel1.ChromeRemoteDesktopAppBlocked = types.BoolValue(dtcRaw1.GetChromeRemoteDesktopAppBlocked())
+			dtcModel1.DeviceEnrollmentDomain = types.StringValue(string(dtcRaw1.GetDeviceEnrollmentDomain()))
+			dtcModel1.DiskEncrypted = types.BoolValue(dtcRaw1.GetDiskEncrypted())
+			dtcModel1.KeyTrustLevel = types.StringValue(string(dtcRaw1.GetKeyTrustLevel()))
+			dtcModel1.OsFirewall = types.BoolValue(dtcRaw1.GetOsFirewall())
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+				osVersionModel2 := &PolicyDeviceAssuranceMacosDataSourceModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
+				osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
+				dtcModel1.OsVersion = osVersionModel2
+			}
+			dtcModel1.PasswordProtectionWarningTrigger = types.StringValue(string(dtcRaw1.GetPasswordProtectionWarningTrigger()))
+			dtcModel1.RealtimeUrlCheckMode = types.BoolValue(dtcRaw1.GetRealtimeUrlCheckMode())
+			dtcModel1.SafeBrowsingProtectionLevel = types.StringValue(string(dtcRaw1.GetSafeBrowsingProtectionLevel()))
+			dtcModel1.ScreenLockSecured = types.BoolValue(dtcRaw1.GetScreenLockSecured())
+			dtcModel1.SiteIsolationEnabled = types.BoolValue(dtcRaw1.GetSiteIsolationEnabled())
+			thirdPartySignalProvidersModel0.Dtc = dtcModel1
+		}
+		state.ThirdPartySignalProviders = thirdPartySignalProvidersModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

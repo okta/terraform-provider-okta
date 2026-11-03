@@ -45,7 +45,7 @@ resource "okta_policy_device_assurance_windows" "example_with_providers" {
   }
 
   grace_period {
-    type   = "DAYS"
-    expiry = "30"
+    type   = "BY_DURATION"
+    expiry = "P30D"
   }
 }

@@ -218,11 +218,11 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 				Description: "Represents the Grace Period configuration for the device assurance policy",
 				Attributes: map[string]schema.Attribute{
 					"expiry": schema.StringAttribute{
-						Description: "Expiry",
+						Description: "When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.",
 						Optional:    true,
 					},
 					"type": schema.StringAttribute{
-						Description: "Represents the type of Grace Period configured for the device assurance policy",
+						Description: "Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.",
 						Optional:    true,
 					},
 				},
@@ -493,13 +493,33 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
 				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
+				if v, ok := dynamicVersionRequirementRaw2.GetDistanceFromLatestMajorOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(*v))
+				} else {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Null()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetLatestSecurityPatchOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolNull()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetTypeOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.Type = types.StringValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.Type = types.StringNull()
+				}
 				osVersionConstraintsItem0.DynamicVersionRequirement = dynamicVersionRequirementModel2
 			}
-			osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(string(apiItem.GetMajorVersionConstraint()))
-			osVersionConstraintsItem0.Minimum = types.StringValue(string(apiItem.GetMinimum()))
+			if v, ok := apiItem.GetMajorVersionConstraintOk(); ok && v != nil {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringNull()
+			}
+			if v, ok := apiItem.GetMinimumOk(); ok && v != nil {
+				osVersionConstraintsItem0.Minimum = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.Minimum = types.StringNull()
+			}
 			osVersionConstraintsList0 = append(osVersionConstraintsList0, *osVersionConstraintsItem0)
 		}
 		state.OsVersionConstraints = osVersionConstraintsList0
@@ -876,13 +896,33 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
 				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
+				if v, ok := dynamicVersionRequirementRaw2.GetDistanceFromLatestMajorOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(*v))
+				} else {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Null()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetLatestSecurityPatchOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolNull()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetTypeOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.Type = types.StringValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.Type = types.StringNull()
+				}
 				osVersionConstraintsItem0.DynamicVersionRequirement = dynamicVersionRequirementModel2
 			}
-			osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(string(apiItem.GetMajorVersionConstraint()))
-			osVersionConstraintsItem0.Minimum = types.StringValue(string(apiItem.GetMinimum()))
+			if v, ok := apiItem.GetMajorVersionConstraintOk(); ok && v != nil {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringNull()
+			}
+			if v, ok := apiItem.GetMinimumOk(); ok && v != nil {
+				osVersionConstraintsItem0.Minimum = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.Minimum = types.StringNull()
+			}
 			osVersionConstraintsList0 = append(osVersionConstraintsList0, *osVersionConstraintsItem0)
 		}
 		plan.OsVersionConstraints = osVersionConstraintsList0
@@ -1299,13 +1339,33 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 			osVersionConstraintsItem0 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModel{}
 			if dynamicVersionRequirementRaw2, ok := apiItem.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw2 != nil {
 				dynamicVersionRequirementModel2 := &PolicyDeviceAssuranceWindowsModelOsVersionConstraintsModelDynamicVersionRequirementModel{}
-				dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw2.GetDistanceFromLatestMajor()))
-				dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(dynamicVersionRequirementRaw2.GetLatestSecurityPatch())
-				dynamicVersionRequirementModel2.Type = types.StringValue(string(dynamicVersionRequirementRaw2.GetType()))
+				if v, ok := dynamicVersionRequirementRaw2.GetDistanceFromLatestMajorOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Value(int64(*v))
+				} else {
+					dynamicVersionRequirementModel2.DistanceFromLatestMajor = types.Int64Null()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetLatestSecurityPatchOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.LatestSecurityPatch = types.BoolNull()
+				}
+				if v, ok := dynamicVersionRequirementRaw2.GetTypeOk(); ok && v != nil {
+					dynamicVersionRequirementModel2.Type = types.StringValue(*v)
+				} else {
+					dynamicVersionRequirementModel2.Type = types.StringNull()
+				}
 				osVersionConstraintsItem0.DynamicVersionRequirement = dynamicVersionRequirementModel2
 			}
-			osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(string(apiItem.GetMajorVersionConstraint()))
-			osVersionConstraintsItem0.Minimum = types.StringValue(string(apiItem.GetMinimum()))
+			if v, ok := apiItem.GetMajorVersionConstraintOk(); ok && v != nil {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.MajorVersionConstraint = types.StringNull()
+			}
+			if v, ok := apiItem.GetMinimumOk(); ok && v != nil {
+				osVersionConstraintsItem0.Minimum = types.StringValue(*v)
+			} else {
+				osVersionConstraintsItem0.Minimum = types.StringNull()
+			}
 			osVersionConstraintsList0 = append(osVersionConstraintsList0, *osVersionConstraintsItem0)
 		}
 		state.OsVersionConstraints = osVersionConstraintsList0
