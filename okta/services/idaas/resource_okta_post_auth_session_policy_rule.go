@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -110,13 +110,15 @@ func (r *postAuthSessionPolicyRuleResource) Schema(_ context.Context, _ resource
 				Description: "ID of the Okta Workflow to run when a policy failure is detected.",
 				Optional:    true,
 			},
-			// Okta increments the rule's priority when a PUT omits it, and the Session
-			// Protection admin UI only renders settings for the priority 0 rule, so the
-			// provider always sends 0 and plans a diff if the rule has drifted.
+			// Okta increments the rule's priority when a PUT omits it, so the provider
+			// always sends it: the configured value, or the current one from state.
 			"priority": schema.Int64Attribute{
-				Description: "Priority of the rule. Always 0, as the Session Protection page in the Admin Console only renders settings for the priority 0 rule.",
+				Description: "Priority of the rule.",
+				Optional:    true,
 				Computed:    true,
-				Default:     int64default.StaticInt64(0),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
@@ -360,7 +362,9 @@ func (r *postAuthSessionPolicyRuleResource) buildPostAuthSessionPolicyRule(ctx c
 
 	ruleType := "POST_AUTH_SESSION"
 	rule.Type = &ruleType
-	rule.SetPriority(0)
+	if !state.Priority.IsNull() && !state.Priority.IsUnknown() {
+		rule.SetPriority(int32(state.Priority.ValueInt64()))
+	}
 
 	conditions := v6okta.NewPostAuthSessionPolicyRuleAllOfConditions()
 

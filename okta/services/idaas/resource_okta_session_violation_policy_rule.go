@@ -4,13 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -116,16 +114,10 @@ func (r *sessionViolationPolicyRuleResource) Schema(_ context.Context, _ resourc
 				Computed:    true,
 				Default:     booldefault.StaticBool(true),
 			},
-			// The Session Protection admin UI only renders settings for the priority 0
-			// rule, so any other value leaves the page blank.
 			"priority": schema.Int64Attribute{
-				Description: "Priority of the rule. Must be 0, as the Session Protection page in the Admin Console only renders settings for the priority 0 rule. Defaults to 0.",
+				Description: "Priority of the rule.",
 				Optional:    true,
 				Computed:    true,
-				Default:     int64default.StaticInt64(0),
-				Validators: []validator.Int64{
-					int64validator.OneOf(0),
-				},
 			},
 		},
 	}
@@ -358,7 +350,9 @@ func (r *sessionViolationPolicyRuleResource) buildSessionViolationPolicyRule(ctx
 	ruleType := "SESSION_VIOLATION_DETECTION"
 	rule.Type = &ruleType
 
-	rule.SetPriority(0)
+	if !state.Priority.IsNull() && !state.Priority.IsUnknown() {
+		rule.SetPriority(int32(state.Priority.ValueInt64()))
+	}
 
 	// Build conditions
 	conditions := v6okta.NewSessionViolationDetectionPolicyRuleAllOfConditions()
