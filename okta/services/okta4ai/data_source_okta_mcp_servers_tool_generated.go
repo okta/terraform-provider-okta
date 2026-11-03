@@ -138,7 +138,7 @@ func (d *mcpServersToolDataSource) Read(ctx context.Context, req datasource.Read
 	client := d.Config.Okta4AIClient.Okta4AISDKClient()
 	id := state.ID.ValueString()
 	mcpServerId := state.McpServerId.ValueString()
-	result, httpResp, err := client.MCPServerCapabilitiesV2API.GetMCPServerToolV2(ctx, mcpServerId, id).Execute()
+	result, httpResp, err := client.MCPServerRegistrationV2API.GetMCPServerToolV2(ctx, mcpServerId, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			resp.Diagnostics.AddError("Not Found", "mcp_servers_tool with the given ID was not found.")
@@ -182,7 +182,9 @@ func (d *mcpServersToolDataSource) Read(ctx context.Context, req datasource.Read
 			resp.Diagnostics.Append(listDiags...)
 			credentialModel0.Scopes = listVal
 		}
-		state.Credential = credentialModel0
+		if state.Credential != nil || !(credentialModel0.AuthType.IsNull() && credentialModel0.ClientAuthSettingsId.IsNull() && credentialModel0.Scopes.IsNull()) {
+			state.Credential = credentialModel0
+		}
 	}
 	if result.GetInputSchema() != nil {
 		inputSchemaAttrs := make(map[string]attr.Value)

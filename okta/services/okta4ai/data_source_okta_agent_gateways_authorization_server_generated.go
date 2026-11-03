@@ -39,21 +39,36 @@ type agentGatewaysAuthorizationServerDataSource struct {
 
 // AgentGatewaysAuthorizationServerDataSourceModel describes the data source data model.
 type agentGatewaysAuthorizationServerDataSourceModel struct {
-	ID             types.String                                                  `tfsdk:"id"`
-	AgentGatewayId types.String                                                  `tfsdk:"agent_gateway_id"`
-	Issuer         types.String                                                  `tfsdk:"issuer"`
-	LastUpdated    types.String                                                  `tfsdk:"last_updated"`
-	Metadata       *AgentGatewaysAuthorizationServerDataSourceModelMetadataModel `tfsdk:"metadata"`
-	Orn            types.String                                                  `tfsdk:"orn"`
-	Status         types.String                                                  `tfsdk:"status"`
+	ID                  types.String                                                             `tfsdk:"id"`
+	AgentGatewayId      types.String                                                             `tfsdk:"agent_gateway_id"`
+	AuthorizationServer *AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModel `tfsdk:"authorization_server"`
+	Created             types.String                                                             `tfsdk:"created"`
+	LastUpdated         types.String                                                             `tfsdk:"last_updated"`
 }
 
-// AgentGatewaysAuthorizationServerDataSourceModelMetadataModel is the nested model for metadata.
-type AgentGatewaysAuthorizationServerDataSourceModelMetadataModel struct {
-	AuthorizationEndpoint   types.String `tfsdk:"authorization_endpoint"`
-	GrantTypesSupported     types.List   `tfsdk:"grant_types_supported"`
-	TokenEndpoint           types.String `tfsdk:"token_endpoint"`
-	TokenEndpointAuthMethod types.String `tfsdk:"token_endpoint_auth_method"`
+// AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModel is the nested model for authorization_server.
+type AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModel struct {
+	Created                  types.String                                                                          `tfsdk:"created"`
+	Id                       types.String                                                                          `tfsdk:"id"`
+	Issuer                   types.String                                                                          `tfsdk:"issuer"`
+	LastUpdated              types.String                                                                          `tfsdk:"last_updated"`
+	Metadata                 *AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModelMetadataModel `tfsdk:"metadata"`
+	Orn                      types.String                                                                          `tfsdk:"orn"`
+	Status                   types.String                                                                          `tfsdk:"status"`
+	SubjectMappingExpression types.String                                                                          `tfsdk:"subject_mapping_expression"`
+	Type                     types.String                                                                          `tfsdk:"type"`
+}
+
+// AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModelMetadataModel is the nested model for metadata.
+type AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModelMetadataModel struct {
+	AuthorizationEndpoint                        types.String `tfsdk:"authorization_endpoint"`
+	GrantTypesSupported                          types.List   `tfsdk:"grant_types_supported"`
+	IdentityChainingRequestedTokenTypesSupported types.List   `tfsdk:"identity_chaining_requested_token_types_supported"`
+	ProtocolSupported                            types.List   `tfsdk:"protocol_supported"`
+	RegistrationEndpoint                         types.String `tfsdk:"registration_endpoint"`
+	TokenEndpoint                                types.String `tfsdk:"token_endpoint"`
+	TokenEndpointAuthMethod                      types.String `tfsdk:"token_endpoint_auth_method"`
+	TokenEndpointAuthMethodsSupported            types.List   `tfsdk:"token_endpoint_auth_methods_supported"`
 }
 
 func NewAgentGatewaysAuthorizationServerDataSource() datasource.DataSource {
@@ -70,7 +85,7 @@ func (d *agentGatewaysAuthorizationServerDataSource) Configure(_ context.Context
 
 func (d *agentGatewaysAuthorizationServerDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Retrieves an authorization server linked to the agent gateway by ID.",
+		MarkdownDescription: "Retrieves the link between the agent gateway and an authorization server, by the authorization server's ID.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: "Unique identifier of the agent_gateways_authorization_server.",
@@ -80,43 +95,93 @@ func (d *agentGatewaysAuthorizationServerDataSource) Schema(_ context.Context, _
 				MarkdownDescription: "ID of an agent gateway",
 				Required:            true,
 			},
-			"issuer": schema.StringAttribute{
-				MarkdownDescription: "OAuth 2.",
+			"created": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the authorization server was linked to the resource server",
 				Computed:            true,
 			},
 			"last_updated": schema.StringAttribute{
-				MarkdownDescription: "Timestamp when the authorization server was last updated",
-				Computed:            true,
-			},
-			"orn": schema.StringAttribute{
-				MarkdownDescription: "The [ORN](https://developer.",
-				Computed:            true,
-			},
-			"status": schema.StringAttribute{
-				MarkdownDescription: "Current status of the authorization server",
+				MarkdownDescription: "Timestamp when the link was last updated",
 				Computed:            true,
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"metadata": schema.SingleNestedBlock{
-				Description: "Metadata about the authorization server",
+			"authorization_server": schema.SingleNestedBlock{
+				Description: "An authorization server.",
 				Attributes: map[string]schema.Attribute{
-					"authorization_endpoint": schema.StringAttribute{
-						Description: "URL of the authorization endpoint",
+					"created": schema.StringAttribute{
+						Description: "Timestamp when the authorization server was created",
 						Computed:    true,
 					},
-					"grant_types_supported": schema.ListAttribute{
+					"id": schema.StringAttribute{
+						Description: "Unique identifier for the authorization server",
+						Computed:    true,
+					},
+					"issuer": schema.StringAttribute{
 						Description: "OAuth 2.",
-						ElementType: types.StringType,
 						Computed:    true,
 					},
-					"token_endpoint": schema.StringAttribute{
-						Description: "URL of the token endpoint",
+					"last_updated": schema.StringAttribute{
+						Description: "Timestamp when the authorization server was last updated",
 						Computed:    true,
 					},
-					"token_endpoint_auth_method": schema.StringAttribute{
-						Description: "The client authentication method used when presenting tokens to the authorization server's token endpoint.",
+					"orn": schema.StringAttribute{
+						Description: "The [ORN](https://developer.",
 						Computed:    true,
+					},
+					"status": schema.StringAttribute{
+						Description: "Current status of the authorization server in its lifecycle",
+						Computed:    true,
+					},
+					"subject_mapping_expression": schema.StringAttribute{
+						Description: "Okta Expression Language formula that computes the `sub` claim value for the ID-JAG token minted for this authorization server.",
+						Computed:    true,
+					},
+					"type": schema.StringAttribute{
+						Description: "How the authorization server's metadata is sourced",
+						Computed:    true,
+					},
+				},
+				Blocks: map[string]schema.Block{
+					"metadata": schema.SingleNestedBlock{
+						Description: "Metadata about the authorization server.",
+						Attributes: map[string]schema.Attribute{
+							"authorization_endpoint": schema.StringAttribute{
+								Description: "URL of the authorization endpoint",
+								Computed:    true,
+							},
+							"grant_types_supported": schema.ListAttribute{
+								Description: "OAuth 2.",
+								ElementType: types.StringType,
+								Computed:    true,
+							},
+							"identity_chaining_requested_token_types_supported": schema.ListAttribute{
+								Description: "Token types supported for identity chaining requested tokens.",
+								ElementType: types.StringType,
+								Computed:    true,
+							},
+							"protocol_supported": schema.ListAttribute{
+								Description: "The mechanism(s) this authorization server supports for obtaining tokens for resource servers — some combination of `STS` and `IDENTITY_ASSERTION`.",
+								ElementType: types.StringType,
+								Computed:    true,
+							},
+							"registration_endpoint": schema.StringAttribute{
+								Description: "URL of the OAuth 2.",
+								Computed:    true,
+							},
+							"token_endpoint": schema.StringAttribute{
+								Description: "URL of the token endpoint",
+								Computed:    true,
+							},
+							"token_endpoint_auth_method": schema.StringAttribute{
+								Description: "The client authentication method used when presenting tokens to the authorization server's token endpoint.",
+								Computed:    true,
+							},
+							"token_endpoint_auth_methods_supported": schema.ListAttribute{
+								Description: "Client authentication methods supported by the token endpoint.",
+								ElementType: types.StringType,
+								Computed:    true,
+							},
+						},
 					},
 				},
 			},
@@ -144,36 +209,100 @@ func (d *agentGatewaysAuthorizationServerDataSource) Read(ctx context.Context, r
 		resp.Diagnostics.AddError("Error reading agent_gateways_authorization_server", err.Error())
 		return
 	}
-	state.ID = types.StringValue(string(result.GetId()))
-	state.Issuer = types.StringValue(string(result.GetIssuer()))
+	_ = result // response type has no GetId(); prevent "declared and not used"
+	if t := result.GetCreated(); !t.IsZero() {
+		state.Created = types.StringValue(t.Format(time.RFC3339))
+	}
 	if t := result.GetLastUpdated(); !t.IsZero() {
 		state.LastUpdated = types.StringValue(t.Format(time.RFC3339))
 	}
-	state.Orn = types.StringValue(string(result.GetOrn()))
-	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &AgentGatewaysAuthorizationServerDataSourceModelMetadataModel{}
-		if v := string(metadataRaw0.GetAuthorizationEndpoint()); v != "" {
-			metadataModel0.AuthorizationEndpoint = types.StringValue(v)
+	if authorizationServerRaw0, ok := result.GetAuthorizationServerOk(); ok && authorizationServerRaw0 != nil {
+		authorizationServerModel0 := &AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModel{}
+		if t := authorizationServerRaw0.GetCreated(); !t.IsZero() {
+			authorizationServerModel0.Created = types.StringValue(t.Format(time.RFC3339))
+		}
+		if v := string(authorizationServerRaw0.GetId()); v != "" {
+			authorizationServerModel0.Id = types.StringValue(v)
 		} else {
-			metadataModel0.AuthorizationEndpoint = types.StringNull()
+			authorizationServerModel0.Id = types.StringNull()
 		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetGrantTypesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.GrantTypesSupported = listVal
-		}
-		if v := string(metadataRaw0.GetTokenEndpoint()); v != "" {
-			metadataModel0.TokenEndpoint = types.StringValue(v)
+		if v := string(authorizationServerRaw0.GetIssuer()); v != "" {
+			authorizationServerModel0.Issuer = types.StringValue(v)
 		} else {
-			metadataModel0.TokenEndpoint = types.StringNull()
+			authorizationServerModel0.Issuer = types.StringNull()
 		}
-		if v := string(metadataRaw0.GetTokenEndpointAuthMethod()); v != "" {
-			metadataModel0.TokenEndpointAuthMethod = types.StringValue(v)
+		if t := authorizationServerRaw0.GetLastUpdated(); !t.IsZero() {
+			authorizationServerModel0.LastUpdated = types.StringValue(t.Format(time.RFC3339))
+		}
+		if metadataRaw1, ok := authorizationServerRaw0.GetMetadataOk(); ok && metadataRaw1 != nil {
+			metadataModel1 := &AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModelMetadataModel{}
+			if v := string(metadataRaw1.GetAuthorizationEndpoint()); v != "" {
+				metadataModel1.AuthorizationEndpoint = types.StringValue(v)
+			} else {
+				metadataModel1.AuthorizationEndpoint = types.StringNull()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw1.GetGrantTypesSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel1.GrantTypesSupported = listVal
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw1.GetIdentityChainingRequestedTokenTypesSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel1.IdentityChainingRequestedTokenTypesSupported = listVal
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw1.GetProtocolSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel1.ProtocolSupported = listVal
+			}
+			if v := string(metadataRaw1.GetRegistrationEndpoint()); v != "" {
+				metadataModel1.RegistrationEndpoint = types.StringValue(v)
+			} else {
+				metadataModel1.RegistrationEndpoint = types.StringNull()
+			}
+			if v := string(metadataRaw1.GetTokenEndpoint()); v != "" {
+				metadataModel1.TokenEndpoint = types.StringValue(v)
+			} else {
+				metadataModel1.TokenEndpoint = types.StringNull()
+			}
+			if v := string(metadataRaw1.GetTokenEndpointAuthMethod()); v != "" {
+				metadataModel1.TokenEndpointAuthMethod = types.StringValue(v)
+			} else {
+				metadataModel1.TokenEndpointAuthMethod = types.StringNull()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw1.GetTokenEndpointAuthMethodsSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel1.TokenEndpointAuthMethodsSupported = listVal
+			}
+			if state.AuthorizationServer != nil && state.AuthorizationServer.Metadata != nil || !(metadataModel1.AuthorizationEndpoint.IsNull() && metadataModel1.GrantTypesSupported.IsNull() && metadataModel1.IdentityChainingRequestedTokenTypesSupported.IsNull() && metadataModel1.ProtocolSupported.IsNull() && metadataModel1.RegistrationEndpoint.IsNull() && metadataModel1.TokenEndpoint.IsNull() && metadataModel1.TokenEndpointAuthMethod.IsNull() && metadataModel1.TokenEndpointAuthMethodsSupported.IsNull()) {
+				authorizationServerModel0.Metadata = metadataModel1
+			}
+		}
+		if v := string(authorizationServerRaw0.GetOrn()); v != "" {
+			authorizationServerModel0.Orn = types.StringValue(v)
 		} else {
-			metadataModel0.TokenEndpointAuthMethod = types.StringNull()
+			authorizationServerModel0.Orn = types.StringNull()
 		}
-		state.Metadata = metadataModel0
+		if v := string(authorizationServerRaw0.GetStatus()); v != "" {
+			authorizationServerModel0.Status = types.StringValue(v)
+		} else {
+			authorizationServerModel0.Status = types.StringNull()
+		}
+		if v := string(authorizationServerRaw0.GetSubjectMappingExpression()); v != "" {
+			authorizationServerModel0.SubjectMappingExpression = types.StringValue(v)
+		} else {
+			authorizationServerModel0.SubjectMappingExpression = types.StringNull()
+		}
+		if v := string(authorizationServerRaw0.GetType()); v != "" {
+			authorizationServerModel0.Type = types.StringValue(v)
+		} else {
+			authorizationServerModel0.Type = types.StringNull()
+		}
+		if state.AuthorizationServer != nil || !(authorizationServerModel0.Created.IsNull() && authorizationServerModel0.Id.IsNull() && authorizationServerModel0.Issuer.IsNull() && authorizationServerModel0.LastUpdated.IsNull() && authorizationServerModel0.Metadata == nil && authorizationServerModel0.Orn.IsNull() && authorizationServerModel0.Status.IsNull() && authorizationServerModel0.SubjectMappingExpression.IsNull() && authorizationServerModel0.Type.IsNull()) {
+			state.AuthorizationServer = authorizationServerModel0
+		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
