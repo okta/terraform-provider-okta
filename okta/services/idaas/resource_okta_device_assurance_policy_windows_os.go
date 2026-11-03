@@ -447,7 +447,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		state.SecureHardwarePresent = types.BoolNull()
 	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && state.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
@@ -460,7 +460,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -469,7 +469,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !state.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
@@ -495,7 +495,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		}
 		state.OsVersionConstraints = osVersionConstraintsList0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
@@ -516,14 +516,14 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !state.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = state.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -572,7 +572,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 			} else {
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -821,7 +821,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 	plan.CreatedBy = types.StringValue(string(createVariantObj.GetCreatedBy()))
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
-	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -834,7 +834,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		}
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -843,7 +843,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !plan.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
@@ -869,7 +869,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		}
 		plan.OsVersionConstraints = osVersionConstraintsList0
 	}
-	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -890,14 +890,14 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -946,7 +946,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -1215,7 +1215,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 	if secureHardwarePresentVal, ok := updateVariantObj.GetSecureHardwarePresentOk(); ok && secureHardwarePresentVal != nil {
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
-	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceWindowsModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -1228,7 +1228,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceWindowsModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -1237,7 +1237,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceWindowsModelOsVersionModel{}
 		if !plan.OsVersion.Minimum.IsNull() {
 			osVersionModel0.Minimum = types.StringValue(string(osVersionRaw0.GetMinimum()))
@@ -1263,7 +1263,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		}
 		state.OsVersionConstraints = osVersionConstraintsList0
 	}
-	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceWindowsModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -1284,14 +1284,14 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled.IsNull() {
 				dtcModel1.AntivirusEnabled = types.BoolValue(dtcRaw1.GetAntivirusEnabled())
 			} else {
 				dtcModel1.AntivirusEnabled = plan.ThirdPartySignalProviders.Dtc.AntivirusEnabled
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -1340,7 +1340,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceWindowsModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))

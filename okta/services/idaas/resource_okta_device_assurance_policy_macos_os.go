@@ -390,7 +390,7 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		state.SecureHardwarePresent = types.BoolNull()
 	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && state.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
@@ -403,7 +403,7 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -412,9 +412,9 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -440,7 +440,7 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
@@ -461,9 +461,9 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -502,7 +502,7 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 			} else {
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -706,7 +706,7 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 	plan.CreatedBy = types.StringValue(string(createVariantObj.GetCreatedBy()))
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
-	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -719,7 +719,7 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 		}
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -728,9 +728,9 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -756,7 +756,7 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 		}
 		plan.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -777,9 +777,9 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -818,7 +818,7 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -1042,7 +1042,7 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 	if secureHardwarePresentVal, ok := updateVariantObj.GetSecureHardwarePresentOk(); ok && secureHardwarePresentVal != nil {
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
-	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceMacosModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -1055,7 +1055,7 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceMacosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -1064,9 +1064,9 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceMacosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceMacosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -1092,7 +1092,7 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceMacosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -1113,9 +1113,9 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModel{}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -1154,7 +1154,7 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceMacosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))

@@ -277,7 +277,7 @@ func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resourc
 	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -286,9 +286,9 @@ func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resourc
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -314,7 +314,7 @@ func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resourc
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
@@ -440,7 +440,7 @@ func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resou
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.Jailbreak = types.BoolValue(createVariantObj.GetJailbreak())
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
-	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -449,9 +449,9 @@ func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resou
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -477,7 +477,7 @@ func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resou
 		}
 		plan.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -622,7 +622,7 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 	if nameVal, ok := updateVariantObj.GetNameOk(); ok && nameVal != nil {
 		state.Name = types.StringValue(string(*nameVal))
 	}
-	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceIosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -631,9 +631,9 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceIosModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceIosModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -659,7 +659,7 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceIosModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{

@@ -348,7 +348,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		state.SecureHardwarePresent = types.BoolNull()
 	}
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := variantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && state.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !state.DiskEncryptionType.Include.IsNull() {
 			{
@@ -361,7 +361,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -370,9 +370,9 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := variantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && state.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && state.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !state.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -398,7 +398,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := variantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && state.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !state.ScreenLockType.Include.IsNull() {
 			{
@@ -413,7 +413,7 @@ func (r *policyDeviceAssuranceAndroidResource) Read(ctx context.Context, req res
 	}
 	if thirdPartySignalProvidersRaw0, ok := variantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
 		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
-		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
+		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.AndroidDeviceTrust != nil {
 			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !state.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
@@ -604,7 +604,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.Jailbreak = types.BoolValue(createVariantObj.GetJailbreak())
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
-	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := createVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -617,7 +617,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		}
 		plan.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -626,9 +626,9 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		}
 		plan.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := createVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -654,7 +654,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 		}
 		plan.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := createVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -669,7 +669,7 @@ func (r *policyDeviceAssuranceAndroidResource) Create(ctx context.Context, req r
 	}
 	if thirdPartySignalProvidersRaw0, ok := createVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
 		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
-		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
+		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.AndroidDeviceTrust != nil {
 			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !plan.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))
@@ -882,7 +882,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 	if secureHardwarePresentVal, ok := updateVariantObj.GetSecureHardwarePresentOk(); ok && secureHardwarePresentVal != nil {
 		state.SecureHardwarePresent = types.BoolValue(*secureHardwarePresentVal)
 	}
-	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil {
+	if diskEncryptionTypeRaw0, ok := updateVariantObj.GetDiskEncryptionTypeOk(); ok && diskEncryptionTypeRaw0 != nil && plan.DiskEncryptionType != nil {
 		diskEncryptionTypeModel0 := &PolicyDeviceAssuranceAndroidModelDiskEncryptionTypeModel{}
 		if !plan.DiskEncryptionType.Include.IsNull() {
 			{
@@ -895,7 +895,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		}
 		state.DiskEncryptionType = diskEncryptionTypeModel0
 	}
-	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceAndroidModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -904,9 +904,9 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		}
 		state.GracePeriod = gracePeriodModel0
 	}
-	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil {
+	if osVersionRaw0, ok := updateVariantObj.GetOsVersionOk(); ok && osVersionRaw0 != nil && plan.OsVersion != nil {
 		osVersionModel0 := &PolicyDeviceAssuranceAndroidModelOsVersionModel{}
-		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil {
+		if dynamicVersionRequirementRaw1, ok := osVersionRaw0.GetDynamicVersionRequirementOk(); ok && dynamicVersionRequirementRaw1 != nil && plan.OsVersion.DynamicVersionRequirement != nil {
 			dynamicVersionRequirementModel1 := &PolicyDeviceAssuranceAndroidModelOsVersionModelDynamicVersionRequirementModel{}
 			if !plan.OsVersion.DynamicVersionRequirement.DistanceFromLatestMajor.IsNull() {
 				dynamicVersionRequirementModel1.DistanceFromLatestMajor = types.Int64Value(int64(dynamicVersionRequirementRaw1.GetDistanceFromLatestMajor()))
@@ -932,7 +932,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 		}
 		state.OsVersion = osVersionModel0
 	}
-	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil {
+	if screenLockTypeRaw0, ok := updateVariantObj.GetScreenLockTypeOk(); ok && screenLockTypeRaw0 != nil && plan.ScreenLockType != nil {
 		screenLockTypeModel0 := &PolicyDeviceAssuranceAndroidModelScreenLockTypeModel{}
 		if !plan.ScreenLockType.Include.IsNull() {
 			{
@@ -947,7 +947,7 @@ func (r *policyDeviceAssuranceAndroidResource) Update(ctx context.Context, req r
 	}
 	if thirdPartySignalProvidersRaw0, ok := updateVariantObj.GetThirdPartySignalProvidersOk(); ok && thirdPartySignalProvidersRaw0 != nil {
 		thirdPartySignalProvidersModel0 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModel{}
-		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil {
+		if androidDeviceTrustRaw1, ok := thirdPartySignalProvidersRaw0.GetAndroidDeviceTrustOk(); ok && androidDeviceTrustRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.AndroidDeviceTrust != nil {
 			androidDeviceTrustModel1 := &PolicyDeviceAssuranceAndroidModelThirdPartySignalProvidersModelAndroidDeviceTrustModel{}
 			if !plan.ThirdPartySignalProviders.AndroidDeviceTrust.DeviceIntegrityLevel.IsNull() {
 				androidDeviceTrustModel1.DeviceIntegrityLevel = types.StringValue(string(androidDeviceTrustRaw1.GetDeviceIntegrityLevel()))

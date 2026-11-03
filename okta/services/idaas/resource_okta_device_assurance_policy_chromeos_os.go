@@ -316,7 +316,7 @@ func (r *policyDeviceAssuranceChromeosResource) Read(ctx context.Context, req re
 	state.LastUpdatedBy = types.StringValue(string(variantObj.GetLastUpdatedBy()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := variantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && state.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !state.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -333,14 +333,14 @@ func (r *policyDeviceAssuranceChromeosResource) Read(ctx context.Context, req re
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && state.ThirdPartySignalProviders != nil && state.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !state.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = state.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -384,7 +384,7 @@ func (r *policyDeviceAssuranceChromeosResource) Read(ctx context.Context, req re
 			} else {
 				dtcModel1.OsFirewall = state.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && state.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !state.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -544,7 +544,7 @@ func (r *policyDeviceAssuranceChromeosResource) Create(ctx context.Context, req 
 	plan.CreatedBy = types.StringValue(string(createVariantObj.GetCreatedBy()))
 	plan.DisplayRemediationMode = types.StringValue(string(createVariantObj.GetDisplayRemediationMode()))
 	plan.LastUpdatedBy = types.StringValue(string(createVariantObj.GetLastUpdatedBy()))
-	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := createVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -561,14 +561,14 @@ func (r *policyDeviceAssuranceChromeosResource) Create(ctx context.Context, req 
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = plan.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -612,7 +612,7 @@ func (r *policyDeviceAssuranceChromeosResource) Create(ctx context.Context, req 
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
@@ -789,7 +789,7 @@ func (r *policyDeviceAssuranceChromeosResource) Update(ctx context.Context, req 
 	if nameVal, ok := updateVariantObj.GetNameOk(); ok && nameVal != nil {
 		state.Name = types.StringValue(string(*nameVal))
 	}
-	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil {
+	if gracePeriodRaw0, ok := updateVariantObj.GetGracePeriodOk(); ok && gracePeriodRaw0 != nil && plan.GracePeriod != nil {
 		gracePeriodModel0 := &PolicyDeviceAssuranceChromeosModelGracePeriodModel{}
 		if !plan.GracePeriod.Type.IsNull() {
 			gracePeriodModel0.Type = types.StringValue(string(gracePeriodRaw0.GetType()))
@@ -806,14 +806,14 @@ func (r *policyDeviceAssuranceChromeosResource) Update(ctx context.Context, req 
 			devicePostureIdPModel1.Managed = types.BoolValue(devicePostureIdPRaw1.GetManaged())
 			thirdPartySignalProvidersModel0.DevicePostureIdP = devicePostureIdPModel1
 		}
-		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil {
+		if dtcRaw1, ok := thirdPartySignalProvidersRaw0.GetDtcOk(); ok && dtcRaw1 != nil && plan.ThirdPartySignalProviders != nil && plan.ThirdPartySignalProviders.Dtc != nil {
 			dtcModel1 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModel{}
 			if !plan.ThirdPartySignalProviders.Dtc.AllowScreenLock.IsNull() {
 				dtcModel1.AllowScreenLock = types.BoolValue(dtcRaw1.GetAllowScreenLock())
 			} else {
 				dtcModel1.AllowScreenLock = plan.ThirdPartySignalProviders.Dtc.AllowScreenLock
 			}
-			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil {
+			if browserVersionRaw2, ok := dtcRaw1.GetBrowserVersionOk(); ok && browserVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.BrowserVersion != nil {
 				browserVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelBrowserVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.BrowserVersion.Minimum.IsNull() {
 					browserVersionModel2.Minimum = types.StringValue(string(browserVersionRaw2.GetMinimum()))
@@ -857,7 +857,7 @@ func (r *policyDeviceAssuranceChromeosResource) Update(ctx context.Context, req 
 			} else {
 				dtcModel1.OsFirewall = plan.ThirdPartySignalProviders.Dtc.OsFirewall
 			}
-			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil {
+			if osVersionRaw2, ok := dtcRaw1.GetOsVersionOk(); ok && osVersionRaw2 != nil && plan.ThirdPartySignalProviders.Dtc.OsVersion != nil {
 				osVersionModel2 := &PolicyDeviceAssuranceChromeosModelThirdPartySignalProvidersModelDtcModelOsVersionModel{}
 				if !plan.ThirdPartySignalProviders.Dtc.OsVersion.Minimum.IsNull() {
 					osVersionModel2.Minimum = types.StringValue(string(osVersionRaw2.GetMinimum()))
