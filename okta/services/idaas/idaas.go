@@ -158,12 +158,16 @@ func FWProviderResources() []func() resource.Resource {
 		newRoleSubscriptionResource,
 		newUserSubscriptionResource,
 		newThreatInsightSettingsResource,
+<<<<<<< HEAD
 		newPolicyDeviceAssuranceAndroidResource,
 		newPolicyDeviceAssuranceChromeosResource,
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
 		NewPoliciesRuleProfileEnrollmentResource,
+=======
+		NewPolicyRuleProfileEnrollmentResource,
+>>>>>>> 9aa212f7f (updating idaas.go with new resource)
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
