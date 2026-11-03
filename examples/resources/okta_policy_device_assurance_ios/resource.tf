@@ -1,6 +1,24 @@
 resource "okta_policy_device_assurance_ios" "example" {
-  name            = "testAcc-replace_with_uuid"
-  os_version      = "12.4.5"
-  jailbreak       = false
-  screenlock_type = toset(["BIOMETRIC"])
+  name      = "My iOS Policy"
+  platform  = "IOS"
+  jailbreak = false
+}
+
+resource "okta_policy_device_assurance_ios" "example_with_providers" {
+  name                     = "My iOS Policy with Providers"
+  platform                 = "IOS"
+  jailbreak                = false
+  display_remediation_mode = "HIDE"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+      managed   = true
+    }
+  }
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P30D"
+  }
 }

@@ -1,32 +1,122 @@
 ---
 page_title: "Resource: okta_policy_device_assurance_chromeos"
 description: |-
-  Manages a device assurance policy for chromeos.
+  This resource allows you to create and configure a ChromeOS Device Assurance Policy.
 ---
 
 # Resource: okta_policy_device_assurance_chromeos
 
-Manages a device assurance policy for chromeos.
+This resource allows you to create and configure a ChromeOS Device Assurance Policy.
+
+!> **BREAKING CHANGE**: This resource has been migrated to use Okta SDK v7, which introduces schema changes. The resource name is unchanged. Migration guide below.
+
+## Breaking Changes
+
+### 1. Resource Name Unchanged
+The resource type remains `okta_policy_device_assurance_chromeos`. No changes are required to your resource addressing (`resource "okta_policy_device_assurance_chromeos" "example" { ... }`).
+
+### 2. Schema Changes
+The resource now uses an updated API schema with the following changes:
+- `platform` is now a **required** attribute and must be set to `"CHROMEOS"` (previously computed automatically)
+- Third-party signal provider attributes previously flattened with a `tpsp_` prefix (for example `tpsp_disk_encrypted`, `tpsp_os_firewall`, `tpsp_browser_version`) have been restructured into nested blocks under `third_party_signal_providers.dtc` (the Google Chrome Device Trust Connector provider), using names without the `tpsp_` prefix (for example `disk_encrypted`, `os_firewall`, `browser_version { minimum = ... }`)
+- `created_date` and `last_update` are no longer exposed on the resource (still available on the corresponding data source)
+- New optional attributes: `display_remediation_mode`, `grace_period` (`type`, `expiry`), and `third_party_signal_providers.device_posture_id_p` (`compliant`, `managed`)
+
+## Migration Guide
+
+Update any configuration using the old flat `tpsp_*` attributes to the new nested block syntax:
+
+```terraform
+# Old schema
+resource "okta_policy_device_assurance_chromeos" "example" {
+  name                        = "My ChromeOS Policy"
+  tpsp_disk_encrypted         = true
+  tpsp_os_firewall            = true
+  tpsp_os_version             = "110"
+  tpsp_browser_version        = "110"
+  tpsp_key_trust_level        = "CHROME_BROWSER_HW_KEY"
+}
+
+# New schema
+resource "okta_policy_device_assurance_chromeos" "example" {
+  name     = "My ChromeOS Policy"
+  platform = "CHROMEOS"
+
+  third_party_signal_providers {
+    dtc {
+      disk_encrypted   = true
+      os_firewall      = true
+      key_trust_level  = "CHROME_BROWSER_HW_KEY"
+
+      os_version {
+        minimum = "110"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
+  }
+}
+```
+
+No changes to import are required:
+```shell
+terraform import okta_policy_device_assurance_chromeos.example <policy-id>
+```
 
 ## Example Usage
 
 ```terraform
 resource "okta_policy_device_assurance_chromeos" "example" {
-  name                                      = "example"
-  tpsp_allow_screen_lock                    = true
-  tpsp_browser_version                      = "15393.27.0"
-  tpsp_builtin_dns_client_enabled           = true
-  tpsp_chrome_remote_desktop_app_blocked    = true
-  tpsp_device_enrollment_domain             = "exampleDomain"
-  tpsp_disk_encrypted                       = true
-  tpsp_key_trust_level                      = "CHROME_OS_VERIFIED_MODE"
-  tpsp_os_firewall                          = true
-  tpsp_os_version                           = "10.0.19041.1110"
-  tpsp_password_proctection_warning_trigger = "PASSWORD_PROTECTION_OFF"
-  tpsp_realtime_url_check_mode              = true
-  tpsp_safe_browsing_protection_level       = "ENHANCED_PROTECTION"
-  tpsp_screen_lock_secured                  = true
-  tpsp_site_isolation_enabled               = true
+  name     = "My ChromeOS Policy"
+  platform = "CHROMEOS"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+    }
+  }
+}
+
+resource "okta_policy_device_assurance_chromeos" "example_with_providers" {
+  name                     = "My ChromeOS Policy with Providers"
+  platform                 = "CHROMEOS"
+  display_remediation_mode = "HIDE"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+      managed   = true
+    }
+
+    dtc {
+      allow_screen_lock                   = true
+      disk_encrypted                      = true
+      managed_device                      = true
+      os_firewall                         = true
+      screen_lock_secured                 = true
+      site_isolation_enabled              = true
+      realtime_url_check_mode             = true
+      safe_browsing_protection_level      = "ENHANCED_PROTECTION"
+      password_protection_warning_trigger = "PASSWORD_PROTECTION_OFF"
+      device_enrollment_domain            = "example.com"
+      key_trust_level                     = "CHROME_BROWSER_HW_KEY"
+
+      os_version {
+        minimum = "110"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
+  }
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P30D"
+  }
 }
 ```
 
@@ -35,38 +125,90 @@ resource "okta_policy_device_assurance_chromeos" "example" {
 
 ### Required
 
-- `name` (String) Name of the device assurance policy.
+- `platform` (String) Discriminator field identifying the variant type. Must be set to "CHROMEOS".
 
 ### Optional
 
-- `tpsp_allow_screen_lock` (Boolean) Third party signal provider allow screen lock
-- `tpsp_browser_version` (String) Third party signal provider minimum browser version
-- `tpsp_builtin_dns_client_enabled` (Boolean) Third party signal provider builtin dns client enabled
-- `tpsp_chrome_remote_desktop_app_blocked` (Boolean) Third party signal provider chrome remote desktop app blocked
-- `tpsp_device_enrollment_domain` (String) Third party signal provider device enrollment domain
-- `tpsp_disk_encrypted` (Boolean) Third party signal provider disk encrypted
-- `tpsp_key_trust_level` (String) Third party signal provider key trust level
-- `tpsp_os_firewall` (Boolean) Third party signal provider os firewall
-- `tpsp_os_version` (String) Third party signal provider minimum os version
-- `tpsp_password_proctection_warning_trigger` (String) Third party signal provider password protection warning trigger
-- `tpsp_realtime_url_check_mode` (Boolean) Third party signal provider realtime url check mode
-- `tpsp_safe_browsing_protection_level` (String) Third party signal provider safe browsing protection level
-- `tpsp_screen_lock_secured` (Boolean) Third party signal provider screen lock secure
-- `tpsp_site_isolation_enabled` (Boolean) Third party signal provider site isolation enabled
+- `display_remediation_mode` (String) Represents the remediation mode of this device assurance policy when users are denied access due to device noncompliance
+- `grace_period` (Block, Optional) Represents the Grace Period configuration for the device assurance policy (see [below for nested schema](#nestedblock--grace_period))
+- `name` (String) Display name of the device assurance policy
+- `third_party_signal_providers` (Block, Optional) Settings for third-party signal providers (based on the `CHROMEOS` platform) (see [below for nested schema](#nestedblock--third_party_signal_providers))
 
 ### Read-Only
 
-- `created_by` (String) Created by
-- `created_date` (String) Created date
-- `id` (String) Policy assurance id
-- `last_update` (String) Last update
-- `last_updated_by` (String) Last updated by
-- `platform` (String) Policy device assurance platform
+- `created_by` (String) CreatedBy
+- `id` (String) The unique identifier for the resource.
+- `last_updated_by` (String) LastUpdatedBy
+
+<a id="nestedblock--grace_period"></a>
+### Nested Schema for `grace_period`
+
+~> **Note:** Grace periods of type `BY_DATE_TIME` are not supported yet. The Okta Go SDK v7 cannot decode a date-time `expiry`, so reading such a policy fails. Use `BY_DURATION`.
+
+Optional:
+
+- `expiry` (String) When the grace period ends: an ISO 8601 duration such as `P30D` when `type` is `BY_DURATION`, or an ISO 8601 date-time when `type` is `BY_DATE_TIME`.
+- `type` (String) Represents the type of Grace Period configured for the device assurance policy. Valid values: `BY_DURATION`, `BY_DATE_TIME`.
+
+
+<a id="nestedblock--third_party_signal_providers"></a>
+### Nested Schema for `third_party_signal_providers`
+
+Optional:
+
+- `device_posture_id_p` (Block, Optional) Device Posture IdP provider (see [below for nested schema](#nestedblock--third_party_signal_providers--device_posture_id_p))
+- `dtc` (Block, Optional) Google Chrome Device Trust Connector provider (see [below for nested schema](#nestedblock--third_party_signal_providers--dtc))
+
+<a id="nestedblock--third_party_signal_providers--device_posture_id_p"></a>
+### Nested Schema for `third_party_signal_providers.device_posture_id_p`
+
+Optional:
+
+- `compliant` (Boolean) Indicates whether the device is compliant according to the custom IDP
+- `managed` (Boolean) Indicates whether the device is managed according to the custom IDP
+
+
+<a id="nestedblock--third_party_signal_providers--dtc"></a>
+### Nested Schema for `third_party_signal_providers.dtc`
+
+Optional:
+
+- `allow_screen_lock` (Boolean) Indicates whether the AllowScreenLock enterprise policy is enabled
+- `browser_version` (Block, Optional) Current version of the Chrome Browser (see [below for nested schema](#nestedblock--third_party_signal_providers--dtc--browser_version))
+- `built_in_dns_client_enabled` (Boolean) Indicates if a software stack is used to communicate with the DNS server
+- `chrome_remote_desktop_app_blocked` (Boolean) Indicates whether access to the Chrome Remote Desktop application is blocked through a policy
+- `device_enrollment_domain` (String) Enrollment domain of the customer that is currently managing the device
+- `disk_encrypted` (Boolean) Indicates whether the main disk is encrypted
+- `key_trust_level` (String) Represents the attestation strength used by the Chrome Verified Access API
+- `managed_device` (Boolean) Indicates whether the device is enrolled in ChromeOS device management
+- `os_firewall` (Boolean) Indicates whether a firewall is enabled at the OS-level on the device
+- `os_version` (Block, Optional) Current version of the operating system (maximum of four components in the versioning scheme) (see [below for nested schema](#nestedblock--third_party_signal_providers--dtc--os_version))
+- `password_protection_warning_trigger` (String) Indicates whether the Password Protection Warning feature is enabled
+- `realtime_url_check_mode` (Boolean) Indicates whether enterprise-grade (custom) unsafe URL scanning is enabled
+- `safe_browsing_protection_level` (String) Represents the current value of the Safe Browsing protection level
+- `screen_lock_secured` (Boolean) Indicates whether the device is password-protected
+- `site_isolation_enabled` (Boolean) Indicates whether the Site Isolation (also known as **Site Per Process**) setting is enabled
+
+<a id="nestedblock--third_party_signal_providers--dtc--browser_version"></a>
+### Nested Schema for `third_party_signal_providers.dtc.browser_version`
+
+Optional:
+
+- `minimum` (String) Minimum
+
+
+<a id="nestedblock--third_party_signal_providers--dtc--os_version"></a>
+### Nested Schema for `third_party_signal_providers.dtc.os_version`
+
+Optional:
+
+- `minimum` (String) Minimum
+
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-terraform import okta_policy_device_assurance_chromeos.example <device_assurance_id>
+terraform import okta_policy_device_assurance_chromeos.example <policy-id>
 ```

@@ -1,8 +1,23 @@
 resource "okta_policy_device_assurance_android" "example" {
-  name                    = "testAcc-replace_with_uuid"
-  os_version              = "12"
-  disk_encryption_type    = toset(["FULL", "USER"])
-  jailbreak               = false
+  name                    = "My Android Policy"
+  platform                = "ANDROID"
   secure_hardware_present = true
-  screenlock_type         = toset(["BIOMETRIC"])
+}
+
+resource "okta_policy_device_assurance_android" "example_with_remediation" {
+  name                     = "My Android Policy with Remediation"
+  platform                 = "ANDROID"
+  display_remediation_mode = "HIDE"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+      managed   = true
+    }
+  }
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P30D"
+  }
 }

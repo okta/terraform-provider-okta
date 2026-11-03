@@ -66,7 +66,7 @@ func TestAccResourceOktaAppSignOnPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "device_assurances_included.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_types_excluded.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "user_types_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "users_included.#", "2"),

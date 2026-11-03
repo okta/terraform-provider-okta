@@ -1,17 +1,50 @@
 resource "okta_policy_device_assurance_chromeos" "example" {
-  name                                      = "testAcc-replace_with_uuid"
-  tpsp_allow_screen_lock                    = true
-  tpsp_browser_version                      = "15393.27.0"
-  tpsp_builtin_dns_client_enabled           = true
-  tpsp_chrome_remote_desktop_app_blocked    = true
-  tpsp_device_enrollment_domain             = "exampleDomain"
-  tpsp_disk_encrypted                       = true
-  tpsp_key_trust_level                      = "CHROME_OS_VERIFIED_MODE"
-  tpsp_os_firewall                          = true
-  tpsp_os_version                           = "10.0.19041.1110"
-  tpsp_password_proctection_warning_trigger = "PASSWORD_PROTECTION_OFF"
-  tpsp_realtime_url_check_mode              = true
-  tpsp_safe_browsing_protection_level       = "ENHANCED_PROTECTION"
-  tpsp_screen_lock_secured                  = true
-  tpsp_site_isolation_enabled               = true
+  name     = "My ChromeOS Policy"
+  platform = "CHROMEOS"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+    }
+  }
+}
+
+resource "okta_policy_device_assurance_chromeos" "example_with_providers" {
+  name                     = "My ChromeOS Policy with Providers"
+  platform                 = "CHROMEOS"
+  display_remediation_mode = "HIDE"
+
+  third_party_signal_providers {
+    device_posture_id_p {
+      compliant = true
+      managed   = true
+    }
+
+    dtc {
+      allow_screen_lock                   = true
+      disk_encrypted                      = true
+      managed_device                      = true
+      os_firewall                         = true
+      screen_lock_secured                 = true
+      site_isolation_enabled              = true
+      realtime_url_check_mode             = true
+      safe_browsing_protection_level      = "ENHANCED_PROTECTION"
+      password_protection_warning_trigger = "PASSWORD_PROTECTION_OFF"
+      device_enrollment_domain            = "example.com"
+      key_trust_level                     = "CHROME_BROWSER_HW_KEY"
+
+      os_version {
+        minimum = "110"
+      }
+
+      browser_version {
+        minimum = "110"
+      }
+    }
+  }
+
+  grace_period {
+    type   = "BY_DURATION"
+    expiry = "P30D"
+  }
 }

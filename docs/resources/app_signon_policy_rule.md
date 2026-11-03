@@ -197,9 +197,13 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_policy_device_assurance_android" "test" {
-  name       = "test"
-  os_version = "12"
-  jailbreak  = false
+  name      = "test"
+  platform  = "ANDROID"
+  jailbreak = false
+
+  os_version {
+    minimum = "12"
+  }
 }
 
 resource "okta_app_signon_policy_rule" "test" {

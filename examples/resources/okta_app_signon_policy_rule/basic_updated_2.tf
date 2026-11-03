@@ -41,11 +41,11 @@ resource "okta_group" "this" {
   description = "testAcc_${count.index}"
 }
 
-resource "okta_user_type" "test" {
-  name         = "testAcc_replace_with_uuid"
-  display_name = "Terraform Acceptance Test User Type Updated"
-  description  = "Terraform Acceptance Test User Type Updated"
-}
+# resource "okta_user_type" "test" {
+#   name         = "testAcc_replace_with_uuid_updated"
+#   display_name = "Terraform Acceptance Test User Type Updated"
+#   description  = "Terraform Acceptance Test User Type Updated"
+# }
 
 resource "okta_network_zone" "test" {
   name     = "testAcc_replace_with_uuid"
@@ -60,9 +60,13 @@ data "okta_user_type" "default" {
 }
 
 resource "okta_policy_device_assurance_android" "test" {
-  name       = "testAcc-replace_with_uuid"
-  os_version = "12"
-  jailbreak  = false
+  name      = "testAcc-replace_with_uuid"
+  platform  = "ANDROID"
+  jailbreak = false
+
+  os_version {
+    minimum = "12"
+  }
 }
 
 resource "okta_app_signon_policy_rule" "test" {
@@ -124,9 +128,10 @@ resource "okta_app_signon_policy_rule" "test" {
   priority                    = 98
   re_authentication_frequency = "PT43800H"
   type                        = "ASSURANCE"
-  user_types_excluded = [
-    okta_user_type.test.id
-  ]
+  # FIXME Okta API bug while deleting user_type
+  # user_types_excluded = [
+  #   okta_user_type.test.id
+  # ]
   user_types_included = [
     data.okta_user_type.default.id
   ]
