@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -110,15 +109,10 @@ func (r *postAuthSessionPolicyRuleResource) Schema(_ context.Context, _ resource
 				Description: "ID of the Okta Workflow to run when a policy failure is detected.",
 				Optional:    true,
 			},
-			// Okta increments the rule's priority when a PUT omits it, so the provider
-			// always sends it: the configured value, or the current one from state.
 			"priority": schema.Int64Attribute{
 				Description: "Priority of the rule.",
 				Optional:    true,
 				Computed:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 	}

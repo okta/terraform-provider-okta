@@ -150,8 +150,8 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 
 func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	logger(meta).Info("deleting group", "id", d.Id(), "name", d.Get("name").(string))
-	_, err := getOktaClientFromMetadata(meta).Group.DeleteGroup(ctx, d.Id())
-	if err != nil {
+	resp, err := getOktaClientFromMetadata(meta).Group.DeleteGroup(ctx, d.Id())
+	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to delete group: %v", err)
 	}
 	return nil
