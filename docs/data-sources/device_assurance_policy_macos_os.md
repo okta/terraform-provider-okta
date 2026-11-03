@@ -51,7 +51,7 @@ data "okta_policy_device_assurance_macos" "example" {
 
 - `created_by` (String) CreatedBy
 - `created_date` (String) CreatedDate
-- `disk_encryption_type` (Block List, Max: 1) List of disk encryption type, can be `FULL`, `USER` (see [below for nested schema](#nestedblock--disk_encryption_type))
+- `disk_encryption_type` (Block List, Max: 1) List of disk encryption type, can be `ALL_INTERNAL_VOLUMES` (see [below for nested schema](#nestedblock--disk_encryption_type))
 - `display_remediation_mode` (String) Represents the remediation mode of this device assurance policy when users are denied access due to device noncompliance
 - `grace_period` (Block List, Max: 1) Represents the Grace Period configuration for the device assurance policy (see [below for nested schema](#nestedblock--grace_period))
 - `last_update` (String) LastUpdate

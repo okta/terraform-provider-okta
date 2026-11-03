@@ -179,7 +179,7 @@ func (d *policyDeviceAssuranceWindowsDataSource) Schema(_ context.Context, _ dat
 		},
 		Blocks: map[string]schema.Block{
 			"disk_encryption_type": schema.SingleNestedBlock{
-				Description: "List of disk encryption type, can be `FULL`, `USER`",
+				Description: "List of disk encryption type, can be `ALL_INTERNAL_VOLUMES`",
 				Attributes: map[string]schema.Attribute{
 					"include": schema.ListAttribute{
 						Description: "Include",
