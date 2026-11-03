@@ -163,6 +163,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
+		NewPoliciesRuleProfileEnrollmentResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -298,21 +299,19 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleIdpDiscovery:        resourcePolicyRuleIdpDiscovery(),
 		resources.OktaIDaaSPolicyRuleMfa:                 resourcePolicyMfaRule(),
 		resources.OktaIDaaSPolicyRulePassword:            resourcePolicyPasswordRule(),
-		resources.OktaIDaaSPolicyRuleProfileEnrollment:   resourcePolicyProfileEnrollmentRule(),
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
-		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
-		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTheme:                      resourceTheme(),
-		resources.OktaIDaaSUser:                       resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                   resourceUserType(),
+		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
+		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTheme:                         resourceTheme(),
+		resources.OktaIDaaSUser:                          resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                      resourceUserType(),
 	})
 }
 
