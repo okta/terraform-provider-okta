@@ -115,7 +115,7 @@ func (r *sessionViolationPolicyRuleResource) Schema(_ context.Context, _ resourc
 				Default:     booldefault.StaticBool(true),
 			},
 			"priority": schema.Int64Attribute{
-				Description: "Priority of the rule. Rules are evaluated in priority order.",
+				Description: "Priority of the rule.",
 				Optional:    true,
 				Computed:    true,
 			},
@@ -350,9 +350,8 @@ func (r *sessionViolationPolicyRuleResource) buildSessionViolationPolicyRule(ctx
 	ruleType := "SESSION_VIOLATION_DETECTION"
 	rule.Type = &ruleType
 
-	if !state.Priority.IsNull() {
-		p := int32(state.Priority.ValueInt64())
-		rule.Priority = *v6okta.NewNullableInt32(&p)
+	if !state.Priority.IsNull() && !state.Priority.IsUnknown() {
+		rule.SetPriority(int32(state.Priority.ValueInt64()))
 	}
 
 	// Build conditions

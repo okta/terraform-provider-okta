@@ -44,6 +44,7 @@ resource "okta_post_auth_session_policy_rule" "example" {
 - `groups_excluded` - (Optional) List of group IDs to exclude from this rule.
 - `terminate_session` - (Optional) When true, terminates the user's session when a policy failure is detected. Default is `false`.
 - `workflow_id` - (Optional) ID of the Okta Workflow to run when a policy failure is detected.
+- `priority` - (Optional) Priority of the rule. If not set, the rule keeps its current priority.
 
 ## Attributes Reference
 

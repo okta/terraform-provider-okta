@@ -28,6 +28,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 	  name                       = "testAcc-replace_with_uuid"
 	  min_risk_level             = "HIGH"
 	  policy_evaluation_enabled  = true
+	  priority                   = 0
 	}
 	`
 
@@ -40,6 +41,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 	  name                       = "testAcc-replace_with_uuid"
 	  policy_evaluation_enabled  = false
 	  min_risk_level             = "HIGH"
+	  priority                   = 0
 	}
 	`
 
@@ -87,6 +89,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_risk_level", "HIGH"),
 					resource.TestCheckResourceAttr(resourceName, "policy_evaluation_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 			{
@@ -96,6 +99,7 @@ func TestAccResourceOktaSessionViolationPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
 					resource.TestCheckResourceAttr(resourceName, "policy_evaluation_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "min_risk_level", "HIGH"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 		},

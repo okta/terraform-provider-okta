@@ -45,6 +45,7 @@ type postAuthSessionPolicyRuleResourceModel struct {
 	GroupsExcluded   types.Set    `tfsdk:"groups_excluded"`
 	TerminateSession types.Bool   `tfsdk:"terminate_session"`
 	WorkflowID       types.String `tfsdk:"workflow_id"`
+	Priority         types.Int64  `tfsdk:"priority"`
 }
 
 func (r *postAuthSessionPolicyRuleResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -107,6 +108,11 @@ func (r *postAuthSessionPolicyRuleResource) Schema(_ context.Context, _ resource
 			"workflow_id": schema.StringAttribute{
 				Description: "ID of the Okta Workflow to run when a policy failure is detected.",
 				Optional:    true,
+			},
+			"priority": schema.Int64Attribute{
+				Description: "Priority of the rule.",
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -282,6 +288,9 @@ func (r *postAuthSessionPolicyRuleResource) readPostAuthSessionPolicyRule(ctx co
 	if rule.Status != nil {
 		state.Status = types.StringValue(string(*rule.Status))
 	}
+	if rule.Priority.IsSet() && rule.Priority.Get() != nil {
+		state.Priority = types.Int64Value(int64(*rule.Priority.Get()))
+	}
 
 	if rule.Conditions != nil {
 		if rule.Conditions.People != nil {
@@ -347,6 +356,9 @@ func (r *postAuthSessionPolicyRuleResource) buildPostAuthSessionPolicyRule(ctx c
 
 	ruleType := "POST_AUTH_SESSION"
 	rule.Type = &ruleType
+	if !state.Priority.IsNull() && !state.Priority.IsUnknown() {
+		rule.SetPriority(int32(state.Priority.ValueInt64()))
+	}
 
 	conditions := v6okta.NewPostAuthSessionPolicyRuleAllOfConditions()
 

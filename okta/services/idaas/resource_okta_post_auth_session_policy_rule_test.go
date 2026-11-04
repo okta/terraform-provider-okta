@@ -27,6 +27,7 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 	policy_id         = data.okta_post_auth_session_policy.test.id
 	name              = "testAcc-replace_with_uuid"
 	terminate_session = true
+	priority          = 0
 	}
 	`
 
@@ -38,6 +39,7 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 	policy_id         = data.okta_post_auth_session_policy.test.id
 	name              = "testAcc-replace_with_uuid"
 	terminate_session = false
+	priority          = 0
 	}
 	`
 
@@ -84,6 +86,7 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
 					resource.TestCheckResourceAttr(resourceName, "terminate_session", "true"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 			{
@@ -92,6 +95,7 @@ func TestAccResourceOktaPostAuthSessionPolicyRule_crud(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "policy_id"),
 					resource.TestCheckResourceAttr(resourceName, "terminate_session", "false"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "0"),
 				),
 			},
 		},
