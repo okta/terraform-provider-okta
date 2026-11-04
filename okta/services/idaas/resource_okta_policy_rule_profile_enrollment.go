@@ -95,7 +95,7 @@ type PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAt
 	Required types.Bool   `tfsdk:"required"`
 }
 
-func NewPolicyRuleProfileEnrollmentResource() resource.Resource {
+func newPolicyRuleProfileEnrollmentResource() resource.Resource {
 	return &policyRuleProfileEnrollmentResource{}
 }
 

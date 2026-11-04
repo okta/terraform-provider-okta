@@ -158,16 +158,12 @@ func FWProviderResources() []func() resource.Resource {
 		newRoleSubscriptionResource,
 		newUserSubscriptionResource,
 		newThreatInsightSettingsResource,
-<<<<<<< HEAD
 		newPolicyDeviceAssuranceAndroidResource,
 		newPolicyDeviceAssuranceChromeosResource,
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
-		NewPoliciesRuleProfileEnrollmentResource,
-=======
-		NewPolicyRuleProfileEnrollmentResource,
->>>>>>> 9aa212f7f (updating idaas.go with new resource)
+		newPolicyRuleProfileEnrollmentResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -306,16 +302,17 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
-		resources.OktaIDaaSResourceSet:                   resourceResourceSet(),
-		resources.OktaIDaaSSecurityNotificationEmails:    resourceSecurityNotificationEmails(),
-		resources.OktaIDaaSTheme:                         resourceTheme(),
-		resources.OktaIDaaSUser:                          resourceUser(),
-		resources.OktaIDaaSUserAdminRoles:                resourceUserAdminRoles(),
-		resources.OktaIDaaSUserBaseSchemaProperty:        resourceUserBaseSchemaProperty(),
-		resources.OktaIDaaSUserFactorQuestion:            resourceUserFactorQuestion(),
-		resources.OktaIDaaSUserGroupMemberships:          resourceUserGroupMemberships(),
-		resources.OktaIDaaSUserSchemaProperty:            resourceUserCustomSchemaProperty(),
-		resources.OktaIDaaSUserType:                      resourceUserType(),
+		// resources.OktaIDaaSRateLimiting:                  resourceRateLimiting(),
+		resources.OktaIDaaSResourceSet:                resourceResourceSet(),
+		resources.OktaIDaaSSecurityNotificationEmails: resourceSecurityNotificationEmails(),
+		resources.OktaIDaaSTheme:                      resourceTheme(),
+		resources.OktaIDaaSUser:                       resourceUser(),
+		resources.OktaIDaaSUserAdminRoles:             resourceUserAdminRoles(),
+		resources.OktaIDaaSUserBaseSchemaProperty:     resourceUserBaseSchemaProperty(),
+		resources.OktaIDaaSUserFactorQuestion:         resourceUserFactorQuestion(),
+		resources.OktaIDaaSUserGroupMemberships:       resourceUserGroupMemberships(),
+		resources.OktaIDaaSUserSchemaProperty:         resourceUserCustomSchemaProperty(),
+		resources.OktaIDaaSUserType:                   resourceUserType(),
 	})
 }
 
