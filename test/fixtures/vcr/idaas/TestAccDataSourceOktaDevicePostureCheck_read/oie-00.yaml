@@ -1,0 +1,235 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 503
+        host: oie-00.dne-okta.com
+        body: |
+            {"description":"Query macOS devices to check if firewall is enabled","mappingType":"CHECKBOX","name":"testAcc_2822911433","platform":"MACOS","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","remediationSettings":{"link":{"customUrl":"https://example.myremediationurl.com/docs","defaultUrl":null},"message":{"customText":"It is our company policy that all devices must have a firewall enabled.","defaultI18nKey":null}},"type":"CUSTOM","variableName":"testvar"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.381975125s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.1313245s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.114337833s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.147036417s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:40 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.116835791s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"name":"testAcc_2822911433","variableName":"testvar","query":"SELECT CASE WHEN global_state = 0 THEN 0 ELSE 1 END AS firewall_enabled FROM alf;","description":"Query macOS devices to check if firewall is enabled","platform":"MACOS","type":"CUSTOM","mappingType":"CHECKBOX","remediationSettings":{"message":{"defaultI18nKey":null,"customText":"It is our company policy that all devices must have a firewall enabled."},"link":{"defaultUrl":null,"customUrl":"https://example.myremediationurl.com/docs"}},"id":"dpc16e59l1hhFQoDS1d8","createdDate":"2026-11-23T11:04:36.000Z","createdBy":"00uonmvbfznIufFS61d7","lastUpdated":"2026-11-23T11:04:36.000Z","lastUpdatedBy":"00uonmvbfznIufFS61d7","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 23 Nov 2026 11:04:42 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.272631667s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/device-posture-checks/dpc16e59l1hhFQoDS1d8
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 23 Nov 2026 11:04:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.131138791s

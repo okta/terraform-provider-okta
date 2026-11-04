@@ -58,7 +58,7 @@ type BehaviorAnomalousIpModelSettingsModel struct {
 	MinEventsNeededForEvaluation types.Int64 `tfsdk:"min_events_needed_for_evaluation"`
 }
 
-func NewBehaviorAnomalousIpResource() resource.Resource {
+func newBehaviorAnomalousIpResource() resource.Resource {
 	return &behaviorAnomalousIpResource{}
 }
 

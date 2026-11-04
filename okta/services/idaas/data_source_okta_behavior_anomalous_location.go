@@ -57,7 +57,7 @@ type BehaviorAnomalousLocationDataSourceModelSettingsModel struct {
 	RadiusKilometers             types.Int64  `tfsdk:"radius_kilometers"`
 }
 
-func NewBehaviorAnomalousLocationDataSource() datasource.DataSource {
+func newBehaviorAnomalousLocationDataSource() datasource.DataSource {
 	return &behaviorAnomalousLocationDataSource{}
 }
 

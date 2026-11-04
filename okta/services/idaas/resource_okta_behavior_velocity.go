@@ -57,7 +57,7 @@ type BehaviorVelocityModelSettingsModel struct {
 	VelocityKph types.Int64 `tfsdk:"velocity_kph"`
 }
 
-func NewBehaviorVelocityResource() resource.Resource {
+func newBehaviorVelocityResource() resource.Resource {
 	return &behaviorVelocityResource{}
 }
 
