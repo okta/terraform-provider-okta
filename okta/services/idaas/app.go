@@ -367,7 +367,7 @@ func setSamlSettings(d *schema.ResourceData, signOn *sdk.SamlApplicationSettings
 	_ = d.Set("authn_context_class_ref", signOn.AuthnContextClassRef)
 	_ = d.Set("saml_signed_request_enabled", signOn.SamlSignedRequestEnabled)
 	if signOn.SamlAssertionLifetimeSeconds != nil {
-		_ = d.Set("saml_assertion_lifetime_seconds", *signOn.SamlAssertionLifetimeSeconds)
+		_ = d.Set("saml_assertion_lifetime_seconds", signOn.SamlAssertionLifetimeSeconds)
 	}
 	if signOn.AllowMultipleAcsEndpoints != nil {
 		if *signOn.AllowMultipleAcsEndpoints {
