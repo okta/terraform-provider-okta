@@ -59,6 +59,7 @@ data "okta_app_saml" "example" {
 - `name` (String) Name of application.
 - `recipient` (String) The location where the app may present the SAML assertion
 - `response_signed` (Boolean) Determines whether the SAML auth response message is digitally signed
+- `saml_assertion_lifetime_seconds` (Number) Determines the SAML app session lifetime with Okta, in seconds.
 - `saml_signed_request_enabled` (Boolean) SAML Signed Request enabled
 - `signature_algorithm` (String) Signature algorithm used to digitally sign the assertion and response
 - `single_logout_certificate` (String) x509 encoded certificate that the Service Provider uses to sign Single Logout requests

@@ -288,6 +288,11 @@ func dataSourceAppSaml() *schema.Resource {
 				Computed:    true,
 				Description: "SAML Signed Request enabled",
 			},
+			"saml_assertion_lifetime_seconds": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Determines the SAML app session lifetime with Okta, in seconds.",
+			},
 		}),
 		Description: "Get a SAML application from Okta.",
 	}
