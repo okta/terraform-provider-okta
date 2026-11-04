@@ -163,6 +163,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
+		newDevicePostureCheckResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
