@@ -169,10 +169,11 @@ func FWProviderResources() []func() resource.Resource {
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
 		newPolicyRuleProfileEnrollmentResource,
-		NewBehaviorAnomalousDeviceResource,
-		NewBehaviorAnomalousIpResource,
-		NewBehaviorAnomalousLocationResource,
-		NewBehaviorVelocityResource,
+		newBehaviorAnomalousDeviceResource,
+		newBehaviorAnomalousIpResource,
+		newBehaviorAnomalousLocationResource,
+		newBehaviorVelocityResource,
+		newDevicePostureCheckResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -233,10 +234,11 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPolicyDeviceAssuranceIosDataSource,
 		newPolicyDeviceAssuranceChromeosDataSource,
 		newPolicyDeviceAssuranceAndroidDataSource,
-		NewBehaviorAnomalousDeviceDataSource,
-		NewBehaviorAnomalousIpDataSource,
-		NewBehaviorAnomalousLocationDataSource,
-		NewBehaviorVelocityDataSource,
+		newBehaviorAnomalousDeviceDataSource,
+		newBehaviorAnomalousIpDataSource,
+		newBehaviorAnomalousLocationDataSource,
+		newBehaviorVelocityDataSource,
+		newDevicePostureCheckDataSource,
 	}
 }
 
