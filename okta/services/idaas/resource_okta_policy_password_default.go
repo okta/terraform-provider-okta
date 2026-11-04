@@ -462,3 +462,14 @@ func buildDefaultPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 	}
 	return template
 }
+
+func getExcludedAttrs(excludeFirstName, excludeLastName bool) []string {
+	var excludedAttrs []string
+	if excludeFirstName {
+		excludedAttrs = append(excludedAttrs, "firstName")
+	}
+	if excludeLastName {
+		excludedAttrs = append(excludedAttrs, "lastName")
+	}
+	return excludedAttrs
+}

@@ -8,15 +8,32 @@ description: |-
 
 Creates a Password Policy. This resource allows you to create and configure a Password Policy.
 
+~> **BREAKING CHANGE:** The flat password policy attributes (`password_*`, `breached_password_*`, `groups_included`, `auth_provider`, the `*_recovery` attributes and others) have been removed. Settings are now expressed as nested blocks (`conditions`, `settings`). See [Migrating from the flat schema](#migrating-from-the-flat-schema) before upgrading.
+
 ## Example Usage
 
 ```terraform
 resource "okta_policy_password" "example" {
-  name                   = "example"
-  status                 = "ACTIVE"
-  description            = "Example"
-  password_history_count = 4
-  groups_included        = ["${data.okta_group.everyone.id}"]
+  name        = "example"
+  type        = "PASSWORD"
+  status      = "ACTIVE"
+  description = "Example"
+
+  conditions {
+    people {
+      groups {
+        include = [data.okta_group.everyone.id]
+      }
+    }
+  }
+
+  settings {
+    password {
+      age {
+        history_count = 4
+      }
+    }
+  }
 }
 ```
 
@@ -25,46 +42,185 @@ resource "okta_policy_password" "example" {
 
 ### Required
 
-- `name` (String) Policy Name
+- `name` (String) Name of the policy.
+- `type` (String) Discriminator field identifying the variant type. Must be set to `"PASSWORD"`.
 
 ### Optional
 
-- `auth_provider` (String) Authentication Provider: `OKTA`, `ACTIVE_DIRECTORY` or `LDAP`. Default: `OKTA`
-- `breached_password_delegated_workflow_id` (String) The ID of the workflow to run when a breached password is found during a sign-in attempt.
-- `breached_password_expire_after_days` (Number) Number of days after a breached password is detected before the user's password expires. Valid values: 0 through 10. If set to 0, expiry is immediate. Only applicable when `breached_password_logout_enabled` is `true`.
-- `breached_password_logout_enabled` (Boolean) If `true`, the user's sessions are terminated immediately when their credentials are detected as part of a breach. Requires `breached_password_expire_after_days` to also be configured. Default: `false`
-- `call_recovery` (String) Enable or disable voice call recovery: `ACTIVE` or `INACTIVE`. Default: `INACTIVE`
-- `description` (String) Policy Description
-- `email_recovery` (String) Enable or disable email password recovery: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
-- `groups_included` (Set of String) List of Group IDs to Include
-- `password_auto_unlock_minutes` (Number) Number of minutes before a locked account is unlocked: 0 = no limit. Default: `0`
-- `password_dictionary_lookup` (Boolean) Check Passwords Against Common Password Dictionary. Default: `false`
-- `password_exclude_first_name` (Boolean) User firstName attribute must be excluded from the password
-- `password_exclude_last_name` (Boolean) User lastName attribute must be excluded from the password
-- `password_exclude_username` (Boolean) If the user name must be excluded from the password. Default: `true`
-- `password_expire_warn_days` (Number) Length in days a user will be warned before password expiry: 0 = no warning. Default: `0`
-- `password_history_count` (Number) Number of distinct passwords that must be created before they can be reused: 0 = none. Default: `0`
-- `password_lockout_notification_channels` (Set of String) Notification channels to use to notify a user when their account has been locked.
-- `password_max_age_days` (Number) Length in days a password is valid before expiry: 0 = no limit. Default: `0`
-- `password_max_lockout_attempts` (Number) Number of unsuccessful login attempts allowed before lockout: 0 = no limit. Default: `10`
-- `password_min_age_minutes` (Number) Minimum time interval in minutes between password changes: 0 = no limit. Default: `0`
-- `password_min_length` (Number) Minimum password length. Default: `8`
-- `password_min_lowercase` (Number) If a password must contain at least one lower case letter: 0 = no, 1 = yes. Default: `1`
-- `password_min_number` (Number) If a password must contain at least one number: 0 = no, 1 = yes. Default: `1`
-- `password_min_symbol` (Number) If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default: `0`
-- `password_min_uppercase` (Number) If a password must contain at least one upper case letter: 0 = no, 1 = yes. Default: `1`
-- `password_show_lockout_failures` (Boolean) If a user should be informed when their account is locked. Default: `false`
-- `priority` (Number) Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
-- `question_min_length` (Number) Min length of the password recovery question answer. Default: `4`
-- `question_recovery` (String) Enable or disable security question password recovery: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
-- `recovery_email_token` (Number) Lifetime in minutes of the recovery email token. Default: `60`
-- `skip_unlock` (Boolean) When an Active Directory user is locked out of Okta, the Okta unlock operation should also attempt to unlock the user's Windows account. Default: `false`
-- `sms_recovery` (String) Enable or disable SMS password recovery: `ACTIVE` or `INACTIVE`. Default: `INACTIVE`
-- `status` (String) Policy Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
+- `description` (String) Description of the policy.
+- `status` (String) Whether or not the policy is active.
+- `conditions` (Block, Optional) Identifies the users and groups the policy applies to. See [below](#nested-schema-for-conditions).
+- `settings` (Block, Optional) Policy-level password settings. See [below](#nested-schema-for-settings).
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The unique identifier for the resource.
+- `priority` (Number) Specifies the order in which this policy is evaluated in relation to the other policies.
+- `system` (Boolean) Specifies whether Okta created the policy.
+
+<a id="nested-schema-for-conditions"></a>
+### Nested Schema for `conditions`
+
+Optional:
+
+- `auth_provider` (Block, Optional) Specifies an authentication provider that's the source of some or all users.
+  - `provider` (String) Provider.
+  - `include` (List of String) Include.
+- `people` (Block, Optional) Identifies users and groups that are used together.
+  - `groups` (Block, Optional) Specifies a set of groups whose users are to be included or excluded.
+    - `include` (List of String) Groups to be included, by group ID. Replaces the flat `groups_included` attribute.
+
+<a id="nested-schema-for-settings"></a>
+### Nested Schema for `settings`
+
+Optional:
+
+- `delegation` (Block, Optional) Specifies how to handle password delegation.
+  - `options` (Block, Optional) Options.
+    - `skip_unlock` (Boolean) Indicates if, when performing an unlock operation on an Active Directory sourced user who is locked out of Okta, the system should also attempt to unlock the user's Windows account. Replaces the flat `skip_unlock` attribute.
+- `password` (Block, Optional) Specifies the password settings for the policy.
+  - `age` (Block, Optional) Age settings.
+    - `expire_warn_days` (Number) Number of days prior to password expiration when a user is warned to reset their password: `0` indicates no warning. Replaces `password_expire_warn_days`.
+    - `history_count` (Number) Number of distinct passwords a user must create before they can reuse a previous password: `0` indicates none. Replaces `password_history_count`.
+    - `max_age_days` (Number) How long (in days) a password remains valid before it expires: `0` indicates no limit. Replaces `password_max_age_days`.
+    - `min_age_minutes` (Number) Minimum time interval (in minutes) between password changes: `0` indicates no limit. Replaces `password_min_age_minutes`.
+  - `breached_protection` (Block, Optional) Breached protection settings.
+    - `delegated_workflow_id` (String) The ID of the workflow that runs when a breached password is found during a sign-in attempt. Replaces `breached_password_delegated_workflow_id`.
+    - `expire_after_days` (Number) Number of days after a breached password is found that the user's password should expire. Replaces `breached_password_expire_after_days`.
+    - `logout_enabled` (Boolean) If `true`, the user's sessions are terminated when their credentials are detected as part of a breach. Requires `expire_after_days`. Replaces `breached_password_logout_enabled`.
+  - `complexity` (Block, Optional) Complexity settings.
+    - `exclude_attributes` (List of String) User profile attributes whose values must be excluded from the password. Currently supports `firstName` and `lastName`. Replaces `password_exclude_first_name` and `password_exclude_last_name`.
+    - `exclude_username` (Boolean) Whether the username must be excluded from the password. Replaces `password_exclude_username`.
+    - `max_consecutive_repeating_characters` (Number) Maximum number of consecutive repeating characters allowed in a password.
+    - `min_length` (Number) Minimum password length. Replaces `password_min_length`.
+    - `min_lower_case` (Number) Whether a password must contain a lower case letter: `0` no, `1` yes. Replaces `password_min_lowercase`.
+    - `min_number` (Number) Whether a password must contain a number: `0` no, `1` yes. Replaces `password_min_number`.
+    - `min_symbol` (Number) Whether a password must contain a symbol (for example `!@#$%^&*`): `0` no, `1` yes. Replaces `password_min_symbol`.
+    - `min_upper_case` (Number) Whether a password must contain an upper case letter: `0` no, `1` yes. Replaces `password_min_uppercase`.
+    - `oel_statement` (String) An Okta Expression Language statement used to validate the password.
+    - `dictionary` (Block, Optional) Weak password dictionary lookup settings.
+      - `common` (Block, Optional) Lookup settings for commonly used passwords.
+        - `exclude` (Boolean) Whether to check passwords against the common password dictionary. Replaces `password_dictionary_lookup`.
+  - `lockout` (Block, Optional) Lockout settings.
+    - `auto_unlock_minutes` (Number) How long (in minutes) a locked account remains locked before it is automatically unlocked: `0` indicates no limit. Replaces `password_auto_unlock_minutes`.
+    - `max_attempts` (Number) Number of invalid sign-in attempts allowed before the account is locked: `0` indicates no limit. Replaces `password_max_lockout_attempts`.
+    - `show_lockout_failures` (Boolean) Whether the user is informed when their account is locked. Replaces `password_show_lockout_failures`.
+    - `user_lockout_notification_channels` (List of String) How the user is notified when their account becomes locked. Replaces `password_lockout_notification_channels`.
+- `recovery` (Block, Optional) Password recovery settings.
+  - `factors` (Block, Optional) Settings for the factors that can be used for recovery.
+    - `okta_call` (Block, Optional) Okta voice call. `status` (String): `ACTIVE` or `INACTIVE`. Replaces `call_recovery`.
+    - `okta_email` (Block, Optional) Okta email. `status` (String): `ACTIVE` or `INACTIVE`. Replaces `email_recovery`.
+      - `properties.recovery_token.token_lifetime_minutes` (Number) Lifetime (in minutes) of the recovery token. Replaces `recovery_email_token`.
+    - `okta_sms` (Block, Optional) Okta SMS. `status` (String): `ACTIVE` or `INACTIVE`. Replaces `sms_recovery`.
+    - `recovery_question` (Block, Optional) Okta security question. `status` (String): `ACTIVE` or `INACTIVE`. Replaces `question_recovery`.
+      - `properties.complexity.min_length` (Number) Minimum length of the password recovery question answer. Replaces `question_min_length`.
+
+## Migrating from the flat schema
+
+This release replaces the flat password policy attributes with the nested blocks above. Configurations that still use the removed flat attributes fail validation with an "unsupported argument" error on `terraform plan`, so they must be rewritten before the upgrade. The policy itself is not replaced or deleted by the rewrite; the change is to the configuration only. Confirm this with the plan in Step 3 before applying.
+
+### Attribute mapping
+
+| Flat attribute (removed) | Nested attribute |
+|---|---|
+| `groups_included` | `conditions.people.groups.include` |
+| `auth_provider` | `conditions.auth_provider.provider` |
+| `password_history_count` | `settings.password.age.history_count` |
+| `password_max_age_days` | `settings.password.age.max_age_days` |
+| `password_expire_warn_days` | `settings.password.age.expire_warn_days` |
+| `password_min_age_minutes` | `settings.password.age.min_age_minutes` |
+| `password_min_length` | `settings.password.complexity.min_length` |
+| `password_min_lowercase` | `settings.password.complexity.min_lower_case` |
+| `password_min_uppercase` | `settings.password.complexity.min_upper_case` |
+| `password_min_number` | `settings.password.complexity.min_number` |
+| `password_min_symbol` | `settings.password.complexity.min_symbol` |
+| `password_exclude_username` | `settings.password.complexity.exclude_username` |
+| `password_exclude_first_name` / `password_exclude_last_name` | `settings.password.complexity.exclude_attributes` (list: `["firstName", "lastName"]`) |
+| `password_dictionary_lookup` | `settings.password.complexity.dictionary.common.exclude` |
+| `password_max_lockout_attempts` | `settings.password.lockout.max_attempts` |
+| `password_auto_unlock_minutes` | `settings.password.lockout.auto_unlock_minutes` |
+| `password_show_lockout_failures` | `settings.password.lockout.show_lockout_failures` |
+| `password_lockout_notification_channels` | `settings.password.lockout.user_lockout_notification_channels` |
+| `breached_password_expire_after_days` | `settings.password.breached_protection.expire_after_days` |
+| `breached_password_logout_enabled` | `settings.password.breached_protection.logout_enabled` |
+| `breached_password_delegated_workflow_id` | `settings.password.breached_protection.delegated_workflow_id` |
+| `skip_unlock` | `settings.delegation.options.skip_unlock` |
+| `email_recovery` | `settings.recovery.factors.okta_email.status` |
+| `recovery_email_token` | `settings.recovery.factors.okta_email.properties.recovery_token.token_lifetime_minutes` |
+| `sms_recovery` | `settings.recovery.factors.okta_sms.status` |
+| `call_recovery` | `settings.recovery.factors.okta_call.status` |
+| `question_recovery` | `settings.recovery.factors.recovery_question.status` |
+| `question_min_length` | `settings.recovery.factors.recovery_question.properties.complexity.min_length` |
+
+`name`, `description`, `status`, and `priority` keep their names. `password_history_count` moves into `settings.password.age.history_count`, and `password_exclude_first_name` / `password_exclude_last_name` collapse into one `exclude_attributes` list.
+
+### Step 1: Back up your state
+
+```bash
+terraform state pull > terraform-state-backup.json
+```
+
+### Step 2: Rewrite the configuration
+
+Replace each flat attribute with its nested equivalent from the table above. For example:
+
+```terraform
+# Before (v7.0.x)
+resource "okta_policy_password" "example" {
+  name                   = "example"
+  status                 = "ACTIVE"
+  password_history_count = 4
+  password_min_length    = 12
+  groups_included        = [data.okta_group.everyone.id]
+}
+
+# After (v7.1.0)
+resource "okta_policy_password" "example" {
+  name   = "example"
+  type   = "PASSWORD"
+  status = "ACTIVE"
+
+  conditions {
+    people {
+      groups {
+        include = [data.okta_group.everyone.id]
+      }
+    }
+  }
+
+  settings {
+    password {
+      age {
+        history_count = 4
+      }
+      complexity {
+        min_length = 12
+      }
+    }
+  }
+}
+```
+
+Two required changes beyond the renames:
+
+- Add `type = "PASSWORD"`. It is required in the nested schema.
+- Combine `password_exclude_first_name` and `password_exclude_last_name` into `exclude_attributes = ["firstName", "lastName"]`.
+
+### Step 3: Plan and verify
+
+```bash
+terraform plan -out migration.tfplan
+```
+
+**Expected outcome:** No changes, or only the intended edits. If the plan shows the policy being replaced or deleted, stop and check that `name` still matches the existing policy exactly.
+
+### Step 4: Apply and confirm
+
+```bash
+terraform apply migration.tfplan
+terraform plan
+# Output should show: No changes. Your infrastructure matches the configuration.
+```
 
 ## Import
 
