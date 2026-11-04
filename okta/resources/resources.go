@@ -1,6 +1,7 @@
 package resources
 
 const (
+	OktaA2aServersAuthorizationServer                 = "okta_a2a_servers_authorization_server"
 	OktaIDaaSAPIToken                                 = "okta_api_token"
 	OktaIDaaSAdminRoleCustom                          = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments               = "okta_admin_role_custom_assignments"
@@ -106,6 +107,7 @@ const (
 	OktaIDaaSLinkDefinition                           = "okta_link_definition"
 	OktaIDaaSLinkValue                                = "okta_link_value"
 	OktaIDaaSLogStream                                = "okta_log_stream"
+	OktaMcpServer                                     = "okta_mcp_server"
 	OktaIDaaSNetworkZone                              = "okta_network_zone"
 	OktaIDaaSOrgConfiguration                         = "okta_org_configuration"
 	OktaIDaaSOrgSupport                               = "okta_org_support"

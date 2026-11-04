@@ -1,4 +1,9 @@
+resource "okta_a2a_servers_authorization_server" test{
+  a2a_server_id = "wlpu37lfb7LQOikYDao5"
+  orn="orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"
+}
+
 data "okta_a2a_servers_authorization_server" "test" {
-  id            = "austyph5foBut7mli1d7"
-  a2a_server_id = "wlp11n8fzv48QTY0U1d8"
+  id            = okta_a2a_servers_authorization_server.test.id
+  a2a_server_id = "wlpu37lfb7LQOikYDao5"
 }
