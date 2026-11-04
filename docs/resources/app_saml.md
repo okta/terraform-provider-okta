@@ -225,6 +225,7 @@ resource "okta_app_saml" "test" {
 - `recipient` (String) The location where the app may present the SAML assertion
 - `request_compressed` (Boolean) Denotes whether the request is compressed or not.
 - `response_signed` (Boolean) Determines whether the SAML auth response message is digitally signed
+- `saml_assertion_lifetime_seconds` (Number) Determines the SAML app session lifetime with Okta, in seconds. If not set, Okta's default is used.
 - `saml_signed_request_enabled` (Boolean) SAML Signed Request enabled
 - `saml_version` (String) SAML version for the app's sign-on mode. Valid values are: `2.0` or `1.1`. Default is `2.0`
 - `signature_algorithm` (String) Signature algorithm used to digitally sign the assertion and response

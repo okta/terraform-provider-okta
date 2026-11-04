@@ -734,3 +734,46 @@ resource "okta_app_saml" "test" {
 		},
 	})
 }
+
+func TestAccResourceOktaAppSaml_assertionLifetime(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSaml, t.Name())
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSaml)
+	config := `
+resource "okta_app_saml" "test" {
+  label                           = "testAcc_replace_with_uuid"
+  sso_url                         = "https://example.com/sso"
+  recipient                       = "https://example.com/sso"
+  destination                     = "https://example.com/sso"
+  audience                        = "https://example.com/audience"
+  subject_name_id_template        = "$${user.userName}"
+  subject_name_id_format          = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+  response_signed                 = true
+  signature_algorithm             = "RSA_SHA256"
+  digest_algorithm                = "SHA256"
+  authn_context_class_ref         = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
+  saml_assertion_lifetime_seconds = %d
+}
+`
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppSaml, createDoesAppExist(sdk.NewSamlApplication())),
+		Steps: []resource.TestStep{
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, 7200)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "saml_assertion_lifetime_seconds", "7200"),
+				),
+			},
+			{
+				Config: mgr.ConfigReplace(fmt.Sprintf(config, 1800)),
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesAppExist(sdk.NewSamlApplication())),
+					resource.TestCheckResourceAttr(resourceName, "saml_assertion_lifetime_seconds", "1800"),
+				),
+			},
+		},
+	})
+}

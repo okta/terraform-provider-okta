@@ -436,6 +436,12 @@ request feature flag 'ADVANCED_SSO' be applied to your org.`,
 				Description: "SAML Signed Request enabled",
 				Default:     false,
 			},
+			"saml_assertion_lifetime_seconds": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Computed:    true,
+				Description: "Determines the SAML app session lifetimes with Okta.",
+			},
 			"skip_authentication_policy": {
 				Type:          schema.TypeBool,
 				Optional:      true,
@@ -687,6 +693,9 @@ func buildSamlApp(d *schema.ResourceData) (*sdk.SamlApplication, error) {
 		AuthnContextClassRef:     d.Get("authn_context_class_ref").(string),
 		Slo:                      &sdk.SingleLogout{Enabled: utils.BoolPtr(false)},
 		SamlSignedRequestEnabled: utils.BoolPtr(d.Get("saml_signed_request_enabled").(bool)),
+	}
+	if v, ok := d.GetOk("saml_assertion_lifetime_seconds"); ok {
+		app.Settings.SignOn.SamlAssertionLifetimeSeconds = utils.Int64Ptr(v.(int))
 	}
 	x5c, ok := d.GetOk("single_logout_certificate")
 	if ok && x5c != "" {
