@@ -485,7 +485,7 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 				DiffSuppressFunc: structure.SuppressJsonDiff,
 			}
 		} else {
-			res[key] = &schema.Schema{
+			s := &schema.Schema{
 				Optional: true,
 				Type:     schema.TypeMap,
 				Elem: &schema.Schema{
@@ -495,6 +495,15 @@ func buildFactorSchemaProviders() map[string]*schema.Schema {
 					return strings.HasSuffix(k, ".%") || new == ""
 				},
 			}
+			// The combined okta_verify key is rejected by the API once an org has the
+			// Okta Verify authenticator breakdown enabled, so the two forms are exclusive.
+			switch key {
+			case sdk.OktaVerifyFactor:
+				s.ConflictsWith = []string{sdk.OktaVerifyFastPassFactor, sdk.OktaVerifyPushFactor, sdk.OktaVerifyTotpFactor}
+			case sdk.OktaVerifyFastPassFactor, sdk.OktaVerifyPushFactor, sdk.OktaVerifyTotpFactor:
+				s.ConflictsWith = []string{sdk.OktaVerifyFactor}
+			}
+			res[key] = s
 		}
 	}
 	res["external_idps"] = &schema.Schema{
