@@ -439,6 +439,7 @@ func getAccessTokenForPrivateKey(httpClient *http.Client, orgURL, clientAssertio
 				backoffDuration = maxBackoff
 			}
 			retryCount++
+			// lintignore:R018
 			time.Sleep(time.Second * time.Duration(backoffDuration))
 			continue
 		}
