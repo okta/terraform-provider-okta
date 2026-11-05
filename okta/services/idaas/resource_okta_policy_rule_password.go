@@ -92,7 +92,7 @@ func resourcePolicyPasswordRule() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
-				Description: "Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = \"LEGACY\"`.",
+				Description: "Self-service password reset (SSPR) requirement settings. Can be set with or without `password_reset_access_control`; Okta defaults to legacy access control behavior when `password_reset_access_control` is omitted.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"method_constraints": {
@@ -414,14 +414,21 @@ func buildPolicyRulePassword(d *schema.ResourceData) v6okta.PasswordPolicyRule {
 	rule.SetConditions(conds)
 
 	// Build the SSPR action, conditionally including the requirement block
-	// when password_reset_access_control is explicitly configured.
+	// when either password_reset_access_control or password_reset_requirement
+	// is explicitly configured.
 	ssprAction := v6okta.SelfServicePasswordResetAction{}
 	access := d.Get("password_reset").(string)
 	ssprAction.SetAccess(access)
 
-	if accessControl, ok := d.GetOk("password_reset_access_control"); ok {
+	_, hasAccessControl := d.GetOk("password_reset_access_control")
+	_, hasRequirement := d.GetOk("password_reset_requirement")
+	if hasAccessControl || hasRequirement {
 		req := v6okta.SsprRequirement{}
-		req.SetAccessControl(accessControl.(string))
+		// accessControl is optional: Okta defaults to legacy behavior when it's
+		// omitted, and primary_methods/step_up take effect either way.
+		if accessControl, ok := d.GetOk("password_reset_access_control"); ok {
+			req.SetAccessControl(accessControl.(string))
+		}
 
 		// Only build primary methods and step-up if the requirement block is provided.
 		if v, ok := d.GetOk("password_reset_requirement"); ok {
