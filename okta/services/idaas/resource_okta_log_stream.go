@@ -35,7 +35,7 @@ const (
 )
 
 var (
-	awsEventBridgeEventSourceNameRegex = regexp.MustCompile(`^[\\.\\-_A-Za-z0-9]{1,75}$`)
+	awsEventBridgeEventSourceNameRegex = regexp.MustCompile(`^[.\-_A-Za-z0-9]{1,75}$`)
 	splunkTokenRegex                   = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
 	splunkHostRegex                    = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*\.splunkcloud(\.gc\.com|\.fed\.com|\.com|\.mil)$`)
 )
