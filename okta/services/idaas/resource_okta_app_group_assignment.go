@@ -164,9 +164,12 @@ func buildAppGroupAssignment(d *schema.ResourceData) sdk.ApplicationGroupAssignm
 	assignment := sdk.ApplicationGroupAssignment{
 		Profile: profile,
 	}
-	p, ok := d.GetOk("priority")
-	if ok {
-		assignment.PriorityPtr = utils.Int64Ptr(p.(int))
+	config := d.GetRawConfig()
+	if !config.IsNull() && config.IsKnown() {
+		priority := config.GetAttr("priority")
+		if !priority.IsNull() && priority.IsKnown() {
+			assignment.PriorityPtr = utils.Int64Ptr(d.Get("priority").(int))
+		}
 	}
 	return assignment
 }
