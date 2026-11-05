@@ -46,6 +46,7 @@ resource "okta_policy_password" "example" {
 - `password_history_count` (Number) Number of distinct passwords that must be created before they can be reused: 0 = none. Default: `0`
 - `password_lockout_notification_channels` (Set of String) Notification channels to use to notify a user when their account has been locked.
 - `password_max_age_days` (Number) Length in days a password is valid before expiry: 0 = no limit. Default: `0`
+- `password_max_consecutive_repeating_characters` (Number) Maximum number of consecutive repeating characters allowed in a password. Valid values: 1 through 72. Only available on Okta Identity Engine orgs with the feature enabled.
 - `password_max_lockout_attempts` (Number) Number of unsuccessful login attempts allowed before lockout: 0 = no limit. Default: `10`
 - `password_min_age_minutes` (Number) Minimum time interval in minutes between password changes: 0 = no limit. Default: `0`
 - `password_min_length` (Number) Minimum password length. Default: `8`
@@ -53,6 +54,7 @@ resource "okta_policy_password" "example" {
 - `password_min_number` (Number) If a password must contain at least one number: 0 = no, 1 = yes. Default: `1`
 - `password_min_symbol` (Number) If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default: `0`
 - `password_min_uppercase` (Number) If a password must contain at least one upper case letter: 0 = no, 1 = yes. Default: `1`
+- `password_oel_statement` (String) An Okta Expression Language expression that blocks a word from being used in a password, e.g. `password.value.contains('Word1') OR password.value.contains('Word2')`. Only available on Okta Identity Engine orgs with the feature enabled.
 - `password_show_lockout_failures` (Boolean) If a user should be informed when their account is locked. Default: `false`
 - `priority` (Number) Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
 - `question_min_length` (Number) Min length of the password recovery question answer. Default: `4`

@@ -101,3 +101,80 @@ func TestAccResourceOktaDefaultPasswordPolicy_issue_2804(t *testing.T) {
 		},
 	})
 }
+
+// TestAccResourceOktaDefaultPasswordPolicy_complexityExtras requires an OIE org
+// with the maxConsecutiveRepeatingCharacters and oelStatement password
+// complexity features enabled. The final step removes both attributes so the
+// org's default policy is left without them.
+func TestAccResourceOktaDefaultPasswordPolicy_complexityExtras(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyPasswordDefault, t.Name())
+	config := mgr.GetFixtures("complexity_extras.tf", t)
+	updatedConfig := mgr.GetFixtures("complexity_extras_updated.tf", t)
+	removedConfig := mgr.GetFixtures("complexity_extras_removed.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyPasswordDefault)
+
+	// The new attributes must not disturb the existing complexity settings,
+	// which keep their schema defaults in every fixture.
+	checkDefaultComplexity := resource.ComposeTestCheckFunc(
+		resource.TestCheckResourceAttr(resourceName, "password_min_length", "8"),
+		resource.TestCheckResourceAttr(resourceName, "password_min_lowercase", "1"),
+		resource.TestCheckResourceAttr(resourceName, "password_min_uppercase", "1"),
+		resource.TestCheckResourceAttr(resourceName, "password_min_number", "1"),
+		resource.TestCheckResourceAttr(resourceName, "password_min_symbol", "0"),
+		resource.TestCheckResourceAttr(resourceName, "password_dictionary_lookup", "false"),
+	)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             nil,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "password_max_consecutive_repeating_characters", "3"),
+					resource.TestCheckResourceAttr(resourceName, "password_oel_statement", "password.value.contains('okta')"),
+					checkDefaultComplexity,
+				),
+			},
+			{
+				// Re-reading the policy must not produce a diff.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_max_consecutive_repeating_characters", "5"),
+					resource.TestCheckResourceAttr(resourceName, "password_oel_statement", "password.value.contains('okta') OR password.value.contains('terraform')"),
+					checkDefaultComplexity,
+				),
+			},
+			{
+				RefreshState: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "password_max_consecutive_repeating_characters", "5"),
+					resource.TestCheckResourceAttr(resourceName, "password_oel_statement", "password.value.contains('okta') OR password.value.contains('terraform')"),
+				),
+			},
+			{
+				// Removing both attributes from config clears them upstream.
+				Config: removedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_max_consecutive_repeating_characters", "0"),
+					resource.TestCheckResourceAttr(resourceName, "password_oel_statement", ""),
+					checkDefaultComplexity,
+				),
+			},
+			{
+				Config:   removedConfig,
+				PlanOnly: true,
+			},
+		},
+	})
+}
