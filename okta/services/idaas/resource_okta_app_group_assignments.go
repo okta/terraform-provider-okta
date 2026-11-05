@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
+	"sort"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -108,6 +110,11 @@ Note: Using ` + "`for_each`" + ` on this resource is safe when each instance tar
 func resourceAppGroupAssignmentsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := getOktaClientFromMetadata(meta)
 	assignments := tfGroupsToGroupAssignments(d)
+	// create in ascending priority so each group lands on its configured
+	// priority, groups without a priority keep config order at the end
+	sort.SliceStable(assignments, func(i, j int) bool {
+		return assignmentPriority(assignments[i]) < assignmentPriority(assignments[j])
+	})
 
 	// run through all groups in the set and create an assignment
 	for i := range assignments {
@@ -310,13 +317,10 @@ func buildProfile(d *schema.ResourceData, i int, assignment *sdk.ApplicationGrou
 // splitAssignmentsTargets uses schema change to determine what if any
 // assignments to keep and which to remove. This is in the context of the local
 // terraform state. Get changes returns old state vs new state. Anything in the
-// old state but not in the new state will be removed.  Otherwise, everything is
-// to be assigned. That way, if there are changes to an existing assignment
-// (e.g. on priority or profile) they'll still be posted to the API for update.
+// old state but not in the new state will be removed. Assignments are sent in
+// ascending priority, because Okta inserts each one at its priority and shifts
+// the rest down. If no priority can shift, only new or changed groups are sent.
 func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.ApplicationGroupAssignment, err error) {
-	// 1. Anything in old, but not in new, needs to be deleted
-	// 2. Treat everything else as to be added that will also take care of field
-	//    updates on priority and profile
 	o, n := d.GetChange("group")
 	oldState, ok := o.([]interface{})
 	if !ok {
@@ -328,53 +332,113 @@ func splitAssignmentsTargets(d *schema.ResourceData) (toAssign, toRemove []*sdk.
 		err = fmt.Errorf("expected new groups to be slice, got %T", n)
 		return
 	}
-
-	oldIDs := map[string]interface{}{}
-	newIDs := map[string]interface{}{}
-	for _, old := range oldState {
-		if o, ok := old.(map[string]interface{}); ok {
-			id := o["id"].(string)
-			oldIDs[id] = o
-		}
-	}
-	for _, new := range newState {
-		if n, ok := new.(map[string]interface{}); ok {
-			id := n["id"].(string)
-			newIDs[id] = n
-		}
-	}
-
-	// delete
-	for id := range oldIDs {
-		if newIDs[id] == nil {
-			// only id is needed
-			toRemove = append(toRemove, &sdk.ApplicationGroupAssignment{
-				Id: id,
-			})
-		}
-	}
-
-	// anything in the new state treat as an assign even though it might already
-	// exist and might be unchanged
-	for id, group := range newIDs {
-		a := group.(map[string]interface{})
-		assignment := &sdk.ApplicationGroupAssignment{
-			Id: id,
-		}
-		if profile, ok := a["profile"]; ok {
-			var p interface{}
-			if err = json.Unmarshal([]byte(profile.(string)), &p); err == nil {
-				assignment.Profile = p
-			}
-			err = nil // need to reset err as it is a named return value
-		}
-		if priority, ok := a["priority"]; ok {
-			assignment.PriorityPtr = utils.Int64Ptr(priority.(int))
-		}
-		toAssign = append(toAssign, assignment)
-	}
-
+	toAssign, toRemove = planGroupAssignments(oldState, newState)
 	return
+}
+
+func planGroupAssignments(oldState, newState []interface{}) (toAssign, toRemove []*sdk.ApplicationGroupAssignment) {
+	oldGroups := map[string]map[string]interface{}{}
+	maxOldPriority := -1
+	for _, raw := range oldState {
+		group, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		oldGroups[group["id"].(string)] = group
+		if p := groupPriority(group); p > maxOldPriority {
+			maxOldPriority = p
+		}
+	}
+
+	newGroups := map[string]map[string]interface{}{}
+	var planned []map[string]interface{}
+	for _, raw := range newState {
+		group, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		id := group["id"].(string)
+		if _, dup := newGroups[id]; dup {
+			continue
+		}
+		newGroups[id] = group
+		planned = append(planned, group)
+	}
+
+	for _, raw := range oldState {
+		group, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		id := group["id"].(string)
+		if _, keep := newGroups[id]; !keep {
+			toRemove = append(toRemove, &sdk.ApplicationGroupAssignment{Id: id})
+		}
+	}
+
+	orderStable := len(toRemove) == 0
+	for _, group := range planned {
+		old, existed := oldGroups[group["id"].(string)]
+		switch {
+		case existed && groupPriority(old) != groupPriority(group):
+			orderStable = false
+		case !existed && groupPriority(group) <= maxOldPriority:
+			orderStable = false
+		}
+	}
+
+	for _, group := range planned {
+		old, existed := oldGroups[group["id"].(string)]
+		if orderStable && existed && groupProfileEqual(old, group) {
+			continue
+		}
+		toAssign = append(toAssign, tfGroupToGroupAssignment(group))
+	}
+
+	sort.SliceStable(toAssign, func(i, j int) bool {
+		return assignmentPriority(toAssign[i]) < assignmentPriority(toAssign[j])
+	})
+	return
+}
+
+func tfGroupToGroupAssignment(group map[string]interface{}) *sdk.ApplicationGroupAssignment {
+	assignment := &sdk.ApplicationGroupAssignment{
+		Id: group["id"].(string),
+	}
+	if profile, ok := group["profile"].(string); ok {
+		var p interface{}
+		if err := json.Unmarshal([]byte(profile), &p); err == nil {
+			assignment.Profile = p
+		}
+	}
+	if priority, ok := group["priority"].(int); ok {
+		assignment.PriorityPtr = utils.Int64Ptr(priority)
+	}
+	return assignment
+}
+
+func groupPriority(group map[string]interface{}) int {
+	if priority, ok := group["priority"].(int); ok {
+		return priority
+	}
+	return -1
+}
+
+func groupProfileEqual(old, new map[string]interface{}) bool {
+	oldProfile, _ := old["profile"].(string)
+	newProfile, _ := new["profile"].(string)
+	if oldProfile == newProfile {
+		return true
+	}
+	return utils.NoChangeInObjectFromUnmarshaledJSON("", oldProfile, newProfile, nil)
+}
+
+// assignmentPriority sorts assignments without a priority after those with one.
+func assignmentPriority(assignment *sdk.ApplicationGroupAssignment) int64 {
+	if assignment.PriorityPtr == nil {
+		return math.MaxInt64
+	}
+	return *assignment.PriorityPtr
 }
 
 func groupAssignmentToTFGroup(assignment *sdk.ApplicationGroupAssignment) map[string]interface{} {
