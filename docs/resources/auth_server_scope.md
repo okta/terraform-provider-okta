@@ -29,7 +29,7 @@ resource "okta_auth_server_scope" "example" {
 
 ### Optional
 
-- `consent` (String) Indicates whether a consent dialog is needed for the scope. It can be set to `REQUIRED` or `IMPLICIT`. Default: `IMPLICIT`
+- `consent` (String) Indicates whether a consent dialog is needed for the scope. It can be set to `REQUIRED`, `FLEXIBLE`, or `IMPLICIT`. Default: `IMPLICIT`
 - `default` (Boolean) A default scope will be returned in an access token when the client omits the scope parameter in a token request, provided this scope is allowed as part of the access policy rule.
 - `description` (String) Description of the Auth Server Scope.
 - `display_name` (String) Name of the end user displayed in a consent dialog box
