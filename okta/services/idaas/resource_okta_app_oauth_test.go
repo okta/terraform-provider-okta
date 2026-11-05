@@ -247,6 +247,13 @@ func TestAccResourceOktaAppOauth_federationBroker(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "true"),
 				),
 			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "implicit_assignment", "false"),
+				),
+			},
 		},
 	})
 }
