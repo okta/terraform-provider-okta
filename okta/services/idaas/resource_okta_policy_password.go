@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -55,6 +56,17 @@ func resourcePolicyPassword() *schema.Resource {
 				Optional:    true,
 				Description: "If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default: `0`",
 				Default:     0,
+			},
+			"password_max_consecutive_repeating_characters": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(1, 72),
+				Description:  "Maximum number of consecutive repeating characters allowed in a password. Valid values: 1 through 72. Only available on Okta Identity Engine orgs with the feature enabled.",
+			},
+			"password_oel_statement": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "An Okta Expression Language expression that blocks a word from being used in a password, e.g. `password.value.contains('Word1') OR password.value.contains('Word2')`. Only available on Okta Identity Engine orgs with the feature enabled.",
 			},
 			"password_exclude_username": {
 				Type:        schema.TypeBool,
@@ -304,6 +316,9 @@ func resourcePolicyPasswordRead(ctx context.Context, d *schema.ResourceData, met
 	if err := syncPolicyFromUpstreamV6(d, policy); err != nil {
 		return diag.Errorf("failed to sync password policy: %v", err)
 	}
+	if pw != nil && pw.Complexity != nil {
+		setPasswordComplexityExtras(d, pw.Complexity)
+	}
 	if pw != nil && pw.BreachedProtection != nil {
 		bp := pw.BreachedProtection
 		if bp.HasExpireAfterDays() {
@@ -383,6 +398,7 @@ func buildPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 			UserLockoutNotificationChannels: utils.ConvertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
 		},
 	}
+	buildPasswordComplexityExtras(d, passwordSettings.Complexity)
 	logoutEnabled := d.Get("breached_password_logout_enabled").(bool)
 	delegatedWorkflowId := d.Get("breached_password_delegated_workflow_id").(string)
 	if logoutEnabled || delegatedWorkflowId != "" {
@@ -440,4 +456,31 @@ func getExcludedAttrs(excludeFirstName, excludeLastName bool) []string {
 		excludedAttrs = append(excludedAttrs, "lastName")
 	}
 	return excludedAttrs
+}
+
+// maxConsecutiveRepeatingCharactersKey is the API's JSON key for this setting.
+// okta-sdk-golang v6 models it as MaxConsecutiveCharacters under the outdated
+// key "maxConsecutiveCharacters", so it is sent and read via
+// AdditionalProperties instead of the typed field.
+const maxConsecutiveRepeatingCharactersKey = "maxConsecutiveRepeatingCharacters"
+
+func buildPasswordComplexityExtras(d *schema.ResourceData, complexity *v6okta.PasswordPolicyPasswordSettingsComplexity) {
+	if v, ok := d.GetOk("password_max_consecutive_repeating_characters"); ok {
+		if complexity.AdditionalProperties == nil {
+			complexity.AdditionalProperties = map[string]interface{}{}
+		}
+		complexity.AdditionalProperties[maxConsecutiveRepeatingCharactersKey] = int32(v.(int))
+	}
+	if v, ok := d.GetOk("password_oel_statement"); ok {
+		complexity.SetOelStatement(v.(string))
+	}
+}
+
+func setPasswordComplexityExtras(d *schema.ResourceData, complexity *v6okta.PasswordPolicyPasswordSettingsComplexity) {
+	if v, ok := complexity.AdditionalProperties[maxConsecutiveRepeatingCharactersKey].(float64); ok {
+		_ = d.Set("password_max_consecutive_repeating_characters", int(v))
+	} else {
+		_ = d.Set("password_max_consecutive_repeating_characters", nil)
+	}
+	_ = d.Set("password_oel_statement", complexity.GetOelStatement())
 }

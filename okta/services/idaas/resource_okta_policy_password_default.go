@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
@@ -69,6 +70,17 @@ func resourcePolicyPasswordDefault() *schema.Resource {
 				Optional:    true,
 				Description: "If a password must contain at least one symbol (!@#$%^&*): 0 = no, 1 = yes. Default = `0`",
 				Default:     0,
+			},
+			"password_max_consecutive_repeating_characters": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.IntBetween(1, 72),
+				Description:  "Maximum number of consecutive repeating characters allowed in a password. Valid values: 1 through 72. Only available on Okta Identity Engine orgs with the feature enabled.",
+			},
+			"password_oel_statement": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "An Okta Expression Language expression that blocks a word from being used in a password, e.g. `password.value.contains('Word1') OR password.value.contains('Word2')`. Only available on Okta Identity Engine orgs with the feature enabled.",
 			},
 			"password_exclude_username": {
 				Type:        schema.TypeBool,
@@ -352,6 +364,9 @@ func resourcePolicyPasswordDefaultRead(ctx context.Context, d *schema.ResourceDa
 			}
 		}
 	}
+	if pw != nil && pw.Complexity != nil {
+		setPasswordComplexityExtras(d, pw.Complexity)
+	}
 	if pw != nil && pw.BreachedProtection != nil {
 		bp := pw.BreachedProtection
 		if bp.HasLogoutEnabled() {
@@ -415,6 +430,7 @@ func buildDefaultPasswordPolicy(d *schema.ResourceData) *v6okta.PasswordPolicy {
 			UserLockoutNotificationChannels: utils.ConvertInterfaceToStringSet(d.Get("password_lockout_notification_channels")),
 		},
 	}
+	buildPasswordComplexityExtras(d, passwordSettings.Complexity)
 	logoutEnabled := d.Get("breached_password_logout_enabled").(bool)
 	delegatedWorkflowId := d.Get("breached_password_delegated_workflow_id").(string)
 	if logoutEnabled || delegatedWorkflowId != "" {
