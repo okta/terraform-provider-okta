@@ -193,7 +193,7 @@ Optional:
 - **`policy_id` and `type` force replacement** when changed.
 - **Inline hook scopes are now managed.** The old resource kept whatever scopes the hook already had. If you set `scopes` (for example only `PROGRESSIVE_PROFILING`), any other scopes on the rule are removed.
 
-### Steps
+### Migration Steps
 
 1. **Back up your state.**
 
@@ -201,7 +201,7 @@ Optional:
    terraform state pull > backup.tfstate
    ```
 
-2. **Record the rule's current settings.** Run `terraform state show okta_policy_rule_profile_enrollment.<name>` and note the rule `id` and the current `ui_schema_id`.
+2. **Record the rule's current settings.** Run `terraform state show okta_policy_rule_profile_enrollment.<name>` and note the rule `id`, `policy_id` and the current `ui_schema_id`. You'll need to run this from the version 7.1.0 or lower.
 
 3. **Rewrite the configuration** using the [attribute mapping](#attribute-mapping). For example:
 

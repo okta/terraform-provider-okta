@@ -100,7 +100,7 @@ func TestAccResourceOktaPolicyRuleProfileEnrollment_crud(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "actions.profile_enrollment.profile_attributes.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "actions.profile_enrollment.profile_attributes.3.name", "mobilePhone"),
 					resource.TestCheckResourceAttr(resourceName, "actions.profile_enrollment.profile_attributes.3.required", "false"),
-					resource.TestCheckResourceAttr(resourceName, "actions.profile_enrollment.pre_registration_inline_hooks.0.scopes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "actions.profile_enrollment.pre_registration_inline_hooks.0.scopes.#", "2"),
 				),
 			},
 			{

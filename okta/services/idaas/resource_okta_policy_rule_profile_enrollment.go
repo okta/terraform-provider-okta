@@ -85,7 +85,7 @@ type PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivatio
 // PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel is the nested model for pre_registration_inline_hooks.
 type PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel struct {
 	InlineHookId types.String `tfsdk:"inline_hook_id"`
-	Scopes       types.List   `tfsdk:"scopes"`
+	Scopes       types.Set    `tfsdk:"scopes"`
 }
 
 // PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel is the nested model for profile_attributes.
@@ -210,7 +210,7 @@ func (r *policyRuleProfileEnrollmentResource) Schema(_ context.Context, _ resour
 											Description: "InlineHookId",
 											Optional:    true,
 										},
-										"scopes": schema.ListAttribute{
+										"scopes": schema.SetAttribute{
 											Description: "Specifies the use cases when the configured pre-registration inline hook is invoked.",
 											ElementType: types.StringType,
 											Optional:    true,
@@ -257,8 +257,8 @@ func (r *policyRuleProfileEnrollmentResource) ImportState(ctx context.Context, r
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("policy_id"), parts[0])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[1])...)
-	// Tells the Read that follows to map every attribute from the API (see Read). Private-state
-	// values must be valid JSON.
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
 	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
@@ -268,10 +268,10 @@ func (r *policyRuleProfileEnrollmentResource) Read(ctx context.Context, req reso
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	// Optional-only attributes the user left unset are null in state; the API may report any value
-	// for them (its own default, e.g. a zone status of ACTIVE). Keep them null so state matches
-	// config, exactly as Create/Update do — except on the first Read after import, when there is no
-	// config-derived state to preserve.
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
 	prior := state
 	importing, importDiags := req.Private.GetKey(ctx, "importing")
 	resp.Diagnostics.Append(importDiags...)
@@ -297,144 +297,184 @@ func (r *policyRuleProfileEnrollmentResource) Read(ctx context.Context, req reso
 
 	state.Type = types.StringValue("PROFILE_ENROLLMENT")
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	if v, ok := variantObj.GetConditionsOk(); ok && v != nil {
-		state.Conditions = types.StringValue(string(*v))
-	} else {
-		state.Conditions = types.StringNull()
-	}
+	state.Conditions = types.StringValue(string(variantObj.GetConditions()))
 	state.Name = types.StringValue(string(variantObj.GetName()))
 	state.Priority = types.Int64Value(int64(variantObj.GetPriority()))
 	state.Status = types.StringValue(string(variantObj.GetStatus()))
 	state.System = types.BoolValue(variantObj.GetSystem())
 	state.ID = types.StringValue(string(variantObj.GetId()))
-	if actionsRaw0, ok := variantObj.GetActionsOk(); ok && actionsRaw0 != nil {
-		actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
-		// plan/state block, read-only: a non-null field there means the user manages it, so
-		// the API value is taken; otherwise the prior value is kept. When the block is absent
-		// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-		actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		if state.Actions != nil {
-			actionsPrior0 = state.Actions
-			*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
-		}
-		if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
-			profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+	if state.Actions != nil || len(importing) > 0 {
+		if actionsRaw0, ok := variantObj.GetActionsOk(); ok && actionsRaw0 != nil {
+			actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
 			// plan/state block, read-only: a non-null field there means the user manages it, so
 			// the API value is taken; otherwise the prior value is kept. When the block is absent
 			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-			profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
-			if actionsPrior0.ProfileEnrollment != nil {
-				profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
-				*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
+			actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			if state.Actions != nil {
+				actionsPrior0 = state.Actions
+				*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
 			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
-				profileEnrollmentModel1.Access = types.StringValue(string(profileEnrollmentRaw1.GetAccess()))
-			} else {
-				profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
-			}
-			if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
-				activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
-				// plan/state block, read-only: a non-null field there means the user manages it, so
-				// the API value is taken; otherwise the prior value is kept. When the block is absent
-				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-				activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
-				if profileEnrollmentPrior1.ActivationRequirements != nil {
-					activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
-					*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
-				}
-				if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
-					activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
-				} else {
-					activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
-				}
-				profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
-				profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.AllowedIdentifiers = listVal
-				}
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
-				profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
-				}
-			}
-			if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
-				preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
-				preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
-				for i, apiItem := range apiList {
-					preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
-					preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(apiItem.GetInlineHookId()))
-					if v := apiItem.GetScopes(); len(v) > 0 {
-						collVal, collDiags := types.ListValueFrom(ctx, types.StringType, v)
-						resp.Diagnostics.Append(collDiags...)
-						preRegistrationInlineHooksItem2.Scopes = collVal
-					} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
-						preRegistrationInlineHooksItem2.Scopes = types.ListValueMust(types.StringType, []attr.Value{})
-					} else {
-						preRegistrationInlineHooksItem2.Scopes = types.ListNull(types.StringType)
+			if actionsPrior0.ProfileEnrollment != nil || len(importing) > 0 {
+				if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
+					profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
+					if actionsPrior0.ProfileEnrollment != nil {
+						profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
+						*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
 					}
-					preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetAccess()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.Access = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.Access = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
+					}
+					if profileEnrollmentPrior1.ActivationRequirements != nil || len(importing) > 0 {
+						if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
+							activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
+							if profileEnrollmentPrior1.ActivationRequirements != nil {
+								activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
+								*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
+							}
+							if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
+								if v, ok := activationRequirementsRaw2.GetEmailVerificationOk(); ok && v != nil {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(*v)
+								} else if activationRequirementsHasPrior2 {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
+								} else {
+									activationRequirementsModel2.EmailVerification = types.BoolNull()
+								}
+							} else {
+								activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
+							}
+							profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
+						profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.AllowedIdentifiers = listVal
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
+						profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
+						}
+					}
+					if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
+						preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
+						preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
+						for i, apiItem := range apiList {
+							preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
+							if v, ok := apiItem.GetInlineHookIdOk(); ok && v != nil {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(*v))
+							} else {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringNull()
+							}
+							if v := apiItem.GetScopes(); len(v) > 0 {
+								collVal, collDiags := types.SetValueFrom(ctx, types.StringType, v)
+								resp.Diagnostics.Append(collDiags...)
+								preRegistrationInlineHooksItem2.Scopes = collVal
+							} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
+								preRegistrationInlineHooksItem2.Scopes = types.SetValueMust(types.StringType, []attr.Value{})
+							} else {
+								preRegistrationInlineHooksItem2.Scopes = types.SetNull(types.StringType)
+							}
+							preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+						}
+						profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
+					}
+					if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
+						profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
+						for _, apiItem := range apiList {
+							profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
+							if v, ok := apiItem.GetLabelOk(); ok && v != nil {
+								profileAttributesItem2.Label = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Label = types.StringNull()
+							}
+							if v, ok := apiItem.GetNameOk(); ok && v != nil {
+								profileAttributesItem2.Name = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Name = types.StringNull()
+							}
+							if v, ok := apiItem.GetRequiredOk(); ok && v != nil {
+								profileAttributesItem2.Required = types.BoolValue(*v)
+							} else {
+								profileAttributesItem2.Required = types.BoolNull()
+							}
+							profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
+						}
+						profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetProgressiveProfilingAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
+						profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.TargetGroupIds = listVal
+						}
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUiSchemaId()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UiSchemaId = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UiSchemaId = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUnknownUserAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UnknownUserAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UnknownUserAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
+					}
+					actionsModel0.ProfileEnrollment = profileEnrollmentModel1
 				}
-				profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
 			}
-			if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
-				profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
-				for _, apiItem := range apiList {
-					profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
-					profileAttributesItem2.Label = types.StringValue(string(apiItem.GetLabel()))
-					profileAttributesItem2.Name = types.StringValue(string(apiItem.GetName()))
-					profileAttributesItem2.Required = types.BoolValue(apiItem.GetRequired())
-					profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
-				}
-				profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
-				profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(string(profileEnrollmentRaw1.GetProgressiveProfilingAction()))
-			} else {
-				profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
-				profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.TargetGroupIds = listVal
-				}
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
-				profileEnrollmentModel1.UiSchemaId = types.StringValue(string(profileEnrollmentRaw1.GetUiSchemaId()))
-			} else {
-				profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
-				profileEnrollmentModel1.UnknownUserAction = types.StringValue(string(profileEnrollmentRaw1.GetUnknownUserAction()))
-			} else {
-				profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
-			}
-			actionsModel0.ProfileEnrollment = profileEnrollmentModel1
+			state.Actions = actionsModel0
 		}
-		state.Actions = actionsModel0
 	}
 
 	if importing == nil {
@@ -453,7 +493,8 @@ func (r *policyRuleProfileEnrollmentResource) Read(ctx context.Context, req reso
 		if prior.System.IsNull() {
 			state.System = prior.System
 		}
-	} else {
+	}
+	if importing != nil {
 		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
 	}
 
@@ -571,12 +612,20 @@ func (r *policyRuleProfileEnrollmentResource) Create(ctx context.Context, req re
 	} else {
 		body.SetConditions(plan.Conditions.ValueString())
 	}
-	body.SetName(plan.Name.ValueString())
-	body.SetPriority(int32(plan.Priority.ValueInt64()))
-	body.SetStatus(plan.Status.ValueString())
-	body.SetSystem(plan.System.ValueBool())
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		body.SetName(plan.Name.ValueString())
+	}
+	if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
+		body.SetPriority(int32(plan.Priority.ValueInt64()))
+	}
+	if !plan.Status.IsNull() && !plan.Status.IsUnknown() {
+		body.SetStatus(plan.Status.ValueString())
+	}
+	if !plan.System.IsNull() && !plan.System.IsUnknown() {
+		body.SetSystem(plan.System.ValueBool())
+	}
 	body.SetType("PROFILE_ENROLLMENT")
-	createReq = createReq.PolicyRule(okta.ListPolicyRules200ResponseInner{ProfileEnrollmentPolicyRule: body})
+	createReq = createReq.PolicyRule(okta.ProfileEnrollmentPolicyRuleAsListPolicyRules200ResponseInner(body))
 	result, _, err := createReq.Execute()
 	if err != nil {
 		resp.Diagnostics.AddError("Error creating policy_rule_profile_enrollment", err.Error())
@@ -594,134 +643,178 @@ func (r *policyRuleProfileEnrollmentResource) Create(ctx context.Context, req re
 
 	// Map computed fields from response back to plan (scalar types only)
 
-	if actionsRaw0, ok := createVariantObj.GetActionsOk(); ok && actionsRaw0 != nil {
-		actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
-		// plan/state block, read-only: a non-null field there means the user manages it, so
-		// the API value is taken; otherwise the prior value is kept. When the block is absent
-		// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-		actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		if plan.Actions != nil {
-			actionsPrior0 = plan.Actions
-			*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
-		}
-		if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
-			profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+	if plan.Actions != nil {
+		if actionsRaw0, ok := createVariantObj.GetActionsOk(); ok && actionsRaw0 != nil {
+			actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
 			// plan/state block, read-only: a non-null field there means the user manages it, so
 			// the API value is taken; otherwise the prior value is kept. When the block is absent
 			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-			profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
+			actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			if plan.Actions != nil {
+				actionsPrior0 = plan.Actions
+				*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
+			}
 			if actionsPrior0.ProfileEnrollment != nil {
-				profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
-				*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
-				profileEnrollmentModel1.Access = types.StringValue(string(profileEnrollmentRaw1.GetAccess()))
-			} else {
-				profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
-			}
-			if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
-				activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
-				// plan/state block, read-only: a non-null field there means the user manages it, so
-				// the API value is taken; otherwise the prior value is kept. When the block is absent
-				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-				activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
-				if profileEnrollmentPrior1.ActivationRequirements != nil {
-					activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
-					*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
-				}
-				if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
-					activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
-				} else {
-					activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
-				}
-				profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
-				profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.AllowedIdentifiers = listVal
-				}
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
-				profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
-				}
-			}
-			if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
-				preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
-				preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
-				for i, apiItem := range apiList {
-					preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
-					preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(apiItem.GetInlineHookId()))
-					if v := apiItem.GetScopes(); len(v) > 0 {
-						collVal, collDiags := types.ListValueFrom(ctx, types.StringType, v)
-						resp.Diagnostics.Append(collDiags...)
-						preRegistrationInlineHooksItem2.Scopes = collVal
-					} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
-						preRegistrationInlineHooksItem2.Scopes = types.ListValueMust(types.StringType, []attr.Value{})
-					} else {
-						preRegistrationInlineHooksItem2.Scopes = types.ListNull(types.StringType)
+				if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
+					profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
+					if actionsPrior0.ProfileEnrollment != nil {
+						profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
+						*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
 					}
-					preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetAccess()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.Access = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.Access = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
+					}
+					if profileEnrollmentPrior1.ActivationRequirements != nil {
+						if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
+							activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
+							if profileEnrollmentPrior1.ActivationRequirements != nil {
+								activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
+								*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
+							}
+							if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
+								if v, ok := activationRequirementsRaw2.GetEmailVerificationOk(); ok && v != nil {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(*v)
+								} else if activationRequirementsHasPrior2 {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
+								} else {
+									activationRequirementsModel2.EmailVerification = types.BoolNull()
+								}
+							} else {
+								activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
+							}
+							profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
+						profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.AllowedIdentifiers = listVal
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
+						profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
+						}
+					}
+					if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
+						preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
+						preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
+						for i, apiItem := range apiList {
+							preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
+							if v, ok := apiItem.GetInlineHookIdOk(); ok && v != nil {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(*v))
+							} else {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringNull()
+							}
+							if v := apiItem.GetScopes(); len(v) > 0 {
+								collVal, collDiags := types.SetValueFrom(ctx, types.StringType, v)
+								resp.Diagnostics.Append(collDiags...)
+								preRegistrationInlineHooksItem2.Scopes = collVal
+							} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
+								preRegistrationInlineHooksItem2.Scopes = types.SetValueMust(types.StringType, []attr.Value{})
+							} else {
+								preRegistrationInlineHooksItem2.Scopes = types.SetNull(types.StringType)
+							}
+							preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+						}
+						profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
+					}
+					if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
+						profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
+						for _, apiItem := range apiList {
+							profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
+							if v, ok := apiItem.GetLabelOk(); ok && v != nil {
+								profileAttributesItem2.Label = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Label = types.StringNull()
+							}
+							if v, ok := apiItem.GetNameOk(); ok && v != nil {
+								profileAttributesItem2.Name = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Name = types.StringNull()
+							}
+							if v, ok := apiItem.GetRequiredOk(); ok && v != nil {
+								profileAttributesItem2.Required = types.BoolValue(*v)
+							} else {
+								profileAttributesItem2.Required = types.BoolNull()
+							}
+							profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
+						}
+						profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetProgressiveProfilingAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
+						profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.TargetGroupIds = listVal
+						}
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUiSchemaId()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UiSchemaId = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UiSchemaId = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUnknownUserAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UnknownUserAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UnknownUserAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
+					}
+					actionsModel0.ProfileEnrollment = profileEnrollmentModel1
 				}
-				profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
 			}
-			if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
-				profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
-				for _, apiItem := range apiList {
-					profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
-					profileAttributesItem2.Label = types.StringValue(string(apiItem.GetLabel()))
-					profileAttributesItem2.Name = types.StringValue(string(apiItem.GetName()))
-					profileAttributesItem2.Required = types.BoolValue(apiItem.GetRequired())
-					profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
-				}
-				profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
-				profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(string(profileEnrollmentRaw1.GetProgressiveProfilingAction()))
-			} else {
-				profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
-				profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.TargetGroupIds = listVal
-				}
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
-				profileEnrollmentModel1.UiSchemaId = types.StringValue(string(profileEnrollmentRaw1.GetUiSchemaId()))
-			} else {
-				profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
-				profileEnrollmentModel1.UnknownUserAction = types.StringValue(string(profileEnrollmentRaw1.GetUnknownUserAction()))
-			} else {
-				profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
-			}
-			actionsModel0.ProfileEnrollment = profileEnrollmentModel1
+			plan.Actions = actionsModel0
 		}
-		plan.Actions = actionsModel0
 	}
 
 	// Unset Optional-only attributes must stay null: Terraform rejects any other value after apply.
@@ -859,10 +952,18 @@ func (r *policyRuleProfileEnrollmentResource) Update(ctx context.Context, req re
 	} else {
 		updateBody.SetConditions(plan.Conditions.ValueString())
 	}
-	updateBody.SetName(plan.Name.ValueString())
-	updateBody.SetPriority(int32(plan.Priority.ValueInt64()))
-	updateBody.SetStatus(plan.Status.ValueString())
-	updateBody.SetSystem(plan.System.ValueBool())
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		updateBody.SetName(plan.Name.ValueString())
+	}
+	if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
+		updateBody.SetPriority(int32(plan.Priority.ValueInt64()))
+	}
+	if !plan.Status.IsNull() && !plan.Status.IsUnknown() {
+		updateBody.SetStatus(plan.Status.ValueString())
+	}
+	if !plan.System.IsNull() && !plan.System.IsUnknown() {
+		updateBody.SetSystem(plan.System.ValueBool())
+	}
 	updateBody.SetType("PROFILE_ENROLLMENT")
 	updateReq = updateReq.PolicyRule(okta.ProfileEnrollmentPolicyRuleAsListPolicyRules200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
@@ -875,6 +976,9 @@ func (r *policyRuleProfileEnrollmentResource) Update(ctx context.Context, req re
 	if updateVariantObj == nil {
 		resp.Diagnostics.AddError("Error updating policy_rule_profile_enrollment", "API returned a response for a different variant type")
 		return
+	}
+	if plan.Actions == nil {
+		state.Actions = nil
 	}
 
 	// Map API response fields to state (scalar types only).
@@ -901,151 +1005,179 @@ func (r *policyRuleProfileEnrollmentResource) Update(ctx context.Context, req re
 	if systemVal, ok := updateVariantObj.GetSystemOk(); ok && systemVal != nil {
 		state.System = types.BoolValue(*systemVal)
 	}
-	if actionsRaw0, ok := updateVariantObj.GetActionsOk(); ok && actionsRaw0 != nil {
-		actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
-		// plan/state block, read-only: a non-null field there means the user manages it, so
-		// the API value is taken; otherwise the prior value is kept. When the block is absent
-		// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-		actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
-		if plan.Actions != nil {
-			actionsPrior0 = plan.Actions
-			*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
-		}
-		if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
-			profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+	state.Actions = plan.Actions
+	if plan.Actions != nil {
+		if actionsRaw0, ok := updateVariantObj.GetActionsOk(); ok && actionsRaw0 != nil {
+			actionsModel0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			// actionsModel0 is the new block, built from the API response. actionsPrior0 is the prior
 			// plan/state block, read-only: a non-null field there means the user manages it, so
 			// the API value is taken; otherwise the prior value is kept. When the block is absent
 			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-			profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
-			profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
+			actionsPrior0 := &PolicyRuleProfileEnrollmentModelActionsModel{}
+			if plan.Actions != nil {
+				actionsPrior0 = plan.Actions
+				*actionsModel0 = *actionsPrior0 // keep fields the reader below does not map
+			}
 			if actionsPrior0.ProfileEnrollment != nil {
-				profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
-				*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
-				profileEnrollmentModel1.Access = types.StringValue(string(profileEnrollmentRaw1.GetAccess()))
-			} else {
-				profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
-			}
-			if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
-				activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
-				// plan/state block, read-only: a non-null field there means the user manages it, so
-				// the API value is taken; otherwise the prior value is kept. When the block is absent
-				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
-				activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
-				activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
-				if profileEnrollmentPrior1.ActivationRequirements != nil {
-					activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
-					*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
-				}
-				if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
-					activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
-				} else {
-					activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
-				}
-				profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
-				profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.AllowedIdentifiers = listVal
-				}
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
-				profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
-				}
-			}
-			if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
-				preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
-				preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
-				for i, apiItem := range apiList {
-					preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
-					preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(apiItem.GetInlineHookId()))
-					if v := apiItem.GetScopes(); len(v) > 0 {
-						collVal, collDiags := types.ListValueFrom(ctx, types.StringType, v)
-						resp.Diagnostics.Append(collDiags...)
-						preRegistrationInlineHooksItem2.Scopes = collVal
-					} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
-						preRegistrationInlineHooksItem2.Scopes = types.ListValueMust(types.StringType, []attr.Value{})
-					} else {
-						preRegistrationInlineHooksItem2.Scopes = types.ListNull(types.StringType)
+				if profileEnrollmentRaw1, ok := actionsRaw0.GetProfileEnrollmentOk(); ok && profileEnrollmentRaw1 != nil {
+					profileEnrollmentModel1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					// profileEnrollmentModel1 is the new block, built from the API response. profileEnrollmentPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					profileEnrollmentPrior1 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModel{}
+					profileEnrollmentHasPrior1 := actionsPrior0.ProfileEnrollment != nil
+					if actionsPrior0.ProfileEnrollment != nil {
+						profileEnrollmentPrior1 = actionsPrior0.ProfileEnrollment
+						*profileEnrollmentModel1 = *profileEnrollmentPrior1 // keep fields the reader below does not map
 					}
-					preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.Access.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetAccess()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.Access = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.Access = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.Access = profileEnrollmentPrior1.Access
+					}
+					if profileEnrollmentPrior1.ActivationRequirements != nil {
+						if activationRequirementsRaw2, ok := profileEnrollmentRaw1.GetActivationRequirementsOk(); ok && activationRequirementsRaw2 != nil {
+							activationRequirementsModel2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							// activationRequirementsModel2 is the new block, built from the API response. activationRequirementsPrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							activationRequirementsPrior2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelActivationRequirementsModel{}
+							activationRequirementsHasPrior2 := profileEnrollmentPrior1.ActivationRequirements != nil
+							if profileEnrollmentPrior1.ActivationRequirements != nil {
+								activationRequirementsPrior2 = profileEnrollmentPrior1.ActivationRequirements
+								*activationRequirementsModel2 = *activationRequirementsPrior2 // keep fields the reader below does not map
+							}
+							if !(activationRequirementsHasPrior2 && activationRequirementsPrior2.EmailVerification.IsNull()) {
+								if v, ok := activationRequirementsRaw2.GetEmailVerificationOk(); ok && v != nil {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(*v)
+								} else if activationRequirementsHasPrior2 {
+									activationRequirementsModel2.EmailVerification = types.BoolValue(activationRequirementsRaw2.GetEmailVerification())
+								} else {
+									activationRequirementsModel2.EmailVerification = types.BoolNull()
+								}
+							} else {
+								activationRequirementsModel2.EmailVerification = activationRequirementsPrior2.EmailVerification
+							}
+							profileEnrollmentModel1.ActivationRequirements = activationRequirementsModel2
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.AllowedIdentifiers.IsNull() {
+						profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetAllowedIdentifiers()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.AllowedIdentifiers = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetAllowedIdentifiers())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.AllowedIdentifiers = listVal
+						}
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.EnrollAuthenticatorTypes.IsNull() {
+						profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetEnrollAuthenticatorTypes()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetEnrollAuthenticatorTypes())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.EnrollAuthenticatorTypes = listVal
+						}
+					}
+					if apiList := profileEnrollmentRaw1.GetPreRegistrationInlineHooks(); len(apiList) > 0 {
+						preRegistrationInlineHooksList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel, 0, len(apiList))
+						preRegistrationInlineHooksPlanned2 := profileEnrollmentPrior1.PreRegistrationInlineHooks
+						for i, apiItem := range apiList {
+							preRegistrationInlineHooksItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelPreRegistrationInlineHooksModel{}
+							if v, ok := apiItem.GetInlineHookIdOk(); ok && v != nil {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringValue(string(*v))
+							} else {
+								preRegistrationInlineHooksItem2.InlineHookId = types.StringNull()
+							}
+							if v := apiItem.GetScopes(); len(v) > 0 {
+								collVal, collDiags := types.SetValueFrom(ctx, types.StringType, v)
+								resp.Diagnostics.Append(collDiags...)
+								preRegistrationInlineHooksItem2.Scopes = collVal
+							} else if i < len(preRegistrationInlineHooksPlanned2) && !preRegistrationInlineHooksPlanned2[i].Scopes.IsNull() && !preRegistrationInlineHooksPlanned2[i].Scopes.IsUnknown() {
+								preRegistrationInlineHooksItem2.Scopes = types.SetValueMust(types.StringType, []attr.Value{})
+							} else {
+								preRegistrationInlineHooksItem2.Scopes = types.SetNull(types.StringType)
+							}
+							preRegistrationInlineHooksList2 = append(preRegistrationInlineHooksList2, *preRegistrationInlineHooksItem2)
+						}
+						profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
+					}
+					if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
+						profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
+						for _, apiItem := range apiList {
+							profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
+							if v, ok := apiItem.GetLabelOk(); ok && v != nil {
+								profileAttributesItem2.Label = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Label = types.StringNull()
+							}
+							if v, ok := apiItem.GetNameOk(); ok && v != nil {
+								profileAttributesItem2.Name = types.StringValue(string(*v))
+							} else {
+								profileAttributesItem2.Name = types.StringNull()
+							}
+							if v, ok := apiItem.GetRequiredOk(); ok && v != nil {
+								profileAttributesItem2.Required = types.BoolValue(*v)
+							} else {
+								profileAttributesItem2.Required = types.BoolNull()
+							}
+							profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
+						}
+						profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetProgressiveProfilingAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.ProgressiveProfilingAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
+					}
+					if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
+						profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+					} else {
+						if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
+							profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
+						} else {
+							listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
+							resp.Diagnostics.Append(listDiags...)
+							profileEnrollmentModel1.TargetGroupIds = listVal
+						}
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUiSchemaId()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UiSchemaId = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UiSchemaId = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
+					}
+					if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
+						if v := string(profileEnrollmentRaw1.GetUnknownUserAction()); v != "" || profileEnrollmentHasPrior1 {
+							profileEnrollmentModel1.UnknownUserAction = types.StringValue(v)
+						} else {
+							profileEnrollmentModel1.UnknownUserAction = types.StringNull()
+						}
+					} else {
+						profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
+					}
+					actionsModel0.ProfileEnrollment = profileEnrollmentModel1
 				}
-				profileEnrollmentModel1.PreRegistrationInlineHooks = preRegistrationInlineHooksList2
 			}
-			if apiList := profileEnrollmentRaw1.GetProfileAttributes(); len(apiList) > 0 {
-				profileAttributesList2 := make([]PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel, 0, len(apiList))
-				for _, apiItem := range apiList {
-					profileAttributesItem2 := &PolicyRuleProfileEnrollmentModelActionsModelProfileEnrollmentModelProfileAttributesModel{}
-					profileAttributesItem2.Label = types.StringValue(string(apiItem.GetLabel()))
-					profileAttributesItem2.Name = types.StringValue(string(apiItem.GetName()))
-					profileAttributesItem2.Required = types.BoolValue(apiItem.GetRequired())
-					profileAttributesList2 = append(profileAttributesList2, *profileAttributesItem2)
-				}
-				profileEnrollmentModel1.ProfileAttributes = profileAttributesList2
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.ProgressiveProfilingAction.IsNull()) {
-				profileEnrollmentModel1.ProgressiveProfilingAction = types.StringValue(string(profileEnrollmentRaw1.GetProgressiveProfilingAction()))
-			} else {
-				profileEnrollmentModel1.ProgressiveProfilingAction = profileEnrollmentPrior1.ProgressiveProfilingAction
-			}
-			if profileEnrollmentHasPrior1 && profileEnrollmentPrior1.TargetGroupIds.IsNull() {
-				profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-			} else {
-				if len(profileEnrollmentRaw1.GetTargetGroupIds()) == 0 && (!profileEnrollmentHasPrior1) {
-					profileEnrollmentModel1.TargetGroupIds = types.ListNull(types.StringType)
-				} else {
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, profileEnrollmentRaw1.GetTargetGroupIds())
-					resp.Diagnostics.Append(listDiags...)
-					profileEnrollmentModel1.TargetGroupIds = listVal
-				}
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UiSchemaId.IsNull()) {
-				profileEnrollmentModel1.UiSchemaId = types.StringValue(string(profileEnrollmentRaw1.GetUiSchemaId()))
-			} else {
-				profileEnrollmentModel1.UiSchemaId = profileEnrollmentPrior1.UiSchemaId
-			}
-			if !(profileEnrollmentHasPrior1 && profileEnrollmentPrior1.UnknownUserAction.IsNull()) {
-				profileEnrollmentModel1.UnknownUserAction = types.StringValue(string(profileEnrollmentRaw1.GetUnknownUserAction()))
-			} else {
-				profileEnrollmentModel1.UnknownUserAction = profileEnrollmentPrior1.UnknownUserAction
-			}
-			actionsModel0.ProfileEnrollment = profileEnrollmentModel1
+			state.Actions = actionsModel0
 		}
-		state.Actions = actionsModel0
-	}
-
-	// Unset Optional-only attributes must stay null: Terraform rejects any other value after apply.
-	if plan.Conditions.IsNull() {
-		state.Conditions = plan.Conditions
-	}
-	if plan.Name.IsNull() {
-		state.Name = plan.Name
-	}
-	if plan.Priority.IsNull() {
-		state.Priority = plan.Priority
-	}
-	if plan.Status.IsNull() {
-		state.Status = plan.Status
-	}
-	if plan.System.IsNull() {
-		state.System = plan.System
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
@@ -1055,6 +1187,11 @@ func (r *policyRuleProfileEnrollmentResource) Delete(ctx context.Context, req re
 	var state policyRuleProfileEnrollmentModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
+		return
+	}
+	// The catch-all rule is a system rule: Okta rejects deleting it ("You cannot
+	// delete a default rule in a policy.") and removes it with its policy.
+	if state.System.ValueBool() {
 		return
 	}
 	id := state.ID.ValueString()
