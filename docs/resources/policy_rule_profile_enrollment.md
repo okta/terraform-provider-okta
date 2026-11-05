@@ -46,12 +46,14 @@ resource "okta_group" "example" {
 }
 
 resource "okta_policy_rule_profile_enrollment" "example" {
-  policy_id           = okta_policy_profile_enrollment.example.id
-  inline_hook_id      = okta_inline_hook.example.id
-  target_group_id     = okta_group.example.id
-  unknown_user_action = "REGISTER"
-  email_verification  = true
-  access              = "ALLOW"
+  policy_id                    = okta_policy_profile_enrollment.example.id
+  inline_hook_id               = okta_inline_hook.example.id
+  inline_hook_scopes           = ["SELF_SERVICE_REGISTRATION", "PROGRESSIVE_PROFILING"]
+  progressive_profiling_action = "ENABLED"
+  target_group_id              = okta_group.example.id
+  unknown_user_action          = "REGISTER"
+  email_verification           = true
+  access                       = "ALLOW"
   profile_attributes {
     name     = "email"
     label    = "Email"
@@ -84,6 +86,7 @@ resource "okta_policy_rule_profile_enrollment" "example" {
 - `email_verification` (Boolean) Indicates whether email verification should occur before access is granted. Default: `true`.
 - `enroll_authenticator_types` (Set of String) Enrolls authenticator types
 - `inline_hook_id` (String) ID of a Registration Inline Hook
+- `inline_hook_scopes` (Set of String) The registration flows that trigger the Registration Inline Hook set in `inline_hook_id`. Valid values are: `SELF_SERVICE_REGISTRATION` (new users signing up), `PROGRESSIVE_PROFILING` (existing users prompted for additional profile data; use with `progressive_profiling_action` set to `ENABLED`). Set both to run the hook for both flows. If not set, the value currently on the rule is kept, and Okta defaults to `SELF_SERVICE_REGISTRATION` when a hook is first attached.
 - `profile_attributes` (Block List) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
 	- 'label' - (Required) A display-friendly label for this property
 	- 'name' - (Required) The name of a User Profile property
