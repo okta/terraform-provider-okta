@@ -118,6 +118,7 @@ resource "okta_policy_mfa" "oie_example" {
 - `smart_card_idp` (Map of String)
 - `status` (String) Policy Status: `ACTIVE` or `INACTIVE`. Default: `ACTIVE`
 - `symantec_vip` (Map of String)
+- `tac` (Map of String)
 - `webauthn` (Map of String)
 - `yubikey_token` (Map of String)
 - `custom_app` (List of Map of String)

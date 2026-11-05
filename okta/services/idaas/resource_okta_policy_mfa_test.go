@@ -149,6 +149,37 @@ func TestAccResourceOktaMfaPolicy_Issue_2139_yubikey_token(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaMfaPolicy_tac verifies that the TAC (temporary access code)
+// authenticator can be configured in an OIE MFA enrollment policy. The fixture
+// activates the TAC authenticator first so the policy can reference it.
+func TestAccResourceOktaMfaPolicy_tac(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyMfa, t.Name())
+	config := mgr.GetFixtures("tac.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSPolicyMfa)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkPolicyDestroy(resources.OktaIDaaSPolicyMfa),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensurePolicyExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "name", acctest.BuildResourceName(mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "status", idaas.StatusActive),
+					resource.TestCheckResourceAttr(resourceName, "description", "Terraform Acceptance Test MFA Policy TAC"),
+					resource.TestCheckResourceAttr(resourceName, "is_oie", "true"),
+					resource.TestCheckResourceAttr(resourceName, "okta_password.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "google_otp.enroll", "REQUIRED"),
+					resource.TestCheckResourceAttr(resourceName, "tac.enroll", "OPTIONAL"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaMfaPolicy_custom_app(t *testing.T) {
 	customAppID1 := "autsp50r54pH17cFz1d7"
 	customAppID2 := "autsp5p2urY5EBWs61d7"
