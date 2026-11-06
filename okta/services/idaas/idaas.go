@@ -163,6 +163,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
+		newPolicyRuleProfileEnrollmentResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -298,7 +299,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSPolicyRuleIdpDiscovery:        resourcePolicyRuleIdpDiscovery(),
 		resources.OktaIDaaSPolicyRuleMfa:                 resourcePolicyMfaRule(),
 		resources.OktaIDaaSPolicyRulePassword:            resourcePolicyPasswordRule(),
-		resources.OktaIDaaSPolicyRuleProfileEnrollment:   resourcePolicyProfileEnrollmentRule(),
 		resources.OktaIDaaSPolicyRuleSignOn:              resourcePolicySignOnRule(),
 		resources.OktaIDaaSPolicySignOn:                  resourcePolicySignOn(),
 		resources.OktaIDaaSProfileMapping:                resourceProfileMapping(),
