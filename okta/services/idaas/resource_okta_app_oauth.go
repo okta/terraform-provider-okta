@@ -973,20 +973,7 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.Errorf("failed to build OAuth application: %v", err)
 	}
 
-	// When omit_secret is true on update, we make sure that do not include
-	// the client secret value in the api call.
-	// This is to ensure that when this is "toggled on", the apply which this occurs also does
-	// not do a final "reset" of the client secret value to the original stored in state.
-	if d.Get("omit_secret").(bool) {
-		// Get the underlying OpenIdConnectApplication and modify the credentials
-		if oidcApp := app.OpenIdConnectApplication; oidcApp != nil {
-			credentials := oidcApp.GetCredentials()
-			oauthClient := credentials.GetOauthClient()
-			oauthClient.SetClientSecret("")
-			credentials.SetOauthClient(oauthClient)
-			oidcApp.SetCredentials(credentials)
-		}
-	}
+	omitOAuthClientSecretOnUpdate(d, &app)
 
 	appResp, _, err := client.ApplicationAPI.ReplaceApplication(ctx, d.Id()).Application(app).Execute()
 	if err != nil {
@@ -1028,6 +1015,31 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		}
 	}
 	return append(diags, resourceAppOAuthRead(ctx, d, meta)...)
+}
+
+// omitOAuthClientSecretOnUpdate drops the client secret from an update request
+// when omit_secret is true.
+// This is to ensure that when this is "toggled on", the apply which this occurs also does
+// not do a final "reset" of the client secret value to the original stored in state.
+// A write-only secret whose version was bumped is the exception, it is the new
+// secret the user asked for.
+func omitOAuthClientSecretOnUpdate(d *schema.ResourceData, app *v6okta.ListApplications200ResponseInner) {
+	if !d.Get("omit_secret").(bool) {
+		return
+	}
+	if d.HasChange("client_basic_secret_wo_version") {
+		if wo, _ := d.GetRawConfigAt(cty.GetAttrPath("client_basic_secret_wo")); !wo.IsNull() {
+			return
+		}
+	}
+	// Get the underlying OpenIdConnectApplication and modify the credentials
+	if oidcApp := app.OpenIdConnectApplication; oidcApp != nil {
+		credentials := oidcApp.GetCredentials()
+		oauthClient := credentials.GetOauthClient()
+		oauthClient.SetClientSecret("")
+		credentials.SetOauthClient(oauthClient)
+		oidcApp.SetCredentials(credentials)
+	}
 }
 
 func resourceAppOAuthDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
