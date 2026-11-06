@@ -127,6 +127,7 @@ resource "okta_app_oauth" "app" {
   jwks {
     kty = local.jwks.kty
     kid = local.jwks.kid
+    use = "sig"
     e   = local.jwks.e
     n   = local.jwks.n
   }
