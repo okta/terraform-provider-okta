@@ -48,7 +48,7 @@ type emailDomainDataSourceModel struct {
 	ValidationSubdomain  types.String `tfsdk:"validation_subdomain"`
 }
 
-func NewEmailDomainDataSource() datasource.DataSource {
+func newEmailDomainDataSource() datasource.DataSource {
 	return &emailDomainDataSource{}
 }
 

@@ -740,6 +740,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV8Client:         c.OktaIDaaSClient.OktaSDKClientV8(),
 		sdkV7Client:         c.OktaIDaaSClient.OktaSDKClientV7(),
 		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
