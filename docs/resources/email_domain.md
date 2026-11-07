@@ -7,18 +7,19 @@ description: |-
 
 # Resource: okta_email_domain
 
-Creates email domain. This resource allows you to create and configure an email domain. 
-		
+Creates email domain. This resource allows you to create and configure an email domain.
+
 **IMPORTANT:** Due to the way Okta's API conflict with terraform design principle, updating the relationship between email_domain and brand is not configurable through terraform and has to be done through clickOps
 
 ## Example Usage
 
 ```terraform
 resource "okta_email_domain" "example" {
-  brand_id     = "abc123"
-  domain       = "example.com"
-  display_name = "test"
-  user_name    = "paul_atreides"
+  brand_id             = "abc123"
+  domain               = "example.com"
+  display_name         = "test"
+  user_name            = "paul_atreides"
+  validation_subdomain = "mail"
 }
 ```
 
@@ -27,26 +28,20 @@ resource "okta_email_domain" "example" {
 
 ### Required
 
-- `brand_id` (String) Brand id of the email domain.
+- `brand_id` (String, Sensitive) Brand id of the email domain.
 - `display_name` (String) Display name of the email domain.
 - `domain` (String) Mail domain to send from.
 - `user_name` (String) User name of the email domain.
 
+### Optional
+
+- `validation_subdomain` (String) The subdomain for the email sender's custom mail domain.
+
 ### Read-Only
 
-- `dns_validation_records` (List of Object) TXT and cname records to be registered for the email Domain (see [below for nested schema](#nestedatt--dns_validation_records))
+- `dns_validation_records` (List of String) DNS records to register for the email domain. Each element is a JSON-encoded record.
 - `id` (String) The ID of this resource.
 - `validation_status` (String) Status of the email domain. Values: NOT_STARTED, IN_PROGRESS, VERIFIED, COMPLETED
-
-<a id="nestedatt--dns_validation_records"></a>
-### Nested Schema for `dns_validation_records`
-
-Read-Only:
-
-- `expiration` (String)
-- `fqdn` (String)
-- `record_type` (String)
-- `value` (String)
 
 ## Import
 

@@ -163,6 +163,7 @@ func FWProviderResources() []func() resource.Resource {
 		newPolicyDeviceAssuranceIosResource,
 		newPolicyDeviceAssuranceMacosResource,
 		newPolicyDeviceAssuranceWindowsResource,
+		newEmailDomainResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -223,6 +224,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newPolicyDeviceAssuranceIosDataSource,
 		newPolicyDeviceAssuranceChromeosDataSource,
 		newPolicyDeviceAssuranceAndroidDataSource,
+		newEmailDomainDataSource,
 	}
 }
 
@@ -265,7 +267,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSDomainCertificate:             resourceDomainCertificate(),
 		resources.OktaIDaaSDomainVerification:            resourceDomainVerification(),
 		resources.OktaIDaaSEmailCustomization:            resourceEmailCustomization(),
-		resources.OktaIDaaSEmailDomain:                   resourceEmailDomain(),
 		resources.OktaIDaaSEmailDomainVerification:       resourceEmailDomainVerification(),
 		resources.OktaIDaaSEmailSender:                   resourceEmailSender(),
 		resources.OktaIDaaSEmailSenderVerification:       resourceEmailSenderVerification(),
@@ -336,7 +337,6 @@ func ProviderDataSources() map[string]*schema.Resource {
 		resources.OktaIDaaSBehaviors:                dataSourceBehaviors(),
 		resources.OktaIDaaSBrand:                    dataSourceBrand(),
 		resources.OktaIDaaSBrands:                   dataSourceBrands(),
-		resources.OktaIDaaSDomain:                   dataSourceDomain(),
 		resources.OktaIDaaSEmailCustomization:       dataSourceEmailCustomization(),
 		resources.OktaIDaaSEmailCustomizations:      dataSourceEmailCustomizations(),
 		resources.OktaIDaaSEmailSMTPServer:          dataSourceEmailSMTPServers(),
