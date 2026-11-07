@@ -182,6 +182,9 @@ func (r *mcpServersAuthorizationServerResource) ImportState(ctx context.Context,
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("mcp_server_id"), parts[0])...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, frameworkPath.Root("id"), parts[1])...)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *mcpServersAuthorizationServerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -190,6 +193,12 @@ func (r *mcpServersAuthorizationServerResource) Read(ctx context.Context, req re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 	mcpServerId := state.McpServerId.ValueString()
 
@@ -295,38 +304,87 @@ func (r *mcpServersAuthorizationServerResource) Read(ctx context.Context, req re
 			state.AuthorizationServer = types.ObjectNull(map[string]attr.Type{"id": types.StringType, "issuer": types.StringType, "metadata": types.ObjectType{AttrTypes: map[string]attr.Type{"authorization_endpoint": types.StringType, "grant_types_supported": types.ListType{ElemType: types.StringType}, "identity_chaining_requested_token_types_supported": types.ListType{ElemType: types.StringType}, "protocol_supported": types.ListType{ElemType: types.StringType}, "registration_endpoint": types.StringType, "token_endpoint": types.StringType, "token_endpoint_auth_method": types.StringType, "token_endpoint_auth_methods_supported": types.ListType{ElemType: types.StringType}}}, "orn": types.StringType, "status": types.StringType, "subject_mapping_expression": types.StringType, "type": types.StringType})
 		}
 	}
-	if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
-		protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
-		if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
-			identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
-			if state.ProtocolConfigurations == nil || state.ProtocolConfigurations.IdentityAssertion == nil || !state.ProtocolConfigurations.IdentityAssertion.Enabled.IsNull() {
-				identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
-			} else {
-				identityAssertionModel1.Enabled = state.ProtocolConfigurations.IdentityAssertion.Enabled
+	if state.ProtocolConfigurations != nil || len(importing) > 0 {
+		if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
+			protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			// protocolConfigurationsModel0 is the new block, built from the API response. protocolConfigurationsPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			protocolConfigurationsPrior0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			if state.ProtocolConfigurations != nil {
+				protocolConfigurationsPrior0 = state.ProtocolConfigurations
+				*protocolConfigurationsModel0 = *protocolConfigurationsPrior0 // keep fields the reader below does not map
 			}
-			if state.ProtocolConfigurations == nil || state.ProtocolConfigurations.IdentityAssertion == nil || !state.ProtocolConfigurations.IdentityAssertion.TenantId.IsNull() {
-				identityAssertionModel1.TenantId = types.StringValue(string(identityAssertionRaw1.GetTenantId()))
-			} else {
-				identityAssertionModel1.TenantId = state.ProtocolConfigurations.IdentityAssertion.TenantId
+			if protocolConfigurationsPrior0.IdentityAssertion != nil || len(importing) > 0 {
+				if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
+					identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					// identityAssertionModel1 is the new block, built from the API response. identityAssertionPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					identityAssertionPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					identityAssertionHasPrior1 := protocolConfigurationsPrior0.IdentityAssertion != nil
+					if protocolConfigurationsPrior0.IdentityAssertion != nil {
+						identityAssertionPrior1 = protocolConfigurationsPrior0.IdentityAssertion
+						*identityAssertionModel1 = *identityAssertionPrior1 // keep fields the reader below does not map
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.Enabled.IsNull()) {
+						if v, ok := identityAssertionRaw1.GetEnabledOk(); ok && v != nil {
+							identityAssertionModel1.Enabled = types.BoolValue(*v)
+						} else if identityAssertionHasPrior1 {
+							identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
+						} else {
+							identityAssertionModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						identityAssertionModel1.Enabled = identityAssertionPrior1.Enabled
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.TenantId.IsNull()) {
+						if v := string(identityAssertionRaw1.GetTenantId()); v != "" || identityAssertionHasPrior1 {
+							identityAssertionModel1.TenantId = types.StringValue(v)
+						} else {
+							identityAssertionModel1.TenantId = types.StringNull()
+						}
+					} else {
+						identityAssertionModel1.TenantId = identityAssertionPrior1.TenantId
+					}
+					protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+				}
 			}
-			if state.ProtocolConfigurations != nil && state.ProtocolConfigurations.IdentityAssertion != nil || !(identityAssertionModel1.Enabled.IsNull() && identityAssertionModel1.TenantId.IsNull()) {
-				protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+			if protocolConfigurationsPrior0.Sts != nil || len(importing) > 0 {
+				if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
+					stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					// stsModel1 is the new block, built from the API response. stsPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					stsPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					stsHasPrior1 := protocolConfigurationsPrior0.Sts != nil
+					if protocolConfigurationsPrior0.Sts != nil {
+						stsPrior1 = protocolConfigurationsPrior0.Sts
+						*stsModel1 = *stsPrior1 // keep fields the reader below does not map
+					}
+					if !(stsHasPrior1 && stsPrior1.Enabled.IsNull()) {
+						if v, ok := stsRaw1.GetEnabledOk(); ok && v != nil {
+							stsModel1.Enabled = types.BoolValue(*v)
+						} else if stsHasPrior1 {
+							stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
+						} else {
+							stsModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						stsModel1.Enabled = stsPrior1.Enabled
+					}
+					protocolConfigurationsModel0.Sts = stsModel1
+				}
 			}
-		}
-		if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
-			stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
-			if state.ProtocolConfigurations == nil || state.ProtocolConfigurations.Sts == nil || !state.ProtocolConfigurations.Sts.Enabled.IsNull() {
-				stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
-			} else {
-				stsModel1.Enabled = state.ProtocolConfigurations.Sts.Enabled
-			}
-			if state.ProtocolConfigurations != nil && state.ProtocolConfigurations.Sts != nil || !(stsModel1.Enabled.IsNull()) {
-				protocolConfigurationsModel0.Sts = stsModel1
-			}
-		}
-		if state.ProtocolConfigurations != nil || !(protocolConfigurationsModel0.IdentityAssertion == nil && protocolConfigurationsModel0.Sts == nil) {
 			state.ProtocolConfigurations = protocolConfigurationsModel0
 		}
+	}
+
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
@@ -376,7 +434,7 @@ func (r *mcpServersAuthorizationServerResource) Create(ctx context.Context, req 
 	}
 
 	// Set ID from API response
-	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	plan.ID = types.StringValue(result.AuthorizationServer.GetId())
 
 	{
 		// authorization_server is a Computed object attribute: fill its typed shape, then convert.
@@ -469,36 +527,81 @@ func (r *mcpServersAuthorizationServerResource) Create(ctx context.Context, req 
 			plan.AuthorizationServer = types.ObjectNull(map[string]attr.Type{"id": types.StringType, "issuer": types.StringType, "metadata": types.ObjectType{AttrTypes: map[string]attr.Type{"authorization_endpoint": types.StringType, "grant_types_supported": types.ListType{ElemType: types.StringType}, "identity_chaining_requested_token_types_supported": types.ListType{ElemType: types.StringType}, "protocol_supported": types.ListType{ElemType: types.StringType}, "registration_endpoint": types.StringType, "token_endpoint": types.StringType, "token_endpoint_auth_method": types.StringType, "token_endpoint_auth_methods_supported": types.ListType{ElemType: types.StringType}}}, "orn": types.StringType, "status": types.StringType, "subject_mapping_expression": types.StringType, "type": types.StringType})
 		}
 	}
-	if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
-		protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
-		if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
-			identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.IdentityAssertion == nil || !plan.ProtocolConfigurations.IdentityAssertion.Enabled.IsNull() {
-				identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
-			} else {
-				identityAssertionModel1.Enabled = plan.ProtocolConfigurations.IdentityAssertion.Enabled
+	if plan.ProtocolConfigurations != nil {
+		if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
+			protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			// protocolConfigurationsModel0 is the new block, built from the API response. protocolConfigurationsPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			protocolConfigurationsPrior0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			if plan.ProtocolConfigurations != nil {
+				protocolConfigurationsPrior0 = plan.ProtocolConfigurations
+				*protocolConfigurationsModel0 = *protocolConfigurationsPrior0 // keep fields the reader below does not map
 			}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.IdentityAssertion == nil || !plan.ProtocolConfigurations.IdentityAssertion.TenantId.IsNull() {
-				identityAssertionModel1.TenantId = types.StringValue(string(identityAssertionRaw1.GetTenantId()))
-			} else {
-				identityAssertionModel1.TenantId = plan.ProtocolConfigurations.IdentityAssertion.TenantId
+			if protocolConfigurationsPrior0.IdentityAssertion != nil {
+				if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
+					identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					// identityAssertionModel1 is the new block, built from the API response. identityAssertionPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					identityAssertionPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					identityAssertionHasPrior1 := protocolConfigurationsPrior0.IdentityAssertion != nil
+					if protocolConfigurationsPrior0.IdentityAssertion != nil {
+						identityAssertionPrior1 = protocolConfigurationsPrior0.IdentityAssertion
+						*identityAssertionModel1 = *identityAssertionPrior1 // keep fields the reader below does not map
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.Enabled.IsNull()) {
+						if v, ok := identityAssertionRaw1.GetEnabledOk(); ok && v != nil {
+							identityAssertionModel1.Enabled = types.BoolValue(*v)
+						} else if identityAssertionHasPrior1 {
+							identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
+						} else {
+							identityAssertionModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						identityAssertionModel1.Enabled = identityAssertionPrior1.Enabled
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.TenantId.IsNull()) {
+						if v := string(identityAssertionRaw1.GetTenantId()); v != "" || identityAssertionHasPrior1 {
+							identityAssertionModel1.TenantId = types.StringValue(v)
+						} else {
+							identityAssertionModel1.TenantId = types.StringNull()
+						}
+					} else {
+						identityAssertionModel1.TenantId = identityAssertionPrior1.TenantId
+					}
+					protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+				}
 			}
-			if plan.ProtocolConfigurations != nil && plan.ProtocolConfigurations.IdentityAssertion != nil || !(identityAssertionModel1.Enabled.IsNull() && identityAssertionModel1.TenantId.IsNull()) {
-				protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+			if protocolConfigurationsPrior0.Sts != nil {
+				if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
+					stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					// stsModel1 is the new block, built from the API response. stsPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					stsPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					stsHasPrior1 := protocolConfigurationsPrior0.Sts != nil
+					if protocolConfigurationsPrior0.Sts != nil {
+						stsPrior1 = protocolConfigurationsPrior0.Sts
+						*stsModel1 = *stsPrior1 // keep fields the reader below does not map
+					}
+					if !(stsHasPrior1 && stsPrior1.Enabled.IsNull()) {
+						if v, ok := stsRaw1.GetEnabledOk(); ok && v != nil {
+							stsModel1.Enabled = types.BoolValue(*v)
+						} else if stsHasPrior1 {
+							stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
+						} else {
+							stsModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						stsModel1.Enabled = stsPrior1.Enabled
+					}
+					protocolConfigurationsModel0.Sts = stsModel1
+				}
 			}
-		}
-		if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
-			stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.Sts == nil || !plan.ProtocolConfigurations.Sts.Enabled.IsNull() {
-				stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
-			} else {
-				stsModel1.Enabled = plan.ProtocolConfigurations.Sts.Enabled
-			}
-			if plan.ProtocolConfigurations != nil && plan.ProtocolConfigurations.Sts != nil || !(stsModel1.Enabled.IsNull()) {
-				protocolConfigurationsModel0.Sts = stsModel1
-			}
-		}
-		if plan.ProtocolConfigurations != nil || !(protocolConfigurationsModel0.IdentityAssertion == nil && protocolConfigurationsModel0.Sts == nil) {
 			plan.ProtocolConfigurations = protocolConfigurationsModel0
 		}
 	}
@@ -652,36 +755,82 @@ func (r *mcpServersAuthorizationServerResource) Update(ctx context.Context, req 
 			state.AuthorizationServer = types.ObjectNull(map[string]attr.Type{"id": types.StringType, "issuer": types.StringType, "metadata": types.ObjectType{AttrTypes: map[string]attr.Type{"authorization_endpoint": types.StringType, "grant_types_supported": types.ListType{ElemType: types.StringType}, "identity_chaining_requested_token_types_supported": types.ListType{ElemType: types.StringType}, "protocol_supported": types.ListType{ElemType: types.StringType}, "registration_endpoint": types.StringType, "token_endpoint": types.StringType, "token_endpoint_auth_method": types.StringType, "token_endpoint_auth_methods_supported": types.ListType{ElemType: types.StringType}}}, "orn": types.StringType, "status": types.StringType, "subject_mapping_expression": types.StringType, "type": types.StringType})
 		}
 	}
-	if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
-		protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
-		if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
-			identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.IdentityAssertion == nil || !plan.ProtocolConfigurations.IdentityAssertion.Enabled.IsNull() {
-				identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
-			} else {
-				identityAssertionModel1.Enabled = plan.ProtocolConfigurations.IdentityAssertion.Enabled
+	state.ProtocolConfigurations = plan.ProtocolConfigurations
+	if plan.ProtocolConfigurations != nil {
+		if protocolConfigurationsRaw0, ok := result.GetProtocolConfigurationsOk(); ok && protocolConfigurationsRaw0 != nil {
+			protocolConfigurationsModel0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			// protocolConfigurationsModel0 is the new block, built from the API response. protocolConfigurationsPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			protocolConfigurationsPrior0 := &McpServersAuthorizationServerModelProtocolConfigurationsModel{}
+			if plan.ProtocolConfigurations != nil {
+				protocolConfigurationsPrior0 = plan.ProtocolConfigurations
+				*protocolConfigurationsModel0 = *protocolConfigurationsPrior0 // keep fields the reader below does not map
 			}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.IdentityAssertion == nil || !plan.ProtocolConfigurations.IdentityAssertion.TenantId.IsNull() {
-				identityAssertionModel1.TenantId = types.StringValue(string(identityAssertionRaw1.GetTenantId()))
-			} else {
-				identityAssertionModel1.TenantId = plan.ProtocolConfigurations.IdentityAssertion.TenantId
+			if protocolConfigurationsPrior0.IdentityAssertion != nil {
+				if identityAssertionRaw1, ok := protocolConfigurationsRaw0.GetIdentityAssertionOk(); ok && identityAssertionRaw1 != nil {
+					identityAssertionModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					// identityAssertionModel1 is the new block, built from the API response. identityAssertionPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					identityAssertionPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelIdentityAssertionModel{}
+					identityAssertionHasPrior1 := protocolConfigurationsPrior0.IdentityAssertion != nil
+					if protocolConfigurationsPrior0.IdentityAssertion != nil {
+						identityAssertionPrior1 = protocolConfigurationsPrior0.IdentityAssertion
+						*identityAssertionModel1 = *identityAssertionPrior1 // keep fields the reader below does not map
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.Enabled.IsNull()) {
+						if v, ok := identityAssertionRaw1.GetEnabledOk(); ok && v != nil {
+							identityAssertionModel1.Enabled = types.BoolValue(*v)
+						} else if identityAssertionHasPrior1 {
+							identityAssertionModel1.Enabled = types.BoolValue(identityAssertionRaw1.GetEnabled())
+						} else {
+							identityAssertionModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						identityAssertionModel1.Enabled = identityAssertionPrior1.Enabled
+					}
+					if !(identityAssertionHasPrior1 && identityAssertionPrior1.TenantId.IsNull()) {
+						if v := string(identityAssertionRaw1.GetTenantId()); v != "" || identityAssertionHasPrior1 {
+							identityAssertionModel1.TenantId = types.StringValue(v)
+						} else {
+							identityAssertionModel1.TenantId = types.StringNull()
+						}
+					} else {
+						identityAssertionModel1.TenantId = identityAssertionPrior1.TenantId
+					}
+					protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+				}
 			}
-			if plan.ProtocolConfigurations != nil && plan.ProtocolConfigurations.IdentityAssertion != nil || !(identityAssertionModel1.Enabled.IsNull() && identityAssertionModel1.TenantId.IsNull()) {
-				protocolConfigurationsModel0.IdentityAssertion = identityAssertionModel1
+			if protocolConfigurationsPrior0.Sts != nil {
+				if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
+					stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					// stsModel1 is the new block, built from the API response. stsPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					stsPrior1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
+					stsHasPrior1 := protocolConfigurationsPrior0.Sts != nil
+					if protocolConfigurationsPrior0.Sts != nil {
+						stsPrior1 = protocolConfigurationsPrior0.Sts
+						*stsModel1 = *stsPrior1 // keep fields the reader below does not map
+					}
+					if !(stsHasPrior1 && stsPrior1.Enabled.IsNull()) {
+						if v, ok := stsRaw1.GetEnabledOk(); ok && v != nil {
+							stsModel1.Enabled = types.BoolValue(*v)
+						} else if stsHasPrior1 {
+							stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
+						} else {
+							stsModel1.Enabled = types.BoolNull()
+						}
+					} else {
+						stsModel1.Enabled = stsPrior1.Enabled
+					}
+					protocolConfigurationsModel0.Sts = stsModel1
+				}
 			}
-		}
-		if stsRaw1, ok := protocolConfigurationsRaw0.GetStsOk(); ok && stsRaw1 != nil {
-			stsModel1 := &McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel{}
-			if plan.ProtocolConfigurations == nil || plan.ProtocolConfigurations.Sts == nil || !plan.ProtocolConfigurations.Sts.Enabled.IsNull() {
-				stsModel1.Enabled = types.BoolValue(stsRaw1.GetEnabled())
-			} else {
-				stsModel1.Enabled = plan.ProtocolConfigurations.Sts.Enabled
-			}
-			if plan.ProtocolConfigurations != nil && plan.ProtocolConfigurations.Sts != nil || !(stsModel1.Enabled.IsNull()) {
-				protocolConfigurationsModel0.Sts = stsModel1
-			}
-		}
-		if plan.ProtocolConfigurations != nil || !(protocolConfigurationsModel0.IdentityAssertion == nil && protocolConfigurationsModel0.Sts == nil) {
 			state.ProtocolConfigurations = protocolConfigurationsModel0
 		}
 	}

@@ -13,9 +13,9 @@ import (
 )
 
 func TestAccResourceOktaAIAgent_basic(t *testing.T) {
-	mgr := newFixtureManager("resources", resources.OktaIDaaSAIAgent, t.Name())
-	config := mgr.GetFixtures("resource.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAIAgent)
+	mgr := newFixtureManager("resources", resources.OktaAIAgent, t.Name())
+	config := mgr.GetFixtures("basic.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaAIAgent)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),

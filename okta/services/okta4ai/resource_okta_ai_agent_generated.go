@@ -49,6 +49,7 @@ type aiAgentModel struct {
 	OauthClient    *AiAgentModelOauthClientModel    `tfsdk:"oauth_client"`
 	Profile        *AiAgentModelProfileModel        `tfsdk:"profile"`
 	SignOnProvider *AiAgentModelSignOnProviderModel `tfsdk:"sign_on_provider"`
+	Source         types.String                     `tfsdk:"source"`
 	Status         types.String                     `tfsdk:"status"`
 	OauthClientId  types.String                     `tfsdk:"oauth_client_id"`
 	ResourceUrl    types.String                     `tfsdk:"resource_url"`
@@ -97,6 +98,13 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
+			"source": schema.StringAttribute{
+				Description: "How the AI agent was added to Okta.",
+				Computed:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
 			"status": schema.StringAttribute{
 				Description: "When an AI agent is created, it's in the `STAGED` status.",
 				Computed:    true,
@@ -114,7 +122,10 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"resource_url": schema.StringAttribute{
 				Description: "The resource URL for the agent-to-agent (A2A) server associated with this AI agent.",
 				Optional:    true,
-				Sensitive:   true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+				Sensitive: true,
 			},
 		},
 		Blocks: map[string]schema.Block{
@@ -128,6 +139,10 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					"type": schema.StringAttribute{
 						Description: "OAuth client type.",
 						Optional:    true,
+						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 				},
 			},
@@ -161,7 +176,7 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 					},
 					"type": schema.StringAttribute{
 						Description: "Type",
-						Required:    true,
+						Optional:    true,
 					},
 				},
 			},
@@ -170,6 +185,9 @@ func (r *aiAgentResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 }
 func (r *aiAgentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -178,6 +196,12 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -191,51 +215,94 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
+	state.Source = types.StringValue(string(result.GetSource()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	// oauth_client is kept as configured: its request and response shapes differ.
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-	} else {
-		state.OauthClientId = types.StringNull()
+	if state.OauthClient != nil || len(importing) > 0 {
+		// oauth_client is kept as configured: its request and response shapes differ.
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+		} else {
+			state.OauthClientId = types.StringNull()
+		}
 	}
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AiAgentModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	if state.Profile != nil || len(importing) > 0 {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AiAgentModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AiAgentModelProfileModel{}
+			profileHasPrior0 := state.Profile != nil
+			if state.Profile != nil {
+				profilePrior0 = state.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.ExternalId.IsNull()) {
+				if v := string(profileRaw0.GetExternalId()); v != "" || profileHasPrior0 {
+					profileModel0.ExternalId = types.StringValue(v)
+				} else {
+					profileModel0.ExternalId = types.StringNull()
+				}
+			} else {
+				profileModel0.ExternalId = profilePrior0.ExternalId
+			}
+			if !(profileHasPrior0 && profilePrior0.Name.IsNull()) {
+				profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+			} else {
+				profileModel0.Name = profilePrior0.Name
+			}
+			if !(profileHasPrior0 && profilePrior0.Platform.IsNull()) {
+				if v := string(profileRaw0.GetPlatform()); v != "" || profileHasPrior0 {
+					profileModel0.Platform = types.StringValue(v)
+				} else {
+					profileModel0.Platform = types.StringNull()
+				}
+			} else {
+				profileModel0.Platform = profilePrior0.Platform
+			}
+			state.Profile = profileModel0
 		}
-		if v := string(profileRaw0.GetExternalId()); v != "" {
-			profileModel0.ExternalId = types.StringValue(v)
-		} else {
-			profileModel0.ExternalId = types.StringNull()
-		}
-		if state.Profile == nil || !state.Profile.Name.IsNull() {
-			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
-		} else {
-			profileModel0.Name = state.Profile.Name
-		}
-		if v := string(profileRaw0.GetPlatform()); v != "" {
-			profileModel0.Platform = types.StringValue(v)
-		} else {
-			profileModel0.Platform = types.StringNull()
-		}
-		state.Profile = profileModel0
 	}
-	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
-		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if state.SignOnProvider == nil || !state.SignOnProvider.AppInstanceId.IsNull() {
-			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
-		} else {
-			signOnProviderModel0.AppInstanceId = state.SignOnProvider.AppInstanceId
+	if state.SignOnProvider != nil || len(importing) > 0 {
+		if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+			signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+			// signOnProviderModel0 is the new block, built from the API response. signOnProviderPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			signOnProviderPrior0 := &AiAgentModelSignOnProviderModel{}
+			signOnProviderHasPrior0 := state.SignOnProvider != nil
+			if state.SignOnProvider != nil {
+				signOnProviderPrior0 = state.SignOnProvider
+				*signOnProviderModel0 = *signOnProviderPrior0 // keep fields the reader below does not map
+			}
+			if !(signOnProviderHasPrior0 && signOnProviderPrior0.AppInstanceId.IsNull()) {
+				if v := string(signOnProviderRaw0.GetAppInstanceId()); v != "" || signOnProviderHasPrior0 {
+					signOnProviderModel0.AppInstanceId = types.StringValue(v)
+				} else {
+					signOnProviderModel0.AppInstanceId = types.StringNull()
+				}
+			} else {
+				signOnProviderModel0.AppInstanceId = signOnProviderPrior0.AppInstanceId
+			}
+			state.SignOnProvider = signOnProviderModel0
 		}
-		if state.SignOnProvider != nil {
-			signOnProviderModel0.Type = state.SignOnProvider.Type
-		}
-		state.SignOnProvider = signOnProviderModel0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -318,49 +385,89 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
+	plan.Source = types.StringValue(string(result.GetSource()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	// oauth_client is kept as configured: its request and response shapes differ.
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-		plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-	} else {
-		plan.OauthClientId = types.StringNull()
+	if plan.OauthClient != nil {
+		// oauth_client is kept as configured: its request and response shapes differ.
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+		} else {
+			plan.OauthClientId = types.StringNull()
+		}
 	}
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AiAgentModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	if plan.Profile != nil {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AiAgentModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AiAgentModelProfileModel{}
+			profileHasPrior0 := plan.Profile != nil
+			if plan.Profile != nil {
+				profilePrior0 = plan.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.ExternalId.IsNull()) {
+				if v := string(profileRaw0.GetExternalId()); v != "" || profileHasPrior0 {
+					profileModel0.ExternalId = types.StringValue(v)
+				} else {
+					profileModel0.ExternalId = types.StringNull()
+				}
+			} else {
+				profileModel0.ExternalId = profilePrior0.ExternalId
+			}
+			if !(profileHasPrior0 && profilePrior0.Name.IsNull()) {
+				profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+			} else {
+				profileModel0.Name = profilePrior0.Name
+			}
+			if !(profileHasPrior0 && profilePrior0.Platform.IsNull()) {
+				if v := string(profileRaw0.GetPlatform()); v != "" || profileHasPrior0 {
+					profileModel0.Platform = types.StringValue(v)
+				} else {
+					profileModel0.Platform = types.StringNull()
+				}
+			} else {
+				profileModel0.Platform = profilePrior0.Platform
+			}
+			plan.Profile = profileModel0
 		}
-		if v := string(profileRaw0.GetExternalId()); v != "" {
-			profileModel0.ExternalId = types.StringValue(v)
-		} else {
-			profileModel0.ExternalId = types.StringNull()
-		}
-		if plan.Profile == nil || !plan.Profile.Name.IsNull() {
-			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
-		} else {
-			profileModel0.Name = plan.Profile.Name
-		}
-		if v := string(profileRaw0.GetPlatform()); v != "" {
-			profileModel0.Platform = types.StringValue(v)
-		} else {
-			profileModel0.Platform = types.StringNull()
-		}
-		plan.Profile = profileModel0
 	}
-	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
-		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if plan.SignOnProvider == nil || !plan.SignOnProvider.AppInstanceId.IsNull() {
-			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
-		} else {
-			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
+	if plan.SignOnProvider != nil {
+		if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+			signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+			// signOnProviderModel0 is the new block, built from the API response. signOnProviderPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			signOnProviderPrior0 := &AiAgentModelSignOnProviderModel{}
+			signOnProviderHasPrior0 := plan.SignOnProvider != nil
+			if plan.SignOnProvider != nil {
+				signOnProviderPrior0 = plan.SignOnProvider
+				*signOnProviderModel0 = *signOnProviderPrior0 // keep fields the reader below does not map
+			}
+			if !(signOnProviderHasPrior0 && signOnProviderPrior0.AppInstanceId.IsNull()) {
+				if v := string(signOnProviderRaw0.GetAppInstanceId()); v != "" || signOnProviderHasPrior0 {
+					signOnProviderModel0.AppInstanceId = types.StringValue(v)
+				} else {
+					signOnProviderModel0.AppInstanceId = types.StringNull()
+				}
+			} else {
+				signOnProviderModel0.AppInstanceId = signOnProviderPrior0.AppInstanceId
+			}
+			plan.SignOnProvider = signOnProviderModel0
 		}
-		if plan.SignOnProvider != nil {
-			signOnProviderModel0.Type = plan.SignOnProvider.Type
-		}
-		plan.SignOnProvider = signOnProviderModel0
 	}
 
 	{
@@ -425,55 +532,110 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 		resp.Diagnostics.AddError("Error updating ai_agent", err.Error())
 		return
 	}
+	if plan.OauthClient == nil {
+		state.OauthClient = nil
+	}
+	if plan.Profile == nil {
+		state.Profile = nil
+	}
+	if plan.SignOnProvider == nil {
+		state.SignOnProvider = nil
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
 	// and overwriting with a zero value here would produce an inconsistent-result error.
 	state.ID = types.StringValue(string(result.GetId()))
+	if sourceVal, ok := result.GetSourceOk(); ok && sourceVal != nil {
+		state.Source = types.StringValue(string(*sourceVal))
+	}
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	// oauth_client is kept as configured: its request and response shapes differ.
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-	} else {
-		state.OauthClientId = types.StringNull()
+	state.OauthClient = plan.OauthClient
+	if plan.OauthClient != nil {
+		// oauth_client is kept as configured: its request and response shapes differ.
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+		} else {
+			state.OauthClientId = types.StringNull()
+		}
 	}
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AiAgentModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	state.Profile = plan.Profile
+	if plan.Profile != nil {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AiAgentModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AiAgentModelProfileModel{}
+			profileHasPrior0 := plan.Profile != nil
+			if plan.Profile != nil {
+				profilePrior0 = plan.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.ExternalId.IsNull()) {
+				if v := string(profileRaw0.GetExternalId()); v != "" || profileHasPrior0 {
+					profileModel0.ExternalId = types.StringValue(v)
+				} else {
+					profileModel0.ExternalId = types.StringNull()
+				}
+			} else {
+				profileModel0.ExternalId = profilePrior0.ExternalId
+			}
+			if !(profileHasPrior0 && profilePrior0.Name.IsNull()) {
+				profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
+			} else {
+				profileModel0.Name = profilePrior0.Name
+			}
+			if !(profileHasPrior0 && profilePrior0.Platform.IsNull()) {
+				if v := string(profileRaw0.GetPlatform()); v != "" || profileHasPrior0 {
+					profileModel0.Platform = types.StringValue(v)
+				} else {
+					profileModel0.Platform = types.StringNull()
+				}
+			} else {
+				profileModel0.Platform = profilePrior0.Platform
+			}
+			state.Profile = profileModel0
 		}
-		if v := string(profileRaw0.GetExternalId()); v != "" {
-			profileModel0.ExternalId = types.StringValue(v)
-		} else {
-			profileModel0.ExternalId = types.StringNull()
-		}
-		if plan.Profile == nil || !plan.Profile.Name.IsNull() {
-			profileModel0.Name = types.StringValue(string(profileRaw0.GetName()))
-		} else {
-			profileModel0.Name = plan.Profile.Name
-		}
-		if v := string(profileRaw0.GetPlatform()); v != "" {
-			profileModel0.Platform = types.StringValue(v)
-		} else {
-			profileModel0.Platform = types.StringNull()
-		}
-		state.Profile = profileModel0
 	}
-	if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
-		signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
-		if plan.SignOnProvider == nil || !plan.SignOnProvider.AppInstanceId.IsNull() {
-			signOnProviderModel0.AppInstanceId = types.StringValue(string(signOnProviderRaw0.GetAppInstanceId()))
-		} else {
-			signOnProviderModel0.AppInstanceId = plan.SignOnProvider.AppInstanceId
+	state.SignOnProvider = plan.SignOnProvider
+	if plan.SignOnProvider != nil {
+		if signOnProviderRaw0, ok := result.GetSignOnProviderOk(); ok && signOnProviderRaw0 != nil {
+			signOnProviderModel0 := &AiAgentModelSignOnProviderModel{}
+			// signOnProviderModel0 is the new block, built from the API response. signOnProviderPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			signOnProviderPrior0 := &AiAgentModelSignOnProviderModel{}
+			signOnProviderHasPrior0 := plan.SignOnProvider != nil
+			if plan.SignOnProvider != nil {
+				signOnProviderPrior0 = plan.SignOnProvider
+				*signOnProviderModel0 = *signOnProviderPrior0 // keep fields the reader below does not map
+			}
+			if !(signOnProviderHasPrior0 && signOnProviderPrior0.AppInstanceId.IsNull()) {
+				if v := string(signOnProviderRaw0.GetAppInstanceId()); v != "" || signOnProviderHasPrior0 {
+					signOnProviderModel0.AppInstanceId = types.StringValue(v)
+				} else {
+					signOnProviderModel0.AppInstanceId = types.StringNull()
+				}
+			} else {
+				signOnProviderModel0.AppInstanceId = signOnProviderPrior0.AppInstanceId
+			}
+			state.SignOnProvider = signOnProviderModel0
 		}
-		if plan.SignOnProvider != nil {
-			signOnProviderModel0.Type = plan.SignOnProvider.Type
-		}
-		state.SignOnProvider = signOnProviderModel0
 	}
 
 	state.ResourceUrl = plan.ResourceUrl

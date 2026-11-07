@@ -1,0 +1,263 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 557
+        host: oie-00.dne-okta.com
+        body: |
+            {"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","name":"tempCred-2","oauthClientConfiguration":{"clientCredentials":{"clientId":"abcd","clientSecret":"BlxZuD-BY93TVg8uZc1Jx8dbqKJ5H74Bwot2Gon3fovQg0Yh3NxpIDr1AJG2yvWI","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"registrationMethod":"STATIC","scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.277295459s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.054953125s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.048378542s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.058712583s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0585995s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:26:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.031341125s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServerOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu6mjzHxpNlehMAao5","created":"2026-11-05T07:26:54Z","id":"rscue0b1ppbhHZLBnao5","lastUpdated":"2026-11-05T07:26:54Z","name":"tempCred-2","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"abcd","credentialType":"CLIENT_SECRET"},"grantTypes":["authorization_code"],"scopes":["okta.users.read"]},"protocol":"OAUTH2","purposes":["STS"],"resourceOrn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsu6mjxY5YyMHF0zao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:27:01 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.139667958s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscue0b1ppbhHZLBnao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 05 Nov 2026 07:27:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.074532458s

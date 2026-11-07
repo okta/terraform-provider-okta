@@ -53,9 +53,9 @@ type mcpServersToolDataSourceModel struct {
 
 // McpServersToolDataSourceModelCredentialModel is the nested model for credential.
 type McpServersToolDataSourceModelCredentialModel struct {
-	AuthType             types.String `tfsdk:"auth_type"`
-	ClientAuthSettingsId types.String `tfsdk:"client_auth_settings_id"`
-	Scopes               types.List   `tfsdk:"scopes"`
+	AuthType               types.String `tfsdk:"auth_type"`
+	ClientAuthSettingsId   types.String `tfsdk:"client_auth_settings_id"`
+	TokenRequestSettingsId types.String `tfsdk:"token_request_settings_id"`
 }
 
 func NewMcpServersToolDataSource() datasource.DataSource {
@@ -113,12 +113,11 @@ func (d *mcpServersToolDataSource) Schema(_ context.Context, _ datasource.Schema
 						Computed:    true,
 					},
 					"client_auth_settings_id": schema.StringAttribute{
-						Description: "ID of the `ResourceServersClientAuthSettings` supplying the OAuth client.",
+						Description: "ID of the `ClientAuthSettings` that supplied the credential.",
 						Computed:    true,
 					},
-					"scopes": schema.ListAttribute{
-						Description: "The scope set used at the resource authorization server for the id-jag exchange.",
-						ElementType: types.StringType,
+					"token_request_settings_id": schema.StringAttribute{
+						Description: "ID of the `TokenRequestSettings` that supplied the credential.",
 						Computed:    true,
 					},
 				},
@@ -167,6 +166,15 @@ func (d *mcpServersToolDataSource) Read(ctx context.Context, req datasource.Read
 	state.Name = types.StringValue(string(result.GetName()))
 	if credentialRaw0, ok := result.GetCredentialOk(); ok && credentialRaw0 != nil {
 		credentialModel0 := &McpServersToolDataSourceModelCredentialModel{}
+		// credentialModel0 is the new block, built from the API response. credentialPrior0 is the prior
+		// plan/state block, read-only: a non-null field there means the user manages it, so
+		// the API value is taken; otherwise the prior value is kept. When the block is absent
+		// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+		credentialPrior0 := &McpServersToolDataSourceModelCredentialModel{}
+		if state.Credential != nil {
+			credentialPrior0 = state.Credential
+			*credentialModel0 = *credentialPrior0 // keep fields the reader below does not map
+		}
 		if v := string(credentialRaw0.GetAuthType()); v != "" {
 			credentialModel0.AuthType = types.StringValue(v)
 		} else {
@@ -177,14 +185,12 @@ func (d *mcpServersToolDataSource) Read(ctx context.Context, req datasource.Read
 		} else {
 			credentialModel0.ClientAuthSettingsId = types.StringNull()
 		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, credentialRaw0.GetScopes())
-			resp.Diagnostics.Append(listDiags...)
-			credentialModel0.Scopes = listVal
+		if v := string(credentialRaw0.GetTokenRequestSettingsId()); v != "" {
+			credentialModel0.TokenRequestSettingsId = types.StringValue(v)
+		} else {
+			credentialModel0.TokenRequestSettingsId = types.StringNull()
 		}
-		if state.Credential != nil || !(credentialModel0.AuthType.IsNull() && credentialModel0.ClientAuthSettingsId.IsNull() && credentialModel0.Scopes.IsNull()) {
-			state.Credential = credentialModel0
-		}
+		state.Credential = credentialModel0
 	}
 	if result.GetInputSchema() != nil {
 		inputSchemaAttrs := make(map[string]attr.Value)

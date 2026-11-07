@@ -1,18 +1,20 @@
-resource "okta_ai_agent" "test_agent" {
+resource "okta_ai_agent" "test" {
   profile {
-    name        = "test-ai-agent-rsa"
-    description = "Test AI Agent for RSA Keys"
+    name        = "testAcc-jwk-rsa-replace_with_uuid"
+    description = "Terraform acceptance test agent for okta_ai_agents_credentials_jwk_rsa"
   }
 
-  resource_url = "https://example.com/api"
+  sign_on_provider {
+    type = "NEW_OIDC_APP"
+  }
 }
 
 resource "okta_ai_agents_credentials_jwk_rsa" "test" {
-  agent_id = okta_ai_agent.test_agent.id
+  agent_id = okta_ai_agent.test.id
 
   kty    = "RSA"
   alg    = "RS256"
-  kid    = "test-rsa-key"
+  kid    = "testacc-rsa-replace_with_uuid"
   use    = "sig"
   status = "ACTIVE"
 

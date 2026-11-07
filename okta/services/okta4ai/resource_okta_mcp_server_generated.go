@@ -24,11 +24,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	frameworkPath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -89,7 +91,7 @@ type mcpServerModel struct {
 	ID                       types.String                                 `tfsdk:"id"`
 	AuthorizationServerCount types.Int64                                  `tfsdk:"authorization_server_count"`
 	Metadata                 *McpServerModelMetadataModel                 `tfsdk:"metadata"`
-	OauthClient              *McpServerModelOauthClientModel              `tfsdk:"oauth_client"`
+	OauthClient              types.Object                                 `tfsdk:"oauth_client"`
 	OrgConfigPropertyValues  []McpServerModelOrgConfigPropertyValuesModel `tfsdk:"org_config_property_values"`
 	Orn                      types.String                                 `tfsdk:"orn"`
 	ResourceServerGlobalId   types.String                                 `tfsdk:"resource_server_global_id"`
@@ -150,6 +152,14 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Computed:    true,
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
+				},
+			},
+			"oauth_client": schema.ObjectAttribute{
+				Description:    "The MCP server's own OAuth client identity, used when the MCP server acts as a client to a downstream resource.",
+				AttributeTypes: map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType},
+				Computed:       true,
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.UseStateForUnknown(),
 				},
 			},
 			"orn": schema.StringAttribute{
@@ -227,54 +237,6 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 					},
 				},
 			},
-			"oauth_client": schema.SingleNestedBlock{
-				Description: "The MCP server's own OAuth client identity, used when the MCP server acts as a client to a downstream resource.",
-				Attributes: map[string]schema.Attribute{
-					"client_id": schema.StringAttribute{
-						Description: "The OAuth client ID that Okta uses when issuing downstream tokens for this MCP server.",
-						Computed:    true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
-					"connection_count": schema.Int64Attribute{
-						Description: "Number of resource connections defined on the MCP server's client identity",
-						Computed:    true,
-						PlanModifiers: []planmodifier.Int64{
-							int64planmodifier.UseStateForUnknown(),
-						},
-					},
-					"grant_types": schema.ListAttribute{
-						Description: "The OAuth 2.",
-						ElementType: types.StringType,
-						Computed:    true,
-						PlanModifiers: []planmodifier.List{
-							listplanmodifier.UseStateForUnknown(),
-						},
-					},
-					"orn": schema.StringAttribute{
-						Description: "The [ORN](https://developer.",
-						Computed:    true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
-					"status": schema.StringAttribute{
-						Description: "Status of the MCP server's client identity",
-						Computed:    true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
-					"token_endpoint_auth_method": schema.StringAttribute{
-						Description: "The client authentication method that the MCP server uses at the Okta token endpoint.",
-						Computed:    true,
-						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.UseStateForUnknown(),
-						},
-					},
-				},
-			},
 			"org_config_property_values": schema.ListNestedBlock{
 				Description: "Values for the org-configured properties that the OIN catalog entry defines",
 				NestedObject: schema.NestedBlockObject{
@@ -295,6 +257,9 @@ func (r *mcpServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 }
 func (r *mcpServerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -303,6 +268,12 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -325,71 +296,106 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 	state.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &McpServerModelMetadataModel{}
-		if v := string(metadataRaw0.GetDescription()); v != "" {
-			metadataModel0.Description = types.StringValue(v)
-		} else {
-			metadataModel0.Description = types.StringNull()
-		}
-		if v := string(metadataRaw0.GetDisplayName()); v != "" {
-			metadataModel0.DisplayName = types.StringValue(v)
-		} else {
-			metadataModel0.DisplayName = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.ScopesSupported = listVal
-		}
-		if state.Metadata != nil || !(metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+	if state.Metadata != nil || len(importing) > 0 {
+		if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
+			metadataModel0 := &McpServerModelMetadataModel{}
+			// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			metadataPrior0 := &McpServerModelMetadataModel{}
+			if state.Metadata != nil {
+				metadataPrior0 = state.Metadata
+				*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+			}
+			if v := string(metadataRaw0.GetDescription()); v != "" {
+				metadataModel0.Description = types.StringValue(v)
+			} else {
+				metadataModel0.Description = types.StringNull()
+			}
+			if v := string(metadataRaw0.GetDisplayName()); v != "" {
+				metadataModel0.DisplayName = types.StringValue(v)
+			} else {
+				metadataModel0.DisplayName = types.StringNull()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel0.ScopesSupported = listVal
+			}
 			state.Metadata = metadataModel0
 		}
 	}
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-		oauthClientModel0 := &McpServerModelOauthClientModel{}
-		if v := string(oauthClientRaw0.GetClientId()); v != "" {
-			oauthClientModel0.ClientId = types.StringValue(v)
+	{
+		// oauth_client is a Computed object attribute: fill its typed shape, then convert.
+		var oauthClientHolder0 struct {
+			OauthClient *McpServerModelOauthClientModel
+		}
+		if oauthClientRaw1, ok := result.GetOauthClientOk(); ok && oauthClientRaw1 != nil {
+			oauthClientModel1 := &McpServerModelOauthClientModel{}
+			if v := string(oauthClientRaw1.GetClientId()); v != "" {
+				oauthClientModel1.ClientId = types.StringValue(v)
+			} else {
+				oauthClientModel1.ClientId = types.StringNull()
+			}
+			if v, ok := oauthClientRaw1.GetConnectionCountOk(); ok && v != nil {
+				oauthClientModel1.ConnectionCount = types.Int64Value(int64(*v))
+			} else {
+				oauthClientModel1.ConnectionCount = types.Int64Null()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw1.GetGrantTypes())
+				resp.Diagnostics.Append(listDiags...)
+				oauthClientModel1.GrantTypes = listVal
+			}
+			if v := string(oauthClientRaw1.GetOrn()); v != "" {
+				oauthClientModel1.Orn = types.StringValue(v)
+			} else {
+				oauthClientModel1.Orn = types.StringNull()
+			}
+			if v := string(oauthClientRaw1.GetStatus()); v != "" {
+				oauthClientModel1.Status = types.StringValue(v)
+			} else {
+				oauthClientModel1.Status = types.StringNull()
+			}
+			if v := string(oauthClientRaw1.GetTokenEndpointAuthMethod()); v != "" {
+				oauthClientModel1.TokenEndpointAuthMethod = types.StringValue(v)
+			} else {
+				oauthClientModel1.TokenEndpointAuthMethod = types.StringNull()
+			}
+			oauthClientHolder0.OauthClient = oauthClientModel1
+		}
+		if oauthClientHolder0.OauthClient != nil {
+			obj, objDiags := types.ObjectValueFrom(ctx, map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType}, oauthClientHolder0.OauthClient)
+			resp.Diagnostics.Append(objDiags...)
+			state.OauthClient = obj
 		} else {
-			oauthClientModel0.ClientId = types.StringNull()
-		}
-		oauthClientModel0.ConnectionCount = types.Int64Value(int64(oauthClientRaw0.GetConnectionCount()))
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw0.GetGrantTypes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientModel0.GrantTypes = listVal
-		}
-		if v := string(oauthClientRaw0.GetOrn()); v != "" {
-			oauthClientModel0.Orn = types.StringValue(v)
-		} else {
-			oauthClientModel0.Orn = types.StringNull()
-		}
-		if v := string(oauthClientRaw0.GetStatus()); v != "" {
-			oauthClientModel0.Status = types.StringValue(v)
-		} else {
-			oauthClientModel0.Status = types.StringNull()
-		}
-		if v := string(oauthClientRaw0.GetTokenEndpointAuthMethod()); v != "" {
-			oauthClientModel0.TokenEndpointAuthMethod = types.StringValue(v)
-		} else {
-			oauthClientModel0.TokenEndpointAuthMethod = types.StringNull()
-		}
-		if state.OauthClient != nil || !(oauthClientModel0.ClientId.IsNull() && oauthClientModel0.ConnectionCount.IsNull() && oauthClientModel0.GrantTypes.IsNull() && oauthClientModel0.Orn.IsNull() && oauthClientModel0.Status.IsNull() && oauthClientModel0.TokenEndpointAuthMethod.IsNull()) {
-			state.OauthClient = oauthClientModel0
+			state.OauthClient = types.ObjectNull(map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType})
 		}
 	}
 	if apiList := result.GetOrgConfigPropertyValues(); len(apiList) > 0 {
 		orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
 		for _, apiItem := range apiList {
 			orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
-			orgConfigPropertyValuesItem0.Name = types.StringValue(string(apiItem.GetName()))
-			orgConfigPropertyValuesItem0.Value = types.StringValue(string(apiItem.GetValue()))
+			if v, ok := apiItem.GetNameOk(); ok && v != nil {
+				orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
+			} else {
+				orgConfigPropertyValuesItem0.Name = types.StringNull()
+			}
+			if v, ok := apiItem.GetValueOk(); ok && v != nil {
+				orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
+			} else {
+				orgConfigPropertyValuesItem0.Value = types.StringNull()
+			}
 			orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
 		}
 		state.OrgConfigPropertyValues = orgConfigPropertyValuesList0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -599,65 +605,97 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 		}
 		plan.ResourceUrl = types.StringValue(string(readResult.GetResourceUrl()))
 		plan.Status = types.StringValue(string(readResult.GetStatus()))
-		if metadataRaw0, ok := readResult.GetMetadataOk(); ok && metadataRaw0 != nil {
-			metadataModel0 := &McpServerModelMetadataModel{}
-			if v := string(metadataRaw0.GetDescription()); v != "" {
-				metadataModel0.Description = types.StringValue(v)
-			} else {
-				metadataModel0.Description = types.StringNull()
-			}
-			if v := string(metadataRaw0.GetDisplayName()); v != "" {
-				metadataModel0.DisplayName = types.StringValue(v)
-			} else {
-				metadataModel0.DisplayName = types.StringNull()
-			}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-				resp.Diagnostics.Append(listDiags...)
-				metadataModel0.ScopesSupported = listVal
-			}
-			if plan.Metadata != nil || !(metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+		if plan.Metadata != nil {
+			if metadataRaw0, ok := readResult.GetMetadataOk(); ok && metadataRaw0 != nil {
+				metadataModel0 := &McpServerModelMetadataModel{}
+				// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				metadataPrior0 := &McpServerModelMetadataModel{}
+				if plan.Metadata != nil {
+					metadataPrior0 = plan.Metadata
+					*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+				}
+				if v := string(metadataRaw0.GetDescription()); v != "" {
+					metadataModel0.Description = types.StringValue(v)
+				} else {
+					metadataModel0.Description = types.StringNull()
+				}
+				if v := string(metadataRaw0.GetDisplayName()); v != "" {
+					metadataModel0.DisplayName = types.StringValue(v)
+				} else {
+					metadataModel0.DisplayName = types.StringNull()
+				}
+				{
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
 				plan.Metadata = metadataModel0
 			}
 		}
-		if oauthClientRaw0, ok := readResult.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-			oauthClientModel0 := &McpServerModelOauthClientModel{}
-			if v := string(oauthClientRaw0.GetClientId()); v != "" {
-				oauthClientModel0.ClientId = types.StringValue(v)
+		{
+			// oauth_client is a Computed object attribute: fill its typed shape, then convert.
+			var oauthClientHolder0 struct {
+				OauthClient *McpServerModelOauthClientModel
+			}
+			if oauthClientRaw1, ok := readResult.GetOauthClientOk(); ok && oauthClientRaw1 != nil {
+				oauthClientModel1 := &McpServerModelOauthClientModel{}
+				if v := string(oauthClientRaw1.GetClientId()); v != "" {
+					oauthClientModel1.ClientId = types.StringValue(v)
+				} else {
+					oauthClientModel1.ClientId = types.StringNull()
+				}
+				if v, ok := oauthClientRaw1.GetConnectionCountOk(); ok && v != nil {
+					oauthClientModel1.ConnectionCount = types.Int64Value(int64(*v))
+				} else {
+					oauthClientModel1.ConnectionCount = types.Int64Null()
+				}
+				{
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw1.GetGrantTypes())
+					resp.Diagnostics.Append(listDiags...)
+					oauthClientModel1.GrantTypes = listVal
+				}
+				if v := string(oauthClientRaw1.GetOrn()); v != "" {
+					oauthClientModel1.Orn = types.StringValue(v)
+				} else {
+					oauthClientModel1.Orn = types.StringNull()
+				}
+				if v := string(oauthClientRaw1.GetStatus()); v != "" {
+					oauthClientModel1.Status = types.StringValue(v)
+				} else {
+					oauthClientModel1.Status = types.StringNull()
+				}
+				if v := string(oauthClientRaw1.GetTokenEndpointAuthMethod()); v != "" {
+					oauthClientModel1.TokenEndpointAuthMethod = types.StringValue(v)
+				} else {
+					oauthClientModel1.TokenEndpointAuthMethod = types.StringNull()
+				}
+				oauthClientHolder0.OauthClient = oauthClientModel1
+			}
+			if oauthClientHolder0.OauthClient != nil {
+				obj, objDiags := types.ObjectValueFrom(ctx, map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType}, oauthClientHolder0.OauthClient)
+				resp.Diagnostics.Append(objDiags...)
+				plan.OauthClient = obj
 			} else {
-				oauthClientModel0.ClientId = types.StringNull()
-			}
-			oauthClientModel0.ConnectionCount = types.Int64Value(int64(oauthClientRaw0.GetConnectionCount()))
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw0.GetGrantTypes())
-				resp.Diagnostics.Append(listDiags...)
-				oauthClientModel0.GrantTypes = listVal
-			}
-			if v := string(oauthClientRaw0.GetOrn()); v != "" {
-				oauthClientModel0.Orn = types.StringValue(v)
-			} else {
-				oauthClientModel0.Orn = types.StringNull()
-			}
-			if v := string(oauthClientRaw0.GetStatus()); v != "" {
-				oauthClientModel0.Status = types.StringValue(v)
-			} else {
-				oauthClientModel0.Status = types.StringNull()
-			}
-			if v := string(oauthClientRaw0.GetTokenEndpointAuthMethod()); v != "" {
-				oauthClientModel0.TokenEndpointAuthMethod = types.StringValue(v)
-			} else {
-				oauthClientModel0.TokenEndpointAuthMethod = types.StringNull()
-			}
-			if plan.OauthClient != nil || !(oauthClientModel0.ClientId.IsNull() && oauthClientModel0.ConnectionCount.IsNull() && oauthClientModel0.GrantTypes.IsNull() && oauthClientModel0.Orn.IsNull() && oauthClientModel0.Status.IsNull() && oauthClientModel0.TokenEndpointAuthMethod.IsNull()) {
-				plan.OauthClient = oauthClientModel0
+				plan.OauthClient = types.ObjectNull(map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType})
 			}
 		}
 		if apiList := readResult.GetOrgConfigPropertyValues(); len(apiList) > 0 {
 			orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
 			for _, apiItem := range apiList {
 				orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
-				orgConfigPropertyValuesItem0.Name = types.StringValue(string(apiItem.GetName()))
-				orgConfigPropertyValuesItem0.Value = types.StringValue(string(apiItem.GetValue()))
+				if v, ok := apiItem.GetNameOk(); ok && v != nil {
+					orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
+				} else {
+					orgConfigPropertyValuesItem0.Name = types.StringNull()
+				}
+				if v, ok := apiItem.GetValueOk(); ok && v != nil {
+					orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
+				} else {
+					orgConfigPropertyValuesItem0.Value = types.StringNull()
+				}
 				orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
 			}
 			plan.OrgConfigPropertyValues = orgConfigPropertyValuesList0
@@ -665,6 +703,25 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 
 	}
 
+	{
+		// Created in an inactive state; activate before handing the resource to Terraform.
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, _, activateErr := client.MCPServerRegistrationV2API.ActivateMCPServerV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating mcp_server after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.MCPServerRegistrationV2API.GetMCPServerV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading mcp_server after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -714,6 +771,13 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 		resp.Diagnostics.AddError("Error updating mcp_server", err.Error())
 		return
 	}
+	if plan.Metadata == nil {
+		state.Metadata = nil
+	}
+	if len(plan.OrgConfigPropertyValues) == 0 {
+		state.OrgConfigPropertyValues = nil
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -734,65 +798,98 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &McpServerModelMetadataModel{}
-		if v := string(metadataRaw0.GetDescription()); v != "" {
-			metadataModel0.Description = types.StringValue(v)
-		} else {
-			metadataModel0.Description = types.StringNull()
-		}
-		if v := string(metadataRaw0.GetDisplayName()); v != "" {
-			metadataModel0.DisplayName = types.StringValue(v)
-		} else {
-			metadataModel0.DisplayName = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.ScopesSupported = listVal
-		}
-		if plan.Metadata != nil || !(metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+	state.Metadata = plan.Metadata
+	if plan.Metadata != nil {
+		if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
+			metadataModel0 := &McpServerModelMetadataModel{}
+			// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			metadataPrior0 := &McpServerModelMetadataModel{}
+			if plan.Metadata != nil {
+				metadataPrior0 = plan.Metadata
+				*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+			}
+			if v := string(metadataRaw0.GetDescription()); v != "" {
+				metadataModel0.Description = types.StringValue(v)
+			} else {
+				metadataModel0.Description = types.StringNull()
+			}
+			if v := string(metadataRaw0.GetDisplayName()); v != "" {
+				metadataModel0.DisplayName = types.StringValue(v)
+			} else {
+				metadataModel0.DisplayName = types.StringNull()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+				resp.Diagnostics.Append(listDiags...)
+				metadataModel0.ScopesSupported = listVal
+			}
 			state.Metadata = metadataModel0
 		}
 	}
-	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-		oauthClientModel0 := &McpServerModelOauthClientModel{}
-		if v := string(oauthClientRaw0.GetClientId()); v != "" {
-			oauthClientModel0.ClientId = types.StringValue(v)
+	{
+		// oauth_client is a Computed object attribute: fill its typed shape, then convert.
+		var oauthClientHolder0 struct {
+			OauthClient *McpServerModelOauthClientModel
+		}
+		if oauthClientRaw1, ok := result.GetOauthClientOk(); ok && oauthClientRaw1 != nil {
+			oauthClientModel1 := &McpServerModelOauthClientModel{}
+			if v := string(oauthClientRaw1.GetClientId()); v != "" {
+				oauthClientModel1.ClientId = types.StringValue(v)
+			} else {
+				oauthClientModel1.ClientId = types.StringNull()
+			}
+			if v, ok := oauthClientRaw1.GetConnectionCountOk(); ok && v != nil {
+				oauthClientModel1.ConnectionCount = types.Int64Value(int64(*v))
+			} else {
+				oauthClientModel1.ConnectionCount = types.Int64Null()
+			}
+			{
+				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw1.GetGrantTypes())
+				resp.Diagnostics.Append(listDiags...)
+				oauthClientModel1.GrantTypes = listVal
+			}
+			if v := string(oauthClientRaw1.GetOrn()); v != "" {
+				oauthClientModel1.Orn = types.StringValue(v)
+			} else {
+				oauthClientModel1.Orn = types.StringNull()
+			}
+			if v := string(oauthClientRaw1.GetStatus()); v != "" {
+				oauthClientModel1.Status = types.StringValue(v)
+			} else {
+				oauthClientModel1.Status = types.StringNull()
+			}
+			if v := string(oauthClientRaw1.GetTokenEndpointAuthMethod()); v != "" {
+				oauthClientModel1.TokenEndpointAuthMethod = types.StringValue(v)
+			} else {
+				oauthClientModel1.TokenEndpointAuthMethod = types.StringNull()
+			}
+			oauthClientHolder0.OauthClient = oauthClientModel1
+		}
+		if oauthClientHolder0.OauthClient != nil {
+			obj, objDiags := types.ObjectValueFrom(ctx, map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType}, oauthClientHolder0.OauthClient)
+			resp.Diagnostics.Append(objDiags...)
+			state.OauthClient = obj
 		} else {
-			oauthClientModel0.ClientId = types.StringNull()
-		}
-		oauthClientModel0.ConnectionCount = types.Int64Value(int64(oauthClientRaw0.GetConnectionCount()))
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientRaw0.GetGrantTypes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientModel0.GrantTypes = listVal
-		}
-		if v := string(oauthClientRaw0.GetOrn()); v != "" {
-			oauthClientModel0.Orn = types.StringValue(v)
-		} else {
-			oauthClientModel0.Orn = types.StringNull()
-		}
-		if v := string(oauthClientRaw0.GetStatus()); v != "" {
-			oauthClientModel0.Status = types.StringValue(v)
-		} else {
-			oauthClientModel0.Status = types.StringNull()
-		}
-		if v := string(oauthClientRaw0.GetTokenEndpointAuthMethod()); v != "" {
-			oauthClientModel0.TokenEndpointAuthMethod = types.StringValue(v)
-		} else {
-			oauthClientModel0.TokenEndpointAuthMethod = types.StringNull()
-		}
-		if plan.OauthClient != nil || !(oauthClientModel0.ClientId.IsNull() && oauthClientModel0.ConnectionCount.IsNull() && oauthClientModel0.GrantTypes.IsNull() && oauthClientModel0.Orn.IsNull() && oauthClientModel0.Status.IsNull() && oauthClientModel0.TokenEndpointAuthMethod.IsNull()) {
-			state.OauthClient = oauthClientModel0
+			state.OauthClient = types.ObjectNull(map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType})
 		}
 	}
 	if apiList := result.GetOrgConfigPropertyValues(); len(apiList) > 0 {
 		orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
 		for _, apiItem := range apiList {
 			orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
-			orgConfigPropertyValuesItem0.Name = types.StringValue(string(apiItem.GetName()))
-			orgConfigPropertyValuesItem0.Value = types.StringValue(string(apiItem.GetValue()))
+			if v, ok := apiItem.GetNameOk(); ok && v != nil {
+				orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
+			} else {
+				orgConfigPropertyValuesItem0.Name = types.StringNull()
+			}
+			if v, ok := apiItem.GetValueOk(); ok && v != nil {
+				orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
+			} else {
+				orgConfigPropertyValuesItem0.Value = types.StringNull()
+			}
 			orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
 		}
 		state.OrgConfigPropertyValues = orgConfigPropertyValuesList0
@@ -813,7 +910,11 @@ func (r *mcpServerResource) Delete(ctx context.Context, req resource.DeleteReque
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
-	client.MCPServerRegistrationV2API.DeactivateMCPServerV2(ctx, id).Execute()
+	_, deactivateHTTPResp, deactivateErr := client.MCPServerRegistrationV2API.DeactivateMCPServerV2(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating mcp_server before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.MCPServerRegistrationV2API.DeleteMCPServerV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {

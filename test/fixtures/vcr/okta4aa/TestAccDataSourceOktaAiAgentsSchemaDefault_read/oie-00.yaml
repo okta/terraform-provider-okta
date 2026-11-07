@@ -1,0 +1,175 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"$schema":"http://json-schema.org/draft-04/schema#","created":"2026-10-30T04:30:21.000Z","definitions":{"base":{"id":"#base","properties":{"description":{"description":"Description of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Description","mutability":"READ_WRITE","scope":"NONE","type":"string"},"externalId":{"description":"External identifier of the AI agent from the source provider","master":{"type":"PROFILE_MASTER"},"maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"External ID","mutability":"READ_WRITE","scope":"NONE","type":"string"},"name":{"description":"Name of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"minLength":3,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"required":true,"title":"Name","mutability":"READ_WRITE","scope":"NONE","type":"string"},"platform":{"description":"Hosting platform of the AI agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Platform","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":["name"],"type":"object"},"custom":{"id":"#custom","properties":{"department":{"description":"The department that owns this AI agent","master":{"type":"PROFILE_MASTER"},"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Department","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":[],"type":"object"}},"description":"Default AI agent schema","id":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default","lastUpdated":"2026-11-04T21:15:24.000Z","name":"okta_ai_agent_profile_with_unify_identity","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"title":"Okta AI Agent Profile with Unify Identity","type":"object"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:16:30 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.049820917s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"$schema":"http://json-schema.org/draft-04/schema#","created":"2026-10-30T04:30:21.000Z","definitions":{"base":{"id":"#base","properties":{"description":{"description":"Description of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Description","mutability":"READ_WRITE","scope":"NONE","type":"string"},"externalId":{"description":"External identifier of the AI agent from the source provider","master":{"type":"PROFILE_MASTER"},"maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"External ID","mutability":"READ_WRITE","scope":"NONE","type":"string"},"name":{"description":"Name of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"minLength":3,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"required":true,"title":"Name","mutability":"READ_WRITE","scope":"NONE","type":"string"},"platform":{"description":"Hosting platform of the AI agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Platform","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":["name"],"type":"object"},"custom":{"id":"#custom","properties":{"department":{"description":"The department that owns this AI agent","master":{"type":"PROFILE_MASTER"},"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Department","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":[],"type":"object"}},"description":"Default AI agent schema","id":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default","lastUpdated":"2026-11-04T21:15:24.000Z","name":"okta_ai_agent_profile_with_unify_identity","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"title":"Okta AI Agent Profile with Unify Identity","type":"object"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:16:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.12406825s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"$schema":"http://json-schema.org/draft-04/schema#","created":"2026-10-30T04:30:21.000Z","definitions":{"base":{"id":"#base","properties":{"description":{"description":"Description of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Description","mutability":"READ_WRITE","scope":"NONE","type":"string"},"externalId":{"description":"External identifier of the AI agent from the source provider","master":{"type":"PROFILE_MASTER"},"maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"External ID","mutability":"READ_WRITE","scope":"NONE","type":"string"},"name":{"description":"Name of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"minLength":3,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"required":true,"title":"Name","mutability":"READ_WRITE","scope":"NONE","type":"string"},"platform":{"description":"Hosting platform of the AI agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Platform","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":["name"],"type":"object"},"custom":{"id":"#custom","properties":{"department":{"description":"The department that owns this AI agent","master":{"type":"PROFILE_MASTER"},"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Department","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":[],"type":"object"}},"description":"Default AI agent schema","id":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default","lastUpdated":"2026-11-04T21:15:24.000Z","name":"okta_ai_agent_profile_with_unify_identity","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"title":"Okta AI Agent Profile with Unify Identity","type":"object"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:16:33 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.022649416s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"$schema":"http://json-schema.org/draft-04/schema#","created":"2026-10-30T04:30:21.000Z","definitions":{"base":{"id":"#base","properties":{"description":{"description":"Description of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Description","mutability":"READ_WRITE","scope":"NONE","type":"string"},"externalId":{"description":"External identifier of the AI agent from the source provider","master":{"type":"PROFILE_MASTER"},"maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"External ID","mutability":"READ_WRITE","scope":"NONE","type":"string"},"name":{"description":"Name of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"minLength":3,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"required":true,"title":"Name","mutability":"READ_WRITE","scope":"NONE","type":"string"},"platform":{"description":"Hosting platform of the AI agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Platform","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":["name"],"type":"object"},"custom":{"id":"#custom","properties":{"department":{"description":"The department that owns this AI agent","master":{"type":"PROFILE_MASTER"},"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Department","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":[],"type":"object"}},"description":"Default AI agent schema","id":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default","lastUpdated":"2026-11-04T21:15:24.000Z","name":"okta_ai_agent_profile_with_unify_identity","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"title":"Okta AI Agent Profile with Unify Identity","type":"object"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:16:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.10929025s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1923
+        body: '{"$schema":"http://json-schema.org/draft-04/schema#","created":"2026-10-30T04:30:21.000Z","definitions":{"base":{"id":"#base","properties":{"description":{"description":"Description of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":1024,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Description","mutability":"READ_WRITE","scope":"NONE","type":"string"},"externalId":{"description":"External identifier of the AI agent from the source provider","master":{"type":"PROFILE_MASTER"},"maxLength":255,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"External ID","mutability":"READ_WRITE","scope":"NONE","type":"string"},"name":{"description":"Name of the ai agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"minLength":3,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"required":true,"title":"Name","mutability":"READ_WRITE","scope":"NONE","type":"string"},"platform":{"description":"Hosting platform of the AI agent","master":{"type":"PROFILE_MASTER"},"maxLength":100,"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Platform","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":["name"],"type":"object"},"custom":{"id":"#custom","properties":{"department":{"description":"The department that owns this AI agent","master":{"type":"PROFILE_MASTER"},"permissions":[{"principal":"SELF","action":"READ_WRITE"}],"title":"Department","mutability":"READ_WRITE","scope":"NONE","type":"string"}},"required":[],"type":"object"}},"description":"Default AI agent schema","id":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/schema/default","lastUpdated":"2026-11-04T21:15:24.000Z","name":"okta_ai_agent_profile_with_unify_identity","properties":{"profile":{"allOf":[{"$ref":"#/definitions/custom"},{"$ref":"#/definitions/base"}]}},"title":"Okta AI Agent Profile with Unify Identity","type":"object"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1923"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:16:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.04634025s

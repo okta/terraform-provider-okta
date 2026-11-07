@@ -14,7 +14,7 @@ import (
 
 func TestAccResourceOktaAgentGateway_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAgentGateway, t.Name())
-	config := mgr.GetFixtures("resource.tf", t)
+	config := mgr.GetFixtures("basic.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAgentGateway)
 
 	acctest.OktaResourceTest(t, resource.TestCase{

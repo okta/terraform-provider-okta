@@ -1,0 +1,231 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 87
+        host: oie-00.dne-okta.com
+        body: |
+            {"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:34 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.105996541s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:35 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.056350125s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:36 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.063011792s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:37 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.042662375s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:38 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.275644875s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:38:39Z","id":"ausu6ayw5WeizA26Vao5","issuer":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","lastUpdated":"2026-11-02T19:38:39Z","metadata":{"authorizationEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/authorize","grantTypesSupported":["authorization_code","implicit","refresh_token","password","client_credentials","urn:ietf:params:oauth:grant-type:device_code","urn:openid:params:grant-type:ciba","urn:okta:params:oauth:grant-type:otp","http://auth0.com/oauth/grant-type/mfa-otp","urn:okta:params:oauth:grant-type:oob","http://auth0.com/oauth/grant-type/mfa-oob","urn:ietf:params:oauth:grant-type:jwt-bearer"],"protocolSupported":["STS","IDENTITY_ASSERTION"],"tokenEndpoint":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5/v1/token","tokenEndpointAuthMethod":"client_secret_basic"},"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","status":"ACTIVE","type":"OKTA"},"created":"2026-11-05T07:21:34Z","lastUpdated":"2026-11-05T07:21:34Z","protocolConfigurations":{"identityAssertion":{"enabled":true},"sts":{"enabled":true}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 07:21:39 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.050364875s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/mcp-servers/emsu6mjxY5YyMHF0zao5/authorization-servers/ausu6ayw5WeizA26Vao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 05 Nov 2026 07:21:41 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.165782459s

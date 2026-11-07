@@ -51,7 +51,7 @@ The constants file is at `okta/resources/resources.go`. Insert at the correct al
 
 ```bash
 ls okta/services/<package>/resource_okta_<name>_test.go 2>/dev/null
-ls examples/resources/okta_<name>/resource.tf          2>/dev/null
+ls examples/resources/okta_<name>/basic.tf          2>/dev/null
 ls docs/resources/<name>.md                            2>/dev/null
 ```
 
@@ -134,7 +134,7 @@ import (
 
 func TestAccResourceOkta<PascalName>_basic(t *testing.T) {
     mgr := newFixtureManager("resources", resources.OktaIDaaS<PascalName>, t.Name())
-    config := mgr.GetFixtures("resource.tf", t)
+    config := mgr.GetFixtures("basic.tf", t)
     resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaS<PascalName>)
 
     acctest.OktaResourceTest(t, resource.TestCase{

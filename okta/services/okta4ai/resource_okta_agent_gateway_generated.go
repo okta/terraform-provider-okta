@@ -120,6 +120,9 @@ func (r *agentGatewayResource) Schema(_ context.Context, _ resource.SchemaReques
 }
 func (r *agentGatewayResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *agentGatewayResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -128,6 +131,12 @@ func (r *agentGatewayResource) Read(ctx context.Context, req resource.ReadReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -143,22 +152,41 @@ func (r *agentGatewayResource) Read(ctx context.Context, req resource.ReadReques
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Orn = types.StringValue(string(result.GetOrn()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AgentGatewayModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	if state.Profile != nil || len(importing) > 0 {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AgentGatewayModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AgentGatewayModelProfileModel{}
+			profileHasPrior0 := state.Profile != nil
+			if state.Profile != nil {
+				profilePrior0 = state.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.DisplayName.IsNull()) {
+				profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
+			} else {
+				profileModel0.DisplayName = profilePrior0.DisplayName
+			}
+			state.Profile = profileModel0
 		}
-		if state.Profile != nil && !state.Profile.DisplayName.IsNull() {
-			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
-		} else {
-			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
-		}
-		state.Profile = profileModel0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -199,19 +227,35 @@ func (r *agentGatewayResource) Create(ctx context.Context, req resource.CreateRe
 	plan.Orn = types.StringValue(string(result.GetOrn()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AgentGatewayModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	if plan.Profile != nil {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AgentGatewayModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AgentGatewayModelProfileModel{}
+			profileHasPrior0 := plan.Profile != nil
+			if plan.Profile != nil {
+				profilePrior0 = plan.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.DisplayName.IsNull()) {
+				profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
+			} else {
+				profileModel0.DisplayName = profilePrior0.DisplayName
+			}
+			plan.Profile = profileModel0
 		}
-		if !plan.Profile.DisplayName.IsNull() {
-			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
-		} else {
-			profileModel0.DisplayName = plan.Profile.DisplayName
-		}
-		plan.Profile = profileModel0
 	}
 
 	{
@@ -270,6 +314,10 @@ func (r *agentGatewayResource) Update(ctx context.Context, req resource.UpdateRe
 		resp.Diagnostics.AddError("Error updating agent_gateway", err.Error())
 		return
 	}
+	if plan.Profile == nil {
+		state.Profile = nil
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -281,19 +329,36 @@ func (r *agentGatewayResource) Update(ctx context.Context, req resource.UpdateRe
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
-		profileModel0 := &AgentGatewayModelProfileModel{}
-		if v := string(profileRaw0.GetDescription()); v != "" {
-			profileModel0.Description = types.StringValue(v)
-		} else {
-			profileModel0.Description = types.StringNull()
+	state.Profile = plan.Profile
+	if plan.Profile != nil {
+		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
+			profileModel0 := &AgentGatewayModelProfileModel{}
+			// profileModel0 is the new block, built from the API response. profilePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			profilePrior0 := &AgentGatewayModelProfileModel{}
+			profileHasPrior0 := plan.Profile != nil
+			if plan.Profile != nil {
+				profilePrior0 = plan.Profile
+				*profileModel0 = *profilePrior0 // keep fields the reader below does not map
+			}
+			if !(profileHasPrior0 && profilePrior0.Description.IsNull()) {
+				if v := string(profileRaw0.GetDescription()); v != "" || profileHasPrior0 {
+					profileModel0.Description = types.StringValue(v)
+				} else {
+					profileModel0.Description = types.StringNull()
+				}
+			} else {
+				profileModel0.Description = profilePrior0.Description
+			}
+			if !(profileHasPrior0 && profilePrior0.DisplayName.IsNull()) {
+				profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
+			} else {
+				profileModel0.DisplayName = profilePrior0.DisplayName
+			}
+			state.Profile = profileModel0
 		}
-		if !plan.Profile.DisplayName.IsNull() {
-			profileModel0.DisplayName = types.StringValue(string(profileRaw0.GetDisplayName()))
-		} else {
-			profileModel0.DisplayName = plan.Profile.DisplayName
-		}
-		state.Profile = profileModel0
 	}
 
 	state.ResourcePath = plan.ResourcePath

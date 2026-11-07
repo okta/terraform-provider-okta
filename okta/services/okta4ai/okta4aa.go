@@ -16,6 +16,14 @@ func FWProviderResources() []func() resource.Resource {
 		NewMcpServerResource,
 		NewApiServerResource,
 		NewA2aServersAuthorizationServerResource,
+		NewMcpServersAuthorizationServerResource,
+		NewAiAgentsSchemaDefaultResource,
+		NewAiAgentsCredentialsJwksUriResource,
+		NewAiAgentsCredentialsPublicKeyModeResource,
+		NewAiAgentsCredentialsJwkEcResource,
+		NewAiAgentsCredentialsSecretResource,
+		NewAiAgentsCredentialsJwkRsaResource,
+		NewConnectionResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -36,5 +44,13 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewClientAuthSettingDataSource,
 		NewMcpServerDataSource,
 		NewA2aServersAuthorizationServerDataSource,
+		NewMcpServersAuthorizationServerDataSource,
+		NewAiAgentsSchemaDefaultDataSource,
+		NewAiAgentsCredentialsJwksUriDataSource,
+		NewAiAgentsCredentialsPublicKeyModeDataSource,
+		NewAiAgentsCredentialsSecretDataSource,
+		NewAiAgentsCredentialsJwkRsaDataSource,
+		NewAiAgentsCredentialsJwkEcDataSource,
+		NewApiServerDataSource,
 	}
 }

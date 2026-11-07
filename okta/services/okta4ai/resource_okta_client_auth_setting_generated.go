@@ -150,6 +150,7 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 				Default:     stringdefault.StaticString("OAUTH2"),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"purposes": schema.ListAttribute{
@@ -158,6 +159,7 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 				Required:    true,
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.UseStateForUnknown(),
+					listplanmodifier.RequiresReplace(),
 				},
 			},
 			"resource_orn": schema.StringAttribute{
@@ -175,12 +177,10 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 					"authorize_endpoint": schema.StringAttribute{
 						Description: "The custom `/authorize` endpoint URL for the authorization server.",
 						Optional:    true,
-						Computed:    true,
 					},
 					"token_endpoint": schema.StringAttribute{
 						Description: "The custom `/token` endpoint URL for the authorization server.",
 						Optional:    true,
-						Computed:    true,
 					},
 				},
 			},
@@ -191,18 +191,18 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 						Description: "The OAuth 2.",
 						ElementType: types.StringType,
 						Optional:    true,
-						Computed:    true,
 					},
 					"registration_method": schema.StringAttribute{
 						Description: "How the OAuth client credentials for this connection are registered.",
 						Optional:    true,
-						Computed:    true,
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplace(),
+						},
 					},
 					"scopes": schema.ListAttribute{
 						Description: "OAuth scopes to request when obtaining tokens.",
 						ElementType: types.StringType,
 						Optional:    true,
-						Computed:    true,
 					},
 				},
 				Blocks: map[string]schema.Block{
@@ -273,6 +273,9 @@ func (r *clientAuthSettingResource) Schema(_ context.Context, _ resource.SchemaR
 }
 func (r *clientAuthSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *clientAuthSettingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -281,6 +284,12 @@ func (r *clientAuthSettingResource) Read(ctx context.Context, req resource.ReadR
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -305,127 +314,216 @@ func (r *clientAuthSettingResource) Read(ctx context.Context, req resource.ReadR
 		state.Purposes = types.ListNull(types.StringType)
 	}
 	state.ResourceOrn = types.StringValue(string(result.GetResourceOrn()))
-	if authorizationServerConfigurationRaw0, ok := result.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
-		authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
-		if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" {
-			authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
-		} else {
-			authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
-		}
-		if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" {
-			authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
-		} else {
-			authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
-		}
-		if state.AuthorizationServerConfiguration != nil || !(authorizationServerConfigurationModel0.AuthorizeEndpoint.IsNull() && authorizationServerConfigurationModel0.TokenEndpoint.IsNull()) {
+	if state.AuthorizationServerConfiguration != nil || len(importing) > 0 {
+		if authorizationServerConfigurationRaw0, ok := result.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
+			authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+			// authorizationServerConfigurationModel0 is the new block, built from the API response. authorizationServerConfigurationPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			authorizationServerConfigurationPrior0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+			authorizationServerConfigurationHasPrior0 := state.AuthorizationServerConfiguration != nil
+			if state.AuthorizationServerConfiguration != nil {
+				authorizationServerConfigurationPrior0 = state.AuthorizationServerConfiguration
+				*authorizationServerConfigurationModel0 = *authorizationServerConfigurationPrior0 // keep fields the reader below does not map
+			}
+			if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.AuthorizeEndpoint.IsNull()) {
+				if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+					authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
+				} else {
+					authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
+				}
+			} else {
+				authorizationServerConfigurationModel0.AuthorizeEndpoint = authorizationServerConfigurationPrior0.AuthorizeEndpoint
+			}
+			if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.TokenEndpoint.IsNull()) {
+				if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+					authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
+				} else {
+					authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
+				}
+			} else {
+				authorizationServerConfigurationModel0.TokenEndpoint = authorizationServerConfigurationPrior0.TokenEndpoint
+			}
 			state.AuthorizationServerConfiguration = authorizationServerConfigurationModel0
 		}
 	}
-	if oauthClientConfigurationRaw0, ok := result.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
-		oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
-		if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
-			additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
-			if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
-				authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
-				if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
-					authorizationCodeVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+	if state.OauthClientConfiguration != nil || len(importing) > 0 {
+		if oauthClientConfigurationRaw0, ok := result.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
+			oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+			// oauthClientConfigurationModel0 is the new block, built from the API response. oauthClientConfigurationPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			oauthClientConfigurationPrior0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+			oauthClientConfigurationHasPrior0 := state.OauthClientConfiguration != nil
+			if state.OauthClientConfiguration != nil {
+				oauthClientConfigurationPrior0 = state.OauthClientConfiguration
+				*oauthClientConfigurationModel0 = *oauthClientConfigurationPrior0 // keep fields the reader below does not map
+			}
+			if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil || len(importing) > 0 {
+				if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
+					additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+					// additionalRequestParametersModel1 is the new block, built from the API response. additionalRequestParametersPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					additionalRequestParametersPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+					if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil {
+						additionalRequestParametersPrior1 = oauthClientConfigurationPrior0.AdditionalRequestParameters
+						*additionalRequestParametersModel1 = *additionalRequestParametersPrior1 // keep fields the reader below does not map
 					}
-					authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-				} else {
-					authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
-				}
-				if state.OauthClientConfiguration != nil && state.OauthClientConfiguration.AdditionalRequestParameters != nil && state.OauthClientConfiguration.AdditionalRequestParameters.Authorize != nil || !(authorizeModel2.AuthorizationCode.IsNull()) {
-					additionalRequestParametersModel1.Authorize = authorizeModel2
+					if additionalRequestParametersPrior1.Authorize != nil || len(importing) > 0 {
+						if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
+							authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+							// authorizeModel2 is the new block, built from the API response. authorizePrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							authorizePrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+							if additionalRequestParametersPrior1.Authorize != nil {
+								authorizePrior2 = additionalRequestParametersPrior1.Authorize
+								*authorizeModel2 = *authorizePrior2 // keep fields the reader below does not map
+							}
+							if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
+								authorizationCodeVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+							} else {
+								authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
+							}
+							additionalRequestParametersModel1.Authorize = authorizeModel2
+						}
+					}
+					if additionalRequestParametersPrior1.Token != nil || len(importing) > 0 {
+						if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
+							tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+							// tokenModel2 is the new block, built from the API response. tokenPrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							tokenPrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+							if additionalRequestParametersPrior1.Token != nil {
+								tokenPrior2 = additionalRequestParametersPrior1.Token
+								*tokenModel2 = *tokenPrior2 // keep fields the reader below does not map
+							}
+							if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
+								authorizationCodeVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+							} else {
+								tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
+								clientCredentialsVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
+							} else {
+								tokenModel2.ClientCredentials = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
+								refreshTokenVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
+							} else {
+								tokenModel2.RefreshToken = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
+								urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
+							} else {
+								tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
+							}
+							additionalRequestParametersModel1.Token = tokenModel2
+						}
+					}
+					oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
 				}
 			}
-			if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
-				tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
-				if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
-					authorizationCodeVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+			if oauthClientConfigurationPrior0.ClientCredentials != nil || len(importing) > 0 {
+				if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
+					clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+					// clientCredentialsModel1 is the new block, built from the API response. clientCredentialsPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					clientCredentialsPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+					clientCredentialsHasPrior1 := oauthClientConfigurationPrior0.ClientCredentials != nil
+					if oauthClientConfigurationPrior0.ClientCredentials != nil {
+						clientCredentialsPrior1 = oauthClientConfigurationPrior0.ClientCredentials
+						*clientCredentialsModel1 = *clientCredentialsPrior1 // keep fields the reader below does not map
 					}
-					tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-				} else {
-					tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
-					clientCredentialsVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.ClientId.IsNull()) {
+						if v := string(clientCredentialsRaw1.GetClientId()); v != "" || clientCredentialsHasPrior1 {
+							clientCredentialsModel1.ClientId = types.StringValue(v)
+						} else {
+							clientCredentialsModel1.ClientId = types.StringNull()
+						}
+					} else {
+						clientCredentialsModel1.ClientId = clientCredentialsPrior1.ClientId
 					}
-					tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
-				} else {
-					tokenModel2.ClientCredentials = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
-					refreshTokenVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.CredentialType.IsNull()) {
+						if v := string(clientCredentialsRaw1.GetCredentialType()); v != "" || clientCredentialsHasPrior1 {
+							clientCredentialsModel1.CredentialType = types.StringValue(v)
+						} else {
+							clientCredentialsModel1.CredentialType = types.StringNull()
+						}
+					} else {
+						clientCredentialsModel1.CredentialType = clientCredentialsPrior1.CredentialType
 					}
-					tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
-				} else {
-					tokenModel2.RefreshToken = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
-					urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-					}
-					tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
-				} else {
-					tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
-				}
-				if state.OauthClientConfiguration != nil && state.OauthClientConfiguration.AdditionalRequestParameters != nil && state.OauthClientConfiguration.AdditionalRequestParameters.Token != nil || !(tokenModel2.AuthorizationCode.IsNull() && tokenModel2.ClientCredentials.IsNull() && tokenModel2.RefreshToken.IsNull() && tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer.IsNull()) {
-					additionalRequestParametersModel1.Token = tokenModel2
+					oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
 				}
 			}
-			if state.OauthClientConfiguration != nil && state.OauthClientConfiguration.AdditionalRequestParameters != nil || !(additionalRequestParametersModel1.Authorize == nil && additionalRequestParametersModel1.Token == nil) {
-				oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
-			}
-		}
-		if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
-			clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
-			if state.OauthClientConfiguration == nil || state.OauthClientConfiguration.ClientCredentials == nil || !state.OauthClientConfiguration.ClientCredentials.ClientId.IsNull() {
-				clientCredentialsModel1.ClientId = types.StringValue(string(clientCredentialsRaw1.GetClientId()))
+			if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.GrantTypes.IsNull() {
+				oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
 			} else {
-				clientCredentialsModel1.ClientId = state.OauthClientConfiguration.ClientCredentials.ClientId
+				if len(oauthClientConfigurationRaw0.GetGrantTypes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+					oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
+					resp.Diagnostics.Append(listDiags...)
+					oauthClientConfigurationModel0.GrantTypes = listVal
+				}
 			}
-			if state.OauthClientConfiguration != nil && state.OauthClientConfiguration.ClientCredentials != nil {
-				clientCredentialsModel1.ClientSecret = state.OauthClientConfiguration.ClientCredentials.ClientSecret
-			}
-			if state.OauthClientConfiguration == nil || state.OauthClientConfiguration.ClientCredentials == nil || !state.OauthClientConfiguration.ClientCredentials.CredentialType.IsNull() {
-				clientCredentialsModel1.CredentialType = types.StringValue(string(clientCredentialsRaw1.GetCredentialType()))
+			if !(oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.RegistrationMethod.IsNull()) {
+				if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" || oauthClientConfigurationHasPrior0 {
+					oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
+				} else {
+					oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
+				}
 			} else {
-				clientCredentialsModel1.CredentialType = state.OauthClientConfiguration.ClientCredentials.CredentialType
+				oauthClientConfigurationModel0.RegistrationMethod = oauthClientConfigurationPrior0.RegistrationMethod
 			}
-			if state.OauthClientConfiguration != nil && state.OauthClientConfiguration.ClientCredentials != nil || !(clientCredentialsModel1.ClientId.IsNull() && clientCredentialsModel1.ClientSecret.IsNull() && clientCredentialsModel1.CredentialType.IsNull()) {
-				oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
+			if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.Scopes.IsNull() {
+				oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+			} else {
+				if len(oauthClientConfigurationRaw0.GetScopes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+					oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
+					resp.Diagnostics.Append(listDiags...)
+					oauthClientConfigurationModel0.Scopes = listVal
+				}
 			}
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientConfigurationModel0.GrantTypes = listVal
-		}
-		if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" {
-			oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
-		} else {
-			oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientConfigurationModel0.Scopes = listVal
-		}
-		if state.OauthClientConfiguration != nil || !(oauthClientConfigurationModel0.AdditionalRequestParameters == nil && oauthClientConfigurationModel0.ClientCredentials == nil && oauthClientConfigurationModel0.GrantTypes.IsNull() && oauthClientConfigurationModel0.RegistrationMethod.IsNull() && oauthClientConfigurationModel0.Scopes.IsNull()) {
 			state.OauthClientConfiguration = oauthClientConfigurationModel0
 		}
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -681,122 +779,208 @@ func (r *clientAuthSettingResource) Create(ctx context.Context, req resource.Cre
 	if readErr == nil {
 		plan.AuthorizationServerOrn = types.StringValue(string(readResult.GetAuthorizationServerOrn()))
 		plan.Name = types.StringValue(string(readResult.GetName()))
-		if authorizationServerConfigurationRaw0, ok := readResult.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
-			authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
-			if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" {
-				authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
-			} else {
-				authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
-			}
-			if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" {
-				authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
-			} else {
-				authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
-			}
-			if plan.AuthorizationServerConfiguration != nil || !(authorizationServerConfigurationModel0.AuthorizeEndpoint.IsNull() && authorizationServerConfigurationModel0.TokenEndpoint.IsNull()) {
+		if plan.AuthorizationServerConfiguration != nil {
+			if authorizationServerConfigurationRaw0, ok := readResult.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
+				authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+				// authorizationServerConfigurationModel0 is the new block, built from the API response. authorizationServerConfigurationPrior0 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				authorizationServerConfigurationPrior0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+				authorizationServerConfigurationHasPrior0 := plan.AuthorizationServerConfiguration != nil
+				if plan.AuthorizationServerConfiguration != nil {
+					authorizationServerConfigurationPrior0 = plan.AuthorizationServerConfiguration
+					*authorizationServerConfigurationModel0 = *authorizationServerConfigurationPrior0 // keep fields the reader below does not map
+				}
+				if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.AuthorizeEndpoint.IsNull()) {
+					if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+						authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
+					} else {
+						authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
+					}
+				} else {
+					authorizationServerConfigurationModel0.AuthorizeEndpoint = authorizationServerConfigurationPrior0.AuthorizeEndpoint
+				}
+				if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.TokenEndpoint.IsNull()) {
+					if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+						authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
+					} else {
+						authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
+					}
+				} else {
+					authorizationServerConfigurationModel0.TokenEndpoint = authorizationServerConfigurationPrior0.TokenEndpoint
+				}
 				plan.AuthorizationServerConfiguration = authorizationServerConfigurationModel0
 			}
 		}
-		if oauthClientConfigurationRaw0, ok := readResult.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
-			oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
-			if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
-				additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
-				if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
-					authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
-					if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
-						authorizationCodeVals := make(map[string]attr.Value, len(m))
-						for k, v := range m {
-							authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+		if plan.OauthClientConfiguration != nil {
+			if oauthClientConfigurationRaw0, ok := readResult.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
+				oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+				// oauthClientConfigurationModel0 is the new block, built from the API response. oauthClientConfigurationPrior0 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				oauthClientConfigurationPrior0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+				oauthClientConfigurationHasPrior0 := plan.OauthClientConfiguration != nil
+				if plan.OauthClientConfiguration != nil {
+					oauthClientConfigurationPrior0 = plan.OauthClientConfiguration
+					*oauthClientConfigurationModel0 = *oauthClientConfigurationPrior0 // keep fields the reader below does not map
+				}
+				if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil {
+					if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
+						additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+						// additionalRequestParametersModel1 is the new block, built from the API response. additionalRequestParametersPrior1 is the prior
+						// plan/state block, read-only: a non-null field there means the user manages it, so
+						// the API value is taken; otherwise the prior value is kept. When the block is absent
+						// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+						additionalRequestParametersPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+						if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil {
+							additionalRequestParametersPrior1 = oauthClientConfigurationPrior0.AdditionalRequestParameters
+							*additionalRequestParametersModel1 = *additionalRequestParametersPrior1 // keep fields the reader below does not map
 						}
-						authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-					} else {
-						authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
-					}
-					if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil && plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize != nil || !(authorizeModel2.AuthorizationCode.IsNull()) {
-						additionalRequestParametersModel1.Authorize = authorizeModel2
+						if additionalRequestParametersPrior1.Authorize != nil {
+							if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
+								authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+								// authorizeModel2 is the new block, built from the API response. authorizePrior2 is the prior
+								// plan/state block, read-only: a non-null field there means the user manages it, so
+								// the API value is taken; otherwise the prior value is kept. When the block is absent
+								// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+								authorizePrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+								if additionalRequestParametersPrior1.Authorize != nil {
+									authorizePrior2 = additionalRequestParametersPrior1.Authorize
+									*authorizeModel2 = *authorizePrior2 // keep fields the reader below does not map
+								}
+								if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
+									authorizationCodeVals := make(map[string]attr.Value, len(m))
+									for k, v := range m {
+										authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+									}
+									authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+								} else {
+									authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
+								}
+								additionalRequestParametersModel1.Authorize = authorizeModel2
+							}
+						}
+						if additionalRequestParametersPrior1.Token != nil {
+							if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
+								tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+								// tokenModel2 is the new block, built from the API response. tokenPrior2 is the prior
+								// plan/state block, read-only: a non-null field there means the user manages it, so
+								// the API value is taken; otherwise the prior value is kept. When the block is absent
+								// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+								tokenPrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+								if additionalRequestParametersPrior1.Token != nil {
+									tokenPrior2 = additionalRequestParametersPrior1.Token
+									*tokenModel2 = *tokenPrior2 // keep fields the reader below does not map
+								}
+								if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
+									authorizationCodeVals := make(map[string]attr.Value, len(m))
+									for k, v := range m {
+										authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+									}
+									tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+								} else {
+									tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
+								}
+								if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
+									clientCredentialsVals := make(map[string]attr.Value, len(m))
+									for k, v := range m {
+										clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+									}
+									tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
+								} else {
+									tokenModel2.ClientCredentials = types.MapNull(types.StringType)
+								}
+								if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
+									refreshTokenVals := make(map[string]attr.Value, len(m))
+									for k, v := range m {
+										refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+									}
+									tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
+								} else {
+									tokenModel2.RefreshToken = types.MapNull(types.StringType)
+								}
+								if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
+									urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
+									for k, v := range m {
+										urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+									}
+									tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
+								} else {
+									tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
+								}
+								additionalRequestParametersModel1.Token = tokenModel2
+							}
+						}
+						oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
 					}
 				}
-				if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
-					tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
-					if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
-						authorizationCodeVals := make(map[string]attr.Value, len(m))
-						for k, v := range m {
-							authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+				if oauthClientConfigurationPrior0.ClientCredentials != nil {
+					if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
+						clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+						// clientCredentialsModel1 is the new block, built from the API response. clientCredentialsPrior1 is the prior
+						// plan/state block, read-only: a non-null field there means the user manages it, so
+						// the API value is taken; otherwise the prior value is kept. When the block is absent
+						// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+						clientCredentialsPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+						clientCredentialsHasPrior1 := oauthClientConfigurationPrior0.ClientCredentials != nil
+						if oauthClientConfigurationPrior0.ClientCredentials != nil {
+							clientCredentialsPrior1 = oauthClientConfigurationPrior0.ClientCredentials
+							*clientCredentialsModel1 = *clientCredentialsPrior1 // keep fields the reader below does not map
 						}
-						tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-					} else {
-						tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
-					}
-					if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
-						clientCredentialsVals := make(map[string]attr.Value, len(m))
-						for k, v := range m {
-							clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+						if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.ClientId.IsNull()) {
+							if v := string(clientCredentialsRaw1.GetClientId()); v != "" || clientCredentialsHasPrior1 {
+								clientCredentialsModel1.ClientId = types.StringValue(v)
+							} else {
+								clientCredentialsModel1.ClientId = types.StringNull()
+							}
+						} else {
+							clientCredentialsModel1.ClientId = clientCredentialsPrior1.ClientId
 						}
-						tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
-					} else {
-						tokenModel2.ClientCredentials = types.MapNull(types.StringType)
-					}
-					if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
-						refreshTokenVals := make(map[string]attr.Value, len(m))
-						for k, v := range m {
-							refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+						if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.CredentialType.IsNull()) {
+							if v := string(clientCredentialsRaw1.GetCredentialType()); v != "" || clientCredentialsHasPrior1 {
+								clientCredentialsModel1.CredentialType = types.StringValue(v)
+							} else {
+								clientCredentialsModel1.CredentialType = types.StringNull()
+							}
+						} else {
+							clientCredentialsModel1.CredentialType = clientCredentialsPrior1.CredentialType
 						}
-						tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
-					} else {
-						tokenModel2.RefreshToken = types.MapNull(types.StringType)
-					}
-					if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
-						urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
-						for k, v := range m {
-							urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-						}
-						tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
-					} else {
-						tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
-					}
-					if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil && plan.OauthClientConfiguration.AdditionalRequestParameters.Token != nil || !(tokenModel2.AuthorizationCode.IsNull() && tokenModel2.ClientCredentials.IsNull() && tokenModel2.RefreshToken.IsNull() && tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer.IsNull()) {
-						additionalRequestParametersModel1.Token = tokenModel2
+						oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
 					}
 				}
-				if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil || !(additionalRequestParametersModel1.Authorize == nil && additionalRequestParametersModel1.Token == nil) {
-					oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
-				}
-			}
-			if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
-				clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
-				if plan.OauthClientConfiguration == nil || plan.OauthClientConfiguration.ClientCredentials == nil || !plan.OauthClientConfiguration.ClientCredentials.ClientId.IsNull() {
-					clientCredentialsModel1.ClientId = types.StringValue(string(clientCredentialsRaw1.GetClientId()))
+				if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.GrantTypes.IsNull() {
+					oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
 				} else {
-					clientCredentialsModel1.ClientId = plan.OauthClientConfiguration.ClientCredentials.ClientId
+					if len(oauthClientConfigurationRaw0.GetGrantTypes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+						oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
+					} else {
+						listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
+						resp.Diagnostics.Append(listDiags...)
+						oauthClientConfigurationModel0.GrantTypes = listVal
+					}
 				}
-				if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.ClientCredentials != nil {
-					clientCredentialsModel1.ClientSecret = plan.OauthClientConfiguration.ClientCredentials.ClientSecret
-				}
-				if plan.OauthClientConfiguration == nil || plan.OauthClientConfiguration.ClientCredentials == nil || !plan.OauthClientConfiguration.ClientCredentials.CredentialType.IsNull() {
-					clientCredentialsModel1.CredentialType = types.StringValue(string(clientCredentialsRaw1.GetCredentialType()))
+				if !(oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.RegistrationMethod.IsNull()) {
+					if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" || oauthClientConfigurationHasPrior0 {
+						oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
+					} else {
+						oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
+					}
 				} else {
-					clientCredentialsModel1.CredentialType = plan.OauthClientConfiguration.ClientCredentials.CredentialType
+					oauthClientConfigurationModel0.RegistrationMethod = oauthClientConfigurationPrior0.RegistrationMethod
 				}
-				if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.ClientCredentials != nil || !(clientCredentialsModel1.ClientId.IsNull() && clientCredentialsModel1.ClientSecret.IsNull() && clientCredentialsModel1.CredentialType.IsNull()) {
-					oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
+				if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.Scopes.IsNull() {
+					oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+				} else {
+					if len(oauthClientConfigurationRaw0.GetScopes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+						oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+					} else {
+						listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
+						resp.Diagnostics.Append(listDiags...)
+						oauthClientConfigurationModel0.Scopes = listVal
+					}
 				}
-			}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
-				resp.Diagnostics.Append(listDiags...)
-				oauthClientConfigurationModel0.GrantTypes = listVal
-			}
-			if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" {
-				oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
-			} else {
-				oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
-			}
-			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
-				resp.Diagnostics.Append(listDiags...)
-				oauthClientConfigurationModel0.Scopes = listVal
-			}
-			if plan.OauthClientConfiguration != nil || !(oauthClientConfigurationModel0.AdditionalRequestParameters == nil && oauthClientConfigurationModel0.ClientCredentials == nil && oauthClientConfigurationModel0.GrantTypes.IsNull() && oauthClientConfigurationModel0.RegistrationMethod.IsNull() && oauthClientConfigurationModel0.Scopes.IsNull()) {
 				plan.OauthClientConfiguration = oauthClientConfigurationModel0
 			}
 		}
@@ -851,7 +1035,7 @@ func (r *clientAuthSettingResource) Update(ctx context.Context, req resource.Upd
 		if plan.OauthClientConfiguration.AdditionalRequestParameters != nil {
 			nestedAdditionalRequestParameters := okta4aa.NewClientAuthSettingsPatchableV2OauthClientConfigurationAdditionalRequestParametersWithDefaults()
 			if plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize != nil {
-				nestedAuthorize := okta4aa.NewClientAuthSettingsAdditionalRequestParametersV2AuthorizeWithDefaults()
+				nestedAuthorize := okta4aa.NewClientAuthSettingsPatchableV2OauthClientConfigurationAdditionalRequestParametersAuthorizeWithDefaults()
 				if !plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize.AuthorizationCode.IsNull() && !plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize.AuthorizationCode.IsUnknown() {
 					authorizationCodeMap := make(map[string]string)
 					for k, v := range plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize.AuthorizationCode.Elements() {
@@ -864,7 +1048,7 @@ func (r *clientAuthSettingResource) Update(ctx context.Context, req resource.Upd
 				nestedAdditionalRequestParameters.SetAuthorize(*nestedAuthorize)
 			}
 			if plan.OauthClientConfiguration.AdditionalRequestParameters.Token != nil {
-				nestedToken := okta4aa.NewClientAuthSettingsAdditionalRequestParametersV2TokenWithDefaults()
+				nestedToken := okta4aa.NewClientAuthSettingsPatchableV2OauthClientConfigurationAdditionalRequestParametersTokenWithDefaults()
 				if !plan.OauthClientConfiguration.AdditionalRequestParameters.Token.AuthorizationCode.IsNull() && !plan.OauthClientConfiguration.AdditionalRequestParameters.Token.AuthorizationCode.IsUnknown() {
 					authorizationCodeMap := make(map[string]string)
 					for k, v := range plan.OauthClientConfiguration.AdditionalRequestParameters.Token.AuthorizationCode.Elements() {
@@ -924,6 +1108,13 @@ func (r *clientAuthSettingResource) Update(ctx context.Context, req resource.Upd
 		resp.Diagnostics.AddError("Error updating client_auth_setting", err.Error())
 		return
 	}
+	if plan.AuthorizationServerConfiguration == nil {
+		state.AuthorizationServerConfiguration = nil
+	}
+	if plan.OauthClientConfiguration == nil {
+		state.OauthClientConfiguration = nil
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -941,122 +1132,210 @@ func (r *clientAuthSettingResource) Update(ctx context.Context, req resource.Upd
 	if resourceOrnVal, ok := result.GetResourceOrnOk(); ok && resourceOrnVal != nil {
 		state.ResourceOrn = types.StringValue(string(*resourceOrnVal))
 	}
-	if authorizationServerConfigurationRaw0, ok := result.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
-		authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
-		if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" {
-			authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
-		} else {
-			authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
-		}
-		if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" {
-			authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
-		} else {
-			authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
-		}
-		if plan.AuthorizationServerConfiguration != nil || !(authorizationServerConfigurationModel0.AuthorizeEndpoint.IsNull() && authorizationServerConfigurationModel0.TokenEndpoint.IsNull()) {
+	state.AuthorizationServerConfiguration = plan.AuthorizationServerConfiguration
+	if plan.AuthorizationServerConfiguration != nil {
+		if authorizationServerConfigurationRaw0, ok := result.GetAuthorizationServerConfigurationOk(); ok && authorizationServerConfigurationRaw0 != nil {
+			authorizationServerConfigurationModel0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+			// authorizationServerConfigurationModel0 is the new block, built from the API response. authorizationServerConfigurationPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			authorizationServerConfigurationPrior0 := &ClientAuthSettingModelAuthorizationServerConfigurationModel{}
+			authorizationServerConfigurationHasPrior0 := plan.AuthorizationServerConfiguration != nil
+			if plan.AuthorizationServerConfiguration != nil {
+				authorizationServerConfigurationPrior0 = plan.AuthorizationServerConfiguration
+				*authorizationServerConfigurationModel0 = *authorizationServerConfigurationPrior0 // keep fields the reader below does not map
+			}
+			if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.AuthorizeEndpoint.IsNull()) {
+				if v := string(authorizationServerConfigurationRaw0.GetAuthorizeEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+					authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringValue(v)
+				} else {
+					authorizationServerConfigurationModel0.AuthorizeEndpoint = types.StringNull()
+				}
+			} else {
+				authorizationServerConfigurationModel0.AuthorizeEndpoint = authorizationServerConfigurationPrior0.AuthorizeEndpoint
+			}
+			if !(authorizationServerConfigurationHasPrior0 && authorizationServerConfigurationPrior0.TokenEndpoint.IsNull()) {
+				if v := string(authorizationServerConfigurationRaw0.GetTokenEndpoint()); v != "" || authorizationServerConfigurationHasPrior0 {
+					authorizationServerConfigurationModel0.TokenEndpoint = types.StringValue(v)
+				} else {
+					authorizationServerConfigurationModel0.TokenEndpoint = types.StringNull()
+				}
+			} else {
+				authorizationServerConfigurationModel0.TokenEndpoint = authorizationServerConfigurationPrior0.TokenEndpoint
+			}
 			state.AuthorizationServerConfiguration = authorizationServerConfigurationModel0
 		}
 	}
-	if oauthClientConfigurationRaw0, ok := result.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
-		oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
-		if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
-			additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
-			if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
-				authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
-				if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
-					authorizationCodeVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+	state.OauthClientConfiguration = plan.OauthClientConfiguration
+	if plan.OauthClientConfiguration != nil {
+		if oauthClientConfigurationRaw0, ok := result.GetOauthClientConfigurationOk(); ok && oauthClientConfigurationRaw0 != nil {
+			oauthClientConfigurationModel0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+			// oauthClientConfigurationModel0 is the new block, built from the API response. oauthClientConfigurationPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			oauthClientConfigurationPrior0 := &ClientAuthSettingModelOauthClientConfigurationModel{}
+			oauthClientConfigurationHasPrior0 := plan.OauthClientConfiguration != nil
+			if plan.OauthClientConfiguration != nil {
+				oauthClientConfigurationPrior0 = plan.OauthClientConfiguration
+				*oauthClientConfigurationModel0 = *oauthClientConfigurationPrior0 // keep fields the reader below does not map
+			}
+			if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil {
+				if additionalRequestParametersRaw1, ok := oauthClientConfigurationRaw0.GetAdditionalRequestParametersOk(); ok && additionalRequestParametersRaw1 != nil {
+					additionalRequestParametersModel1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+					// additionalRequestParametersModel1 is the new block, built from the API response. additionalRequestParametersPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					additionalRequestParametersPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModel{}
+					if oauthClientConfigurationPrior0.AdditionalRequestParameters != nil {
+						additionalRequestParametersPrior1 = oauthClientConfigurationPrior0.AdditionalRequestParameters
+						*additionalRequestParametersModel1 = *additionalRequestParametersPrior1 // keep fields the reader below does not map
 					}
-					authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-				} else {
-					authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
-				}
-				if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil && plan.OauthClientConfiguration.AdditionalRequestParameters.Authorize != nil || !(authorizeModel2.AuthorizationCode.IsNull()) {
-					additionalRequestParametersModel1.Authorize = authorizeModel2
+					if additionalRequestParametersPrior1.Authorize != nil {
+						if authorizeRaw2, ok := additionalRequestParametersRaw1.GetAuthorizeOk(); ok && authorizeRaw2 != nil {
+							authorizeModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+							// authorizeModel2 is the new block, built from the API response. authorizePrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							authorizePrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelAuthorizeModel{}
+							if additionalRequestParametersPrior1.Authorize != nil {
+								authorizePrior2 = additionalRequestParametersPrior1.Authorize
+								*authorizeModel2 = *authorizePrior2 // keep fields the reader below does not map
+							}
+							if m := authorizeRaw2.GetAuthorizationCode(); len(m) > 0 {
+								authorizationCodeVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								authorizeModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+							} else {
+								authorizeModel2.AuthorizationCode = types.MapNull(types.StringType)
+							}
+							additionalRequestParametersModel1.Authorize = authorizeModel2
+						}
+					}
+					if additionalRequestParametersPrior1.Token != nil {
+						if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
+							tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+							// tokenModel2 is the new block, built from the API response. tokenPrior2 is the prior
+							// plan/state block, read-only: a non-null field there means the user manages it, so
+							// the API value is taken; otherwise the prior value is kept. When the block is absent
+							// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+							tokenPrior2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
+							if additionalRequestParametersPrior1.Token != nil {
+								tokenPrior2 = additionalRequestParametersPrior1.Token
+								*tokenModel2 = *tokenPrior2 // keep fields the reader below does not map
+							}
+							if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
+								authorizationCodeVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
+							} else {
+								tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
+								clientCredentialsVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
+							} else {
+								tokenModel2.ClientCredentials = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
+								refreshTokenVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
+							} else {
+								tokenModel2.RefreshToken = types.MapNull(types.StringType)
+							}
+							if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
+								urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
+								for k, v := range m {
+									urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+								}
+								tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
+							} else {
+								tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
+							}
+							additionalRequestParametersModel1.Token = tokenModel2
+						}
+					}
+					oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
 				}
 			}
-			if tokenRaw2, ok := additionalRequestParametersRaw1.GetTokenOk(); ok && tokenRaw2 != nil {
-				tokenModel2 := &ClientAuthSettingModelOauthClientConfigurationModelAdditionalRequestParametersModelTokenModel{}
-				if m := tokenRaw2.GetAuthorizationCode(); len(m) > 0 {
-					authorizationCodeVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						authorizationCodeVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+			if oauthClientConfigurationPrior0.ClientCredentials != nil {
+				if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
+					clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+					// clientCredentialsModel1 is the new block, built from the API response. clientCredentialsPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					clientCredentialsPrior1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
+					clientCredentialsHasPrior1 := oauthClientConfigurationPrior0.ClientCredentials != nil
+					if oauthClientConfigurationPrior0.ClientCredentials != nil {
+						clientCredentialsPrior1 = oauthClientConfigurationPrior0.ClientCredentials
+						*clientCredentialsModel1 = *clientCredentialsPrior1 // keep fields the reader below does not map
 					}
-					tokenModel2.AuthorizationCode, _ = types.MapValue(types.StringType, authorizationCodeVals)
-				} else {
-					tokenModel2.AuthorizationCode = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetClientCredentials(); len(m) > 0 {
-					clientCredentialsVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						clientCredentialsVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.ClientId.IsNull()) {
+						if v := string(clientCredentialsRaw1.GetClientId()); v != "" || clientCredentialsHasPrior1 {
+							clientCredentialsModel1.ClientId = types.StringValue(v)
+						} else {
+							clientCredentialsModel1.ClientId = types.StringNull()
+						}
+					} else {
+						clientCredentialsModel1.ClientId = clientCredentialsPrior1.ClientId
 					}
-					tokenModel2.ClientCredentials, _ = types.MapValue(types.StringType, clientCredentialsVals)
-				} else {
-					tokenModel2.ClientCredentials = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetRefreshToken(); len(m) > 0 {
-					refreshTokenVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						refreshTokenVals[k] = types.StringValue(fmt.Sprintf("%v", v))
+					if !(clientCredentialsHasPrior1 && clientCredentialsPrior1.CredentialType.IsNull()) {
+						if v := string(clientCredentialsRaw1.GetCredentialType()); v != "" || clientCredentialsHasPrior1 {
+							clientCredentialsModel1.CredentialType = types.StringValue(v)
+						} else {
+							clientCredentialsModel1.CredentialType = types.StringNull()
+						}
+					} else {
+						clientCredentialsModel1.CredentialType = clientCredentialsPrior1.CredentialType
 					}
-					tokenModel2.RefreshToken, _ = types.MapValue(types.StringType, refreshTokenVals)
-				} else {
-					tokenModel2.RefreshToken = types.MapNull(types.StringType)
-				}
-				if m := tokenRaw2.GetUrnIetfParamsOauthGrantTypeJwtBearer(); len(m) > 0 {
-					urnIetfParamsOauthGrantTypeJwtBearerVals := make(map[string]attr.Value, len(m))
-					for k, v := range m {
-						urnIetfParamsOauthGrantTypeJwtBearerVals[k] = types.StringValue(fmt.Sprintf("%v", v))
-					}
-					tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer, _ = types.MapValue(types.StringType, urnIetfParamsOauthGrantTypeJwtBearerVals)
-				} else {
-					tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer = types.MapNull(types.StringType)
-				}
-				if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil && plan.OauthClientConfiguration.AdditionalRequestParameters.Token != nil || !(tokenModel2.AuthorizationCode.IsNull() && tokenModel2.ClientCredentials.IsNull() && tokenModel2.RefreshToken.IsNull() && tokenModel2.UrnIetfParamsOauthGrantTypeJwtBearer.IsNull()) {
-					additionalRequestParametersModel1.Token = tokenModel2
+					oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
 				}
 			}
-			if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.AdditionalRequestParameters != nil || !(additionalRequestParametersModel1.Authorize == nil && additionalRequestParametersModel1.Token == nil) {
-				oauthClientConfigurationModel0.AdditionalRequestParameters = additionalRequestParametersModel1
-			}
-		}
-		if clientCredentialsRaw1, ok := oauthClientConfigurationRaw0.GetClientCredentialsOk(); ok && clientCredentialsRaw1 != nil {
-			clientCredentialsModel1 := &ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel{}
-			if plan.OauthClientConfiguration == nil || plan.OauthClientConfiguration.ClientCredentials == nil || !plan.OauthClientConfiguration.ClientCredentials.ClientId.IsNull() {
-				clientCredentialsModel1.ClientId = types.StringValue(string(clientCredentialsRaw1.GetClientId()))
+			if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.GrantTypes.IsNull() {
+				oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
 			} else {
-				clientCredentialsModel1.ClientId = plan.OauthClientConfiguration.ClientCredentials.ClientId
+				if len(oauthClientConfigurationRaw0.GetGrantTypes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+					oauthClientConfigurationModel0.GrantTypes = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
+					resp.Diagnostics.Append(listDiags...)
+					oauthClientConfigurationModel0.GrantTypes = listVal
+				}
 			}
-			if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.ClientCredentials != nil {
-				clientCredentialsModel1.ClientSecret = plan.OauthClientConfiguration.ClientCredentials.ClientSecret
-			}
-			if plan.OauthClientConfiguration == nil || plan.OauthClientConfiguration.ClientCredentials == nil || !plan.OauthClientConfiguration.ClientCredentials.CredentialType.IsNull() {
-				clientCredentialsModel1.CredentialType = types.StringValue(string(clientCredentialsRaw1.GetCredentialType()))
+			if !(oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.RegistrationMethod.IsNull()) {
+				if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" || oauthClientConfigurationHasPrior0 {
+					oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
+				} else {
+					oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
+				}
 			} else {
-				clientCredentialsModel1.CredentialType = plan.OauthClientConfiguration.ClientCredentials.CredentialType
+				oauthClientConfigurationModel0.RegistrationMethod = oauthClientConfigurationPrior0.RegistrationMethod
 			}
-			if plan.OauthClientConfiguration != nil && plan.OauthClientConfiguration.ClientCredentials != nil || !(clientCredentialsModel1.ClientId.IsNull() && clientCredentialsModel1.ClientSecret.IsNull() && clientCredentialsModel1.CredentialType.IsNull()) {
-				oauthClientConfigurationModel0.ClientCredentials = clientCredentialsModel1
+			if oauthClientConfigurationHasPrior0 && oauthClientConfigurationPrior0.Scopes.IsNull() {
+				oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+			} else {
+				if len(oauthClientConfigurationRaw0.GetScopes()) == 0 && (!oauthClientConfigurationHasPrior0) {
+					oauthClientConfigurationModel0.Scopes = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
+					resp.Diagnostics.Append(listDiags...)
+					oauthClientConfigurationModel0.Scopes = listVal
+				}
 			}
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetGrantTypes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientConfigurationModel0.GrantTypes = listVal
-		}
-		if v := string(oauthClientConfigurationRaw0.GetRegistrationMethod()); v != "" {
-			oauthClientConfigurationModel0.RegistrationMethod = types.StringValue(v)
-		} else {
-			oauthClientConfigurationModel0.RegistrationMethod = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, oauthClientConfigurationRaw0.GetScopes())
-			resp.Diagnostics.Append(listDiags...)
-			oauthClientConfigurationModel0.Scopes = listVal
-		}
-		if plan.OauthClientConfiguration != nil || !(oauthClientConfigurationModel0.AdditionalRequestParameters == nil && oauthClientConfigurationModel0.ClientCredentials == nil && oauthClientConfigurationModel0.GrantTypes.IsNull() && oauthClientConfigurationModel0.RegistrationMethod.IsNull() && oauthClientConfigurationModel0.Scopes.IsNull()) {
 			state.OauthClientConfiguration = oauthClientConfigurationModel0
 		}
 	}

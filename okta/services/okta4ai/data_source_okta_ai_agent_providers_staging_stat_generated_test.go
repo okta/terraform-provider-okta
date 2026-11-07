@@ -9,9 +9,9 @@ import (
 )
 
 func TestAccDataSourceAiAgentProvidersStagingStat_read(t *testing.T) {
-	mgr := newFixtureManager("data-sources", resources.OktaIDaaSAIAgentProvidersStagingStat, t.Name())
+	mgr := newFixtureManager("data-sources", resources.OktaAIAgentProvidersStagingStat, t.Name())
 	config := mgr.GetFixtures("datasource.tf", t)
-	dataSourceName := "data." + resources.OktaIDaaSAIAgentProvidersStagingStat + ".test"
+	dataSourceName := "data." + resources.OktaAIAgentProvidersStagingStat + ".test"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),

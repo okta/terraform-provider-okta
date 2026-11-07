@@ -151,6 +151,9 @@ func (r *apiServerResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 }
 func (r *apiServerResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -159,6 +162,12 @@ func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -175,40 +184,81 @@ func (r *apiServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.Orn = types.StringValue(string(result.GetOrn()))
 	state.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &ApiServerModelMetadataModel{}
-		if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
-			appModel1 := &ApiServerModelMetadataModelAppModel{}
-			if state.Metadata == nil || state.Metadata.App == nil || !state.Metadata.App.Orn.IsNull() {
-				appModel1.Orn = types.StringValue(string(appRaw1.GetOrn()))
+	if state.Metadata != nil || len(importing) > 0 {
+		if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
+			metadataModel0 := &ApiServerModelMetadataModel{}
+			// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			metadataPrior0 := &ApiServerModelMetadataModel{}
+			metadataHasPrior0 := state.Metadata != nil
+			if state.Metadata != nil {
+				metadataPrior0 = state.Metadata
+				*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+			}
+			if metadataPrior0.App != nil || len(importing) > 0 {
+				if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
+					appModel1 := &ApiServerModelMetadataModelAppModel{}
+					// appModel1 is the new block, built from the API response. appPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					appPrior1 := &ApiServerModelMetadataModelAppModel{}
+					appHasPrior1 := metadataPrior0.App != nil
+					if metadataPrior0.App != nil {
+						appPrior1 = metadataPrior0.App
+						*appModel1 = *appPrior1 // keep fields the reader below does not map
+					}
+					if !(appHasPrior1 && appPrior1.Orn.IsNull()) {
+						if v := string(appRaw1.GetOrn()); v != "" || appHasPrior1 {
+							appModel1.Orn = types.StringValue(v)
+						} else {
+							appModel1.Orn = types.StringNull()
+						}
+					} else {
+						appModel1.Orn = appPrior1.Orn
+					}
+					metadataModel0.App = appModel1
+				}
+			}
+			if !(metadataHasPrior0 && metadataPrior0.Description.IsNull()) {
+				if v := string(metadataRaw0.GetDescription()); v != "" || metadataHasPrior0 {
+					metadataModel0.Description = types.StringValue(v)
+				} else {
+					metadataModel0.Description = types.StringNull()
+				}
 			} else {
-				appModel1.Orn = state.Metadata.App.Orn
+				metadataModel0.Description = metadataPrior0.Description
 			}
-			if state.Metadata != nil && state.Metadata.App != nil || !(appModel1.Orn.IsNull()) {
-				metadataModel0.App = appModel1
+			if !(metadataHasPrior0 && metadataPrior0.DisplayName.IsNull()) {
+				if v := string(metadataRaw0.GetDisplayName()); v != "" || metadataHasPrior0 {
+					metadataModel0.DisplayName = types.StringValue(v)
+				} else {
+					metadataModel0.DisplayName = types.StringNull()
+				}
+			} else {
+				metadataModel0.DisplayName = metadataPrior0.DisplayName
 			}
-		}
-		if v := string(metadataRaw0.GetDescription()); v != "" {
-			metadataModel0.Description = types.StringValue(v)
-		} else {
-			metadataModel0.Description = types.StringNull()
-		}
-		if v := string(metadataRaw0.GetDisplayName()); v != "" {
-			metadataModel0.DisplayName = types.StringValue(v)
-		} else {
-			metadataModel0.DisplayName = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.ScopesSupported = listVal
-		}
-		if state.Metadata != nil || !(metadataModel0.App == nil && metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+			if metadataHasPrior0 && metadataPrior0.ScopesSupported.IsNull() {
+				metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+			} else {
+				if len(metadataRaw0.GetScopesSupported()) == 0 && (!metadataHasPrior0) {
+					metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
+			}
 			state.Metadata = metadataModel0
 		}
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -270,39 +320,96 @@ func (r *apiServerResource) Create(ctx context.Context, req resource.CreateReque
 	plan.ResourceUrl = types.StringValue(string(result.GetResourceUrl()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &ApiServerModelMetadataModel{}
-		if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
-			appModel1 := &ApiServerModelMetadataModelAppModel{}
-			if plan.Metadata == nil || plan.Metadata.App == nil || !plan.Metadata.App.Orn.IsNull() {
-				appModel1.Orn = types.StringValue(string(appRaw1.GetOrn()))
+	if plan.Metadata != nil {
+		if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
+			metadataModel0 := &ApiServerModelMetadataModel{}
+			// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			metadataPrior0 := &ApiServerModelMetadataModel{}
+			metadataHasPrior0 := plan.Metadata != nil
+			if plan.Metadata != nil {
+				metadataPrior0 = plan.Metadata
+				*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+			}
+			if metadataPrior0.App != nil {
+				if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
+					appModel1 := &ApiServerModelMetadataModelAppModel{}
+					// appModel1 is the new block, built from the API response. appPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					appPrior1 := &ApiServerModelMetadataModelAppModel{}
+					appHasPrior1 := metadataPrior0.App != nil
+					if metadataPrior0.App != nil {
+						appPrior1 = metadataPrior0.App
+						*appModel1 = *appPrior1 // keep fields the reader below does not map
+					}
+					if !(appHasPrior1 && appPrior1.Orn.IsNull()) {
+						if v := string(appRaw1.GetOrn()); v != "" || appHasPrior1 {
+							appModel1.Orn = types.StringValue(v)
+						} else {
+							appModel1.Orn = types.StringNull()
+						}
+					} else {
+						appModel1.Orn = appPrior1.Orn
+					}
+					metadataModel0.App = appModel1
+				}
+			}
+			if !(metadataHasPrior0 && metadataPrior0.Description.IsNull()) {
+				if v := string(metadataRaw0.GetDescription()); v != "" || metadataHasPrior0 {
+					metadataModel0.Description = types.StringValue(v)
+				} else {
+					metadataModel0.Description = types.StringNull()
+				}
 			} else {
-				appModel1.Orn = plan.Metadata.App.Orn
+				metadataModel0.Description = metadataPrior0.Description
 			}
-			if plan.Metadata != nil && plan.Metadata.App != nil || !(appModel1.Orn.IsNull()) {
-				metadataModel0.App = appModel1
+			if !(metadataHasPrior0 && metadataPrior0.DisplayName.IsNull()) {
+				if v := string(metadataRaw0.GetDisplayName()); v != "" || metadataHasPrior0 {
+					metadataModel0.DisplayName = types.StringValue(v)
+				} else {
+					metadataModel0.DisplayName = types.StringNull()
+				}
+			} else {
+				metadataModel0.DisplayName = metadataPrior0.DisplayName
 			}
-		}
-		if v := string(metadataRaw0.GetDescription()); v != "" {
-			metadataModel0.Description = types.StringValue(v)
-		} else {
-			metadataModel0.Description = types.StringNull()
-		}
-		if v := string(metadataRaw0.GetDisplayName()); v != "" {
-			metadataModel0.DisplayName = types.StringValue(v)
-		} else {
-			metadataModel0.DisplayName = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.ScopesSupported = listVal
-		}
-		if plan.Metadata != nil || !(metadataModel0.App == nil && metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+			if metadataHasPrior0 && metadataPrior0.ScopesSupported.IsNull() {
+				metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+			} else {
+				if len(metadataRaw0.GetScopesSupported()) == 0 && (!metadataHasPrior0) {
+					metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
+			}
 			plan.Metadata = metadataModel0
 		}
 	}
 
+	{
+		// Created in an inactive state; activate before handing the resource to Terraform.
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, _, activateErr := client.ApiServerRegistrationV2API.ActivateApiServerV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating api_server after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.ApiServerRegistrationV2API.GetApiServerV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading api_server after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
+	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 func (r *apiServerResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -367,35 +474,74 @@ func (r *apiServerResource) Update(ctx context.Context, req resource.UpdateReque
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
-		metadataModel0 := &ApiServerModelMetadataModel{}
-		if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
-			appModel1 := &ApiServerModelMetadataModelAppModel{}
-			if plan.Metadata == nil || plan.Metadata.App == nil || !plan.Metadata.App.Orn.IsNull() {
-				appModel1.Orn = types.StringValue(string(appRaw1.GetOrn()))
+	state.Metadata = plan.Metadata
+	if plan.Metadata != nil {
+		if metadataRaw0, ok := result.GetMetadataOk(); ok && metadataRaw0 != nil {
+			metadataModel0 := &ApiServerModelMetadataModel{}
+			// metadataModel0 is the new block, built from the API response. metadataPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			metadataPrior0 := &ApiServerModelMetadataModel{}
+			metadataHasPrior0 := plan.Metadata != nil
+			if plan.Metadata != nil {
+				metadataPrior0 = plan.Metadata
+				*metadataModel0 = *metadataPrior0 // keep fields the reader below does not map
+			}
+			if metadataPrior0.App != nil {
+				if appRaw1, ok := metadataRaw0.GetAppOk(); ok && appRaw1 != nil {
+					appModel1 := &ApiServerModelMetadataModelAppModel{}
+					// appModel1 is the new block, built from the API response. appPrior1 is the prior
+					// plan/state block, read-only: a non-null field there means the user manages it, so
+					// the API value is taken; otherwise the prior value is kept. When the block is absent
+					// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+					appPrior1 := &ApiServerModelMetadataModelAppModel{}
+					appHasPrior1 := metadataPrior0.App != nil
+					if metadataPrior0.App != nil {
+						appPrior1 = metadataPrior0.App
+						*appModel1 = *appPrior1 // keep fields the reader below does not map
+					}
+					if !(appHasPrior1 && appPrior1.Orn.IsNull()) {
+						if v := string(appRaw1.GetOrn()); v != "" || appHasPrior1 {
+							appModel1.Orn = types.StringValue(v)
+						} else {
+							appModel1.Orn = types.StringNull()
+						}
+					} else {
+						appModel1.Orn = appPrior1.Orn
+					}
+					metadataModel0.App = appModel1
+				}
+			}
+			if !(metadataHasPrior0 && metadataPrior0.Description.IsNull()) {
+				if v := string(metadataRaw0.GetDescription()); v != "" || metadataHasPrior0 {
+					metadataModel0.Description = types.StringValue(v)
+				} else {
+					metadataModel0.Description = types.StringNull()
+				}
 			} else {
-				appModel1.Orn = plan.Metadata.App.Orn
+				metadataModel0.Description = metadataPrior0.Description
 			}
-			if plan.Metadata != nil && plan.Metadata.App != nil || !(appModel1.Orn.IsNull()) {
-				metadataModel0.App = appModel1
+			if !(metadataHasPrior0 && metadataPrior0.DisplayName.IsNull()) {
+				if v := string(metadataRaw0.GetDisplayName()); v != "" || metadataHasPrior0 {
+					metadataModel0.DisplayName = types.StringValue(v)
+				} else {
+					metadataModel0.DisplayName = types.StringNull()
+				}
+			} else {
+				metadataModel0.DisplayName = metadataPrior0.DisplayName
 			}
-		}
-		if v := string(metadataRaw0.GetDescription()); v != "" {
-			metadataModel0.Description = types.StringValue(v)
-		} else {
-			metadataModel0.Description = types.StringNull()
-		}
-		if v := string(metadataRaw0.GetDisplayName()); v != "" {
-			metadataModel0.DisplayName = types.StringValue(v)
-		} else {
-			metadataModel0.DisplayName = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-			resp.Diagnostics.Append(listDiags...)
-			metadataModel0.ScopesSupported = listVal
-		}
-		if plan.Metadata != nil || !(metadataModel0.App == nil && metadataModel0.Description.IsNull() && metadataModel0.DisplayName.IsNull() && metadataModel0.ScopesSupported.IsNull()) {
+			if metadataHasPrior0 && metadataPrior0.ScopesSupported.IsNull() {
+				metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+			} else {
+				if len(metadataRaw0.GetScopesSupported()) == 0 && (!metadataHasPrior0) {
+					metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
+			}
 			state.Metadata = metadataModel0
 		}
 	}
@@ -414,6 +560,11 @@ func (r *apiServerResource) Delete(ctx context.Context, req resource.DeleteReque
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
+	_, deactivateHTTPResp, deactivateErr := client.ApiServerRegistrationV2API.DeactivateApiServerV2(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating api_server before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.ApiServerRegistrationV2API.DeleteApiServerV2(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
