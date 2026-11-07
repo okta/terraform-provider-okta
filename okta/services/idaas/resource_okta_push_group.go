@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -32,6 +33,10 @@ type pushGroupResourceModel struct {
 	Status                     types.String `tfsdk:"status"`
 	DeleteTargetGroupOnDestroy types.Bool   `tfsdk:"delete_target_group_on_destroy"`
 	AppConfig                  types.Object `tfsdk:"app_config"`
+	ErrorSummary               types.String `tfsdk:"error_summary"`
+	LastPush                   types.String `tfsdk:"last_push"`
+	Created                    types.String `tfsdk:"created"`
+	LastUpdated                types.String `tfsdk:"last_updated"`
 }
 
 var appConfigAttrTypes = map[string]attr.Type{
@@ -125,6 +130,10 @@ func (r *pushGroupResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 					objectplanmodifier.RequiresReplace(),
 				},
 			},
+			"error_summary": schema.StringAttribute{Computed: true, Description: "The error message summary if the latest group push failed."},
+			"last_push":     schema.StringAttribute{Computed: true, Description: "The timestamp when the group push mapping was last pushed, in RFC 3339 format."},
+			"created":       schema.StringAttribute{Computed: true, Description: "The timestamp when the group push mapping was created, in RFC 3339 format."},
+			"last_updated":  schema.StringAttribute{Computed: true, Description: "The timestamp when the group push mapping was last updated, in RFC 3339 format."},
 		},
 		Description: "Creates a Push Group assignment for an Application in Okta.",
 	}
@@ -347,6 +356,10 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 	state.TargetGroupId = types.StringPointerValue(groupPushMapping.TargetGroupId)
 	state.Status = types.StringPointerValue(groupPushMapping.Status)
 	state.AppConfig = types.ObjectNull(appConfigAttrTypes)
+	state.ErrorSummary = types.StringPointerValue(groupPushMapping.ErrorSummary)
+	state.LastPush = groupPushMappingTimeValue(groupPushMapping.GetLastPushOk())
+	state.Created = groupPushMappingTimeValue(groupPushMapping.GetCreatedOk())
+	state.LastUpdated = groupPushMappingTimeValue(groupPushMapping.GetLastUpdatedOk())
 
 	// Preserve app_config in state only when the API returns at least one concrete value.
 	// Some mappings return an empty app_config envelope, which must stay null in state.
@@ -392,4 +405,11 @@ func mapPushGroupResourceToState(groupPushMapping *v6okta.GroupPushMapping, stat
 	}
 
 	return diags
+}
+
+func groupPushMappingTimeValue(value *time.Time, ok bool) types.String {
+	if !ok || value == nil {
+		return types.StringNull()
+	}
+	return types.StringValue(value.Format(time.RFC3339))
 }
