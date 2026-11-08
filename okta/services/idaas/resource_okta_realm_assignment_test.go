@@ -49,6 +49,33 @@ func TestAccResourceOktaRealmAssignment_crud(t *testing.T) {
 	})
 }
 
+func TestAccResourceOktaRealmAssignment_optional_profile_source(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test_optional", resources.OktaIDaaSRealmAssignment)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSRealmAssignment, t.Name())
+
+	config := mgr.GetFixtures("okta_realm_assignment_optional_profile_source.tf", t)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSRealmAssignment, doesRealmAssignmentExist),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "realm_id"),
+					resource.TestCheckResourceAttr(resourceName, "name", "TestAcc Example Realm Assignment Optional"),
+					resource.TestCheckResourceAttr(resourceName, "priority", "50"),
+					resource.TestCheckResourceAttr(resourceName, "status", "ACTIVE"),
+					resource.TestCheckResourceAttr(resourceName, "condition_expression", "user.profile.login.contains(\"@optional.com\")"),
+				),
+			},
+		},
+	})
+}
+
 func doesRealmAssignmentExist(id string) (bool, error) {
 	client := iDaaSAPIClientForTestUtil.OktaSDKClientV5()
 	_, response, err := client.RealmAssignmentAPI.GetRealmAssignment(context.Background(), id).Execute()
