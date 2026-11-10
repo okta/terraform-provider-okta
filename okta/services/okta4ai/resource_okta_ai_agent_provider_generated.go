@@ -101,7 +101,7 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 				},
 			},
 			"configuration": schema.MapAttribute{
-				Description: "Configuration",
+				Description: "Provider-specific configuration used to connect to the AI agent provider and import agents.",
 				ElementType: types.StringType,
 				Required:    true,
 				PlanModifiers: []planmodifier.Map{
@@ -193,13 +193,11 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					"group_orn": schema.StringAttribute{
 						Description: "The resource-owner group [ORN](https://developer.",
 						Optional:    true,
-						Computed:    true,
 					},
 					"user_orns": schema.ListAttribute{
 						Description: "List of resource-owner user [ORNs](https://developer.",
 						ElementType: types.StringType,
 						Optional:    true,
-						Computed:    true,
 					},
 				},
 			},
@@ -209,12 +207,10 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 					"cron": schema.StringAttribute{
 						Description: "The schedule of the import in cron format.",
 						Optional:    true,
-						Computed:    true,
 					},
 					"timezone": schema.StringAttribute{
 						Description: "Timezone of where the scheduled import takes place",
 						Optional:    true,
-						Computed:    true,
 					},
 				},
 			},
@@ -223,6 +219,9 @@ func (r *aiAgentProviderResource) Schema(_ context.Context, _ resource.SchemaReq
 }
 func (r *aiAgentProviderResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -231,6 +230,12 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -255,40 +260,81 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
 	state.Stage = types.StringValue(string(result.GetStage()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
-		ownersModel0 := &AiAgentProviderModelOwnersModel{}
-		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
-			ownersModel0.GroupOrn = types.StringValue(v)
-		} else {
-			ownersModel0.GroupOrn = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
-			resp.Diagnostics.Append(listDiags...)
-			ownersModel0.UserOrns = listVal
-		}
-		if state.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+	if state.Owners != nil || len(importing) > 0 {
+		if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
+			ownersModel0 := &AiAgentProviderModelOwnersModel{}
+			// ownersModel0 is the new block, built from the API response. ownersPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			ownersPrior0 := &AiAgentProviderModelOwnersModel{}
+			ownersHasPrior0 := state.Owners != nil
+			if state.Owners != nil {
+				ownersPrior0 = state.Owners
+				*ownersModel0 = *ownersPrior0 // keep fields the reader below does not map
+			}
+			if !(ownersHasPrior0 && ownersPrior0.GroupOrn.IsNull()) {
+				if v := string(ownersRaw0.GetGroupOrn()); v != "" || ownersHasPrior0 {
+					ownersModel0.GroupOrn = types.StringValue(v)
+				} else {
+					ownersModel0.GroupOrn = types.StringNull()
+				}
+			} else {
+				ownersModel0.GroupOrn = ownersPrior0.GroupOrn
+			}
+			if ownersHasPrior0 && ownersPrior0.UserOrns.IsNull() {
+				ownersModel0.UserOrns = types.ListNull(types.StringType)
+			} else {
+				if len(ownersRaw0.GetUserOrns()) == 0 && (!ownersHasPrior0) {
+					ownersModel0.UserOrns = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
+					resp.Diagnostics.Append(listDiags...)
+					ownersModel0.UserOrns = listVal
+				}
+			}
 			state.Owners = ownersModel0
 		}
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
-		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
-		if v := string(scheduleRaw0.GetCron()); v != "" {
-			scheduleModel0.Cron = types.StringValue(v)
-		} else {
-			scheduleModel0.Cron = types.StringNull()
-		}
-		if v := string(scheduleRaw0.GetTimezone()); v != "" {
-			scheduleModel0.Timezone = types.StringValue(v)
-		} else {
-			scheduleModel0.Timezone = types.StringNull()
-		}
-		if state.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+	if state.Schedule != nil || len(importing) > 0 {
+		if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
+			scheduleModel0 := &AiAgentProviderModelScheduleModel{}
+			// scheduleModel0 is the new block, built from the API response. schedulePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			schedulePrior0 := &AiAgentProviderModelScheduleModel{}
+			scheduleHasPrior0 := state.Schedule != nil
+			if state.Schedule != nil {
+				schedulePrior0 = state.Schedule
+				*scheduleModel0 = *schedulePrior0 // keep fields the reader below does not map
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Cron.IsNull()) {
+				if v := string(scheduleRaw0.GetCron()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Cron = types.StringValue(v)
+				} else {
+					scheduleModel0.Cron = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Cron = schedulePrior0.Cron
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Timezone.IsNull()) {
+				if v := string(scheduleRaw0.GetTimezone()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Timezone = types.StringValue(v)
+				} else {
+					scheduleModel0.Timezone = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Timezone = schedulePrior0.Timezone
+			}
 			state.Schedule = scheduleModel0
 		}
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -370,35 +416,73 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	plan.Stage = types.StringValue(string(result.GetStage()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
-		ownersModel0 := &AiAgentProviderModelOwnersModel{}
-		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
-			ownersModel0.GroupOrn = types.StringValue(v)
-		} else {
-			ownersModel0.GroupOrn = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
-			resp.Diagnostics.Append(listDiags...)
-			ownersModel0.UserOrns = listVal
-		}
-		if plan.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+	if plan.Owners != nil {
+		if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
+			ownersModel0 := &AiAgentProviderModelOwnersModel{}
+			// ownersModel0 is the new block, built from the API response. ownersPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			ownersPrior0 := &AiAgentProviderModelOwnersModel{}
+			ownersHasPrior0 := plan.Owners != nil
+			if plan.Owners != nil {
+				ownersPrior0 = plan.Owners
+				*ownersModel0 = *ownersPrior0 // keep fields the reader below does not map
+			}
+			if !(ownersHasPrior0 && ownersPrior0.GroupOrn.IsNull()) {
+				if v := string(ownersRaw0.GetGroupOrn()); v != "" || ownersHasPrior0 {
+					ownersModel0.GroupOrn = types.StringValue(v)
+				} else {
+					ownersModel0.GroupOrn = types.StringNull()
+				}
+			} else {
+				ownersModel0.GroupOrn = ownersPrior0.GroupOrn
+			}
+			if ownersHasPrior0 && ownersPrior0.UserOrns.IsNull() {
+				ownersModel0.UserOrns = types.ListNull(types.StringType)
+			} else {
+				if len(ownersRaw0.GetUserOrns()) == 0 && (!ownersHasPrior0) {
+					ownersModel0.UserOrns = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
+					resp.Diagnostics.Append(listDiags...)
+					ownersModel0.UserOrns = listVal
+				}
+			}
 			plan.Owners = ownersModel0
 		}
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
-		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
-		if v := string(scheduleRaw0.GetCron()); v != "" {
-			scheduleModel0.Cron = types.StringValue(v)
-		} else {
-			scheduleModel0.Cron = types.StringNull()
-		}
-		if v := string(scheduleRaw0.GetTimezone()); v != "" {
-			scheduleModel0.Timezone = types.StringValue(v)
-		} else {
-			scheduleModel0.Timezone = types.StringNull()
-		}
-		if plan.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+	if plan.Schedule != nil {
+		if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
+			scheduleModel0 := &AiAgentProviderModelScheduleModel{}
+			// scheduleModel0 is the new block, built from the API response. schedulePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			schedulePrior0 := &AiAgentProviderModelScheduleModel{}
+			scheduleHasPrior0 := plan.Schedule != nil
+			if plan.Schedule != nil {
+				schedulePrior0 = plan.Schedule
+				*scheduleModel0 = *schedulePrior0 // keep fields the reader below does not map
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Cron.IsNull()) {
+				if v := string(scheduleRaw0.GetCron()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Cron = types.StringValue(v)
+				} else {
+					scheduleModel0.Cron = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Cron = schedulePrior0.Cron
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Timezone.IsNull()) {
+				if v := string(scheduleRaw0.GetTimezone()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Timezone = types.StringValue(v)
+				} else {
+					scheduleModel0.Timezone = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Timezone = schedulePrior0.Timezone
+			}
 			plan.Schedule = scheduleModel0
 		}
 	}
@@ -491,6 +575,13 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddError("Error updating ai_agent_provider", err.Error())
 		return
 	}
+	if plan.Owners == nil {
+		state.Owners = nil
+	}
+	if plan.Schedule == nil {
+		state.Schedule = nil
+	}
+
 	// Map API response fields to state (scalar types only; WriteOnly and SkipRead fields skipped).
 	// Fields absent from this response (GetXOk returns ok=false) are left as-is,
 	// since some update endpoints return a narrower object than the GET response
@@ -529,41 +620,80 @@ func (r *aiAgentProviderResource) Update(ctx context.Context, req resource.Updat
 	if statusVal, ok := result.GetStatusOk(); ok && statusVal != nil {
 		state.Status = types.StringValue(string(*statusVal))
 	}
-	if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
-		ownersModel0 := &AiAgentProviderModelOwnersModel{}
-		if v := string(ownersRaw0.GetGroupOrn()); v != "" {
-			ownersModel0.GroupOrn = types.StringValue(v)
-		} else {
-			ownersModel0.GroupOrn = types.StringNull()
-		}
-		{
-			listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
-			resp.Diagnostics.Append(listDiags...)
-			ownersModel0.UserOrns = listVal
-		}
-		if plan.Owners != nil || !(ownersModel0.GroupOrn.IsNull() && ownersModel0.UserOrns.IsNull()) {
+	state.Owners = plan.Owners
+	if plan.Owners != nil {
+		if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
+			ownersModel0 := &AiAgentProviderModelOwnersModel{}
+			// ownersModel0 is the new block, built from the API response. ownersPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			ownersPrior0 := &AiAgentProviderModelOwnersModel{}
+			ownersHasPrior0 := plan.Owners != nil
+			if plan.Owners != nil {
+				ownersPrior0 = plan.Owners
+				*ownersModel0 = *ownersPrior0 // keep fields the reader below does not map
+			}
+			if !(ownersHasPrior0 && ownersPrior0.GroupOrn.IsNull()) {
+				if v := string(ownersRaw0.GetGroupOrn()); v != "" || ownersHasPrior0 {
+					ownersModel0.GroupOrn = types.StringValue(v)
+				} else {
+					ownersModel0.GroupOrn = types.StringNull()
+				}
+			} else {
+				ownersModel0.GroupOrn = ownersPrior0.GroupOrn
+			}
+			if ownersHasPrior0 && ownersPrior0.UserOrns.IsNull() {
+				ownersModel0.UserOrns = types.ListNull(types.StringType)
+			} else {
+				if len(ownersRaw0.GetUserOrns()) == 0 && (!ownersHasPrior0) {
+					ownersModel0.UserOrns = types.ListNull(types.StringType)
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, ownersRaw0.GetUserOrns())
+					resp.Diagnostics.Append(listDiags...)
+					ownersModel0.UserOrns = listVal
+				}
+			}
 			state.Owners = ownersModel0
 		}
 	}
-	if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
-		scheduleModel0 := &AiAgentProviderModelScheduleModel{}
-		if v := string(scheduleRaw0.GetCron()); v != "" {
-			scheduleModel0.Cron = types.StringValue(v)
-		} else {
-			scheduleModel0.Cron = types.StringNull()
-		}
-		if v := string(scheduleRaw0.GetTimezone()); v != "" {
-			scheduleModel0.Timezone = types.StringValue(v)
-		} else {
-			scheduleModel0.Timezone = types.StringNull()
-		}
-		if plan.Schedule != nil || !(scheduleModel0.Cron.IsNull() && scheduleModel0.Timezone.IsNull()) {
+	state.Schedule = plan.Schedule
+	if plan.Schedule != nil {
+		if scheduleRaw0, ok := result.GetScheduleOk(); ok && scheduleRaw0 != nil {
+			scheduleModel0 := &AiAgentProviderModelScheduleModel{}
+			// scheduleModel0 is the new block, built from the API response. schedulePrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			schedulePrior0 := &AiAgentProviderModelScheduleModel{}
+			scheduleHasPrior0 := plan.Schedule != nil
+			if plan.Schedule != nil {
+				schedulePrior0 = plan.Schedule
+				*scheduleModel0 = *schedulePrior0 // keep fields the reader below does not map
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Cron.IsNull()) {
+				if v := string(scheduleRaw0.GetCron()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Cron = types.StringValue(v)
+				} else {
+					scheduleModel0.Cron = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Cron = schedulePrior0.Cron
+			}
+			if !(scheduleHasPrior0 && schedulePrior0.Timezone.IsNull()) {
+				if v := string(scheduleRaw0.GetTimezone()); v != "" || scheduleHasPrior0 {
+					scheduleModel0.Timezone = types.StringValue(v)
+				} else {
+					scheduleModel0.Timezone = types.StringNull()
+				}
+			} else {
+				scheduleModel0.Timezone = schedulePrior0.Timezone
+			}
 			state.Schedule = scheduleModel0
 		}
 	}
 
 	state.Configuration = plan.Configuration
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 

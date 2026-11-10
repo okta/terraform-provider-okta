@@ -319,9 +319,15 @@ func (r *mcpServerResource) Read(ctx context.Context, req resource.ReadRequest, 
 				metadataModel0.DisplayName = types.StringNull()
 			}
 			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-				resp.Diagnostics.Append(listDiags...)
-				metadataModel0.ScopesSupported = listVal
+				if len(metadataRaw0.GetScopesSupported()) == 0 && !metadataModel0.ScopesSupported.IsUnknown() && (metadataModel0.ScopesSupported.IsNull() || len(metadataModel0.ScopesSupported.Elements()) == 0) {
+					if metadataModel0.ScopesSupported.IsNull() {
+						metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+					}
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
 			}
 			state.Metadata = metadataModel0
 		}
@@ -628,9 +634,15 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 					metadataModel0.DisplayName = types.StringNull()
 				}
 				{
-					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-					resp.Diagnostics.Append(listDiags...)
-					metadataModel0.ScopesSupported = listVal
+					if len(metadataRaw0.GetScopesSupported()) == 0 && !metadataModel0.ScopesSupported.IsUnknown() && (metadataModel0.ScopesSupported.IsNull() || len(metadataModel0.ScopesSupported.Elements()) == 0) {
+						if metadataModel0.ScopesSupported.IsNull() {
+							metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+						}
+					} else {
+						listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+						resp.Diagnostics.Append(listDiags...)
+						metadataModel0.ScopesSupported = listVal
+					}
 				}
 				plan.Metadata = metadataModel0
 			}
@@ -682,45 +694,47 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 				plan.OauthClient = types.ObjectNull(map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType})
 			}
 		}
-		if apiList := readResult.GetOrgConfigPropertyValues(); len(apiList) > 0 {
-			orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
-			for _, apiItem := range apiList {
-				orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
-				if v, ok := apiItem.GetNameOk(); ok && v != nil {
-					orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
-				} else {
-					orgConfigPropertyValuesItem0.Name = types.StringNull()
+		if len(plan.OrgConfigPropertyValues) > 0 {
+			if apiList := readResult.GetOrgConfigPropertyValues(); len(apiList) > 0 {
+				orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
+				for _, apiItem := range apiList {
+					orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
+					if v, ok := apiItem.GetNameOk(); ok && v != nil {
+						orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
+					} else {
+						orgConfigPropertyValuesItem0.Name = types.StringNull()
+					}
+					if v, ok := apiItem.GetValueOk(); ok && v != nil {
+						orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
+					} else {
+						orgConfigPropertyValuesItem0.Value = types.StringNull()
+					}
+					orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
 				}
-				if v, ok := apiItem.GetValueOk(); ok && v != nil {
-					orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
-				} else {
-					orgConfigPropertyValuesItem0.Value = types.StringNull()
-				}
-				orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
+				plan.OrgConfigPropertyValues = orgConfigPropertyValuesList0
 			}
-			plan.OrgConfigPropertyValues = orgConfigPropertyValuesList0
 		}
 
 	}
 
 	{
 		// Created in an inactive state; activate before handing the resource to Terraform.
-		activateID := plan.ID.ValueString()
-		_ = activateID
-		_, _, activateErr := client.MCPServerRegistrationV2API.ActivateMCPServerV2(ctx, activateID).Execute()
-		if activateErr != nil {
-			// Persist the created resource so it is not orphaned, then report the failure.
-			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-			resp.Diagnostics.AddError("Error activating mcp_server after creation", activateErr.Error())
-			return
-		}
-		activated, _, readErr := client.MCPServerRegistrationV2API.GetMCPServerV2(ctx, activateID).Execute()
-		if readErr != nil {
-			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-			resp.Diagnostics.AddError("Error reading mcp_server after activation", readErr.Error())
-			return
-		}
-		plan.Status = types.StringValue(string(activated.GetStatus()))
+		//activateID := plan.ID.ValueString()
+		//_ = activateID
+		//_, _, activateErr := client.MCPServerRegistrationV2API.ActivateMCPServerV2(ctx, activateID).Execute()
+		//if activateErr != nil {
+		//	// Persist the created resource so it is not orphaned, then report the failure.
+		//	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+		//	resp.Diagnostics.AddError("Error activating mcp_server after creation", activateErr.Error())
+		//	return
+		//}
+		//activated, _, readErr := client.MCPServerRegistrationV2API.GetMCPServerV2(ctx, activateID).Execute()
+		//if readErr != nil {
+		//	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+		//	resp.Diagnostics.AddError("Error reading mcp_server after activation", readErr.Error())
+		//	return
+		//}
+		//plan.Status = types.StringValue(string(activated.GetStatus()))
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -822,9 +836,15 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 				metadataModel0.DisplayName = types.StringNull()
 			}
 			{
-				listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
-				resp.Diagnostics.Append(listDiags...)
-				metadataModel0.ScopesSupported = listVal
+				if len(metadataRaw0.GetScopesSupported()) == 0 && !metadataModel0.ScopesSupported.IsUnknown() && (metadataModel0.ScopesSupported.IsNull() || len(metadataModel0.ScopesSupported.Elements()) == 0) {
+					if metadataModel0.ScopesSupported.IsNull() {
+						metadataModel0.ScopesSupported = types.ListNull(types.StringType)
+					}
+				} else {
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, metadataRaw0.GetScopesSupported())
+					resp.Diagnostics.Append(listDiags...)
+					metadataModel0.ScopesSupported = listVal
+				}
 			}
 			state.Metadata = metadataModel0
 		}
@@ -876,28 +896,30 @@ func (r *mcpServerResource) Update(ctx context.Context, req resource.UpdateReque
 			state.OauthClient = types.ObjectNull(map[string]attr.Type{"client_id": types.StringType, "connection_count": types.Int64Type, "grant_types": types.ListType{ElemType: types.StringType}, "orn": types.StringType, "status": types.StringType, "token_endpoint_auth_method": types.StringType})
 		}
 	}
-	if apiList := result.GetOrgConfigPropertyValues(); len(apiList) > 0 {
-		orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
-		for _, apiItem := range apiList {
-			orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
-			if v, ok := apiItem.GetNameOk(); ok && v != nil {
-				orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
-			} else {
-				orgConfigPropertyValuesItem0.Name = types.StringNull()
+	state.OrgConfigPropertyValues = plan.OrgConfigPropertyValues
+	if len(plan.OrgConfigPropertyValues) > 0 {
+		if apiList := result.GetOrgConfigPropertyValues(); len(apiList) > 0 {
+			orgConfigPropertyValuesList0 := make([]McpServerModelOrgConfigPropertyValuesModel, 0, len(apiList))
+			for _, apiItem := range apiList {
+				orgConfigPropertyValuesItem0 := &McpServerModelOrgConfigPropertyValuesModel{}
+				if v, ok := apiItem.GetNameOk(); ok && v != nil {
+					orgConfigPropertyValuesItem0.Name = types.StringValue(string(*v))
+				} else {
+					orgConfigPropertyValuesItem0.Name = types.StringNull()
+				}
+				if v, ok := apiItem.GetValueOk(); ok && v != nil {
+					orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
+				} else {
+					orgConfigPropertyValuesItem0.Value = types.StringNull()
+				}
+				orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
 			}
-			if v, ok := apiItem.GetValueOk(); ok && v != nil {
-				orgConfigPropertyValuesItem0.Value = types.StringValue(string(*v))
-			} else {
-				orgConfigPropertyValuesItem0.Value = types.StringNull()
-			}
-			orgConfigPropertyValuesList0 = append(orgConfigPropertyValuesList0, *orgConfigPropertyValuesItem0)
+			state.OrgConfigPropertyValues = orgConfigPropertyValuesList0
 		}
-		state.OrgConfigPropertyValues = orgConfigPropertyValuesList0
 	}
 
 	state.AppName = plan.AppName
 	state.RegistrationType = plan.RegistrationType
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 

@@ -123,6 +123,9 @@ func (r *delegationLinkResource) Schema(_ context.Context, _ resource.SchemaRequ
 }
 func (r *delegationLinkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, frameworkPath.Root("id"), req, resp)
+	// Tells the Read that follows to map every attribute and block from the API (see Read).
+	// Private-state values must be valid JSON.
+	resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", []byte("true"))...)
 }
 
 func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -131,6 +134,12 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	// Optional-only attributes and nested blocks the user left unset are null in state; the API
+	// may report any value for them (its own default, e.g. a zone status of ACTIVE). Keep them null
+	// so state matches config, exactly as Create/Update do — except on the first Read after import,
+	// when there is no config-derived state to preserve.
+	importing, importDiags := req.Private.GetKey(ctx, "importing")
+	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
 	client := r.Config.Okta4AIClient.Okta4AISDKClient()
@@ -144,35 +153,79 @@ func (r *delegationLinkResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	if fromRaw0, ok := result.GetFromOk(); ok {
-		fromModel0 := &DelegationLinkModelFromModel{}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+	if state.From != nil || len(importing) > 0 {
+		if fromRaw0, ok := result.GetFromOk(); ok {
+			fromModel0 := &DelegationLinkModelFromModel{}
+			if state.From != nil {
+				*fromModel0 = *state.From // keep fields the reader below does not map
+			}
+			var appInstanceOrnVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrnOk() (*string, bool) }); ok {
+				appInstanceOrnVal, _ = obj.GetAppInstanceOrnOk()
+			}
+			if appInstanceOrnVal != nil {
+				fromModel0.AppInstanceOrn = types.StringValue(string(*appInstanceOrnVal))
+			} else if fromModel0.AppInstanceOrn.IsUnknown() {
+				fromModel0.AppInstanceOrn = types.StringNull()
+			}
+			var clientOrnVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrnOk() (*string, bool) }); ok {
+				clientOrnVal, _ = obj.GetClientOrnOk()
+			}
+			if clientOrnVal != nil {
+				fromModel0.ClientOrn = types.StringValue(string(*clientOrnVal))
+			} else if fromModel0.ClientOrn.IsUnknown() {
+				fromModel0.ClientOrn = types.StringNull()
+			}
+			var tokenTypeVal *okta4aa.DelegationLinkTokenTypeV2
+			if obj, ok := fromRaw0.GetActualInstance().(interface {
+				GetTokenTypeOk() (*okta4aa.DelegationLinkTokenTypeV2, bool)
+			}); ok {
+				tokenTypeVal, _ = obj.GetTokenTypeOk()
+			}
+			if tokenTypeVal != nil {
+				fromModel0.TokenType = types.StringValue(string(*tokenTypeVal))
+			} else if fromModel0.TokenType.IsUnknown() {
+				fromModel0.TokenType = types.StringNull()
+			}
+			var typeVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTypeOk() (*string, bool) }); ok {
+				typeVal, _ = obj.GetTypeOk()
+			}
+			if typeVal != nil {
+				fromModel0.Type = types.StringValue(string(*typeVal))
+			} else if fromModel0.Type.IsUnknown() {
+				fromModel0.Type = types.StringNull()
+			}
+			state.From = fromModel0
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
-		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface {
-			GetTokenType() okta4aa.DelegationLinkTokenTypeV2
-		}); ok {
-			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
-		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(string(obj.GetType()))
-		}
-		state.From = fromModel0
 	}
-	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
-		toModel0 := &DelegationLinkModelToModel{}
-		if state.To == nil || !state.To.ResourceOrn.IsNull() {
-			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
-		} else {
-			toModel0.ResourceOrn = state.To.ResourceOrn
+	if state.To != nil || len(importing) > 0 {
+		if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
+			toModel0 := &DelegationLinkModelToModel{}
+			// toModel0 is the new block, built from the API response. toPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			toPrior0 := &DelegationLinkModelToModel{}
+			toHasPrior0 := state.To != nil
+			if state.To != nil {
+				toPrior0 = state.To
+				*toModel0 = *toPrior0 // keep fields the reader below does not map
+			}
+			if !(toHasPrior0 && toPrior0.ResourceOrn.IsNull()) {
+				toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+			} else {
+				toModel0.ResourceOrn = toPrior0.ResourceOrn
+			}
+			state.To = toModel0
 		}
-		state.To = toModel0
 	}
 
 	state.ID = types.StringValue(string(result.GetId()))
+	if importing != nil {
+		resp.Diagnostics.Append(resp.Private.SetKey(ctx, "importing", nil)...)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -243,32 +296,73 @@ func (r *delegationLinkResource) Create(ctx context.Context, req resource.Create
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 
-	if fromRaw0, ok := result.GetFromOk(); ok {
-		fromModel0 := &DelegationLinkModelFromModel{}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(string(obj.GetAppInstanceOrn()))
+	if plan.From != nil {
+		if fromRaw0, ok := result.GetFromOk(); ok {
+			fromModel0 := &DelegationLinkModelFromModel{}
+			if plan.From != nil {
+				*fromModel0 = *plan.From // keep fields the reader below does not map
+			}
+			var appInstanceOrnVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrnOk() (*string, bool) }); ok {
+				appInstanceOrnVal, _ = obj.GetAppInstanceOrnOk()
+			}
+			if appInstanceOrnVal != nil {
+				fromModel0.AppInstanceOrn = types.StringValue(string(*appInstanceOrnVal))
+			} else if fromModel0.AppInstanceOrn.IsUnknown() {
+				fromModel0.AppInstanceOrn = types.StringNull()
+			}
+			var clientOrnVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrnOk() (*string, bool) }); ok {
+				clientOrnVal, _ = obj.GetClientOrnOk()
+			}
+			if clientOrnVal != nil {
+				fromModel0.ClientOrn = types.StringValue(string(*clientOrnVal))
+			} else if fromModel0.ClientOrn.IsUnknown() {
+				fromModel0.ClientOrn = types.StringNull()
+			}
+			var tokenTypeVal *okta4aa.DelegationLinkTokenTypeV2
+			if obj, ok := fromRaw0.GetActualInstance().(interface {
+				GetTokenTypeOk() (*okta4aa.DelegationLinkTokenTypeV2, bool)
+			}); ok {
+				tokenTypeVal, _ = obj.GetTokenTypeOk()
+			}
+			if tokenTypeVal != nil {
+				fromModel0.TokenType = types.StringValue(string(*tokenTypeVal))
+			} else if fromModel0.TokenType.IsUnknown() {
+				fromModel0.TokenType = types.StringNull()
+			}
+			var typeVal *string
+			if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTypeOk() (*string, bool) }); ok {
+				typeVal, _ = obj.GetTypeOk()
+			}
+			if typeVal != nil {
+				fromModel0.Type = types.StringValue(string(*typeVal))
+			} else if fromModel0.Type.IsUnknown() {
+				fromModel0.Type = types.StringNull()
+			}
+			plan.From = fromModel0
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(string(obj.GetClientOrn()))
-		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface {
-			GetTokenType() okta4aa.DelegationLinkTokenTypeV2
-		}); ok {
-			fromModel0.TokenType = types.StringValue(string(obj.GetTokenType()))
-		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(string(obj.GetType()))
-		}
-		plan.From = fromModel0
 	}
-	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
-		toModel0 := &DelegationLinkModelToModel{}
-		if plan.To == nil || !plan.To.ResourceOrn.IsNull() {
-			toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
-		} else {
-			toModel0.ResourceOrn = plan.To.ResourceOrn
+	if plan.To != nil {
+		if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
+			toModel0 := &DelegationLinkModelToModel{}
+			// toModel0 is the new block, built from the API response. toPrior0 is the prior
+			// plan/state block, read-only: a non-null field there means the user manages it, so
+			// the API value is taken; otherwise the prior value is kept. When the block is absent
+			// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+			toPrior0 := &DelegationLinkModelToModel{}
+			toHasPrior0 := plan.To != nil
+			if plan.To != nil {
+				toPrior0 = plan.To
+				*toModel0 = *toPrior0 // keep fields the reader below does not map
+			}
+			if !(toHasPrior0 && toPrior0.ResourceOrn.IsNull()) {
+				toModel0.ResourceOrn = types.StringValue(string(toRaw0.GetResourceOrn()))
+			} else {
+				toModel0.ResourceOrn = toPrior0.ResourceOrn
+			}
+			plan.To = toModel0
 		}
-		plan.To = toModel0
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
