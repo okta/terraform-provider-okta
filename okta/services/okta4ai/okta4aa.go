@@ -52,5 +52,6 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewAiAgentsCredentialsJwkRsaDataSource,
 		NewAiAgentsCredentialsJwkEcDataSource,
 		NewApiServerDataSource,
+		NewConnectionDataSource,
 	}
 }

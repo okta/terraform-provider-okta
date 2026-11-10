@@ -1,0 +1,549 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 234
+        host: oie-00.dne-okta.com
+        body: |
+            {"profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"resourceUrl":"https://testacc-jwk-ec-ds-3475428689.example.com/api","signOnProvider":{"type":"NEW_OIDC_APP"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 696
+        body: '{"created":"2026-11-05T23:09:13Z","id":"wlpufwsuHpZBsDTaAao5","lastUpdated":"2026-11-05T23:09:13Z","profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"_links":{"resourceServer":"https://oie-00.dne-okta.com/resource-servers/api/v2/a2a-servers/wlpufwsuHpZBsDTaAao5","delegationLinks":"https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links?filter=to.resourceOrn%20eq%20%22orn:okta:directory:00otxk5i5T0Rk59Z3ao5:workload-principals:ai-agents:wlpufwsuHpZBsDTaAao5%22"},"oauthClient":{"clientId":"wlpufwsuHpZBsDTaAao5"},"signOnProvider":{"appInstanceId":"0oaufwsxU8dcCMoeFao5"},"status":"STAGED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "696"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.581486333s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 05 Nov 2026 23:09:15 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.293495584s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 359
+        body: '{"created":"2026-11-05T23:09:13Z","id":"wlpufwsuHpZBsDTaAao5","lastUpdated":"2026-11-05T23:09:15Z","profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"_links":{},"oauthClient":{"clientId":"wlpufwsuHpZBsDTaAao5"},"signOnProvider":{"appInstanceId":"0oaufwsxU8dcCMoeFao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "359"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0548125s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 201
+        host: oie-00.dne-okta.com
+        body: |
+            {"alg":"ES256","crv":"P-256","kid":"testacc-ec-3475428689","kty":"EC","status":"ACTIVE","use":"sig","x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 784
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z","_links":{"activate":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5/lifecycle/activate","deactivate":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5/lifecycle/deactivate","delete":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "784"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:17 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.073761833s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 784
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z","_links":{"activate":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5/lifecycle/activate","deactivate":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5/lifecycle/deactivate","delete":"https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5"}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "784"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.064286958s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0486085s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.05191675s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.041936167s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 359
+        body: '{"created":"2026-11-05T23:09:13Z","id":"wlpufwsuHpZBsDTaAao5","lastUpdated":"2026-11-05T23:09:15Z","profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"_links":{},"oauthClient":{"clientId":"wlpufwsuHpZBsDTaAao5"},"signOnProvider":{"appInstanceId":"0oaufwsxU8dcCMoeFao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "359"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.038599709s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.037520917s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:24 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.045820042s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/credentials/jwks/wpcufwtxJgu49Flnzao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 298
+        body: '{"x":"WKn-ZIGevcwGIyyrzFoZNBdaq9_TsqzGl96oc0CWuis","y":"y77t-RvAHRKTsSGdIYUfweuOvwrvDD-Q3Hv5J0fSKQE","crv":"P-256","kty":"EC","kid":"testacc-ec-3475428689","status":"ACTIVE","alg":"ES256","use":"sig","created":"2026-11-05T23:09:17Z","id":"wpcufwtxJgu49Flnzao5","lastUpdated":"2026-11-05T23:09:17Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "298"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.060674375s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 359
+        body: '{"created":"2026-11-05T23:09:13Z","id":"wlpufwsuHpZBsDTaAao5","lastUpdated":"2026-11-05T23:09:15Z","profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"_links":{},"oauthClient":{"clientId":"wlpufwsuHpZBsDTaAao5"},"signOnProvider":{"appInstanceId":"0oaufwsxU8dcCMoeFao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "359"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.057044667s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 359
+        body: '{"created":"2026-11-05T23:09:13Z","id":"wlpufwsuHpZBsDTaAao5","lastUpdated":"2026-11-05T23:09:15Z","profile":{"description":"Terraform acceptance test agent for the jwk-ec data source","name":"testAcc-jwk-ec-3475428689"},"_links":{},"oauthClient":{"clientId":"wlpufwsuHpZBsDTaAao5"},"signOnProvider":{"appInstanceId":"0oaufwsxU8dcCMoeFao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "359"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 05 Nov 2026 23:09:28 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.036261333s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 05 Nov 2026 23:09:29 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.13243275s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpufwsuHpZBsDTaAao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Thu, 05 Nov 2026 23:09:31 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.389819833s
