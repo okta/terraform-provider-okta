@@ -740,6 +740,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV8Client:         c.OktaIDaaSClient.OktaSDKClientV8(),
 		sdkV7Client:         c.OktaIDaaSClient.OktaSDKClientV7(),
 		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
@@ -784,6 +785,7 @@ func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV8Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV7Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
