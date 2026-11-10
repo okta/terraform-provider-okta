@@ -176,6 +176,7 @@ const (
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUID        = "okta_authenticator_webauthn_custom_aaguid"
 	OktaIDaaSAuthenticatorWebauthnCustomAAGUIDs       = "okta_authenticator_webauthn_custom_aaguids"
 	OktaIDaaSAuthenticatorMethodWebauthn              = "okta_authenticator_method_webauthn"
+	OktaIDaaSAuthenticatorTac                         = "okta_authenticator_tac"
 	OktaIDaaSPoliciesRuleSignOn                       = "okta_policies_rule_sign_on"
 	OktaGovernanceResourceOwner                       = "okta_resource_owner"
 	OktaGovernanceResourceOwnersCatalogResource       = "okta_resource_owners_catalog_resource"
