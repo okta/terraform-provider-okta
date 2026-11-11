@@ -729,6 +729,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	// force all the API clients on a new config to use the same round tripper
 	// for VCR recording/playback
 	tripper := c.OktaIDaaSClient.OktaSDKClientV5().GetConfig().HTTPClient.Transport
+	c.OktaIDaaSClient.OktaSDKClientV8().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV7().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV6().GetConfig().HTTPClient.Transport = tripper
 	c.OktaIDaaSClient.OktaSDKClientV3().GetConfig().HTTPClient.Transport = tripper
@@ -740,6 +741,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV8Client:         c.OktaIDaaSClient.OktaSDKClientV8(),
 		sdkV7Client:         c.OktaIDaaSClient.OktaSDKClientV7(),
 		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
 		sdkV5Client:         c.OktaIDaaSClient.OktaSDKClientV5(),
@@ -750,6 +752,24 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	return client
+}
+
+// VCRIDaaSClientForTest returns the IDaaS client the provider is using for
+// testName's current cassette so that out-of-band lookups made by test steps
+// (e.g. ImportStateIdFunc) are recorded/played along with the provider's own
+// API calls. Returns nil when VCR is not enabled or the provider has not been
+// configured yet for the test.
+func VCRIDaaSClientForTest(testName string) api.OktaIDaaSClient {
+	mgr := currentVCRManager(testName)
+	if !mgr.IsVcrEnabled() {
+		return nil
+	}
+	providerConfigsLock.RLock()
+	defer providerConfigsLock.RUnlock()
+	if c, ok := providerConfig(mgr); ok {
+		return c.OktaIDaaSClient
+	}
+	return nil
 }
 
 func NewVcrGovernanceClient(d *schema_sdk.ResourceData) *vcrGovernanceTestClient {
@@ -784,6 +804,7 @@ func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV8Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV7Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV5Client.GetConfig().HTTPClient.Transport = rt
