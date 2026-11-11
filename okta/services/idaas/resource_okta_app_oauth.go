@@ -587,11 +587,17 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func setAppOauthGroupsClaim(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	raw, ok := d.GetOk("groups_claim")
-	// Log deprecation warning
-	logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+	if ok {
+		// Log deprecation warning
+		logger(meta).Warn("groups_claim is deprecated and will be removed in a future version. Please use Authorization Server Claims (okta_auth_server_claim) or app profile configuration instead.")
+	}
 
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
+		// Only warn when the user actually configured groups_claim
+		if !ok {
+			return nil
+		}
 		logger(meta).Warn("setting groups_claim disabled with OAuth 2.0 API authentication")
 		return diag.Diagnostics{
 			{
@@ -773,8 +779,8 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	// Handle groups_claim with deprecation warning
 	c := meta.(*config.Config)
 	if c.IsOAuth20Auth() {
-		logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
 		if _, ok := d.GetOk("groups_claim"); ok {
+			logger(meta).Warn("reading groups_claim disabled with OAuth 2.0 API authentication")
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Warning,
 				Summary:  "groups_claim not read: OAuth 2.0 authentication does not support this field",
