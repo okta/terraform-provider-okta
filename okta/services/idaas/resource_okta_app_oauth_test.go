@@ -369,9 +369,9 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728(t *testing.T) 
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 				// These are config-only or only read for refresh tokens, so they are not set on import.
 				ImportStateVerifyIgnore: []string{"client_secret", "omit_secret", "refresh_token_leeway", "refresh_token_rotation", "skip_authentication_policy"},
 			},

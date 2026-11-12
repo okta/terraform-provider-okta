@@ -120,7 +120,7 @@ resource "okta_app_oauth" "example" {
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.
 - `tos_uri` (String) URI to web page providing client tos (terms of service).
-- `type` (String) The type of client application. Required unless `preconfigured_app` is set; some catalog applications have no type.
+- `type` (String) The type of client application. Required unless `preconfigured_app` is set.
 - `user_name_template` (String) Username template. Default: `${source.login}`
 - `user_name_template_push_status` (String) Push username on update. Valid values: `PUSH` and `DONT_PUSH`
 - `user_name_template_suffix` (String) Username template suffix
@@ -167,7 +167,7 @@ Required:
 Optional:
 
 - `e` (String) RSA Exponent
-- `kid` (String) Key ID. May be omitted, as Okta accepts keys without a key ID.
+- `kid` (String) Key ID
 - `n` (String) RSA Modulus
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point
