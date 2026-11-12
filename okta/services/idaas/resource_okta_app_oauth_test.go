@@ -344,6 +344,39 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	})
 }
 
+// TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728 verifies that a
+// JWKS key without a key ID can be created and imported.
+func TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	config := mgr.GetFixtures("service_with_jwks_no_kid.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", ""),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"client_secret"},
+			},
+		},
+	})
+}
+
 func TestAccResourceOktaAppOauth_serviceWithJWKSURI(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	config := mgr.GetFixtures("service_with_jwks_uri.tf", t)

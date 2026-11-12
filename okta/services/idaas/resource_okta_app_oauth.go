@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/hashicorp/go-cty/cty"
@@ -153,9 +154,10 @@ other arguments that changed will be applied.`,
 		Schema: BuildAppSchema(map[string]*schema.Schema{
 			"type": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				ForceNew:    true,
-				Description: "The type of client application.",
+				Description: "The type of client application. Required unless `preconfigured_app` is set; some catalog applications have no type.",
 			},
 			"client_id": {
 				Type: schema.TypeString,
@@ -385,8 +387,8 @@ other arguments that changed will be applied.`,
 					Schema: map[string]*schema.Schema{
 						"kid": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Key ID",
+							Optional:    true,
+							Description: "Key ID. May be omitted, as Okta accepts keys without a key ID.",
 						},
 						"kty": {
 							Type:        schema.TypeString,
@@ -536,6 +538,9 @@ var groupsClaimResource = &schema.Resource{
 func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	client := getOktaV6ClientFromMetadata(meta)
+	if _, ok := d.GetOk("preconfigured_app"); !ok && d.Get("type").(string) == "" {
+		return diag.Errorf("failed to create OAuth application: 'type' is required unless 'preconfigured_app' is set")
+	}
 	if err := validateGrantTypes(d); err != nil {
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
@@ -697,8 +702,12 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var diags diag.Diagnostics
 	client := getOktaV6ClientFromMetadata(meta)
 
-	appResp, _, err := client.ApplicationAPI.GetApplication(ctx, d.Id()).Execute()
+	appResp, resp, err := client.ApplicationAPI.GetApplication(ctx, d.Id()).Execute()
 	if err != nil {
+		if resp != nil && resp.StatusCode == http.StatusForbidden {
+			return diag.Errorf("failed to get OAuth application: %v. Okta first-party applications "+
+				"(e.g. Okta Admin Console, Okta Dashboard, Okta Workflows) cannot be read or managed through the Apps API", err)
+		}
 		return diag.Errorf("failed to get OAuth application: %v", err)
 	}
 
@@ -917,7 +926,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 			if j.OAuth2ClientJsonEncryptionKeyResponse != nil {
 				arr[i] = map[string]interface{}{
 					"kty": j.OAuth2ClientJsonEncryptionKeyResponse.Kty,
-					"kid": j.OAuth2ClientJsonEncryptionKeyResponse.Kid.Get(),
+					"kid": j.OAuth2ClientJsonEncryptionKeyResponse.GetKid(),
 					"e":   j.OAuth2ClientJsonEncryptionKeyResponse.E,
 					"n":   j.OAuth2ClientJsonEncryptionKeyResponse.N,
 					"use": j.OAuth2ClientJsonEncryptionKeyResponse.Use,
@@ -931,7 +940,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 					rsaKey := signingKey.OAuth2ClientJsonWebKeyRsaResponse
 					arr[i] = map[string]interface{}{
 						"kty": rsaKey.Kty,
-						"kid": rsaKey.Kid.Get(),
+						"kid": rsaKey.GetKid(),
 						"e":   rsaKey.E,
 						"n":   rsaKey.N,
 					}
@@ -941,7 +950,7 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 					ecKey := signingKey.OAuth2ClientJsonWebKeyECResponse
 					arr[i] = map[string]interface{}{
 						"kty": ecKey.Kty,
-						"kid": ecKey.Kid.Get(),
+						"kid": ecKey.GetKid(),
 						"x":   ecKey.X,
 						"y":   ecKey.Y,
 					}
@@ -1140,7 +1149,9 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 
 	// Build OAuth client settings
 	oauthClientSettings := v6okta.NewOpenIdConnectApplicationSettingsClientWithDefaults()
-	oauthClientSettings.SetApplicationType(appType)
+	if appType != "" {
+		oauthClientSettings.SetApplicationType(appType)
+	}
 
 	dpopVal := d.GetRawConfig().GetAttr("dpop_bound_access_tokens")
 	if dpopVal.IsNull() {

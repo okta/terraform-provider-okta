@@ -12,6 +12,12 @@ description: |-
 in the v5 release of the provider. Operators should manage the redirect URIs for
 an oauth app directly on that resource.
 
+-> Some Okta catalog applications have no `application_type`. When importing
+one of these with `preconfigured_app` set, `type` can be omitted. Okta
+first-party applications (for example Okta Admin Console, Okta Dashboard or
+Okta Workflows) cannot be read or managed through the Apps API, and importing
+them returns `403 Forbidden`.
+
 {{ if .HasExample -}}
 
 ## Example Usage

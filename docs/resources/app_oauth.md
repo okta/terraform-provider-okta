@@ -18,6 +18,12 @@ other arguments that changed will be applied.
 in the v5 release of the provider. Operators should manage the redirect URIs for
 an oauth app directly on that resource.
 
+-> Some Okta catalog applications have no `application_type`. When importing
+one of these with `preconfigured_app` set, `type` can be omitted. Okta
+first-party applications (for example Okta Admin Console, Okta Dashboard or
+Okta Workflows) cannot be read or managed through the Apps API, and importing
+them returns `403 Forbidden`.
+
 ## Example Usage
 
 ```terraform
@@ -61,7 +67,6 @@ resource "okta_app_oauth" "example" {
 ### Required
 
 - `label` (String) The Application's display name.
-- `type` (String) The type of client application.
 
 ### Optional
 
@@ -114,6 +119,7 @@ resource "okta_app_oauth" "example" {
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.
 - `tos_uri` (String) URI to web page providing client tos (terms of service).
+- `type` (String) The type of client application. Required unless `preconfigured_app` is set; some catalog applications have no type.
 - `user_name_template` (String) Username template. Default: `${source.login}`
 - `user_name_template_push_status` (String) Push username on update. Valid values: `PUSH` and `DONT_PUSH`
 - `user_name_template_suffix` (String) Username template suffix
@@ -155,12 +161,12 @@ Read-Only:
 
 Required:
 
-- `kid` (String) Key ID
 - `kty` (String) Key type
 
 Optional:
 
 - `e` (String) RSA Exponent
+- `kid` (String) Key ID. May be omitted, as Okta accepts keys without a key ID.
 - `n` (String) RSA Modulus
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point

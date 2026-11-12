@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	fwresource "github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
@@ -421,6 +424,44 @@ func TestChainsPlanModifier(t *testing.T) {
 			}
 			if result[0] != tt.expectedValue {
 				t.Errorf("got %s, want %s", result[0], tt.expectedValue)
+			}
+		})
+	}
+}
+
+// TestAppSignOnPolicyRulesFactorModeValidator_OKTA1243728 verifies that
+// factor_mode accepts 2FA_If_Possible so existing rules using it can be imported.
+func TestAppSignOnPolicyRulesFactorModeValidator_OKTA1243728(t *testing.T) {
+	ctx := context.Background()
+	schemaResp := &fwresource.SchemaResponse{}
+	idaas.NewAppSignOnPolicyRulesResource().Schema(ctx, fwresource.SchemaRequest{}, schemaResp)
+
+	ruleBlock, ok := schemaResp.Schema.Blocks["rule"].(schema.ListNestedBlock)
+	if !ok {
+		t.Fatal("expected rule to be a ListNestedBlock")
+	}
+	factorMode, ok := ruleBlock.NestedObject.Attributes["factor_mode"].(schema.StringAttribute)
+	if !ok {
+		t.Fatal("expected factor_mode to be a StringAttribute")
+	}
+
+	tests := []struct {
+		value   string
+		wantErr bool
+	}{
+		{value: "1FA"},
+		{value: "2FA"},
+		{value: "2FA_If_Possible"},
+		{value: "3FA", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.value, func(t *testing.T) {
+			resp := &validator.StringResponse{}
+			for _, v := range factorMode.Validators {
+				v.ValidateString(ctx, validator.StringRequest{ConfigValue: types.StringValue(tt.value)}, resp)
+			}
+			if got := resp.Diagnostics.HasError(); got != tt.wantErr {
+				t.Errorf("factor_mode %q: got error %v, want %v: %v", tt.value, got, tt.wantErr, resp.Diagnostics)
 			}
 		})
 	}
