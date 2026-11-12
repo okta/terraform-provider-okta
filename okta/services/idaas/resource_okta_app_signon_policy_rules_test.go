@@ -449,6 +449,8 @@ func TestAccResourceOktaAppSignOnPolicyRules_factorMode2FAIfPossible_OKTA1243728
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		// Nothing is created: the policy is read by a data source and the import is not persisted.
+		CheckDestroy: nil,
 		Steps: []resource.TestStep{
 			{
 				Config: policyConfig,
