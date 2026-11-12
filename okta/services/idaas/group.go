@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 	"github.com/okta/terraform-provider-okta/sdk/query"
@@ -44,13 +45,13 @@ func listGroupUserIDs(ctx context.Context, m interface{}, id string) ([]string, 
 }
 
 // Group Primary Key Operations (Use when # groups < # users in operations)
-func addGroupMembers(ctx context.Context, client *sdk.Client, groupId string, users []string) error {
+func addGroupMembers(ctx context.Context, client *v6okta.APIClient, groupId string, users []string) error {
 	for _, user := range users {
-		resp, err := client.Group.AddUserToGroup(ctx, groupId, user)
+		resp, err := client.GroupAPI.AssignUserToGroup(ctx, groupId, user).Execute()
 		if err != nil {
 			return fmt.Errorf("failed to add user (%s) to group (%s): %w", user, groupId, err)
 		}
-		exists, err := utils.DoesResourceExist(resp, err)
+		exists, err := utils.DoesResourceExistV6(resp, err)
 		if !exists {
 			return fmt.Errorf("targeted object does not exist: %s", err)
 		}
@@ -58,10 +59,10 @@ func addGroupMembers(ctx context.Context, client *sdk.Client, groupId string, us
 	return nil
 }
 
-func removeGroupMembers(ctx context.Context, client *sdk.Client, groupId string, users []string) error {
+func removeGroupMembers(ctx context.Context, client *v6okta.APIClient, groupId string, users []string) error {
 	for _, user := range users {
-		resp, err := client.Group.RemoveUserFromGroup(ctx, groupId, user)
-		err = utils.SuppressErrorOn404(resp, err)
+		resp, err := client.GroupAPI.UnassignUserFromGroup(ctx, groupId, user).Execute()
+		err = utils.SuppressErrorOn404_V6(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", user, groupId, err)
 		}
@@ -70,10 +71,10 @@ func removeGroupMembers(ctx context.Context, client *sdk.Client, groupId string,
 }
 
 // User Primary Key Operations (use when # users < # groups in operations)
-func addUserToGroups(ctx context.Context, client *sdk.Client, userId string, groups []string) error {
+func addUserToGroups(ctx context.Context, client *v6okta.APIClient, userId string, groups []string) error {
 	for _, group := range groups {
-		resp, err := client.Group.AddUserToGroup(ctx, group, userId)
-		exists, err := utils.DoesResourceExist(resp, err)
+		resp, err := client.GroupAPI.AssignUserToGroup(ctx, group, userId).Execute()
+		exists, err := utils.DoesResourceExistV6(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to add user (%s) to group (%s): %v", userId, group, err)
 		}
@@ -84,10 +85,10 @@ func addUserToGroups(ctx context.Context, client *sdk.Client, userId string, gro
 	return nil
 }
 
-func removeUserFromGroups(ctx context.Context, client *sdk.Client, userId string, groups []string) error {
+func removeUserFromGroups(ctx context.Context, client *v6okta.APIClient, userId string, groups []string) error {
 	for _, group := range groups {
-		resp, err := client.Group.RemoveUserFromGroup(ctx, group, userId)
-		err = utils.SuppressErrorOn404(resp, err)
+		resp, err := client.GroupAPI.UnassignUserFromGroup(ctx, group, userId).Execute()
+		err = utils.SuppressErrorOn404_V6(resp, err)
 		if err != nil {
 			return fmt.Errorf("failed to remove user (%s) from group (%s): %v", userId, group, err)
 		}
