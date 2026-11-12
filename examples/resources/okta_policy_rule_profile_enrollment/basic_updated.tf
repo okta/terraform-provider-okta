@@ -40,7 +40,7 @@ resource "okta_policy_rule_profile_enrollment" "test" {
 
       pre_registration_inline_hooks {
         inline_hook_id = okta_inline_hook.test.id
-        scopes         = ["PROGRESSIVE_PROFILING","SELF_SERVICE_REGISTRATION"]
+        scopes         = ["PROGRESSIVE_PROFILING", "SELF_SERVICE_REGISTRATION"]
       }
 
       activation_requirements {
