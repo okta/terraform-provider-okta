@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -371,7 +372,62 @@ func TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728(t *testing.T) 
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"client_secret"},
+				// These are config-only or only read for refresh tokens, so they are not set on import.
+				ImportStateVerifyIgnore: []string{"client_secret", "omit_secret", "refresh_token_leeway", "refresh_token_rotation", "skip_authentication_policy"},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_preconfiguredNoType_OKTA1243728 verifies that a
+// catalog app with no application_type (Moveworks) can be created, read and
+// imported without setting type, and that custom apps still require type.
+func TestAccResourceOktaAppOauth_preconfiguredNoType_OKTA1243728(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	customConfig := mgr.GetFixtures("custom_no_type.tf", t)
+	config := mgr.GetFixtures("preconfigured_no_type.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config:      customConfig,
+				ExpectError: regexp.MustCompile(`'type' is required unless 'preconfigured_app' is set`),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "moveworks"),
+					resource.TestCheckResourceAttr(resourceName, "name", "moveworks"),
+					// Moveworks has no OAuth client settings, so type is never set.
+					resource.TestCheckNoResourceAttr(resourceName, "type"),
+				),
+			},
+			{
+				// No diff, and in particular no replacement on type, on re-plan.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import okta_app_oauth into state")
+					}
+					if got := s[0].Attributes["type"]; got != "" {
+						return fmt.Errorf("expected imported type to be empty, got %q", got)
+					}
+					if got := s[0].Attributes["name"]; got != "moveworks" {
+						return fmt.Errorf("expected imported name to be moveworks, got %q", got)
+					}
+					return nil
+				},
 			},
 		},
 	})

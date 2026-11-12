@@ -705,8 +705,9 @@ func resourceAppOAuthRead(ctx context.Context, d *schema.ResourceData, meta inte
 	appResp, resp, err := client.ApplicationAPI.GetApplication(ctx, d.Id()).Execute()
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusForbidden {
-			return diag.Errorf("failed to get OAuth application: %v. Okta first-party applications "+
-				"(e.g. Okta Admin Console, Okta Dashboard, Okta Workflows) cannot be read or managed through the Apps API", err)
+			return diag.Errorf("failed to get OAuth application: %v. The provider credentials are not permitted to read "+
+				"this application; check the admin role assigned to the API token or OAuth service app and, for OAuth 2.0 "+
+				"credentials, that the okta.apps.read scope is granted", err)
 		}
 		return diag.Errorf("failed to get OAuth application: %v", err)
 	}

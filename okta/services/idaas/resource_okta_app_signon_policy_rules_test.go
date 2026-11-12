@@ -2,6 +2,7 @@ package idaas_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
@@ -427,6 +429,68 @@ func TestChainsPlanModifier(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestAccResourceOktaAppSignOnPolicyRules_factorMode2FAIfPossible_OKTA1243728
+// verifies that a policy whose rules use factor_mode 2FA_If_Possible can be
+// imported with a configuration that sets it. The Okta Account Management
+// Policy's Catch-all Rule is used because Okta rejects 2FA_If_Possible on
+// rule writes and does not allow that rule to be updated, so the import is not
+// persisted and nothing in the policy is changed. Destroying a persisted import
+// would also delete the policy's Password Expiry Rule. The plan-only step runs
+// config validation, which the import step does not, so it is the step that
+// fails without the fix.
+func TestAccResourceOktaAppSignOnPolicyRules_factorMode2FAIfPossible_OKTA1243728(t *testing.T) {
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppSignOnPolicyRules)
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppSignOnPolicyRules, t.Name())
+	policyConfig := mgr.GetFixtures("account_management_policy.tf", t)
+	config := mgr.GetFixtures("factor_mode_2fa_if_possible.tf", t)
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		Steps: []resource.TestStep{
+			{
+				Config: policyConfig,
+				Check:  resource.TestCheckResourceAttrSet("data.okta_policy.account_management", "id"),
+			},
+			{
+				Config:             config,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+			{
+				Config:       config,
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources["data.okta_policy.account_management"]
+					if !ok {
+						return "", errors.New("data.okta_policy.account_management not found in state")
+					}
+					return rs.Primary.ID, nil
+				},
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return fmt.Errorf("expected 1 imported resource, got %d", len(s))
+					}
+					attrs := s[0].Attributes
+					for i := 0; ; i++ {
+						name, ok := attrs[fmt.Sprintf("rule.%d.name", i)]
+						if !ok {
+							return errors.New("Catch-all Rule not found in imported rules")
+						}
+						if name == "Catch-all Rule" {
+							if got := attrs[fmt.Sprintf("rule.%d.factor_mode", i)]; got != "2FA_If_Possible" {
+								return fmt.Errorf("expected Catch-all Rule factor_mode 2FA_If_Possible, got %q", got)
+							}
+							return nil
+						}
+					}
+				},
+			},
+		},
+	})
 }
 
 // TestAppSignOnPolicyRulesFactorModeValidator_OKTA1243728 verifies that
