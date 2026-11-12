@@ -19,6 +19,7 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "RSA"
     kid = "SIGNING_KEY_RSA"
+    use = "sig"
     e   = "AQAB"
     n   = "xyz"
   }
@@ -26,7 +27,17 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "EC"
     kid = "SIGNING_KEY_EC"
+    use = "sig"
     x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
     y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
+  }
+
+  # Okta supports only RSA keys for encryption
+  jwks {
+    kty = "RSA"
+    kid = "ENCRYPTION_KEY_RSA"
+    use = "enc"
+    e   = "AQAB"
+    n   = "xyz"
   }
 }

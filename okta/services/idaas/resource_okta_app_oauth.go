@@ -382,7 +382,7 @@ other arguments that changed will be applied.`,
 			"jwks": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "JSON Web Key Set (JWKS) for application. Note: Inline JWKS may have compatibility issues with v6 SDK. Consider using jwks_uri instead.",
+				Description: "JSON Web Key Set (JWKS) for application.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"kid": {
@@ -414,6 +414,13 @@ other arguments that changed will be applied.`,
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "Y coordinate of the elliptic curve point",
+						},
+						"use": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
+							ValidateFunc: validation.StringInSlice([]string{"sig", "enc"}, false),
+							Description:  "Acceptable use of the key. Valid values are `sig` (signing) and `enc` (encryption, RSA keys only). Defaults to `sig`. Removing `use` from an existing key keeps its current value, so set `use = \"sig\"` explicitly to change an encryption key into a signing key.",
 						},
 					},
 				},
@@ -920,44 +927,8 @@ func setOAuthClientSettingsV6(d *schema.ResourceData, oauthClient *v6okta.OpenId
 
 	jwk, ok := oauthClient.GetJwksOk()
 	if ok {
-		jwks := jwk.Keys
-		arr := make([]map[string]interface{}, len(jwks))
-		for i, j := range jwks {
-			// Encryption key response (use=enc)
-			if j.OAuth2ClientJsonEncryptionKeyResponse != nil {
-				arr[i] = map[string]interface{}{
-					"kty": j.OAuth2ClientJsonEncryptionKeyResponse.Kty,
-					"kid": j.OAuth2ClientJsonEncryptionKeyResponse.GetKid(),
-					"e":   j.OAuth2ClientJsonEncryptionKeyResponse.E,
-					"n":   j.OAuth2ClientJsonEncryptionKeyResponse.N,
-					"use": j.OAuth2ClientJsonEncryptionKeyResponse.Use,
-				}
-			}
-			// Signing key response (RSA or EC)
-			if j.OAuth2ClientJsonSigningKeyResponse != nil {
-				signingKey := j.OAuth2ClientJsonSigningKeyResponse
-				// RSA Signing key
-				if signingKey.OAuth2ClientJsonWebKeyRsaResponse != nil {
-					rsaKey := signingKey.OAuth2ClientJsonWebKeyRsaResponse
-					arr[i] = map[string]interface{}{
-						"kty": rsaKey.Kty,
-						"kid": rsaKey.GetKid(),
-						"e":   rsaKey.E,
-						"n":   rsaKey.N,
-					}
-				}
-				// EC Signing key
-				if signingKey.OAuth2ClientJsonWebKeyECResponse != nil {
-					ecKey := signingKey.OAuth2ClientJsonWebKeyECResponse
-					arr[i] = map[string]interface{}{
-						"kty": ecKey.Kty,
-						"kid": ecKey.GetKid(),
-						"x":   ecKey.X,
-						"y":   ecKey.Y,
-					}
-				}
-			}
-		}
+		prior, _ := d.Get("jwks").([]interface{})
+		arr := FlattenOAuthAppJwks(jwk.Keys, prior)
 		err := utils.SetNonPrimitives(d, map[string]interface{}{"jwks": arr})
 		if err != nil {
 			return diag.Errorf("failed to set OAuth application properties: %v", err)
@@ -1228,78 +1199,11 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	if jwksList, ok := d.GetOk("jwks"); ok {
 		jwksData := jwksList.([]interface{})
 		if len(jwksData) > 0 {
-
-			jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
-
-			var keyData []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
-			for _, jwk := range jwksData {
-				jwkMap := jwk.(map[string]interface{})
-				var k v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
-
-				kty := jwkMap["kty"].(string)
-				use := ""
-				if jwkMap["use"] != nil {
-					use = jwkMap["use"].(string)
-				}
-
-				// Determine key type based on kty and use
-				if use == "enc" {
-					// Encryption key (RSA only for encryption)
-					// Fields: e, kty, n, use, kid, status
-					key := v6okta.NewOAuth2ClientJsonEncryptionKeyResponseWithDefaults()
-					if e, ok := jwkMap["e"].(string); ok {
-						key.SetE(e)
-					}
-					if n, ok := jwkMap["n"].(string); ok {
-						key.SetN(n)
-					}
-					key.SetKty(kty)
-					key.SetUse("enc")
-					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
-						key.SetKid(kid)
-					}
-					k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(key)
-				} else if kty == "RSA" {
-					// RSA Signing key
-					// Fields: e, kty, n, kid, status (NO use, NO alg)
-					key := v6okta.NewOAuth2ClientJsonWebKeyRsaResponseWithDefaults()
-					if e, ok := jwkMap["e"].(string); ok {
-						key.SetE(e)
-					}
-					if n, ok := jwkMap["n"].(string); ok {
-						key.SetN(n)
-					}
-					key.SetKty(kty)
-					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
-						key.SetKid(kid)
-					}
-					// Wrap RSA key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
-					signingKey := v6okta.OAuth2ClientJsonWebKeyRsaResponseAsOAuth2ClientJsonSigningKeyResponse(key)
-					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
-				} else if kty == "EC" {
-					// EC Signing key
-					// Fields: kty, x, y, kid, status (NO crv, NO use, NO alg)
-					key := v6okta.NewOAuth2ClientJsonWebKeyECResponseWithDefaults()
-					if x, ok := jwkMap["x"].(string); ok {
-						key.SetX(x)
-					}
-					if y, ok := jwkMap["y"].(string); ok {
-						key.SetY(y)
-					}
-					key.SetKty(kty)
-					if kid, ok := jwkMap["kid"].(string); ok && kid != "" {
-						key.SetKid(kid)
-					}
-					// Wrap EC key in SigningKeyResponse, then in OpenIdConnectApplicationSettingsClientKeysKeysInner
-					signingKey := v6okta.OAuth2ClientJsonWebKeyECResponseAsOAuth2ClientJsonSigningKeyResponse(key)
-					k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
-				}
-
-				keyData = append(keyData, k)
+			jwks, err := ExpandOAuthAppJwks(jwksData)
+			if err != nil {
+				return v6okta.ListApplications200ResponseInner{}, err
 			}
-			jwks.SetKeys(keyData)
 			oauthClientSettings.SetJwks(*jwks)
-
 		}
 	}
 
@@ -1388,6 +1292,163 @@ func buildAppOAuthV6(d *schema.ResourceData, isNew bool) (v6okta.ListApplication
 	}
 
 	return v6okta.OpenIdConnectApplicationAsListApplications200ResponseInner(app), nil
+}
+
+// ExpandOAuthAppJwks builds the inline JWKS request payload from the jwks blocks.
+// The SDK's RSA and EC signing key models have no `use` field, so `use` is sent
+// through AdditionalProperties; without it Okta stores `use: null` on the key.
+func ExpandOAuthAppJwks(jwksData []interface{}) (*v6okta.OpenIdConnectApplicationSettingsClientKeys, error) {
+	jwks := v6okta.NewOpenIdConnectApplicationSettingsClientKeysWithDefaults()
+	keyData := make([]v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner, 0, len(jwksData))
+	for _, jwk := range jwksData {
+		jwkMap, ok := jwk.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		kty, _ := jwkMap["kty"].(string)
+		use, _ := jwkMap["use"].(string)
+		kid, _ := jwkMap["kid"].(string)
+
+		var k v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner
+		switch {
+		case use == "enc":
+			// Okta supports only RSA keys for encryption
+			if kty != "RSA" {
+				return nil, fmt.Errorf("jwks encryption keys (use = \"enc\") must have kty \"RSA\", got %q", kty)
+			}
+			key := v6okta.NewOAuth2ClientJsonEncryptionKeyResponseWithDefaults()
+			if e, ok := jwkMap["e"].(string); ok {
+				key.SetE(e)
+			}
+			if n, ok := jwkMap["n"].(string); ok {
+				key.SetN(n)
+			}
+			key.SetKty(kty)
+			key.SetUse("enc")
+			if kid != "" {
+				key.SetKid(kid)
+			}
+			k = v6okta.OAuth2ClientJsonEncryptionKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(key)
+		case use == "" || use == "sig":
+			var signingKey v6okta.OAuth2ClientJsonSigningKeyResponse
+			switch kty {
+			case "RSA":
+				key := v6okta.NewOAuth2ClientJsonWebKeyRsaResponseWithDefaults()
+				if e, ok := jwkMap["e"].(string); ok {
+					key.SetE(e)
+				}
+				if n, ok := jwkMap["n"].(string); ok {
+					key.SetN(n)
+				}
+				key.SetKty(kty)
+				if kid != "" {
+					key.SetKid(kid)
+				}
+				key.AdditionalProperties = map[string]interface{}{"use": "sig"}
+				signingKey = v6okta.OAuth2ClientJsonWebKeyRsaResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+			case "EC":
+				key := v6okta.NewOAuth2ClientJsonWebKeyECResponseWithDefaults()
+				if x, ok := jwkMap["x"].(string); ok {
+					key.SetX(x)
+				}
+				if y, ok := jwkMap["y"].(string); ok {
+					key.SetY(y)
+				}
+				key.SetKty(kty)
+				if kid != "" {
+					key.SetKid(kid)
+				}
+				key.AdditionalProperties = map[string]interface{}{"use": "sig"}
+				signingKey = v6okta.OAuth2ClientJsonWebKeyECResponseAsOAuth2ClientJsonSigningKeyResponse(key)
+			default:
+				return nil, fmt.Errorf("jwks signing keys must have kty \"RSA\" or \"EC\", got %q", kty)
+			}
+			k = v6okta.OAuth2ClientJsonSigningKeyResponseAsOpenIdConnectApplicationSettingsClientKeysKeysInner(&signingKey)
+		default:
+			return nil, fmt.Errorf("invalid jwks use %q, must be \"sig\" or \"enc\"", use)
+		}
+		keyData = append(keyData, k)
+	}
+	jwks.SetKeys(keyData)
+	return jwks, nil
+}
+
+// FlattenOAuthAppJwks converts the inline JWKS returned by Okta into jwks blocks.
+// Okta may return keys in a different order than they were sent, so when every
+// key has a unique kid the result follows the order of the prior jwks blocks,
+// with any keys not in prior appended in API order. Otherwise API order is kept.
+func FlattenOAuthAppJwks(keys []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner, prior []interface{}) []map[string]interface{} {
+	arr := make([]map[string]interface{}, 0, len(keys))
+	for _, j := range keys {
+		if enc := j.OAuth2ClientJsonEncryptionKeyResponse; enc != nil {
+			arr = append(arr, map[string]interface{}{
+				"kty": enc.GetKty(),
+				"kid": enc.GetKid(),
+				"e":   enc.GetE(),
+				"n":   enc.GetN(),
+				"use": "enc",
+			})
+			continue
+		}
+		signingKey := j.OAuth2ClientJsonSigningKeyResponse
+		if signingKey == nil {
+			continue
+		}
+		if rsaKey := signingKey.OAuth2ClientJsonWebKeyRsaResponse; rsaKey != nil {
+			arr = append(arr, map[string]interface{}{
+				"kty": rsaKey.GetKty(),
+				"kid": rsaKey.GetKid(),
+				"e":   rsaKey.GetE(),
+				"n":   rsaKey.GetN(),
+				"use": oauthAppJwkSigningUse(rsaKey.AdditionalProperties),
+			})
+		} else if ecKey := signingKey.OAuth2ClientJsonWebKeyECResponse; ecKey != nil {
+			arr = append(arr, map[string]interface{}{
+				"kty": ecKey.GetKty(),
+				"kid": ecKey.GetKid(),
+				"x":   ecKey.GetX(),
+				"y":   ecKey.GetY(),
+				"use": oauthAppJwkSigningUse(ecKey.AdditionalProperties),
+			})
+		}
+	}
+
+	byKid := make(map[string]map[string]interface{}, len(arr))
+	for _, m := range arr {
+		kid := m["kid"].(string)
+		if _, dup := byKid[kid]; kid == "" || dup {
+			return arr
+		}
+		byKid[kid] = m
+	}
+	ordered := make([]map[string]interface{}, 0, len(arr))
+	for _, raw := range prior {
+		p, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		kid, _ := p["kid"].(string)
+		if m, ok := byKid[kid]; ok {
+			ordered = append(ordered, m)
+			delete(byKid, kid)
+		}
+	}
+	for _, m := range arr {
+		if _, ok := byKid[m["kid"].(string)]; ok {
+			ordered = append(ordered, m)
+		}
+	}
+	return ordered
+}
+
+// oauthAppJwkSigningUse returns the `use` of a signing key, which the SDK leaves
+// in AdditionalProperties. Okta returns `use: null` for keys created without
+// it, which are treated as signing keys.
+func oauthAppJwkSigningUse(additionalProperties map[string]interface{}) string {
+	if use, ok := additionalProperties["use"].(string); ok && use != "" {
+		return use
+	}
+	return "sig"
 }
 
 func validateGrantTypes(d *schema.ResourceData) error {
