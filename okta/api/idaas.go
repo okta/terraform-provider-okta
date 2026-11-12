@@ -265,6 +265,18 @@ func GetV3ClientConfig(c *OktaAPIConfig) (*okta.Configuration, *okta.APIClient, 
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
+	// okta-sdk-golang v4 replays its client assertion when it retries the
+	// token request with a DPoP proof, so DPoP-enforced orgs fail with
+	// "Empty access token". Re-sign the assertion on those retries.
+	if c.AccessToken == "" && c.ApiToken == "" && c.PrivateKey != "" {
+		rt, err := newV3ClientAssertionTransport(httpClient.Transport, orgUrl, c.ClientID, c.PrivateKey, c.PrivateKeyId, c.Logger)
+		if err != nil {
+			c.Logger.Warn("unable to set up DPoP client assertion refresh for the v3 client", "error", err)
+		} else {
+			httpClient.Transport = rt
+		}
+	}
+
 	setters := []okta.ConfigSetter{
 		okta.WithOrgUrl(orgUrl),
 		okta.WithCache(false),
