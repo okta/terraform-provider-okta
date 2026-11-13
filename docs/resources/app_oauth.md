@@ -18,6 +18,13 @@ other arguments that changed will be applied.
 in the v5 release of the provider. Operators should manage the redirect URIs for
 an oauth app directly on that resource.
 
+-> Some Okta catalog applications have no `application_type`. When importing
+one of these with `preconfigured_app` set, `type` can be omitted. If reading
+an application returns `403 Forbidden`, the provider credentials are not
+permitted to read it: check the admin role assigned to the API token or OAuth
+service app, and that OAuth 2.0 credentials are granted the `okta.apps.read`
+scope.
+
 ## Example Usage
 
 ```terraform
@@ -42,6 +49,7 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "RSA"
     kid = "SIGNING_KEY_RSA"
+    use = "sig"
     e   = "AQAB"
     n   = "xyz"
   }
@@ -49,8 +57,18 @@ resource "okta_app_oauth" "example" {
   jwks {
     kty = "EC"
     kid = "SIGNING_KEY_EC"
+    use = "sig"
     x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
     y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
+  }
+
+  # Okta supports only RSA keys for encryption
+  jwks {
+    kty = "RSA"
+    kid = "ENCRYPTION_KEY_RSA"
+    use = "enc"
+    e   = "AQAB"
+    n   = "xyz"
   }
 }
 ```
@@ -61,7 +79,6 @@ resource "okta_app_oauth" "example" {
 ### Required
 
 - `label` (String) The Application's display name.
-- `type` (String) The type of client application.
 
 ### Optional
 
@@ -114,6 +131,7 @@ resource "okta_app_oauth" "example" {
 - `timeouts` (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - `token_endpoint_auth_method` (String) Requested authentication method for the token endpoint, valid values include:  'client_secret_basic', 'client_secret_post', 'client_secret_jwt', 'private_key_jwt', 'none', etc.
 - `tos_uri` (String) URI to web page providing client tos (terms of service).
+- `type` (String) The type of client application. Required unless `preconfigured_app` is set; some catalog applications have no type.
 - `user_name_template` (String) Username template. Default: `${source.login}`
 - `user_name_template_push_status` (String) Push username on update. Valid values: `PUSH` and `DONT_PUSH`
 - `user_name_template_suffix` (String) Username template suffix
@@ -155,13 +173,14 @@ Read-Only:
 
 Required:
 
-- `kid` (String) Key ID
 - `kty` (String) Key type
 
 Optional:
 
 - `e` (String) RSA Exponent
+- `kid` (String) Key ID. May be omitted, as Okta accepts keys without a key ID.
 - `n` (String) RSA Modulus
+- `use` (String) Acceptable use of the key. Valid values are `sig` (signing) and `enc` (encryption, RSA keys only). Defaults to `sig`. Removing `use` from an existing key keeps its current value, so set `use = "sig"` explicitly to change an encryption key into a signing key.
 - `x` (String) X coordinate of the elliptic curve point
 - `y` (String) Y coordinate of the elliptic curve point
 
@@ -316,6 +335,7 @@ resource "okta_app_oauth" "app" {
   jwks {
     kty = local.jwks.kty
     kid = local.jwks.kid
+    use = "sig"
     e   = local.jwks.e
     n   = local.jwks.n
   }

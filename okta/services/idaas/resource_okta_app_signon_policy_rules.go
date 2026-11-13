@@ -39,7 +39,7 @@ var (
 	validStatuses           = []string{"ACTIVE", "INACTIVE"}
 	validNetworkConnections = []string{"ANYWHERE", "ZONE", "ON_NETWORK", "OFF_NETWORK"}
 	validAccessTypes        = []string{"ALLOW", "DENY"}
-	validFactorModes        = []string{"1FA", "2FA"}
+	validFactorModes        = []string{"1FA", "2FA", "2FA_If_Possible"}
 	validRiskScores         = []string{"ANY", "LOW", "MEDIUM", "HIGH"}
 	validPlatformTypes      = []string{"ANY", "MOBILE", "DESKTOP"}
 	// NOTE: ANY is intentionally excluded. The API silently maps os_type=ANY to
@@ -800,7 +800,7 @@ func (r *appSignOnPolicyRulesResource) buildRuleAttributes() map[string]schema.A
 			Optional:    true,
 			Computed:    true,
 			Default:     stringdefault.StaticString("2FA"),
-			Description: "Number of factors required: 1FA or 2FA.",
+			Description: "Number of factors required: 1FA, 2FA, or 2FA_If_Possible.",
 			Validators:  []validator.String{stringvalidator.OneOf(validFactorModes...)},
 		},
 		"type": schema.StringAttribute{

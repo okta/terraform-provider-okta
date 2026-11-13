@@ -2,16 +2,22 @@ package idaas_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
 	"github.com/okta/terraform-provider-okta/okta/resources"
 	"github.com/okta/terraform-provider-okta/okta/services/idaas"
+	"github.com/stretchr/testify/require"
 )
 
 // Tests a standard OAuth application with an updated type. This tests the ForceNew on type and tests creating an
@@ -306,12 +312,25 @@ func TestAccResourceOktaAppOauth_customProfileAttributes(t *testing.T) {
 	})
 }
 
-// Tests an OAuth application with profile attributes. This tests with a nested JSON object as well as an array.
+// TestAccResourceOktaAppOauth_serviceWithJWKS tests OAuth applications with inline
+// JWKS. Keys keep their `use` (sig or enc) on create, update and import, and adding
+// a key does not reset `use` on the existing keys (OKTA-1238778).
 func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
 	config := mgr.GetFixtures("service_with_jwks.tf", t)
-	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+	// Add an EC signing key to the RSA app, after its encryption key.
+	updatedConfig := strings.Replace(config, "  }\n}\n", `  }
 
+  jwks {
+    kty = "EC"
+    kid = "SIGNING_KEY_EC"
+    use = "sig"
+    x   = "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"
+    y   = "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"
+  }
+}
+`, 1)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
 	ecResourceName := fmt.Sprintf("%s.test_ec", resources.OktaIDaaSAppOAuth)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -324,21 +343,384 @@ func TestAccResourceOktaAppOauth_serviceWithJWKS(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY_RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.use", "sig"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
 					resource.TestCheckResourceAttr(resourceName, "jwks.0.n", "owfoXNHcAlAVpIO41840ZU2tZraLGw3yEr3xZvAti7oEZPUKCytk88IDgH7440JOuz8GC_D6vtduWOqnEt0j0_faJnhKHgfj7DTWBOCxzSdjrM-Uyj6-e_XLFvZXzYsQvt52PnBJUV15G1W9QTjlghT_pFrW0xrTtbO1c281u1HJdPd5BeIyPb0pGbciySlx53OqGyxrAxPAt5P5h-n36HJkVsSQtNvgptLyOwWYkX50lgnh2szbJ0_O581bqkNBy9uqlnVeK1RZDQUl4mk8roWYhsx_JOgjpC3YyeXA6hHsT5xWZos_gNx98AHivNaAjzIzvyVItX2-hP0Aoscfff"),
-				),
-			},
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.kty", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.kid", "ENCRYPTION_KEY_RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.use", "enc"),
+					checkOAuthAppJwksUse(resourceName, map[string]string{
+						"SIGNING_KEY_RSA":    "sig",
+						"ENCRYPTION_KEY_RSA": "enc",
+					}),
 					ensureResourceExists(ecResourceName, createDoesOAuthAppExist()),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kty", "EC"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.kid", "SIGNING_KEY_EC"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.x", "K37X78mXJHHldZYMzrwipjKR-YZUS2SMye0KindHp6I"),
 					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.y", "8IfvsvXWzbFWOZoVOMwgF5p46mUj3kbOVf9Fk0vVVHo"),
+					resource.TestCheckResourceAttr(ecResourceName, "jwks.0.use", "sig"),
+					checkOAuthAppJwksUse(ecResourceName, map[string]string{"SIGNING_KEY_EC": "sig"}),
 				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", "SIGNING_KEY_RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.use", "sig"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.kid", "ENCRYPTION_KEY_RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.1.use", "enc"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.2.kid", "SIGNING_KEY_EC"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.2.use", "sig"),
+					checkOAuthAppJwksUse(resourceName, map[string]string{
+						"SIGNING_KEY_RSA":    "sig",
+						"ENCRYPTION_KEY_RSA": "enc",
+						"SIGNING_KEY_EC":     "sig",
+					}),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				// client_secret etc. are config-only or only read for refresh tokens, so they are
+				// not set on import. Okta returns jwks sorted by kid and import has no configured
+				// order to follow, so jwks is compared by kid in ImportStateCheck instead.
+				ImportStateVerifyIgnore: []string{"client_secret", "omit_secret", "refresh_token_leeway", "refresh_token_rotation", "skip_authentication_policy", "jwks"},
+				ImportStateCheck: checkImportedOAuthAppJwksUse(map[string]string{
+					"SIGNING_KEY_RSA":    "sig",
+					"ENCRYPTION_KEY_RSA": "enc",
+					"SIGNING_KEY_EC":     "sig",
+				}),
+			},
+		},
+	})
+}
+
+func TestExpandOAuthAppJwks(t *testing.T) {
+	tests := []struct {
+		name     string
+		jwks     []interface{}
+		wantJSON string
+		wantErr  string
+	}{
+		{
+			name: "rsa signing key defaults use to sig",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "RSA", "kid": "rsa", "e": "AQAB", "n": "modulus"},
+			},
+			wantJSON: `{"keys":[{"e":"AQAB","kid":"rsa","kty":"RSA","n":"modulus","status":"ACTIVE","use":"sig"}]}`,
+		},
+		{
+			name: "rsa signing key",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "RSA", "kid": "rsa", "e": "AQAB", "n": "modulus", "use": "sig"},
+			},
+			wantJSON: `{"keys":[{"e":"AQAB","kid":"rsa","kty":"RSA","n":"modulus","status":"ACTIVE","use":"sig"}]}`,
+		},
+		{
+			name: "ec signing key",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "EC", "kid": "ec", "x": "x-coord", "y": "y-coord", "use": "sig"},
+			},
+			wantJSON: `{"keys":[{"kid":"ec","kty":"EC","status":"ACTIVE","use":"sig","x":"x-coord","y":"y-coord"}]}`,
+		},
+		{
+			name: "rsa encryption key",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "RSA", "kid": "enc", "e": "AQAB", "n": "modulus", "use": "enc"},
+			},
+			wantJSON: `{"keys":[{"e":"AQAB","kid":"enc","kty":"RSA","n":"modulus","status":"ACTIVE","use":"enc"}]}`,
+		},
+		{
+			name: "signing and encryption keys together",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "RSA", "kid": "sig", "e": "AQAB", "n": "m1"},
+				map[string]interface{}{"kty": "RSA", "kid": "enc", "e": "AQAB", "n": "m2", "use": "enc"},
+			},
+			wantJSON: `{"keys":[` +
+				`{"e":"AQAB","kid":"sig","kty":"RSA","n":"m1","status":"ACTIVE","use":"sig"},` +
+				`{"e":"AQAB","kid":"enc","kty":"RSA","n":"m2","status":"ACTIVE","use":"enc"}]}`,
+		},
+		{
+			name: "key without kid",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "RSA", "kid": "", "e": "AQAB", "n": "modulus"},
+			},
+			wantJSON: `{"keys":[{"e":"AQAB","kty":"RSA","n":"modulus","status":"ACTIVE","use":"sig"}]}`,
+		},
+		{
+			name: "ec encryption key is rejected",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "EC", "kid": "ec", "x": "x", "y": "y", "use": "enc"},
+			},
+			wantErr: `jwks encryption keys (use = "enc") must have kty "RSA", got "EC"`,
+		},
+		{
+			name: "unsupported signing key type is rejected",
+			jwks: []interface{}{
+				map[string]interface{}{"kty": "oct", "kid": "oct"},
+			},
+			wantErr: `jwks signing keys must have kty "RSA" or "EC", got "oct"`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			jwks, err := idaas.ExpandOAuthAppJwks(tt.jwks)
+			if tt.wantErr != "" {
+				require.EqualError(t, err, tt.wantErr)
+				return
+			}
+			require.NoError(t, err)
+			body, err := json.Marshal(jwks)
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(body))
+		})
+	}
+}
+
+func TestFlattenOAuthAppJwks(t *testing.T) {
+	// Keys as Okta returns them: signing keys created without `use` come back as null.
+	const apiKeys = `{"keys":[
+		{"kty":"EC","kid":"ec","status":"ACTIVE","use":"sig","x":"x-coord","y":"y-coord"},
+		{"kty":"RSA","kid":"enc","status":"ACTIVE","use":"enc","e":"AQAB","n":"m2"},
+		{"kty":"RSA","kid":"rsa","status":"ACTIVE","use":null,"e":"AQAB","n":"m1"}
+	]}`
+	keys := unmarshalOAuthAppJwksForTest(t, apiKeys)
+
+	ec := map[string]interface{}{"kty": "EC", "kid": "ec", "x": "x-coord", "y": "y-coord", "use": "sig"}
+	enc := map[string]interface{}{"kty": "RSA", "kid": "enc", "e": "AQAB", "n": "m2", "use": "enc"}
+	rsa := map[string]interface{}{"kty": "RSA", "kid": "rsa", "e": "AQAB", "n": "m1", "use": "sig"}
+
+	t.Run("no prior keeps api order", func(t *testing.T) {
+		require.Equal(t, []map[string]interface{}{ec, enc, rsa}, idaas.FlattenOAuthAppJwks(keys, nil))
+	})
+
+	t.Run("follows prior order", func(t *testing.T) {
+		prior := []interface{}{
+			map[string]interface{}{"kid": "rsa"},
+			map[string]interface{}{"kid": "enc"},
+			map[string]interface{}{"kid": "ec"},
+		}
+		require.Equal(t, []map[string]interface{}{rsa, enc, ec}, idaas.FlattenOAuthAppJwks(keys, prior))
+	})
+
+	t.Run("keys missing from prior are appended in api order", func(t *testing.T) {
+		prior := []interface{}{
+			map[string]interface{}{"kid": "rsa"},
+			map[string]interface{}{"kid": "removed"},
+		}
+		require.Equal(t, []map[string]interface{}{rsa, ec, enc}, idaas.FlattenOAuthAppJwks(keys, prior))
+	})
+
+	t.Run("duplicate kid keeps api order", func(t *testing.T) {
+		dupKeys := unmarshalOAuthAppJwksForTest(t, `{"keys":[
+			{"kty":"EC","kid":"dup","use":"sig","x":"x","y":"y"},
+			{"kty":"RSA","kid":"dup","use":"sig","e":"AQAB","n":"m"}
+		]}`)
+		prior := []interface{}{map[string]interface{}{"kid": "dup"}}
+		got := idaas.FlattenOAuthAppJwks(dupKeys, prior)
+		require.Len(t, got, 2)
+		require.Equal(t, "EC", got[0]["kty"])
+		require.Equal(t, "RSA", got[1]["kty"])
+	})
+
+	t.Run("key without kid keeps api order", func(t *testing.T) {
+		noKid := unmarshalOAuthAppJwksForTest(t, `{"keys":[
+			{"kty":"RSA","kid":"rsa","use":"sig","e":"AQAB","n":"m1"},
+			{"kty":"RSA","use":"sig","e":"AQAB","n":"m2"}
+		]}`)
+		prior := []interface{}{
+			map[string]interface{}{"kid": ""},
+			map[string]interface{}{"kid": "rsa"},
+		}
+		got := idaas.FlattenOAuthAppJwks(noKid, prior)
+		require.Len(t, got, 2)
+		require.Equal(t, "rsa", got[0]["kid"])
+		require.Equal(t, "", got[1]["kid"])
+	})
+}
+
+func TestExpandFlattenOAuthAppJwksRoundTrip(t *testing.T) {
+	in := []interface{}{
+		map[string]interface{}{"kty": "RSA", "kid": "rsa", "e": "AQAB", "n": "m1", "use": "sig"},
+		map[string]interface{}{"kty": "RSA", "kid": "enc", "e": "AQAB", "n": "m2", "use": "enc"},
+		map[string]interface{}{"kty": "EC", "kid": "ec", "x": "x-coord", "y": "y-coord", "use": "sig"},
+	}
+	jwks, err := idaas.ExpandOAuthAppJwks(in)
+	require.NoError(t, err)
+	body, err := json.Marshal(jwks)
+	require.NoError(t, err)
+
+	got := idaas.FlattenOAuthAppJwks(unmarshalOAuthAppJwksForTest(t, string(body)), in)
+	require.Len(t, got, len(in))
+	for i := range in {
+		require.Equal(t, in[i], got[i])
+	}
+}
+
+func unmarshalOAuthAppJwksForTest(t *testing.T, body string) []v6okta.OpenIdConnectApplicationSettingsClientKeysKeysInner {
+	t.Helper()
+	var jwks v6okta.OpenIdConnectApplicationSettingsClientKeys
+	require.NoError(t, json.Unmarshal([]byte(body), &jwks))
+	return jwks.GetKeys()
+}
+
+// checkImportedOAuthAppJwksUse checks the `use` of each imported jwks key, keyed by kid.
+func checkImportedOAuthAppJwksUse(want map[string]string) resource.ImportStateCheckFunc {
+	return func(states []*terraform.InstanceState) error {
+		if len(states) != 1 {
+			return fmt.Errorf("expected 1 imported state, got %d", len(states))
+		}
+		attrs := states[0].Attributes
+		got := make(map[string]string)
+		for k, kid := range attrs {
+			if strings.HasPrefix(k, "jwks.") && strings.HasSuffix(k, ".kid") {
+				got[kid] = attrs[strings.TrimSuffix(k, "kid")+"use"]
+			}
+		}
+		if !reflect.DeepEqual(want, got) {
+			return fmt.Errorf("unexpected imported jwks key use: want %v, got %v", want, got)
+		}
+		return nil
+	}
+}
+
+// checkOAuthAppJwksUse checks the `use` Okta stores on each inline JWKS key, keyed by kid.
+func checkOAuthAppJwksUse(name string, want map[string]string) resource.TestCheckFunc {
+	if os.Getenv("OKTA_VCR_TF_ACC") == "play" {
+		return func(s *terraform.State) error {
+			return nil
+		}
+	}
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("resource not found: %s", name)
+		}
+		client := iDaaSAPIClientForTestUtil.OktaSDKClientV6()
+		app, _, err := client.ApplicationAPI.GetApplication(context.Background(), rs.Primary.ID).Execute()
+		if err != nil {
+			return err
+		}
+		if app.OpenIdConnectApplication == nil {
+			return fmt.Errorf("%s is not an OpenID Connect application", name)
+		}
+		settings := app.OpenIdConnectApplication.GetSettings()
+		oauthClient := settings.GetOauthClient()
+		jwks := oauthClient.GetJwks()
+		got := make(map[string]string)
+		for _, k := range jwks.GetKeys() {
+			if enc := k.OAuth2ClientJsonEncryptionKeyResponse; enc != nil {
+				got[enc.GetKid()] = enc.GetUse()
+				continue
+			}
+			if sig := k.OAuth2ClientJsonSigningKeyResponse; sig != nil {
+				var kid string
+				var additional map[string]interface{}
+				if sig.OAuth2ClientJsonWebKeyRsaResponse != nil {
+					kid, additional = sig.OAuth2ClientJsonWebKeyRsaResponse.GetKid(), sig.OAuth2ClientJsonWebKeyRsaResponse.AdditionalProperties
+				} else if sig.OAuth2ClientJsonWebKeyECResponse != nil {
+					kid, additional = sig.OAuth2ClientJsonWebKeyECResponse.GetKid(), sig.OAuth2ClientJsonWebKeyECResponse.AdditionalProperties
+				}
+				use, _ := additional["use"].(string)
+				got[kid] = use
+			}
+		}
+		if !reflect.DeepEqual(want, got) {
+			return fmt.Errorf("unexpected JWKS key use in Okta: want %v, got %v", want, got)
+		}
+		return nil
+	}
+}
+
+// TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728 verifies that a
+// JWKS key without a key ID can be created and imported.
+func TestAccResourceOktaAppOauth_serviceWithJWKSNoKid_OKTA1243728(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	config := mgr.GetFixtures("service_with_jwks_no_kid.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "jwks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kty", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.kid", ""),
+					resource.TestCheckResourceAttr(resourceName, "jwks.0.e", "AQAB"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				// These are config-only or only read for refresh tokens, so they are not set on import.
+				ImportStateVerifyIgnore: []string{"client_secret", "omit_secret", "refresh_token_leeway", "refresh_token_rotation", "skip_authentication_policy"},
+			},
+		},
+	})
+}
+
+// TestAccResourceOktaAppOauth_preconfiguredNoType_OKTA1243728 verifies that a
+// catalog app with no application_type (Moveworks) can be created, read and
+// imported without setting type, and that custom apps still require type.
+func TestAccResourceOktaAppOauth_preconfiguredNoType_OKTA1243728(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSAppOAuth, t.Name())
+	customConfig := mgr.GetFixtures("custom_no_type.tf", t)
+	config := mgr.GetFixtures("preconfigured_no_type.tf", t)
+	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAppOAuth)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkResourceDestroy(resources.OktaIDaaSAppOAuth, createDoesOAuthAppExist()),
+		Steps: []resource.TestStep{
+			{
+				Config:      customConfig,
+				ExpectError: regexp.MustCompile(`'type' is required unless 'preconfigured_app' is set`),
+			},
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					ensureResourceExists(resourceName, createDoesOAuthAppExist()),
+					resource.TestCheckResourceAttr(resourceName, "preconfigured_app", "moveworks"),
+					resource.TestCheckResourceAttr(resourceName, "name", "moveworks"),
+					// Moveworks has no OAuth client settings, so type is never set.
+					resource.TestCheckNoResourceAttr(resourceName, "type"),
+				),
+			},
+			{
+				// No diff, and in particular no replacement on type, on re-plan.
+				Config:   config,
+				PlanOnly: true,
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateCheck: func(s []*terraform.InstanceState) error {
+					if len(s) != 1 {
+						return errors.New("failed to import okta_app_oauth into state")
+					}
+					if got := s[0].Attributes["type"]; got != "" {
+						return fmt.Errorf("expected imported type to be empty, got %q", got)
+					}
+					if got := s[0].Attributes["name"]; got != "moveworks" {
+						return fmt.Errorf("expected imported name to be moveworks, got %q", got)
+					}
+					return nil
+				},
 			},
 		},
 	})
