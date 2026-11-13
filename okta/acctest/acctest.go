@@ -29,7 +29,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
 	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"

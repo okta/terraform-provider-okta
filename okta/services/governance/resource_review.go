@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 

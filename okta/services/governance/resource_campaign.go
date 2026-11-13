@@ -22,7 +22,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -1215,7 +1215,7 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 			AutoRemediationSettings: autoRemediationSettings,
 		},
 		ResourceSettings: governance.ResourceSettingsMutable{
-			Type:                               governance.CampaignResourceType(d.ResourceSettings.Type.ValueString()),
+			Type:                               governance.CampaignResourceType(d.ResourceSettings.Type.ValueString()).Ptr(),
 			TargetResources:                    targetResources,
 			IncludeAdminRoles:                  d.ResourceSettings.IncludeAdminRoles.ValueBoolPointer(),
 			IncludeEntitlements:                d.ResourceSettings.IncludeEntitlements.ValueBoolPointer(),

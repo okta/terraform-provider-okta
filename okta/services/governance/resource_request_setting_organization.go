@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -122,7 +122,7 @@ func (r *requestSettingOrganizationResource) Update(ctx context.Context, req res
 
 func createOrgRequestsSettings(data requestSettingOrganizationResourceModel) governance.OrgRequestSettingsPatchable {
 	return governance.OrgRequestSettingsPatchable{
-		SubprocessorsAcknowledged: data.SubprocessorsAcknowledged.ValueBool(),
+		SubprocessorsAcknowledged: data.SubprocessorsAcknowledged.ValueBoolPointer(),
 	}
 }
 

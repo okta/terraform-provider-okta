@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -203,7 +203,7 @@ func (r *entitlementResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	data.Id = state.Id
 	// Update API call logic
-	replaceEntitlementResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementsAPI.ReplaceEntitlement(ctx, data.Id.ValueString()).EntitlementsFullWithParent(buildEntitlementReplace(data, state)).Execute()
+	replaceEntitlementResp, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().EntitlementsAPI.ReplaceEntitlement(ctx, data.Id.ValueString()).EntitlementUpdatable(buildEntitlementReplace(data, state)).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Entitlement",
@@ -323,8 +323,8 @@ func buildEntitlementValues(data []entitlementValuesModel) []governance.Entitlem
 	return x
 }
 
-func buildEntitlementReplace(data, state entitlementResourceModel) governance.EntitlementsFullWithParent {
-	return governance.EntitlementsFullWithParent{
+func buildEntitlementReplace(data, state entitlementResourceModel) governance.EntitlementUpdatable {
+	return governance.EntitlementUpdatable{
 		Id:            data.Id.ValueString(),
 		DataType:      governance.EntitlementPropertyDatatype(data.DataType.ValueString()),
 		ExternalValue: data.ExternalValue.ValueString(),
@@ -340,7 +340,7 @@ func buildEntitlementReplace(data, state entitlementResourceModel) governance.En
 	}
 }
 
-func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []governance.EntitlementValueFull {
+func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []governance.EntitlementValueUpdatable {
 	// Build a lookup map from the prior state so we can match existing values
 	// by their external_value (which is the unique key) rather than by positional index.
 	stateByExternalValue := make(map[string]string, len(state))
@@ -350,16 +350,16 @@ func buildEntitlementValuesForReplace(values, state []entitlementValuesModel) []
 		}
 	}
 
-	x := make([]governance.EntitlementValueFull, len(values))
+	x := make([]governance.EntitlementValueUpdatable, len(values))
 	for i, value := range values {
 		var Id *string
 		if existingID, ok := stateByExternalValue[value.ExternalValue.ValueString()]; ok {
 			Id = &existingID
 		}
 
-		x[i] = governance.EntitlementValueFull{
-			ExternalValue: value.ExternalValue.ValueStringPointer(),
-			Name:          value.Name.ValueStringPointer(),
+		x[i] = governance.EntitlementValueUpdatable{
+			ExternalValue: value.ExternalValue.ValueString(),
+			Name:          value.Name.ValueString(),
 			Description:   value.Description.ValueStringPointer(),
 			Id:            Id,
 		}
