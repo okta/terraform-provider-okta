@@ -66,7 +66,11 @@ resource "okta_push_group" "ad_sample" {
 
 ### Read-Only
 
+- `created` (String) The timestamp when the group push mapping was created, in RFC 3339 format.
+- `error_summary` (String) The error message summary if the latest group push failed.
 - `id` (String) Push Group ID
+- `last_push` (String) The timestamp when the group push mapping was last pushed, in RFC 3339 format.
+- `last_updated` (String) The timestamp when the group push mapping was last updated, in RFC 3339 format.
 
 <a id="nestedatt--app_config"></a>
 ### Nested Schema for `app_config`
