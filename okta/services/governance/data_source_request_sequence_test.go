@@ -21,7 +21,7 @@ func TestAccDataSourceOktaRequestSequence_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_request_sequence.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_request_sequence.test", "name", "Business Justification + Requester's Manager Approval/Justification"),
+					resource.TestCheckResourceAttr("data.okta_request_sequence.test", "name", "seq1"),
 					resource.TestCheckResourceAttr("data.okta_request_sequence.test", "compatible_resource_types.0", "APP"),
 					resource.TestCheckResourceAttr("data.okta_request_sequence.test", "compatible_resource_types.1", "GROUP"),
 				),

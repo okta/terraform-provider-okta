@@ -6,10 +6,10 @@ resource "okta_user" "test" {
 }
 
 resource "okta_review" "test" {
-  campaign_id = "icizigd86iM9sOcbN1d6"
+  campaign_id = "ici1mo8jm7rv8vTXv1d7"
   reviewer_id = okta_user.test.id
   review_ids = [
-    "icrztblxbBFiVKepb1d6"
+    "icr1mobpl8z8xIPLv1d7"
   ]
   reviewer_level = "FIRST"
   note           = "John Smith is on leave for this month. His manager Tim will be the reviewer instead."

@@ -1,3 +1,3 @@
 data "okta_review" "test" {
-  id = "icrztblxbBFiVKepb1d6"
+  id = "icr1mobpl8z8xIPLv1d7"
 }

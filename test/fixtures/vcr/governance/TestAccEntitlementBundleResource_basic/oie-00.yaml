@@ -6,10 +6,52 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
+        content_length: 390
+        host: oie-00.dne-okta.com
+        body: |
+            {"dataType":"array","description":"Some license entitlement","externalValue":"Entitlement Bundle","multiValue":true,"name":"Entitlement Bundle","parent":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"},"values":[{"description":"description for value1","externalValue":"value_1","name":"value1"},{"description":"description for value2","externalValue":"value_2","name":"value2"}]}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/governance/api/v1/entitlements
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 1388
+        body: '{"parentResourceOrn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oa15zse2by0vGzyP1d8","parent":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"},"values":[{"id":"ent1mo9yg1EspcWEk1d7","name":"value1","externalValue":"value_1","description":"description for value1","orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-values:ent1mo9yg1EspcWEk1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"},{"id":"ent1mo9yg2pyqsS3I1d7","name":"value2","externalValue":"value_2","description":"description for value2","orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-values:ent1mo9yg2pyqsS3I1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7","hints":{}}},"metadata":{"total":2},"id":"esp1mo9yg0sDqAFn91d7","name":"Entitlement Bundle","externalValue":"Entitlement Bundle","description":"Some license entitlement","multiValue":true,"required":false,"dataType":"array","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11.673Z","lastUpdated":"2026-11-14T09:24:11.673Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "1388"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 14 Nov 2026 09:24:11 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7>; rel="self"
+            Location:
+                - https://dcp-tf-testing-2026-01-06.oktapreview.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.229825166s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
         content_length: 234
         host: oie-00.dne-okta.com
         body: |
-            {"description":"testing entitlement bundle","entitlements":[{"id":"espzcbqd7Suwp4Y7A1d6","values":[{"id":"entzcbqd8lcD3BRWR1d6"}]}],"name":"test-entitlement-bundle","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"}}
+            {"description":"testing entitlement bundle","entitlements":[{"id":"esp1mo9yg0sDqAFn91d7","values":[{"id":"ent1mo9yg1EspcWEk1d7"}]}],"name":"test-entitlement-bundle","target":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"}}
         headers:
             Accept:
                 - application/json
@@ -24,7 +66,7 @@ interactions:
         proto_major: 2
         proto_minor: 0
         content_length: 770
-        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11rzfjq7zngVDA1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"id":"espzcbqd7Suwp4Y7A1d6","values":[{"id":"entzcbqd8lcD3BRWR1d6"}]}],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7","hints":{}}},"name":"test-entitlement-bundle","description":"testing entitlement bundle","id":"enb11rzfjq7zngVDA1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T09:39:35Z","lastUpdated":"2025-09-22T09:39:35Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
+        body: '{"orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-bundles:enb1mo8jlwShCsWqk1d7","targetResourceOrn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oa15zse2by0vGzyP1d8","target":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"id":"esp1mo9yg0sDqAFn91d7","values":[{"id":"ent1mo9yg1EspcWEk1d7"}]}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7","hints":{}}},"name":"test-entitlement-bundle","description":"testing entitlement bundle","id":"enb1mo8jlwShCsWqk1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:12Z","lastUpdated":"2026-11-14T09:24:12Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
@@ -33,51 +75,16 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Mon, 22 Sep 2025 09:39:35 GMT
+                - Sat, 14 Nov 2026 09:24:12 GMT
             Link:
-                - <https://oie-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7>; rel="self"
+                - <https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7>; rel="self"
             Location:
-                - https://dcp-testing-oig-2025-06-26-admin.oktapreview.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7
+                - https://dcp-tf-testing-2026-01-06.oktapreview.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 201 Created
         code: 201
-        duration: 2.917418792s
-    - id: 1
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: -1
-        uncompressed: true
-        body: '{"orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-bundles:enb11rzfjq7zngVDA1d7","targetResourceOrn":"orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oao01ardu8r8qUP91d7","target":{"externalId":"0oao01ardu8r8qUP91d7","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"entzcbqd8lcD3BRWR1d6","name":"disp-name","externalValue":"val1","orn":"orn:okta:governance:00onkw1sbuAh3Q06I1d7:entitlement-values:entzcbqd8lcD3BRWR1d6"}],"id":"espzcbqd7Suwp4Y7A1d6","name":"manual-entitlement","externalValue":"manual-entitlement-10-07","multiValue":false,"required":false,"dataType":"string"}],"_links":{"self":{"href":"https://oie-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7","hints":{}}},"name":"test-entitlement-bundle","description":"testing entitlement bundle","id":"enb11rzfjq7zngVDA1d7","createdBy":"00unkw1sfbTw08c0g1d7","created":"2025-09-22T09:39:35Z","lastUpdated":"2025-09-22T09:39:35Z","lastUpdatedBy":"00unkw1sfbTw08c0g1d7"}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Type:
-                - application/json
-            Date:
-                - Mon, 22 Sep 2025 09:39:36 GMT
-            Link:
-                - <https://oie-00-admin.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7>; rel="self"
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.096857584s
+        duration: 1.232391458s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -90,7 +97,77 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb11rzfjq7zngVDA1d7
+        url: https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"parentResourceOrn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oa15zse2by0vGzyP1d8","parent":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"},"values":[{"id":"ent1mo9yg1EspcWEk1d7","name":"value1","externalValue":"value_1","description":"description for value1","orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-values:ent1mo9yg1EspcWEk1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"},{"id":"ent1mo9yg2pyqsS3I1d7","name":"value2","externalValue":"value_2","description":"description for value2","orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-values:ent1mo9yg2pyqsS3I1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7","hints":{}}},"metadata":{"total":2},"id":"esp1mo9yg0sDqAFn91d7","name":"Entitlement Bundle","externalValue":"Entitlement Bundle","description":"Some license entitlement","multiValue":true,"required":false,"dataType":"array","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 14 Nov 2026 09:24:14 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.175485166s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-bundles:enb1mo8jlwShCsWqk1d7","targetResourceOrn":"orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oa15zse2by0vGzyP1d8","target":{"externalId":"0oa15zse2by0vGzyP1d8","type":"APPLICATION"},"status":"ACTIVE","entitlements":[{"values":[{"id":"ent1mo9yg1EspcWEk1d7","name":"value1","externalValue":"value_1","description":"description for value1","orn":"orn:oktapreview:governance:00otivnuq1X5554yc1d7:entitlement-values:ent1mo9yg1EspcWEk1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:11Z","lastUpdated":"2026-11-14T09:24:11Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}],"id":"esp1mo9yg0sDqAFn91d7","name":"Entitlement Bundle","externalValue":"Entitlement Bundle","description":"Some license entitlement","multiValue":true,"required":false,"dataType":"array"}],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7","hints":{}}},"name":"test-entitlement-bundle","description":"testing entitlement bundle","id":"enb1mo8jlwShCsWqk1d7","createdBy":"00utivnuu1aaKzqqO1d7","created":"2026-11-14T09:24:12Z","lastUpdated":"2026-11-14T09:24:12Z","lastUpdatedBy":"00utivnuu1aaKzqqO1d7"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 14 Nov 2026 09:24:15 GMT
+            Link:
+                - <https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7>; rel="self"
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.193329666s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/entitlement-bundles/enb1mo8jlwShCsWqk1d7
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -102,9 +179,39 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 22 Sep 2025 09:39:37 GMT
+                - Sat, 14 Nov 2026 09:24:16 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.095778625s
+        duration: 1.211534s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/governance/api/v1/entitlements/esp1mo9yg0sDqAFn91d7
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Sat, 14 Nov 2026 09:24:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.349307542s

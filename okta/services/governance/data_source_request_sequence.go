@@ -89,8 +89,8 @@ func (d *requestSequenceDataSource) Read(ctx context.Context, req datasource.Rea
 	readRequestSeqResp, _, err := d.OktaGovernanceClient.OktaGovernanceSDKClient().RequestSequencesAPI.GetResourceRequestSequenceV2(ctx, data.ResourceId.ValueString(), data.Id.ValueString()).Execute()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading Principal Entitlements",
-			"Could not read Principal Entitlements, unexpected error: "+err.Error(),
+			"Error reading Request Sequence",
+			"Could not read Request Sequence, unexpected error: "+err.Error(),
 		)
 		return
 	}

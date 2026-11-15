@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -687,9 +688,14 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 
 	campaign, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
 	if err != nil {
+		detail := err.Error()
+		var apiErr *governance.GenericOpenAPIError
+		if errors.As(err, &apiErr) && len(apiErr.Body()) > 0 {
+			detail += ": " + string(apiErr.Body())
+		}
 		resp.Diagnostics.AddError(
 			"Error creating Campaign",
-			"Could not create Campaign, unexpected error: "+err.Error(),
+			"Could not create Campaign, unexpected error: "+detail,
 		)
 		return
 	}

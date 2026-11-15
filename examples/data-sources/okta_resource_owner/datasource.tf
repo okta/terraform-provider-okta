@@ -1,8 +1,8 @@
 resource "okta_resource_owner" "test" {
-  resource_orns = ["orn:oktapreview:idp:00onkw1sa89bQ0bncd9A:apps:oidc_client:0oabcde0afs9cbx90bup"]
+  resource_orns = ["orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oaws4am895IZbn6Q1d7"]
 }
 
 data "okta_resource_owner" "test" {
-  parent_resource_orn = "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oanbc98zc6kh2bx32Pv"
+  parent_resource_orn = "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7"
   depends_on          = [okta_resource_owner.test]
 }

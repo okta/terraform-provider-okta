@@ -48,6 +48,10 @@ func TestAccRequestConditionResource_ReorderIDs(t *testing.T) {
 	config := mgr.GetFixtures("reorder_ids.tf", t)
 	updatedConfig := mgr.GetFixtures("reorder_ids_updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaGovernanceRequestCondition)
+	// The groups are created by the fixture, so their IDs are only known at
+	// runtime; compare against the okta_group resources instead of literals.
+	groupA := "okta_group.requester_groupA"
+	groupB := "okta_group.requester_groupB"
 
 	acctest.OktaResourceTest(t, resource.TestCase{
 		PreCheck:                 acctest.AccPreCheck(t),
@@ -60,19 +64,19 @@ func TestAccRequestConditionResource_ReorderIDs(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "test-reorder-ids"),
 					resource.TestCheckResourceAttr(resourceName, "requester_settings.type", "GROUPS"),
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.0.id", "00gwkaw31mtq5LnuZ1d7"),
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.1.id", "00gwkax39dIJgiptR1d7"),
-					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.0.id", "00gwkaw31mtq5LnuZ1d7"),
-					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.1.id", "00gwkax39dIJgiptR1d7"),
+					resource.TestCheckResourceAttrPair(resourceName, "requester_settings.ids.0.id", groupA, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "requester_settings.ids.1.id", groupB, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "access_scope_settings.ids.0.id", groupA, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "access_scope_settings.ids.1.id", groupB, "id"),
 				),
 			},
 			{
 				Config: mgr.ConfigReplace(updatedConfig),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.0.id", "00gwkax39dIJgiptR1d7"),
-					resource.TestCheckResourceAttr(resourceName, "requester_settings.ids.1.id", "00gwkaw31mtq5LnuZ1d7"),
-					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.0.id", "00gwkax39dIJgiptR1d7"),
-					resource.TestCheckResourceAttr(resourceName, "access_scope_settings.ids.1.id", "00gwkaw31mtq5LnuZ1d7"),
+					resource.TestCheckResourceAttrPair(resourceName, "requester_settings.ids.0.id", groupB, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "requester_settings.ids.1.id", groupA, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "access_scope_settings.ids.0.id", groupB, "id"),
+					resource.TestCheckResourceAttrPair(resourceName, "access_scope_settings.ids.1.id", groupA, "id"),
 				),
 			},
 			{
@@ -162,7 +166,7 @@ func TestAccRequestConditionResource_Issue2780(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "issue-2780"),
-					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oatu8k9anRWwR1oq1d7"),
+					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oa15zse2by0vGzyP1d8"),
 				),
 			},
 			{
@@ -170,7 +174,7 @@ func TestAccRequestConditionResource_Issue2780(t *testing.T) {
 				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "issue-2780"),
-					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oaty79sxfpt7AVvI1d7"),
+					resource.TestCheckResourceAttr(resourceName, "resource_id", "0oa15zse2by0vGzyP1d8"),
 				),
 			},
 		},
