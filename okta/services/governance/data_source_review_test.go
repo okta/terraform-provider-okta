@@ -21,7 +21,7 @@ func TestAccDataSourceOktaReview_read(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_review.test", "id"),
-					resource.TestCheckResourceAttr("data.okta_review.test", "campaign_id", "icizigd86iM9sOcbN1d6"),
+					resource.TestCheckResourceAttr("data.okta_review.test", "campaign_id", "ici1mo8jm7rv8vTXv1d7"),
 					resource.TestCheckResourceAttr("data.okta_review.test", "decision", "UNREVIEWED"),
 				),
 			},

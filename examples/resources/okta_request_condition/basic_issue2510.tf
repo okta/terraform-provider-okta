@@ -3,16 +3,27 @@ resource "okta_group" "requester" {
   description = "requester_test"
 }
 
+resource "okta_group" "requester_groupA" {
+  name        = "requester_test_groupA"
+  description = "requester_test_groupA"
+}
+
+resource "okta_app_group_assignment" "testA" {
+  app_id   = "0oa15zse2by0vGzyP1d8"
+  group_id = okta_group.requester_groupA.id
+}
+
+
 resource "okta_request_condition" "test" {
-  resource_id          = "0oasp3g29b1hqkcYE1d7"
-  approval_sequence_id = "69251ae704a4d0a7fcdb870f"
+  resource_id          = "0oa15zse2by0vGzyP1d8"
+  approval_sequence_id = "69cbcb93a55844b4f3090b11"
   name                 = "issue-2510"
 
   access_scope_settings {
     type = "GROUPS"
 
     ids {
-      id = "00gouu5aq9Gq0JGLH1d7"
+      id = okta_group.requester_groupA.id
     }
   }
 
@@ -23,4 +34,5 @@ resource "okta_request_condition" "test" {
       id = okta_group.requester.id
     }
   }
+  depends_on = ["okta_app_group_assignment.testA"]
 }

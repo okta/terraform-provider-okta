@@ -6,7 +6,7 @@ resource "okta_entitlement" "test" {
   data_type      = "array"
 
   parent {
-    external_id = "0oatu8k9anRWwR1oq1d7"
+    external_id = "0oa15zse2by0vGzyP1d8"
     type        = "APPLICATION"
   }
 

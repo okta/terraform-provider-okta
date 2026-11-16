@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"path/filepath"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -29,7 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	schema_sdk "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	v4SdkOkta "github.com/okta/okta-sdk-golang/v4/okta"
 	v5SdkOkta "github.com/okta/okta-sdk-golang/v5/okta"
 	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"
@@ -88,13 +87,10 @@ func OktaResourceTest(t *testing.T, c resource.TestCase) {
 
 	// sdk client clients are set up in provider factories for test
 	if mgr.IsPlaying() {
-		if !mgr.HasIdaasCassettesToPlay() {
-			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.IdaaSCassettesPath)
-			return
-		}
-
-		if !mgr.HasGovernanceCassettesToPlay() {
-			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), mgr.GovernanceCassettesPath)
+		// Skip rather than pass when the test has no cassettes of its own;
+		// otherwise the play loop below runs zero times and reports PASS.
+		if len(mgr.Cassettes()) == 0 {
+			t.Skipf("%q test is missing VCR cassette(s) at %q, skipping test. See .github/CONTRIBUTING.md#acceptance-tests-with-vcr for more information about playing/recording cassettes.", t.Name(), path.Dir(mgr.CassettePath()))
 			return
 		}
 
@@ -205,22 +201,20 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	idaasTestClient := NewVcrIDaaSClient(d)
 	cfg.SetIdaasAPIClient(idaasTestClient)
 
-	idaaSRec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
+	// The IDaaS and governance clients share one recorder so that a test using
+	// both (e.g. creating an okta_user for a governance resource) records every
+	// interaction into the same cassette. Separate recorders writing to one
+	// cassette path clobber each other, and only one of them gets stopped/saved.
+	rec, err := newVCRRecorder(mgr, idaasTestClient.Transport())
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	idaaSRt := http.RoundTripper(idaaSRec)
-	idaasTestClient.SetTransport(idaaSRt)
+	rt := http.RoundTripper(rec)
+	idaasTestClient.SetTransport(rt)
 
 	governanceTestClient := NewVcrGovernanceClient(d)
 	cfg.SetGovernanceAPIClient(governanceTestClient)
-
-	governanceRec, err := newVCRRecorder(mgr, governanceTestClient.Transport())
-	if err != nil {
-		return nil, diag.FromErr(err)
-	}
-	governanceRt := http.RoundTripper(governanceRec)
-	governanceTestClient.SetTransport(governanceRt)
+	governanceTestClient.SetTransport(rt)
 
 	providerConfigsLock.Lock()
 	providerConfigs[mgr.TestAndCassetteNameKey()] = cfg
@@ -251,21 +245,12 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 	if ok {
 		// don't record failing test runs (unless explicitly allowed for error response testing)
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
-			// If a test succeeds, write new seed/yaml to files
-			if strings.Contains(strings.ToLower(vcr.CassettePath()), "idaas") {
-				rtIDaasHelper := config.OktaIDaaSClient.(HttpClientHelper)
-				rt := rtIDaasHelper.Transport()
-				err := rt.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
-				}
-			} else {
-				rtGovernanceHelper := config.OktaGovernanceClient.(HttpClientHelper)
-				rtGovernance := rtGovernanceHelper.Transport()
-				err := rtGovernance.(*recorder.Recorder).Stop()
-				if err != nil {
-					t.Error(err)
-				}
+			// If a test succeeds, write new seed/yaml to files. Both clients
+			// share one recorder (see vcrCachedConfigV2), so stopping it once
+			// saves every interaction.
+			rt := config.OktaIDaaSClient.(HttpClientHelper).Transport()
+			if err := rt.(*recorder.Recorder).Stop(); err != nil {
+				t.Error(err)
 			}
 			fmt.Printf("=== VCR WROTE CASSETTE %s.yaml\n", vcr.CassettePath())
 		}
@@ -298,33 +283,19 @@ func (m *vcrManager) ValidMode() bool {
 	return m.VCRModeName == "play" || m.VCRModeName == "record"
 }
 
-// HasIdaasCassettesToPlay VCR is in play mode and there are cassette files to play.
-func (m *vcrManager) HasIdaasCassettesToPlay() bool {
-	cassetteDir := filepath.Dir(m.IdaaSCassettesPath)
-	files, err := os.ReadDir(cassetteDir)
-	if err != nil {
-		return false
-	}
-	return m.VCRModeName == "play" && len(files) > 0
-}
-
-// HasGovernanceCassettesToPlay VCR is in play mode and there are cassette files to play.
-func (m *vcrManager) HasGovernanceCassettesToPlay() bool {
-	cassetteDir := filepath.Dir(m.GovernanceCassettesPath)
-	files, err := os.ReadDir(cassetteDir)
-	if err != nil {
-		return false
-	}
-	return m.VCRModeName == "play" && len(files) > 0
-}
-
 // CassettePath the path to what would be the current cassette.
 func (m *vcrManager) CassettePath() string {
-	wd, _ := os.Getwd()
-	if strings.Contains(strings.ToLower(wd), "governance") {
+	if m.isGovernanceTest() {
 		return path.Join(m.GovernanceCassettesPath, m.CurrentCassette)
 	}
 	return path.Join(m.IdaaSCassettesPath, m.CurrentCassette)
+}
+
+// isGovernanceTest reports whether the test is running from the governance
+// service package, whose cassettes are stored under the governance fixtures.
+func (m *vcrManager) isGovernanceTest() bool {
+	wd, _ := os.Getwd()
+	return strings.Contains(strings.ToLower(wd), "governance")
 }
 
 // AttemptedWriteOfExistingCassette given a vcr mode of record the current
@@ -364,18 +335,18 @@ func (m *vcrManager) Cassettes() []string {
 		return []string{os.Getenv("OKTA_VCR_CASSETTE")}
 	}
 
-	cassettes := []string{}
-	idaasFiles, err := os.ReadDir(path.Join(m.IdaaSCassettesPath))
-	if err != nil {
-		return cassettes
+	// Read only the directory CassettePath() will load from. A test's cassettes
+	// live under either idaas/ or governance/, never both, so bailing out when
+	// the idaas/ directory is missing silently skipped every governance test.
+	dir := m.IdaaSCassettesPath
+	if m.isGovernanceTest() {
+		dir = m.GovernanceCassettesPath
 	}
-	cassettes = append(cassettes, m.getCassettes(idaasFiles, cassettes)...)
-	governanceFiles, err := os.ReadDir(path.Join(m.GovernanceCassettesPath))
+	files, err := os.ReadDir(dir)
 	if err != nil {
-		return cassettes
+		return []string{}
 	}
-	cassettes = append(cassettes, m.getCassettes(governanceFiles, cassettes)...)
-	return cassettes
+	return m.getCassettes(files, []string{})
 }
 
 func (m *vcrManager) getCassettes(files []os.DirEntry, cassettes []string) []string {

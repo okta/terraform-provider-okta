@@ -24,7 +24,7 @@ func TestAccRequestSettingResource_basic(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_request_setting_resource.test",
-				ImportStateId:      "0oaoum6j3cElINe1z1d7",
+				ImportStateId:      "0oa15zse2by0vGzyP1d8",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
@@ -32,7 +32,7 @@ func TestAccRequestSettingResource_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.approval_sequence_id", "68920b41386747a673869356"),
+					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.approval_sequence_id", "69cbcb93a55844b4f3090b11"),
 					resource.TestCheckResourceAttr(resourceName, "risk_settings.default_setting.request_submission_type", "ALLOWED_WITH_OVERRIDES"),
 				),
 			},

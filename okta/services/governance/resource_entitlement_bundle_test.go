@@ -24,7 +24,7 @@ func TestAccEntitlementBundleResource_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", "test-entitlement-bundle"),
-					resource.TestCheckResourceAttr(resourceName, "target.external_id", "0oao01ardu8r8qUP91d7"),
+					resource.TestCheckResourceAttr(resourceName, "target.external_id", "0oa15zse2by0vGzyP1d8"),
 				),
 			},
 		},

@@ -1,4 +1,4 @@
 data "okta_end_user_my_requests" "example" {
-  entry_id = "ce123456789abcdefghi"
+  entry_id = "cen123456789abcdefgh"
   id       = "req123abcd456ghijklm"
 }

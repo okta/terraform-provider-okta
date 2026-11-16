@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -22,7 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -687,9 +688,14 @@ func (r *campaignResource) Create(ctx context.Context, req resource.CreateReques
 
 	campaign, _, err := r.OktaGovernanceClient.OktaGovernanceSDKClient().CampaignsAPI.CreateCampaign(ctx).CampaignMutable(buildCampaign(data)).Execute()
 	if err != nil {
+		detail := err.Error()
+		var apiErr *governance.GenericOpenAPIError
+		if errors.As(err, &apiErr) && len(apiErr.Body()) > 0 {
+			detail += ": " + string(apiErr.Body())
+		}
 		resp.Diagnostics.AddError(
 			"Error creating Campaign",
-			"Could not create Campaign, unexpected error: "+err.Error(),
+			"Could not create Campaign, unexpected error: "+detail,
 		)
 		return
 	}
@@ -1215,7 +1221,7 @@ func buildCampaign(d campaignResourceModel) governance.CampaignMutable {
 			AutoRemediationSettings: autoRemediationSettings,
 		},
 		ResourceSettings: governance.ResourceSettingsMutable{
-			Type:                               governance.CampaignResourceType(d.ResourceSettings.Type.ValueString()),
+			Type:                               governance.CampaignResourceType(d.ResourceSettings.Type.ValueString()).Ptr(),
 			TargetResources:                    targetResources,
 			IncludeAdminRoles:                  d.ResourceSettings.IncludeAdminRoles.ValueBoolPointer(),
 			IncludeEntitlements:                d.ResourceSettings.IncludeEntitlements.ValueBoolPointer(),

@@ -13,7 +13,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: GET
       response:
         proto: HTTP/2.0
@@ -21,19 +21,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"69cbcb93a55844b4f3090b11"}},"validRequestOnBehalfOfSettings":[{"type":"EVERYONE"},{"type":"DIRECT_REPORT"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:13 GMT
+                - Sat, 14 Nov 2026 10:42:26 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.111956208s
+        duration: 1.328117917s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -46,7 +46,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: GET
       response:
         proto: HTTP/2.0
@@ -54,19 +54,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"69cbcb93a55844b4f3090b11"}},"validRequestOnBehalfOfSettings":[{"type":"DIRECT_REPORT"},{"type":"EVERYONE"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:14 GMT
+                - Sat, 14 Nov 2026 10:42:27 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.130475875s
+        duration: 1.225320666s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -75,7 +75,7 @@ interactions:
         content_length: 210
         host: oie-00.dne-okta.com
         body: |
-            {"requestOnBehalfOfSettings":{"allowed":true},"riskSettings":{"defaultSetting":{"accessDurationSettings":null,"approvalSequenceId":"68920b41386747a673869356","requestSubmissionType":"ALLOWED_WITH_OVERRIDES"}}}
+            {"requestOnBehalfOfSettings":{"allowed":true},"riskSettings":{"defaultSetting":{"accessDurationSettings":null,"approvalSequenceId":"69cbcb93a55844b4f3090b11","requestSubmissionType":"ALLOWED_WITH_OVERRIDES"}}}
         headers:
             Accept:
                 - application/json
@@ -83,7 +83,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: PATCH
       response:
         proto: HTTP/2.0
@@ -91,19 +91,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"69cbcb93a55844b4f3090b11"}},"validRequestOnBehalfOfSettings":[{"type":"DIRECT_REPORT"},{"type":"EVERYONE"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:15 GMT
+                - Sat, 14 Nov 2026 10:42:29 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.362048917s
+        duration: 1.418600542s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -116,7 +116,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: GET
       response:
         proto: HTTP/2.0
@@ -124,19 +124,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"69cbcb93a55844b4f3090b11"}},"validRequestOnBehalfOfSettings":[{"type":"DIRECT_REPORT"},{"type":"EVERYONE"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:17 GMT
+                - Sat, 14 Nov 2026 10:42:30 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.282246333s
+        duration: 1.225915625s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -149,7 +149,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: GET
       response:
         proto: HTTP/2.0
@@ -157,19 +157,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"68920b41386747a673869356"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"requestOnBehalfOfSettings":{"allowed":true},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"ALLOWED_WITH_OVERRIDES","approvalSequenceId":"69cbcb93a55844b4f3090b11"}},"validRequestOnBehalfOfSettings":[{"type":"EVERYONE"},{"type":"DIRECT_REPORT"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:18 GMT
+                - Sat, 14 Nov 2026 10:42:31 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.291226208s
+        duration: 1.221549167s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -186,7 +186,7 @@ interactions:
                 - SSWS REDACTED
             Content-Type:
                 - application/json
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: PATCH
       response:
         proto: HTTP/2.0
@@ -194,19 +194,19 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[{"type":"DIRECT_REPORT"},{"type":"EVERYONE"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:20 GMT
+                - Sat, 14 Nov 2026 10:42:33 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.149606292s
+        duration: 1.296478125s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -219,7 +219,7 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oaoum6j3cElINe1z1d7/request-settings
+        url: https://oie-00.dne-okta.com/governance/api/v2/resources/0oa15zse2by0vGzyP1d8/request-settings
         method: GET
       response:
         proto: HTTP/2.0
@@ -227,16 +227,16 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"validAccessScopeSettings":[{"type":"ENTITLEMENT_BUNDLES"},{"type":"RESOURCE_DEFAULT"}],"validRequesterSettings":[{"type":"GROUPS"},{"type":"EVERYONE"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"ADMIN_FIXED_DURATION"},{"type":"REQUESTER_SPECIFIED_DURATION"}],"required":false,"maximumDays":90,"maximumHours":72,"maximumWeeks":12},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[]}'
+        body: '{"validAccessScopeSettings":[{"type":"RESOURCE_DEFAULT"},{"type":"ENTITLEMENT_BUNDLES"}],"validRequesterSettings":[{"type":"EVERYONE"},{"type":"GROUPS"}],"validAccessDurationSettings":{"supportedTypes":[{"type":"REQUESTER_SPECIFIED_DURATION"},{"type":"ADMIN_FIXED_DURATION"}],"required":false,"maximumDays":365,"maximumHours":72,"maximumWeeks":52},"validRiskSettings":{"supportedTypes":[{"type":"DEFAULT_SETTING"}]},"riskSettings":{"defaultSetting":{"requestSubmissionType":"RESTRICTED"}},"validRequestOnBehalfOfSettings":[{"type":"DIRECT_REPORT"},{"type":"EVERYONE"}]}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Wed, 17 Sep 2025 22:07:22 GMT
+                - Sat, 14 Nov 2026 10:42:34 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 2.082233416s
+        duration: 1.253493708s

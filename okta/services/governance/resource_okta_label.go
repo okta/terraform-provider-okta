@@ -28,7 +28,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	governance "github.com/okta/okta-governance-sdk-golang/governance"
+	governance "github.com/okta/okta-governance-sdk-golang/v2/governance"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )

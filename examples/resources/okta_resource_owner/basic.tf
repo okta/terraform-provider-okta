@@ -1,3 +1,3 @@
 resource "okta_resource_owner" "test" {
-  resource_orns = ["orn:oktapreview:idp:00onqu8scuB03Vl9xxd7:apps:oidc_client:0oanb8j08zc7gi8cv2c9"]
+  resource_orns = ["orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oaws4am895IZbn6Q1d7"]
 }

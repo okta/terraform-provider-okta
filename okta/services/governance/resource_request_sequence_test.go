@@ -26,7 +26,7 @@ func TestAccRequestSequenceResource_basic(t *testing.T) {
 			{
 				ImportState:        true,
 				ResourceName:       "okta_request_sequence.test",
-				ImportStateId:      "0oaoum6j3cElINe1z1d7/68cbc2b263c689fc3336bfac",
+				ImportStateId:      "0oa15zse2by0vGzyP1d8/6af8f21dc78cc307be8e6b8b",
 				ImportStatePersist: true,
 				Config:             config,
 				PlanOnly:           true,
@@ -34,7 +34,7 @@ func TestAccRequestSequenceResource_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "Test Sequence"),
+					resource.TestCheckResourceAttr(resourceName, "name", "tf testing seq"),
 					resource.TestCheckResourceAttr(resourceName, "description", "Sequence for testing TF"),
 				),
 			},

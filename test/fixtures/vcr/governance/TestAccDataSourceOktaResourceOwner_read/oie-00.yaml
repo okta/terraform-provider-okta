@@ -9,7 +9,7 @@ interactions:
         content_length: 100
         host: oie-00.dne-okta.com
         body: |
-            {"resourceOrns":["orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7"]}
+            {"resourceOrns":["orn:oktapreview:idp:00otivnuq1X5554yc1d7:apps:oidc_client:0oaws4am895IZbn6Q1d7"]}
         headers:
             Accept:
                 - application/json
@@ -33,12 +33,12 @@ interactions:
             Content-Type:
                 - application/json
             Date:
-                - Fri, 26 Jun 2026 15:56:51 GMT
+                - Sun, 15 Nov 2026 00:56:19 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 3.489152666s
+        duration: 1.258058083s
     - id: 1
       request:
         proto: HTTP/1.1
@@ -48,13 +48,13 @@ interactions:
         host: oie-00.dne-okta.com
         form:
             filter:
-                - parentResourceOrn eq "orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7"
+                - parentResourceOrn eq "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7"
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onkw1sbuAh3Q06I1d7%3Aapps%3Aoidc_client%3A0oanlpn0tzc7kh9bx1d7%22
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onabc90Ah3T09I1xe0%3Aapps%3Aoidc_client%3A0oaws4am895IZbn6Q1d7%22
         method: GET
       response:
         proto: HTTP/2.0
@@ -62,21 +62,21 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
+        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 26 Jun 2026 15:56:52 GMT
+                - Sun, 15 Nov 2026 00:56:20 GMT
             Link:
-                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20>; rel="self"
+                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.625354917s
+        duration: 1.143783167s
     - id: 2
       request:
         proto: HTTP/1.1
@@ -86,13 +86,13 @@ interactions:
         host: oie-00.dne-okta.com
         form:
             filter:
-                - parentResourceOrn eq "orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7"
+                - parentResourceOrn eq "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7"
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onkw1sbuAh3Q06I1d7%3Aapps%3Aoidc_client%3A0oanlpn0tzc7kh9bx1d7%22
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onabc90Ah3T09I1xe0%3Aapps%3Aoidc_client%3A0oaws4am895IZbn6Q1d7%22
         method: GET
       response:
         proto: HTTP/2.0
@@ -100,21 +100,21 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
+        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 26 Jun 2026 15:56:55 GMT
+                - Sun, 15 Nov 2026 00:56:21 GMT
             Link:
-                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20>; rel="self"
+                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.432479042s
+        duration: 1.138326292s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -124,13 +124,13 @@ interactions:
         host: oie-00.dne-okta.com
         form:
             filter:
-                - parentResourceOrn eq "orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7"
+                - parentResourceOrn eq "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7"
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onkw1sbuAh3Q06I1d7%3Aapps%3Aoidc_client%3A0oanlpn0tzc7kh9bx1d7%22
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onabc90Ah3T09I1xe0%3Aapps%3Aoidc_client%3A0oaws4am895IZbn6Q1d7%22
         method: GET
       response:
         proto: HTTP/2.0
@@ -138,21 +138,21 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
+        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 26 Jun 2026 15:56:58 GMT
+                - Sun, 15 Nov 2026 00:56:22 GMT
             Link:
-                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20>; rel="self"
+                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.781429s
+        duration: 1.113894s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -162,13 +162,13 @@ interactions:
         host: oie-00.dne-okta.com
         form:
             filter:
-                - parentResourceOrn eq "orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7"
+                - parentResourceOrn eq "orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7"
         headers:
             Accept:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onkw1sbuAh3Q06I1d7%3Aapps%3Aoidc_client%3A0oanlpn0tzc7kh9bx1d7%22
+        url: https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn+eq+%22orn%3Aoktapreview%3Aidp%3A00onabc90Ah3T09I1xe0%3Aapps%3Aoidc_client%3A0oaws4am895IZbn6Q1d7%22
         method: GET
       response:
         proto: HTTP/2.0
@@ -176,18 +176,18 @@ interactions:
         proto_minor: 0
         content_length: -1
         uncompressed: true
-        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
+        body: '{"data":[],"_links":{"self":{"href":"https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20","hints":{}}},"metadata":{"total":0}}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Type:
                 - application/json
             Date:
-                - Fri, 26 Jun 2026 15:57:00 GMT
+                - Sun, 15 Nov 2026 00:56:24 GMT
             Link:
-                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onkw1sbuAh3Q06I1d7:apps:oidc_client:0oanlpn0tzc7kh9bx1d7%22&limit=20>; rel="self"
+                - <https://oie-00.dne-okta.com/governance/api/v1/resource-owners?filter=parentResourceOrn%20eq%20%22orn:oktapreview:idp:00onabc90Ah3T09I1xe0:apps:oidc_client:0oaws4am895IZbn6Q1d7%22&limit=20>; rel="self"
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.304379709s
+        duration: 1.198548166s
