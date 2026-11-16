@@ -24,6 +24,9 @@ func FWProviderResources() []func() resource.Resource {
 		newEntitlementBundleResource,
 		newLabelResource,
 		newResourceOwnerResource,
+		newCollectionResource,
+		newCollectionsAssignmentResource,
+		newCollectionsResourceResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -48,6 +51,9 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newResourceLabelDataSource,
 		newResourceOwnerDataSource,
 		newResourceOwnersCatalogResourceDataSource,
+		newCollectionDataSource,
+		newCollectionsAssignmentDataSource,
+		newCollectionsResourceDataSource,
 	}
 }
 
