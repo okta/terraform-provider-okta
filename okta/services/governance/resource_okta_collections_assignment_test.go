@@ -43,7 +43,6 @@ func TestAccCollectionsAssignment_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrPair(resourceName, "collection_id", "okta_collection.test", "id"),
-					resource.TestCheckResourceAttr(resourceName, "principal.external_id", "00uto13wvy2Y5RCv91d7"),
 					resource.TestCheckResourceAttr(resourceName, "principal.type", "OKTA_USER"),
 					resource.TestCheckNoResourceAttr(resourceName, "expiration_time"),
 					resource.TestCheckNoResourceAttr(resourceName, "time_zone"),

@@ -156,9 +156,8 @@ func (r *collectionsResourceResource) Schema(_ context.Context, _ resource.Schem
 				Description:    "Server-resolved configuration details for this resource within the collection",
 				AttributeTypes: map[string]attr.Type{"counts": types.ObjectType{AttrTypes: map[string]attr.Type{"entitlements": types.Int64Type, "labels": types.Int64Type, "push_groups": types.Int64Type, "related_apps": types.Int64Type}}, "entitlement_management_enabled": types.BoolType, "has_push_mapping": types.BoolType, "type": types.StringType},
 				Computed:       true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.UseStateForUnknown(),
-				},
+				// No UseStateForUnknown: counts change server-side whenever entitlements change,
+				// so the prior state value can't be carried into the plan on update.
 			},
 			"resource_id": schema.StringAttribute{
 				Description: "The unique resource ID for this resource (app, group, or push group).",
@@ -186,7 +185,7 @@ func (r *collectionsResourceResource) Schema(_ context.Context, _ resource.Schem
 			},
 		},
 		Blocks: map[string]schema.Block{
-			"entitlements": schema.ListNestedBlock{
+			"entitlements": schema.SetNestedBlock{
 				Description: "Collection of entitlements and associated value identifiers",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
@@ -196,7 +195,7 @@ func (r *collectionsResourceResource) Schema(_ context.Context, _ resource.Schem
 						},
 					},
 					Blocks: map[string]schema.Block{
-						"values": schema.ListNestedBlock{
+						"values": schema.SetNestedBlock{
 							Description: "Collection of entitlement value identifiers",
 							NestedObject: schema.NestedBlockObject{
 								Attributes: map[string]schema.Attribute{
