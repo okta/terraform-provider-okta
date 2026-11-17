@@ -44,6 +44,9 @@ func dataSourceBehavior() *schema.Resource {
 			},
 		},
 		Description: "Get a behavior by name or ID.",
+		DeprecationMessage: "`okta_behavior` data source is deprecated and will be removed in a future release. " +
+			"Use `okta_behavior_anomalous_device`, `okta_behavior_anomalous_ip`, " +
+			"`okta_behavior_anomalous_location` or `okta_behavior_velocity` data sources instead.",
 	}
 }
 

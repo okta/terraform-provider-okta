@@ -216,6 +216,8 @@ func (r *behaviorAnomalousDeviceResource) Create(ctx context.Context, req resour
 		return
 	}
 	planned := plan
+	// status_lifecycle tests the configured status; the create response mapped below may differ.
+	lifecycleStatus := plan.Status
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV8()
 
@@ -297,6 +299,30 @@ func (r *behaviorAnomalousDeviceResource) Create(ctx context.Context, req resour
 	// Unset Optional-only attributes must stay null: Terraform rejects any other value after apply.
 	if planned.Status.IsNull() {
 		plan.Status = planned.Status
+	}
+	{
+		lifecycleID := plan.ID.ValueString()
+		_ = lifecycleID
+		var lifecycleErr error
+		var lifecycleAction string
+		switch {
+		case !lifecycleStatus.IsNull() && !lifecycleStatus.IsUnknown() && lifecycleStatus.ValueString() == "ACTIVE":
+			lifecycleAction = "activating"
+			_, _, lifecycleErr = client.BehaviorAPI.ActivateBehaviorDetectionRule(ctx, lifecycleID).Execute()
+		case !lifecycleStatus.IsNull() && !lifecycleStatus.IsUnknown() && lifecycleStatus.ValueString() == "INACTIVE":
+			lifecycleAction = "deactivating"
+			_, _, lifecycleErr = client.BehaviorAPI.DeactivateBehaviorDetectionRule(ctx, lifecycleID).Execute()
+		}
+		if lifecycleErr != nil {
+			// Persist what the API already holds so the resource is not orphaned, then report.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error "+lifecycleAction+" behavior_anomalous_device", lifecycleErr.Error())
+			return
+		}
+		if lifecycleAction != "" {
+			// The response mapped above predates the lifecycle call.
+			plan.Status = lifecycleStatus
+		}
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -401,6 +427,31 @@ func (r *behaviorAnomalousDeviceResource) Update(ctx context.Context, req resour
 		}
 	}
 
+	{
+		lifecycleID := state.ID.ValueString()
+		_ = lifecycleID
+		var lifecycleErr error
+		var lifecycleAction string
+		switch {
+		case !plan.Status.IsNull() && !plan.Status.IsUnknown() && plan.Status.ValueString() == "ACTIVE" && state.Status.ValueString() != "ACTIVE":
+			lifecycleAction = "activating"
+			_, _, lifecycleErr = client.BehaviorAPI.ActivateBehaviorDetectionRule(ctx, lifecycleID).Execute()
+		case !plan.Status.IsNull() && !plan.Status.IsUnknown() && plan.Status.ValueString() == "INACTIVE" && state.Status.ValueString() != "INACTIVE":
+			lifecycleAction = "deactivating"
+			_, _, lifecycleErr = client.BehaviorAPI.DeactivateBehaviorDetectionRule(ctx, lifecycleID).Execute()
+		}
+		if lifecycleErr != nil {
+			// Persist what the API already holds so the resource is not orphaned, then report.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+			resp.Diagnostics.AddError("Error "+lifecycleAction+" behavior_anomalous_device", lifecycleErr.Error())
+			return
+		}
+		if lifecycleAction != "" {
+			// The response mapped above predates the lifecycle call.
+			state.Status = plan.Status
+		}
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
@@ -413,6 +464,11 @@ func (r *behaviorAnomalousDeviceResource) Delete(ctx context.Context, req resour
 	id := state.ID.ValueString()
 
 	client := r.Config.OktaIDaaSClient.OktaSDKClientV8()
+	_, deactivateHTTPResp, deactivateErr := client.BehaviorAPI.DeactivateBehaviorDetectionRule(ctx, id).Execute()
+	if deactivateErr != nil && !(deactivateHTTPResp != nil && deactivateHTTPResp.StatusCode == http.StatusNotFound) {
+		resp.Diagnostics.AddError("Error deactivating behavior_anomalous_device before deletion", deactivateErr.Error())
+		return
+	}
 	httpResp, err := client.BehaviorAPI.DeleteBehaviorDetectionRule(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
