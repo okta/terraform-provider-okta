@@ -3,6 +3,7 @@ package idaas
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
@@ -14,9 +15,11 @@ func readAppAssignment(ctx context.Context, c *config.Config, app, group string)
 	if !c.AppReadBatching || c.AppReads.Written() {
 		return client.Application.GetApplicationGroupAssignment(ctx, app, group, nil)
 	}
+	unavailable := false
 	value, found, err := c.AppReads.Get(ctx, "assignments/"+app, group, func(ctx context.Context) (map[string]any, error) {
-		groups, _, err := listApplicationGroupAssignments(ctx, client, app)
+		groups, response, err := listApplicationGroupAssignments(ctx, client, app)
 		if err != nil {
+			unavailable = response != nil && (response.StatusCode == http.StatusForbidden || response.StatusCode == http.StatusNotFound)
 			return nil, err
 		}
 		values := make(map[string]any, len(groups))
@@ -29,6 +32,9 @@ func readAppAssignment(ctx context.Context, c *config.Config, app, group string)
 		return values, nil
 	})
 	if err != nil {
+		if unavailable {
+			return client.Application.GetApplicationGroupAssignment(ctx, app, group, nil)
+		}
 		return nil, nil, err
 	}
 	if found && !c.AppReads.Written() {

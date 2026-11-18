@@ -16,9 +16,10 @@ import (
 )
 
 type batchTransport struct {
-	mu       sync.Mutex
-	calls    map[string]int
-	failPage bool
+	mu          sync.Mutex
+	calls       map[string]int
+	failPage    bool
+	unavailable int
 }
 
 func (b *batchTransport) RoundTrip(r *http.Request) (*http.Response, error) {
@@ -63,6 +64,10 @@ func (b *batchTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		body = `{"id":"missing","sourceGroupId":"g3","targetGroupId":"t3","status":"ACTIVE"}`
 	default:
 		return nil, fmt.Errorf("unexpected request: %s", key)
+	}
+	if b.unavailable != 0 && strings.HasSuffix(r.URL.Path, "/groups") {
+		code = b.unavailable
+		body = `{"errorCode":"E0000007","errorSummary":"collection unavailable"}`
 	}
 	header.Set("Content-Type", "application/json")
 	return &http.Response{StatusCode: code, Status: fmt.Sprintf("%d %s", code, http.StatusText(code)), Header: header, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
@@ -174,4 +179,17 @@ func TestBatchDisabledUsesIndividualRead(t *testing.T) {
 	require.NoError(t, err)
 	require.Zero(t, b.calls["GET /api/v1/apps/app/groups"])
 	require.Zero(t, b.calls["GET /api/v1/apps/app/group-push/mappings"])
+}
+
+func TestBatchUnavailableAssignmentCollectionUsesIndividualRead(t *testing.T) {
+	for _, status := range []int{http.StatusForbidden, http.StatusNotFound} {
+		b := &batchTransport{calls: map[string]int{}, unavailable: status}
+		c := batchConfig(t, b)
+		g, _, err := readAppAssignment(t.Context(), c, "app", "g1")
+		require.NoError(t, err)
+		require.Equal(t, "g1", g.Id)
+		_, resp, err := readAppAssignment(t.Context(), c, "app", "missing")
+		require.Error(t, err)
+		require.Equal(t, http.StatusNotFound, resp.StatusCode)
+	}
 }
