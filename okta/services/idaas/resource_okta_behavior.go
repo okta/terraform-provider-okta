@@ -30,6 +30,9 @@ func resourceBehavior() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: "This resource allows you to create and configure a behavior.",
+		DeprecationMessage: "`okta_behavior` is deprecated and will be removed in a future release. " +
+			"Use `okta_behavior_anomalous_device`, `okta_behavior_anomalous_ip`, " +
+			"`okta_behavior_anomalous_location` or `okta_behavior_velocity` instead.",
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,

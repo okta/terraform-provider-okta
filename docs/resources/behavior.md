@@ -8,6 +8,13 @@ description: |-
 
 This resource allows you to create and configure a behavior.
 
+~> **DEPRECATION WARNING: The `okta_behavior` resource is deprecated and will be removed in a future release. Users of this resource should consider migrating to the following resources:**
+
+- [`okta_behavior_anomalous_device`](../resources/behavior_anomalous_device.md)
+- [`okta_behavior_anomalous_ip`](../resources/behavior_anomalous_ip.md)
+- [`okta_behavior_anomalous_location`](../resources/behavior_anomalous_location.md)
+- [`okta_behavior_velocity`](../resources/behavior_velocity.md)
+
 ## Example Usage
 
 ```terraform
