@@ -20,6 +20,7 @@ import (
 	v8okta "github.com/okta/okta-sdk-golang/v8/okta"
 	v9okta "github.com/okta/okta-sdk-golang/v9/okta"
 	"github.com/okta/terraform-provider-okta/okta/internal/apimutex"
+	"github.com/okta/terraform-provider-okta/okta/internal/apprefresh"
 	"github.com/okta/terraform-provider-okta/okta/internal/transport"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/okta/version"
@@ -195,6 +196,7 @@ func getV8ClientConfig(c *OktaAPIConfig) (*v8okta.Configuration, *v8okta.APIClie
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
+	httpClient.Transport = apprefresh.InvalidateWrites(httpClient.Transport, c.AppReads)
 	setters := []v8okta.ConfigSetter{
 		v8okta.WithOrgUrl(orgURL),
 		v8okta.WithCache(false),
@@ -310,6 +312,7 @@ func getV7ClientConfig(c *OktaAPIConfig) (*v7okta.Configuration, *v7okta.APIClie
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
+	httpClient.Transport = apprefresh.InvalidateWrites(httpClient.Transport, c.AppReads)
 	setters := []v7okta.ConfigSetter{
 		v7okta.WithOrgUrl(orgURL),
 		v7okta.WithCache(false),
@@ -425,6 +428,7 @@ func getV6ClientConfig(c *OktaAPIConfig) (*v6okta.Configuration, *v6okta.APIClie
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
+	httpClient.Transport = apprefresh.InvalidateWrites(httpClient.Transport, c.AppReads)
 	setters := []v6okta.ConfigSetter{
 		v6okta.WithOrgUrl(orgURL),
 		v6okta.WithCache(false),
@@ -540,6 +544,7 @@ func getV5ClientConfig(c *OktaAPIConfig) (*v5okta.Configuration, *v5okta.APIClie
 		return nil, nil, fmt.Errorf("malformed Okta API URL (org_name+base_url value, or http_proxy value): %+v", err)
 	}
 
+	httpClient.Transport = apprefresh.InvalidateWrites(httpClient.Transport, c.AppReads)
 	setters := []v5okta.ConfigSetter{
 		v5okta.WithOrgUrl(orgUrl),
 		v5okta.WithCache(false),

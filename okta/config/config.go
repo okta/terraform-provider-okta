@@ -12,12 +12,15 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/api"
+	"github.com/okta/terraform-provider-okta/okta/internal/apprefresh"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 type (
 	// Config contains our provider schema values and Okta clients
 	Config struct {
+		AppReadBatching      bool
+		AppReads             apprefresh.Cache
 		AccessToken          string
 		ApiToken             string
 		Backoff              bool
@@ -143,6 +146,9 @@ func NewConfig(d *schema.ResourceData) *Config {
 		config.RequestTimeout = val.(int)
 	}
 
+	if val, ok := d.GetOk("app_read_batching"); ok {
+		config.AppReadBatching = val.(bool)
+	}
 	if val, ok := d.GetOk("max_api_capacity"); ok {
 		config.MaxAPICapacity = val.(int)
 	}
@@ -214,6 +220,7 @@ func (c *Config) SetTimeOperations(op TimeOperations) {
 // LoadAPIClient initializes the Okta SDK clients
 func (c *Config) LoadAPIClient() (err error) {
 	iDaaSConfig := &api.OktaAPIConfig{
+		AppReads:       &c.AppReads,
 		AccessToken:    c.AccessToken,
 		ApiToken:       c.ApiToken,
 		Backoff:        c.Backoff,

@@ -16,6 +16,8 @@ This argument exists for the use case where the same group is
 assigned in multiple places in order to prevent a single 
 destruction removing all of them.
 
+When app_read_batching is enabled, refresh reads share a complete paginated app collection for up to 30 seconds across distinct resources in one provider configuration. Repeated reads and reads after management writes use fresh data; missing list entries are checked individually. Resource ownership is unchanged.
+
 ## Example Usage
 
 ```terraform

@@ -43,23 +43,24 @@ type FrameworkProvider struct {
 }
 
 type FrameworkProviderData struct {
-	OrgName        types.String `tfsdk:"org_name"`
-	AccessToken    types.String `tfsdk:"access_token"`
-	APIToken       types.String `tfsdk:"api_token"`
-	ClientID       types.String `tfsdk:"client_id"`
-	Scopes         types.Set    `tfsdk:"scopes"`
-	PrivateKey     types.String `tfsdk:"private_key"`
-	PrivateKeyID   types.String `tfsdk:"private_key_id"`
-	BaseURL        types.String `tfsdk:"base_url"`
-	HTTPProxy      types.String `tfsdk:"http_proxy"`
-	Backoff        types.Bool   `tfsdk:"backoff"`
-	MinWaitSeconds types.Int64  `tfsdk:"min_wait_seconds"`
-	MaxWaitSeconds types.Int64  `tfsdk:"max_wait_seconds"`
-	MaxRetries     types.Int64  `tfsdk:"max_retries"`
-	Parallelism    types.Int64  `tfsdk:"parallelism"`
-	LogLevel       types.Int64  `tfsdk:"log_level"`
-	MaxAPICapacity types.Int64  `tfsdk:"max_api_capacity"`
-	RequestTimeout types.Int64  `tfsdk:"request_timeout"`
+	OrgName         types.String `tfsdk:"org_name"`
+	AccessToken     types.String `tfsdk:"access_token"`
+	APIToken        types.String `tfsdk:"api_token"`
+	ClientID        types.String `tfsdk:"client_id"`
+	Scopes          types.Set    `tfsdk:"scopes"`
+	PrivateKey      types.String `tfsdk:"private_key"`
+	PrivateKeyID    types.String `tfsdk:"private_key_id"`
+	BaseURL         types.String `tfsdk:"base_url"`
+	HTTPProxy       types.String `tfsdk:"http_proxy"`
+	Backoff         types.Bool   `tfsdk:"backoff"`
+	MinWaitSeconds  types.Int64  `tfsdk:"min_wait_seconds"`
+	MaxWaitSeconds  types.Int64  `tfsdk:"max_wait_seconds"`
+	MaxRetries      types.Int64  `tfsdk:"max_retries"`
+	Parallelism     types.Int64  `tfsdk:"parallelism"`
+	LogLevel        types.Int64  `tfsdk:"log_level"`
+	AppReadBatching types.Bool   `tfsdk:"app_read_batching"`
+	MaxAPICapacity  types.Int64  `tfsdk:"max_api_capacity"`
+	RequestTimeout  types.Int64  `tfsdk:"request_timeout"`
 }
 
 // Metadata returns the provider type name.
@@ -179,6 +180,7 @@ func (p *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 					int64validator.AtMost(5),
 				},
 			},
+			"app_read_batching": schema.BoolAttribute{Optional: true, Description: "Share paginated app assignment and push-mapping reads during refresh. Enable for configurations managing many groups per app. Defaults to false; collection reads may cost more for apps with few managed groups. Cached collections expire after 30 seconds and are bypassed after management writes."},
 			"max_api_capacity": schema.Int64Attribute{
 				Optional: true,
 				Description: "Sets what percentage of capacity the provider can use of the total rate limit " +

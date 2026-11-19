@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/okta/api"
+	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/utils"
 	"github.com/okta/terraform-provider-okta/sdk"
 )
@@ -39,7 +40,7 @@ func resourceAppGroupAssignment() *schema.Resource {
 				return []*schema.ResourceData{d}, nil
 			},
 		},
-		Description: "Assigns a group to an application. This resource allows you to create an App Group assignment.",
+		Description: "Assigns a group to an application. This resource allows you to create an App Group assignment. When app_read_batching is enabled, refresh reads share a complete paginated app collection for up to 30 seconds across distinct resources in one provider configuration. Repeated reads and reads after management writes use fresh data; missing list entries are checked individually. Resource ownership is unchanged.",
 		Schema: map[string]*schema.Schema{
 			"app_id": {
 				Type:        schema.TypeString,
@@ -115,12 +116,7 @@ func resourceAppGroupAssignmentUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceAppGroupAssignmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	g, resp, err := getOktaClientFromMetadata(meta).Application.GetApplicationGroupAssignment(
-		ctx,
-		d.Get("app_id").(string),
-		d.Get("group_id").(string),
-		nil,
-	)
+	g, resp, err := readAppAssignment(ctx, meta.(*config.Config), d.Get("app_id").(string), d.Get("group_id").(string))
 	if err := utils.SuppressErrorOn404(resp, err); err != nil {
 		return diag.Errorf("failed to get application group assignment: %v", err)
 	}
