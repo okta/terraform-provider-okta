@@ -110,6 +110,9 @@ resource "okta_policy_mfa" "oie_example" {
 - `okta_question` (Map of String)
 - `okta_sms` (Map of String)
 - `okta_verify` (Map of String)
+- `okta_verify_fastpass` (Map of String)
+- `okta_verify_push` (Map of String)
+- `okta_verify_totp` (Map of String)
 - `onprem_mfa` (Map of String)
 - `phone_number` (Map of String)
 - `priority` (Number) Policy Priority, this attribute can be set to a valid priority. To avoid endless diff situation we error if an invalid priority is provided. API defaults it to the last (lowest) if not there.
