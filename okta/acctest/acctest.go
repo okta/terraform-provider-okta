@@ -229,6 +229,7 @@ func newVCRRecorder(mgr *vcrManager, transport http.RoundTripper) (rec *recorder
 	vcrOpts := []recorder.Option{
 		recorder.WithMatcher(vcrMatcher()),
 		recorder.WithHook(vcrHook(mgr), recorder.AfterCaptureHook),
+		recorder.WithHook(vcrRedactClientSecretsHook(), recorder.BeforeSaveHook),
 		recorder.WithMode(mgr.VCRMode()),
 		recorder.WithSkipRequestLatency(true),
 		recorder.WithRealTransport(transport),
@@ -524,6 +525,45 @@ func vcrHook(mgr *vcrManager) func(*cassette.Interaction) error {
 			i.Response.Headers.Add("Link", val)
 		}
 
+		return nil
+	}
+}
+
+var clientSecretRegexp = regexp.MustCompile(`(\\?"client_secret\\?"\s*:\s*\\?")([^"\\]+)`)
+
+// vcrRedactClientSecretsHook replaces server generated client secrets with
+// placeholders right before the cassette is written to disk so real secrets
+// are not committed. It runs as a BeforeSaveHook rather than in vcrHook
+// because the provider must see the real secret while recording, it echoes
+// the secret back to the API on updates. Secrets first seen in a request body
+// are supplied by the test config and are left as is so playback requests
+// still match the cassette. The same secret maps to the same placeholder
+// throughout the cassette.
+func vcrRedactClientSecretsHook() func(*cassette.Interaction) error {
+	redacted := map[string]string{}
+	configSupplied := map[string]bool{}
+	return func(i *cassette.Interaction) error {
+		for _, m := range clientSecretRegexp.FindAllStringSubmatch(i.Request.Body, -1) {
+			if _, ok := redacted[m[2]]; !ok {
+				configSupplied[m[2]] = true
+			}
+		}
+		for _, m := range clientSecretRegexp.FindAllStringSubmatch(i.Response.Body, -1) {
+			if _, ok := redacted[m[2]]; !ok && !configSupplied[m[2]] {
+				redacted[m[2]] = fmt.Sprintf("REDACTED_CLIENT_SECRET_%d", len(redacted)+1)
+			}
+		}
+		replace := func(body string) string {
+			return clientSecretRegexp.ReplaceAllStringFunc(body, func(s string) string {
+				m := clientSecretRegexp.FindStringSubmatch(s)
+				if placeholder, ok := redacted[m[2]]; ok {
+					return m[1] + placeholder
+				}
+				return s
+			})
+		}
+		i.Request.Body = replace(i.Request.Body)
+		i.Response.Body = replace(i.Response.Body)
 		return nil
 	}
 }
