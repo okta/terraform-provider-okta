@@ -17,6 +17,7 @@ import (
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	v7okta "github.com/okta/okta-sdk-golang/v7/okta"
 	v8okta "github.com/okta/okta-sdk-golang/v8/okta"
+	v9okta "github.com/okta/okta-sdk-golang/v9/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/internal/mutexkv"
 	"github.com/okta/terraform-provider-okta/okta/resources"
@@ -57,6 +58,10 @@ func getOktaV3ClientFromMetadata(meta interface{}) *okta.APIClient {
 
 func getOktaV5ClientFromMetadata(meta interface{}) *oktav5sdk.APIClient {
 	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV5()
+}
+
+func getOktaV9ClientFromMetadata(meta interface{}) *v9okta.APIClient {
+	return meta.(*config.Config).OktaIDaaSClient.OktaSDKClientV9()
 }
 
 func getOktaV8ClientFromMetadata(meta interface{}) *v8okta.APIClient {
