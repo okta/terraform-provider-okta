@@ -2,6 +2,7 @@ package governance
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
@@ -10,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -148,10 +149,14 @@ func (r *reviewResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	getReview, _, err := r.OktaGovernanceClient.
+	getReview, httpResp, err := r.OktaGovernanceClient.
 		OktaGovernanceSDKClient().
-		ReviewsAPI.GetReview(ctx, data.CampaignId.ValueString()).Execute()
+		ReviewsAPI.GetReview(ctx, data.Id.ValueString()).Execute()
 	if err != nil {
+		if httpResp != nil && httpResp.Response != nil && httpResp.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			"Error reading Review",
 			"Could not reading Review, unexpected error: "+err.Error(),

@@ -1,29 +1,33 @@
 ---
 page_title: "Resource: okta_policy_rule_profile_enrollment"
 description: |-
-  Creates a Profile Enrollment Policy Rule.
+  Manages a Profile Enrollment Policy Rule.
   ~> WARNING: This feature is only available as a part of the Identity Engine. Contact support mailto:dev-inquiries@okta.com for further information.
   A profile enrollment
   policy https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy
-  is limited to one default rule. This resource does not create a rule for an
-  enrollment policy, it allows the default policy rule to be updated.
+  is limited to one default rule (the Catch-all Rule). Use this resource to manage that rule.
 ---
 
 # Resource: okta_policy_rule_profile_enrollment
 
-Creates a Profile Enrollment Policy Rule.
-		
+Manages a Profile Enrollment Policy Rule.
+
 ~> **WARNING:** This feature is only available as a part of the Identity Engine. [Contact support](mailto:dev-inquiries@okta.com) for further information.
 A [profile enrollment
 policy](https://developer.okta.com/docs/reference/api/policy/#profile-enrollment-policy)
-is limited to one default rule. This resource does not create a rule for an
-enrollment policy, it allows the default policy rule to be updated.
+is limited to one default rule (the Catch-all Rule). Use this resource to manage that rule.
+
+~> **BREAKING CHANGE:** This resource has been rewritten on the Terraform Plugin Framework and its schema now follows the
+[Okta Policy Rule API](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/Policy/#tag/Policy/operation/createPolicyRule)
+object. Most rule settings moved from top-level attributes into an `actions { profile_enrollment { ... } }` block.
+Configurations written for earlier versions of this resource must be updated. See [Migrating from the previous schema](#migrating-from-the-previous-schema).
 
 ## Example Usage
 
 ```terraform
 resource "okta_policy_profile_enrollment" "example" {
-  name = "My Enrollment Policy"
+  name   = "My Enrollment Policy"
+  status = "ACTIVE"
 }
 
 resource "okta_inline_hook" "example" {
@@ -46,26 +50,49 @@ resource "okta_group" "example" {
 }
 
 resource "okta_policy_rule_profile_enrollment" "example" {
-  policy_id           = okta_policy_profile_enrollment.example.id
-  inline_hook_id      = okta_inline_hook.example.id
-  target_group_id     = okta_group.example.id
-  unknown_user_action = "REGISTER"
-  email_verification  = true
-  access              = "ALLOW"
-  profile_attributes {
-    name     = "email"
-    label    = "Email"
-    required = true
-  }
-  profile_attributes {
-    name     = "name"
-    label    = "Name"
-    required = true
-  }
-  profile_attributes {
-    name     = "t-shirt"
-    label    = "T-Shirt Size"
-    required = false
+  policy_id = okta_policy_profile_enrollment.example.id
+  type      = "PROFILE_ENROLLMENT"
+  name      = "Catch-all Rule"
+  status    = "ACTIVE"
+  priority  = 99
+  system    = true
+
+  actions {
+    profile_enrollment {
+      access                       = "ALLOW"
+      allowed_identifiers          = ["login"]
+      target_group_ids             = [okta_group.example.id]
+      unknown_user_action          = "REGISTER"
+      progressive_profiling_action = "ENABLED"
+
+      # Value created by the backend. If the rule has one, include it so updates are accepted.
+      ui_schema_id = "<ui_schema_id>"
+
+      pre_registration_inline_hooks {
+        inline_hook_id = okta_inline_hook.example.id
+        scopes         = ["SELF_SERVICE_REGISTRATION", "PROGRESSIVE_PROFILING"]
+      }
+
+      activation_requirements {
+        email_verification = true
+      }
+
+      profile_attributes {
+        name     = "email"
+        label    = "Email"
+        required = true
+      }
+      profile_attributes {
+        name     = "firstName"
+        label    = "First Name"
+        required = true
+      }
+      profile_attributes {
+        name     = "lastName"
+        label    = "Last Name"
+        required = false
+      }
+    }
   }
 }
 ```
@@ -75,40 +102,187 @@ resource "okta_policy_rule_profile_enrollment" "example" {
 
 ### Required
 
-- `policy_id` (String) ID of the policy
-- `unknown_user_action` (String) Which action should be taken if this User is new. Valid values are: `DENY`, `REGISTER`
+- `policy_id` (String) `id` of the policy. Changing this forces a new resource.
+- `type` (String) Policy rule type. Must be set to `PROFILE_ENROLLMENT`. Changing this forces a new resource.
 
 ### Optional
 
-- `access` (String) Allow or deny access based on the rule conditions. Valid values are: `ALLOW`, `DENY`. Default: `ALLOW`.
-- `email_verification` (Boolean) Indicates whether email verification should occur before access is granted. Default: `true`.
-- `enroll_authenticator_types` (Set of String) Enrolls authenticator types
-- `inline_hook_id` (String) ID of a Registration Inline Hook
-- `profile_attributes` (Block List) A list of attributes to prompt the user during registration or progressive profiling. Where defined on the User schema, these attributes are persisted in the User profile. Non-schema attributes may also be added, which aren't persisted to the User's profile, but are included in requests to the registration inline hook. A maximum of 10 Profile properties is supported.
-	- 'label' - (Required) A display-friendly label for this property
-	- 'name' - (Required) The name of a User Profile property
-	- 'required' - (Required) Indicates if this property is required for enrollment. Default is 'false'. (see [below for nested schema](#nestedblock--profile_attributes))
-- `progressive_profiling_action` (String) Enabled or disabled progressive profiling action rule conditions: `ENABLED` or `DISABLED`. Default: `DISABLED`
-- `target_group_id` (String) The ID of a Group that this User should be added to
-- `ui_schema_id` (String) Value created by the backend. If present all policy updates must include this attribute/value.
+- `actions` (Block, Optional) Wraps the `profile_enrollment` block, which holds the rule's profile enrollment settings (see [below for nested schema](#nestedblock--actions))
+- `conditions` (String) Policy rule conditions aren't supported for this policy type. Leave it unset.
+- `name` (String) Name of the rule. The default rule is named `Catch-all Rule`.
+- `priority` (Number) Priority of the rule. The default Catch-all Rule reports `99`.
+- `status` (String) Whether or not the rule is active. Valid values are: `ACTIVE`, `INACTIVE`.
+- `system` (Boolean) Specifies whether Okta created the policy rule (`system=true`). The default Catch-all Rule is `true`.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `name` (String) Name of the rule
-- `status` (String) Status of the rule
+- `id` (String) The unique identifier for the resource.
 
-<a id="nestedblock--profile_attributes"></a>
-### Nested Schema for `profile_attributes`
-
-Required:
-
-- `label` (String) A display-friendly label for this property
-- `name` (String) The name of a User Profile property
+<a id="nestedblock--actions"></a>
+### Nested Schema for `actions`
 
 Optional:
 
-- `required` (Boolean) Indicates if this property is required for enrollment
+- `profile_enrollment` (Block, Optional) The rule's profile enrollment settings (see [below for nested schema](#nestedblock--actions--profile_enrollment))
+
+<a id="nestedblock--actions--profile_enrollment"></a>
+### Nested Schema for `actions.profile_enrollment`
+
+Optional:
+
+- `access` (String) Indicates if the user profile is granted access  > **Note:** You can't set the `access` property to `DENY` after you create the policy
+- `activation_requirements` (Block, Optional) Activation requirements for new users. Contains a single Boolean property that indicates whether `email_verification` should occur (`true`) or not (`false`, default) (see [below for nested schema](#nestedblock--actions--profile_enrollment--activation_requirements))
+- `allowed_identifiers` (List of String) A list of profile attributes the user can use to identify themselves, for example `["login"]`.
+- `enroll_authenticator_types` (List of String) Additional authenticator fields that can be used on the first page of user registration.
+- `pre_registration_inline_hooks` (Block List) At most one pre-registration inline hook to invoke during registration. (see [below for nested schema](#nestedblock--actions--profile_enrollment--pre_registration_inline_hooks))
+- `profile_attributes` (Block List) A list of attributes to prompt the user for during registration or progressive profiling. (see [below for nested schema](#nestedblock--actions--profile_enrollment--profile_attributes))
+- `progressive_profiling_action` (String) Progressive profile enrollment helps evaluate the user profile policy at every user login.
+- `target_group_ids` (List of String) (Optional, max 1 entry) The `id` of a group that new users are added to.
+- `ui_schema_id` (String) Value created by the backend.
+- `unknown_user_action` (String) Which action should be taken if this user is new
+
+<a id="nestedblock--actions--profile_enrollment--activation_requirements"></a>
+### Nested Schema for `actions.profile_enrollment.activation_requirements`
+
+Optional:
+
+- `email_verification` (Boolean) Indicates whether email verification must happen before access is granted.
+
+<a id="nestedblock--actions--profile_enrollment--pre_registration_inline_hooks"></a>
+### Nested Schema for `actions.profile_enrollment.pre_registration_inline_hooks`
+
+Optional:
+
+- `inline_hook_id` (String) The `id` of the pre-registration inline hook.
+- `scopes` (List of String) Specifies the use cases when the configured pre-registration inline hook is invoked. Valid values are: `SELF_SERVICE_REGISTRATION`, `PROGRESSIVE_PROFILING`.
+
+<a id="nestedblock--actions--profile_enrollment--profile_attributes"></a>
+### Nested Schema for `actions.profile_enrollment.profile_attributes`
+
+Optional:
+
+- `label` (String) A display-friendly label for this property
+- `name` (String) The name of a user profile property.
+- `required` (Boolean) (Optional, default `FALSE`) Indicates if this property is required for enrollment
+
+## Migrating from the previous schema
+
+### Attribute mapping
+
+| Previous attribute | New location | Notes |
+|--------------------|--------------|-------|
+| `policy_id` | `policy_id` | Unchanged. |
+| `name` (Computed) | `name` | Now Optional. Set it to the rule's existing name (`Catch-all Rule`). |
+| `status` (Computed) | `status` | Now Optional. |
+| `inline_hook_id` | `actions.profile_enrollment.pre_registration_inline_hooks[*].inline_hook_id` | Now a block. You can also set `scopes`. |
+| `target_group_id` | `actions.profile_enrollment.target_group_ids` | Now a list with at most one entry: `[<group_id>]`. |
+| `unknown_user_action` | `actions.profile_enrollment.unknown_user_action` | Was Required; now Optional. |
+| `access` | `actions.profile_enrollment.access` | Previous default `ALLOW` is gone. |
+| `email_verification` | `actions.profile_enrollment.activation_requirements.email_verification` | Now in a nested block. Previous default `true` is gone. |
+| `progressive_profiling_action` | `actions.profile_enrollment.progressive_profiling_action` | Previous default `DISABLED` is gone. |
+| `ui_schema_id` | `actions.profile_enrollment.ui_schema_id` | Moved. |
+| `profile_attributes` | `actions.profile_enrollment.profile_attributes` | Moved. `label` and `name` are now Optional. `required` has no provider-side default. |
+| `enroll_authenticator_types` (Set) | `actions.profile_enrollment.enroll_authenticator_types` (List) | Moved; now an ordered list. |
+| — | `type`, `priority`, `system`, `conditions`, `allowed_identifiers`, `pre_registration_inline_hooks.scopes` | New. See [Schema](#schema). |
+
+### Behavior changes
+
+- **No provider-side defaults.** The old resource quietly sent `access = "ALLOW"`, `email_verification = true`, `progressive_profiling_action = "DISABLED"`, and `profile_attributes.required = false` when you left them out. The new resource sends only what you configure. Unset attributes stay `null` in state, so Terraform doesn't track drift on them. To keep managing a value, set it explicitly.
+- **Create calls the API's create endpoint.** The old resource never created a rule; it found the policy's single default rule and updated it in place. A profile enrollment policy allows only one rule, so bring the existing Catch-all Rule under management with `terraform import` (shown below). Don't rely on `create`.
+- **Delete calls the API's delete endpoint.** The old `destroy` only removed the rule from state. The new one asks Okta to delete the rule. To stop managing the default rule without touching it, use `terraform state rm` instead of `terraform destroy`.
+- **`policy_id` and `type` force replacement** when changed.
+- **Inline hook scopes are now managed.** The old resource kept whatever scopes the hook already had. If you set `scopes` (for example only `PROGRESSIVE_PROFILING`), any other scopes on the rule are removed.
+
+### Migration Steps
+
+1. **Back up your state.**
+
+   ```shell
+   terraform state pull > backup.tfstate
+   ```
+
+2. **Record the rule's current settings.** Run `terraform state show okta_policy_rule_profile_enrollment.<name>` and note the rule `id`, `policy_id` and the current `ui_schema_id`. You'll need to run this from the version 7.1.0 or lower.
+
+3. **Rewrite the configuration** using the [attribute mapping](#attribute-mapping). For example:
+
+   Before:
+
+   ```terraform
+   resource "okta_policy_rule_profile_enrollment" "example" {
+     policy_id                    = okta_policy_profile_enrollment.example.id
+     inline_hook_id               = okta_inline_hook.example.id
+     target_group_id              = okta_group.example.id
+     unknown_user_action          = "REGISTER"
+     access                       = "ALLOW"
+     email_verification           = true
+     progressive_profiling_action = "ENABLED"
+     ui_schema_id                 = "<ui_schema_id>"
+
+     profile_attributes {
+       label    = "Email"
+       name     = "email"
+       required = true
+     }
+   }
+   ```
+
+   After:
+
+   ```terraform
+   resource "okta_policy_rule_profile_enrollment" "example" {
+     policy_id = okta_policy_profile_enrollment.example.id
+     type      = "PROFILE_ENROLLMENT"
+     name      = "Catch-all Rule"
+     status    = "ACTIVE"
+     priority  = 99
+     system    = true
+
+     actions {
+       profile_enrollment {
+         access                       = "ALLOW"
+         allowed_identifiers          = ["login"]
+         target_group_ids             = [okta_group.example.id]
+         unknown_user_action          = "REGISTER"
+         progressive_profiling_action = "ENABLED"
+         ui_schema_id                 = "<ui_schema_id>"
+
+         pre_registration_inline_hooks {
+           inline_hook_id = okta_inline_hook.example.id
+           scopes         = ["SELF_SERVICE_REGISTRATION", "PROGRESSIVE_PROFILING"]
+         }
+
+         activation_requirements {
+           email_verification = true
+         }
+
+         profile_attributes {
+           label    = "Email"
+           name     = "email"
+           required = true
+         }
+       }
+     }
+   }
+   ```
+
+4. **Remove the old state entry and re-import the rule** so that state is rebuilt in the new shape:
+
+   ```shell
+   terraform state rm okta_policy_rule_profile_enrollment.example
+   terraform import okta_policy_rule_profile_enrollment.example <policy_id>/<rule_id>
+   ```
+
+   On import, every attribute is read from the API, including ones you don't configure.
+
+5. **Review the plan.**
+
+   ```shell
+   terraform plan
+   ```
+
+   Ideally you see `No changes`. If the plan proposes updates, adjust the configuration to match the values from step 2, unless the change is intended. Watch especially for `scopes`, `allowed_identifiers`, and `ui_schema_id`. Make sure the plan doesn't replace or destroy the rule.
+
+6. **Apply** once the plan only shows changes you intend.
 
 ## Import
 

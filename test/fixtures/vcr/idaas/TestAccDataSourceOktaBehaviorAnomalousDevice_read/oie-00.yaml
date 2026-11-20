@@ -1,0 +1,301 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 152
+        host: oie-00.dne-okta.com
+        body: |
+            {"name":"testAcc_3546682370","settings":{"maxEventsUsedForEvaluation":20,"minEventsNeededForEvaluation":0},"status":"ACTIVE","type":"ANOMALOUS_DEVICE"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/api/v1/behaviors
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:33:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.460297458s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:33:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.098799083s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:33:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.085872625s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:34:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.166208666s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:34:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.125406083s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:34:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.077240333s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"ACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:33:57.0","_links":{"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}},"deactivate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate","hints":{"allow":["POST"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:34:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.41673675s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"bhv162kkwl3XPM2yp1d8","name":"testAcc_3546682370","status":"INACTIVE","settings":{"minEventsNeededForEvaluation":0,"maxEventsUsedForEvaluation":20},"type":"ANOMALOUS_DEVICE","created":"2026-11-16 17:33:57.0","lastUpdated":"2026-11-16 17:34:06.0","_links":{"activate":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8/lifecycle/activate","hints":{"allow":["POST"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Mon, 16 Nov 2026 17:34:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.330753708s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/behaviors/bhv162kkwl3XPM2yp1d8
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Mon, 16 Nov 2026 17:34:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.155433292s

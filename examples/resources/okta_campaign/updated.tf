@@ -12,7 +12,7 @@ resource "okta_campaign" "test" {
 
   schedule_settings {
     type             = "ONE_OFF"
-    start_date       = "2026-10-04T13:43:40.000Z"
+    start_date       = "2030-10-04T13:43:40.000Z"
     duration_in_days = 21
     time_zone        = "America/Vancouver"
   }

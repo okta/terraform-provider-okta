@@ -8,6 +8,13 @@ description: |-
 
 Get a behavior by name or ID.
 
+~> **DEPRECATION WARNING: The `okta_behavior` data source is deprecated and will be removed in a future release. Users of this data source should consider migrating to the following data sources:**
+
+- [`okta_behavior_anomalous_device`](../data-sources/behavior_anomalous_device.md)
+- [`okta_behavior_anomalous_ip`](../data-sources/behavior_anomalous_ip.md)
+- [`okta_behavior_anomalous_location`](../data-sources/behavior_anomalous_location.md)
+- [`okta_behavior_velocity`](../data-sources/behavior_velocity.md)
+
 ## Example Usage
 
 ```terraform

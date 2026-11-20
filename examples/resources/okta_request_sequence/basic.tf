@@ -1,4 +1,4 @@
 resource "okta_request_sequence" "test" {
-  id          = "68cbc2b263c689fc3336bfac"
-  resource_id = "0oaoum6j3cElINe1z1d7"
+  id          = "6af8f21dc78cc307be8e6b8b"
+  resource_id = "0oa15zse2by0vGzyP1d8"
 }

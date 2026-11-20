@@ -22,7 +22,7 @@ func TestAccDataSourceOktaCampaign_read(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.okta_campaign.test", "id"),
 					resource.TestCheckResourceAttr("data.okta_campaign.test", "name", "Monthly access review of sales team"),
-					resource.TestCheckResourceAttr("data.okta_campaign.test", "resource_settings.type", "GROUP"),
+					resource.TestCheckResourceAttr("data.okta_campaign.test", "resource_settings.type", "APPLICATION"),
 					resource.TestCheckResourceAttr("data.okta_campaign.test", "principal_scope_settings.type", "USERS"),
 				),
 			},

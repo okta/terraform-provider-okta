@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/okta/okta-governance-sdk-golang/governance"
+	"github.com/okta/okta-governance-sdk-golang/v2/governance"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -569,11 +569,11 @@ func createRequestCondition(data requestConditionResourceModel) governance.Reque
 				&governance.AccessScopeSettingsCreatableGroupAccessScopeSettings{}
 		}
 		accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings.Type = "GROUPS"
-		var groupsIds []governance.GroupsArrayCreatableInner
+		var groupsIds []governance.GroupsArrayRequesterSettingsCreatableInner
 		elems := data.AccessScopeSettings.Ids
 		for _, elem := range elems {
 			groupId := elem.Id
-			groupsIds = append(groupsIds, governance.GroupsArrayCreatableInner{
+			groupsIds = append(groupsIds, governance.GroupsArrayRequesterSettingsCreatableInner{
 				Id: groupId.ValueString(),
 			})
 		}
@@ -609,11 +609,11 @@ func createRequestCondition(data requestConditionResourceModel) governance.Reque
 			requestSettings.RequesterSettingsCreatableGroupsRequesterSettings = &governance.RequesterSettingsCreatableGroupsRequesterSettings{}
 		}
 		requestSettings.RequesterSettingsCreatableGroupsRequesterSettings.Type = "GROUPS"
-		var groups []governance.GroupsArrayCreatableInner
+		var groups []governance.GroupsArrayRequesterSettingsCreatableInner
 		elems := data.RequesterSettings.Ids
 		for _, elem := range elems {
 			groupId := elem.Id
-			groups = append(groups, governance.GroupsArrayCreatableInner{
+			groups = append(groups, governance.GroupsArrayRequesterSettingsCreatableInner{
 				Id: groupId.ValueString(),
 			})
 		}
@@ -663,11 +663,11 @@ func createRequestConditionPatch(data requestConditionResourceModel) governance.
 			accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings = &governance.AccessScopeSettingsCreatableGroupAccessScopeSettings{}
 		}
 		accessScopeSettings.AccessScopeSettingsCreatableGroupAccessScopeSettings.Type = "GROUPS"
-		var groupsIds []governance.GroupsArrayCreatableInner
+		var groupsIds []governance.GroupsArrayRequesterSettingsCreatableInner
 		elems := data.AccessScopeSettings.Ids
 		for _, elem := range elems {
 			groupId := elem.Id.ValueString()
-			groupsIds = append(groupsIds, governance.GroupsArrayCreatableInner{
+			groupsIds = append(groupsIds, governance.GroupsArrayRequesterSettingsCreatableInner{
 				Id: groupId,
 			})
 		}
@@ -702,11 +702,11 @@ func createRequestConditionPatch(data requestConditionResourceModel) governance.
 			requestSettings.RequesterSettingsCreatableGroupsRequesterSettings = &governance.RequesterSettingsCreatableGroupsRequesterSettings{}
 		}
 		requestSettings.RequesterSettingsCreatableGroupsRequesterSettings.Type = "GROUPS"
-		var groups []governance.GroupsArrayCreatableInner
+		var groups []governance.GroupsArrayRequesterSettingsCreatableInner
 		elems := data.RequesterSettings.Ids
 		for _, elem := range elems {
 			groupId := elem.Id
-			groups = append(groups, governance.GroupsArrayCreatableInner{
+			groups = append(groups, governance.GroupsArrayRequesterSettingsCreatableInner{
 				Id: groupId.ValueString(),
 			})
 		}

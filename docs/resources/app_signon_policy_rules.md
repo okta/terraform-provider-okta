@@ -72,7 +72,7 @@ resource "okta_app_signon_policy_rules" "example" {
   - `priority` (Number) - Priority of the rule. Lower numbers are evaluated first. When omitted, the provider will use the actual priority assigned by Okta.
   - `status` (String) - Status of the rule: `ACTIVE` or `INACTIVE`. Defaults to `ACTIVE`.
   - `access` (String) - Access decision: `ALLOW` or `DENY`. Defaults to `ALLOW`.
-  - `factor_mode` (String) - Number of factors required: `1FA` or `2FA`. Defaults to `2FA`.
+  - `factor_mode` (String) - Number of factors required: `1FA`, `2FA`, or `2FA_If_Possible`. Defaults to `2FA`.
   - `type` (String) - Verification method type. Defaults to `ASSURANCE`.
   - `re_authentication_frequency` (String) - Re-authentication frequency in ISO 8601 duration format (e.g., `PT2H`). Defaults to `PT2H`.
   - `inactivity_period` (String) - Inactivity period before re-authentication in ISO 8601 duration format.

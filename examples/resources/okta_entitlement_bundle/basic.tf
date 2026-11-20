@@ -1,17 +1,42 @@
+resource "okta_entitlement" "test" {
+  name           = "Entitlement Bundle"
+  external_value = "Entitlement Bundle"
+  description    = "Some license entitlement"
+  multi_value    = true
+  data_type      = "array"
+
+  parent {
+    external_id = "0oa15zse2by0vGzyP1d8"
+    type        = "APPLICATION"
+  }
+
+  values {
+    name           = "value1"
+    description    = "description for value1"
+    external_value = "value_1"
+  }
+
+  values {
+    name           = "value2"
+    description    = "description for value2"
+    external_value = "value_2"
+  }
+}
+
 resource "okta_entitlement_bundle" "test" {
   name        = "test-entitlement-bundle"
   description = "testing entitlement bundle"
 
   target {
-    external_id = "0oao01ardu8r8qUP91d7"
+    external_id = "0oa15zse2by0vGzyP1d8"
     type        = "APPLICATION"
   }
 
   entitlements {
-    id = "espzcbqd7Suwp4Y7A1d6"
+    id = okta_entitlement.test.id
 
     values {
-      id = "entzcbqd8lcD3BRWR1d6"
+      id = okta_entitlement.test.values[0].id
     }
   }
 }
