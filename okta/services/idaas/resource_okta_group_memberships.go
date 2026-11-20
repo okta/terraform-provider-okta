@@ -90,6 +90,11 @@ argument with this resource.`,
 				Default:     false,
 				Description: "The resource concerns itself with all users added/deleted to the group; even those managed outside of the resource.",
 			},
+			"last_membership_updated": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "When the group's membership last changed, as of the last read. A refresh lists the group's members only when this has moved since.",
+			},
 		},
 	}
 }
@@ -140,11 +145,29 @@ func resourceGroupMembershipsCreate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceGroupMembershipsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := getOktaClientFromMetadata(meta)
 	groupId := d.Get("group_id").(string)
 	oldUsers := utils.ConvertInterfaceToStringSetNullable(d.Get("users"))
 	trackAllUsers := d.Get("track_all_users").(bool)
 
+	// The group listing carries each group's lastMembershipUpdated, so an
+	// unchanged membership needs no listing of its members. The timestamp is
+	// taken before the members are listed, so a change in between is listed
+	// again on the next read rather than missed.
+	group, listed, err := listingCachesFor(meta).groups.lookup(ctx, "", groupId, listOktaGroups(meta))
+	if err != nil {
+		return diag.Errorf("An error occurred checking user ids for group %q, error: %+v", groupId, err)
+	}
+	if listed && group.LastMembershipUpdated != nil &&
+		group.LastMembershipUpdated.UTC().Format(time.RFC3339Nano) == d.Get("last_membership_updated").(string) {
+		return nil
+	}
+	lastMembershipUpdated := ""
+	if listed {
+		lastMembershipUpdated = recordableMembershipUpdated(group)
+	}
+	d.Set("last_membership_updated", lastMembershipUpdated)
+
+	client := getOktaClientFromMetadata(meta)
 	// New behavior, tracking all users.
 	if trackAllUsers {
 		changed, newUserIDs, err := checkIfUsersHaveChanged(ctx, client, groupId, &oldUsers)

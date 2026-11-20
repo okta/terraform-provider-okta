@@ -58,6 +58,7 @@ resource "okta_group_memberships" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `last_membership_updated` (String) When the group's membership last changed, as of the last read. A refresh lists the group's members only when this has moved since.
 
 ## Import
 
