@@ -106,7 +106,7 @@ type AiAgentProvidersStagingDataSourceModelIncomingAgentModelSignOnProviderModel
 	AppInstanceId types.String `tfsdk:"app_instance_id"`
 }
 
-func NewAiAgentProvidersStagingDataSource() datasource.DataSource {
+func newAiAgentProvidersStagingDataSource() datasource.DataSource {
 	return &aiAgentProvidersStagingDataSource{}
 }
 

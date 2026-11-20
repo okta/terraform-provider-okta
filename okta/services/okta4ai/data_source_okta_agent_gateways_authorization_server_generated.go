@@ -71,7 +71,7 @@ type AgentGatewaysAuthorizationServerDataSourceModelAuthorizationServerModelMeta
 	TokenEndpointAuthMethodsSupported            types.List   `tfsdk:"token_endpoint_auth_methods_supported"`
 }
 
-func NewAgentGatewaysAuthorizationServerDataSource() datasource.DataSource {
+func newAgentGatewaysAuthorizationServerDataSource() datasource.DataSource {
 	return &agentGatewaysAuthorizationServerDataSource{}
 }
 

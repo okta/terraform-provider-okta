@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	okta4aa "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -57,7 +58,7 @@ type DelegationLinkDataSourceModelToModel struct {
 	ResourceOrn            types.String `tfsdk:"resource_orn"`
 }
 
-func NewDelegationLinkDataSource() datasource.DataSource {
+func newDelegationLinkDataSource() datasource.DataSource {
 	return &delegationLinkDataSource{}
 }
 
@@ -140,22 +141,60 @@ func (d *delegationLinkDataSource) Read(ctx context.Context, req datasource.Read
 	state.ID = types.StringValue(string(result.GetId()))
 	if fromRaw0, ok := result.GetFromOk(); ok {
 		fromModel0 := &DelegationLinkDataSourceModelFromModel{}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrn() string }); ok {
-			fromModel0.AppInstanceOrn = types.StringValue(obj.GetAppInstanceOrn())
+		if state.From != nil {
+			*fromModel0 = *state.From // keep fields the reader below does not map
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrn() string }); ok {
-			fromModel0.ClientOrn = types.StringValue(obj.GetClientOrn())
+		var appInstanceOrnVal *string
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetAppInstanceOrnOk() (*string, bool) }); ok {
+			appInstanceOrnVal, _ = obj.GetAppInstanceOrnOk()
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTokenType() string }); ok {
-			fromModel0.TokenType = types.StringValue(obj.GetTokenType())
+		if appInstanceOrnVal != nil {
+			fromModel0.AppInstanceOrn = types.StringValue(string(*appInstanceOrnVal))
+		} else if fromModel0.AppInstanceOrn.IsUnknown() {
+			fromModel0.AppInstanceOrn = types.StringNull()
 		}
-		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetType() string }); ok {
-			fromModel0.Type = types.StringValue(obj.GetType())
+		var clientOrnVal *string
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetClientOrnOk() (*string, bool) }); ok {
+			clientOrnVal, _ = obj.GetClientOrnOk()
+		}
+		if clientOrnVal != nil {
+			fromModel0.ClientOrn = types.StringValue(string(*clientOrnVal))
+		} else if fromModel0.ClientOrn.IsUnknown() {
+			fromModel0.ClientOrn = types.StringNull()
+		}
+		var tokenTypeVal *okta4aa.DelegationLinkTokenTypeV2
+		if obj, ok := fromRaw0.GetActualInstance().(interface {
+			GetTokenTypeOk() (*okta4aa.DelegationLinkTokenTypeV2, bool)
+		}); ok {
+			tokenTypeVal, _ = obj.GetTokenTypeOk()
+		}
+		if tokenTypeVal != nil {
+			fromModel0.TokenType = types.StringValue(string(*tokenTypeVal))
+		} else if fromModel0.TokenType.IsUnknown() {
+			fromModel0.TokenType = types.StringNull()
+		}
+		var typeVal *string
+		if obj, ok := fromRaw0.GetActualInstance().(interface{ GetTypeOk() (*string, bool) }); ok {
+			typeVal, _ = obj.GetTypeOk()
+		}
+		if typeVal != nil {
+			fromModel0.Type = types.StringValue(string(*typeVal))
+		} else if fromModel0.Type.IsUnknown() {
+			fromModel0.Type = types.StringNull()
 		}
 		state.From = fromModel0
 	}
 	if toRaw0, ok := result.GetToOk(); ok && toRaw0 != nil {
 		toModel0 := &DelegationLinkDataSourceModelToModel{}
+		// toModel0 is the new block, built from the API response. toPrior0 is the prior
+		// plan/state block, read-only: a non-null field there means the user manages it, so
+		// the API value is taken; otherwise the prior value is kept. When the block is absent
+		// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+		toPrior0 := &DelegationLinkDataSourceModelToModel{}
+		if state.To != nil {
+			toPrior0 = state.To
+			*toModel0 = *toPrior0 // keep fields the reader below does not map
+		}
 		if v := string(toRaw0.GetAuthorizationServerOrn()); v != "" {
 			toModel0.AuthorizationServerOrn = types.StringValue(v)
 		} else {

@@ -1,0 +1,331 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 289
+        host: oie-00.dne-okta.com
+        body: |
+            {"metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"registrationType":"MANUAL","resourceUrl":"https://testacc-api-server-as-1301064274.example.com"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T10:50:16Z","id":"apivcu24OowvonWruao5","lastUpdated":"2026-11-18T10:50:16Z","metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:api:apivcu24OowvonWruao5","resourceUrl":"https://testacc-api-server-as-1301064274.example.com","status":"ACTIVE","_embedded":{"counts":{"authorizationServers":0,"clientAuthSettings":0}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:16 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 201 Created
+        code: 201
+        duration: 1.120109083s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T10:50:16Z","id":"apivcu24OowvonWruao5","lastUpdated":"2026-11-18T10:50:16Z","metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:api:apivcu24OowvonWruao5","resourceUrl":"https://testacc-api-server-as-1301064274.example.com","status":"ACTIVE","_embedded":{"counts":{"authorizationServers":0,"clientAuthSettings":0}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:18 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0700235s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T10:50:16Z","id":"apivcu24OowvonWruao5","lastUpdated":"2026-11-18T10:50:16Z","metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:api:apivcu24OowvonWruao5","resourceUrl":"https://testacc-api-server-as-1301064274.example.com","status":"ACTIVE","_embedded":{"counts":{"authorizationServers":0,"clientAuthSettings":0}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:19 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.049008334s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 102
+        host: oie-00.dne-okta.com
+        body: |
+            {"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu7ekmjWxppv5PFao5"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/authorization-servers
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:17:08Z","id":"easu7ekmjWxppv5PFao5","issuer":"http://token.com","lastUpdated":"2026-11-02T19:17:08Z","metadata":{"authorizationEndpoint":"http://token.com/authorize","grantTypesSupported":["authorization_code","refresh_token"],"tokenEndpoint":"http://token.com/authorize","tokenEndpointAuthMethod":"client_secret_post"},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu7ekmjWxppv5PFao5","status":"ACTIVE","type":"MANUAL"},"created":"2026-11-18T10:50:20Z","lastUpdated":"2026-11-18T10:50:20Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:20 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.069327417s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T10:50:16Z","id":"apivcu24OowvonWruao5","lastUpdated":"2026-11-18T10:50:16Z","metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:api:apivcu24OowvonWruao5","resourceUrl":"https://testacc-api-server-as-1301064274.example.com","status":"ACTIVE","_embedded":{"counts":{"authorizationServers":1,"clientAuthSettings":0}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:21 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.071823542s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/authorization-servers/easu7ekmjWxppv5PFao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:17:08Z","id":"easu7ekmjWxppv5PFao5","issuer":"http://token.com","lastUpdated":"2026-11-02T19:17:08Z","metadata":{"authorizationEndpoint":"http://token.com/authorize","grantTypesSupported":["authorization_code","refresh_token"],"tokenEndpoint":"http://token.com/authorize","tokenEndpointAuthMethod":"client_secret_post"},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu7ekmjWxppv5PFao5","status":"ACTIVE","type":"MANUAL"},"created":"2026-11-18T10:50:20Z","lastUpdated":"2026-11-18T10:50:20Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:22 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.080955833s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/authorization-servers/easu7ekmjWxppv5PFao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"authorizationServer":{"created":"2026-11-02T19:17:08Z","id":"easu7ekmjWxppv5PFao5","issuer":"http://token.com","lastUpdated":"2026-11-02T19:17:08Z","metadata":{"authorizationEndpoint":"http://token.com/authorize","grantTypesSupported":["authorization_code","refresh_token"],"tokenEndpoint":"http://token.com/authorize","tokenEndpointAuthMethod":"client_secret_post"},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:external-authorization-servers:easu7ekmjWxppv5PFao5","status":"ACTIVE","type":"MANUAL"},"created":"2026-11-18T10:50:20Z","lastUpdated":"2026-11-18T10:50:20Z"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:23 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.078035s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/authorization-servers/easu7ekmjWxppv5PFao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 10:50:25 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.063095375s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T10:50:16Z","id":"apivcu24OowvonWruao5","lastUpdated":"2026-11-18T10:50:26Z","metadata":{"description":"Terraform acceptance test API server for okta_api_servers_authorization_server","displayName":"testAcc-api-server-as-1301064274","scopesSupported":["read:items"]},"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:api:apivcu24OowvonWruao5","resourceUrl":"https://testacc-api-server-as-1301064274.example.com","status":"INACTIVE","_embedded":{"counts":{"authorizationServers":0,"clientAuthSettings":0}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 10:50:26 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.05580325s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/api-servers/apivcu24OowvonWruao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 10:50:27 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.103446583s

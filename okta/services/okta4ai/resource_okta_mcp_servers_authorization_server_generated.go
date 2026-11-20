@@ -95,7 +95,7 @@ type McpServersAuthorizationServerModelProtocolConfigurationsModelStsModel struc
 	Enabled types.Bool `tfsdk:"enabled"`
 }
 
-func NewMcpServersAuthorizationServerResource() resource.Resource {
+func newMcpServersAuthorizationServerResource() resource.Resource {
 	return &mcpServersAuthorizationServerResource{}
 }
 
@@ -435,6 +435,7 @@ func (r *mcpServersAuthorizationServerResource) Create(ctx context.Context, req 
 
 	// Set ID from API response
 	plan.ID = types.StringValue(result.AuthorizationServer.GetId())
+	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
 
 	{
 		// authorization_server is a Computed object attribute: fill its typed shape, then convert.
@@ -751,9 +752,8 @@ func (r *mcpServersAuthorizationServerResource) Update(ctx context.Context, req 
 			obj, objDiags := types.ObjectValueFrom(ctx, map[string]attr.Type{"id": types.StringType, "issuer": types.StringType, "metadata": types.ObjectType{AttrTypes: map[string]attr.Type{"authorization_endpoint": types.StringType, "grant_types_supported": types.ListType{ElemType: types.StringType}, "identity_chaining_requested_token_types_supported": types.ListType{ElemType: types.StringType}, "protocol_supported": types.ListType{ElemType: types.StringType}, "registration_endpoint": types.StringType, "token_endpoint": types.StringType, "token_endpoint_auth_method": types.StringType, "token_endpoint_auth_methods_supported": types.ListType{ElemType: types.StringType}}}, "orn": types.StringType, "status": types.StringType, "subject_mapping_expression": types.StringType, "type": types.StringType}, authorizationServerHolder0.AuthorizationServer)
 			resp.Diagnostics.Append(objDiags...)
 			state.AuthorizationServer = obj
-		} else {
-			state.AuthorizationServer = types.ObjectNull(map[string]attr.Type{"id": types.StringType, "issuer": types.StringType, "metadata": types.ObjectType{AttrTypes: map[string]attr.Type{"authorization_endpoint": types.StringType, "grant_types_supported": types.ListType{ElemType: types.StringType}, "identity_chaining_requested_token_types_supported": types.ListType{ElemType: types.StringType}, "protocol_supported": types.ListType{ElemType: types.StringType}, "registration_endpoint": types.StringType, "token_endpoint": types.StringType, "token_endpoint_auth_method": types.StringType, "token_endpoint_auth_methods_supported": types.ListType{ElemType: types.StringType}}}, "orn": types.StringType, "status": types.StringType, "subject_mapping_expression": types.StringType, "type": types.StringType})
 		}
+		// Absent from this response: keep the prior value, as the scalar fields above do.
 	}
 	state.ProtocolConfigurations = plan.ProtocolConfigurations
 	if plan.ProtocolConfigurations != nil {
@@ -836,7 +836,6 @@ func (r *mcpServersAuthorizationServerResource) Update(ctx context.Context, req 
 	}
 
 	state.Orn = plan.Orn
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 

@@ -50,7 +50,7 @@ type aiAgentsCredentialsPublicKeyModeModel struct {
 	Mode    types.String `tfsdk:"mode"`
 }
 
-func NewAiAgentsCredentialsPublicKeyModeResource() resource.Resource {
+func newAiAgentsCredentialsPublicKeyModeResource() resource.Resource {
 	return &aiAgentsCredentialsPublicKeyModeResource{}
 }
 

@@ -13,6 +13,7 @@ import (
 func TestAccResourceOktaMcpServersAuthorizationServer_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaMcpServersAuthorizationServer, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaMcpServersAuthorizationServer)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -27,6 +28,17 @@ func TestAccResourceOktaMcpServersAuthorizationServer_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "mcp_server_id", "emsu6mjxY5YyMHF0zao5"),
 					resource.TestCheckResourceAttrSet(resourceName, "authorization_server.id"),
 					resource.TestCheckResourceAttrSet(resourceName, "authorization_server.status"),
+					resource.TestCheckResourceAttr(resourceName, "protocol_configurations.identity_assertion.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "protocol_configurations.sts.enabled", "true"),
+				),
+			},
+			{
+				// Changing protocol_configurations updates the link in place.
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrPair(resourceName, "id", resourceName, "authorization_server.id"),
+					resource.TestCheckResourceAttr(resourceName, "protocol_configurations.identity_assertion.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "protocol_configurations.sts.enabled", "false"),
 				),
 			},
 			{

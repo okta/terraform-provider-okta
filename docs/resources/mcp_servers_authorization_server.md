@@ -8,7 +8,7 @@ description: |-
 
 Links an authorization server to an Okta MCP server. The MCP Server Registrations V2 API provides registration and lifecycle management operations for third-party MCP servers, including the authorization servers linked to them.
 
-Updates are not supported in place. Changing `mcp_server_id` or `orn` replaces the link.
+Changing `protocol_configurations` updates the link in place. Changing `mcp_server_id` replaces it.
 
 ## Example Usage
 
@@ -44,7 +44,7 @@ resource "okta_mcp_servers_authorization_server" "example" {
 ### Required
 
 - `mcp_server_id` (String) ID of an MCP server. Forces replacement if changed.
-- `orn` (String) The [ORN](https://developer.okta.com/docs/reference/okta-resource-names/) of the authorization server to link. Forces replacement if changed.
+- `orn` (String) The [ORN](https://developer.okta.com/docs/reference/okta-resource-names/) of the authorization server to link.
 
 ### Optional
 

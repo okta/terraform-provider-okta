@@ -72,7 +72,7 @@ type McpServerDataSourceModelOauthClientModel struct {
 	TokenEndpointAuthMethod types.String `tfsdk:"token_endpoint_auth_method"`
 }
 
-func NewMcpServerDataSource() datasource.DataSource {
+func newMcpServerDataSource() datasource.DataSource {
 	return &mcpServerDataSource{}
 }
 

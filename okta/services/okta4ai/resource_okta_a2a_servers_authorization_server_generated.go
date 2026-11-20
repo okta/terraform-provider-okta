@@ -64,7 +64,7 @@ type A2aServersAuthorizationServerModelAuthorizationServerModel struct {
 	Type                     types.String `tfsdk:"type"`
 }
 
-func NewA2aServersAuthorizationServerResource() resource.Resource {
+func newA2aServersAuthorizationServerResource() resource.Resource {
 	return &a2aServersAuthorizationServerResource{}
 }
 

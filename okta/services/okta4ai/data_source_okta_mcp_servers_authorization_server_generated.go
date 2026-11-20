@@ -89,7 +89,7 @@ type McpServersAuthorizationServerDataSourceModelProtocolConfigurationsModelStsM
 	Enabled types.Bool `tfsdk:"enabled"`
 }
 
-func NewMcpServersAuthorizationServerDataSource() datasource.DataSource {
+func newMcpServersAuthorizationServerDataSource() datasource.DataSource {
 	return &mcpServersAuthorizationServerDataSource{}
 }
 

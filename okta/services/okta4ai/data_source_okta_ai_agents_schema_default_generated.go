@@ -172,7 +172,7 @@ type aiAgentsSchemaDefaultDataSourceModel struct {
 	Items []aiAgentsSchemaDefaultItemModel `tfsdk:"items"`
 }
 
-func NewAiAgentsSchemaDefaultDataSource() datasource.DataSource {
+func newAiAgentsSchemaDefaultDataSource() datasource.DataSource {
 	return &aiAgentsSchemaDefaultDataSource{}
 }
 

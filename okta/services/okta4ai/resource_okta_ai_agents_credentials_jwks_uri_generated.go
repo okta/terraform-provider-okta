@@ -50,7 +50,7 @@ type aiAgentsCredentialsJwksUriModel struct {
 	JwksUri types.String `tfsdk:"jwks_uri"`
 }
 
-func NewAiAgentsCredentialsJwksUriResource() resource.Resource {
+func newAiAgentsCredentialsJwksUriResource() resource.Resource {
 	return &aiAgentsCredentialsJwksUriResource{}
 }
 

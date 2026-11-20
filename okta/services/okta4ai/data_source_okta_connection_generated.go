@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	okta4aa "github.com/okta/okta-for-ai-agents-golang/okta4aa"
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
 
@@ -96,7 +97,7 @@ type ConnectionDataSourceModelResourceModelAppInstanceModel struct {
 	Orn         types.String `tfsdk:"orn"`
 }
 
-func NewConnectionDataSource() datasource.DataSource {
+func newConnectionDataSource() datasource.DataSource {
 	return &connectionDataSource{}
 }
 
@@ -352,16 +353,27 @@ func (d *connectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			protocolModel0.ClientIdAtResource = types.StringNull()
 		}
 		var protocolTypeVal *string
-		if obj, ok := protocolRaw0.GetActualInstance().(interface{ GetProtocolTypeOk() (*string, bool) }); ok {
-			protocolTypeVal, _ = obj.GetProtocolTypeOk()
+		switch v := protocolRaw0.GetActualInstance().(type) {
+		case *okta4aa.ResourceConnectionIdentityAssertionProtocolV2:
+			if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+				s := string(*p)
+				protocolTypeVal = &s
+			}
+		case *okta4aa.ResourceConnectionStsProtocolV2:
+			if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+				s := string(*p)
+				protocolTypeVal = &s
+			}
 		}
 		if protocolTypeVal != nil {
 			protocolModel0.ProtocolType = types.StringValue(string(*protocolTypeVal))
 		} else if protocolModel0.ProtocolType.IsUnknown() {
 			protocolModel0.ProtocolType = types.StringNull()
 		}
-		var scopeConditionVal *string
-		if obj, ok := protocolRaw0.GetActualInstance().(interface{ GetScopeConditionOk() (*string, bool) }); ok {
+		var scopeConditionVal *okta4aa.ScopeCondition
+		if obj, ok := protocolRaw0.GetActualInstance().(interface {
+			GetScopeConditionOk() (*okta4aa.ScopeCondition, bool)
+		}); ok {
 			scopeConditionVal, _ = obj.GetScopeConditionOk()
 		}
 		if scopeConditionVal != nil {
@@ -420,8 +432,32 @@ func (d *connectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 			resourceModel0.Orn = types.StringNull()
 		}
 		var resourceTypeVal *string
-		if obj, ok := resourceRaw0.GetActualInstance().(interface{ GetResourceTypeOk() (*string, bool) }); ok {
-			resourceTypeVal, _ = obj.GetResourceTypeOk()
+		switch v := resourceRaw0.GetActualInstance().(type) {
+		case *okta4aa.ResourceConnectionA2aServerResourceV2:
+			if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+				s := string(*p)
+				resourceTypeVal = &s
+			}
+		case *okta4aa.ResourceConnectionApiServerResourceV2:
+			if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+				s := string(*p)
+				resourceTypeVal = &s
+			}
+		case *okta4aa.ResourceConnectionMcpServerResourceV2:
+			if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+				s := string(*p)
+				resourceTypeVal = &s
+			}
+		case *okta4aa.ResourceConnectionServiceAccountResourceV2:
+			if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+				s := string(*p)
+				resourceTypeVal = &s
+			}
+		case *okta4aa.ResourceConnectionVaultSecretResourceV2:
+			if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+				s := string(*p)
+				resourceTypeVal = &s
+			}
 		}
 		if resourceTypeVal != nil {
 			resourceModel0.ResourceType = types.StringValue(string(*resourceTypeVal))

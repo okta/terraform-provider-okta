@@ -49,7 +49,7 @@ type aiAgentsCredentialsPublicKeyModeDataSourceModel struct {
 	Items   []aiAgentsCredentialsPublicKeyModeItemModel `tfsdk:"items"`
 }
 
-func NewAiAgentsCredentialsPublicKeyModeDataSource() datasource.DataSource {
+func newAiAgentsCredentialsPublicKeyModeDataSource() datasource.DataSource {
 	return &aiAgentsCredentialsPublicKeyModeDataSource{}
 }
 

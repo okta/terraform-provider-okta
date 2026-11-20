@@ -3,6 +3,8 @@ package resources
 const (
 	OktaA2aServersAuthorizationServer                 = "okta_a2a_servers_authorization_server"
 	OktaApiServer                                     = "okta_api_server"
+	OktaApiServersAuthorizationServer                 = "okta_api_servers_authorization_server"
+	OktaConnection                                    = "okta_connection"
 	OktaIDaaSAPIToken                                 = "okta_api_token"
 	OktaIDaaSAdminRoleCustom                          = "okta_admin_role_custom"
 	OktaIDaaSAdminRoleCustomAssignments               = "okta_admin_role_custom_assignments"

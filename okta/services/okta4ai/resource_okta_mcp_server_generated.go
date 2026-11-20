@@ -124,7 +124,7 @@ type McpServerModelOrgConfigPropertyValuesModel struct {
 	Value types.String `tfsdk:"value"`
 }
 
-func NewMcpServerResource() resource.Resource {
+func newMcpServerResource() resource.Resource {
 	return &mcpServerResource{}
 }
 
@@ -719,22 +719,22 @@ func (r *mcpServerResource) Create(ctx context.Context, req resource.CreateReque
 
 	{
 		// Created in an inactive state; activate before handing the resource to Terraform.
-		//activateID := plan.ID.ValueString()
-		//_ = activateID
-		//_, _, activateErr := client.MCPServerRegistrationV2API.ActivateMCPServerV2(ctx, activateID).Execute()
-		//if activateErr != nil {
-		//	// Persist the created resource so it is not orphaned, then report the failure.
-		//	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-		//	resp.Diagnostics.AddError("Error activating mcp_server after creation", activateErr.Error())
-		//	return
-		//}
-		//activated, _, readErr := client.MCPServerRegistrationV2API.GetMCPServerV2(ctx, activateID).Execute()
-		//if readErr != nil {
-		//	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-		//	resp.Diagnostics.AddError("Error reading mcp_server after activation", readErr.Error())
-		//	return
-		//}
-		//plan.Status = types.StringValue(string(activated.GetStatus()))
+		activateID := plan.ID.ValueString()
+		_ = activateID
+		_, _, activateErr := client.MCPServerRegistrationV2API.ActivateMCPServerV2(ctx, activateID).Execute()
+		if activateErr != nil {
+			// Persist the created resource so it is not orphaned, then report the failure.
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error activating mcp_server after creation", activateErr.Error())
+			return
+		}
+		activated, _, readErr := client.MCPServerRegistrationV2API.GetMCPServerV2(ctx, activateID).Execute()
+		if readErr != nil {
+			resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+			resp.Diagnostics.AddError("Error reading mcp_server after activation", readErr.Error())
+			return
+		}
+		plan.Status = types.StringValue(string(activated.GetStatus()))
 	}
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }

@@ -70,7 +70,7 @@ type AiAgentProviderDataSourceModelScheduleModel struct {
 	Timezone types.String `tfsdk:"timezone"`
 }
 
-func NewAiAgentProviderDataSource() datasource.DataSource {
+func newAiAgentProviderDataSource() datasource.DataSource {
 	return &aiAgentProviderDataSource{}
 }
 

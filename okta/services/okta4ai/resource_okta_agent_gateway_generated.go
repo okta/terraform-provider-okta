@@ -58,7 +58,7 @@ type AgentGatewayModelProfileModel struct {
 	DisplayName types.String `tfsdk:"display_name"`
 }
 
-func NewAgentGatewayResource() resource.Resource {
+func newAgentGatewayResource() resource.Resource {
 	return &agentGatewayResource{}
 }
 

@@ -53,7 +53,7 @@ type aiAgentsCredentialsJwkRsaDataSourceModel struct {
 	Use         types.String `tfsdk:"use"`
 }
 
-func NewAiAgentsCredentialsJwkRsaDataSource() datasource.DataSource {
+func newAiAgentsCredentialsJwkRsaDataSource() datasource.DataSource {
 	return &aiAgentsCredentialsJwkRsaDataSource{}
 }
 

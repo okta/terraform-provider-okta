@@ -49,7 +49,7 @@ type aiAgentsCredentialsJwksUriDataSourceModel struct {
 	Items   []aiAgentsCredentialsJwksUriItemModel `tfsdk:"items"`
 }
 
-func NewAiAgentsCredentialsJwksUriDataSource() datasource.DataSource {
+func newAiAgentsCredentialsJwksUriDataSource() datasource.DataSource {
 	return &aiAgentsCredentialsJwksUriDataSource{}
 }
 

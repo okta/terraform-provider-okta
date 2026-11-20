@@ -1,9 +1,8 @@
 resource "okta_mcp_server" "test" {
-  registration_type = "MANUAL"
-  resource_url      = "https://example.com"
+  resource_url      =  "https://workspacemcp.googleapis.com/mcp/v1"
 
   metadata {
-    display_name = "Test MCP Server"
+    display_name = "MCP Server"
     description  = "Test MCP server registered by the terraform provider acceptance tests"
   }
 }

@@ -14,6 +14,7 @@ import (
 func TestAccResourceOktaClientAuthSetting_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaClientAuthSetting, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaClientAuthSetting)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -28,6 +29,14 @@ func TestAccResourceOktaClientAuthSetting_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttr(resourceName, "protocol", "OAUTH2"),
 					resource.TestCheckResourceAttr(resourceName, "purposes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc-cred-%d", mgr.Seed)),
+				),
+			},
+			{
+				// Changing the configuration updates the resource in place.
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", fmt.Sprintf("testAcc-cred-updated-%d", mgr.Seed)),
 				),
 			},
 			{

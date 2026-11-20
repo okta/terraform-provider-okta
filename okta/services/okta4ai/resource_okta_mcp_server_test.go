@@ -14,6 +14,7 @@ import (
 func TestAccResourceOktaMcpServer_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaMcpServer, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaMcpServer)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -29,8 +30,17 @@ func TestAccResourceOktaMcpServer_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttrSet(resourceName, "orn"),
 					resource.TestCheckResourceAttrSet(resourceName, "authorization_server_count"),
-					resource.TestCheckResourceAttr(resourceName, "resource_url", "https://example.com"),
-					resource.TestCheckResourceAttr(resourceName, "metadata.display_name", "Test MCP Server"),
+					resource.TestCheckResourceAttr(resourceName, "resource_url", "https://workspacemcp.googleapis.com/mcp/v1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.display_name", "MCP Server"),
+				),
+			},
+			{
+				// Changing the configuration updates the resource in place.
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "resource_url", "https://workspacemcp.googleapis.com/mcp/v1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.display_name", "MCP Server updated"),
+					resource.TestCheckResourceAttr(resourceName, "metadata.description", "Test MCP server registered by the terraform provider acceptance tests, updated"),
 				),
 			},
 			{

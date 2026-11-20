@@ -53,7 +53,7 @@ type AgentGatewayDataSourceModelProfileModel struct {
 	DisplayName types.String `tfsdk:"display_name"`
 }
 
-func NewAgentGatewayDataSource() datasource.DataSource {
+func newAgentGatewayDataSource() datasource.DataSource {
 	return &agentGatewayDataSource{}
 }
 

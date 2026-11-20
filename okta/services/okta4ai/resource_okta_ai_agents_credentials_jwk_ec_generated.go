@@ -58,7 +58,7 @@ type aiAgentsCredentialsJwkEcModel struct {
 	Y       types.String `tfsdk:"y"`
 }
 
-func NewAiAgentsCredentialsJwkEcResource() resource.Resource {
+func newAiAgentsCredentialsJwkEcResource() resource.Resource {
 	return &aiAgentsCredentialsJwkEcResource{}
 }
 

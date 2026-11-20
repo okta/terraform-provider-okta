@@ -51,7 +51,7 @@ type aiAgentProvidersStagingStatDataSourceModel struct {
 	Items      []aiAgentProvidersStagingStatItemModel `tfsdk:"items"`
 }
 
-func NewAiAgentProvidersStagingStatDataSource() datasource.DataSource {
+func newAiAgentProvidersStagingStatDataSource() datasource.DataSource {
 	return &aiAgentProvidersStagingStatDataSource{}
 }
 

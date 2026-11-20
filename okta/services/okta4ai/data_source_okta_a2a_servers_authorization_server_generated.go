@@ -71,7 +71,7 @@ type A2aServersAuthorizationServerDataSourceModelAuthorizationServerModelMetadat
 	TokenEndpointAuthMethodsSupported            types.List   `tfsdk:"token_endpoint_auth_methods_supported"`
 }
 
-func NewA2aServersAuthorizationServerDataSource() datasource.DataSource {
+func newA2aServersAuthorizationServerDataSource() datasource.DataSource {
 	return &a2aServersAuthorizationServerDataSource{}
 }
 

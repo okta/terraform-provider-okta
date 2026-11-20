@@ -222,7 +222,7 @@ type AiAgentsSchemaDefaultModelDefinitionsModelCustomModel struct {
 	Type       types.String `tfsdk:"type"`
 }
 
-func NewAiAgentsSchemaDefaultResource() resource.Resource {
+func newAiAgentsSchemaDefaultResource() resource.Resource {
 	return &aiAgentsSchemaDefaultResource{}
 }
 

@@ -1,0 +1,601 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 191
+        host: oie-00.dne-okta.com
+        body: |
+            {"profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"resourceUrl":"https://testacc-connection-1935252946.example.com/api"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 653
+        body: '{"created":"2026-11-18T14:24:54Z","id":"wlpvcudlbrHnNC9eCao5","lastUpdated":"2026-11-18T14:24:54Z","profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"source":"MANUAL","_links":{"resourceServer":"https://oie-00.dne-okta.com/resource-servers/api/v2/a2a-servers/wlpvcudlbrHnNC9eCao5","delegationLinks":"https://oie-00.dne-okta.com/workload-principals/api/v2/delegation-links?filter=to.resourceOrn%20eq%20%22orn:okta:directory:00otxk5i5T0Rk59Z3ao5:workload-principals:ai-agents:wlpvcudlbrHnNC9eCao5%22"},"oauthClient":{"clientId":"wlpvcudlbrHnNC9eCao5"},"status":"STAGED"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "653"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:24:54 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 201 Created
+        code: 201
+        duration: 1.270386167s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 14:24:55 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 204 No Content
+        code: 204
+        duration: 1.067088s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 316
+        body: '{"created":"2026-11-18T14:24:54Z","id":"wlpvcudlbrHnNC9eCao5","lastUpdated":"2026-11-18T14:24:55Z","profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"source":"MANUAL","_links":{},"oauthClient":{"clientId":"wlpvcudlbrHnNC9eCao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "316"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:24:56 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.129547542s
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 402
+        host: oie-00.dne-okta.com
+        body: |
+            {"actor":{"wlpId":"wlpvcudlbrHnNC9eCao5"},"authorizationServer":{"orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/oauth2/as/ausu6ayw5WeizA26Vao5"}},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/apps/mcp-servers/emsv9wtzWEC6F5C0mao5"}},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:24:57 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 201 Created
+        code: 201
+        duration: 1.212505125s
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5/lifecycle/activate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/oauth2/as/ausu6ayw5WeizA26Vao5"}},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/apps/mcp-servers/emsv9wtzWEC6F5C0mao5"}},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:24:58 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.102461916s
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:24:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.08275525s
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 316
+        body: '{"created":"2026-11-18T14:24:54Z","id":"wlpvcudlbrHnNC9eCao5","lastUpdated":"2026-11-18T14:24:55Z","profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"source":"MANUAL","_links":{},"oauthClient":{"clientId":"wlpvcudlbrHnNC9eCao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "316"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:01 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.082835834s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:02 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.162055s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 316
+        body: '{"created":"2026-11-18T14:24:54Z","id":"wlpvcudlbrHnNC9eCao5","lastUpdated":"2026-11-18T14:24:55Z","profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"source":"MANUAL","_links":{},"oauthClient":{"clientId":"wlpvcudlbrHnNC9eCao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "316"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.046240958s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile","email"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.116963833s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 77
+        host: oie-00.dne-okta.com
+        body: |
+            {"protocol":{"scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile"]}}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/merge-patch+json
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: PATCH
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/oauth2/as/ausu6ayw5WeizA26Vao5"}},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/apps/mcp-servers/emsv9wtzWEC6F5C0mao5"}},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.27451575s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 316
+        body: '{"created":"2026-11-18T14:24:54Z","id":"wlpvcudlbrHnNC9eCao5","lastUpdated":"2026-11-18T14:24:55Z","profile":{"description":"Terraform acceptance test agent for okta_connection","name":"testAcc-connection-1935252946"},"source":"MANUAL","_links":{},"oauthClient":{"clientId":"wlpvcudlbrHnNC9eCao5"},"status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "316"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.049661709s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:08 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.067077875s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5"},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER"},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"ACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:09 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.113591459s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"actor":{"displayName":"testAcc-connection-1935252946","wlpId":"wlpvcudlbrHnNC9eCao5","wlpType":"AI_AGENT"},"authorizationServer":{"displayName":"tf-auth-server","issuerUrl":"https://oie-00.dne-okta.com/oauth2/ausu6ayw5WeizA26Vao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:authorization_servers:ausu6ayw5WeizA26Vao5","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/oauth2/as/ausu6ayw5WeizA26Vao5"}},"id":"mcnvcudqrP1myS4Eaao5","orn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:connections:mcnvcudqrP1myS4Eaao5","protocol":{"protocolType":"IDENTITY_ASSERTION","scopeCondition":"INCLUDE_ONLY","scopes":["openid","profile"]},"resource":{"displayName":"Microsoft Teams","location":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","orn":"orn:okta:directory:00otxk5i5T0Rk59Z3ao5:resource-servers:mcp:emsv9wtzWEC6F5C0mao5","resourceType":"MCP_SERVER","_links":{"web":"https://oie-00-admin.dne-okta.com/admin/apps/mcp-servers/emsv9wtzWEC6F5C0mao5"}},"resourceIdentifier":"https://agent365.svc.cloud.microsoft/agents/tenants/office688/servers/mcp_TeamsServer","status":"INACTIVE"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:25:11 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.119757208s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-connections/api/v2/connections/mcnvcudqrP1myS4Eaao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 14:25:12 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.110790583s
+    - id: 16
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 14:25:13 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.1795445s
+    - id: 17
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agents/wlpvcudlbrHnNC9eCao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 14:25:14 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.131267125s

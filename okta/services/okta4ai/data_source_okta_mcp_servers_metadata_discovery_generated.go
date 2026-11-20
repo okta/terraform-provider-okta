@@ -55,7 +55,7 @@ type McpServersMetadataDiscoveryDataSourceModelCredentialModel struct {
 	TokenRequestSettingsId types.String `tfsdk:"token_request_settings_id"`
 }
 
-func NewMcpServersMetadataDiscoveryDataSource() datasource.DataSource {
+func newMcpServersMetadataDiscoveryDataSource() datasource.DataSource {
 	return &mcpServersMetadataDiscoveryDataSource{}
 }
 

@@ -75,7 +75,7 @@ type AiAgentModelSignOnProviderModel struct {
 	Type          types.String `tfsdk:"type"`
 }
 
-func NewAiAgentResource() resource.Resource {
+func newAiAgentResource() resource.Resource {
 	return &aiAgentResource{}
 }
 
@@ -217,13 +217,11 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
 	state.Source = types.StringValue(string(result.GetSource()))
 	state.Status = types.StringValue(string(result.GetStatus()))
-	if state.OauthClient != nil || len(importing) > 0 {
-		// oauth_client is kept as configured: its request and response shapes differ.
-		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-			state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-		} else {
-			state.OauthClientId = types.StringNull()
-		}
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+	} else {
+		state.OauthClientId = types.StringNull()
 	}
 	if state.Profile != nil || len(importing) > 0 {
 		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
@@ -388,13 +386,11 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.Source = types.StringValue(string(result.GetSource()))
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
-	if plan.OauthClient != nil {
-		// oauth_client is kept as configured: its request and response shapes differ.
-		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-			plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-		} else {
-			plan.OauthClientId = types.StringNull()
-		}
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+	} else {
+		plan.OauthClientId = types.StringNull()
 	}
 	if plan.Profile != nil {
 		if profileRaw0, ok := result.GetProfileOk(); ok && profileRaw0 != nil {
@@ -554,13 +550,11 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 		state.Status = types.StringValue(string(*statusVal))
 	}
 	state.OauthClient = plan.OauthClient
-	if plan.OauthClient != nil {
-		// oauth_client is kept as configured: its request and response shapes differ.
-		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
-			state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
-		} else {
-			state.OauthClientId = types.StringNull()
-		}
+	// oauth_client is kept as configured: its request and response shapes differ.
+	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
+	} else {
+		state.OauthClientId = types.StringNull()
 	}
 	state.Profile = plan.Profile
 	if plan.Profile != nil {
@@ -639,7 +633,6 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	state.ResourceUrl = plan.ResourceUrl
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 

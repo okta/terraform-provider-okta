@@ -15,6 +15,7 @@ import (
 func TestAccResourceOktaAgentGateway_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaIDaaSAgentGateway, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaIDaaSAgentGateway)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -29,7 +30,16 @@ func TestAccResourceOktaAgentGateway_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttrSet(resourceName, "orn"),
-					resource.TestCheckResourceAttr(resourceName, "profile.display_name", "Production MCP Servers"),
+					resource.TestCheckResourceAttr(resourceName, "profile.display_name", fmt.Sprintf("testAcc-agent-gateway-%d", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "profile.description", "Terraform acceptance test agent gateway"),
+				),
+			},
+			{
+				// Changing the configuration updates the resource in place.
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "profile.display_name", fmt.Sprintf("testAcc-agent-gateway-updated-%d", mgr.Seed)),
+					resource.TestCheckResourceAttr(resourceName, "profile.description", "Terraform acceptance test agent gateway, updated"),
 				),
 			},
 			{

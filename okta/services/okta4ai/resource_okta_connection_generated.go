@@ -105,7 +105,7 @@ type ConnectionModelResourceModelAppInstanceModel struct {
 	Orn         types.String `tfsdk:"orn"`
 }
 
-func NewConnectionResource() resource.Resource {
+func newConnectionResource() resource.Resource {
 	return &connectionResource{}
 }
 
@@ -436,8 +436,17 @@ func (r *connectionResource) Read(ctx context.Context, req resource.ReadRequest,
 				protocolModel0.ClientIdAtResource = types.StringNull()
 			}
 			var protocolTypeVal *string
-			if obj, ok := protocolRaw0.GetActualInstance().(interface{ GetProtocolTypeOk() (*string, bool) }); ok {
-				protocolTypeVal, _ = obj.GetProtocolTypeOk()
+			switch v := protocolRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionIdentityAssertionProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionStsProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
 			}
 			if protocolTypeVal != nil {
 				protocolModel0.ProtocolType = types.StringValue(string(*protocolTypeVal))
@@ -508,8 +517,32 @@ func (r *connectionResource) Read(ctx context.Context, req resource.ReadRequest,
 				resourceModel0.Orn = types.StringNull()
 			}
 			var resourceTypeVal *string
-			if obj, ok := resourceRaw0.GetActualInstance().(interface{ GetResourceTypeOk() (*string, bool) }); ok {
-				resourceTypeVal, _ = obj.GetResourceTypeOk()
+			switch v := resourceRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionA2aServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionApiServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionMcpServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionServiceAccountResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionVaultSecretResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
 			}
 			if resourceTypeVal != nil {
 				resourceModel0.ResourceType = types.StringValue(string(*resourceTypeVal))
@@ -783,8 +816,17 @@ func (r *connectionResource) Create(ctx context.Context, req resource.CreateRequ
 				protocolModel0.ClientIdAtResource = types.StringNull()
 			}
 			var protocolTypeVal *string
-			if obj, ok := protocolRaw0.GetActualInstance().(interface{ GetProtocolTypeOk() (*string, bool) }); ok {
-				protocolTypeVal, _ = obj.GetProtocolTypeOk()
+			switch v := protocolRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionIdentityAssertionProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionStsProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
 			}
 			if protocolTypeVal != nil {
 				protocolModel0.ProtocolType = types.StringValue(string(*protocolTypeVal))
@@ -855,8 +897,32 @@ func (r *connectionResource) Create(ctx context.Context, req resource.CreateRequ
 				resourceModel0.Orn = types.StringNull()
 			}
 			var resourceTypeVal *string
-			if obj, ok := resourceRaw0.GetActualInstance().(interface{ GetResourceTypeOk() (*string, bool) }); ok {
-				resourceTypeVal, _ = obj.GetResourceTypeOk()
+			switch v := resourceRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionA2aServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionApiServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionMcpServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionServiceAccountResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionVaultSecretResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
 			}
 			if resourceTypeVal != nil {
 				resourceModel0.ResourceType = types.StringValue(string(*resourceTypeVal))
@@ -1050,8 +1116,17 @@ func (r *connectionResource) Update(ctx context.Context, req resource.UpdateRequ
 				protocolModel0.ClientIdAtResource = types.StringNull()
 			}
 			var protocolTypeVal *string
-			if obj, ok := protocolRaw0.GetActualInstance().(interface{ GetProtocolTypeOk() (*string, bool) }); ok {
-				protocolTypeVal, _ = obj.GetProtocolTypeOk()
+			switch v := protocolRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionIdentityAssertionProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionStsProtocolV2:
+				if p, ok := v.GetProtocolTypeOk(); ok && p != nil {
+					s := string(*p)
+					protocolTypeVal = &s
+				}
 			}
 			if protocolTypeVal != nil {
 				protocolModel0.ProtocolType = types.StringValue(string(*protocolTypeVal))
@@ -1123,8 +1198,32 @@ func (r *connectionResource) Update(ctx context.Context, req resource.UpdateRequ
 				resourceModel0.Orn = types.StringNull()
 			}
 			var resourceTypeVal *string
-			if obj, ok := resourceRaw0.GetActualInstance().(interface{ GetResourceTypeOk() (*string, bool) }); ok {
-				resourceTypeVal, _ = obj.GetResourceTypeOk()
+			switch v := resourceRaw0.GetActualInstance().(type) {
+			case *okta4aa.ResourceConnectionA2aServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionApiServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionMcpServerResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionServiceAccountResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
+			case *okta4aa.ResourceConnectionVaultSecretResourceV2:
+				if p, ok := v.GetResourceTypeOk(); ok && p != nil {
+					s := string(*p)
+					resourceTypeVal = &s
+				}
 			}
 			if resourceTypeVal != nil {
 				resourceModel0.ResourceType = types.StringValue(string(*resourceTypeVal))

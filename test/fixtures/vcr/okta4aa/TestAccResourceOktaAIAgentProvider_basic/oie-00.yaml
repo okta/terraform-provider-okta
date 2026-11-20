@@ -6,10 +6,82 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 212
+        content_length: 484
         host: oie-00.dne-okta.com
         body: |
-            {"configuration":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","clientSecret":"<REDACTED>"},"sourceOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:office365:0oat1a3yIbqyw7VY0ao5"}
+            {"name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","clientSecret":"REDACTED-CLIENT-SECRET","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"registrationMethod":"STATIC","scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T14:42:52Z","id":"rscvcueluIircE08wao5","lastUpdated":"2026-11-18T14:42:52Z","name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:42:52 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 201 Created
+        code: 201
+        duration: 1.139071792s
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscvcueluIircE08wao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T14:42:52Z","id":"rscvcueluIircE08wao5","lastUpdated":"2026-11-18T14:42:52Z","name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:42:53 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.101941875s
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 272
+        host: oie-00.dne-okta.com
+        body: |
+            {"configuration":{"client_auth_id":"rscvcueluIircE08wao5"},"deDupExpression":"target.profile.externalId eq source.profile.externalId","schedule":{"cron":"0 0 2 ? * MON","timezone":"UTC"},"sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}
         headers:
             Accept:
                 - application/json
@@ -23,90 +95,22 @@ interactions:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 509
-        body: '{"configuration":{"genericOAuthClientId":"goctmnfowcj5Stf0Yao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aiptmnfpAwCUYrnLHao5","integrationDate":"2026-10-26T15:33:24Z","owners":{},"sourceId":"0oat1a3yIbqyw7VY0ao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:office365:0oat1a3yIbqyw7VY0ao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        content_length: 649
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T02:00:00Z","owners":{},"schedule":{"cron":"0 0 2 ? * MON","timezone":"UTC"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Length:
-                - "509"
+                - "649"
             Content-Type:
                 - application/json
             Date:
-                - Mon, 26 Oct 2026 15:33:24 GMT
+                - Wed, 18 Nov 2026 14:42:54 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 201 Created
         code: 201
-        duration: 1.709294125s
-    - id: 1
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5/lifecycle/activate
-        method: POST
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: 0
-        body: ""
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Date:
-                - Mon, 26 Oct 2026 15:33:26 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-        status: 204 No Content
-        code: 204
-        duration: 1.430417083s
-    - id: 2
-      request:
-        proto: HTTP/1.1
-        proto_major: 1
-        proto_minor: 1
-        content_length: 0
-        host: oie-00.dne-okta.com
-        headers:
-            Accept:
-                - application/json
-            Authorization:
-                - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5
-        method: GET
-      response:
-        proto: HTTP/2.0
-        proto_major: 2
-        proto_minor: 0
-        content_length: 509
-        body: '{"configuration":{"genericOAuthClientId":"goctmnfowcj5Stf0Yao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aiptmnfpAwCUYrnLHao5","integrationDate":"2026-10-26T15:33:24Z","owners":{},"sourceId":"0oat1a3yIbqyw7VY0ao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:office365:0oat1a3yIbqyw7VY0ao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
-        headers:
-            Accept-Ch:
-                - Sec-CH-UA-Platform-Version
-            Content-Length:
-                - "509"
-            Content-Type:
-                - application/json
-            Date:
-                - Mon, 26 Oct 2026 15:33:27 GMT
-            Referrer-Policy:
-                - strict-origin-when-cross-origin
-            Report-To:
-                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
-        status: 200 OK
-        code: 200
-        duration: 1.108878583s
+        duration: 1.563468167s
     - id: 3
       request:
         proto: HTTP/1.1
@@ -119,28 +123,24 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5
-        method: GET
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5/lifecycle/activate
+        method: POST
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 509
-        body: '{"configuration":{"genericOAuthClientId":"goctmnfowcj5Stf0Yao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aiptmnfpAwCUYrnLHao5","integrationDate":"2026-10-26T15:33:24Z","owners":{},"sourceId":"0oat1a3yIbqyw7VY0ao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:office365:0oat1a3yIbqyw7VY0ao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        content_length: 0
+        body: ""
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
-            Content-Length:
-                - "509"
-            Content-Type:
-                - application/json
             Date:
-                - Mon, 26 Oct 2026 15:33:28 GMT
+                - Wed, 18 Nov 2026 14:42:55 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 200 OK
-        code: 200
-        duration: 1.082060583s
+        status: 204 No Content
+        code: 204
+        duration: 1.073558916s
     - id: 4
       request:
         proto: HTTP/1.1
@@ -153,28 +153,28 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
         method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 509
-        body: '{"configuration":{"genericOAuthClientId":"goctmnfowcj5Stf0Yao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aiptmnfpAwCUYrnLHao5","integrationDate":"2026-10-26T15:33:24Z","owners":{},"sourceId":"0oat1a3yIbqyw7VY0ao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00op58x1t9iNay3Ojao5:apps:office365:0oat1a3yIbqyw7VY0ao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        content_length: 649
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T02:00:00Z","owners":{},"schedule":{"cron":"0 0 2 ? * MON","timezone":"UTC"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Content-Length:
-                - "509"
+                - "649"
             Content-Type:
                 - application/json
             Date:
-                - Mon, 26 Oct 2026 15:33:29 GMT
+                - Wed, 18 Nov 2026 14:42:56 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 200 OK
         code: 200
-        duration: 1.075332916s
+        duration: 1.058915666s
     - id: 5
       request:
         proto: HTTP/1.1
@@ -187,24 +187,26 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5/lifecycle/deactivate
-        method: POST
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscvcueluIircE08wao5
+        method: GET
       response:
         proto: HTTP/2.0
         proto_major: 2
         proto_minor: 0
-        content_length: 0
-        body: ""
+        content_length: -1
+        body: '{"created":"2026-11-18T14:42:52Z","id":"rscvcueluIircE08wao5","lastUpdated":"2026-11-18T14:42:52Z","name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}'
         headers:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
             Date:
-                - Mon, 26 Oct 2026 15:33:31 GMT
+                - Wed, 18 Nov 2026 14:42:58 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
-        status: 204 No Content
-        code: 204
-        duration: 1.11698525s
+        status: 200 OK
+        code: 200
+        duration: 1.099043667s
     - id: 6
       request:
         proto: HTTP/1.1
@@ -217,7 +219,279 @@ interactions:
                 - application/json
             Authorization:
                 - SSWS REDACTED
-        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aiptmnfpAwCUYrnLHao5
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 649
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T02:00:00Z","owners":{},"schedule":{"cron":"0 0 2 ? * MON","timezone":"UTC"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "649"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:42:59 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.093970916s
+    - id: 7
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscvcueluIircE08wao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T14:42:52Z","id":"rscvcueluIircE08wao5","lastUpdated":"2026-11-18T14:42:52Z","name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:00 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.058780583s
+    - id: 8
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 649
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T02:00:00Z","owners":{},"schedule":{"cron":"0 0 2 ? * MON","timezone":"UTC"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "649"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:01 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.091054s
+    - id: 9
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 225
+        host: oie-00.dne-okta.com
+        body: |
+            {"configuration":{"client_auth_id":"rscvcueluIircE08wao5"},"deDupExpression":"target.profile.externalId eq source.profile.externalId","schedule":{"cron":"0 0 4 ? * MON","timezone":"America/Los_Angeles"},"stage":"AUTO_MERGE"}
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+            Content-Type:
+                - application/json
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
+        method: PUT
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 665
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T12:00:00Z","owners":{},"schedule":{"cron":"0 0 4 ? * MON","timezone":"America/Los_Angeles"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "665"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:03 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.097275917s
+    - id: 10
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscvcueluIircE08wao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"created":"2026-11-18T14:42:52Z","id":"rscvcueluIircE08wao5","lastUpdated":"2026-11-18T14:42:52Z","name":"testAcc-provider-cred-44876890","oauthClientConfiguration":{"registrationMethod":"STATIC","clientCredentials":{"clientId":"1b2af17d-98de-408c-a4d3-d73f475bd222","credentialType":"CLIENT_SECRET"},"grantTypes":["client_credentials"],"scopes":["https://graph.microsoft.com/.default"]},"protocol":"OAUTH2","purposes":["AGENT_IMPORT"],"resourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5"}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:04 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+            Report-To:
+                - '{"group":"csp","max_age":31536000,"endpoints":[{"url":"https://oktacsp.report-uri.com/a/t/g"}],"include_subdomains":true}'
+        status: 200 OK
+        code: 200
+        duration: 1.123609542s
+    - id: 11
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 665
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T12:00:00Z","owners":{},"schedule":{"cron":"0 0 4 ? * MON","timezone":"America/Los_Angeles"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "665"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:05 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.0433445s
+    - id: 12
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 665
+        body: '{"configuration":{"clientAuthId":"rscvcueluIircE08wao5","genericOAuthClientId":"gocvcuek9ohesE7u3ao5","platforms":["MICROSOFT_COPILOT_STUDIO","MICROSOFT_FOUNDRY"]},"id":"aipvcuemNiexoz6K3ao5","integrationDate":"2026-11-18T14:42:54Z","nextScheduledImportDate":"2026-11-23T12:00:00Z","owners":{},"schedule":{"cron":"0 0 4 ? * MON","timezone":"America/Los_Angeles"},"sourceId":"0oautxdhNWOdr5J9qao5","sourceName":"office365","sourceOrn":"orn:okta:idp:00otxk5i5T0Rk59Z3ao5:apps:office365:0oautxdhNWOdr5J9qao5","sourceType":"apps","status":"ACTIVE","stage":"AUTO_MERGE","deDupExpression":"target.profile.externalId eq source.profile.externalId","importInProgress":false}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Length:
+                - "665"
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:06 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 1.046758417s
+    - id: 13
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5/lifecycle/deactivate
+        method: POST
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: 0
+        body: ""
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Date:
+                - Wed, 18 Nov 2026 14:43:07 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 204 No Content
+        code: 204
+        duration: 1.098037542s
+    - id: 14
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/workload-principals/api/v2/ai-agent-providers/aipvcuemNiexoz6K3ao5
         method: DELETE
       response:
         proto: HTTP/2.0
@@ -229,9 +503,41 @@ interactions:
             Accept-Ch:
                 - Sec-CH-UA-Platform-Version
             Date:
-                - Mon, 26 Oct 2026 15:33:32 GMT
+                - Wed, 18 Nov 2026 14:43:09 GMT
             Referrer-Policy:
                 - strict-origin-when-cross-origin
         status: 204 No Content
         code: 204
-        duration: 1.181684958s
+        duration: 1.070268458s
+    - id: 15
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/resource-servers/api/v2/client-auth-settings/rscvcueluIircE08wao5
+        method: DELETE
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        body: '{"errorCode":"E0000007","errorSummary":"Not found: Resource not found: rscvcueluIircE08wao5 (ResourceServersClientAuthSettings)","errorLink":"E0000007","errorId":"oaeZGC-yW6eRh-PdeEoivdltg","errorCauses":[]}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Wed, 18 Nov 2026 14:43:10 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 404 Not Found
+        code: 404
+        duration: 1.07001625s

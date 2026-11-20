@@ -25,6 +25,7 @@ func TestAccDataSourceOktaDelegationLink_read(t *testing.T) {
 					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "from.type"),
 					resource.TestCheckResourceAttrSet(dataSourceName, "to.resource_orn"),
+					resource.TestCheckResourceAttr(dataSourceName, "from.token_type", "ACCESS_TOKEN"),
 				),
 			},
 		},

@@ -93,7 +93,7 @@ type ClientAuthSettingDataSourceModelOauthClientConfigurationModelClientCredenti
 	CredentialType types.String `tfsdk:"credential_type"`
 }
 
-func NewClientAuthSettingDataSource() datasource.DataSource {
+func newClientAuthSettingDataSource() datasource.DataSource {
 	return &clientAuthSettingDataSource{}
 }
 

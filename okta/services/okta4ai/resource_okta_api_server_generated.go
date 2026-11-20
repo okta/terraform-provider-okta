@@ -66,7 +66,7 @@ type ApiServerModelMetadataModelAppModel struct {
 	Orn types.String `tfsdk:"orn"`
 }
 
-func NewApiServerResource() resource.Resource {
+func newApiServerResource() resource.Resource {
 	return &apiServerResource{}
 }
 

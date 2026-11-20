@@ -77,7 +77,7 @@ type AiAgentProviderModelScheduleModel struct {
 	Timezone types.String `tfsdk:"timezone"`
 }
 
-func NewAiAgentProviderResource() resource.Resource {
+func newAiAgentProviderResource() resource.Resource {
 	return &aiAgentProviderResource{}
 }
 
@@ -249,16 +249,36 @@ func (r *aiAgentProviderResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 	// Map API response fields to state (scalar types only; WriteOnly fields are skipped — response type doesn't have them)
-	state.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
+	if v := string(result.GetDeDupExpression()); v != "" {
+		state.DeDupExpression = types.StringValue(v)
+	} else {
+		state.DeDupExpression = types.StringNull()
+	}
 	state.ImportInProgress = types.BoolValue(result.GetImportInProgress())
-	state.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
-	state.LastImportDate = types.StringValue(result.GetLastImportDate().Format(time.RFC3339))
-	state.NextScheduledImportDate = types.StringValue(result.GetNextScheduledImportDate().Format(time.RFC3339))
+	if v, ok := result.GetIntegrationDateOk(); ok && v != nil {
+		state.IntegrationDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		state.IntegrationDate = types.StringNull()
+	}
+	if v, ok := result.GetLastImportDateOk(); ok && v != nil {
+		state.LastImportDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		state.LastImportDate = types.StringNull()
+	}
+	if v, ok := result.GetNextScheduledImportDateOk(); ok && v != nil {
+		state.NextScheduledImportDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		state.NextScheduledImportDate = types.StringNull()
+	}
 	state.SourceId = types.StringValue(string(result.GetSourceId()))
 	state.SourceName = types.StringValue(string(result.GetSourceName()))
 	state.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	state.SourceType = types.StringValue(string(result.GetSourceType()))
-	state.Stage = types.StringValue(string(result.GetStage()))
+	if v := string(result.GetStage()); v != "" {
+		state.Stage = types.StringValue(v)
+	} else {
+		state.Stage = types.StringNull()
+	}
 	state.Status = types.StringValue(string(result.GetStatus()))
 	if state.Owners != nil || len(importing) > 0 {
 		if ownersRaw0, ok := result.GetOwnersOk(); ok && ownersRaw0 != nil {
@@ -404,16 +424,36 @@ func (r *aiAgentProviderResource) Create(ctx context.Context, req resource.Creat
 	// Set ID from API response
 	plan.ID = types.StringValue(string(result.GetId()))
 	// Map response fields back to plan (scalar types only; WriteOnly and SkipRead fields skipped)
-	plan.DeDupExpression = types.StringValue(string(result.GetDeDupExpression()))
+	if v := string(result.GetDeDupExpression()); v != "" {
+		plan.DeDupExpression = types.StringValue(v)
+	} else {
+		plan.DeDupExpression = types.StringNull()
+	}
 	plan.ImportInProgress = types.BoolValue(result.GetImportInProgress())
-	plan.IntegrationDate = types.StringValue(result.GetIntegrationDate().Format(time.RFC3339))
-	plan.LastImportDate = types.StringValue(result.GetLastImportDate().Format(time.RFC3339))
-	plan.NextScheduledImportDate = types.StringValue(result.GetNextScheduledImportDate().Format(time.RFC3339))
+	if v, ok := result.GetIntegrationDateOk(); ok && v != nil {
+		plan.IntegrationDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		plan.IntegrationDate = types.StringNull()
+	}
+	if v, ok := result.GetLastImportDateOk(); ok && v != nil {
+		plan.LastImportDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		plan.LastImportDate = types.StringNull()
+	}
+	if v, ok := result.GetNextScheduledImportDateOk(); ok && v != nil {
+		plan.NextScheduledImportDate = types.StringValue(v.Format(time.RFC3339))
+	} else {
+		plan.NextScheduledImportDate = types.StringNull()
+	}
 	plan.SourceId = types.StringValue(string(result.GetSourceId()))
 	plan.SourceName = types.StringValue(string(result.GetSourceName()))
 	plan.SourceOrn = types.StringValue(string(result.GetSourceOrn()))
 	plan.SourceType = types.StringValue(string(result.GetSourceType()))
-	plan.Stage = types.StringValue(string(result.GetStage()))
+	if v := string(result.GetStage()); v != "" {
+		plan.Stage = types.StringValue(v)
+	} else {
+		plan.Stage = types.StringNull()
+	}
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
 	if plan.Owners != nil {

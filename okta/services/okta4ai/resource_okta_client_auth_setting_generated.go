@@ -104,7 +104,7 @@ type ClientAuthSettingModelOauthClientConfigurationModelClientCredentialsModel s
 	CredentialType types.String `tfsdk:"credential_type"`
 }
 
-func NewClientAuthSettingResource() resource.Resource {
+func newClientAuthSettingResource() resource.Resource {
 	return &clientAuthSettingResource{}
 }
 

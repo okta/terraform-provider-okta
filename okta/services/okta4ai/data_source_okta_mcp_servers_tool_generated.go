@@ -58,7 +58,7 @@ type McpServersToolDataSourceModelCredentialModel struct {
 	TokenRequestSettingsId types.String `tfsdk:"token_request_settings_id"`
 }
 
-func NewMcpServersToolDataSource() datasource.DataSource {
+func newMcpServersToolDataSource() datasource.DataSource {
 	return &mcpServersToolDataSource{}
 }
 

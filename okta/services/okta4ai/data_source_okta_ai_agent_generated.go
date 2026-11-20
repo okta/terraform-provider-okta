@@ -67,7 +67,7 @@ type AiAgentDataSourceModelSignOnProviderModel struct {
 	AppInstanceId types.String `tfsdk:"app_instance_id"`
 }
 
-func NewAiAgentDataSource() datasource.DataSource {
+func newAiAgentDataSource() datasource.DataSource {
 	return &aiAgentDataSource{}
 }
 

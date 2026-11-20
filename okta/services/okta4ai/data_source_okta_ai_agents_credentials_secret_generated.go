@@ -47,7 +47,7 @@ type aiAgentsCredentialsSecretDataSourceModel struct {
 	Status       types.String `tfsdk:"status"`
 }
 
-func NewAiAgentsCredentialsSecretDataSource() datasource.DataSource {
+func newAiAgentsCredentialsSecretDataSource() datasource.DataSource {
 	return &aiAgentsCredentialsSecretDataSource{}
 }
 

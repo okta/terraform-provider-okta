@@ -15,6 +15,7 @@ import (
 func TestAccResourceOktaAIAgent_basic(t *testing.T) {
 	mgr := newFixtureManager("resources", resources.OktaAIAgent, t.Name())
 	config := mgr.GetFixtures("basic.tf", t)
+	updated := mgr.GetFixtures("updated.tf", t)
 	resourceName := fmt.Sprintf("%s.test", resources.OktaAIAgent)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -29,6 +30,15 @@ func TestAccResourceOktaAIAgent_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 					resource.TestCheckResourceAttrSet(resourceName, "status"),
 					resource.TestCheckResourceAttr(resourceName, "profile.name", "test-ai-agent"),
+					resource.TestCheckResourceAttr(resourceName, "profile.description", "Test AI Agent"),
+				),
+			},
+			{
+				// Changing the configuration updates the resource in place.
+				Config: updated,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "profile.name", "test-ai-agent-updated"),
+					resource.TestCheckResourceAttr(resourceName, "profile.description", "Test AI Agent, updated"),
 				),
 			},
 			{

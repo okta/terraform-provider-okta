@@ -54,7 +54,7 @@ type aiAgentProvidersProfileMappingDataSourceModel struct {
 	Items      []aiAgentProvidersProfileMappingItemModel `tfsdk:"items"`
 }
 
-func NewAiAgentProvidersProfileMappingDataSource() datasource.DataSource {
+func newAiAgentProvidersProfileMappingDataSource() datasource.DataSource {
 	return &aiAgentProvidersProfileMappingDataSource{}
 }
 

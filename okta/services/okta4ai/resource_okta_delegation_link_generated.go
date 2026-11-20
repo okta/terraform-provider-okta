@@ -63,7 +63,7 @@ type DelegationLinkModelToModel struct {
 	ResourceOrn types.String `tfsdk:"resource_orn"`
 }
 
-func NewDelegationLinkResource() resource.Resource {
+func newDelegationLinkResource() resource.Resource {
 	return &delegationLinkResource{}
 }
 
