@@ -24,6 +24,8 @@ func TestAccResourceOktaAuthenticatorTac_crud(t *testing.T) {
 		PreCheck:                 acctest.AccPreCheck(t),
 		ErrorCheck:               testAccErrorChecks(t),
 		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactoriesForTestAcc(t),
+		// The org's TAC authenticator always exists and Delete is a no-op, so there is nothing to verify on destroy.
+		CheckDestroy: nil,
 		Steps: []resource.TestStep{
 			{
 				Config: lookup,

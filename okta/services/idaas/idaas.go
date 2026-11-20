@@ -173,6 +173,7 @@ func FWProviderResources() []func() resource.Resource {
 		NewBehaviorAnomalousIpResource,
 		NewBehaviorAnomalousLocationResource,
 		NewBehaviorVelocityResource,
+		newAuthenticatorTacResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -237,6 +238,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		NewBehaviorAnomalousIpDataSource,
 		NewBehaviorAnomalousLocationDataSource,
 		NewBehaviorVelocityDataSource,
+		newAuthenticatorTacDataSource,
 	}
 }
 
