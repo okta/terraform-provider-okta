@@ -55,7 +55,7 @@ type BehaviorAnomalousIpDataSourceModelSettingsModel struct {
 	MinEventsNeededForEvaluation types.Int64 `tfsdk:"min_events_needed_for_evaluation"`
 }
 
-func NewBehaviorAnomalousIpDataSource() datasource.DataSource {
+func newBehaviorAnomalousIpDataSource() datasource.DataSource {
 	return &behaviorAnomalousIpDataSource{}
 }
 

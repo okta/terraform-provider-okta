@@ -58,7 +58,7 @@ type BehaviorAnomalousDeviceModelSettingsModel struct {
 	MinEventsNeededForEvaluation types.Int64 `tfsdk:"min_events_needed_for_evaluation"`
 }
 
-func NewBehaviorAnomalousDeviceResource() resource.Resource {
+func newBehaviorAnomalousDeviceResource() resource.Resource {
 	return &behaviorAnomalousDeviceResource{}
 }
 
