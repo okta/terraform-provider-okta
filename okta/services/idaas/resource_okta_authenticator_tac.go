@@ -26,7 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta "github.com/okta/okta-sdk-golang/v8/okta"
+	okta "github.com/okta/okta-sdk-golang/v9/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -209,7 +209,7 @@ func (r *authenticatorTacResource) Read(ctx context.Context, req resource.ReadRe
 	resp.Diagnostics.Append(importDiags...)
 	id := state.ID.ValueString()
 
-	client := r.Config.OktaIDaaSClient.OktaSDKClientV8()
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV9()
 	result, httpResp, err := client.AuthenticatorAPI.GetAuthenticator(ctx, id).Execute()
 	if err != nil {
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
@@ -407,7 +407,7 @@ func (r *authenticatorTacResource) Create(ctx context.Context, req resource.Crea
 	plannedStatus := plan.Status
 	planned := plan
 
-	client := r.Config.OktaIDaaSClient.OktaSDKClientV8()
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV9()
 
 	// Build request body from plan
 	createReq := client.AuthenticatorAPI.CreateAuthenticator(ctx)
@@ -693,7 +693,7 @@ func (r *authenticatorTacResource) Update(ctx context.Context, req resource.Upda
 	}
 	id := state.ID.ValueString()
 
-	client := r.Config.OktaIDaaSClient.OktaSDKClientV8()
+	client := r.Config.OktaIDaaSClient.OktaSDKClientV9()
 
 	// Build request body from plan — only send changed fields
 	updateReq := client.AuthenticatorAPI.ReplaceAuthenticator(ctx, id)

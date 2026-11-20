@@ -25,7 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	okta "github.com/okta/okta-sdk-golang/v8/okta"
+	okta "github.com/okta/okta-sdk-golang/v9/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
 )
@@ -188,7 +188,7 @@ func (d *authenticatorTacDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	client := d.Config.OktaIDaaSClient.OktaSDKClientV8()
+	client := d.Config.OktaIDaaSClient.OktaSDKClientV9()
 	id := state.ID.ValueString()
 	result, httpResp, err := client.AuthenticatorAPI.GetAuthenticator(ctx, id).Execute()
 	if err != nil {

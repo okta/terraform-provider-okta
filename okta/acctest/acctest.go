@@ -35,6 +35,7 @@ import (
 	v6SdkOkta "github.com/okta/okta-sdk-golang/v6/okta"
 	v7SdkOkta "github.com/okta/okta-sdk-golang/v7/okta"
 	v8SdkOkta "github.com/okta/okta-sdk-golang/v8/okta"
+	v9SdkOkta "github.com/okta/okta-sdk-golang/v9/okta"
 	"github.com/okta/terraform-provider-okta/okta/api"
 	"github.com/okta/terraform-provider-okta/okta/config"
 	"github.com/okta/terraform-provider-okta/okta/fwprovider"
@@ -706,6 +707,7 @@ type HttpClientHelper interface {
 }
 
 type vcrIDaaSTestClient struct {
+	sdkV9Client         *v9SdkOkta.APIClient
 	sdkV8Client         *v8SdkOkta.APIClient
 	sdkV7Client         *v7SdkOkta.APIClient
 	sdkV6Client         *v6SdkOkta.APIClient
@@ -740,6 +742,7 @@ func NewVcrIDaaSClient(d *schema_sdk.ResourceData) *vcrIDaaSTestClient {
 	}
 
 	client := &vcrIDaaSTestClient{
+		sdkV9Client:         c.OktaIDaaSClient.OktaSDKClientV9(),
 		sdkV8Client:         c.OktaIDaaSClient.OktaSDKClientV8(),
 		sdkV7Client:         c.OktaIDaaSClient.OktaSDKClientV7(),
 		sdkV6Client:         c.OktaIDaaSClient.OktaSDKClientV6(),
@@ -785,6 +788,7 @@ func (c *vcrGovernanceTestClient) Transport() http.RoundTripper {
 func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 
+	c.sdkV9Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV8Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV7Client.GetConfig().HTTPClient.Transport = rt
 	c.sdkV6Client.GetConfig().HTTPClient.Transport = rt
@@ -801,6 +805,10 @@ func (c *vcrIDaaSTestClient) SetTransport(rt http.RoundTripper) {
 func (c *vcrGovernanceTestClient) SetTransport(rt http.RoundTripper) {
 	c.transport = rt
 	c.oktaGovernanceSDKClient.GetConfig().HTTPClient.Transport = rt
+}
+
+func (c *vcrIDaaSTestClient) OktaSDKClientV9() *v9SdkOkta.APIClient {
+	return c.sdkV9Client
 }
 
 func (c *vcrIDaaSTestClient) OktaSDKClientV8() *v8SdkOkta.APIClient {
