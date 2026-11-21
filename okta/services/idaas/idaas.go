@@ -134,6 +134,7 @@ func FWProviderResources() []func() resource.Resource {
 		newUISchemaResource,
 		newAppFederatedClaimResource,
 		newAppSignOnPolicyRulesResource,
+		newAuthServerPolicyPriorityResource,
 		newPushGroupResource,
 		newUserRiskResource,
 		newPostAuthSessionPolicyRuleResource,
