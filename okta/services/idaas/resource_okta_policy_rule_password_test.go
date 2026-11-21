@@ -220,6 +220,8 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 	authPolicyConfig := mgr.GetFixtures("sspr_auth_policy.tf", t)
 	// Step 4: LEGACY with method_constraints and step_up_methods
 	stepUpMethodsConfig := mgr.GetFixtures("sspr_with_step_up_methods.tf", t)
+	// Step 5: password_reset_requirement set without password_reset_access_control
+	noAccessControlConfig := mgr.GetFixtures("sspr_no_access_control.tf", t)
 	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
 
 	acctest.OktaResourceTest(t, resource.TestCase{
@@ -284,6 +286,22 @@ func TestAccResourceOktaPolicyRulePassword_sspr(t *testing.T) {
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "otp"),
 					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "email"),
 					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.method_constraints.0.method", "otp"),
+					resource.TestCheckResourceAttr(resourceName, "users_included.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "groups_excluded.#", "1"),
+				),
+			},
+			{
+				// password_reset_requirement set without password_reset_access_control –
+				// regression test for OKTA-1252600: primary_methods must be sent to the
+				// API (and round-trip through state) even when access_control is unset.
+				Config: noAccessControlConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "false"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "push"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "email"),
 					resource.TestCheckResourceAttr(resourceName, "users_included.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "users_excluded.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "groups_included.#", "1"),
