@@ -1,0 +1,69 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD14k9oy3uuzBt6Y698","domain":"custom.example.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd14k9cmuu61Q45r698","dnsRecords":[{"recordType":"TXT","fqdn":"_acme-challenge.custom.example.com","values":["jXXQdcYYZy30uMpjyDyhAgN26j_EvKoHWfRTkuwt9Gk"],"expiration":"2026-07-03T03:38:07.000Z"},{"recordType":"CAA","fqdn":"custom.example.com","values":["0 issue letsencrypt.org"]},{"recordType":"CNAME","fqdn":"custom.example.com","values":["oie-00.customdomains.okta.com"]}],"publicCertificate":{"subject":"CN=custom.example.com","fingerprint":"18:6E:CE:C9:0F:3D:4D:68:3C:63:52:C6:1E:93:30:7C:D6:E2:6A:5D:57:E1:7C:3F:82:9E:64:8E:4D:03:E4:41","expiration":"2026-09-24T02:59:10.000Z"},"_links":{"certificate":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698/certificate","hints":{"allow":["PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698","hints":{"allow":["DELETE"]}},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698/verify","hints":{"allow":["POST"]}},"brand":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd14k9cmuu61Q45r698","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 04:30:43 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 802.340834ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: oie-00.dne-okta.com
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - SSWS REDACTED
+        url: https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698
+        method: GET
+      response:
+        proto: HTTP/2.0
+        proto_major: 2
+        proto_minor: 0
+        content_length: -1
+        uncompressed: true
+        body: '{"id":"OcD14k9oy3uuzBt6Y698","domain":"custom.example.com","certificateSourceType":"OKTA_MANAGED","validationStatus":"COMPLETED","brandId":"bnd14k9cmuu61Q45r698","dnsRecords":[{"recordType":"TXT","fqdn":"_acme-challenge.custom.example.com","values":["jXXQdcYYZy30uMpjyDyhAgN26j_EvKoHWfRTkuwt9Gk"],"expiration":"2026-07-03T03:38:07.000Z"},{"recordType":"CAA","fqdn":"custom.example.com","values":["0 issue letsencrypt.org"]},{"recordType":"CNAME","fqdn":"custom.example.com","values":["oie-00.customdomains.okta.com"]}],"publicCertificate":{"subject":"CN=custom.example.com","fingerprint":"18:6E:CE:C9:0F:3D:4D:68:3C:63:52:C6:1E:93:30:7C:D6:E2:6A:5D:57:E1:7C:3F:82:9E:64:8E:4D:03:E4:41","expiration":"2026-09-24T02:59:10.000Z"},"_links":{"certificate":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698/certificate","hints":{"allow":["PUT"]}},"self":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698","hints":{"allow":["DELETE"]}},"verify":{"href":"https://oie-00.dne-okta.com/api/v1/domains/OcD14k9oy3uuzBt6Y698/verify","hints":{"allow":["POST"]}},"brand":{"href":"https://oie-00.dne-okta.com/api/v1/brands/bnd14k9cmuu61Q45r698","hints":{"allow":["GET","PUT","DELETE"]}}}}'
+        headers:
+            Accept-Ch:
+                - Sec-CH-UA-Platform-Version
+            Content-Type:
+                - application/json
+            Date:
+                - Fri, 26 Jun 2026 04:30:45 GMT
+            Referrer-Policy:
+                - strict-origin-when-cross-origin
+        status: 200 OK
+        code: 200
+        duration: 646.767791ms
