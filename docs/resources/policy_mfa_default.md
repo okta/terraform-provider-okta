@@ -71,6 +71,7 @@ resource "okta_policy_mfa_default" "oie_example" {
 - `rsa_token` (Map of String)
 - `security_question` (Map of String)
 - `symantec_vip` (Map of String)
+- `tac` (Map of String)
 - `webauthn` (Map of String)
 - `yubikey_token` (Map of String)
 
