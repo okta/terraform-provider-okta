@@ -41,6 +41,7 @@ data "okta_idp_oidc" "example" {
 - `scopes` (Set of String) The scopes of the IdP.
 - `token_binding` (String) The method of making a token request.
 - `token_url` (String) IdP Authorization Server (AS) endpoint to exchange the authorization code grant for an access token.
+- `trust_claims` (Boolean) Indicates whether to trust authentication claims from the IdP.
 - `type` (String) Type of idp.
 - `user_info_binding` (String) The method of making a user info request.
 - `user_info_url` (String) Protected resource endpoint that returns claims about the authenticated user.
