@@ -352,6 +352,42 @@ func (d *connectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		} else if protocolModel0.ClientIdAtResource.IsUnknown() {
 			protocolModel0.ClientIdAtResource = types.StringNull()
 		}
+		switch credentialVariant0 := protocolRaw0.GetActualInstance().(type) {
+		case *okta4aa.ResourceConnectionStsProtocolV2:
+			if credentialRaw2, ok := credentialVariant0.GetCredentialOk(); ok && credentialRaw2 != nil {
+				credentialModel2 := &ConnectionDataSourceModelProtocolModelCredentialModel{}
+				// credentialModel2 is the new block, built from the API response. credentialPrior2 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				credentialPrior2 := &ConnectionDataSourceModelProtocolModelCredentialModel{}
+				if protocolModel0.Credential != nil {
+					credentialPrior2 = protocolModel0.Credential
+					*credentialModel2 = *credentialPrior2 // keep fields the reader below does not map
+				}
+				if v := string(credentialRaw2.GetCredentialType()); v != "" {
+					credentialModel2.CredentialType = types.StringValue(v)
+				} else {
+					credentialModel2.CredentialType = types.StringNull()
+				}
+				if v := string(credentialRaw2.GetDisplayName()); v != "" {
+					credentialModel2.DisplayName = types.StringValue(v)
+				} else {
+					credentialModel2.DisplayName = types.StringNull()
+				}
+				if v := string(credentialRaw2.GetOrn()); v != "" {
+					credentialModel2.Orn = types.StringValue(v)
+				} else {
+					credentialModel2.Orn = types.StringNull()
+				}
+				{
+					listVal, listDiags := types.ListValueFrom(ctx, types.StringType, credentialRaw2.GetScopes())
+					resp.Diagnostics.Append(listDiags...)
+					credentialModel2.Scopes = listVal
+				}
+				protocolModel0.Credential = credentialModel2
+			}
+		}
 		var protocolTypeVal *string
 		switch v := protocolRaw0.GetActualInstance().(type) {
 		case *okta4aa.ResourceConnectionIdentityAssertionProtocolV2:
@@ -394,6 +430,66 @@ func (d *connectionDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		resourceModel0 := &ConnectionDataSourceModelResourceModel{}
 		if state.Resource != nil {
 			*resourceModel0 = *state.Resource // keep fields the reader below does not map
+		}
+		switch appInstanceVariant0 := resourceRaw0.GetActualInstance().(type) {
+		case *okta4aa.ResourceConnectionApiServerResourceV2:
+			if appInstanceRaw2, ok := appInstanceVariant0.GetAppInstanceOk(); ok && appInstanceRaw2 != nil {
+				appInstanceModel2 := &ConnectionDataSourceModelResourceModelAppInstanceModel{}
+				// appInstanceModel2 is the new block, built from the API response. appInstancePrior2 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				appInstancePrior2 := &ConnectionDataSourceModelResourceModelAppInstanceModel{}
+				if resourceModel0.AppInstance != nil {
+					appInstancePrior2 = resourceModel0.AppInstance
+					*appInstanceModel2 = *appInstancePrior2 // keep fields the reader below does not map
+				}
+				if v := string(appInstanceRaw2.GetDisplayName()); v != "" {
+					appInstanceModel2.DisplayName = types.StringValue(v)
+				} else {
+					appInstanceModel2.DisplayName = types.StringNull()
+				}
+				if v := string(appInstanceRaw2.GetLogo()); v != "" {
+					appInstanceModel2.Logo = types.StringValue(v)
+				} else {
+					appInstanceModel2.Logo = types.StringNull()
+				}
+				if v := string(appInstanceRaw2.GetOrn()); v != "" {
+					appInstanceModel2.Orn = types.StringValue(v)
+				} else {
+					appInstanceModel2.Orn = types.StringNull()
+				}
+				resourceModel0.AppInstance = appInstanceModel2
+			}
+		case *okta4aa.ResourceConnectionServiceAccountResourceV2:
+			if appInstanceRaw2, ok := appInstanceVariant0.GetAppInstanceOk(); ok && appInstanceRaw2 != nil {
+				appInstanceModel2 := &ConnectionDataSourceModelResourceModelAppInstanceModel{}
+				// appInstanceModel2 is the new block, built from the API response. appInstancePrior2 is the prior
+				// plan/state block, read-only: a non-null field there means the user manages it, so
+				// the API value is taken; otherwise the prior value is kept. When the block is absent
+				// it stays an empty, all-null model so it is never nil (OKTA-1129669).
+				appInstancePrior2 := &ConnectionDataSourceModelResourceModelAppInstanceModel{}
+				if resourceModel0.AppInstance != nil {
+					appInstancePrior2 = resourceModel0.AppInstance
+					*appInstanceModel2 = *appInstancePrior2 // keep fields the reader below does not map
+				}
+				if v := string(appInstanceRaw2.GetDisplayName()); v != "" {
+					appInstanceModel2.DisplayName = types.StringValue(v)
+				} else {
+					appInstanceModel2.DisplayName = types.StringNull()
+				}
+				if v := string(appInstanceRaw2.GetLogo()); v != "" {
+					appInstanceModel2.Logo = types.StringValue(v)
+				} else {
+					appInstanceModel2.Logo = types.StringNull()
+				}
+				if v := string(appInstanceRaw2.GetOrn()); v != "" {
+					appInstanceModel2.Orn = types.StringValue(v)
+				} else {
+					appInstanceModel2.Orn = types.StringNull()
+				}
+				resourceModel0.AppInstance = appInstanceModel2
+			}
 		}
 		var descriptionVal *string
 		if obj, ok := resourceRaw0.GetActualInstance().(interface{ GetDescriptionOk() (*string, bool) }); ok {

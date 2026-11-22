@@ -218,6 +218,20 @@ func (r *aiAgentResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.Source = types.StringValue(string(result.GetSource()))
 	state.Status = types.StringValue(string(result.GetStatus()))
 	// oauth_client is kept as configured: its request and response shapes differ.
+	if state.OauthClient != nil {
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			if state.OauthClient.Type.IsUnknown() {
+				if v := string(oauthClientRaw0.GetType()); v != "" {
+					state.OauthClient.Type = types.StringValue(v)
+				} else {
+					state.OauthClient.Type = types.StringNull()
+				}
+			}
+		}
+		if state.OauthClient.Type.IsUnknown() {
+			state.OauthClient.Type = types.StringNull()
+		}
+	}
 	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
 		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
 	} else {
@@ -387,6 +401,20 @@ func (r *aiAgentResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.Status = types.StringValue(string(result.GetStatus()))
 
 	// oauth_client is kept as configured: its request and response shapes differ.
+	if plan.OauthClient != nil {
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			if plan.OauthClient.Type.IsUnknown() {
+				if v := string(oauthClientRaw0.GetType()); v != "" {
+					plan.OauthClient.Type = types.StringValue(v)
+				} else {
+					plan.OauthClient.Type = types.StringNull()
+				}
+			}
+		}
+		if plan.OauthClient.Type.IsUnknown() {
+			plan.OauthClient.Type = types.StringNull()
+		}
+	}
 	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
 		plan.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
 	} else {
@@ -551,6 +579,20 @@ func (r *aiAgentResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 	state.OauthClient = plan.OauthClient
 	// oauth_client is kept as configured: its request and response shapes differ.
+	if state.OauthClient != nil {
+		if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
+			if state.OauthClient.Type.IsUnknown() {
+				if v := string(oauthClientRaw0.GetType()); v != "" {
+					state.OauthClient.Type = types.StringValue(v)
+				} else {
+					state.OauthClient.Type = types.StringNull()
+				}
+			}
+		}
+		if state.OauthClient.Type.IsUnknown() {
+			state.OauthClient.Type = types.StringNull()
+		}
+	}
 	if oauthClientRaw0, ok := result.GetOauthClientOk(); ok && oauthClientRaw0 != nil {
 		state.OauthClientId = types.StringValue(string(oauthClientRaw0.GetClientId()))
 	} else {
