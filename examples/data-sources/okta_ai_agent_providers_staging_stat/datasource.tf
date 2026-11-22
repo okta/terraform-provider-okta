@@ -1,5 +1,5 @@
 data "okta_ai_agent_providers_staging_stat" "test" {
-  provider_id = "aipty2bdDsW4txI6Nao5"
+  provider_id = "aipued6hgSvnXYSVPao5"
 }
 
 output "staging_counts" {

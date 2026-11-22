@@ -4,7 +4,7 @@ resource "okta_ai_agent" "test" {
     description = "Terraform acceptance test agent for okta_ai_agents_credentials_jwk_ec"
   }
 
-  resource_url = "https://example.com/api"
+  resource_url = "https://testacc-jwk-ec-replace_with_uuid.example.com/api"
 
   sign_on_provider {
     type = "NEW_OIDC_APP"

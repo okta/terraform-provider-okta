@@ -217,7 +217,7 @@ func vcrCachedConfigV2(ctx context.Context, d *schema_sdk.ResourceData, configur
 	cfg.SetTimeOperations(config.NewTestTimeOperations())
 
 	if mgr.IsOkta4aa() {
-		// okta4ai tests call the Okta4AI SDK client, which has its own HTTP
+		// okta4aa tests call the Okta4AI SDK client, which has its own HTTP
 		// client. All recorders write to the same cassette path, so use a
 		// single recorder and share it across the clients to avoid clobbering.
 		idaasTestClient := NewVcrIDaaSClient(d)
@@ -294,7 +294,7 @@ func closeRecorder(t *testing.T, vcr *vcrManager) {
 		if !t.Failed() || os.Getenv("OKTA_VCR_RECORD_FAILURES") == "true" {
 			// If a test succeeds, write new seed/yaml to files
 			if vcr.IsOkta4aa() {
-				// the recorder is shared by the okta4ai and IDaaS clients
+				// the recorder is shared by the okta4aa and IDaaS clients
 				rtOkta4aiHelper := config.Okta4AIClient.(HttpClientHelper)
 				rt := rtOkta4aiHelper.Transport()
 				err := rt.(*recorder.Recorder).Stop()
@@ -379,11 +379,11 @@ func (m *vcrManager) CassettePath() string {
 	return path.Join(m.IdaaSCassettesPath, m.CurrentCassette)
 }
 
-// IsOkta4aa the test is running from the okta4ai service package, whose
+// IsOkta4aa the test is running from the okta4aa service package, whose
 // cassettes live in test/fixtures/vcr/okta4aa.
 func (m *vcrManager) IsOkta4aa() bool {
 	wd, _ := os.Getwd()
-	return strings.Contains(strings.ToLower(wd), "okta4ai")
+	return strings.Contains(strings.ToLower(wd), "okta4aa")
 }
 
 // AttemptedWriteOfExistingCassette given a vcr mode of record the current

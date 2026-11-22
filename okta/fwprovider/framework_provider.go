@@ -3,7 +3,7 @@ package fwprovider
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-okta/okta/services/okta4ai"
+	"github.com/okta/terraform-provider-okta/okta/services/okta4aa"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
@@ -241,7 +241,7 @@ func (p *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 	sources = append(sources, idaas.FWProviderDataSources()...)
 	sources = append(sources, idaas.FWProviderGeneratedDataSources()...)
 	sources = append(sources, governance.FWProviderDataSources()...)
-	sources = append(sources, okta4ai.FWProviderDataSources()...)
+	sources = append(sources, okta4aa.FWProviderDataSources()...)
 
 	// Wrap all data sources with SafeDataSource for panic recovery
 	return resources.WrapDataSources(sources)
@@ -255,7 +255,7 @@ func (p *FrameworkProvider) Resources(_ context.Context) []func() resource.Resou
 	res = append(res, idaas.FWProviderResources()...)
 	res = append(res, idaas.FWProviderGeneratedResources()...)
 	res = append(res, governance.FWProviderResources()...)
-	res = append(res, okta4ai.FWProviderResources()...)
+	res = append(res, okta4aa.FWProviderResources()...)
 
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(res)

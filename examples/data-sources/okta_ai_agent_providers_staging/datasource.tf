@@ -1,6 +1,6 @@
 data "okta_ai_agent_providers_staging" "test" {
-  id          = "replace_with_staging_item_id"
-  provider_id = "replace_with_provider_id"
+  id          = "aicufjl5wp7W2cZl5ao5"
+  provider_id = "aipued6hgSvnXYSVPao5"
 }
 
 output "staging_type" {
