@@ -13,6 +13,8 @@
 * Added new resources and data sources `okta_collection`, `okta_collections_resource` and `okta_collections_assignment` for managing Okta Identity Governance resource collections, their resources and their assignments to principals [#3027](https://github.com/okta/terraform-provider-okta/pull/3027) by [aditya-okta](https://github.com/aditya-okta)
 * Added new resource and data source `okta_authenticator_tac` for managing the org's Temporary Access Code (TAC) authenticator [#3017](https://github.com/okta/terraform-provider-okta/pull/3017) by [aditya-okta](https://github.com/aditya-okta)
 * Added new resources and data sources `okta_behavior_anomalous_device`, `okta_behavior_anomalous_ip`, `okta_behavior_anomalous_location` and `okta_behavior_velocity` for managing behavior detection rules by type [#3024](https://github.com/okta/terraform-provider-okta/pull/3024) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added new resource and data source `okta_device_posture_check` for managing custom device posture checks used in device assurance policies [#3014](https://github.com/okta/terraform-provider-okta/pull/3014) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added new data source `okta_org` for reading the org's general settings, such as company name, subdomain, status, address and support contact details [#3035](https://github.com/okta/terraform-provider-okta/pull/3035) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
 
 ### ENHANCEMENTS
 
