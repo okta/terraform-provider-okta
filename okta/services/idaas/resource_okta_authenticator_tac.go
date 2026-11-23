@@ -130,7 +130,7 @@ func (r *authenticatorTacResource) Schema(_ context.Context, _ resource.SchemaRe
 		},
 		Blocks: map[string]schema.Block{
 			"provider_tac": schema.SingleNestedBlock{
-				Description: "<x-lifecycle-container><x-lifecycle class='oie'></x-lifecycle></x-lifecycle-container>Settings for the TAC authenticator",
+				Description: "Settings for the TAC authenticator",
 				Attributes: map[string]schema.Attribute{
 					"type": schema.StringAttribute{
 						Description: "Provider type",
