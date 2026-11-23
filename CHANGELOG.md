@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+### BUG FIXES
+
+* **`okta_policy_rule_password`**: Setting `password_reset_requirement` without `password_reset_access_control` now fails at plan time. Previously the provider dropped the requirement from the request without warning, so the rule was saved without the configured recovery methods while Terraform reported success and showed no drift. Read now also clears `password_reset_access_control` and `password_reset_requirement` from state when Okta returns no requirement, so rules affected by this show a diff on the next plan. [#3032](https://github.com/okta/terraform-provider-okta/pull/3032) by [pranav-okta](https://github.com/pranav-okta)
+
+  **Action required:** configurations that set `password_reset_requirement` without `password_reset_access_control` fail with `"password_reset_requirement": all of `password_reset_access_control,password_reset_requirement` must be specified`. Add `password_reset_access_control = "LEGACY"` to the rule. Okta applies `primary_methods` and step-up settings only with `LEGACY` access control, so the next apply saves the recovery methods that were previously missing:
+
+  ```hcl
+  resource "okta_policy_rule_password" "example" {
+    # ...
+    password_reset_access_control = "LEGACY"
+
+    password_reset_requirement {
+      primary_methods = ["push", "email"]
+      step_up_enabled = false
+    }
+  }
+  ```
+
+  To have recovery governed by an authentication policy instead, set `password_reset_access_control = "AUTH_POLICY"` and remove the `password_reset_requirement` block.
+
 ## 7.1.0 (Oct 29, 2026)
 
 ### ENHANCEMENTS
