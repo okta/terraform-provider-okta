@@ -228,6 +228,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newUserSubscriptionDataSource,
 		newThreatInsightSettingsDataSource,
 		newCaptchaDataSource,
+		newOrgDataSource,
 		newOrgCaptchaDataSource,
 		newPolicyDeviceAssuranceWindowsDataSource,
 		newPolicyDeviceAssuranceMacosDataSource,
