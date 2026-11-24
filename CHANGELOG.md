@@ -1,26 +1,42 @@
 # Changelog
 
-## Unreleased
+## 8.0.0 (Nov 23, 2026)
+
+### BREAKING CHANGES
+
+* **`okta_policy_device_assurance_android`, `okta_policy_device_assurance_chromeos`, `okta_policy_device_assurance_ios`, `okta_policy_device_assurance_macos`, `okta_policy_device_assurance_windows`**: Rewritten on Okta SDK v7 with a schema that follows the Device Assurance Policy API. Resource names are unchanged, but existing configurations must be updated: `platform` is now required (`"ANDROID"`, `"CHROMEOS"`, `"IOS"`, `"MACOS"` or `"WINDOWS"`); `screenlock_type` is renamed to `screen_lock_type` and, like `disk_encryption_type`, is now a block with an `include` attribute; `os_version` is now a block with a `minimum` attribute; the flat `tpsp_*` attributes move under `third_party_signal_providers.dtc` without the `tpsp_` prefix; `created_date` and `last_update` are no longer exposed on the resources. New optional attributes include `display_remediation_mode`, `grace_period` and (Windows only) `os_version_constraints`. See each resource's documentation for a migration guide. [#2964](https://github.com/okta/terraform-provider-okta/pull/2964) by [aditya-okta](https://github.com/aditya-okta)
+* **`okta_device_assurance_policy` (data source)**: Removed. Use the new per-platform data sources `okta_policy_device_assurance_android`, `okta_policy_device_assurance_chromeos`, `okta_policy_device_assurance_ios`, `okta_policy_device_assurance_macos` and `okta_policy_device_assurance_windows` instead. [#2964](https://github.com/okta/terraform-provider-okta/pull/2964) by [aditya-okta](https://github.com/aditya-okta)
+* **`okta_policy_rule_profile_enrollment`**: Migrated from SDKv2 to Terraform Plugin Framework with a schema that follows the Policy Rule API. Most settings move under an `actions { profile_enrollment { ... } }` block (for example `inline_hook_id` becomes `actions.profile_enrollment.pre_registration_inline_hooks[*].inline_hook_id` and `target_group_id` becomes `actions.profile_enrollment.target_group_ids`). The provider no longer sends defaults for `access`, `email_verification`, `progressive_profiling_action` or `profile_attributes.required`. `terraform destroy` now deletes the rule in Okta instead of only removing it from state; use `terraform state rm` to stop managing the default rule. Existing rules should be brought under management with `terraform import`. See [Migrating from the previous schema](https://registry.terraform.io/providers/okta/okta/latest/docs/resources/policy_rule_profile_enrollment#migrating-from-the-previous-schema). Also adds `ui_schema_id`, `pre_registration_inline_hooks` with `scopes`, `activation_requirements` and `profile_attributes`. [#2999](https://github.com/okta/terraform-provider-okta/pull/2999) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### FEATURES
+
+* Added new resources and data sources `okta_collection`, `okta_collections_resource` and `okta_collections_assignment` for managing Okta Identity Governance resource collections, their resources and their assignments to principals [#3027](https://github.com/okta/terraform-provider-okta/pull/3027) by [aditya-okta](https://github.com/aditya-okta)
+* Added new resource and data source `okta_authenticator_tac` for managing the org's Temporary Access Code (TAC) authenticator [#3017](https://github.com/okta/terraform-provider-okta/pull/3017) by [aditya-okta](https://github.com/aditya-okta)
+* Added new resources and data sources `okta_behavior_anomalous_device`, `okta_behavior_anomalous_ip`, `okta_behavior_anomalous_location` and `okta_behavior_velocity` for managing behavior detection rules by type [#3024](https://github.com/okta/terraform-provider-okta/pull/3024) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added new resource and data source `okta_device_posture_check` for managing custom device posture checks used in device assurance policies [#3014](https://github.com/okta/terraform-provider-okta/pull/3014) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* Added new data source `okta_org` for reading the org's general settings, such as company name, subdomain, status, address and support contact details [#3035](https://github.com/okta/terraform-provider-okta/pull/3035) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+
+### ENHANCEMENTS
+
+* **`okta_app_oauth`**: Inline `jwks` keys gain an optional `use` attribute (`sig` or `enc`, default `sig`), so encryption keys can be managed and signing keys keep their `use` across applies [#3023](https://github.com/okta/terraform-provider-okta/pull/3023) by [pranav-okta](https://github.com/pranav-okta)
+* **`okta_app_saml`** (resource and data source): Added `saml_assertion_lifetime_seconds` [#3000](https://github.com/okta/terraform-provider-okta/pull/3000) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* **`okta_policy_password`, `okta_policy_password_default`**: Added `password_max_consecutive_repeating_characters` and `password_oel_statement` (Limited GA, Identity Engine only) [#3003](https://github.com/okta/terraform-provider-okta/pull/3003) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* **`okta_post_auth_session_policy_rule`**: Added optional `priority` argument [#2992](https://github.com/okta/terraform-provider-okta/pull/2992) by [pranav-okta](https://github.com/pranav-okta)
+* Upgraded the Okta Identity Governance SDK to v2 [#3026](https://github.com/okta/terraform-provider-okta/pull/3026) by [aditya-okta](https://github.com/aditya-okta)
+* Added support for okta-sdk-golang v8 and v9 [#2993](https://github.com/okta/terraform-provider-okta/pull/2993) by [dhiwakar-okta](https://github.com/dhiwakar-okta), [#3031](https://github.com/okta/terraform-provider-okta/pull/3031) by [pranav-okta](https://github.com/pranav-okta)
+* Bumped `golang.org/x/crypto`, `golang.org/x/net`, `google.golang.org/grpc` and `github.com/go-jose/go-jose/v4` to resolve Dependabot security alerts [#3004](https://github.com/okta/terraform-provider-okta/pull/3004) by [manmohan-shaw-okta](https://github.com/manmohan-shaw-okta)
+
+### DEPRECATIONS
+
+* **`okta_behavior`** (resource and data source): Deprecated in favour of the typed `okta_behavior_*` resources and data sources, and will be removed in a future version. Existing state is not migrated automatically. [#3024](https://github.com/okta/terraform-provider-okta/pull/3024) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
 
 ### BUG FIXES
 
-* **`okta_policy_rule_password`**: Setting `password_reset_requirement` without `password_reset_access_control` now fails at plan time. Previously the provider dropped the requirement from the request without warning, so the rule was saved without the configured recovery methods while Terraform reported success and showed no drift. Read now also clears `password_reset_access_control` and `password_reset_requirement` from state when Okta returns no requirement, so rules affected by this show a diff on the next plan. [#3032](https://github.com/okta/terraform-provider-okta/pull/3032) by [pranav-okta](https://github.com/pranav-okta)
-
-  **Action required:** configurations that set `password_reset_requirement` without `password_reset_access_control` fail with `"password_reset_requirement": all of `password_reset_access_control,password_reset_requirement` must be specified`. Add `password_reset_access_control = "LEGACY"` to the rule. Okta applies `primary_methods` and step-up settings only with `LEGACY` access control, so the next apply saves the recovery methods that were previously missing:
-
-  ```hcl
-  resource "okta_policy_rule_password" "example" {
-    # ...
-    password_reset_access_control = "LEGACY"
-
-    password_reset_requirement {
-      primary_methods = ["push", "email"]
-      step_up_enabled = false
-    }
-  }
-  ```
-
-  To have recovery governed by an authentication policy instead, set `password_reset_access_control = "AUTH_POLICY"` and remove the `password_reset_requirement` block.
+* **`okta_group`, `okta_app_group_assignment`, `okta_app_user`**: Delete now treats a 404 as success, so destroy no longer fails when the object was already removed in Okta (for example when Okta cascade-deletes an app assignment). [#2998](https://github.com/okta/terraform-provider-okta/pull/2998) by [pranav-okta](https://github.com/pranav-okta)
+* With `private_key_jwt` and DPoP-bound access tokens, applies under load no longer fail with `empty access token` or `The DPoP proof JWT has already been used`. Token requests now handle 429s, a fresh DPoP proof is built for every retry, and concurrent requests share a single token request. [#3002](https://github.com/okta/terraform-provider-okta/pull/3002) by [pranav-okta](https://github.com/pranav-okta)
+* **`okta_app_oauth`**: Applying inline `jwks` no longer resets each key's `use` to `null` in Okta (which broke `private_key_jwt` client authentication), and refreshing or importing an app with an encryption key no longer fails with `Invalid address to set`. [#3023](https://github.com/okta/terraform-provider-okta/pull/3023) by [pranav-okta](https://github.com/pranav-okta)
+* **`okta_app_oauth`**: The `groups_claim` warning is only shown when `groups_claim` is configured [#2949](https://github.com/okta/terraform-provider-okta/issues/2949) [#3019](https://github.com/okta/terraform-provider-okta/pull/3019) by [dhiwakar-okta](https://github.com/dhiwakar-okta)
+* **`okta_post_auth_session_policy_rule`**: Updates now send `priority`, so the rule's priority no longer increases on every apply. **`okta_session_violation_policy_rule`**: an unset `priority` is no longer sent as `0`. [#2992](https://github.com/okta/terraform-provider-okta/pull/2992) by [pranav-okta](https://github.com/pranav-okta)
 
 ## 7.1.0 (Oct 29, 2026)
 
@@ -29,7 +45,7 @@
 
 ### BUG FIXES
 
-* **`okta_request_condition`**: Reordering the `ids` in `access_scope_settings` or `requester_settings` on an existing condition no longer fails with `Provider produced inconsistent result after apply`. Okta keeps the stored order of the groups when an update only reorders them, so the provider now keeps the configured order in state whenever the API returns the same IDs. Added, removed or replaced IDs are still reported as differences. Relates to OPE-865.[#2980](https://github.com/okta/terraform-provider-okta/pull/2982) by [pranav-okta](https://github.com/pranav-okta)
+* **`okta_request_condition`**: Reordering the `ids` in `access_scope_settings` or `requester_settings` on an existing condition no longer fails with `Provider produced inconsistent result after apply`. Okta keeps the stored order of the groups when an update only reorders them, so the provider now keeps the configured order in state whenever the API returns the same IDs. Added, removed or replaced IDs are still reported as differences. [#2980](https://github.com/okta/terraform-provider-okta/pull/2982) by [pranav-okta](https://github.com/pranav-okta)
 * **`okta_policy_rule_signon`, `okta_policy_rule_mfa`**: A policy's default rule can now be imported and updated. Previously any update failed with `Default Rule is immutable` because the provider matched on the rule's name rather than the API's `system` flag, even though Okta permits editing default rules. Removing a default rule from configuration now drops it from Terraform state instead of erroring or attempting a delete Okta rejects. Okta continues to manage `priority`, `network_connection`, `network_includes`, `network_excludes`, `users_excluded` and `session_persistent` on a default rule, so values configured for them are ignored. Policy rule resources gain a read-only `system` attribute. [#2788](https://github.com/okta/terraform-provider-okta/issues/2788) by [mehulmistry-accelya](https://github.com/mehulmistry-accelya)
 
 ## 7.0.0 (Aug 24, 2026)
