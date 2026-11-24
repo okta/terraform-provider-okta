@@ -1,0 +1,37 @@
+# Dry-runs the release build (all goos/goarch targets) without signing or
+# publishing, so changes to the release pipeline are verified before a tag is
+# pushed.
+name: release check
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - ".goreleaser.yml"
+      - ".github/workflows/release.yml"
+      - ".github/workflows/release_check.yml"
+      - "go.mod"
+  workflow_dispatch:
+jobs:
+  goreleaser-snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: "go.mod"
+          cache: true
+
+      # Keep version, args and GOFLAGS in sync with release.yml.
+      - name: Run GoReleaser (snapshot)
+        uses: goreleaser/goreleaser-action@v7.3.0
+        with:
+          version: "v2.20.3"
+          args: release --snapshot --clean --parallelism 2 --skip=sign,publish
+        env:
+          GOFLAGS: "-p=2"
