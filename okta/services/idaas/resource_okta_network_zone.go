@@ -55,6 +55,7 @@ func resourceNetworkZone() *schema.Resource {
 					ValidateFunc:     validateIPaddress,
 					DiffSuppressFunc: suppressIPDiff,
 				},
+				Set: hashIPAddress,
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -70,6 +71,7 @@ func resourceNetworkZone() *schema.Resource {
 					ValidateFunc:     validateIPaddress,
 					DiffSuppressFunc: suppressIPDiff,
 				},
+				Set: hashIPAddress,
 			},
 			"type": {
 				Type:        schema.TypeString,
@@ -356,17 +358,9 @@ func flattenAddresses(gateways []v6okta.NetworkZoneAddress) interface{} {
 	}
 	arr := make([]interface{}, len(gateways))
 	for i := range gateways {
-		value := gateways[i].GetValue()
-		// If it's a range with same start/end IP, convert to single IP
-		if strings.Contains(value, "-") {
-			parts := strings.Split(value, "-")
-			if len(parts) == 2 && parts[0] == parts[1] {
-				value = parts[0]
-			}
-		}
-		arr[i] = value
+		arr[i] = canonicalIPAddress(gateways[i].GetValue())
 	}
-	return schema.NewSet(schema.HashString, arr)
+	return schema.NewSet(hashIPAddress, arr)
 }
 
 func flattenDynamicLocations(locations []v6okta.NetworkZoneLocation) interface{} {
@@ -503,15 +497,23 @@ func validateIPaddress(v interface{}, k string) (warnings []string, errors []err
 }
 
 func suppressIPDiff(k, old, new string, d *schema.ResourceData) bool {
-	if old == new {
-		return true
+	return canonicalIPAddress(old) == canonicalIPAddress(new)
+}
+
+// canonicalIPAddress collapses a range whose start and end are the same IP
+// ("1.2.3.4-1.2.3.4") to the bare IP ("1.2.3.4"). Other values are returned
+// unchanged.
+func canonicalIPAddress(addr string) string {
+	if parts := strings.Split(addr, "-"); len(parts) == 2 && parts[0] == parts[1] {
+		return parts[0]
 	}
-	// Handle case where API returns range format for single IP
-	if strings.Contains(old, "-") {
-		parts := strings.Split(old, "-")
-		if len(parts) == 2 && parts[0] == parts[1] && parts[0] == new {
-			return true
-		}
-	}
-	return false
+	return addr
+}
+
+// hashIPAddress is the set hash for gateways and proxies. Set elements are
+// matched by hash, so a single IP must hash the same whether it is written as
+// "1.2.3.4" or "1.2.3.4-1.2.3.4". Otherwise Terraform sees a removal plus an
+// addition and the plan never converges.
+func hashIPAddress(v interface{}) int {
+	return schema.HashString(canonicalIPAddress(v.(string)))
 }
