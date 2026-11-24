@@ -562,6 +562,9 @@ func resourceAppOAuthCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	appResp, _, err := client.ApplicationAPI.CreateApplication(ctx).Application(app).Activate(activate).Execute()
 	if err != nil {
+		if detail := oktaV6ErrorDetail(err); detail != "" {
+			return diag.Errorf("failed to create OAuth application: %v: %s", err, detail)
+		}
 		return diag.Errorf("failed to create OAuth application: %v", err)
 	}
 
@@ -977,6 +980,9 @@ func resourceAppOAuthUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 	appResp, _, err := client.ApplicationAPI.ReplaceApplication(ctx, d.Id()).Application(app).Execute()
 	if err != nil {
+		if detail := oktaV6ErrorDetail(err); detail != "" {
+			return diag.Errorf("failed to update OAuth application: %v: %s", err, detail)
+		}
 		return diag.Errorf("failed to update OAuth application: %v", err)
 	}
 
