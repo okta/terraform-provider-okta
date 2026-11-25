@@ -29,6 +29,8 @@ func TestAccResourceOktaPushGroup_crud(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "app_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "source_group_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "target_group_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "created"),
+					resource.TestCheckResourceAttrSet(resourceName, "last_updated"),
 				),
 			},
 			{
