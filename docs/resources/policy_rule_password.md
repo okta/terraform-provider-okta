@@ -67,7 +67,7 @@ resource "okta_policy_rule_password" "example_legacy" {
 - `password_change` (String) Allow or deny a user to change their password: `ALLOW` or `DENY`. Default: `ALLOW`
 - `password_reset` (String) Allow or deny a user to reset their password: `ALLOW` or `DENY`. Default: `ALLOW`
 - `password_reset_access_control` (String) Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.
-- `password_reset_requirement` (Block List, Max: 1) Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = "LEGACY"`. (see [below for nested schema](#nestedblock--password_reset_requirement))
+- `password_reset_requirement` (Block List, Max: 1) Self-service password reset (SSPR) requirement settings. Requires `password_reset_access_control`, and should only be used when `password_reset_access_control = "LEGACY"`. (see [below for nested schema](#nestedblock--password_reset_requirement))
 - `password_unlock` (String) Allow or deny a user to unlock. Default: `DENY`
 - `policy_id` (String) Policy ID of the Rule
 - `priority` (Number) Rule priority. This attribute can be set to a valid priority. To avoid an endless diff situation an error is thrown if an invalid property is provided. The Okta API defaults to the last (lowest) if not provided.
@@ -98,6 +98,48 @@ Required:
 Optional:
 
 - `allowed_authenticators` (Set of String) Keys of the authenticators allowed for this method (e.g. `google_otp`).
+
+## Migrating rules that set `password_reset_requirement` without `password_reset_access_control`
+
+Earlier versions of this resource accepted `password_reset_requirement` without `password_reset_access_control`, but dropped the requirement from the request without warning. The rule was saved without the configured recovery methods, and Terraform reported no drift. These configurations now fail at plan time:
+
+```text
+Error: Missing required argument
+
+  "password_reset_requirement": all of `password_reset_access_control,password_reset_requirement` must be specified
+```
+
+Okta applies `primary_methods` and the step-up settings only when `password_reset_access_control = "LEGACY"`, so add it to the rule:
+
+```hcl
+# Before: fails at plan time
+resource "okta_policy_rule_password" "example" {
+  policy_id = "<policy_id>"
+  name      = "example_rule"
+
+  password_reset_requirement {
+    primary_methods = ["push", "email"]
+    step_up_enabled = false
+  }
+}
+
+# After
+resource "okta_policy_rule_password" "example" {
+  policy_id = "<policy_id>"
+  name      = "example_rule"
+
+  password_reset_access_control = "LEGACY"
+
+  password_reset_requirement {
+    primary_methods = ["push", "email"]
+    step_up_enabled = false
+  }
+}
+```
+
+The next `terraform plan` shows `password_reset_access_control` and `password_reset_requirement` being added. These are the settings that were never saved in Okta. Before applying, check that `primary_methods` lists every method users should recover with: until now Okta applied its default (email) to these rules, so email recovery is turned off if `email` isn't listed. Users can only recover with methods they have enrolled, so check the authenticator enrollment policy too.
+
+To have an authentication policy govern recovery instead, set `password_reset_access_control = "AUTH_POLICY"` and remove the `password_reset_requirement` block.
 
 ## Import
 

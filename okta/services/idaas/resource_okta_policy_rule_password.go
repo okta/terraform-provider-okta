@@ -88,11 +88,14 @@ func resourcePolicyPasswordRule() *schema.Resource {
 				Description:  "Determines whether the Self-Service Password Reset (SSPR) access is governed by an authentication policy or legacy behavior. Options: `LEGACY`, `AUTH_POLICY`.",
 			},
 			// password_reset_requirement defines the SSPR requirement settings (primary methods, step-up).
+			// The requirement is only sent to Okta alongside an access control, so require both
+			// to avoid silently dropping the configured methods.
 			"password_reset_requirement": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				MaxItems:    1,
-				Description: "Self-service password reset (SSPR) requirement settings. Use only when `password_reset_access_control = \"LEGACY\"`.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				RequiredWith: []string{"password_reset_access_control"},
+				Description:  "Self-service password reset (SSPR) requirement settings. Requires `password_reset_access_control`, and should only be used when `password_reset_access_control = \"LEGACY\"`.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"method_constraints": {
@@ -249,55 +252,62 @@ func resourcePolicyPasswordRuleRead(ctx context.Context, d *schema.ResourceData,
 		if sspr := actions.SelfServicePasswordReset; sspr != nil {
 			_ = d.Set("password_reset", sspr.GetAccess())
 			// Read SSPR requirement fields from upstream and set them in state.
-			if req := sspr.Requirement; req != nil {
-				if ac := req.AccessControl; ac != nil {
-					_ = d.Set("password_reset_access_control", ac)
-				} else {
-					_ = d.Set("password_reset_access_control", "")
-				}
-				reqMap := map[string]interface{}{
-					"primary_methods":    []string{},
-					"method_constraints": []interface{}{},
-					"step_up_enabled":    false,
-					"step_up_methods":    []string{},
-				}
-				if primary := req.Primary; primary != nil {
-					reqMap["primary_methods"] = primary.Methods
-					methodConstraints := make([]interface{}, 0, len(primary.MethodConstraints))
-					for _, mc := range primary.MethodConstraints {
-						allowedAuths := make([]interface{}, 0, len(mc.GetAllowedAuthenticators()))
-						for _, identity := range mc.GetAllowedAuthenticators() {
-							allowedAuths = append(allowedAuths, identity.GetKey())
-						}
-						methodConstraints = append(methodConstraints, map[string]interface{}{
-							"method":                 mc.GetMethod(),
-							"allowed_authenticators": allowedAuths,
-						})
-					}
-					reqMap["method_constraints"] = methodConstraints
-				}
-				if stepUp := req.StepUp; stepUp != nil {
-					reqMap["step_up_enabled"] = stepUp.GetRequired()
-					reqMap["step_up_methods"] = stepUp.GetMethods()
-				}
-				// Only persist the requirement block when it contains meaningful content.
-				// If the API returns an empty requirement (e.g. with AUTH_POLICY), omitting
-				// the block prevents a permanent diff for configs that don't set it.
-				primaryMethods, _ := reqMap["primary_methods"].([]string)
-				methodConstraints, _ := reqMap["method_constraints"].([]interface{})
-				stepUpEnabled, _ := reqMap["step_up_enabled"].(bool)
-				stepUpMethods, _ := reqMap["step_up_methods"].([]string)
-				hasContent := len(primaryMethods) > 0 || len(methodConstraints) > 0 || stepUpEnabled || len(stepUpMethods) > 0
-				if hasContent {
-					_ = d.Set("password_reset_requirement", []interface{}{reqMap})
-				} else {
-					_ = d.Set("password_reset_requirement", []interface{}{})
-				}
-			}
+			accessControl, requirement := FlattenSsprRequirement(sspr.Requirement)
+			_ = d.Set("password_reset_access_control", accessControl)
+			_ = d.Set("password_reset_requirement", requirement)
 		}
 	}
 
 	return nil
+}
+
+// FlattenSsprRequirement converts an upstream SSPR requirement into the
+// password_reset_access_control value and password_reset_requirement block.
+// A nil requirement means Okta stored none, so both are returned empty. This
+// clears any prior state, so a configured requirement that Okta never saved
+// shows up as drift instead of being hidden.
+func FlattenSsprRequirement(req *v6okta.SsprRequirement) (string, []interface{}) {
+	if req == nil {
+		return "", []interface{}{}
+	}
+	accessControl := req.GetAccessControl()
+	reqMap := map[string]interface{}{
+		"primary_methods":    []string{},
+		"method_constraints": []interface{}{},
+		"step_up_enabled":    false,
+		"step_up_methods":    []string{},
+	}
+	if primary := req.Primary; primary != nil {
+		reqMap["primary_methods"] = primary.Methods
+		methodConstraints := make([]interface{}, 0, len(primary.MethodConstraints))
+		for _, mc := range primary.MethodConstraints {
+			allowedAuths := make([]interface{}, 0, len(mc.GetAllowedAuthenticators()))
+			for _, identity := range mc.GetAllowedAuthenticators() {
+				allowedAuths = append(allowedAuths, identity.GetKey())
+			}
+			methodConstraints = append(methodConstraints, map[string]interface{}{
+				"method":                 mc.GetMethod(),
+				"allowed_authenticators": allowedAuths,
+			})
+		}
+		reqMap["method_constraints"] = methodConstraints
+	}
+	if stepUp := req.StepUp; stepUp != nil {
+		reqMap["step_up_enabled"] = stepUp.GetRequired()
+		reqMap["step_up_methods"] = stepUp.GetMethods()
+	}
+	// Only persist the requirement block when it contains meaningful content.
+	// If the API returns an empty requirement (e.g. with AUTH_POLICY), omitting
+	// the block prevents a permanent diff for configs that don't set it.
+	primaryMethods, _ := reqMap["primary_methods"].([]string)
+	methodConstraints, _ := reqMap["method_constraints"].([]interface{})
+	stepUpEnabled, _ := reqMap["step_up_enabled"].(bool)
+	stepUpMethods, _ := reqMap["step_up_methods"].([]string)
+	hasContent := len(primaryMethods) > 0 || len(methodConstraints) > 0 || stepUpEnabled || len(stepUpMethods) > 0
+	if !hasContent {
+		return accessControl, []interface{}{}
+	}
+	return accessControl, []interface{}{reqMap}
 }
 
 func resourcePolicyPasswordRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
