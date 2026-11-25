@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	v6okta "github.com/okta/okta-sdk-golang/v6/okta"
 	"github.com/okta/terraform-provider-okta/okta/acctest"
@@ -315,6 +316,74 @@ resource "%s" "%s" {
 `, rInt, sdk.PasswordPolicyType, resources.OktaIDaaSPolicyRulePassword, name, rInt, name)
 }
 
+// TestAccResourceOktaPolicyRulePassword_ssprUnset applies a rule that sets
+// neither password_reset_access_control nor password_reset_requirement, so Okta
+// returns no SSPR requirement, and checks repeated applies don't drift. It then
+// adds a LEGACY requirement and removes it again to cover the transitions in and
+// out of the nil requirement case.
+func TestAccResourceOktaPolicyRulePassword_ssprUnset(t *testing.T) {
+	mgr := newFixtureManager("resources", resources.OktaIDaaSPolicyRulePassword, t.Name())
+	unsetConfig := mgr.GetFixtures("sspr_unset.tf", t)
+	legacyConfig := mgr.GetFixtures("sspr_legacy_push_email.tf", t)
+	resourceName := acctest.BuildResourceFQN(resources.OktaIDaaSPolicyRulePassword, mgr.Seed)
+
+	checkUnset := resource.ComposeTestCheckFunc(
+		ensureRuleExists(resourceName),
+		resource.TestCheckResourceAttr(resourceName, "password_reset", "ALLOW"),
+		resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", ""),
+		resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.#", "0"),
+	)
+
+	acctest.OktaResourceTest(t, resource.TestCase{
+		PreCheck:                 acctest.AccPreCheck(t),
+		ErrorCheck:               testAccErrorChecks(t),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactoriesForTestAcc(t),
+		CheckDestroy:             checkRuleDestroy(resources.OktaIDaaSPolicyRulePassword),
+		Steps: []resource.TestStep{
+			{
+				Config: unsetConfig,
+				Check:  checkUnset,
+			},
+			{
+				// Apply the same config again: the nil requirement must not cause drift.
+				Config: unsetConfig,
+				Check:  checkUnset,
+			},
+			{
+				Config:   unsetConfig,
+				PlanOnly: true,
+			},
+			{
+				Config: legacyConfig,
+				Check: resource.ComposeTestCheckFunc(
+					ensureRuleExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_access_control", "LEGACY"),
+					resource.TestCheckResourceAttr(resourceName, "password_reset_requirement.0.step_up_enabled", "false"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "push"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "password_reset_requirement.0.primary_methods.*", "email"),
+				),
+			},
+			{
+				// Removing the requirement again must converge without a permanent diff.
+				Config: unsetConfig,
+				Check:  checkUnset,
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					rs, ok := s.RootModule().Resources[resourceName]
+					if !ok {
+						return "", fmt.Errorf("failed to find %s", resourceName)
+					}
+					return fmt.Sprintf("%s/%s", rs.Primary.Attributes["policy_id"], rs.Primary.ID), nil
+				},
+			},
+		},
+	})
+}
+
 // TestResourceOktaPolicyRulePassword_ssprRequirementRequiresAccessControl verifies
 // that password_reset_requirement is rejected at plan time without
 // password_reset_access_control. Previously the requirement was silently dropped
@@ -369,6 +438,50 @@ func TestResourceOktaPolicyRulePassword_ssprRequirementRequiresAccessControl(t *
 				return
 			}
 			require.False(t, diags.HasError(), "unexpected validation error: %+v", diags)
+		})
+	}
+}
+
+// TestResourceOktaPolicyRulePassword_nilRequirementDrift plans each config
+// against the state Read stores when Okta returns no SSPR requirement. Configs
+// that set neither SSPR field must plan cleanly so repeated applies don't drift,
+// while a configured requirement must show a diff because Okta never saved it.
+func TestResourceOktaPolicyRulePassword_nilRequirementDrift(t *testing.T) {
+	tests := []struct {
+		name      string
+		config    map[string]interface{}
+		wantDrift bool
+	}{
+		{
+			name:   "neither set",
+			config: map[string]interface{}{"name": "test", "policy_id": "policy"},
+		},
+		{
+			name: "LEGACY with requirement",
+			config: map[string]interface{}{
+				"name":                          "test",
+				"policy_id":                     "policy",
+				"password_reset_access_control": "LEGACY",
+				"password_reset_requirement": []interface{}{
+					map[string]interface{}{"primary_methods": []interface{}{"push", "email"}},
+				},
+			},
+			wantDrift: true,
+		},
+	}
+	r := idaas.ProviderResources()[resources.OktaIDaaSPolicyRulePassword]
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			d := schema.TestResourceDataRaw(t, r.Schema, tc.config)
+			d.SetId("rule")
+			accessControl, requirement := idaas.FlattenSsprRequirement(nil)
+			require.NoError(t, d.Set("password_reset_access_control", accessControl))
+			require.NoError(t, d.Set("password_reset_requirement", requirement))
+
+			diff, err := r.SimpleDiff(context.Background(), d.State(), terraform.NewResourceConfigRaw(tc.config), nil)
+			require.NoError(t, err)
+			hasDrift := diff != nil && len(diff.Attributes) > 0
+			require.Equal(t, tc.wantDrift, hasDrift, "diff: %+v", diff)
 		})
 	}
 }

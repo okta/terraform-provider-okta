@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### BREAKING CHANGES
+
+* **`okta_policy_rule_password`**: `password_reset_requirement` now requires `password_reset_access_control`, and configurations that set the requirement without it fail at plan time with `"password_reset_requirement": all of `password_reset_access_control,password_reset_requirement` must be specified`. Previously the provider dropped the requirement from the request without warning, so the rule was saved without the configured recovery methods while Terraform reported success and showed no drift. To migrate, add `password_reset_access_control = "LEGACY"` to the rule; Okta applies `primary_methods` and step-up settings only with `LEGACY` access control. The next apply saves the configured methods for the first time, so review `primary_methods` first: until now Okta applied its default (email) to these rules, and email recovery is turned off if `email` isn't listed. To have an authentication policy govern recovery instead, set `password_reset_access_control = "AUTH_POLICY"` and remove the `password_reset_requirement` block. See [Migrating rules that set `password_reset_requirement` without `password_reset_access_control`](https://registry.terraform.io/providers/okta/okta/latest/docs/resources/policy_rule_password#migrating-rules-that-set-password_reset_requirement-without-password_reset_access_control). [#3032](https://github.com/okta/terraform-provider-okta/pull/3032) by [pranav-okta](https://github.com/pranav-okta)
+
 ## 8.0.0 (Nov 23, 2026)
 
 ### BREAKING CHANGES

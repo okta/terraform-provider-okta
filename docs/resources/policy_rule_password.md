@@ -99,6 +99,48 @@ Optional:
 
 - `allowed_authenticators` (Set of String) Keys of the authenticators allowed for this method (e.g. `google_otp`).
 
+## Migrating rules that set `password_reset_requirement` without `password_reset_access_control`
+
+Earlier versions of this resource accepted `password_reset_requirement` without `password_reset_access_control`, but dropped the requirement from the request without warning. The rule was saved without the configured recovery methods, and Terraform reported no drift. These configurations now fail at plan time:
+
+```text
+Error: Missing required argument
+
+  "password_reset_requirement": all of `password_reset_access_control,password_reset_requirement` must be specified
+```
+
+Okta applies `primary_methods` and the step-up settings only when `password_reset_access_control = "LEGACY"`, so add it to the rule:
+
+```hcl
+# Before: fails at plan time
+resource "okta_policy_rule_password" "example" {
+  policy_id = "<policy_id>"
+  name      = "example_rule"
+
+  password_reset_requirement {
+    primary_methods = ["push", "email"]
+    step_up_enabled = false
+  }
+}
+
+# After
+resource "okta_policy_rule_password" "example" {
+  policy_id = "<policy_id>"
+  name      = "example_rule"
+
+  password_reset_access_control = "LEGACY"
+
+  password_reset_requirement {
+    primary_methods = ["push", "email"]
+    step_up_enabled = false
+  }
+}
+```
+
+The next `terraform plan` shows `password_reset_access_control` and `password_reset_requirement` being added. These are the settings that were never saved in Okta. Before applying, check that `primary_methods` lists every method users should recover with: until now Okta applied its default (email) to these rules, so email recovery is turned off if `email` isn't listed. Users can only recover with methods they have enrolled, so check the authenticator enrollment policy too.
+
+To have an authentication policy govern recovery instead, set `password_reset_access_control = "AUTH_POLICY"` and remove the `password_reset_requirement` block.
+
 ## Import
 
 Import is supported using the following syntax:
