@@ -175,6 +175,7 @@ func FWProviderResources() []func() resource.Resource {
 		newBehaviorAnomalousLocationResource,
 		newBehaviorVelocityResource,
 		newDevicePostureCheckResource,
+		newBehaviorNewAsnResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -242,6 +243,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newBehaviorAnomalousLocationDataSource,
 		newBehaviorVelocityDataSource,
 		newDevicePostureCheckDataSource,
+		newBehaviorNewAsnDataSource,
 	}
 }
 
