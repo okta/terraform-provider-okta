@@ -541,23 +541,29 @@ func resourceAppSamlRead(ctx context.Context, d *schema.ResourceData, meta inter
 	if app.Credentials.Signing.Kid != "" && app.Status != StatusInactive {
 		keyID := app.Credentials.Signing.Kid
 		_ = d.Set("key_id", keyID)
-		keyMetadata, metadataRoot, err := getAPISupplementFromMetadata(meta).GetSAMLMetadata(ctx, d.Id(), keyID)
+		keyMetadata, metadataRoot, found, err := getAppSAMLMetadata(ctx, getAPISupplementFromMetadata(meta), d.Id(), keyID)
 		if err != nil {
 			return diag.Errorf("failed to get app's SAML metadata: %v", err)
 		}
-		_ = d.Set("metadata", string(keyMetadata))
-		_ = d.Set("metadata_url", utils.LinksValue(app.Links, "metadata", "href"))
-		desc := metadataRoot.IDPSSODescriptors[0]
-		syncSamlEndpointBinding(d, desc.SingleSignOnServices)
-		uri := metadataRoot.EntityID
-		if app.Settings != nil {
-			if app.Settings.SignOn != nil {
-				key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
-				_ = d.Set("entity_key", key)
+		if !found {
+			// Okta does not publish IdP metadata for this app (for example a catalog
+			// app where Okta is the service provider), so there is nothing to read.
+			logger(meta).Warn("SAML metadata not found for app, skipping metadata attributes", "id", d.Id())
+		} else {
+			_ = d.Set("metadata", string(keyMetadata))
+			_ = d.Set("metadata_url", utils.LinksValue(app.Links, "metadata", "href"))
+			desc := metadataRoot.IDPSSODescriptors[0]
+			syncSamlEndpointBinding(d, desc.SingleSignOnServices)
+			uri := metadataRoot.EntityID
+			if app.Settings != nil {
+				if app.Settings.SignOn != nil {
+					key := getExternalID(uri, app.Settings.SignOn.IdpIssuer)
+					_ = d.Set("entity_key", key)
+				}
 			}
+			_ = d.Set("entity_url", uri)
+			_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 		}
-		_ = d.Set("entity_url", uri)
-		_ = d.Set("certificate", desc.KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
 	}
 
 	keys, err := fetchAppKeys(ctx, meta, app.Id)
