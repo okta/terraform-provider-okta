@@ -30,6 +30,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure interface compliance
@@ -425,7 +426,7 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_windows", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -834,7 +835,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceWindowsPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating policy_device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_windows", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -1243,7 +1244,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceWindowsPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating policy_device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_windows", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -1523,7 +1524,7 @@ func (r *policyDeviceAssuranceWindowsResource) Delete(ctx context.Context, req r
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting policy_device_assurance_windows", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_windows", utils.APIErrorDetail(err))
 		return
 	}
 }

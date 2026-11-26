@@ -30,6 +30,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure interface compliance
@@ -299,7 +300,7 @@ func (r *policyDeviceAssuranceChromeosResource) Read(ctx context.Context, req re
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -537,7 +538,7 @@ func (r *policyDeviceAssuranceChromeosResource) Create(ctx context.Context, req 
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceChromeOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating policy_device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_chromeos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -780,7 +781,7 @@ func (r *policyDeviceAssuranceChromeosResource) Update(ctx context.Context, req 
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceChromeOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating policy_device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_chromeos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -948,7 +949,7 @@ func (r *policyDeviceAssuranceChromeosResource) Delete(ctx context.Context, req 
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting policy_device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_chromeos", utils.APIErrorDetail(err))
 		return
 	}
 }

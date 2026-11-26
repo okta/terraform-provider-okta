@@ -30,6 +30,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure interface compliance
@@ -259,7 +260,7 @@ func (r *policyDeviceAssuranceIosResource) Read(ctx context.Context, req resourc
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_ios", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -432,7 +433,7 @@ func (r *policyDeviceAssuranceIosResource) Create(ctx context.Context, req resou
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceIOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating policy_device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_ios", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -610,7 +611,7 @@ func (r *policyDeviceAssuranceIosResource) Update(ctx context.Context, req resou
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceIOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating policy_device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_ios", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -741,7 +742,7 @@ func (r *policyDeviceAssuranceIosResource) Delete(ctx context.Context, req resou
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting policy_device_assurance_ios", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_ios", utils.APIErrorDetail(err))
 		return
 	}
 }
