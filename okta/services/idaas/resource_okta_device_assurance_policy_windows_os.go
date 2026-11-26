@@ -30,6 +30,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure interface compliance
@@ -190,9 +191,6 @@ func (r *policyDeviceAssuranceWindowsResource) Schema(_ context.Context, _ resou
 			"last_updated_by": schema.StringAttribute{
 				Description: "LastUpdatedBy",
 				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Display name of the device assurance policy",
@@ -470,6 +468,9 @@ func (r *policyDeviceAssuranceWindowsResource) Read(ctx context.Context, req res
 		if state.GracePeriod == nil || !state.GracePeriod.Expiry.IsNull() {
 			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
 				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+				if state.GracePeriod != nil {
+					gracePeriodModel0.Expiry = utils.PreferPriorDuration(state.GracePeriod.Expiry, *expiryRaw.String)
+				}
 			} else {
 				gracePeriodModel0.Expiry = types.StringNull()
 			}
@@ -872,7 +873,7 @@ func (r *policyDeviceAssuranceWindowsResource) Create(ctx context.Context, req r
 		}
 		if !plan.GracePeriod.Expiry.IsNull() {
 			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
-				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+				gracePeriodModel0.Expiry = utils.PreferPriorDuration(plan.GracePeriod.Expiry, *expiryRaw.String)
 			} else {
 				gracePeriodModel0.Expiry = types.StringNull()
 			}
@@ -1315,7 +1316,7 @@ func (r *policyDeviceAssuranceWindowsResource) Update(ctx context.Context, req r
 		}
 		if !plan.GracePeriod.Expiry.IsNull() {
 			if expiryRaw, ok := gracePeriodRaw0.GetExpiryOk(); ok && expiryRaw.String != nil {
-				gracePeriodModel0.Expiry = types.StringValue(*expiryRaw.String)
+				gracePeriodModel0.Expiry = utils.PreferPriorDuration(plan.GracePeriod.Expiry, *expiryRaw.String)
 			} else {
 				gracePeriodModel0.Expiry = types.StringNull()
 			}
