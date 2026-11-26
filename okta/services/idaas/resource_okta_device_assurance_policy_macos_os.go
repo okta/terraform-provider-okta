@@ -30,6 +30,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure interface compliance
@@ -368,7 +369,7 @@ func (r *policyDeviceAssuranceMacosResource) Read(ctx context.Context, req resou
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -699,7 +700,7 @@ func (r *policyDeviceAssuranceMacosResource) Create(ctx context.Context, req res
 	createReq = createReq.DeviceAssurance(okta.ListDeviceAssurancePolicies200ResponseInner{DeviceAssuranceMacOSPlatform: body})
 	result, _, err := createReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error creating policy_device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error creating policy_device_assurance_macos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -1030,7 +1031,7 @@ func (r *policyDeviceAssuranceMacosResource) Update(ctx context.Context, req res
 	updateReq = updateReq.DeviceAssurance(okta.DeviceAssuranceMacOSPlatformAsListDeviceAssurancePolicies200ResponseInner(updateBody))
 	result, _, err := updateReq.Execute()
 	if err != nil {
-		resp.Diagnostics.AddError("Error updating policy_device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error updating policy_device_assurance_macos", utils.APIErrorDetail(err))
 		return
 	}
 	// Unwrap the union type to access the concrete variant's fields.
@@ -1254,7 +1255,7 @@ func (r *policyDeviceAssuranceMacosResource) Delete(ctx context.Context, req res
 		if httpResp != nil && httpResp.StatusCode == http.StatusNotFound {
 			return
 		}
-		resp.Diagnostics.AddError("Error deleting policy_device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error deleting policy_device_assurance_macos", utils.APIErrorDetail(err))
 		return
 	}
 }

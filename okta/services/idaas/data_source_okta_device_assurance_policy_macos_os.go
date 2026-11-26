@@ -26,6 +26,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -341,7 +342,7 @@ func (d *policyDeviceAssuranceMacosDataSource) Read(ctx context.Context, req dat
 			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_macos with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_macos", utils.APIErrorDetail(err))
 		return
 	}
 	variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceMacOSPlatform)

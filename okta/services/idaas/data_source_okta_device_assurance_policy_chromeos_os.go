@@ -26,6 +26,7 @@ import (
 	okta "github.com/okta/okta-sdk-golang/v7/okta"
 
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 var (
@@ -272,7 +273,7 @@ func (d *policyDeviceAssuranceChromeosDataSource) Read(ctx context.Context, req 
 			resp.Diagnostics.AddError("Not Found", "policy_device_assurance_chromeos with the given ID was not found.")
 			return
 		}
-		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", err.Error())
+		resp.Diagnostics.AddError("Error reading policy_device_assurance_chromeos", utils.APIErrorDetail(err))
 		return
 	}
 	variantObj, ok := result.GetActualInstance().(*okta.DeviceAssuranceChromeOSPlatform)
