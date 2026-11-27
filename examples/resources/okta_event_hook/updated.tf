@@ -16,5 +16,15 @@ resource "okta_event_hook" "test" {
       "user.lifecycle.create",
       "user.lifecycle.delete.initiated",
     ]
+
+    filter {
+      type = "EXPRESSION_LANGUAGE"
+      event_filter_map {
+        event = "user.lifecycle.create"
+        condition {
+          expression = "event.target.?[type eq 'User'].size()>0"
+        }
+      }
+    }
   }
 }
