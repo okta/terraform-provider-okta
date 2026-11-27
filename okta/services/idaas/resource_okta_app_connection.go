@@ -181,6 +181,17 @@ func (r *appConnections) Create(ctx context.Context, req resource.CreateRequest,
 		}
 		data.Status = types.StringValue("ENABLED")
 		data.Action = types.StringValue("activate")
+	} else if data.Action.ValueString() == "deactivate" {
+		_, err = r.OktaIDaaSClient.OktaSDKClientV5().ApplicationConnectionsAPI.DeactivateDefaultProvisioningConnectionForApplication(ctx, data.ID.ValueString()).Execute()
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Error Deactivating App Connection",
+				"Could not deactivate app connection for application ID "+data.ID.ValueString()+": "+err.Error(),
+			)
+			return
+		}
+		data.Status = types.StringValue("DISABLED")
+		data.Action = types.StringValue("deactivate")
 	}
 
 	// Update state with response
