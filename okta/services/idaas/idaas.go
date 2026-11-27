@@ -176,6 +176,7 @@ func FWProviderResources() []func() resource.Resource {
 		newBehaviorVelocityResource,
 		newDevicePostureCheckResource,
 		newBehaviorNewAsnResource,
+		newEventHookResource,
 	}
 	// Wrap all resources with SafeResource for panic recovery
 	return resources.WrapResources(rawResources)
@@ -244,6 +245,7 @@ func FWProviderDataSources() []func() datasource.DataSource {
 		newBehaviorVelocityDataSource,
 		newDevicePostureCheckDataSource,
 		newBehaviorNewAsnDataSource,
+		newEventHookDataSource,
 	}
 }
 
@@ -291,7 +293,6 @@ func ProviderResources() map[string]*schema.Resource {
 		resources.OktaIDaaSEmailSender:                   resourceEmailSender(),
 		resources.OktaIDaaSEmailSenderVerification:       resourceEmailSenderVerification(),
 		resources.OktaIDaaSEmailSMTPServer:               resourceEmailSMTP(),
-		resources.OktaIDaaSEventHook:                     resourceEventHook(),
 		resources.OktaIDaaSEventHookVerification:         resourceEventHookVerification(),
 		resources.OktaIDaaSFactor:                        resourceFactor(),
 		resources.OktaIDaaSFactorTotp:                    resourceFactorTOTP(),
