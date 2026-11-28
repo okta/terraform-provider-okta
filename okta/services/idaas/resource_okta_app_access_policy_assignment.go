@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/okta/okta-sdk-golang/v4/okta"
 	"github.com/okta/terraform-provider-okta/okta/config"
+	"github.com/okta/terraform-provider-okta/okta/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -83,7 +84,7 @@ func (r *appAccessPolicyAssignmentResource) Create(ctx context.Context, req reso
 	}
 
 	// find the app
-	appInnerResp, err := r.findAppSDKInnerResponse(ctx, plan.AppID.ValueString())
+	appInnerResp, _, err := r.findAppSDKInnerResponse(ctx, plan.AppID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("create failed to find app %q for policy assignment", plan.AppID.ValueString()),
@@ -134,8 +135,12 @@ func (r *appAccessPolicyAssignmentResource) Read(ctx context.Context, req resour
 	}
 
 	// find the app
-	appInnerResp, err := r.findAppSDKInnerResponse(ctx, state.ID.ValueString())
+	appInnerResp, apiResp, err := r.findAppSDKInnerResponse(ctx, state.ID.ValueString())
 	if err != nil {
+		if suppressErr := utils.SuppressErrorOn404_V3(apiResp, err); suppressErr == nil {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("read failed to find app %q for policy assignment", state.ID.ValueString()),
 			err.Error(),
@@ -193,7 +198,7 @@ func (r *appAccessPolicyAssignmentResource) Update(ctx context.Context, req reso
 	}
 
 	// find the app
-	_, err := r.findAppSDKInnerResponse(ctx, state.ID.ValueString())
+	_, _, err := r.findAppSDKInnerResponse(ctx, state.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			fmt.Sprintf("update failed to find app %q for policy assignment", state.AppID.ValueString()),
@@ -229,9 +234,9 @@ func (r *appAccessPolicyAssignmentResource) ImportState(ctx context.Context, req
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func (r *appAccessPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.Context, appID string) (*okta.ListApplications200ResponseInner, error) {
-	appInnerResp, _, err := r.OktaIDaaSClient.OktaSDKClientV3().ApplicationAPI.GetApplication(ctx, appID).Execute()
-	return appInnerResp, err
+func (r *appAccessPolicyAssignmentResource) findAppSDKInnerResponse(ctx context.Context, appID string) (*okta.ListApplications200ResponseInner, *okta.APIResponse, error) {
+	appInnerResp, apiResp, err := r.OktaIDaaSClient.OktaSDKClientV3().ApplicationAPI.GetApplication(ctx, appID).Execute()
+	return appInnerResp, apiResp, err
 }
 
 func concreteAppID(src *okta.ListApplications200ResponseInner) (id string, err error) {
